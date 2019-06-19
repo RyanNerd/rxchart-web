@@ -1,8 +1,32 @@
-import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
 import * as serviceWorker from './serviceWorker';
+import React, {setGlobal} from "reactn";
+import App from './App';
+
+// const resident = {
+//     Id: null,
+//     FirstName: null,
+//     LastName: null,
+//     DOB_YEAR: null,
+//     DOB_MONTH: null,
+//     DOB_DAY: null,
+//     Status: null,
+//     Updated: null,
+//     Created: null
+// };
+
+setGlobal({
+    counter: 0,
+    currentResident: null,
+    currentBarcode: null,
+    currentMedicine: null,
+    apiKey: null
+    }).then((initialState) => {
+        console.log('MedTrax Started', initialState);
+    }).catch((err) => {
+        console.error('Something went wrong', err);
+    }
+);
 
 ReactDOM.render(<App />, document.getElementById('root'));
 
