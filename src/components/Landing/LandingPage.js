@@ -7,7 +7,7 @@ import ScanPage from "../Scan/ScanPage";
 
 function LandingPage() {
     const [key, setKey] = useState('login');
-    const [apiKey, setApiKey] = useGlobal('apiKey');
+    const [ apiKey ] = useGlobal('apiKey');
 
     return (
         <Tabs
@@ -25,7 +25,7 @@ function LandingPage() {
             <Tab
                 disabled={apiKey === null}
                 eventKey="scan"
-                title="Scan Barcode"
+                title="Lookup"
             >
                 <ScanPage/>
             </Tab>

@@ -1,11 +1,11 @@
-import React, { useGlobal } from 'reactn';
+import React, {useGlobal} from 'reactn';
 
 import LandingPage from "./components/Landing/LandingPage";
 
 function App()
 {
-    const [currentBarcode, setCurrentBarcode] = useGlobal('currentBarCode');
-    const [currentResident, setCurrentResident] = useGlobal('currentResident');
+    const [ currentBarcode ] = useGlobal('currentBarCode');
+    const [currentResident ] = useGlobal('currentResident');
 
     return (
         <>

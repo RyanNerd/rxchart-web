@@ -1,24 +1,19 @@
-import React, { useGlobal } from 'reactn';
+import React, {setGlobal} from 'reactn';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import TabContent from "../../styles/tab_content.css";
 
 function ScanPage()
 {
-    const [ currentBarcode, setCurrentBarcode ] = useGlobal('currentBarCode');
-    const [ currentResident, setCurrentResident] = useGlobal('currentResident');
-
     return (
-        <Form>
-            <Form.Check>
-                Test
-            </Form.Check>
-            <Button onClick={() =>{
+        <Form className={TabContent}>
+            <Form.Check type="checkbox" label="Check me out"/>
+                                                                                                        <Button onClick={() =>{
              const resident = {
                  LastName: "White",
                  FirstName: "Snow"
              };
-             setCurrentResident(resident);
-             setCurrentBarcode('test');
+             setGlobal({currentResident: resident, currentBarcode: "test"});
             }}>
                 Scan
             </Button>

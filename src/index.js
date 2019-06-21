@@ -2,6 +2,7 @@ import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
 import React, {setGlobal} from "reactn";
 import App from './App';
+import Frak from './providers/Frak';
 
 // const resident = {
 //     Id: null,
@@ -20,7 +21,9 @@ setGlobal({
     currentResident: null,
     currentBarcode: null,
     currentMedicine: null,
-    apiKey: null
+    apiKey: null,
+    baseUrl: 'http://localhost:8082/v1/',
+    frak: new Frak()
     }).then((initialState) => {
         console.log('MedTrax Started', initialState);
     }).catch((err) => {

@@ -1,6 +1,7 @@
-import React, { useGlobal } from 'reactn';
+import React, {setGlobal, useGlobal, useState} from 'reactn';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import TabContent from './../../styles/tab_content.css';
 
 /**
  * Sign in page
@@ -8,17 +9,40 @@ import Button from 'react-bootstrap/Button';
  * @constructor
  */
 function LoginPage(props) {
+    const [userName, setUserName] = useState('');
+    const [password, setPassword] = useState('');
+
+
     const [ apiKey, setApiKey ] = useGlobal('apiKey');
-    const [ currentResident, setCurrentResident] = useGlobal('currentResident');
-    const [ currentBarCode, setCurrentBarCode] = useGlobal('currentBarCode');
+    const [ frak ] = useGlobal('frak');
+    const [ baseUrl ] = useGlobal('baseUrl');
 
     /**
      * Fires when the Login Button is clicked
      */
     function login(e) {
         e.preventDefault();
-        setApiKey('test');
-        props.onLogin(true);
+
+        // setApiKey('blah').then(() => {
+        //     props.onLogin(true);
+        //     setPassword('');
+        //     setUserName('');
+        // });
+
+        frak.post(baseUrl + 'authenticate', {username: "switchpoint", password: "switchpoint"}, {mode: "cors"})
+        .then((json) => {
+            if (json.success) {
+                setApiKey(json.data.apiKey)
+                    .then(() => props.onLogin(true));
+                alert(json.data.apiKey);
+            } else {
+                alert('Invalid login credentials')
+            }
+        })
+        .catch((err) => {
+            console.error(err);
+            alert('something went wrong');
+        });
     }
 
     /**
@@ -26,20 +50,28 @@ function LoginPage(props) {
      */
     function logout(e) {
         e.preventDefault();
-        setApiKey(null);
-        setCurrentBarCode(null);
-        setCurrentResident(null);
+
+        setGlobal({currentBarCode: null, currentResident: null, apiKey: null});
     }
 
     const signIn = (
         <>
             <Form.Group controlId="user.name">
                 <Form.Label>User Name</Form.Label>
-                <Form.Control type="text" placeholder="user-name" />
+                <Form.Control
+                    type="text"
+                    placeholder="user-name"
+                    value={userName}
+                    onChange={(e) => setUserName(e.target.value)}
+                />
             </Form.Group>
             <Form.Group controlId="user.password">
                 <Form.Label>Password</Form.Label>
-                <Form.Control type="password" />
+                <Form.Control
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
             </Form.Group>
             <Button onClick={(e) => {login(e)}}>
                 Login
@@ -54,7 +86,7 @@ function LoginPage(props) {
     );
 
     return (
-        <Form style={{marginTop: "25px", marginLeft: "35px", marginRight: "235px"}}>
+        <Form className={TabContent}>
             {apiKey === null ? (signIn) : (signOut)}
         </Form>
     );
