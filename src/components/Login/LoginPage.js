@@ -28,8 +28,10 @@ function LoginPage(props) {
         .then((json) => {
             if (json.success) {
                 setApiKey(json.data.apiKey).then(() => {
-                    const residentProvider = new ResidentProvider(baseUrl, json.data.apiKey);
-                    residentProvider.read('all').then((data) => setResidentList(data));
+                    if (residentList === null) {
+                        const residentProvider = new ResidentProvider(baseUrl, json.data.apiKey);
+                        residentProvider.read('all').then((data) => setResidentList(data));
+                    }
                     props.onLogin(true);
                 });
             } else {
