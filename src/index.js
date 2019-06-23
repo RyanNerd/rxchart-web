@@ -10,6 +10,7 @@ setGlobal({
     currentResident: null,
     currentBarcode: null,
     currentMedicine: null,
+    currentTabKey: 'login',
     apiKey: null,
     baseUrl: "http://localhost:8082/v1/",
     frak: new Frak()

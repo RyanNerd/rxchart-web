@@ -1,4 +1,4 @@
-import React, {useGlobal, useState} from 'reactn';
+import React, {useGlobal} from 'reactn';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import LoginPage from './../Login/LoginPage';
@@ -6,21 +6,21 @@ import ScanPage from "../Scan/ScanPage";
 import ResidentPage from "../Resident/ResidentPage";
 
 function LandingPage() {
-    const [key, setKey] = useState('login');
+    const [ currentTabKey, setCurrentTabKey ] = useGlobal('currentTabKey');
     const [ apiKey ] = useGlobal('apiKey');
 
     return (
         <Tabs
             id="controlled-tab-example"
-            activeKey={key}
-            onSelect={key => setKey(key)}
+            activeKey={currentTabKey}
+            onSelect={key => setCurrentTabKey(key)}
         >
             <Tab
                 sytle={{marginLeft: "15px"}}
                 eventKey="login"
                 title={apiKey ? "Logout" : "Login"}
             >
-                <LoginPage onLogin={(loggedIn) => {setKey(loggedIn ? 'scan' : 'login')}} />
+                <LoginPage onLogin={(loggedIn) => {setCurrentTabKey(loggedIn ? 'scan' : 'login')}} />
             </Tab>
             <Tab
                 disabled={apiKey === null}
