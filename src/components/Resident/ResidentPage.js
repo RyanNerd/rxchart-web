@@ -1,20 +1,11 @@
-import React, {useGlobal, useState} from 'reactn';
-import ResidentProvider from './../../providers/ResidentProvider'
+import React, {useGlobal} from 'reactn';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table'
 
 export default function ResidentPage()
 {
-    const [ residentList, setResidentList ] = useState(null);
-    const [ baseUrl ] = useGlobal('baseUrl');
-    const [ apiKey ] = useGlobal('apiKey');
+    const [ residentList ] = useGlobal('residentList');
 
-    function refreshResident() {
-        const residentProvider = new ResidentProvider(baseUrl, apiKey);
-        residentProvider.read('all').then((data) => {
-            setResidentList(data);
-        });
-    }
 
     function handleClick(e, resident) {
         alert(resident.Id + 'DOB: ' + resident.DOB_MONTH + '/' + resident.DOB_DAY + '/' + resident.DOB_YEAR);
@@ -46,7 +37,6 @@ export default function ResidentPage()
 
     return (
         <>
-            <Button onClick={() => refreshResident()}>Refresh</Button>
         <Table striped bordered hover size="sm">
             <thead>
             <tr>

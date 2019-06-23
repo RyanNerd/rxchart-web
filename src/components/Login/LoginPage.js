@@ -2,6 +2,7 @@ import React, {setGlobal, useGlobal, useState} from 'reactn';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import TabContent from './../../styles/tab_content.css';
+import ResidentProvider from './../../providers/ResidentProvider';
 
 /**
  * Sign in page
@@ -12,10 +13,10 @@ function LoginPage(props) {
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
 
-
     const [ apiKey, setApiKey ] = useGlobal('apiKey');
     const [ frak ] = useGlobal('frak');
     const [ baseUrl ] = useGlobal('baseUrl');
+    const [ residentList, setResidentList ] = useGlobal('residentList');
 
     /**
      * Fires when the Login Button is clicked
@@ -26,7 +27,11 @@ function LoginPage(props) {
         frak.post(baseUrl + 'authenticate', {username: userName, password: password}, {mode: "cors"})
         .then((json) => {
             if (json.success) {
-                setApiKey(json.data.apiKey).then(() => props.onLogin(true));
+                setApiKey(json.data.apiKey).then(() => {
+                    const residentProvider = new ResidentProvider(baseUrl, json.data.apiKey);
+                    residentProvider.read('all').then((data) => setResidentList(data));
+                    props.onLogin(true);
+                });
             } else {
                 alert('Invalid login credentials')
             }
