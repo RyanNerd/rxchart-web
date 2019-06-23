@@ -35,6 +35,12 @@ function LandingPage() {
                 title="Resident">
                 <ResidentPage />
             </Tab>
+            <Tab
+                disabled={apiKey === null}
+                eventKey="history"
+                title="Medical History">
+                <p>Place Holder for Medical History</p>
+            </Tab>
         </Tabs>
     );
 }

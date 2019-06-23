@@ -11,14 +11,13 @@ export default function ResidentPage()
 
     function refreshResident() {
         const residentProvider = new ResidentProvider(baseUrl, apiKey);
-        residentProvider.read(1).then((data) => {
-            console.log(data, data);
-            setResidentList([data]);
+        residentProvider.read('all').then((data) => {
+            setResidentList(data);
         });
     }
 
     function handleClick(e, resident) {
-        alert(resident.Id + ' clicked');
+        alert(resident.Id + 'DOB: ' + resident.DOB_MONTH + '/' + resident.DOB_DAY + '/' + resident.DOB_YEAR);
     }
 
     const ResidentRow = (resident) => {
