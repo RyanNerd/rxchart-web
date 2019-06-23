@@ -4,25 +4,14 @@ import React, {setGlobal} from "reactn";
 import App from './App';
 import Frak from './providers/Frak';
 
-// const resident = {
-//     Id: null,
-//     FirstName: null,
-//     LastName: null,
-//     DOB_YEAR: null,
-//     DOB_MONTH: null,
-//     DOB_DAY: null,
-//     Status: null,
-//     Updated: null,
-//     Created: null
-// };
-
 setGlobal({
+    development: true,
     counter: 0,
     currentResident: null,
     currentBarcode: null,
     currentMedicine: null,
     apiKey: null,
-    baseUrl: 'http://localhost:8082/v1/',
+    baseUrl: "http://localhost:8082/v1/",
     frak: new Frak()
     }).then((initialState) => {
         console.log('MedTrax Started', initialState);

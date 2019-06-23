@@ -23,18 +23,10 @@ function LoginPage(props) {
     function login(e) {
         e.preventDefault();
 
-        // setApiKey('blah').then(() => {
-        //     props.onLogin(true);
-        //     setPassword('');
-        //     setUserName('');
-        // });
-
-        frak.post(baseUrl + 'authenticate', {username: "switchpoint", password: "switchpoint"}, {mode: "cors"})
+        frak.post(baseUrl + 'authenticate', {username: userName, password: password}, {mode: "cors"})
         .then((json) => {
             if (json.success) {
-                setApiKey(json.data.apiKey)
-                    .then(() => props.onLogin(true));
-                alert(json.data.apiKey);
+                setApiKey(json.data.apiKey).then(() => props.onLogin(true));
             } else {
                 alert('Invalid login credentials')
             }

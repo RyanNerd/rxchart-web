@@ -1,9 +1,9 @@
 import React, {useGlobal, useState} from 'reactn';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
-import Example from './../../Example';
 import LoginPage from './../Login/LoginPage';
 import ScanPage from "../Scan/ScanPage";
+import ResidentPage from "../Resident/ResidentPage";
 
 function LandingPage() {
     const [key, setKey] = useState('login');
@@ -33,7 +33,7 @@ function LandingPage() {
                 disabled={apiKey === null}
                 eventKey="resident"
                 title="Resident">
-                <Example variant="light"/>
+                <ResidentPage />
             </Tab>
         </Tabs>
     );
