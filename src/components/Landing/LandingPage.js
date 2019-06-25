@@ -31,15 +31,15 @@ function LandingPage() {
             </Tab>
             <Tab
                 disabled={apiKey === null}
-                eventKey="resident"
-                title="Resident">
-                <ResidentPage />
-            </Tab>
-            <Tab
-                disabled={apiKey === null}
                 eventKey="history"
                 title="Medical History">
                 <p>Place Holder for Medical History</p>
+            </Tab>
+            <Tab
+                disabled={apiKey === null}
+                eventKey="resident"
+                title="Resident List">
+                <ResidentPage />
             </Tab>
         </Tabs>
     );

@@ -2,19 +2,10 @@ import ReactDOM from 'react-dom';
 // import * as serviceWorker from './serviceWorker';
 import React, {setGlobal} from "reactn";
 import App from './App';
-import Frak from './providers/Frak';
+import {initialState} from "./InitialState";
 
-setGlobal({
-    development: true,
-    currentResident: null,
-    currentBarcode: null,
-    currentMedicine: null,
-    residentList: null,
-    currentTabKey: 'login',
-    apiKey: null,
-    baseUrl: "http://localhost:8082/v1/",
-    frak: new Frak()
-    }).then((initialState) => {
+setGlobal(initialState)
+    .then((initialState) => {
         console.log('MedTrax Started', initialState);
     }).catch((err) => {
         console.error('Something went wrong', err);

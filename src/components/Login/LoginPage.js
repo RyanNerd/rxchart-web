@@ -3,6 +3,8 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import TabContent from './../../styles/tab_content.css';
 import ResidentProvider from './../../providers/ResidentProvider';
+import MedicineProvider from './../../providers/MedicineProvider';
+import {initialState} from "../../InitialState";
 
 /**
  * Sign in page
@@ -17,6 +19,7 @@ function LoginPage(props) {
     const [ frak ] = useGlobal('frak');
     const [ baseUrl ] = useGlobal('baseUrl');
     const [ residentList, setResidentList ] = useGlobal('residentList');
+    const [ providers , setProviders ] = useGlobal('providers');
 
     /**
      * Fires when the Login Button is clicked
@@ -28,10 +31,13 @@ function LoginPage(props) {
         .then((json) => {
             if (json.success) {
                 setApiKey(json.data.apiKey).then(() => {
+                    providers.residentProvider = new ResidentProvider(baseUrl, json.data.apiKey);
+                    providers.medicineProvider = new MedicineProvider(baseUrl, json.data.apiKey);
                     if (residentList === null) {
-                        const residentProvider = new ResidentProvider(baseUrl, json.data.apiKey);
-                        residentProvider.read('all').then((data) => setResidentList(data));
+                        providers.residentProvider.query('*').then((data) => setResidentList(data));
+                        setProviders(providers);
                     }
+
                     props.onLogin(true);
                 });
             } else {
@@ -50,7 +56,9 @@ function LoginPage(props) {
     function logout(e) {
         e.preventDefault();
 
-        setGlobal({currentBarCode: null, currentResident: null, apiKey: null});
+        setGlobal(initialState)
+        .then(()=> console.log('logout successful'))
+        .catch((err) => console.error('logout error', err));
     }
 
     const signIn = (
