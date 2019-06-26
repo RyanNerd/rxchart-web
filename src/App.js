@@ -9,7 +9,7 @@ function App()
 
     return (
         <>
-            {currentResident ? <h2 style={{textAlign: "center"}}>{currentResident.FirstName} {currentResident.LastName}</h2> : null}
+            {currentResident ? <h2 style={{textAlign: "center"}}><span style={{background:"#edf11e"}}>{currentResident.FirstName} {currentResident.LastName}</span></h2> : null}
             {currentBarcode ? <h3 style={{textAlign: "center"}}>{currentBarcode}</h3> : null}
             <LandingPage/>
         </>
