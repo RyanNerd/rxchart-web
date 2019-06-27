@@ -31,9 +31,9 @@ function LandingPage() {
             </Tab>
             <Tab
                 disabled={apiKey === null}
-                eventKey="history"
-                title="Medical History">
-                <p>Place Holder for Medical History</p>
+                eventKey="log"
+                title="Medicine Log">
+                <p>Place Holder for Medicine Log</p>
             </Tab>
             <Tab
                 disabled={apiKey === null}

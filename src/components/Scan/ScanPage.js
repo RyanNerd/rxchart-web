@@ -23,31 +23,46 @@ function ScanPage()
         }
     }
 
+    /**
+     * Fires when the user hits enter on the barcode input or clicks the OK button
+     */
     function barcodeLookup()
     {
+        // Query the Medicine table looking for a matching barcode.
         const medicineProvider = providers.medicineProvider;
         medicineProvider.query(barcodeValue, 'Barcode')
         .then((response) =>
         {
+            // Did we find one?
             if (response.success) {
+                // Should only be one
                 if (response.data.length === 1) {
+                    // Find the associated Resident
                     const residentProvider = providers.residentProvider;
                     residentProvider.read(response.data[0].ResidentId)
                         .then((residentInfo) =>
                         {
+                            // Set the currentResident, currentBarcode, and switch to the medical log tab
                             setGlobal({
                                 currentResident: residentInfo,
-                                currentBarcode: "12345",
-                                currentTabKey: 'history'
+                                currentBarcode: barcodeValue,
+                                currentTabKey: 'log'
                             });
+                            // Clear the barcode value so when we come back we don't have the previous barcode
                             setBarcodeValue('');
                         });
                 } else {
-                    alert('barcode not found');
+                    alert("Duplicate Barcode -- This shouldn't happen");
                 }
             } else {
-                alert('Problem querying medicine');
-                console.error("He's dead Jim", response);
+                if (response.status === 404) {
+                    // TODO: Add code to bring up a Medicine Modal.
+                    alert('New medicine');
+                } else {
+                    // Something went wrong. TODO: Degrade gracefully.
+                    alert('Problem querying medicine');
+                    console.error("He's dead Jim", response);
+                }
             }
         })
     }
@@ -55,11 +70,13 @@ function ScanPage()
     // Set focus to the barcode input when the scan tab is open
     let bc = React.createRef();
     useEffect(() => {
-        if (currentTabKey === 'scan') {
+        if (currentTabKey === 'scan' && bc) {
             const barcode = ReactDom.findDOMNode(bc);
-            barcode.focus();
+            if (barcode.value === '') {
+                barcode.focus();
+            }
         }
-    }, [currentTabKey]);
+    }, [currentTabKey, bc]);
 
     return (
         <Form className={TabContent}>
