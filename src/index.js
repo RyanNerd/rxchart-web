@@ -12,7 +12,17 @@ setGlobal(initialState)
     }
 );
 
-ReactDOM.render(<App />, document.getElementById('root'));
+// Are we using the Chrome browser?
+var isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
+
+// What version of Chrome is being used?
+var chromeVersion = null;
+if (isChrome) {
+    const rawChromeVersion = navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
+    chromeVersion = rawChromeVersion ? parseInt(rawChromeVersion[2], 10) : -1;
+}
+
+ReactDOM.render(<App isChrome={isChrome} chromeVersion={chromeVersion}/>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

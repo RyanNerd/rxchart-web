@@ -13,6 +13,11 @@ function ScanPage()
     const [ barcodeValue, setBarcodeValue ] = useState('');
     const [ currentTabKey ] = useGlobal('currentTabKey');
 
+    /**
+     * Fires on keyPress for the barcode text box
+     *
+     * @param e KeyboardEvent
+     */
     function handleBarcodeKeyPress(e)
     {
         if (e.target.value ) {
@@ -33,9 +38,9 @@ function ScanPage()
         medicineProvider.query(barcodeValue, 'Barcode')
         .then((response) =>
         {
-            // Did we find one?
+            // Did we find a matching barcode?
             if (response.success) {
-                // Should only be one
+                // Sanity Check -- Should only be one
                 if (response.data.length === 1) {
                     // Find the associated Resident
                     const residentProvider = providers.residentProvider;
@@ -48,6 +53,7 @@ function ScanPage()
                                 currentBarcode: barcodeValue,
                                 currentTabKey: 'log'
                             });
+
                             // Clear the barcode value so when we come back we don't have the previous barcode
                             setBarcodeValue('');
                         });

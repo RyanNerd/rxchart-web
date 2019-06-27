@@ -1,20 +1,43 @@
 import React, {useGlobal} from 'reactn';
 import Button from 'react-bootstrap/Button';
-import Table from 'react-bootstrap/Table'
+import Table from 'react-bootstrap/Table';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
+import {DOB} from './../../utility/common';
 
 export default function ResidentPage()
 {
     const [ residentList ] = useGlobal('residentList');
 
 
-    function handleClick(e, resident) {
-        alert(resident.Id + 'DOB: ' + resident.DOB_MONTH + '/' + resident.DOB_DAY + '/' + resident.DOB_YEAR);
+    /**
+     * Fires when user clicks the Edit button
+     * @param e
+     * @param resident
+     */
+    function handleEdit(e, resident)
+    {
+        alert(resident.Id + ' DOB: ' + DOB(resident));
     }
 
+    function handleAdd(e)
+    {
+        e.preventDefault();
+        alert('you clicked the add button');
+    }
+
+    /**
+     * Resident Child Component
+     * @param resident ResidentInfo
+     * @returns {null | ResidentRow}
+     * @constructor
+     */
     const ResidentRow = (resident) => {
         if (resident === null ){
             return null;
         }
+
+        const dob = DOB(resident);
 
         return (
             <tr
@@ -23,40 +46,62 @@ export default function ResidentPage()
             >
                 <td>
                     <Button
+                        size="sm"
                         id={"resident-grid-button-" + resident.Id}
-                        onClick={(e) => handleClick(e, resident)}
+                        onClick={(e) => handleEdit(e, resident)}
                     >
-                        Select
+                        Edit
                     </Button>
                 </td>
                 <td>{resident.FirstName}</td>
                 <td>{resident.LastName}</td>
+                <td>{dob}</td>
             </tr>
         );
     };
 
+
     return (
         <>
-        <Table striped bordered hover size="sm">
-            <thead>
-            <tr>
-                <th/>
-                <th
-                    className="poverty-grid-header"
+            <OverlayTrigger
+                key="add-right"
+                placement="right"
+                overlay={
+                    <Tooltip id="add-tooltip-right">
+                        Add New Resident
+                    </Tooltip>
+                }
+            >
+                <Button
+                    size="sm"
+                    variant="info"
+                    onClick={(e) => handleAdd(e)}
                 >
-                    <span>First Name</span>
-                </th>
-                <th
-                    className="poverty-grid-header"
-                >
-                    <span>Last Name</span>
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-                {residentList && residentList.length > 0 && residentList.map(ResidentRow) }
-            </tbody>
-        </Table>
+                    +
+                </Button>
+            </OverlayTrigger>
+
+            <Table striped bordered hover size="sm">
+                <thead>
+                <tr>
+                    <th/>
+                    <th>
+                        <span>First Name</span>
+                    </th>
+                    <th>
+                        <span>Last Name</span>
+                    </th>
+                    <th>
+                        <span>DOB</span>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                    {residentList && residentList.length > 0 && residentList.map(ResidentRow) }
+                </tbody>
+            </Table>
+
+            <br/>
         </>
     );
 }
