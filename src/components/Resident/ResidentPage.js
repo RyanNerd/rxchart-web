@@ -1,9 +1,8 @@
-import React, {useGlobal, useState} from 'reactn';
+import React, {useState} from 'reactn';
 import Button from 'react-bootstrap/Button';
-import Table from 'react-bootstrap/Table';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
-import {DOB} from './../../utility/common';
+import ResidentGrid from './ResidentGrid';
 import ResidentEdit from './ResidentEdit';
 
 /**
@@ -16,17 +15,16 @@ import ResidentEdit from './ResidentEdit';
 export default function ResidentPage()
 {
     // Establish initial state
-    const [ residentList ] = useGlobal('residentList');
     const [ show, setShow ] = useState(false);
     const [ residentInfo, setResidentInfo ] = useState({Id: null});
-
+    const [ currentResidentId, setCurrentResidentId ] = useState(2);
     /**
      * Fires when user clicks the Edit button
      *
      * @param e
      * @param resident
      */
-    function handleEdit(e, resident)
+    function onEdit(e, resident)
     {
         e.preventDefault();
 
@@ -66,40 +64,10 @@ export default function ResidentPage()
         setShow(false);
     }
 
-    /**
-     * Resident Child Component
-     * @param resident ResidentInfo
-     * @returns {null | ResidentRow}
-     * @constructor
-     */
-    const ResidentRow = (resident) => {
-        if (resident === null ){
-            return null;
-        }
-
-        const dob = DOB(resident);
-
-        return (
-            <tr
-                key={'resident-grid-row-' + resident.Id}
-                id={'resident-grid-row-' + resident.Id}
-            >
-                <td>
-                    <Button
-                        size="sm"
-                        id={"resident-grid-button-" + resident.Id}
-                        onClick={(e) => handleEdit(e, resident)}
-                    >
-                        Edit
-                    </Button>
-                </td>
-                <td>{resident.FirstName}</td>
-                <td>{resident.LastName}</td>
-                <td>{dob}</td>
-            </tr>
-        );
-    };
-
+    function handleOnSelected(e, resident)
+    {
+        setCurrentResidentId(resident.Id);
+    }
 
     return (
         <>
@@ -121,26 +89,15 @@ export default function ResidentPage()
                 </Button>
             </OverlayTrigger>
 
-            <Table striped bordered hover size="sm">
-                <thead>
-                <tr>
-                    <th/>
-                    <th>
-                        <span>First Name</span>
-                    </th>
-                    <th>
-                        <span>Last Name</span>
-                    </th>
-                    <th>
-                        <span>DOB</span>
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                    {residentList && residentList.length > 0 && residentList.map(ResidentRow) }
-                </tbody>
-            </Table>
+            <p><span> </span></p>
 
+            <ResidentGrid
+                onEdit={(e, resident) => onEdit(e, resident)}
+                onSelected={(e, r) => handleOnSelected(e, r)}
+                currentResidentId={currentResidentId}
+            />
+
+            {/* ResidentEdit Modal */}
             <ResidentEdit
                 show={show}
                 residentInfo={residentInfo}

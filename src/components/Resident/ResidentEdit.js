@@ -8,7 +8,10 @@ import Row from "react-bootstrap/Row";
 /**
  * Edit Modal for Resident
  *
- * @param props {boolean} show, {object} residentInfo
+ * @param props :
+ *          show {boolean} show/hide this modal
+ *          residentInfo {Id: id, FirstName: first_name, etc.}
+ *
  * @returns {boolean|*}
  * @constructor
  */
