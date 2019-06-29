@@ -1,9 +1,10 @@
-import React, {useState} from 'reactn';
+import React, {useGlobal, useState} from 'reactn';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import ResidentGrid from './ResidentGrid';
 import ResidentEdit from './ResidentEdit';
+import {FULLNAME} from './../../utility/common';
 
 /**
  * Display Resident Grid
@@ -17,7 +18,8 @@ export default function ResidentPage()
     // Establish initial state
     const [ show, setShow ] = useState(false);
     const [ residentInfo, setResidentInfo ] = useState({Id: null});
-    const [ currentResidentId, setCurrentResidentId ] = useState(2);
+    const [ currentResident, setCurrentResident ] = useGlobal('currentResident');
+
     /**
      * Fires when user clicks the Edit button
      *
@@ -58,7 +60,7 @@ export default function ResidentPage()
     function handleModalClose(residentInfo)
     {
         if (residentInfo) {
-            alert(residentInfo.FirstName + ' ' + residentInfo.LastName);
+            alert(FULLNAME(residentInfo));
         }
 
         setShow(false);
@@ -66,7 +68,12 @@ export default function ResidentPage()
 
     function handleOnSelected(e, resident)
     {
-        setCurrentResidentId(resident.Id);
+        setCurrentResident(resident);
+    }
+
+    function handleOnDelete(e, resident)
+    {
+        alert('Delete: ' + FULLNAME(resident));
     }
 
     return (
@@ -93,8 +100,9 @@ export default function ResidentPage()
 
             <ResidentGrid
                 onEdit={(e, resident) => onEdit(e, resident)}
-                onSelected={(e, r) => handleOnSelected(e, r)}
-                currentResidentId={currentResidentId}
+                onSelected={(e, resident) => handleOnSelected(e, resident)}
+                onDelete={(e, resident) => handleOnDelete(e, resident)}
+                currentResident={currentResident}
             />
 
             {/* ResidentEdit Modal */}

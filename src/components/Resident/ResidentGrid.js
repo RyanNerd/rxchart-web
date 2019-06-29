@@ -21,7 +21,7 @@ export default function ResidentGrid(props) {
     /**
      * Resident Child Table Component
      *
-     * @param resident ResidentInfo
+     * @param {object} resident Resident record object
      * @returns {null | ResidentRow}
      * @constructor
      */
@@ -29,8 +29,8 @@ export default function ResidentGrid(props) {
         // Get formatted DOB
         const dob = DOB(resident);
 
-        // Determine if this row is selected [for radio buttons]
-        const isSelected = props.onSelected && (resident.Id === props.currentResidentId) ? 1 : 0;
+        // Determine if this row is selected [for radio ToggleButtons]
+        const isSelected = props.onSelected && props.currentResident && resident.Id === props.currentResident.Id;
 
         return (
             <tr
@@ -40,9 +40,10 @@ export default function ResidentGrid(props) {
                 {props.onSelected &&
                     <td>
                         <ToggleButton
+                            id={"resident-grid-select-btn-" + resident.Id}
                             type="radio"
                             name="resident-list"
-                            variant="outline-secondary"
+                            variant="outline-info"
                             checked={isSelected}
                             onClick={(e) => props.onSelected(e, resident)}
                         />
@@ -53,10 +54,8 @@ export default function ResidentGrid(props) {
                     <td>
                         <Button
                             size="sm"
-                            id={"resident-grid-button-" + resident.Id}
-                            onClick={(e) => {
-                                props.onEdit(e, resident)
-                            }}
+                            id={"resident-grid-edit-btn-" + resident.Id}
+                            onClick={(e) => props.onEdit(e, resident)}
                         >
                             Edit
                         </Button>
@@ -66,6 +65,19 @@ export default function ResidentGrid(props) {
                 <td>{resident.FirstName}</td>
                 <td>{resident.LastName}</td>
                 <td>{dob}</td>
+
+                {props.onDelete &&
+                    <td>
+                        <Button
+                            size="sm"
+                            id={"resident-grid-delete-btn-" + resident.Id}
+                            variant="outline-danger"
+                            onClick={(e) => props.onDelete(e, resident)}
+                        >
+                            <span role="img" aria-label="delete">🗑️</span>
+                        </Button>
+                    </td>
+                }
             </tr>
         );
     };
@@ -75,7 +87,7 @@ export default function ResidentGrid(props) {
             <thead>
             <tr>
                 {props.onSelected &&
-                    <th/>
+                <th>Selected</th>
                 }
                 {props.onEdit &&
                     <th/>
@@ -89,6 +101,9 @@ export default function ResidentGrid(props) {
                 <th>
                     <span>DOB</span>
                 </th>
+                {props.onDelete &&
+                    <th/>
+                }
             </tr>
             </thead>
             <tbody>
