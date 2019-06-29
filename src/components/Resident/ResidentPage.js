@@ -79,10 +79,10 @@ export default function ResidentPage()
     return (
         <>
             <OverlayTrigger
-                key="add-right"
-                placement="right"
+                key="add"
+                placement="top"
                 overlay={
-                    <Tooltip id="add-tooltip-right">
+                    <Tooltip id="add-resident-tooltip">
                         Add New Resident
                     </Tooltip>
                 }
@@ -95,6 +95,8 @@ export default function ResidentPage()
                     +
                 </Button>
             </OverlayTrigger>
+
+
 
             <p><span> </span></p>
 

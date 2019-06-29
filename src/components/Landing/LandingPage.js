@@ -4,6 +4,7 @@ import Tab from 'react-bootstrap/Tab';
 import LoginPage from './../Login/LoginPage';
 import ScanPage from "../Scan/ScanPage";
 import ResidentPage from "../Resident/ResidentPage";
+import MedicinePage from "../Medicine/MedicinePage";
 
 function LandingPage() {
     const [ currentTabKey, setCurrentTabKey ] = useGlobal('currentTabKey');
@@ -33,7 +34,7 @@ function LandingPage() {
                 disabled={apiKey === null}
                 eventKey="log"
                 title="Medicine Log">
-                <p>Place Holder for Medicine Log</p>
+                <MedicinePage/>
             </Tab>
             <Tab
                 disabled={apiKey === null}
