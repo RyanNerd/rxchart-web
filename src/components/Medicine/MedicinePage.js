@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'reactn';
+import React, {useEffect, useGlobal, useState} from 'reactn';
 import Card from 'react-bootstrap/Card';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
@@ -30,6 +30,8 @@ function MedicinePage() {
         {Id: 2, Drug: "Letrozole", Barcode: "22222"},
         {Id: 3, Drug: "Calcium Gluconate", Barcode: "blah"}
     ];
+
+    const [ currentResident ] = useGlobal('currentResident');
 
     let activeDrug = medicineList[medicineKey];
 
@@ -66,76 +68,78 @@ function MedicinePage() {
             </Form.Group>
         </Form>
 
-        <Row>
-            <Col sm={3}>
-                <OverlayTrigger
-                    key="add"
-                    placement="top"
-                    overlay={
-                        <Tooltip id="add-medicine-tooltip">
-                            Add drug to medical history
-                        </Tooltip>
-                    }
-                >
-                    <Button
-                        size="sm"
-                        variant="info"
-                        onClick={() => alert('Add to Log')}
+            {currentResident && currentResident.Id &&
+            <Row>
+                <Col sm={4}>
+                    <OverlayTrigger
+                        key="add"
+                        placement="top"
+                        overlay={
+                            <Tooltip id="add-medicine-tooltip">
+                                Add drug to medical history
+                            </Tooltip>
+                        }
                     >
-                        Add Medicine to Log
-                    </Button>
-                </OverlayTrigger>
-
-                <Card bg="light">
-                <Card.Body>
-                    <Card.Title>
-                        <DropdownButton
+                        <Button
                             size="sm"
-                            title={activeDrug.Drug}
-                            variant="primary"
-                            id="medicine-dropdown-button"
+                            variant="info"
+                            onClick={() => alert('Add to Log')}
                         >
-                            {medicineList.map(MedicineDropdownItems)}
-                        </DropdownButton>
-                    </Card.Title>
+                            Add Medicine to Log
+                        </Button>
+                    </OverlayTrigger>
 
-                    <Card.Text>
-                        <Form>
-                            <Form.Label column sm="6">
-                                <b>Directions</b>
-                            </Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                plaintext
-                                readOnly
-                                defaultValue="Take once at bedtime."
-                            />
-                        </Form>
-                    </Card.Text>
-                    <Card.Text>
-                        <Form>
-                            <Form.Label column sm="4">
-                                <b>Notes</b>
-                            </Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                plaintext
-                                readOnly
-                                defaultValue="Medicine is reduced by "
-                            />
-                        </Form>
-                    </Card.Text>
+                    <Card bg="light">
+                        <Card.Body>
+                            <Card.Title>
+                                <DropdownButton
+                                    size="sm"
+                                    title={activeDrug.Drug}
+                                    variant="primary"
+                                    id="medicine-dropdown-button"
+                                >
+                                    {medicineList.map(MedicineDropdownItems)}
+                                </DropdownButton>
+                            </Card.Title>
 
-                    <Card.Link href="#">Edit</Card.Link>
-                    <Card.Link href="#"><span role="img" aria-label="delete">🗑️ Delete</span></Card.Link>
-                </Card.Body>
-            </Card>
-            </Col>
-            <Col sm={6}>
-                <span style={{textAlign: "center"}}> <h1>MEDICAL LOG PLACE HOLDER</h1> </span>
-                <span style={{textAlign: "center"}}> <h2>subtext</h2> </span>
-            </Col>
-        </Row>
+                            <Card.Text>
+                                <Form>
+                                    <Form.Label column sm="6">
+                                        <b>Directions</b>
+                                    </Form.Label>
+                                    <Form.Control
+                                        as="textarea"
+                                        plaintext
+                                        readOnly
+                                        defaultValue="Take once at bedtime."
+                                    />
+                                </Form>
+                            </Card.Text>
+                            <Card.Text>
+                                <Form>
+                                    <Form.Label column sm="4">
+                                        <b>Notes</b>
+                                    </Form.Label>
+                                    <Form.Control
+                                        as="textarea"
+                                        plaintext
+                                        readOnly
+                                        defaultValue="Medicine is reduced by "
+                                    />
+                                </Form>
+                            </Card.Text>
+
+                            <Card.Link href="#">Edit</Card.Link>
+                            <Card.Link href="#"><span role="img" aria-label="delete">🗑️ Delete</span></Card.Link>
+                        </Card.Body>
+                    </Card>
+                </Col>
+                <Col sm={6}>
+                    <span style={{textAlign: "center"}}> <h1>MEDICAL LOG PLACE HOLDER</h1> </span>
+                    <span style={{textAlign: "center"}}> <h2>subtext</h2> </span>
+                </Col>
+            </Row>
+            }
         </>
     );
 }
