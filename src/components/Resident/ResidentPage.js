@@ -96,8 +96,6 @@ export default function ResidentPage()
                 </Button>
             </OverlayTrigger>
 
-
-
             <p><span> </span></p>
 
             <ResidentGrid

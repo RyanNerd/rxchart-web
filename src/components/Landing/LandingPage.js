@@ -2,7 +2,6 @@ import React, {useGlobal} from 'reactn';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import LoginPage from './../Login/LoginPage';
-import ScanPage from "../Scan/ScanPage";
 import ResidentPage from "../Resident/ResidentPage";
 import MedicinePage from "../Medicine/MedicinePage";
 
@@ -21,18 +20,11 @@ function LandingPage() {
                 eventKey="login"
                 title={apiKey ? "Logout" : "Login"}
             >
-                <LoginPage onLogin={(loggedIn) => {setCurrentTabKey(loggedIn ? 'scan' : 'login')}} />
+                <LoginPage onLogin={(loggedIn) => {setCurrentTabKey(loggedIn ? 'drugs' : 'login')}} />
             </Tab>
             <Tab
                 disabled={apiKey === null}
-                eventKey="scan"
-                title="Lookup"
-            >
-                <ScanPage/>
-            </Tab>
-            <Tab
-                disabled={apiKey === null}
-                eventKey="log"
+                eventKey="drugs"
                 title="Medicine Log">
                 <MedicinePage/>
             </Tab>
