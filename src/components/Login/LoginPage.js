@@ -1,6 +1,9 @@
 import React, {setGlobal, useGlobal, useState} from 'reactn';
+import Alert from 'react-bootstrap/Alert';
+import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';
 import TabContent from './../../styles/tab_content.css';
 import ResidentProvider from './../../providers/ResidentProvider';
 import MedicineProvider from './../../providers/MedicineProvider';
@@ -12,8 +15,9 @@ import {initialState} from "../../InitialState";
  * @constructor
  */
 function LoginPage(props) {
-    const [userName, setUserName] = useState('');
-    const [password, setPassword] = useState('');
+    const [ userName, setUserName ] = useState('');
+    const [ password, setPassword ] = useState('');
+    const [ showAlert, setShowAlert ] = useState(0);
 
     const [ apiKey, setApiKey ] = useGlobal('apiKey');
     const [ frak ] = useGlobal('frak');
@@ -31,17 +35,25 @@ function LoginPage(props) {
         .then((json) => {
             if (json.success) {
                 setApiKey(json.data.apiKey).then(() => {
+                    // Use global state for Dependency Injection for providers.
                     providers.residentProvider = new ResidentProvider(baseUrl, json.data.apiKey);
                     providers.medicineProvider = new MedicineProvider(baseUrl, json.data.apiKey);
+                    setProviders(providers);
+
+                    // Load ALL Resident records up front and save them in the global store.
                     if (residentList === null) {
                         providers.residentProvider.query('*').then((data) => setResidentList(data));
-                        setProviders(providers);
                     }
 
+                    // Let the parent component know we are logged in successfully
                     props.onLogin(true);
+
+                    // Remove alert
+                    setShowAlert(0);
                 });
             } else {
-                alert('Invalid login credentials')
+                // Show invalid credentials alert
+                setShowAlert(1);
             }
         })
         .catch((err) => {
@@ -63,26 +75,57 @@ function LoginPage(props) {
 
     const signIn = (
         <>
-            <Form.Group controlId="user.name">
-                <Form.Label>User Name</Form.Label>
+            <Form.Group as={Row}>
+                <Col sm={1}>
+                    <Form.Label>User Name</Form.Label>
+                </Col>
+                <Col sm={3}>
                 <Form.Control
                     type="text"
-                    placeholder="user-name"
                     value={userName}
                     onChange={(e) => setUserName(e.target.value)}
                 />
+                </Col>
             </Form.Group>
-            <Form.Group controlId="user.password">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
+
+            <Form.Group as={Row}>
+                <Col sm={1}>
+                    <Form.Label>Password</Form.Label>
+                </Col>
+                <Col sm={3}>
+                    <Form.Control
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                </Col>
             </Form.Group>
-            <Button onClick={(e) => {login(e)}}>
-                Login
-            </Button>
+
+            <Form.Group as={Row}/>
+
+            <Form.Group as={Row}>
+                <Col sm={1}>
+                    <Button onClick={(e) => {login(e)}}>
+                        Login
+                    </Button>
+                </Col>
+
+                <Col sm={3}>
+                    <Alert
+                        variant="warning"
+                        show={showAlert}
+                        onClose={() => setShowAlert(1 - showAlert)}
+                        dismissible
+                    >
+                        <Alert.Heading>
+                            <strong>Invalid Credentials</strong>
+                        </Alert.Heading>
+                        <p>
+                            Invalid Username or Password
+                        </p>
+                    </Alert>
+                </Col>
+            </Form.Group>
         </>
     );
 
