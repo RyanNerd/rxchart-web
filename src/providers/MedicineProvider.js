@@ -48,11 +48,10 @@ export default class MedicineProvider
     {
         return this._frak.get(this._baseURL + 'medicine/'+ id + '?api_key=' + this._apiKey)
             .then((response) => {
-                console.log('response', response);
                 if (response.success) {
                     return response.data;
                 } else {
-                    throw new Error(response.toString());
+                    throw response;
                 }
             })
             .catch((err) => {

@@ -1,4 +1,4 @@
-import React, {setGlobal, useGlobal, useState} from 'reactn';
+import React, {addCallback, setGlobal, useGlobal, useState} from 'reactn';
 import Alert from 'react-bootstrap/Alert';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
@@ -17,13 +17,18 @@ import {initialState} from "../../InitialState";
 function LoginPage(props) {
     const [ userName, setUserName ] = useState('');
     const [ password, setPassword ] = useState('');
-    const [ showAlert, setShowAlert ] = useState(0);
+    const [ showAlert, setShowAlert ] = useState(false);
 
     const [ apiKey, setApiKey ] = useGlobal('apiKey');
     const [ frak ] = useGlobal('frak');
     const [ baseUrl ] = useGlobal('baseUrl');
     const [ residentList, setResidentList ] = useGlobal('residentList');
     const [ providers , setProviders ] = useGlobal('providers');
+    // eslint-disable-next-line
+    const [ medicineList, setMedicineList ] = useGlobal('medicineList');
+
+    let removeCallback;
+    let currentResidentId = null;
 
     /**
      * Fires when the Login Button is clicked
@@ -49,11 +54,33 @@ function LoginPage(props) {
                     props.onLogin(true);
 
                     // Remove alert
-                    setShowAlert(0);
+                    setShowAlert(false);
+
+                    // Capture global state changes
+                    removeCallback = addCallback(global =>
+                    {
+                        // Update the medicineList global when the current resident changes
+                        if (global.currentResident && global.currentResident.Id && global.currentResident.Id !== currentResidentId) {
+                            currentResidentId = global.currentResident.Id;
+                            providers.medicineProvider.query(currentResidentId, 'ResidentId')
+                            .then((response) =>
+                            {
+                                if (response.success) {
+                                    setMedicineList(response.data)
+                                } else {
+                                    throw response;
+                                }
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                                alert('something went wrong');
+                            });
+                        }
+                    });
                 });
             } else {
                 // Show invalid credentials alert
-                setShowAlert(1);
+                setShowAlert(true);
             }
         })
         .catch((err) => {
@@ -67,6 +94,12 @@ function LoginPage(props) {
      */
     function logout(e) {
         e.preventDefault();
+
+        // Remove the global callback function
+        if (removeCallback) {
+            removeCallback();
+        }
+        currentResidentId = null;
 
         setGlobal(initialState)
         .then(()=> console.log('logout successful'))
@@ -114,7 +147,7 @@ function LoginPage(props) {
                     <Alert
                         variant="warning"
                         show={showAlert}
-                        onClose={() => setShowAlert(1 - showAlert)}
+                        onClose={() => setShowAlert(!showAlert)}
                         dismissible
                     >
                         <Alert.Heading>

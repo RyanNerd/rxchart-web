@@ -1,8 +1,8 @@
 import ReactDOM from 'react-dom';
-// import * as serviceWorker from './serviceWorker';
 import React, {setGlobal} from "reactn";
 import App from './App';
 import {initialState} from "./InitialState";
+// import * as serviceWorker from './serviceWorker';
 
 setGlobal(initialState)
     .then((initialState) => {

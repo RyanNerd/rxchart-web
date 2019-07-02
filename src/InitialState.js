@@ -6,6 +6,7 @@ export const initialState = {
     currentBarcode: null,
     currentMedicine: null,
     residentList: null,
+    medicineList: null,
     currentTabKey: 'login',
     apiKey: null,
     baseUrl: "http://localhost:8082/v1/",
