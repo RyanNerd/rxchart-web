@@ -26,9 +26,11 @@ function LoginPage(props) {
     const [ providers , setProviders ] = useGlobal('providers');
     // eslint-disable-next-line
     const [ medicineList, setMedicineList ] = useGlobal('medicineList');
+    // eslint-disable-next-line
+    const [ activeDrug, setActiveDrug ] = useGlobal('activeDrug');
 
     let removeCallback;
-    let currentResidentId = null;
+    let activeResidentId = null;
 
     /**
      * Fires when the Login Button is clicked
@@ -59,23 +61,23 @@ function LoginPage(props) {
                     // Capture global state changes
                     removeCallback = addCallback(global =>
                     {
-                        // Update the medicineList global when the current resident changes
-                        if (global.currentResident && global.currentResident.Id && global.currentResident.Id !== currentResidentId) {
-                            currentResidentId = global.currentResident.Id;
-                            providers.medicineProvider.query(currentResidentId, 'ResidentId')
-                            .then((response) =>
-                            {
-                                if (response.success) {
-                                    setMedicineList(response.data)
-                                } else {
-                                    throw response;
-                                }
-                            })
-                            .catch((err) => {
-                                console.log(err);
-                                alert('something went wrong');
-                            });
-                        }
+                        // // Update the medicineList global when the current resident changes
+                        // if (global.activeResident && global.activeResident.Id && global.activeResident.Id !== activeResidentId) {
+                        //     activeResidentId = global.activeResident.Id;
+                        //     providers.medicineProvider.query(activeResidentId, 'ResidentId')
+                        //     .then((response) =>
+                        //     {
+                        //         if (response.success) {
+                        //             return {medicineList: response.data};
+                        //         } else {
+                        //             throw response;
+                        //         }
+                        //     })
+                        //     .catch((err) => {
+                        //         console.log(err);
+                        //         alert('something went wrong');
+                        //     });
+                        // }
                     });
                 });
             } else {
@@ -99,11 +101,27 @@ function LoginPage(props) {
         if (removeCallback) {
             removeCallback();
         }
-        currentResidentId = null;
+        activeResidentId = null;
 
         setGlobal(initialState)
         .then(()=> console.log('logout successful'))
         .catch((err) => console.error('logout error', err));
+    }
+
+    function refreshMedicineList(residentId) {
+        providers.medicineProvider.query(residentId, 'ResidentId')
+        .then((response) =>
+        {
+            if (response.success) {
+                setMedicineList(response.data).then(() => console.log('refeshMedicineList', response.data));
+            } else {
+                throw response;
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            alert('something went wrong');
+        });
     }
 
     const signIn = (

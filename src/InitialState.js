@@ -2,12 +2,12 @@ import Frak from "./providers/Frak";
 
 export const initialState = {
     development: true,
-    currentResident: null,
-    currentBarcode: null,
-    currentMedicine: null,
+    activeTabKey: 'login',
+    activeDrug: null,
+    activeBarcode: null,
+    activeResident: null,
     residentList: null,
     medicineList: null,
-    currentTabKey: 'login',
     apiKey: null,
     baseUrl: "http://localhost:8082/v1/",
     providers: {

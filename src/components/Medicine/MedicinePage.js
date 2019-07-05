@@ -1,4 +1,4 @@
-import React, {setGlobal, useGlobal, useState} from 'reactn';
+import React, {useGlobal} from 'reactn';
 import ListGroup from 'react-bootstrap/ListGroup';
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from 'react-bootstrap/Tooltip';
@@ -8,6 +8,7 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import TabContent from "../../styles/tab_content.css";
 import DrugDropdown from "./DrugDropdown";
+import MedicineList from "../../providers/MedicineList";
 
 /**
  * MedicinePage
@@ -21,12 +22,12 @@ import DrugDropdown from "./DrugDropdown";
  * @returns {*}
  * @constructor
  */
-function MedicinePage() {
-    const [ activeDrug, setActiveDrug ] = useState(null);
-    const [ barcode, setBarcode ] = useState('');
-
-    const [ medicineList ] = useGlobal('medicineList');
-    const [ currentResident ] = useGlobal('currentResident');
+function MedicinePage()
+{
+    const [ barcode, setBarcode ] = useGlobal('activeBarcode');
+    const [ activeDrug, setActiveDrug ] = useGlobal('activeDrug');
+    const [ medicineList, setMedicineList ] = useGlobal('medicineList');
+    const [ activeResident, setActiveResident ] = useGlobal('activeResident');
     const [ providers ] = useGlobal('providers');
 
     /**
@@ -47,22 +48,18 @@ function MedicinePage() {
                 if (response.success) {
                     // Sanity Check -- Should only be one
                     if (response.data.length === 1) {
-                        // Find the associated Resident
-                        const residentProvider = providers.residentProvider;
-                        residentProvider.read(response.data[0].ResidentId)
-                            .then((residentInfo) => {
-                                // Set the currentResident, currentBarcode, and switch to the medical log tab
-                                setGlobal({
-                                    currentMedicine: response.data[0],
-                                    currentResident: residentInfo,
-                                    currentBarcode: barcode
-                                });
+                        setActiveDrug(null);
+                        setBarcode(null);
 
-                                setActiveDrug(response.data[0]);
+                        const data = response.data[0];
 
-                                // Clear the barcode value so when we come back we don't have the previous barcode
-                                setBarcode('');
-                            });
+                        // Did a different resident get selected?
+                        if (!activeResident || data.Id !== activeResident.Id) {
+                            refreshActiveResident(data.Id);
+                        }
+
+                        setActiveDrug(data);
+                        console.log('activeDrug', data);
                     } else {
                         alert("Duplicate Barcode -- This shouldn't happen");
                     }
@@ -78,6 +75,17 @@ function MedicinePage() {
                 }
             })
         }
+    }
+
+    function refreshActiveResident(residentId)
+    {
+        providers.residentProvider.read(residentId)
+        .then((residentInfo) => {
+            setActiveResident(residentInfo)
+            .then(() => console.log('refreshactiveResident', activeResident));
+            MedicineList(providers.medicineProvider, residentId)
+            .then((data) => setMedicineList(data));
+        });
     }
 
     return (
@@ -113,21 +121,28 @@ function MedicinePage() {
                 </Form.Group>
             </Form>
 
-            {currentResident && currentResident.Id && activeDrug &&
+            {activeResident && activeResident.Id && activeDrug &&
             <Row>
                 <Col sm={4}>
+                    <p>{activeDrug.Drug}</p>
                     <ListGroup>
                         <ListGroup.Item>
                             <DrugDropdown
                                 medicineList={medicineList}
                                 drugId={activeDrug.Id}
-                                onSelect={(e, drug) => setActiveDrug(drug)}
+                                onSelect={(e, drug) => {
+                                    setActiveDrug(drug);
+                                    setBarcode(drug.Barcode);
+                                }}
                             />
                         </ListGroup.Item>
                         <ListGroup.Item><b>Directions</b></ListGroup.Item>
                         <ListGroup.Item><p>{activeDrug.Directions}</p></ListGroup.Item>
                         <ListGroup.Item><b>Notes</b></ListGroup.Item>
                         <ListGroup.Item><p>{activeDrug.Notes}</p></ListGroup.Item>
+                        <ListGroup.Item variant="info" active>
+                            <b>Barcode:</b> {activeDrug.Barcode}
+                        </ListGroup.Item>
                     </ListGroup>
 
                 </Col>

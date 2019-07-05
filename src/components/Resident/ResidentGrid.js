@@ -10,7 +10,7 @@ import {DOB} from "../../utility/common";
  * @param props :
  *          onEdit(e, resident) Callback when edit button clicked
  *          onSelected(e, resident) Callback when selected toggle button clicked
- *          currentResidentId {int} The currently selected resident Id
+ *          activeResidentId {int} The currently selected resident Id
  * @returns {*}
  * @constructor
  */
@@ -30,7 +30,7 @@ export default function ResidentGrid(props) {
         const dob = DOB(resident);
 
         // Determine if this row is selected [for radio ToggleButtons]
-        const isSelected = props.onSelected && props.currentResident && resident.Id === props.currentResident.Id;
+        const isSelected = props.onSelected && props.activeResident && resident.Id === props.activeResident.Id;
 
         return (
             <tr

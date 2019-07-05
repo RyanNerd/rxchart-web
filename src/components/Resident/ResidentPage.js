@@ -18,7 +18,7 @@ export default function ResidentPage()
     // Establish initial state
     const [ show, setShow ] = useState(false);
     const [ residentInfo, setResidentInfo ] = useState({Id: null});
-    const [ currentResident, setCurrentResident ] = useGlobal('currentResident');
+    const [ activeResident, setActiveResident ] = useGlobal('activeResident');
 
     /**
      * Fires when user clicks the Edit button
@@ -68,7 +68,7 @@ export default function ResidentPage()
 
     function handleOnSelected(e, resident)
     {
-        setCurrentResident(resident);
+        setActiveResident(resident);
     }
 
     function handleOnDelete(e, resident)
@@ -102,7 +102,7 @@ export default function ResidentPage()
                 onEdit={(e, resident) => onEdit(e, resident)}
                 onSelected={(e, resident) => handleOnSelected(e, resident)}
                 onDelete={(e, resident) => handleOnDelete(e, resident)}
-                currentResident={currentResident}
+                activeResident={activeResident}
             />
 
             {/* ResidentEdit Modal */}

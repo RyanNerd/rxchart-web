@@ -12,8 +12,8 @@ import {FULLNAME} from "./utility/common";
  */
 function App(props)
 {
-    const [ currentBarcode ] = useGlobal('currentBarcode');
-    const [ currentResident ] = useGlobal('currentResident');
+    const [ activeResident ] = useGlobal('activeResident');
+    const [ medicineList ] = useGlobal('medicineList');
 
     /**
      * JSX to display if user is not using Chrome
@@ -30,8 +30,8 @@ function App(props)
         props.isChrome ?
             (
                 <>
-                    {currentResident ? <h2 style={{textAlign: "center"}}><span style={{background:"#edf11e"}}>{FULLNAME(currentResident)}</span></h2> : null}
-                    {currentBarcode ? <h3 style={{textAlign: "center"}}>{currentBarcode}</h3> : null}
+                    {activeResident ? <h2 style={{textAlign: "center"}}><span style={{background:"#edf11e"}}>{FULLNAME(activeResident)}</span></h2> : null}
+                    {medicineList && medicineList.length > 0 && <h3 style={{textAlign: "center"}}>{medicineList[0].Directions}</h3>}
                     {props.chromeVersion < 74 &&
                         <Alert variant="warning">
                             Please upgrade your browser. Version {props.chromeVersion} is outdated and may cause issues!

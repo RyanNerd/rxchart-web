@@ -6,21 +6,21 @@ import ResidentPage from "../Resident/ResidentPage";
 import MedicinePage from "../Medicine/MedicinePage";
 
 function LandingPage() {
-    const [ currentTabKey, setCurrentTabKey ] = useGlobal('currentTabKey');
+    const [ activeTabKey, setActiveTabKey ] = useGlobal('activeTabKey');
     const [ apiKey ] = useGlobal('apiKey');
 
     return (
         <Tabs
             id="controlled-tab-example"
-            activeKey={currentTabKey}
-            onSelect={key => setCurrentTabKey(key)}
+            activeKey={activeTabKey}
+            onSelect={key => setActiveTabKey(key)}
         >
             <Tab
                 sytle={{marginLeft: "15px"}}
                 eventKey="login"
                 title={apiKey ? "Logout" : "Login"}
             >
-                <LoginPage onLogin={(loggedIn) => {setCurrentTabKey(loggedIn ? 'drugs' : 'login')}} />
+                <LoginPage onLogin={(loggedIn) => {setActiveTabKey(loggedIn ? 'drugs' : 'login')}} />
             </Tab>
             <Tab
                 disabled={apiKey === null}
