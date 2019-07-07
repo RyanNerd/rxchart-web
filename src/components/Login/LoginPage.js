@@ -11,6 +11,7 @@ import {initialState} from "../../InitialState";
 
 /**
  * Sign in page
+ *
  * @returns {*}
  * @constructor
  */
@@ -24,6 +25,7 @@ function LoginPage(props) {
     const [ baseUrl ] = useGlobal('baseUrl');
     const [ residentList, setResidentList ] = useGlobal('residentList');
     const [ providers , setProviders ] = useGlobal('providers');
+    const [ development ] = useGlobal('development');
 
     /**
      * Fires when the Login Button is clicked
@@ -31,10 +33,14 @@ function LoginPage(props) {
     function login(e) {
         e.preventDefault();
 
+        // Send the user name and password to the web service
         frak.post(baseUrl + 'authenticate', {username: userName, password: password}, {mode: "cors"})
         .then((json) => {
+            // Success?
             if (json.success) {
-                setApiKey(json.data.apiKey).then(() => {
+                // Set the global API key returned from the web service.
+                setApiKey(json.data.apiKey).then(() =>
+                {
                     // Use global state for Dependency Injection for providers.
                     providers.residentProvider = new ResidentProvider(baseUrl, json.data.apiKey);
                     providers.medicineProvider = new MedicineProvider(baseUrl, json.data.apiKey);
@@ -48,7 +54,7 @@ function LoginPage(props) {
                     // Let the parent component know we are logged in successfully
                     props.onLogin(true);
 
-                    // Remove alert
+                    // Remove alert (in the case where a previous log in attempt failed).
                     setShowAlert(false);
                 });
             } else {
@@ -57,7 +63,10 @@ function LoginPage(props) {
             }
         })
         .catch((err) => {
-            console.error(err);
+            if (development) {
+                console.error(err);
+            }
+
             alert('something went wrong');
         });
     }
@@ -70,7 +79,7 @@ function LoginPage(props) {
 
         setGlobal(initialState)
         .then(()=> console.log('logout successful'))
-        .catch((err) => console.error('logout error', err));
+        .catch((err) => console.error('logout error', development ? err : ''));
     }
 
     const signIn = (

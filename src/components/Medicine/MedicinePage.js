@@ -14,6 +14,7 @@ import MedicineList from "../../providers/MedicineList";
 /**
  * MedicinePage
  * This is where most of the logic and data entry will be done so the page is a little busy
+ * Features of this page are:
  *  - Scan Barcode
  *  - Manually Add Medicine
  *  - Add Drug to Medicine Log
