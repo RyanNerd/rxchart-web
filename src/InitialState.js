@@ -1,7 +1,7 @@
 import Frak from "./providers/Frak";
 
 export const initialState = {
-    development: true,
+    development: false,
     activeTabKey: 'login',
     activeDrug: null,
     activeBarcode: '',
