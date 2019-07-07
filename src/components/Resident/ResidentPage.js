@@ -1,4 +1,4 @@
-import React, {useGlobal, useState} from 'reactn';
+import React, {setGlobal, useGlobal, useState} from 'reactn';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
@@ -21,9 +21,6 @@ export default function ResidentPage()
     const [ residentInfo, setResidentInfo ] = useState({Id: null});
     const [ activeResident, setActiveResident ] = useGlobal('activeResident');
     const [ providers ] = useGlobal('providers');
-    const [ medicineList, setMedicineList ] = useGlobal('medicineList'); /* eslint-disable-line */
-    const [ activeBarcode, setActivebarcode ] = useGlobal('activeBarcode'); /* eslint-disable-line */
-    const [ activeDrug, setActiveDrug ] = useGlobal('activeDrug'); /* eslint-disable-line */
 
     /**
      * Fires when user clicks the Edit button
@@ -31,7 +28,7 @@ export default function ResidentPage()
      * @param e
      * @param resident
      */
-    function onEdit(e, resident)
+    function handleOnEdit(e, resident)
     {
         e.preventDefault();
 
@@ -75,11 +72,11 @@ export default function ResidentPage()
     {
         setActiveResident(resident);
         MedicineList(providers.medicineProvider, resident.Id)
-        .then((data) => setMedicineList(data))
-        .catch((err) => setMedicineList(null));
+        .then((data) => setGlobal({medicineList: data}))
+        .catch((err) => setGlobal({medicineList: null}));
 
-        setActivebarcode('');
-        setActiveDrug(null);
+        setGlobal({activeBarcode: ''});
+        setGlobal({acitveDrug: null});
     }
 
     function handleOnDelete(e, resident)
@@ -110,7 +107,7 @@ export default function ResidentPage()
             <p><span> </span></p>
 
             <ResidentGrid
-                onEdit={(e, resident) => onEdit(e, resident)}
+                onEdit={(e, resident) => handleOnEdit(e, resident)}
                 onSelected={(e, resident) => handleOnSelected(e, resident)}
                 onDelete={(e, resident) => handleOnDelete(e, resident)}
                 activeResident={activeResident}
