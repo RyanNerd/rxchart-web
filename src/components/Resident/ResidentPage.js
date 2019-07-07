@@ -5,6 +5,7 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import ResidentGrid from './ResidentGrid';
 import ResidentEdit from './ResidentEdit';
 import {FULLNAME} from './../../utility/common';
+import MedicineList from "../../providers/MedicineList";
 
 /**
  * Display Resident Grid
@@ -19,6 +20,10 @@ export default function ResidentPage()
     const [ show, setShow ] = useState(false);
     const [ residentInfo, setResidentInfo ] = useState({Id: null});
     const [ activeResident, setActiveResident ] = useGlobal('activeResident');
+    const [ providers ] = useGlobal('providers');
+    const [ medicineList, setMedicineList ] = useGlobal('medicineList'); /* eslint-disable-line */
+    const [ activeBarcode, setActivebarcode ] = useGlobal('activeBarcode'); /* eslint-disable-line */
+    const [ activeDrug, setActiveDrug ] = useGlobal('activeDrug'); /* eslint-disable-line */
 
     /**
      * Fires when user clicks the Edit button
@@ -69,6 +74,12 @@ export default function ResidentPage()
     function handleOnSelected(e, resident)
     {
         setActiveResident(resident);
+        MedicineList(providers.medicineProvider, resident.Id)
+        .then((data) => setMedicineList(data))
+        .catch((err) => setMedicineList(null));
+
+        setActivebarcode('');
+        setActiveDrug(null);
     }
 
     function handleOnDelete(e, resident)

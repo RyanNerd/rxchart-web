@@ -1,4 +1,4 @@
-import React, {addCallback, setGlobal, useGlobal, useState} from 'reactn';
+import React, {setGlobal, useGlobal, useState} from 'reactn';
 import Alert from 'react-bootstrap/Alert';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
@@ -24,13 +24,6 @@ function LoginPage(props) {
     const [ baseUrl ] = useGlobal('baseUrl');
     const [ residentList, setResidentList ] = useGlobal('residentList');
     const [ providers , setProviders ] = useGlobal('providers');
-    // eslint-disable-next-line
-    const [ medicineList, setMedicineList ] = useGlobal('medicineList');
-    // eslint-disable-next-line
-    const [ activeDrug, setActiveDrug ] = useGlobal('activeDrug');
-
-    let removeCallback;
-    let activeResidentId = null;
 
     /**
      * Fires when the Login Button is clicked
@@ -57,28 +50,6 @@ function LoginPage(props) {
 
                     // Remove alert
                     setShowAlert(false);
-
-                    // Capture global state changes
-                    removeCallback = addCallback(global =>
-                    {
-                        // // Update the medicineList global when the current resident changes
-                        // if (global.activeResident && global.activeResident.Id && global.activeResident.Id !== activeResidentId) {
-                        //     activeResidentId = global.activeResident.Id;
-                        //     providers.medicineProvider.query(activeResidentId, 'ResidentId')
-                        //     .then((response) =>
-                        //     {
-                        //         if (response.success) {
-                        //             return {medicineList: response.data};
-                        //         } else {
-                        //             throw response;
-                        //         }
-                        //     })
-                        //     .catch((err) => {
-                        //         console.log(err);
-                        //         alert('something went wrong');
-                        //     });
-                        // }
-                    });
                 });
             } else {
                 // Show invalid credentials alert
@@ -97,31 +68,9 @@ function LoginPage(props) {
     function logout(e) {
         e.preventDefault();
 
-        // Remove the global callback function
-        if (removeCallback) {
-            removeCallback();
-        }
-        activeResidentId = null;
-
         setGlobal(initialState)
         .then(()=> console.log('logout successful'))
         .catch((err) => console.error('logout error', err));
-    }
-
-    function refreshMedicineList(residentId) {
-        providers.medicineProvider.query(residentId, 'ResidentId')
-        .then((response) =>
-        {
-            if (response.success) {
-                setMedicineList(response.data).then(() => console.log('refeshMedicineList', response.data));
-            } else {
-                throw response;
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-            alert('something went wrong');
-        });
     }
 
     const signIn = (

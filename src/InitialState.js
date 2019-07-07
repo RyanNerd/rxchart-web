@@ -4,7 +4,7 @@ export const initialState = {
     development: true,
     activeTabKey: 'login',
     activeDrug: null,
-    activeBarcode: null,
+    activeBarcode: '',
     activeResident: null,
     residentList: null,
     medicineList: null,

@@ -1,4 +1,4 @@
-import React, {useGlobal} from 'reactn';
+import React, {useGlobal, useState} from 'reactn';
 import ListGroup from 'react-bootstrap/ListGroup';
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from 'react-bootstrap/Tooltip';
@@ -6,6 +6,7 @@ import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
+import Toast from 'react-bootstrap/Toast';
 import TabContent from "../../styles/tab_content.css";
 import DrugDropdown from "./DrugDropdown";
 import MedicineList from "../../providers/MedicineList";
@@ -29,7 +30,7 @@ function MedicinePage()
     const [ medicineList, setMedicineList ] = useGlobal('medicineList');
     const [ activeResident, setActiveResident ] = useGlobal('activeResident');
     const [ providers ] = useGlobal('providers');
-
+    const [ showResidentChangeAlert, setShowResidentChangeAlert ] = useState(false);
     /**
      * Fires on keyPress for the barcode text box
      *
@@ -48,18 +49,12 @@ function MedicinePage()
                 if (response.success) {
                     // Sanity Check -- Should only be one
                     if (response.data.length === 1) {
-                        setActiveDrug(null);
-                        setBarcode(null);
 
-                        const data = response.data[0];
+                        setBarcode('');
 
-                        // Did a different resident get selected?
-                        if (!activeResident || data.Id !== activeResident.Id) {
-                            refreshActiveResident(data.Id);
-                        }
-
-                        setActiveDrug(data);
-                        console.log('activeDrug', data);
+                        const drug = response.data[0];
+                        setActiveDrug(drug);
+                        refreshActiveResident(drug.Id);
                     } else {
                         alert("Duplicate Barcode -- This shouldn't happen");
                     }
@@ -90,6 +85,19 @@ function MedicinePage()
 
     return (
         <>
+            <Toast
+                show={showResidentChangeAlert}
+                onClose={()=>setShowResidentChangeAlert(!showResidentChangeAlert)}
+                varient="warning"
+            >
+                <Toast.Header>
+                    <strong>Resident Change</strong>
+                </Toast.Header>
+                <Toast.Body>
+                    Barcode changed active resident
+                </Toast.Body>
+            </Toast>
+
             <Form className={TabContent}>
                 <Form.Group as={Row} controlId="bar-code">
                     <Form.Label column sm="1">
