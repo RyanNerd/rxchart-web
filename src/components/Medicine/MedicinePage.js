@@ -9,7 +9,8 @@ import Form from 'react-bootstrap/Form';
 import Toast from 'react-bootstrap/Toast';
 import TabContent from "../../styles/tab_content.css";
 import DrugDropdown from "./DrugDropdown";
-import MedicineList from "../../providers/MedicineList";
+import RefreshMedicineList from "../../providers/RefreshMedicineList";
+import {FULLNAME} from "../../utility/common";
 
 /**
  * MedicinePage
@@ -31,7 +32,11 @@ function MedicinePage()
     const [ medicineList, setMedicineList ] = useGlobal('medicineList');
     const [ activeResident, setActiveResident ] = useGlobal('activeResident');
     const [ providers ] = useGlobal('providers');
+    const [ development ] = useGlobal('development');
     const [ showResidentChangeAlert, setShowResidentChangeAlert ] = useState(false);
+
+    const fullName = activeResident ? FULLNAME(activeResident) : '';
+
     /**
      * Fires on keyPress for the barcode text box
      *
@@ -55,7 +60,7 @@ function MedicinePage()
 
                         const drug = response.data[0];
                         setActiveDrug(drug);
-                        refreshActiveResident(drug.Id);
+                        refreshActiveResident(drug.ResidentId);
                     } else {
                         alert("Duplicate Barcode -- This shouldn't happen");
                     }
@@ -73,31 +78,52 @@ function MedicinePage()
         }
     }
 
+    /**
+     *
+     * @param residentId
+     * Set the active resident to what is given by the residentId and rehydrate the medicineList.
+     *
+     */
     function refreshActiveResident(residentId)
     {
         providers.residentProvider.read(residentId)
-        .then((residentInfo) => {
+        .then((residentInfo) =>
+        {
             setActiveResident(residentInfo)
             .then(() => console.log('refreshactiveResident', activeResident));
-            MedicineList(providers.medicineProvider, residentId)
-            .then((data) => setMedicineList(data));
+            RefreshMedicineList(providers.medicineProvider, residentId)
+            .then((data) => setMedicineList(data))
+            .catch((err) => {
+                if (development) {
+                    console.log('MedicineList rehydrate error', err);
+                }
+                alert('something went wrong');
+            });
+        })
+        .catch((err) => {
+            if (development) {
+                console.log('residentProvider.read error', err);
+            }
+            alert('something went wrong');
         });
     }
 
     return (
         <>
-            <Toast
-                show={showResidentChangeAlert}
-                onClose={()=>setShowResidentChangeAlert(!showResidentChangeAlert)}
-                varient="warning"
-            >
-                <Toast.Header>
-                    <strong>Resident Change</strong>
-                </Toast.Header>
-                <Toast.Body>
-                    Barcode changed active resident
-                </Toast.Body>
-            </Toast>
+            {showResidentChangeAlert &&
+                <Toast
+                    show={showResidentChangeAlert}
+                    onClose={() => setShowResidentChangeAlert(!showResidentChangeAlert)}
+                    varient="warning"
+                >
+                    <Toast.Header>
+                        <strong>Resident Change</strong>
+                    </Toast.Header>
+                    <Toast.Body>
+                        Barcode changed active resident
+                    </Toast.Body>
+                </Toast>
+            }
 
             <Form className={TabContent}>
                 <Form.Group as={Row} controlId="bar-code">
@@ -133,8 +159,10 @@ function MedicinePage()
             {activeResident && activeResident.Id && activeDrug &&
             <Row>
                 <Col sm={4}>
-                    <p>{activeDrug.Drug}</p>
                     <ListGroup>
+                        <ListGroup.Item active>
+                            <b>{fullName} ({activeDrug.Drug})</b>
+                        </ListGroup.Item>
                         <ListGroup.Item>
                             <DrugDropdown
                                 medicineList={medicineList}
@@ -149,7 +177,7 @@ function MedicinePage()
                         <ListGroup.Item><p>{activeDrug.Directions}</p></ListGroup.Item>
                         <ListGroup.Item><b>Notes</b></ListGroup.Item>
                         <ListGroup.Item><p>{activeDrug.Notes}</p></ListGroup.Item>
-                        <ListGroup.Item variant="info" active>
+                        <ListGroup.Item variant="info">
                             <b>Barcode:</b> {activeDrug.Barcode}
                         </ListGroup.Item>
                     </ListGroup>

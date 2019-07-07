@@ -5,7 +5,7 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import ResidentGrid from './ResidentGrid';
 import ResidentEdit from './ResidentEdit';
 import {FULLNAME} from './../../utility/common';
-import MedicineList from "../../providers/MedicineList";
+import RefreshMedicineList from "../../providers/RefreshMedicineList";
 
 /**
  * Display Resident Grid
@@ -71,12 +71,12 @@ export default function ResidentPage()
     function handleOnSelected(e, resident)
     {
         setActiveResident(resident);
-        MedicineList(providers.medicineProvider, resident.Id)
+        RefreshMedicineList(providers.medicineProvider, resident.Id)
         .then((data) => setGlobal({medicineList: data}))
         .catch((err) => setGlobal({medicineList: null}));
 
         setGlobal({activeBarcode: ''});
-        setGlobal({acitveDrug: null});
+        setGlobal({activeDrug: null});
     }
 
     function handleOnDelete(e, resident)
