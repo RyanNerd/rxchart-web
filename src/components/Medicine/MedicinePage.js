@@ -173,7 +173,6 @@ function MedicinePage()
                                 drugId={activeDrug.Id}
                                 onSelect={(e, drug) => {
                                     setActiveDrug(drug);
-                                    // setBarcode(drug.Barcode);
                                 }}
                             />
                         </ListGroup.Item>
