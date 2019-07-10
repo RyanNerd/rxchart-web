@@ -75,7 +75,6 @@ export default function ResidentPage()
         .then((data) => setGlobal({medicineList: data}))
         .catch((err) => setGlobal({medicineList: null}));
 
-        setGlobal({activeBarcode: ''});
         setGlobal({activeDrug: null});
     }
 

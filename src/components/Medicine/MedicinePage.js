@@ -27,7 +27,8 @@ import {FULLNAME} from "../../utility/common";
  */
 function MedicinePage()
 {
-    const [ barcode, setBarcode ] = useGlobal('activeBarcode');
+    const [ barcode, setBarcode ] = useState('');
+
     const [ activeDrug, setActiveDrug ] = useGlobal('activeDrug');
     const [ medicineList, setMedicineList ] = useGlobal('medicineList');
     const [ activeResident, setActiveResident ] = useGlobal('activeResident');
@@ -148,7 +149,10 @@ function MedicinePage()
                                 </Tooltip>
                             }
                         >
-                            <Button sm={2}>
+                            <Button
+                                sm={2}
+                                onClick={() => alert('Add New Medicine Clicked')}
+                            >
                                 Add New Medicine
                             </Button>
                         </OverlayTrigger>
@@ -169,7 +173,6 @@ function MedicinePage()
                                 drugId={activeDrug.Id}
                                 onSelect={(e, drug) => {
                                     setActiveDrug(drug);
-                                    setBarcode(drug.Barcode);
                                 }}
                             />
                         </ListGroup.Item>
