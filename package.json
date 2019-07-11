@@ -8,7 +8,8 @@
     "react-bootstrap": "^1.0.0-beta.9",
     "react-dom": "^16.8.6",
     "react-scripts": "3.0.1",
-    "reactn": "^2.1.4"
+    "reactn": "^2.1.4",
+    "lodash.template": ">=4.5.0"
   },
   "scripts": {
     "start": "react-scripts start",
