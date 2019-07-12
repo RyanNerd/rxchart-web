@@ -21,6 +21,7 @@ export default function ResidentPage()
     const [ residentInfo, setResidentInfo ] = useState({Id: null});
     const [ activeResident, setActiveResident ] = useGlobal('activeResident');
     const [ providers ] = useGlobal('providers');
+    const [ setResidentList ] = useGlobal('residenceList');
 
     /**
      * Fires when user clicks the Edit button
@@ -48,7 +49,7 @@ export default function ResidentPage()
         setResidentInfo({
             Id: 0,
             FirstName: "",
-            LastName: "",
+            LastName: ""
         });
 
         setShow(true);
@@ -62,7 +63,18 @@ export default function ResidentPage()
     function handleModalClose(residentInfo)
     {
         if (residentInfo) {
-            alert(FULLNAME(residentInfo));
+            const residentData = {...residentInfo};
+
+            if (!residentData.Id) {
+                residentData.Id = null;
+            }
+
+            providers.residentProvider.post(residentData)
+                .then((response) => {
+                    setResidentInfo(response);
+                    providers.residentProvider.query('*')
+                        .then((data) => setResidentList(data));
+                });
         }
 
         setShow(false);

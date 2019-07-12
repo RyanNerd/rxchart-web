@@ -37,6 +37,12 @@ export default function ResidentEdit(props)
         setResidentInfo({...residentInfo});
     }
 
+    /**
+     * Fires when the user clicks on save or cancel
+     *
+     * @param {event} e
+     * @param {boolean} shouldSave
+     */
     function handleHide(e, shouldSave)
     {
         if (shouldSave) {
@@ -70,12 +76,13 @@ export default function ResidentEdit(props)
         }
     }, [residentInfo, residentInfo.FirstName, residentInfo.LastName]);
 
-    const residentTitle = (residentInfo && residentInfo.Id) ? 'Edit Resident' : 'Add New Resident';
-
     // Prevent render if there is no data.
     if (!residentInfo) {
         return false;
     }
+
+    const residentTitle = residentInfo.Id ? 'Edit Resident' : 'Add New Resident';
+
 
     return (
         <Modal
@@ -107,7 +114,6 @@ export default function ResidentEdit(props)
                         <Form.Label column sm="3">
                             Last Name
                         </Form.Label>
-
                         <Col sm="7">
                             <Form.Control
                                 type="text"
@@ -117,8 +123,43 @@ export default function ResidentEdit(props)
                             />
                         </Col>
                     </Form.Group>
-                </Form>
 
+                    <Form.Group as={Row}>
+                        <Form.Label column sm={3}>
+                            DOB Month
+                        </Form.Label>
+                        <Col sm={2}>
+                        <Form.Control
+                            type="text"
+                            value={residentInfo.DOB_MONTH}
+                            name="DOB_MONTH"
+                            onChange={(e) => handleOnChange(e)}
+                            />
+                        </Col>
+                        <Form.Label column sm={1}>
+                            Day
+                        </Form.Label>
+                        <Col sm={2}>
+                            <Form.Control
+                                type="text"
+                                value={residentInfo.DOB_DAY}
+                                name="DOB_DAY"
+                                onChange={(e) => handleOnChange(e)}
+                            />
+                        </Col>
+                        <Form.Label column sm={1}>
+                            Year
+                        </Form.Label>
+                        <Col sm={3}>
+                            <Form.Control
+                                type="text"
+                                value={residentInfo.DOB_YEAR}
+                                name="DOB_YEAR"
+                                onChange={(e) => handleOnChange(e)}
+                            />
+                        </Col>
+                    </Form.Group>
+                </Form>
             </Modal.Body>
 
             <Modal.Footer>

@@ -87,7 +87,7 @@ export default function ResidentGrid(props) {
             <thead>
             <tr>
                 {props.onSelected &&
-                <th>Selected</th>
+                    <th>Selected</th>
                 }
                 {props.onEdit &&
                     <th/>

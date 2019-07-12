@@ -46,4 +46,20 @@ export default class ResidentProvider
             alert('problem');
         });
     }
+
+    post(residentInfo)
+    {
+        return this._frak.post(this._baseURL + 'resident' + '?api_key=' + this._apiKey)
+        .then((response) => {
+            if (response.success) {
+                return response.data;
+            } else {
+                throw response;
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            alert('Something went wrong')
+        })
+    }
 }
