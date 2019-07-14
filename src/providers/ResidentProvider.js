@@ -49,7 +49,7 @@ export default class ResidentProvider
 
     post(residentInfo)
     {
-        return this._frak.post(this._baseURL + 'resident' + '?api_key=' + this._apiKey)
+        return this._frak.post(this._baseURL + 'resident?api_key=' + this._apiKey, residentInfo)
         .then((response) => {
             if (response.success) {
                 return response.data;
