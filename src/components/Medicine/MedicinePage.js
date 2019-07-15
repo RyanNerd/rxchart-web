@@ -68,9 +68,9 @@ function MedicinePage()
                 } else {
                     if (response.status === 404) {
                         // TODO: Add code to bring up a Medicine Modal.
-                        alert('New medicine');
+                        addNewMedicine();
                     } else {
-                        // Something went wrong. TODO: Degrade gracefully.
+                        // TODO: Degrade gracefully.
                         alert('Problem querying medicine');
                         console.error("He's dead Jim", response);
                     }
@@ -107,6 +107,11 @@ function MedicinePage()
             }
             alert('something went wrong');
         });
+    }
+
+    function addNewMedicine(e)
+    {
+        alert('Add new medicine');
     }
 
     return (
@@ -151,7 +156,7 @@ function MedicinePage()
                         >
                             <Button
                                 sm={2}
-                                onClick={() => alert('Add New Medicine Clicked')}
+                                onClick={(e) => addNewMedicine(e)}
                             >
                                 Add New Medicine
                             </Button>

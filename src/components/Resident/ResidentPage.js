@@ -74,10 +74,16 @@ export default function ResidentPage()
             .then((response) => {
                 setResidentInfo(response);
                 providers.residentProvider.query('*')
-                    .then((data) => setGlobal({residentList: data}));
+                .then((data) => {
+                    setGlobal({residentList: data});
+                    if (activeResident.Id === residentData.Id) {
+                        setActiveResident(residentData);
+                    }
+                });
             });
         }
 
+        // TODO: If updated residentInfo is the currentResident then update the global
         setShow(false);
     }
 
