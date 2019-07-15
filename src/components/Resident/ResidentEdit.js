@@ -88,7 +88,7 @@ export default function ResidentEdit(props)
         <Modal
             show={show}
             centered
-            onHide={()=>{}}
+            onHide={(e, r)=>{handleHide(e, false)}}
         >
             <Modal.Header closeButton>
                 <Modal.Title>{residentTitle}</Modal.Title>

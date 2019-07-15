@@ -76,7 +76,7 @@ export default function ResidentPage()
                 providers.residentProvider.query('*')
                 .then((data) => {
                     setGlobal({residentList: data});
-                    if (activeResident.Id === residentData.Id) {
+                    if (activeResident && activeResident.Id === residentData.Id) {
                         setActiveResident(residentData);
                     }
                 });

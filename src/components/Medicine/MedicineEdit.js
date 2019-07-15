@@ -24,21 +24,28 @@ export default function MedicineEdit(props)
         setShow(props.show)
     }, [props.show]);
 
+    if (!props.drugInfo) {
+        return false;
+    }
+
+    const drugName = props.drugInfo.Id ? props.drugInfo.Drug : '';
+    const barcode = props.drugInfo.Barcode;
+
+
     return (
         <Modal
+            size="lg"
             show={show}
             centered
-            onHide={() => {
-            }}
+            onHide={() => props.onHide()}
         >
             <Modal.Header closeButton>
-                <Modal.Title>MEDICINE EDIT PLACEHOLDER</Modal.Title>
+                <Modal.Title>MEDICINE <b>{drugName}</b> PLACEHOLDER</Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
-                <p>Medicine Edit Placeholder</p>
+                <p>Medicine barcode: {barcode}</p>
             </Modal.Body>
-            }
         </Modal>
     );
 }

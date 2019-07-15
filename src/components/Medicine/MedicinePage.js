@@ -11,6 +11,7 @@ import TabContent from "../../styles/tab_content.css";
 import DrugDropdown from "./DrugDropdown";
 import RefreshMedicineList from "../../providers/RefreshMedicineList";
 import {FULLNAME} from "../../utility/common";
+import MedicineEdit from "../Medicine/MedicineEdit";
 
 /**
  * MedicinePage
@@ -28,6 +29,8 @@ import {FULLNAME} from "../../utility/common";
 function MedicinePage()
 {
     const [ barcode, setBarcode ] = useState('');
+    const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
+    const [ drugInfo, setDrugInfo ] = useState(null);
 
     const [ activeDrug, setActiveDrug ] = useGlobal('activeDrug');
     const [ medicineList, setMedicineList ] = useGlobal('medicineList');
@@ -67,8 +70,13 @@ function MedicinePage()
                     }
                 } else {
                     if (response.status === 404) {
-                        // TODO: Add code to bring up a Medicine Modal.
-                        addNewMedicine();
+                        if (activeResident && activeResident.Id) {
+                            // TODO: Dialog box: Barcode not found. Do you want to add a new drug for {resident}?
+                            addEditDrug(true);
+                        } else {
+                            // TODO: Dialog box: Barcode not found. If you want to add a new drug you must first select the resident the drug is for.
+                            alert('Unknown barcode. You must select the resident this drug is for before adding it.');
+                        }
                     } else {
                         // TODO: Degrade gracefully.
                         alert('Problem querying medicine');
@@ -109,9 +117,20 @@ function MedicinePage()
         });
     }
 
-    function addNewMedicine(e)
+    function addEditDrug(isAdd)
     {
-        alert('Add new medicine');
+        // There are multiple entry states:
+        // 1. Barcode gave not found error AND there is an activeResident (add)
+        // 2. User clicked the Add New Medicine button AND there is an activeResident (add)
+        // 3. User clicked Edit Drug Info button [activeResident && activeDrug.Id] (edit)
+
+        if (isAdd) {
+            setDrugInfo({Id: 0, Barcode: barcode});
+        } else {
+            setDrugInfo({...activeDrug});
+        }
+
+        setShowMedicineEdit(true);
     }
 
     return (
@@ -136,7 +155,7 @@ function MedicinePage()
                     <Form.Label column sm="1">
                         Scan Barcode
                     </Form.Label>
-                    <Col sm="3">
+                    <Col sm="2">
                         <Form.Control
                             type="text"
                             value={barcode}
@@ -144,23 +163,25 @@ function MedicinePage()
                             onChange={(e) => setBarcode(e.target.value)}
                         />
                     </Col>
-                    <Col sm={4}>
-                        <OverlayTrigger
-                            key="new-drug"
-                            placement="right"
-                            overlay={
-                                <Tooltip id="add-new-drug-tooltip">
-                                    Manually Add New Drug for Resident
-                                </Tooltip>
-                            }
-                        >
-                            <Button
-                                sm={2}
-                                onClick={(e) => addNewMedicine(e)}
+                    <Col sm="2">
+                        {activeResident && activeResident.Id &&
+                            <OverlayTrigger
+                                key="new-drug"
+                                placement="right"
+                                overlay={
+                                    <Tooltip id="add-new-drug-tooltip">
+                                        Manually Add New Drug for Resident
+                                    </Tooltip>
+                                }
                             >
-                                Add New Medicine
-                            </Button>
-                        </OverlayTrigger>
+                                <Button
+                                    sm={2}
+                                    onClick={() => addEditDrug(true)}
+                                >
+                                    + Drug
+                                </Button>
+                            </OverlayTrigger>
+                        }
                     </Col>
                 </Form.Group>
             </Form>
@@ -179,6 +200,8 @@ function MedicinePage()
                                 onSelect={(e, drug) => {
                                     setActiveDrug(drug);
                                 }}
+                                onLogDrug={(e) => alert('Add drug to log')}
+                                onEditDrug={() => addEditDrug(false)}
                             />
                         </ListGroup.Item>
                         <ListGroup.Item><b>Directions</b></ListGroup.Item>
@@ -197,6 +220,12 @@ function MedicinePage()
                 </Col>
             </Row>
             }
+
+            <MedicineEdit
+                show={showMedicineEdit}
+                onHide={() => setShowMedicineEdit(!showMedicineEdit)}
+                drugInfo={drugInfo}
+            />
         </>
     );
 }
