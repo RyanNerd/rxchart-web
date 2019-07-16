@@ -9,7 +9,8 @@
     "react-dom": "^16.8.6",
     "react-scripts": "3.0.1",
     "reactn": "^2.1.4",
-    "lodash.template": ">=4.5.0"
+    "lodash.template": ">=4.5.0",
+    "lodash": ">=4.17.13"
   },
   "scripts": {
     "start": "react-scripts start",
