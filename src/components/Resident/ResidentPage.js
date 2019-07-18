@@ -83,7 +83,6 @@ export default function ResidentPage()
             });
         }
 
-        // TODO: If updated residentInfo is the currentResident then update the global
         setShow(false);
     }
 

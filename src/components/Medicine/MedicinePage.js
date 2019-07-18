@@ -10,7 +10,6 @@ import Toast from 'react-bootstrap/Toast';
 import TabContent from "../../styles/tab_content.css";
 import DrugDropdown from "./DrugDropdown";
 import RefreshMedicineList from "../../providers/RefreshMedicineList";
-import {FULLNAME} from "../../utility/common";
 import MedicineEdit from "../Medicine/MedicineEdit";
 
 /**
@@ -38,8 +37,6 @@ function MedicinePage()
     const [ providers ] = useGlobal('providers');
     const [ development ] = useGlobal('development');
     const [ showResidentChangeAlert, setShowResidentChangeAlert ] = useState(false);
-
-    const fullName = activeResident ? FULLNAME(activeResident) : '';
 
     /**
      * Fires on keyPress for the barcode text box
@@ -125,12 +122,64 @@ function MedicinePage()
         // 3. User clicked Edit Drug Info button [activeResident && activeDrug.Id] (edit)
 
         if (isAdd) {
-            setDrugInfo({Id: 0, Barcode: barcode});
+            // Sanity check
+            if (!activeResident || !activeResident.Id) {
+                alert('No active resident selected!');
+                return;
+            }
+
+            setDrugInfo({
+                Id: 0,
+                Barcode: barcode,
+                ResidentId: activeResident.Id,
+                Drug: "",
+                Strength: "",
+                Directions: "",
+                Notes: ""
+            });
         } else {
             setDrugInfo({...activeDrug});
         }
 
         setShowMedicineEdit(true);
+    }
+
+    /**
+     * Fires when MedicineEdit closes.
+     *
+     * @param {object | null} drugInfo
+     */
+    function handleModalClose(drugInfo)
+    {
+        if (drugInfo) {
+            const drugData = {...drugInfo};
+
+            if (!drugData.Id) {
+                drugData.Id = null;
+            }
+
+            if (drugData.Notes === '') {
+                drugData.Notes = null;
+            }
+
+            providers.medicineProvider.post(drugData)
+            .then((response) => {
+                RefreshMedicineList(providers.medicineProvider, drugData.ResidentId)
+                .then((data) => {
+                    setMedicineList(data);
+                    setDrugInfo(response);
+                    setActiveDrug(response).then(()=>console.log('newActiveDrug', activeDrug));
+                })
+                .catch((err) => {
+                    if (development) {
+                        console.log('MedicineList rehydrate error', err);
+                    }
+                    alert('something went wrong');
+                });
+            });
+        }
+
+        setShowMedicineEdit(false);
     }
 
     return (
@@ -191,9 +240,6 @@ function MedicinePage()
                 <Col sm={4}>
                     <ListGroup>
                         <ListGroup.Item active>
-                            <b>{fullName} ({activeDrug.Drug})</b>
-                        </ListGroup.Item>
-                        <ListGroup.Item>
                             <DrugDropdown
                                 medicineList={medicineList}
                                 drugId={activeDrug.Id}
@@ -204,16 +250,48 @@ function MedicinePage()
                                 onEditDrug={() => addEditDrug(false)}
                             />
                         </ListGroup.Item>
-                        <ListGroup.Item><b>Directions</b></ListGroup.Item>
-                        <ListGroup.Item><p>{activeDrug.Directions}</p></ListGroup.Item>
-                        <ListGroup.Item><b>Notes</b></ListGroup.Item>
-                        <ListGroup.Item><p>{activeDrug.Notes}</p></ListGroup.Item>
+
+                        <ListGroup.Item>
+                            <Button
+                                className="mr-1"
+                                size="sm"
+                                variant="info"
+                                onClick={() => alert('+ Log clicked')}
+                            >
+                                + Log
+                            </Button>
+
+                            <Button
+                                size="sm"
+                                variant="info"
+                                onClick={() => alert('Edit Drug Info button clicked')}
+                            >
+                                Edit
+                            </Button>
+                        </ListGroup.Item>
+
+                        <ListGroup.Item>
+                            <b>Directions</b>
+                        </ListGroup.Item>
+
+                        <ListGroup.Item>
+                            <p>{activeDrug.Directions}</p>
+                        </ListGroup.Item>
+
+                        <ListGroup.Item>
+                            <b>Notes</b>
+                        </ListGroup.Item>
+
+                        <ListGroup.Item>
+                            <p>{activeDrug.Notes}</p>
+                        </ListGroup.Item>
+
                         <ListGroup.Item variant="info">
                             <b>Barcode:</b> {activeDrug.Barcode}
                         </ListGroup.Item>
                     </ListGroup>
-
                 </Col>
+
                 <Col sm={6}>
                     <span style={{textAlign: "center"}}> <h1>MEDICAL LOG PLACE HOLDER</h1> </span>
                     <span style={{textAlign: "center"}}> <h2>subtext</h2> </span>
@@ -221,9 +299,11 @@ function MedicinePage()
             </Row>
             }
 
+            {/* MedicineEdit Modal*/}
             <MedicineEdit
                 show={showMedicineEdit}
                 onHide={() => setShowMedicineEdit(!showMedicineEdit)}
+                onClose={(r) => handleModalClose(r)}
                 drugInfo={drugInfo}
             />
         </>

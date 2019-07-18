@@ -47,16 +47,32 @@ export default class MedicineProvider
     read(id)
     {
         return this._frak.get(this._baseURL + 'medicine/'+ id + '?api_key=' + this._apiKey)
-            .then((response) => {
-                if (response.success) {
-                    return response.data;
-                } else {
-                    throw response;
-                }
-            })
-            .catch((err) => {
-                console.error(err);
-                alert('problem');
-            });
+        .then((response) => {
+            if (response.success) {
+                return response.data;
+            } else {
+                throw response;
+            }
+        })
+        .catch((err) => {
+            console.error(err);
+            alert('problem');
+        });
+    }
+
+    post(drugInfo)
+    {
+        return this._frak.post(this._baseURL + 'medicine?api_key=' + this._apiKey, drugInfo)
+        .then((response) => {
+            if (response.success) {
+                return response.data;
+            } else {
+                throw response;
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            alert('Something went wrong')
+        })
     }
 }
