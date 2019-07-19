@@ -1,9 +1,7 @@
 import React, {useEffect, useGlobal, useState} from 'reactn';
 import Modal from 'react-bootstrap/Modal';
 import {FULLNAME} from "../../utility/common";
-// import Button from 'react-bootstrap/Button';
 import Form from "react-bootstrap/Form";
-// import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";

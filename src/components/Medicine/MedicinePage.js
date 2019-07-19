@@ -24,7 +24,6 @@ import {FULLNAME} from "../../utility/common";
  *  - Drug History Grid
  *
  * @returns {*}
- * @constructor
  */
 function MedicinePage()
 {
