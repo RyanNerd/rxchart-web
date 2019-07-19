@@ -39,7 +39,6 @@ export default function DrugDropdown(props)
      * @returns {*}
      */
     const MedicineDropdownItems = (medicine) => {
-        console.log('medicine', medicine);
         const drug = medicine.Drug.toUpperCase();
         const strength = medicine.Strength ? medicine.Strength.toUpperCase() : '';
         const drugDetail = drug + ' ' + strength;

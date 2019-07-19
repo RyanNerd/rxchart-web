@@ -6,11 +6,12 @@ import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
-import Toast from 'react-bootstrap/Toast';
+import Alert from 'react-bootstrap/Alert';
 import TabContent from "../../styles/tab_content.css";
 import DrugDropdown from "./DrugDropdown";
 import RefreshMedicineList from "../../providers/RefreshMedicineList";
 import MedicineEdit from "../Medicine/MedicineEdit";
+import {FULLNAME} from "../../utility/common";
 
 /**
  * MedicinePage
@@ -95,8 +96,12 @@ function MedicinePage()
         providers.residentProvider.read(residentId)
         .then((residentInfo) =>
         {
-            setActiveResident(residentInfo)
-            .then(() => console.log('refreshactiveResident', activeResident));
+            if (activeResident && activeResident.Id !== residentId) {
+                setShowResidentChangeAlert(true);
+            }
+
+            setActiveResident(residentInfo);
+
             RefreshMedicineList(providers.medicineProvider, residentId)
             .then((data) => setMedicineList(data))
             .catch((err) => {
@@ -185,18 +190,16 @@ function MedicinePage()
     return (
         <>
             {showResidentChangeAlert &&
-                <Toast
+                <Alert
+                    dismissible
                     show={showResidentChangeAlert}
                     onClose={() => setShowResidentChangeAlert(!showResidentChangeAlert)}
-                    varient="warning"
+                    variant="warning"
                 >
-                    <Toast.Header>
-                        <strong>Resident Change</strong>
-                    </Toast.Header>
-                    <Toast.Body>
-                        Barcode changed active resident
-                    </Toast.Body>
-                </Toast>
+                    <Alert.Heading>
+                        <strong>Resident Changed to {FULLNAME(activeResident)}</strong>
+                    </Alert.Heading>
+                </Alert>
             }
 
             <Form className={TabContent}>
@@ -224,7 +227,8 @@ function MedicinePage()
                                 }
                             >
                                 <Button
-                                    sm={2}
+                                    size="sm"
+                                    variant="info"
                                     onClick={() => addEditDrug(true)}
                                 >
                                     + Drug
@@ -247,26 +251,34 @@ function MedicinePage()
                                     setActiveDrug(drug);
                                 }}
                                 onLogDrug={(e) => alert('Add drug to log')}
-                                onEditDrug={() => addEditDrug(false)}
                             />
                         </ListGroup.Item>
 
                         <ListGroup.Item>
                             <Button
-                                className="mr-1"
-                                size="sm"
-                                variant="info"
+                                className="mr-2"
+                                size="md"
+                                variant="primary"
                                 onClick={() => alert('+ Log clicked')}
                             >
-                                + Log
+                                + Log Drug
+                            </Button>
+
+                            <Button
+                                className="mr-3"
+                                size="sm"
+                                variant="info"
+                                onClick={() => addEditDrug(false)}
+                            >
+                                Edit Drug
                             </Button>
 
                             <Button
                                 size="sm"
-                                variant="info"
-                                onClick={() => alert('Edit Drug Info button clicked')}
+                                variant="outline-danger"
+                                onClick={() => alert('Delete Drug')}
                             >
-                                Edit
+                                <span role="img" aria-label="delete">🗑️ Delete Drug</span>
                             </Button>
                         </ListGroup.Item>
 

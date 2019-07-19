@@ -72,7 +72,7 @@ export default function MedicineEdit(props)
     }
 
     const drugTitleType = drugInfo.Id ? 'Edit ' : 'Add ';
-    const drugName = drugInfo.Id ? drugInfo.Drug : '';
+    const drugName = drugInfo.Id ? drugInfo.Drug : 'new drug';
     const fullName = activeResident && FULLNAME(activeResident);
 
     return (
