@@ -11,7 +11,7 @@ function LandingPage() {
 
     return (
         <Tabs
-            id="controlled-tab-example"
+            id="landing-page-tabs"
             activeKey={activeTabKey}
             onSelect={key => setActiveTabKey(key)}
         >

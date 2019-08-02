@@ -1,4 +1,4 @@
-import React, {useEffect, useGlobal, useState} from 'reactn';
+import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import Modal from 'react-bootstrap/Modal';
 import {FULLNAME} from "../../utility/common";
 import Form from "react-bootstrap/Form";
@@ -22,7 +22,7 @@ export default function MedicineEdit(props)
     const [ drugInfo, setDrugInfo ] = useState(null);
     const [ activeResident ] = useGlobal('activeResident');
 
-    let textInput = React.createRef();
+    const textInput = useRef(null);
 
     // Observer for show and drugInfo properties
     useEffect(() => {
@@ -142,7 +142,7 @@ export default function MedicineEdit(props)
                                 as="textarea"
                                 rows="2"
                                 value={drugInfo.Directions}
-                                placeholder={'Take 1 tablet at bedtime'}
+                                placeholder="e.g. Take 1 tablet at bedtime"
                                 name="Directions"
                                 onChange={(e) => handleOnChange(e)}
                             />
@@ -159,7 +159,6 @@ export default function MedicineEdit(props)
                                 as="textarea"
                                 rows="3"
                                 value={drugInfo.Notes}
-                                placeholder={'Take 1 tablet at bedtime'}
                                 name="Notes"
                                 onChange={(e) => handleOnChange(e)}
                             />

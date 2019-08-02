@@ -73,6 +73,21 @@ export default class MedicineProvider
         .catch((err) => {
             console.log(err);
             alert('Something went wrong')
+        });
+    }
+
+    delete(drugId)
+    {
+        return this._frak.delete_(this._baseURL + 'medicine/' + drugId + '?api_key=' + this._apiKey)
+        .then((response) => {
+            if (response.success) {
+                return response;
+            } else {
+                throw response;
+            }
         })
+        .catch((err) => {
+            console.log(err);
+        });
     }
 }

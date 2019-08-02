@@ -12,6 +12,8 @@ import DrugDropdown from "./DrugDropdown";
 import RefreshMedicineList from "../../providers/RefreshMedicineList";
 import MedicineEdit from "../Medicine/MedicineEdit";
 import {FULLNAME} from "../../utility/common";
+import ConfirmationDialog from "../Dialog/ConfirmationDialog";
+import InformationDialog from "../Dialog/InformationDialog";
 
 /**
  * MedicinePage
@@ -29,6 +31,8 @@ function MedicinePage()
 {
     const [ barcode, setBarcode ] = useState('');
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
+    const [ showDeleteDrug, setShowDeleteDrug ] = useState(false);
+    const [ showUnknownBarcode, setShowUnknownBarcode ] = useState(false);
     const [ drugInfo, setDrugInfo ] = useState(null);
 
     const [ activeDrug, setActiveDrug ] = useGlobal('activeDrug');
@@ -71,8 +75,7 @@ function MedicinePage()
                             // TODO: Dialog box: Barcode not found. Do you want to add a new drug for {resident}?
                             addEditDrug(true);
                         } else {
-                            // TODO: Dialog box: Barcode not found. If you want to add a new drug you must first select the resident the drug is for.
-                            alert('Unknown barcode. You must select the resident this drug is for before adding it.');
+                            setShowUnknownBarcode(true);
                         }
                     } else {
                         // TODO: Degrade gracefully.
@@ -186,6 +189,26 @@ function MedicinePage()
         setShowMedicineEdit(false);
     }
 
+    function deleteDrug() {
+        const medicineProvider = providers.medicineProvider;
+        medicineProvider.delete(activeDrug.Id)
+        .then((response) => {
+            if (response.success) {
+                RefreshMedicineList(providers.medicineProvider, activeDrug.ResidentId)
+                .then((data) => {
+                    setMedicineList(data);
+                    setDrugInfo(null);
+                    setActiveDrug(null);
+                });
+            } else {
+                console.log('error', response);
+                alert('Something went wrong');
+            }
+        });
+
+        setShowDeleteDrug(false);
+    }
+
     return (
         <>
             {showResidentChangeAlert &&
@@ -275,7 +298,7 @@ function MedicinePage()
                             <Button
                                 size="sm"
                                 variant="outline-danger"
-                                onClick={() => alert('Delete Drug')}
+                                onClick={() => setShowDeleteDrug(true)}
                             >
                                 <span role="img" aria-label="delete">🗑️ Delete Drug</span>
                             </Button>
@@ -316,6 +339,31 @@ function MedicinePage()
                 onHide={() => setShowMedicineEdit(!showMedicineEdit)}
                 onClose={(r) => handleModalClose(r)}
                 drugInfo={drugInfo}
+            />
+
+            {activeDrug && activeDrug.Id &&
+            <ConfirmationDialog
+                title={"Delete " + activeDrug.Drug}
+                body={
+                    <b style={{color: "red"}}>
+                        Are you sure?
+                    </b>
+                }
+                show={showDeleteDrug}
+                onAnswer={(a) => {
+                    if (a) {
+                        deleteDrug();
+                    }
+                }}
+                onHide={() => setShowDeleteDrug(false)}
+            />
+            }
+
+            <InformationDialog
+                title="Unknown Barcode"
+                body="You must select the resident this drug is for before adding it."
+                show={showUnknownBarcode}
+                onHide={() => setShowUnknownBarcode(false)}
             />
         </>
     );
