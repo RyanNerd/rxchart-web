@@ -1,0 +1,93 @@
+import Frak from './Frak';
+
+export default class MedHistoryProvider
+{
+
+    constructor(baseUrl, apiKey)
+    {
+        this._frak = new Frak();
+        this._baseURL = baseUrl;
+        this._apiKey = apiKey;
+    }
+
+    query(value, ...columns)
+    {
+        let uri = this._baseURL + 'medhistory/query/'+ value + '?';
+
+        switch (value) {
+            case '*':
+            {
+                break;
+            }
+
+            case '-':
+            {
+                break;
+            }
+
+            default:
+            {
+                uri += 'column_name=' + columns[0] + '&';
+                break;
+            }
+        }
+
+        uri += 'api_key=' + this._apiKey;
+
+        return this._frak.get(uri)
+        .then((response) => {
+            return response;
+        })
+        .catch((err) => {
+            console.error(err);
+            alert('problem');
+        });
+    }
+
+    read(id)
+    {
+        return this._frak.get(this._baseURL + 'medhistory/'+ id + '?api_key=' + this._apiKey)
+        .then((response) => {
+            if (response.success) {
+                return response.data;
+            } else {
+                throw response;
+            }
+        })
+        .catch((err) => {
+            console.error(err);
+            alert('problem');
+        });
+    }
+
+    post(drugInfo)
+    {
+        return this._frak.post(this._baseURL + 'medhistory?api_key=' + this._apiKey, drugInfo)
+        .then((response) => {
+            if (response.success) {
+                return response.data;
+            } else {
+                throw response;
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            alert('Something went wrong')
+        });
+    }
+
+    delete(drugId)
+    {
+        return this._frak.delete_(this._baseURL + 'medhistory/' + drugId + '?api_key=' + this._apiKey)
+            .then((response) => {
+                if (response.success) {
+                    return response;
+                } else {
+                    throw response;
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
+}

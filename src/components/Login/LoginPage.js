@@ -8,6 +8,7 @@ import TabContent from './../../styles/tab_content.css';
 import ResidentProvider from './../../providers/ResidentProvider';
 import MedicineProvider from './../../providers/MedicineProvider';
 import {initialState} from "../../InitialState";
+import MedHistoryProvider from "../../providers/MedHistoryProvider";
 
 /**
  * Sign in page
@@ -44,6 +45,7 @@ function LoginPage(props) {
                     // Use global state for Dependency Injection for providers.
                     providers.residentProvider = new ResidentProvider(baseUrl, json.data.apiKey);
                     providers.medicineProvider = new MedicineProvider(baseUrl, json.data.apiKey);
+                    providers.medHistoryProvider = new MedHistoryProvider(baseUrl, json.data.apiKey);
                     setProviders(providers);
 
                     // Load ALL Resident records up front and save them in the global store.

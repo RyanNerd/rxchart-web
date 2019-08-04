@@ -14,6 +14,8 @@ import MedicineEdit from "../Medicine/MedicineEdit";
 import {FULLNAME} from "../../utility/common";
 import ConfirmationDialog from "../Dialog/ConfirmationDialog";
 import InformationDialog from "../Dialog/InformationDialog";
+import DrugLogGrid from "../DrugLog/DrugLogGrid";
+import RefreshMedicineLog from "../../providers/RefreshMedicineLog";
 
 /**
  * MedicinePage
@@ -41,6 +43,7 @@ function MedicinePage()
     const [ providers ] = useGlobal('providers');
     const [ development ] = useGlobal('development');
     const [ showResidentChangeAlert, setShowResidentChangeAlert ] = useState(false);
+    const [ drugLog, setDrugLog ] = useState(null);
 
     /**
      * Fires on keyPress for the barcode text box
@@ -66,6 +69,8 @@ function MedicinePage()
                         const drug = response.data[0];
                         setActiveDrug(drug);
                         refreshActiveResident(drug.ResidentId);
+                        RefreshMedicineLog(providers.medHistoryProvider, drug.Id)
+                            .then((data) => setDrugLog(data));
                     } else {
                         alert("Duplicate Barcode -- This shouldn't happen");
                     }
@@ -88,6 +93,7 @@ function MedicinePage()
     }
 
     /**
+     * Rehydrate the active resident and the medicineList
      *
      * @param residentId
      * Set the active resident to what is given by the residentId and rehydrate the medicineList.
@@ -176,6 +182,7 @@ function MedicinePage()
                     setMedicineList(data);
                     setDrugInfo(response);
                     setActiveDrug(response).then(()=>console.log('newActiveDrug', activeDrug));
+                    RefreshMedicineLog(providers.medHistoryProvider, response.Id);
                 })
                 .catch((err) => {
                     if (development) {
@@ -199,6 +206,7 @@ function MedicinePage()
                     setMedicineList(data);
                     setDrugInfo(null);
                     setActiveDrug(null);
+                    setDrugLog(null);
                 });
             } else {
                 console.log('error', response);
@@ -207,6 +215,27 @@ function MedicinePage()
         });
 
         setShowDeleteDrug(false);
+    }
+
+    function logDrug() {
+        const medHistoryProvider = providers.medHistoryProvider;
+        const medLog = {
+            ResidentId: activeResident.Id,
+            MedicineId: activeDrug.Id,
+            Notes: null
+        };
+
+        medHistoryProvider.post(medLog)
+        .then((response) => {
+            RefreshMedicineLog(providers.medHistoryProvider, activeDrug.Id)
+                .then((data)=>setDrugLog(data));
+        })
+        .catch((err) => {
+            if (development) {
+                console.log('Error inserting medHistory', err);
+            }
+            alert('something went wrong');
+        });
     }
 
     return (
@@ -271,8 +300,9 @@ function MedicinePage()
                                 drugId={activeDrug.Id}
                                 onSelect={(e, drug) => {
                                     setActiveDrug(drug);
+                                    RefreshMedicineLog(providers.medHistoryProvider, drug.Id)
+                                        .then((data) => setDrugLog(data));
                                 }}
-                                onLogDrug={(e) => alert('Add drug to log')}
                             />
                         </ListGroup.Item>
 
@@ -281,7 +311,7 @@ function MedicinePage()
                                 className="mr-2"
                                 size="md"
                                 variant="primary"
-                                onClick={() => alert('+ Log clicked')}
+                                onClick={() => logDrug()}
                             >
                                 + Log Drug
                             </Button>
@@ -327,8 +357,11 @@ function MedicinePage()
                 </Col>
 
                 <Col sm={6}>
-                    <span style={{textAlign: "center"}}> <h1>MEDICAL LOG PLACE HOLDER</h1> </span>
-                    <span style={{textAlign: "center"}}> <h2>subtext</h2> </span>
+                    <span style={{textAlign: "center"}}> <h1>DRUG HISTORY</h1> </span>
+                    <DrugLogGrid
+                        drugLog={drugLog}
+                        onEdit={(e, x)=> alert(x.Id)}
+                    />
                 </Col>
             </Row>
             }

@@ -8,6 +8,7 @@ import MedicinePage from "../Medicine/MedicinePage";
 function LandingPage() {
     const [ activeTabKey, setActiveTabKey ] = useGlobal('activeTabKey');
     const [ apiKey ] = useGlobal('apiKey');
+    const [ activeResident ] = useGlobal('activeResident');
 
     return (
         <Tabs
@@ -25,7 +26,7 @@ function LandingPage() {
             <Tab
                 disabled={apiKey === null}
                 eventKey="drugs"
-                title="Medicine Log">
+                title="Scan">
                 <MedicinePage/>
             </Tab>
             <Tab
@@ -33,6 +34,20 @@ function LandingPage() {
                 eventKey="resident"
                 title="Resident List">
                 <ResidentPage />
+            </Tab>
+            <Tab
+                disabled={apiKey === null || activeResident === null}
+                eventKey="history"
+                title="Drug History"
+            >
+                <p>Drug History Placeholder</p>
+            </Tab>
+            <Tab
+                disabled={apiKey === null || activeResident === null}
+                eventKey="manage"
+                title="Manage Drugs"
+            >
+                <p>Manage Drugs Placeholder</p>
             </Tab>
         </Tabs>
     );
