@@ -53,7 +53,7 @@ export default function DrugLogGrid(props)
                     <span>Updated</span>
                 </th>
                 <th>
-                    <span>Notes</span>
+                    <span>Amount Taken/Notes</span>
                 </th>
             </tr>
             </thead>

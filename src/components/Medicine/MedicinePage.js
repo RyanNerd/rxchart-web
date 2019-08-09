@@ -15,6 +15,7 @@ import {FULLNAME} from "../../utility/common";
 import ConfirmationDialog from "../Dialog/ConfirmationDialog";
 import InformationDialog from "../Dialog/InformationDialog";
 import DrugLogGrid from "../DrugLog/DrugLogGrid";
+import DrugLogEdit from "../DrugLog/DrugLogEdit";
 import RefreshMedicineLog from "../../providers/RefreshMedicineLog";
 
 /**
@@ -35,7 +36,9 @@ function MedicinePage()
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDeleteDrug, setShowDeleteDrug ] = useState(false);
     const [ showUnknownBarcode, setShowUnknownBarcode ] = useState(false);
+    const [ showDrugLog, setShowDrugLog ] = useState(false);
     const [ drugInfo, setDrugInfo ] = useState(null);
+    const [ drugLogInfo, setDrugLogInfo ] = useState(null);
 
     const [ activeDrug, setActiveDrug ] = useGlobal('activeDrug');
     const [ medicineList, setMedicineList ] = useGlobal('medicineList');
@@ -162,7 +165,7 @@ function MedicinePage()
      *
      * @param {object | null} drugInfo
      */
-    function handleModalClose(drugInfo)
+    function handleMedicineEditModalClose(drugInfo)
     {
         if (drugInfo) {
             const drugData = {...drugInfo};
@@ -217,25 +220,33 @@ function MedicinePage()
         setShowDeleteDrug(false);
     }
 
-    function logDrug() {
-        const medHistoryProvider = providers.medHistoryProvider;
-        const medLog = {
-            ResidentId: activeResident.Id,
-            MedicineId: activeDrug.Id,
-            Notes: null
-        };
+    function addEditDrugLog(e, drugLogInfo)
+    {
+        e.preventDefault();
 
-        medHistoryProvider.post(medLog)
-        .then((response) => {
-            RefreshMedicineLog(providers.medHistoryProvider, activeDrug.Id)
-                .then((data)=>setDrugLog(data));
-        })
-        .catch((err) => {
-            if (development) {
-                console.log('Error inserting medHistory', err);
-            }
-            alert('something went wrong');
-        });
+        setDrugLogInfo(drugLogInfo);
+        setShowDrugLog(true);
+    }
+
+    function handleDrugLogEditClose(drugLog) {
+
+        if (drugLog) {
+            const medHistoryProvider = providers.medHistoryProvider;
+
+            medHistoryProvider.post(drugLog)
+                .then((response) => {
+                    RefreshMedicineLog(providers.medHistoryProvider, activeDrug.Id)
+                        .then((data) => setDrugLog(data));
+                })
+                .catch((err) => {
+                    if (development) {
+                        console.log('Error inserting medHistory', err);
+                    }
+                    alert('something went wrong');
+                });
+        }
+
+        setShowDrugLog(false);
     }
 
     return (
@@ -311,7 +322,12 @@ function MedicinePage()
                                 className="mr-2"
                                 size="md"
                                 variant="primary"
-                                onClick={() => logDrug()}
+                                onClick={(e) => addEditDrugLog(e, {
+                                    Id: null,
+                                    ResidentId: activeResident.Id,
+                                    MedicineId: activeDrug.Id,
+                                    Note: ''
+                                })}
                             >
                                 + Log Drug
                             </Button>
@@ -370,8 +386,15 @@ function MedicinePage()
             <MedicineEdit
                 show={showMedicineEdit}
                 onHide={() => setShowMedicineEdit(!showMedicineEdit)}
-                onClose={(r) => handleModalClose(r)}
+                onClose={(r) => handleMedicineEditModalClose(r)}
                 drugInfo={drugInfo}
+            />
+
+            <DrugLogEdit
+                show={showDrugLog}
+                drugLogInfo={drugLogInfo}
+                onHide={() => setShowDrugLog(!showDrugLog)}
+                onClose={(drugLogRecord) => handleDrugLogEditClose(drugLogRecord)}
             />
 
             {activeDrug && activeDrug.Id &&
