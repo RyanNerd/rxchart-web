@@ -376,7 +376,7 @@ function MedicinePage()
                     <span style={{textAlign: "center"}}> <h1>DRUG HISTORY</h1> </span>
                     <DrugLogGrid
                         drugLog={drugLog}
-                        onEdit={(e, x)=> alert(x.Id)}
+                        onEdit={(e, r)=> addEditDrugLog(e, r)}
                     />
                 </Col>
             </Row>

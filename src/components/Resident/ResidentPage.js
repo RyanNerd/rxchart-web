@@ -90,7 +90,14 @@ export default function ResidentPage()
     {
         setActiveResident(resident);
         RefreshMedicineList(providers.medicineProvider, resident.Id)
-        .then((data) => setGlobal({medicineList: data}))
+        .then((data) => {
+            setGlobal({medicineList: data});
+            // If there are any medicines for the selected resident then
+            // select the first one and make it the active drug.
+            if (data && data.length > 0) {
+                setGlobal({activeDrug: data[0]});
+            }
+        })
         .catch((err) => setGlobal({medicineList: null}));
 
         setGlobal({activeDrug: null});
