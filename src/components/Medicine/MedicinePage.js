@@ -28,6 +28,9 @@ import RefreshMedicineLog from "../../providers/RefreshMedicineLog";
  *  - Edit / Delete Existing Medicine
  *  - Drug History Grid
  *
+ *  TODO: Make DrugLogList a global
+ *  TODO: refresh**** should be single responsibility.
+ *
  * @returns {*}
  */
 function MedicinePage()
@@ -46,7 +49,7 @@ function MedicinePage()
     const [ providers ] = useGlobal('providers');
     const [ development ] = useGlobal('development');
     const [ showResidentChangeAlert, setShowResidentChangeAlert ] = useState(false);
-    const [ drugLog, setDrugLog ] = useState(null);
+    const [ drugLogList, setDrugLogList ] = useGlobal('drugLogList');
 
     /**
      * Fires on keyPress for the barcode text box
@@ -73,7 +76,7 @@ function MedicinePage()
                         setActiveDrug(drug);
                         refreshActiveResident(drug.ResidentId);
                         RefreshMedicineLog(providers.medHistoryProvider, drug.Id)
-                            .then((data) => setDrugLog(data));
+                            .then((data) => setDrugLogList(data));
                     } else {
                         alert("Duplicate Barcode -- This shouldn't happen");
                     }
@@ -209,7 +212,7 @@ function MedicinePage()
                     setMedicineList(data);
                     setDrugInfo(null);
                     setActiveDrug(null);
-                    setDrugLog(null);
+                    setDrugLogList(null);
                 });
             } else {
                 console.log('error', response);
@@ -228,15 +231,15 @@ function MedicinePage()
         setShowDrugLog(true);
     }
 
-    function handleDrugLogEditClose(drugLog) {
+    function handleDrugLogEditClose(drugLogInfo) {
 
-        if (drugLog) {
+        if (drugLogInfo) {
             const medHistoryProvider = providers.medHistoryProvider;
 
-            medHistoryProvider.post(drugLog)
+            medHistoryProvider.post(drugLogInfo)
                 .then((response) => {
                     RefreshMedicineLog(providers.medHistoryProvider, activeDrug.Id)
-                        .then((data) => setDrugLog(data));
+                        .then((data) => setDrugLogList(data));
                 })
                 .catch((err) => {
                     if (development) {
@@ -312,7 +315,7 @@ function MedicinePage()
                                 onSelect={(e, drug) => {
                                     setActiveDrug(drug);
                                     RefreshMedicineLog(providers.medHistoryProvider, drug.Id)
-                                        .then((data) => setDrugLog(data));
+                                        .then((data) => setDrugLogList(data));
                                 }}
                             />
                         </ListGroup.Item>
@@ -375,7 +378,7 @@ function MedicinePage()
                 <Col sm={6}>
                     <span style={{textAlign: "center"}}> <h1>DRUG HISTORY</h1> </span>
                     <DrugLogGrid
-                        drugLog={drugLog}
+                        drugLog={drugLogList}
                         onEdit={(e, r)=> addEditDrugLog(e, r)}
                     />
                 </Col>

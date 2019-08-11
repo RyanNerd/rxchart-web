@@ -6,11 +6,13 @@ import ResidentGrid from './ResidentGrid';
 import ResidentEdit from './ResidentEdit';
 import {FULLNAME} from './../../utility/common';
 import RefreshMedicineList from "../../providers/RefreshMedicineList";
+import RefreshMedicineLog from "../../providers/RefreshMedicineLog";
 
 /**
  * Display Resident Grid
  * Allow user to edit and add Residents
  *
+ * TODO: Update DrugLogList when a resident changes and the resident has meds.
  * @returns {*}
  * @constructor
  */
@@ -96,6 +98,13 @@ export default function ResidentPage()
             // select the first one and make it the active drug.
             if (data && data.length > 0) {
                 setGlobal({activeDrug: data[0]});
+                // Refresh the drugLogList for the new active drug.
+                RefreshMedicineLog(providers.medHistoryProvider, data[0].Id)
+                    .then((data) => setGlobal({drugLogList: data}))
+                    .catch((err) => {
+                        console.log('Error rehydrating drugLogList', err);
+                        alert('Something went wrong');
+                    });
             }
         })
         .catch((err) => setGlobal({medicineList: null}));
