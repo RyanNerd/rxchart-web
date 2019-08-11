@@ -62,4 +62,19 @@ export default class ResidentProvider
             alert('Something went wrong')
         })
     }
+
+    delete(residentId)
+    {
+        return this._frak.delete_(this._baseURL + 'resident/' + residentId + '?api_key=' + this._apiKey)
+        .then((response) => {
+            if (response.success) {
+                return response;
+            } else {
+                throw response;
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+    }
 }

@@ -7,6 +7,7 @@ import ResidentEdit from './ResidentEdit';
 import {FULLNAME} from './../../utility/common';
 import RefreshMedicineList from "../../providers/RefreshMedicineList";
 import RefreshMedicineLog from "../../providers/RefreshMedicineLog";
+import ConfirmationDialog from "../Dialog/ConfirmationDialog";
 
 /**
  * Display Resident Grid
@@ -21,8 +22,13 @@ export default function ResidentPage()
     // Establish initial state
     const [ show, setShow ] = useState(false);
     const [ residentInfo, setResidentInfo ] = useState({Id: null});
+    const [ showDeleteResident, setShowDeleteResident ] = useState(false);
+    const [ residentToDelete, setResidentToDelete ] = useState(null);
+
     const [ activeResident, setActiveResident ] = useGlobal('activeResident');
     const [ providers ] = useGlobal('providers');
+
+    const residentProvider = providers.residentProvider;
 
     /**
      * Fires when user clicks the Edit button
@@ -72,10 +78,11 @@ export default function ResidentPage()
             if (!residentData.Id) {
                 residentData.Id = null;
             }
-            providers.residentProvider.post(residentData)
+
+            residentProvider.post(residentData)
             .then((response) => {
                 setResidentInfo(response);
-                providers.residentProvider.query('*')
+                residentProvider.query('*')
                 .then((data) => {
                     setGlobal({residentList: data});
                     if (activeResident && activeResident.Id === residentData.Id) {
@@ -112,9 +119,39 @@ export default function ResidentPage()
         setGlobal({activeDrug: null});
     }
 
+    /**
+     * Fires when user clicks on resident trash icon
+     *
+     * @param {event} e
+     * @param {object} resident
+     */
     function handleOnDelete(e, resident)
     {
-        alert('Delete: ' + FULLNAME(resident));
+        e.preventDefault();
+        setResidentToDelete(resident);
+        setShowDeleteResident(true);
+    }
+
+    /**
+     * Fires when user confirms to delete resident record
+     */
+    function deleteResident()
+    {
+        // Perform the DELETE API call
+        residentProvider.delete(residentToDelete.Id)
+        .then((response) => {
+            if (response.success) {
+                // If the activeResident is the resident that is being deleted then mark it as no longer active.
+                if (activeResident && activeResident.Id === residentToDelete.Id) {
+                    setActiveResident(null);
+                }
+
+                residentProvider.query('*').then((data) => setGlobal({residentList: data}));
+            } else {
+                console.log('error deleting resident', response);
+                alert('Something went wrong');
+            }
+        });
     }
 
     return (
@@ -152,6 +189,26 @@ export default function ResidentPage()
                 residentInfo={residentInfo}
                 onClose={(r) => handleModalClose(r)}
             />
+
+            {residentToDelete &&
+            <ConfirmationDialog
+                title={"Delete " + FULLNAME(residentToDelete)}
+                body={
+                    <b style={{color: "red"}}>
+                        Are you sure?
+                    </b>
+                }
+                show={showDeleteResident}
+                onAnswer={(a) => {
+                    if (a) {
+                        deleteResident();
+                    } else {
+                        setResidentToDelete(null);
+                    }
+                }}
+                onHide={() => setShowDeleteResident(false)}
+            />
+            }
         </>
     );
 }
