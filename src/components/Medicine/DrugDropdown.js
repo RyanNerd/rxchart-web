@@ -28,8 +28,8 @@ export default function DrugDropdown(props)
     }
 
     // Figure out the display title
-    const drug = activeDrug.Drug.toUpperCase();
-    const strength = activeDrug.Strength ? activeDrug.Strength.toUpperCase() : '';
+    const drug = activeDrug.Drug;
+    const strength = activeDrug.Strength ? activeDrug.Strength : '';
     const title = drug + ' ' + strength;
 
     /**
@@ -39,8 +39,8 @@ export default function DrugDropdown(props)
      * @returns {*}
      */
     const MedicineDropdownItems = (medicine) => {
-        const drug = medicine.Drug.toUpperCase();
-        const strength = medicine.Strength ? medicine.Strength.toUpperCase() : '';
+        const drug = medicine.Drug;
+        const strength = medicine.Strength ? medicine.Strength : '';
         const drugDetail = drug + ' ' + strength;
 
         return (

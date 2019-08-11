@@ -95,7 +95,6 @@ export default function MedicineEdit(props)
                         <Col sm="4">
                             <Form.Control
                                 ref={textInput}
-                                style={{textTransform: "uppercase"}}
                                 type="text"
                                 value={drugInfo.Drug}
                                 name="Drug"

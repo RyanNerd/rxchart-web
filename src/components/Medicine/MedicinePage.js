@@ -28,7 +28,6 @@ import RefreshMedicineLog from "../../providers/RefreshMedicineLog";
  *  - Edit / Delete Existing Medicine
  *  - Drug History Grid
  *
- *  TODO: Make DrugLogList a global
  *  TODO: refresh**** should be single responsibility.
  *
  * @returns {*}
@@ -42,14 +41,15 @@ function MedicinePage()
     const [ showDrugLog, setShowDrugLog ] = useState(false);
     const [ drugInfo, setDrugInfo ] = useState(null);
     const [ drugLogInfo, setDrugLogInfo ] = useState(null);
+    const [ showResidentChangeAlert, setShowResidentChangeAlert ] = useState(false);
 
     const [ activeDrug, setActiveDrug ] = useGlobal('activeDrug');
     const [ medicineList, setMedicineList ] = useGlobal('medicineList');
+    const [ drugLogList, setDrugLogList ] = useGlobal('drugLogList');
     const [ activeResident, setActiveResident ] = useGlobal('activeResident');
     const [ providers ] = useGlobal('providers');
     const [ development ] = useGlobal('development');
-    const [ showResidentChangeAlert, setShowResidentChangeAlert ] = useState(false);
-    const [ drugLogList, setDrugLogList ] = useGlobal('drugLogList');
+
 
     /**
      * Fires on keyPress for the barcode text box
