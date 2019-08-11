@@ -12,7 +12,7 @@ In the base directory where MedTrax Web Client is located run:
 
 `yarn start`
 
-This will start a web page: local:3000
+This will start a web page: `http://localhost:3000`
 
 You will then be prompted to login with a user name and password.
 The username and password is set on MedTrax Back-End.
