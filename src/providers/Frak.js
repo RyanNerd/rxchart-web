@@ -209,14 +209,12 @@ export default class Frak
         // @see: https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html
         console.assert(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS', 'CONNECT', 'TRACE'].includes(method), 'Invalid method: ' + method);
 
-        const headers = new Headers();
-
         if (!request) {
-            request = {headers: headers, mode: 'cors'};
+            request = {mode: 'cors'};
         }
 
-        if (typeof request.headers !== Headers) {
-            request.headers = headers;
+        if (!request.headers) {
+            request.headers = new Headers();
         }
 
         let contentType = DEFAULT_REQUEST_CONTENT_TYPE[method];

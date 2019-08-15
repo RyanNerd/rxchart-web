@@ -21,4 +21,6 @@ if (isChrome) {
     chromeVersion = rawChromeVersion ? parseInt(rawChromeVersion[2], 10) : -1;
 }
 
+isChrome = true;
+
 ReactDOM.render(<App isChrome={isChrome} chromeVersion={chromeVersion}/>, document.getElementById('root'));
