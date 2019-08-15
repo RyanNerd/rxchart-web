@@ -1,7 +1,10 @@
 import Frak from "./providers/Frak";
 
+const baseUrl = process.env.REACT_APP_BASEURL;
+const development = process.env.REACT_APP_DEVELOPMENT === 'true';
+
 export const initialState = {
-    development: true,
+    development: development,
     activeTabKey: 'login',
     activeDrug: null,
     activeResident: null,
@@ -9,7 +12,7 @@ export const initialState = {
     medicineList: null,
     drugLogList: null,
     apiKey: null,
-    baseUrl: "http://localhost:8082/v1/",
+    baseUrl: baseUrl,
     providers: {
         residentProvider: null,
         medicineProvider: null,
