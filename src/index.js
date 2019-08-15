@@ -1,7 +1,8 @@
 import ReactDOM from 'react-dom';
 import React, {setGlobal} from "reactn";
 import App from './App';
-import {initialState} from "./InitialState";
+import {initialState} from "./utility/InitialState";
+import {browserInfo} from "./utility/browserInfo";
 
 setGlobal(initialState)
     .then((initialState) => {
@@ -11,16 +12,6 @@ setGlobal(initialState)
     }
 );
 
-// Are we using the Chrome browser?
-var isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
+const browser = browserInfo();
 
-// What version of Chrome is being used?
-var chromeVersion = null;
-if (isChrome) {
-    const rawChromeVersion = navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
-    chromeVersion = rawChromeVersion ? parseInt(rawChromeVersion[2], 10) : -1;
-}
-
-isChrome = true;
-
-ReactDOM.render(<App isChrome={isChrome} chromeVersion={chromeVersion}/>, document.getElementById('root'));
+ReactDOM.render(<App isChrome={browser.browser === 'Chrome'} chromeVersion={browser.majVersion}/>, document.getElementById('root'));

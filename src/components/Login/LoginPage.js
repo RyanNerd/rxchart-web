@@ -7,7 +7,7 @@ import Row from 'react-bootstrap/Row';
 import TabContent from './../../styles/tab_content.css';
 import ResidentProvider from './../../providers/ResidentProvider';
 import MedicineProvider from './../../providers/MedicineProvider';
-import {initialState} from "../../InitialState";
+import {initialState} from "../../utility/InitialState";
 import MedHistoryProvider from "../../providers/MedHistoryProvider";
 
 /**

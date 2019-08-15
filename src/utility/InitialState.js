@@ -1,4 +1,4 @@
-import Frak from "./providers/Frak";
+import Frak from "../providers/Frak";
 
 const baseUrl = process.env.REACT_APP_BASEURL;
 const development = process.env.REACT_APP_DEVELOPMENT === 'true';

@@ -30,8 +30,8 @@ function App(props)
             (
                 <>
                     {activeResident ? <h2 style={{textAlign: "center"}}><span style={{background:"#edf11e"}}>{FULLNAME(activeResident)}</span></h2> : null}
-                    {props.chromeVersion < 74 &&
-                        <Alert variant="warning">
+                    {props.chromeVersion < 76 &&
+                        <Alert variant="warning" dismissible>
                             Please upgrade your browser. Version {props.chromeVersion} is outdated and may cause issues!
                         </Alert>
                     }
