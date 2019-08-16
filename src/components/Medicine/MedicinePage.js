@@ -182,13 +182,14 @@ function MedicinePage()
             }
 
             providers.medicineProvider.post(drugData)
-            .then((response) => {
+            .then((drugRecord) => {
                 RefreshMedicineList(providers.medicineProvider, drugData.ResidentId)
-                .then((data) => {
-                    setMedicineList(data);
-                    setDrugInfo(response);
-                    setActiveDrug(response).then(()=>console.log('newActiveDrug', activeDrug));
-                    RefreshMedicineLog(providers.medHistoryProvider, response.Id);
+                .then((drugList) => {
+                    setMedicineList(drugList);
+                    setDrugInfo(drugRecord);
+                    setActiveDrug(drugRecord);
+                    RefreshMedicineLog(providers.medHistoryProvider, drugRecord.Id)
+                        .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
                 })
                 .catch((err) => {
                     if (development) {
