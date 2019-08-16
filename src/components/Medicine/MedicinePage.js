@@ -52,6 +52,8 @@ function MedicinePage()
     const [ development ] = useGlobal('development');
 
     const medHistoryProvider = providers.medHistoryProvider;
+    const medicineProvider = providers.medicineProvider;
+    const residentProvider = providers.residentProvider;
 
     /**
      * Fires on keyPress for the barcode text box
@@ -64,7 +66,6 @@ function MedicinePage()
             e.preventDefault();
 
             // Query the Medicine table looking for a matching barcode.
-            const medicineProvider = providers.medicineProvider;
             medicineProvider.query(barcode, 'Barcode')
             .then((response) => {
                 // Did we find a matching barcode?
@@ -77,7 +78,7 @@ function MedicinePage()
                         const drug = response.data[0];
                         setActiveDrug(drug);
                         refreshActiveResident(drug.ResidentId);
-                        RefreshMedicineLog(providers.medHistoryProvider, drug.Id)
+                        RefreshMedicineLog(medHistoryProvider, drug.Id)
                             .then((data) => setDrugLogList(data));
                     } else {
                         alert("Duplicate Barcode -- This shouldn't happen");
@@ -109,7 +110,7 @@ function MedicinePage()
      */
     function refreshActiveResident(residentId)
     {
-        providers.residentProvider.read(residentId)
+        residentProvider.read(residentId)
         .then((residentInfo) =>
         {
             if (activeResident && activeResident.Id !== residentId) {
@@ -118,7 +119,7 @@ function MedicinePage()
 
             setActiveResident(residentInfo);
 
-            RefreshMedicineList(providers.medicineProvider, residentId)
+            RefreshMedicineList(medicineProvider, residentId)
             .then((data) => setMedicineList(data))
             .catch((err) => {
                 if (development) {
@@ -135,6 +136,11 @@ function MedicinePage()
         });
     }
 
+    /**
+     * Fires when a drug is being manually added or edited.
+     *
+     * @param {boolean} isAdd
+     */
     function addEditDrug(isAdd)
     {
         // There are multiple entry states:
@@ -183,14 +189,14 @@ function MedicinePage()
                 drugData.Notes = null;
             }
 
-            providers.medicineProvider.post(drugData)
+            medicineProvider.post(drugData)
             .then((drugRecord) => {
-                RefreshMedicineList(providers.medicineProvider, drugData.ResidentId)
+                RefreshMedicineList(medicineProvider, drugData.ResidentId)
                 .then((drugList) => {
                     setMedicineList(drugList);
                     setDrugInfo(drugRecord);
                     setActiveDrug(drugRecord);
-                    RefreshMedicineLog(providers.medHistoryProvider, drugRecord.Id)
+                    RefreshMedicineLog(medHistoryProvider, drugRecord.Id)
                         .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
                 })
                 .catch((err) => {
@@ -205,12 +211,14 @@ function MedicinePage()
         setShowMedicineEdit(false);
     }
 
+    /**
+     * Fires when the user clicks on the Delete Drug button
+     */
     function deleteDrug() {
-        const medicineProvider = providers.medicineProvider;
         medicineProvider.delete(activeDrug.Id)
         .then((response) => {
             if (response.success) {
-                RefreshMedicineList(providers.medicineProvider, activeDrug.ResidentId)
+                RefreshMedicineList(medicineProvider, activeDrug.ResidentId)
                 .then((data) => {
                     setMedicineList(data);
                     setDrugInfo(null);
@@ -226,16 +234,27 @@ function MedicinePage()
         setShowDeleteDrug(false);
     }
 
+    /**
+     * Fires when the user has confirmed the deletion of a drug log record.
+     *
+     * @param {object} drugLogInfo
+     */
     function deleteDrugLogRecord(drugLogInfo)
     {
         medHistoryProvider.delete(drugLogInfo.Id)
         .then((response) => {
-            RefreshMedicineLog(providers.medHistoryProvider, activeDrug.Id)
+            RefreshMedicineLog(medHistoryProvider, activeDrug.Id)
                 .then((data) => setDrugLogList(data));
-            setShowDeleteDrugLogRecord(false);
         });
+        setShowDeleteDrugLogRecord(false);
     }
 
+    /**
+     * Fires when user clicks on +Log or the drug log edit button
+     *
+     * @param {Event} e
+     * @param {object} drugLogInfo
+     */
     function addEditDrugLog(e, drugLogInfo)
     {
         e.preventDefault();
@@ -244,12 +263,16 @@ function MedicinePage()
         setShowDrugLog(true);
     }
 
+    /**
+     * Fires when the drug log edit modal closes
+     *
+     * @param {object | null} drugLogInfo
+     */
     function handleDrugLogEditClose(drugLogInfo) {
-
         if (drugLogInfo) {
             medHistoryProvider.post(drugLogInfo)
                 .then((response) => {
-                    RefreshMedicineLog(providers.medHistoryProvider, activeDrug.Id)
+                    RefreshMedicineLog(medHistoryProvider, activeDrug.Id)
                         .then((data) => setDrugLogList(data));
                 })
                 .catch((err) => {
@@ -259,7 +282,6 @@ function MedicinePage()
                     alert('something went wrong');
                 });
         }
-
         setShowDrugLog(false);
     }
 
@@ -325,7 +347,7 @@ function MedicinePage()
                                 drugId={activeDrug.Id}
                                 onSelect={(e, drug) => {
                                     setActiveDrug(drug);
-                                    RefreshMedicineLog(providers.medHistoryProvider, drug.Id)
+                                    RefreshMedicineLog(medHistoryProvider, drug.Id)
                                         .then((data) => setDrugLogList(data));
                                 }}
                             />
