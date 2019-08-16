@@ -42,6 +42,7 @@ function MedicinePage()
     const [ drugInfo, setDrugInfo ] = useState(null);
     const [ drugLogInfo, setDrugLogInfo ] = useState(null);
     const [ showResidentChangeAlert, setShowResidentChangeAlert ] = useState(false);
+    const [ showDeleteDrugLogRecord, setShowDeleteDrugLogRecord ] = useState(false);
 
     const [ activeDrug, setActiveDrug ] = useGlobal('activeDrug');
     const [ medicineList, setMedicineList ] = useGlobal('medicineList');
@@ -50,6 +51,7 @@ function MedicinePage()
     const [ providers ] = useGlobal('providers');
     const [ development ] = useGlobal('development');
 
+    const medHistoryProvider = providers.medHistoryProvider;
 
     /**
      * Fires on keyPress for the barcode text box
@@ -224,6 +226,16 @@ function MedicinePage()
         setShowDeleteDrug(false);
     }
 
+    function deleteDrugLogRecord(drugLogInfo)
+    {
+        medHistoryProvider.delete(drugLogInfo.Id)
+        .then((response) => {
+            RefreshMedicineLog(providers.medHistoryProvider, activeDrug.Id)
+                .then((data) => setDrugLogList(data));
+            setShowDeleteDrugLogRecord(false);
+        });
+    }
+
     function addEditDrugLog(e, drugLogInfo)
     {
         e.preventDefault();
@@ -235,8 +247,6 @@ function MedicinePage()
     function handleDrugLogEditClose(drugLogInfo) {
 
         if (drugLogInfo) {
-            const medHistoryProvider = providers.medHistoryProvider;
-
             medHistoryProvider.post(drugLogInfo)
                 .then((response) => {
                     RefreshMedicineLog(providers.medHistoryProvider, activeDrug.Id)
@@ -381,6 +391,7 @@ function MedicinePage()
                     <DrugLogGrid
                         drugLog={drugLogList}
                         onEdit={(e, r)=> addEditDrugLog(e, r)}
+                        onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
                     />
                 </Col>
             </Row>
@@ -413,9 +424,34 @@ function MedicinePage()
                 onAnswer={(a) => {
                     if (a) {
                         deleteDrug();
+                    } else {
+                        showDeleteDrug(false);
                     }
                 }}
                 onHide={() => setShowDeleteDrug(false)}
+            />
+            }
+
+            {activeDrug && activeDrug.Id &&
+            <ConfirmationDialog
+                title={"Delete Log Record"}
+                body={
+                    <>
+                        <p>{showDeleteDrugLogRecord.Created}</p>
+                        <b style={{color: "red"}}>
+                            Are you sure?
+                        </b>
+                    </>
+                }
+                show={showDeleteDrugLogRecord}
+                onAnswer={(a) => {
+                    if (a) {
+                        deleteDrugLogRecord(showDeleteDrugLogRecord);
+                    } else {
+                        setShowDeleteDrugLogRecord(false);
+                    }
+                }}
+                onHide={() => setShowDeleteDrugLogRecord(false)}
             />
             }
 

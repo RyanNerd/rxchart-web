@@ -35,6 +35,18 @@ export default function DrugLogGrid(props)
                 <td>{drug.Created}</td>
                 <td>{drug.Updated}</td>
                 <td>{drug.Notes}</td>
+                {props.onDelete &&
+                <td>
+                    <Button
+                        size="sm"
+                        id={"resident-grid-delete-btn-" + drug.Id}
+                        variant="outline-danger"
+                        onClick={(e) => props.onDelete(e, drug)}
+                    >
+                        <span role="img" aria-label="delete">🗑️</span>
+                    </Button>
+                </td>
+                }
             </tr>
         );
     };
