@@ -5,7 +5,6 @@ const development = process.env.REACT_APP_DEVELOPMENT === 'true';
 
 export const initialState = {
     development: development,
-    activeTabKey: 'login',
     activeDrug: null,
     activeResident: null,
     residentList: null,

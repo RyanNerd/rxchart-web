@@ -1,4 +1,4 @@
-import React, {useGlobal} from 'reactn';
+import React, {useGlobal, useState} from 'reactn';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import LoginPage from './../Login/LoginPage';
@@ -6,34 +6,57 @@ import ResidentPage from "../Resident/ResidentPage";
 import MedicinePage from "../Medicine/MedicinePage";
 
 function LandingPage() {
-    const [ activeTabKey, setActiveTabKey ] = useGlobal('activeTabKey');
-    const [ apiKey ] = useGlobal('apiKey');
+
+    const [ apiKey, setApiKey ] = useGlobal('apiKey');
     const [ activeResident ] = useGlobal('activeResident');
+    const [ development ] = useGlobal('development');
+
+    const [ errorDetails, setErrorDetails ] = useState(null);
+    const [ activeTabKey, setActiveTabKey ] = useState('login');
+
+    function errorOccurred(err)
+    {
+        if (development) {
+            console.error(err);
+            setErrorDetails(err.toString());
+        } else {
+            setErrorDetails('Something went wrong. Pleasen check your internet connection and sign back in.');
+        }
+        setApiKey(null);
+        setActiveTabKey('error');
+    }
 
     return (
         <Tabs
             id="landing-page-tabs"
             activeKey={activeTabKey}
-            onSelect={key => setActiveTabKey(key)}
+            onSelect={(key) => setActiveTabKey(key)}
         >
             <Tab
                 sytle={{marginLeft: "15px"}}
                 eventKey="login"
                 title={apiKey ? "Logout" : "Login"}
             >
-                <LoginPage onLogin={(loggedIn) => {setActiveTabKey(loggedIn ? 'drugs' : 'login')}} />
+                <LoginPage
+                    onLogin={(loggedIn) => {setActiveTabKey(loggedIn ? 'drugs' : 'login')}}
+                    onError={(error) => errorOccurred(error)}
+                />
             </Tab>
             <Tab
                 disabled={apiKey === null}
                 eventKey="drugs"
                 title="Scan">
-                <MedicinePage/>
+                <MedicinePage
+                    onError={(error) => errorOccurred(error)}
+                />
             </Tab>
             <Tab
                 disabled={apiKey === null}
                 eventKey="resident"
                 title="Resident List">
-                <ResidentPage />
+                <ResidentPage
+                    onError={(error) => errorOccurred(error)}
+                />
             </Tab>
             <Tab
                 disabled={apiKey === null || activeResident === null}
@@ -48,6 +71,13 @@ function LandingPage() {
                 title="Manage Drugs"
             >
                 <p>Manage Drugs Placeholder</p>
+            </Tab>
+            <Tab
+                disabled={activeTabKey !== 'error'}
+                eventKey="error"
+                title="Diagnostics"
+            >
+                <p>{errorDetails}</p>
             </Tab>
         </Tabs>
     );

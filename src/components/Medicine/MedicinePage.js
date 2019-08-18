@@ -32,7 +32,7 @@ import RefreshMedicineLog from "../../providers/RefreshMedicineLog";
  *
  * @returns {*}
  */
-function MedicinePage()
+function MedicinePage(props)
 {
     const [ barcode, setBarcode ] = useState('');
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
@@ -80,20 +80,19 @@ function MedicinePage()
                         RefreshMedicineLog(medHistoryProvider, drug.Id)
                             .then((data) => setDrugLogList(data));
                     } else {
-                        alert("Duplicate Barcode -- This shouldn't happen");
+                        const err = new Error("Duplicate Barcode -- This shouldn't happen!");
+                        props.onError(err);
                     }
                 } else {
-                    if (response.status === 404) {
+                    if (!response.status || response.status !== 404) {
+                        props.onError(response);
+                    } else {
                         if (activeResident && activeResident.Id) {
                             // Show Dialog box: Barcode not found. Do you want to add a new drug for {resident}?
                             setShowBarcodeNotFound(true);
                         } else {
                             setShowUnknownBarcode(true);
                         }
-                    } else {
-                        // TODO: Degrade gracefully.
-                        alert('Problem querying medicine');
-                        console.error("He's dead Jim", response);
                     }
                 }
             })

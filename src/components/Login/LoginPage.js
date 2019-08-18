@@ -65,11 +65,7 @@ function LoginPage(props) {
             }
         })
         .catch((err) => {
-            if (development) {
-                console.error(err);
-            }
-
-            alert('something went wrong');
+            props.onError(err);
         });
     }
 
