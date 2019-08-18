@@ -481,7 +481,7 @@ function MedicinePage()
                 title={"Barcode not found"}
                 body={
                     <>
-                        <b style={{color: "red"}}>
+                        <b style={{color: "blue"}}>
                             Do you want to add a new drug?
                         </b>
                     </>
