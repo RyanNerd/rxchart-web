@@ -43,6 +43,7 @@ function MedicinePage()
     const [ drugLogInfo, setDrugLogInfo ] = useState(null);
     const [ showResidentChangeAlert, setShowResidentChangeAlert ] = useState(false);
     const [ showDeleteDrugLogRecord, setShowDeleteDrugLogRecord ] = useState(false);
+    const [ showBarcodeNotFound, setShowBarcodeNotFound ] = useState(false);
 
     const [ activeDrug, setActiveDrug ] = useGlobal('activeDrug');
     const [ medicineList, setMedicineList ] = useGlobal('medicineList');
@@ -72,9 +73,7 @@ function MedicinePage()
                 if (response.success) {
                     // Sanity Check -- Should only be one
                     if (response.data.length === 1) {
-
                         setBarcode('');
-
                         const drug = response.data[0];
                         setActiveDrug(drug);
                         refreshActiveResident(drug.ResidentId);
@@ -86,8 +85,8 @@ function MedicinePage()
                 } else {
                     if (response.status === 404) {
                         if (activeResident && activeResident.Id) {
-                            // TODO: Dialog box: Barcode not found. Do you want to add a new drug for {resident}?
-                            addEditDrug(true);
+                            // Show Dialog box: Barcode not found. Do you want to add a new drug for {resident}?
+                            setShowBarcodeNotFound(true);
                         } else {
                             setShowUnknownBarcode(true);
                         }
@@ -474,6 +473,29 @@ function MedicinePage()
                     }
                 }}
                 onHide={() => setShowDeleteDrugLogRecord(false)}
+            />
+            }
+
+            {showBarcodeNotFound &&
+            <ConfirmationDialog
+                title={"Barcode not found"}
+                body={
+                    <>
+                        <b style={{color: "red"}}>
+                            Do you want to add a new drug?
+                        </b>
+                    </>
+                }
+                show={showBarcodeNotFound}
+                onAnswer={(a) => {
+                    if (a) {
+                        addEditDrug(true);
+                        setShowBarcodeNotFound(false);
+                    } else {
+                        setShowBarcodeNotFound(false);
+                    }
+                }}
+                onHide={() => setShowBarcodeNotFound(false)}
             />
             }
 
