@@ -120,17 +120,11 @@ function MedicinePage(props)
             RefreshMedicineList(medicineProvider, residentId)
             .then((data) => setMedicineList(data))
             .catch((err) => {
-                if (development) {
-                    console.log('MedicineList rehydrate error', err);
-                }
-                alert('something went wrong');
+                props.onError(err);
             });
         })
         .catch((err) => {
-            if (development) {
-                console.log('residentProvider.read error', err);
-            }
-            alert('something went wrong');
+            props.onError(err);
         });
     }
 
@@ -198,10 +192,7 @@ function MedicinePage(props)
                         .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
                 })
                 .catch((err) => {
-                    if (development) {
-                        console.log('MedicineList rehydrate error', err);
-                    }
-                    alert('something went wrong');
+                    props.onError(err);
                 });
             });
         }
@@ -274,10 +265,7 @@ function MedicinePage(props)
                         .then((data) => setDrugLogList(data));
                 })
                 .catch((err) => {
-                    if (development) {
-                        console.log('Error inserting medHistory', err);
-                    }
-                    alert('something went wrong');
+                    props.onError(err);
                 });
         }
         setShowDrugLog(false);
