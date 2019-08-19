@@ -50,7 +50,6 @@ function MedicinePage(props)
     const [ drugLogList, setDrugLogList ] = useGlobal('drugLogList');
     const [ activeResident, setActiveResident ] = useGlobal('activeResident');
     const [ providers ] = useGlobal('providers');
-    const [ development ] = useGlobal('development');
 
     const medHistoryProvider = providers.medHistoryProvider;
     const medicineProvider = providers.medicineProvider;
@@ -70,7 +69,7 @@ function MedicinePage(props)
             medicineProvider.query(barcode, 'Barcode')
             .then((response) => {
                 // Did we find a matching barcode?
-                if (response.success) {
+                if (response && response.success) {
                     // Sanity Check -- Should only be one
                     if (response.data.length === 1) {
                         setBarcode('');
@@ -84,7 +83,7 @@ function MedicinePage(props)
                         props.onError(err);
                     }
                 } else {
-                    if (!response.status || response.status !== 404) {
+                    if (!response || !response.status || response.status !== 404) {
                         props.onError(response);
                     } else {
                         if (activeResident && activeResident.Id) {
@@ -215,8 +214,7 @@ function MedicinePage(props)
                     setDrugLogList(null);
                 });
             } else {
-                console.log('error', response);
-                alert('Something went wrong');
+                props.onError(response);
             }
         });
 

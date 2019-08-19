@@ -17,10 +17,14 @@ function LandingPage() {
     function errorOccurred(err)
     {
         if (development) {
-            console.error(err);
-            setErrorDetails(err.toString());
+            console.error('Error', err);
+            if (err) {
+                setErrorDetails(err.toString());
+            } else {
+                setErrorDetails('Unknown Error');
+            }
         } else {
-            setErrorDetails('Something went wrong. Pleasen check your internet connection and sign back in.');
+            setErrorDetails('Something went wrong. Please check your internet connection and sign back in.');
         }
         setApiKey(null);
         setActiveTabKey('error');

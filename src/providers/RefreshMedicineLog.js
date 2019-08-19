@@ -14,8 +14,6 @@ export default function RefreshMedicineLog(medHistoryProvider, drugId)
                 }
             })
             .catch((err) => {
-                console.log(err);
-                alert('something went wrong');
                 return err;
             });
 }

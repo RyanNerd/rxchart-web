@@ -98,8 +98,7 @@ export default class MedicineProvider
             }
         })
         .catch((err) => {
-            console.log(err);
-            alert('Something went wrong')
+           return err;
         });
     }
 

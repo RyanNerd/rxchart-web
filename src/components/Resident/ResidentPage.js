@@ -17,7 +17,7 @@ import ConfirmationDialog from "../Dialog/ConfirmationDialog";
  * @returns {*}
  * @constructor
  */
-export default function ResidentPage()
+export default function ResidentPage(props)
 {
     // Establish initial state
     const [ show, setShow ] = useState(false);
@@ -88,8 +88,10 @@ export default function ResidentPage()
                     if (activeResident && activeResident.Id === residentData.Id) {
                         setActiveResident(residentData);
                     }
-                });
-            });
+                })
+                .catch((err) => props.onError(err));
+            })
+            .catch((err) => props.onError(err));
         }
 
         setShow(false);
@@ -108,10 +110,7 @@ export default function ResidentPage()
                 // Refresh the drugLogList for the new active drug.
                 RefreshMedicineLog(providers.medHistoryProvider, data[0].Id)
                     .then((data) => setGlobal({drugLogList: data}))
-                    .catch((err) => {
-                        console.log('Error rehydrating drugLogList', err);
-                        alert('Something went wrong');
-                    });
+                    .catch((err) => props.onError(err));
             }
         })
         .catch((err) => setGlobal({medicineList: null}));
@@ -148,8 +147,7 @@ export default function ResidentPage()
 
                 residentProvider.query('*').then((data) => setGlobal({residentList: data}));
             } else {
-                console.log('error deleting resident', response);
-                alert('Something went wrong');
+                props.onError(response);
             }
         });
     }

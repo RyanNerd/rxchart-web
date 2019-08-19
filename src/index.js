@@ -6,9 +6,13 @@ import {browserInfo} from "./utility/browserInfo";
 
 setGlobal(initialState)
     .then((initialState) => {
-        console.log('MedTrax Started', initialState);
+        if (initialState.development) {
+            console.log('MedTrax Started', initialState);
+        } else {
+            console.log('MedTrax Started');
+        }
     }).catch((err) => {
-        console.error('Something went wrong', err);
+        console.log('Something went wrong', err);
     }
 );
 

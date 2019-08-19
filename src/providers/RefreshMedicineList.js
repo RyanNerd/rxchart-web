@@ -21,8 +21,6 @@ export default function RefreshMedicineList(medicineProvider, residentId)
         }
     })
     .catch((err) => {
-        console.log(err);
-        alert('something went wrong');
         return err;
     });
 }

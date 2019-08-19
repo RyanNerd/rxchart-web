@@ -50,7 +50,9 @@ function LoginPage(props) {
 
                     // Load ALL Resident records up front and save them in the global store.
                     if (residentList === null) {
-                        providers.residentProvider.query('*').then((data) => setResidentList(data));
+                        providers.residentProvider.query('*')
+                        .then((data) => setResidentList(data))
+                        .catch((err) => props.onError(err));
                     }
 
                     // Let the parent component know we are logged in successfully

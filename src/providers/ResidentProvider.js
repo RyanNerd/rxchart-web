@@ -86,8 +86,7 @@ export default class ResidentProvider
             }
         })
         .catch((err) => {
-            console.log(err);
-            alert('Something went wrong')
+            return err;
         })
     }
 

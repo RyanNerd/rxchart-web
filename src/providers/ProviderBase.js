@@ -99,8 +99,7 @@ export default class ProviderBase
                 }
             })
             .catch((err) => {
-                console.log(err);
-                alert('Something went wrong')
+                return err;
             });
     }
 
