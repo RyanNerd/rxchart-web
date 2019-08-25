@@ -5,17 +5,17 @@ import LoginPage from './../Login/LoginPage';
 import ResidentPage from "../Resident/ResidentPage";
 import MedicinePage from "../Medicine/MedicinePage";
 import DrugHistoryGrid from "../DrugHistory/DrugHistoryGrid";
-import Button from "react-bootstrap/Button";
 
 function LandingPage()
 {
     const [ apiKey, setApiKey ] = useGlobal('apiKey');
     const [ activeResident ] = useGlobal('activeResident');
     const [ development ] = useGlobal('development');
+    const [ drugLogList ] = useGlobal('drugLogList');
+    const [ medicineList ] = useGlobal('medicineList');
 
     const [ errorDetails, setErrorDetails ] = useState(null);
     const [ activeTabKey, setActiveTabKey ] = useState('login');
-    const [ showDemo, setShowDemo ] = useState(false);
 
     function errorOccurred(err)
     {
@@ -70,15 +70,11 @@ function LandingPage()
                 eventKey="history"
                 title="Drug History"
             >
-                <Button onClick={()=>setShowDemo(true)}>
-                    launch
-                </Button>
-
-                {showDemo &&
-                    <>
-                        <DrugHistoryGrid/>
-                    </>
-                }
+                <DrugHistoryGrid
+                    drugLogList={drugLogList}
+                    medicineList={medicineList}
+                    drugId={null}
+                />
             </Tab>
             <Tab
                 disabled={apiKey === null || activeResident === null}

@@ -10,6 +10,7 @@ import Table from 'react-bootstrap/Table';
  *                 props.onEdit {cb}
  *                 props.onDelete {cb}
  *                 props.drugId {number}
+ *                 props.medicineList {array<object>}
  * @returns {null|*}
  */
 export default function DrugLogGrid(props)
@@ -21,6 +22,22 @@ export default function DrugLogGrid(props)
     const drugList = props.drugLog;
     const drugId = props.drugId;
     const filteredDrugs = drugId && drugList ? drugList.filter(drug => drug.MedicineId === drugId) : drugList;
+    const medicineList = props.medicineList;
+
+    /**
+     * Return the name of the drug given the Id of the drug
+     *
+     * @param drugId
+     * @returns {string|null}
+     */
+    function drugNameLookup(drugId)
+    {
+        const medicine =  medicineList.filter(drug => drug.Id === drugId);
+        if (medicine.length === 1) {
+            return medicine[0].Drug;
+        }
+        return null;
+    }
 
     const DrugRow = (drug) => {
         return (
@@ -37,6 +54,11 @@ export default function DrugLogGrid(props)
                         >
                             Edit
                         </Button>
+                    </td>
+                }
+                {medicineList &&
+                    <td>
+                        {drugNameLookup(drug.MedicineId)}
                     </td>
                 }
                 <td>{drug.Created}</td>
@@ -64,6 +86,11 @@ export default function DrugLogGrid(props)
             <tr>
                 {props.onEdit &&
                     <th> </th>
+                }
+                {medicineList &&
+                    <th>
+                        Drug
+                    </th>
                 }
                 <th>
                     <span>Created</span>

@@ -1,14 +1,23 @@
 import React from 'reactn';
-import Button from "react-bootstrap/Button";
-import NewWindow from "react-new-window";
+import DrugLogGrid from "../DrugLog/DrugLogGrid";
 
-export default function DrugHistoryGrid()
+/**
+ * @param props
+ * @returns {null|*}
+ */
+export default function DrugHistoryGrid(props)
 {
+    if (!props.drugLogList) {
+        return null;
+    }
+
     return (
-        <NewWindow>
-            <Button onClick={()=> window.open("https://google.com", "_blank")}>
-                Launch Google
-            </Button>
-        </NewWindow>
+        <>
+            <DrugLogGrid
+                drugLog={props.drugLogList}
+                medicineList={props.medicineList}
+                drugId={null}
+            />
+        </>
     );
 }
