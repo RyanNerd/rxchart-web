@@ -17,7 +17,6 @@ import InformationDialog from "../Dialog/InformationDialog";
 import DrugLogGrid from "../DrugLog/DrugLogGrid";
 import DrugLogEdit from "../DrugLog/DrugLogEdit";
 import RefreshMedicineLog from "../../providers/RefreshMedicineLog";
-import RefreshDrugHistory from "../../providers/RefreshDrugHistory";
 
 /**
  * MedicinePage
@@ -77,7 +76,7 @@ function MedicinePage(props)
                         const drug = response.data[0];
                         setActiveDrug(drug);
                         refreshActiveResident(drug.ResidentId);
-                        RefreshMedicineLog(medHistoryProvider, drug.Id)
+                        RefreshMedicineLog(medHistoryProvider, 'ResidentId', drug.ResidentId)
                             .then((data) => setDrugLogList(data));
                     } else {
                         const err = new Error("Duplicate Barcode -- This shouldn't happen!");
@@ -188,7 +187,7 @@ function MedicinePage(props)
                     setMedicineList(drugList);
                     setDrugInfo(drugRecord);
                     setActiveDrug(drugRecord);
-                    RefreshMedicineLog(medHistoryProvider, drugRecord.Id)
+                    RefreshMedicineLog(medHistoryProvider, 'ResidentId', drugData.ResidentId)
                         .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
                 })
                 .catch((err) => {
@@ -231,7 +230,7 @@ function MedicinePage(props)
     {
         medHistoryProvider.delete(drugLogInfo.Id)
         .then((response) => {
-            RefreshMedicineLog(medHistoryProvider, activeDrug.Id)
+            RefreshMedicineLog(medHistoryProvider, 'ResidentId', activeDrug.ResidentId)
                 .then((data) => setDrugLogList(data));
         });
         setShowDeleteDrugLogRecord(false);
@@ -260,7 +259,7 @@ function MedicinePage(props)
         if (drugLogInfo) {
             medHistoryProvider.post(drugLogInfo)
                 .then((response) => {
-                    RefreshMedicineLog(medHistoryProvider, activeDrug.Id)
+                    RefreshMedicineLog(medHistoryProvider, 'ResidentId', activeDrug.ResidentId)
                         .then((data) => setDrugLogList(data));
                 })
                 .catch((err) => {
@@ -332,7 +331,7 @@ function MedicinePage(props)
                                 drugId={activeDrug.Id}
                                 onSelect={(e, drug) => {
                                     setActiveDrug(drug);
-                                    RefreshMedicineLog(medHistoryProvider, drug.Id)
+                                    RefreshMedicineLog(medHistoryProvider, 'ResidentId', drug.ResidentId)
                                         .then((data) => setDrugLogList(data));
                                 }}
                             />
@@ -397,6 +396,7 @@ function MedicinePage(props)
                     <span style={{textAlign: "center"}}> <h1>DRUG HISTORY</h1> </span>
                     <DrugLogGrid
                         drugLog={drugLogList}
+                        drugId={activeDrug && activeDrug.Id}
                         onEdit={(e, r)=> addEditDrugLog(e, r)}
                         onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
                     />

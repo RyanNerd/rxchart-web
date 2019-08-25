@@ -108,7 +108,7 @@ export default function ResidentPage(props)
             if (data && data.length > 0) {
                 setGlobal({activeDrug: data[0]});
                 // Refresh the drugLogList for the new active drug.
-                RefreshMedicineLog(providers.medHistoryProvider, data[0].Id)
+                RefreshMedicineLog(providers.medHistoryProvider, 'ResidentId', data[0].ResidentId)
                     .then((data) => setGlobal({drugLogList: data}))
                     .catch((err) => props.onError(err));
             }

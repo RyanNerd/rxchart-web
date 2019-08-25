@@ -14,6 +14,8 @@ export default function DrugLogGrid(props)
     }
 
     const drugList = props.drugLog;
+    const drugId = props.drugId;
+    const filteredDrugs = drugId && drugList ? drugList.filter(drug => drug.MedicineId === drugId) : drugList;
 
     const DrugRow = (drug) => {
         return (
@@ -70,7 +72,7 @@ export default function DrugLogGrid(props)
             </tr>
             </thead>
             <tbody>
-                {drugList && drugList.length && drugList.map(DrugRow)}
+                {drugList && drugList.length && filteredDrugs.map(DrugRow)}
             </tbody>
         </Table>
     );

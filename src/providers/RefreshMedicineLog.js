@@ -1,15 +1,14 @@
-export default function RefreshMedicineLog(medHistoryProvider, drugId)
+export default function RefreshMedicineLog(medHistoryProvider, columnName, id)
 {
-    return medHistoryProvider.query(drugId, 'MedicineId')
+    return medHistoryProvider.query(id, columnName)
             .then((response) => {
                 if (response.success) {
                     return response.data;
                 } else {
                     if (response.status === 404) {
                         return null;
-                    } else {
-                        throw response;
                     }
+                    throw response;
                 }
             })
             .catch((err) => {
