@@ -4,7 +4,12 @@ import Table from 'react-bootstrap/Table';
 
 /**
  * DrugLogGrid
- * @param {object} props -- props.drugLog & props.onEdit
+ *
+ * @param {object} props
+ *                 props.drugLog {array<object>}
+ *                 props.onEdit {cb}
+ *                 props.onDelete {cb}
+ *                 props.drugId {number}
  * @returns {null|*}
  */
 export default function DrugLogGrid(props)
@@ -69,6 +74,9 @@ export default function DrugLogGrid(props)
                 <th>
                     <span>Amount Taken/Notes</span>
                 </th>
+                {props.onDelete &&
+                    <th> </th>
+                }
             </tr>
             </thead>
             <tbody>
