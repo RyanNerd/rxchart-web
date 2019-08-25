@@ -17,6 +17,7 @@ import InformationDialog from "../Dialog/InformationDialog";
 import DrugLogGrid from "../DrugLog/DrugLogGrid";
 import DrugLogEdit from "../DrugLog/DrugLogEdit";
 import RefreshMedicineLog from "../../providers/RefreshMedicineLog";
+import RefreshDrugHistory from "../../providers/RefreshDrugHistory";
 
 /**
  * MedicinePage
