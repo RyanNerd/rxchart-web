@@ -39,7 +39,23 @@ export default function DrugLogGrid(props)
         return null;
     }
 
-    const DrugRow = (drug) => {
+    function drugStrengthLookup(drugId)
+    {
+        const medicine =  medicineList.filter(drug => drug.Id === drugId);
+        if (medicine.length === 1) {
+            return medicine[0].Strength;
+        }
+        return null;
+    }
+
+    /**
+     * Child component for the table for each drug that has been logged.
+     *
+     * @param {object} drug
+     * @returns {*}
+     */
+    const DrugRow = (drug) =>
+    {
         return (
             <tr
                 key={'druglog-grid-row-' + drug.Id}
@@ -58,7 +74,8 @@ export default function DrugLogGrid(props)
                 }
                 {medicineList &&
                     <td>
-                        {drugNameLookup(drug.MedicineId)}
+                        <span>{drugNameLookup(drug.MedicineId)}</span>
+                        <p style={{lineHeight: "1.5em"}}>{drugStrengthLookup(drug.MedicineId)}</p>
                     </td>
                 }
                 <td>{drug.Created}</td>

@@ -4,15 +4,13 @@ import Tab from 'react-bootstrap/Tab';
 import LoginPage from './../Login/LoginPage';
 import ResidentPage from "../Resident/ResidentPage";
 import MedicinePage from "../Medicine/MedicinePage";
-import DrugHistoryGrid from "../DrugHistory/DrugHistoryGrid";
+import DrugHistoryPage from "../DrugHistory/DrugHistoryPage";
 
 function LandingPage()
 {
     const [ apiKey, setApiKey ] = useGlobal('apiKey');
     const [ activeResident ] = useGlobal('activeResident');
     const [ development ] = useGlobal('development');
-    const [ drugLogList ] = useGlobal('drugLogList');
-    const [ medicineList ] = useGlobal('medicineList');
 
     const [ errorDetails, setErrorDetails ] = useState(null);
     const [ activeTabKey, setActiveTabKey ] = useState('login');
@@ -70,11 +68,7 @@ function LandingPage()
                 eventKey="history"
                 title="Drug History"
             >
-                <DrugHistoryGrid
-                    drugLogList={drugLogList}
-                    medicineList={medicineList}
-                    drugId={null}
-                />
+                <DrugHistoryPage/>
             </Tab>
             <Tab
                 disabled={apiKey === null || activeResident === null}
