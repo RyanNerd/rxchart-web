@@ -393,7 +393,7 @@ function MedicinePage(props)
                 </Col>
 
                 <Col sm={6}>
-                    <span style={{textAlign: "center"}}> <h1>DRUG HISTORY</h1> </span>
+                    <span style={{textAlign: "center"}}> <h1>{activeDrug.Drug} History</h1> </span>
                     <DrugLogGrid
                         drugLog={drugLogList}
                         drugId={activeDrug && activeDrug.Id}

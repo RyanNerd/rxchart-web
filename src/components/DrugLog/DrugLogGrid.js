@@ -25,26 +25,19 @@ export default function DrugLogGrid(props)
     const medicineList = props.medicineList;
 
     /**
-     * Return the name of the drug given the Id of the drug
+     * Returns the value of the drug column for the given drugId
      *
-     * @param drugId
-     * @returns {string|null}
+     * @param {number} drugId
+     * @param {string} columnName
+     * @returns {null|*}
      */
-    function drugNameLookup(drugId)
+    function drugColumnLookup(drugId, columnName)
     {
         const medicine =  medicineList.filter(drug => drug.Id === drugId);
         if (medicine.length === 1) {
-            return medicine[0].Drug;
-        }
-        return null;
-    }
-
-    function drugStrengthLookup(drugId)
-    {
-        const medicine =  medicineList.filter(drug => drug.Id === drugId);
-        if (medicine.length === 1) {
-            return medicine[0].Strength;
-        }
+            const drug = medicine[0];
+            return drug[columnName];
+           }
         return null;
     }
 
@@ -74,8 +67,8 @@ export default function DrugLogGrid(props)
                 }
                 {medicineList &&
                     <td>
-                        <span>{drugNameLookup(drug.MedicineId)}</span>
-                        <p style={{lineHeight: "1.5em"}}>{drugStrengthLookup(drug.MedicineId)}</p>
+                        <span><b>{drugColumnLookup(drug.MedicineId, 'Drug')}</b></span> <span>{drugColumnLookup(drug.MedicineId, 'Strength')}</span>
+                        <p>{drugColumnLookup(drug.MedicineId, 'Notes')}</p>
                     </td>
                 }
                 <td>{drug.Created}</td>
@@ -98,7 +91,13 @@ export default function DrugLogGrid(props)
     };
 
     return (
-        <Table striped bordered hover size="sm">
+        <Table
+            striped
+            bordered
+            hover
+            size="sm"
+            style={{tableLayout: "fixed", wordWrap: "break-word"}}
+        >
             <thead>
             <tr>
                 {props.onEdit &&
