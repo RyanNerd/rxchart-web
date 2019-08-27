@@ -5,6 +5,7 @@ import LoginPage from './../Login/LoginPage';
 import ResidentPage from "../Resident/ResidentPage";
 import MedicinePage from "../Medicine/MedicinePage";
 import DrugHistoryPage from "../DrugHistory/DrugHistoryPage";
+import ManageDrugPage from "../ManageDrugs/ManageDrugPage";
 
 function LandingPage()
 {
@@ -75,7 +76,7 @@ function LandingPage()
                 eventKey="manage"
                 title="Manage Drugs"
             >
-                <p>Manage Drugs Placeholder</p>
+                <ManageDrugPage/>
             </Tab>
             <Tab
                 disabled={activeTabKey !== 'error'}
