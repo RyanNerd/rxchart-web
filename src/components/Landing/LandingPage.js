@@ -76,7 +76,9 @@ function LandingPage()
                 eventKey="manage"
                 title="Manage Drugs"
             >
-                <ManageDrugPage/>
+                <ManageDrugPage
+                    onError={(error) => errorOccurred(error)}
+                />
             </Tab>
             <Tab
                 disabled={activeTabKey !== 'error'}

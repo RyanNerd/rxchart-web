@@ -1,7 +1,5 @@
 import React, {useGlobal, useState} from 'reactn';
 import ListGroup from 'react-bootstrap/ListGroup';
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Tooltip from 'react-bootstrap/Tooltip';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -17,6 +15,7 @@ import InformationDialog from "../Dialog/InformationDialog";
 import DrugLogGrid from "../DrugLog/DrugLogGrid";
 import DrugLogEdit from "../DrugLog/DrugLogEdit";
 import RefreshMedicineLog from "../../providers/RefreshMedicineLog";
+import AddNewMedicineButton from "../ManageDrugs/AddNewMedicineButton";
 
 /**
  * MedicinePage
@@ -130,10 +129,13 @@ function MedicinePage(props)
     /**
      * Fires when a drug is being manually added or edited.
      *
+     * @param {Event} e
      * @param {boolean} isAdd
      */
-    function addEditDrug(isAdd)
+    function addEditDrug(e, isAdd)
     {
+        e.preventDefault();
+
         // There are multiple entry states:
         // 1. Barcode gave not found error AND there is an activeResident (add)
         // 2. User clicked the Add New Medicine button AND there is an activeResident (add)
@@ -299,23 +301,9 @@ function MedicinePage(props)
                     </Col>
                     <Col sm="2">
                         {activeResident && activeResident.Id &&
-                            <OverlayTrigger
-                                key="new-drug"
-                                placement="right"
-                                overlay={
-                                    <Tooltip id="add-new-drug-tooltip">
-                                        Manually Add New Drug for Resident
-                                    </Tooltip>
-                                }
-                            >
-                                <Button
-                                    size="sm"
-                                    variant="info"
-                                    onClick={() => addEditDrug(true)}
-                                >
-                                    + Drug
-                                </Button>
-                            </OverlayTrigger>
+                            <AddNewMedicineButton
+                                onClick={(e) => addEditDrug(e, true)}
+                            />
                         }
                     </Col>
                 </Form.Group>
@@ -356,7 +344,7 @@ function MedicinePage(props)
                                 className="mr-3"
                                 size="sm"
                                 variant="info"
-                                onClick={() => addEditDrug(false)}
+                                onClick={(e) => addEditDrug(e, false)}
                             >
                                 Edit Drug
                             </Button>

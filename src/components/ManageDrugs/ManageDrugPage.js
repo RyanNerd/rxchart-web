@@ -3,14 +3,18 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import MedicineEdit from "../Medicine/MedicineEdit";
 import ConfirmationDialog from "../Dialog/ConfirmationDialog";
+import RefreshMedicineList from "../../providers/RefreshMedicineList";
+import AddNewMedicineButton from "./AddNewMedicineButton";
 
 /**
  *
  * @returns {null|*}
  */
-export default function ManageDrugPage()
+export default function ManageDrugPage(props)
 {
-    const [ medicineList ] = useGlobal('medicineList');
+    const [ medicineList, setMedicineList ] = useGlobal('medicineList');
+    const [ providers ] = useGlobal('providers');
+    const medicineProvider = providers.medicineProvider;
 
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDeleteMedicine, setShowDeleteMedicine ] = useState(false);
@@ -28,12 +32,28 @@ export default function ManageDrugPage()
         setShowMedicineEdit(true);
     }
 
-    function handleMedicineEditModalClose(r)
-    {
-        if (r) {
-            alert(r);
-        } else {
-            alert('cancel');
+    function handleMedicineEditModalClose(drugInfo) {
+        if (drugInfo) {
+            const drugData = {...drugInfo};
+
+            if (!drugData.Id) {
+                drugData.Id = null;
+            }
+
+            if (drugData.Notes === '') {
+                drugData.Notes = null;
+            }
+
+            medicineProvider.post(drugData)
+            .then((drugRecord) => {
+                RefreshMedicineList(medicineProvider, drugData.ResidentId)
+                .then((drugList) => {
+                    setMedicineList(drugList);
+                })
+                .catch((err) => {
+                    props.onError(err);
+                });
+            });
         }
     }
 
@@ -41,16 +61,17 @@ export default function ManageDrugPage()
     {
         e.preventDefault();
         setMedicineInfo({...medicine});
-        setShowDeleteMedicine(true);
+         setShowDeleteMedicine(true);
     }
 
     function deleteMedicine()
     {
         setShowDeleteMedicine(false);
+        // TODO: Do the actual delete and update.
         alert(medicineInfo.Drug + ' deleted');
     }
 
-    const MedicineDetail = item => {
+    const MedicineDetail = (item) => {
         return (
             <tr
                 key={'medicine-grid-row-' + item.Id}
@@ -75,7 +96,7 @@ export default function ManageDrugPage()
                         size="sm"
                         id={"medicine-grid-delete-btn-" + item.Id}
                         variant="outline-danger"
-                        onClick={(e, item) => onDelete(e, item)}
+                        onClick={(e) => onDelete(e, item)}
                     >
                         <span role="img" aria-label="delete">🗑️</span>
                     </Button>
@@ -86,6 +107,9 @@ export default function ManageDrugPage()
 
     return (
         <>
+            <AddNewMedicineButton
+                onClick={(e) => onEdit(e, {Id: null})}
+            />
             <Table
                 striped
                 bordered
@@ -118,15 +142,17 @@ export default function ManageDrugPage()
                 </tbody>
             </Table>
 
-            {/* MedicineEdit Modal*/}
-            <MedicineEdit
-                show={showMedicineEdit}
-                onHide={() => setShowMedicineEdit(!showMedicineEdit)}
-                onClose={(r) => handleMedicineEditModalClose(r)}
-                drugInfo={medicineInfo}
-            />
+            {showMedicineEdit &&
+                /* MedicineEdit Modal */
+                <MedicineEdit
+                    show={showMedicineEdit}
+                    onHide={() => setShowMedicineEdit(!showMedicineEdit)}
+                    onClose={(r) => handleMedicineEditModalClose(r)}
+                    drugInfo={medicineInfo}
+                />
+            }
 
-            {medicineInfo &&
+            {medicineInfo && showDeleteMedicine &&
             <ConfirmationDialog
                 title={"Delete " + medicineInfo.Drug}
                 body={
