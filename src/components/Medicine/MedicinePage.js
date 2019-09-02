@@ -134,7 +134,9 @@ function MedicinePage(props)
      */
     function addEditDrug(e, isAdd)
     {
-        e.preventDefault();
+        if (e) {
+            e.preventDefault();
+        }
 
         // There are multiple entry states:
         // 1. Barcode gave not found error AND there is an activeResident (add)
@@ -391,7 +393,7 @@ function MedicinePage(props)
                     </ListGroup>
                 </Col>
 
-                <Col sm={6}>
+                <Col sm={8}>
                     <span style={{textAlign: "center"}}> <h1>{activeDrug.Drug} History</h1> </span>
                     <DrugLogGrid
                         drugLog={drugLogList}
@@ -474,7 +476,7 @@ function MedicinePage(props)
                 show={showBarcodeNotFound}
                 onAnswer={(a) => {
                     if (a) {
-                        addEditDrug(true);
+                        addEditDrug(null, true);
                         setShowBarcodeNotFound(false);
                     } else {
                         setShowBarcodeNotFound(false);

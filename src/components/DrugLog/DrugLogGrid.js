@@ -115,7 +115,7 @@ export default function DrugLogGrid(props)
                     <span>Updated</span>
                 </th>
                 <th>
-                    <span>Amount Taken/Notes</span>
+                    <span>Amount</span>
                 </th>
                 {props.onDelete &&
                     <th> </th>
