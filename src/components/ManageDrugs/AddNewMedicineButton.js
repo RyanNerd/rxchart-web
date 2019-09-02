@@ -8,7 +8,7 @@ export default function AddNewMedicineButton(props)
     return (
         <OverlayTrigger
             key="new-drug"
-            placement="right"
+            placement="top"
             overlay={
                 <Tooltip id="add-new-drug-tooltip">
                     Manually Add New Medicine

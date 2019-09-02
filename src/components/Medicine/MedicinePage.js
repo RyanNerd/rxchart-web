@@ -299,11 +299,41 @@ function MedicinePage(props)
                             onChange={(e) => setBarcode(e.target.value)}
                         />
                     </Col>
-                    <Col sm="2">
+                    <Col sm="9">
                         {activeResident && activeResident.Id &&
+                            <>
                             <AddNewMedicineButton
                                 onClick={(e) => addEditDrug(e, true)}
                             />
+
+                            {activeDrug &&
+                                <>
+                                <Button
+                                    className="ml-1"
+                                    size="sm"
+                                    variant="info"
+                                    onClick={(e) => addEditDrug(e, false)}
+                                >
+                                    Edit Medicine
+                                </Button>
+
+                                <Button
+                                    className="ml-1"
+                                    size="sm"
+                                    variant="outline-danger"
+                                    onClick={() => setShowDeleteDrug(true)}
+                                >
+                                    <span
+                                        className="ml-1"
+                                        role="img"
+                                        aria-label="delete"
+                                    >
+                                        🗑️ Delete Medicine
+                                    </span>
+                                </Button>
+                            </>
+                            }
+                        </>
                         }
                     </Col>
                 </Form.Group>
@@ -324,7 +354,6 @@ function MedicinePage(props)
                                 }}
                             />
                         </ListGroup.Item>
-
                         <ListGroup.Item>
                             <Button
                                 className="mr-2"
@@ -339,25 +368,7 @@ function MedicinePage(props)
                             >
                                 + Log Drug
                             </Button>
-
-                            <Button
-                                className="mr-3"
-                                size="sm"
-                                variant="info"
-                                onClick={(e) => addEditDrug(e, false)}
-                            >
-                                Edit Drug
-                            </Button>
-
-                            <Button
-                                size="sm"
-                                variant="outline-danger"
-                                onClick={() => setShowDeleteDrug(true)}
-                            >
-                                <span role="img" aria-label="delete">🗑️ Delete Drug</span>
-                            </Button>
                         </ListGroup.Item>
-
                         <ListGroup.Item>
                             <b>Directions</b>
                         </ListGroup.Item>
