@@ -156,7 +156,7 @@ export default function ResidentPage(props)
         <>
             <OverlayTrigger
                 key="add"
-                placement="top"
+                placement="right"
                 overlay={
                     <Tooltip id="add-resident-tooltip">
                         Add New Resident
@@ -168,7 +168,7 @@ export default function ResidentPage(props)
                     variant="info"
                     onClick={(e) => handleAdd(e)}
                 >
-                    +
+                    + Resident
                 </Button>
             </OverlayTrigger>
 

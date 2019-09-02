@@ -11,16 +11,16 @@ export default function AddNewMedicineButton(props)
             placement="right"
             overlay={
                 <Tooltip id="add-new-drug-tooltip">
-                    Manually Add New Drug for Resident
+                    Manually Add New Medicine
                 </Tooltip>
             }
         >
             <Button
+                {...props}
                 size="sm"
                 variant="info"
-                onClick={(e) => props.onClick(e)}
             >
-                + Drug
+                + Medicine
             </Button>
         </OverlayTrigger>
     );

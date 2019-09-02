@@ -1,4 +1,3 @@
-import Alert from 'react-bootstrap/Alert';
 import LandingPage from "./components/Landing/LandingPage";
 import React, {useGlobal} from 'reactn';
 import {FULLNAME} from "./utility/common";
@@ -14,31 +13,12 @@ function App(props)
 {
     const [ activeResident ] = useGlobal('activeResident');
 
-    /**
-     * JSX to display if user is not using Chrome
-     */
-    const notChrome = (
+    return (
         <>
-            <h1 style={{textAlign: "center"}}>
-                You must use the Chrome browser. No other browser is supported!
-            </h1>
+            {activeResident ? <h2 style={{textAlign: "center"}}><span style={{background:"#edf11e"}}>{FULLNAME(activeResident)}</span></h2> : null}
+            <LandingPage/>
         </>
     );
-
-    return (
-        props.isChrome ?
-            (
-                <>
-                    {activeResident ? <h2 style={{textAlign: "center"}}><span style={{background:"#edf11e"}}>{FULLNAME(activeResident)}</span></h2> : null}
-                    {props.chromeVersion < 76 &&
-                        <Alert variant="warning" dismissible>
-                            Please upgrade your browser. Version {props.chromeVersion} is outdated and may cause issues!
-                        </Alert>
-                    }
-                    <LandingPage/>
-                </>
-            ) : notChrome
-    )
 }
 
 export default App;

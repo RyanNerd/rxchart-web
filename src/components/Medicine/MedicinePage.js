@@ -127,7 +127,7 @@ function MedicinePage(props)
     }
 
     /**
-     * Fires when a drug is being manually added or edited.
+     * Fires when medicine is being manually added or edited.
      *
      * @param {Event} e
      * @param {boolean} isAdd

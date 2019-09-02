@@ -34,8 +34,9 @@ function LoginPage(props) {
     function login(e) {
         e.preventDefault();
 
+        const subdomain =  window.location.host.split('.')[1] ? window.location.host.split('.')[0] : false;
         // Send the user name and password to the web service
-        frak.post(baseUrl + 'authenticate', {username: userName, password: password}, {mode: "cors"})
+        frak.post(baseUrl + 'authenticate', {username: userName, password: password, subdomain: subdomain}, {mode: "cors"})
         .then((json) => {
             // Success?
             if (json.success) {

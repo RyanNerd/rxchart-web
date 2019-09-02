@@ -108,6 +108,7 @@ export default function ManageDrugPage(props)
     return (
         <>
             <AddNewMedicineButton
+                style={{marginBottom: "15px"}}
                 onClick={(e) => onEdit(e, {Id: null})}
             />
             <Table
