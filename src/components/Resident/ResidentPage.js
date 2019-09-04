@@ -8,6 +8,7 @@ import {FULLNAME} from './../../utility/common';
 import RefreshMedicineList from "../../providers/RefreshMedicineList";
 import RefreshMedicineLog from "../../providers/RefreshMedicineLog";
 import ConfirmationDialog from "../Dialog/ConfirmationDialog";
+import {Form} from "react-bootstrap";
 
 /**
  * Display Resident Grid
@@ -154,6 +155,7 @@ export default function ResidentPage(props)
 
     return (
         <>
+            <Form>
             <OverlayTrigger
                 key="add"
                 placement="right"
@@ -172,6 +174,16 @@ export default function ResidentPage(props)
                 </Button>
             </OverlayTrigger>
 
+                <Form.Check
+                    className="ml-3"
+                    inline
+                    custom
+                    type="checkbox"
+                    id="resident-show-deleted"
+                    label='Show deleted'
+                    onClick={()=>alert('TODO: Add logic that shows deleted residents')}
+                />
+            </Form>
             <p><span> </span></p>
 
             <ResidentGrid

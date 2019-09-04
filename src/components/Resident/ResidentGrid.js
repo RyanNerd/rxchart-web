@@ -66,7 +66,7 @@ export default function ResidentGrid(props) {
                 <td>{resident.LastName}</td>
                 <td>{dob}</td>
 
-                {props.onDelete &&
+                {props.onDelete && !resident.deleted_at &&
                     <td>
                         <Button
                             size="sm"
