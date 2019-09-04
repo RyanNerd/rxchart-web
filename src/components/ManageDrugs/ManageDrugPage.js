@@ -14,11 +14,13 @@ export default function ManageDrugPage(props)
 {
     const [ medicineList, setMedicineList ] = useGlobal('medicineList');
     const [ providers ] = useGlobal('providers');
+    const [ activeResident ]= useGlobal('activeResident');
     const medicineProvider = providers.medicineProvider;
 
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDeleteMedicine, setShowDeleteMedicine ] = useState(false);
     const [ medicineInfo, setMedicineInfo ] = useState(null);
+
 
     if (!medicineList) {
         return null;
@@ -27,7 +29,22 @@ export default function ManageDrugPage(props)
     function onEdit(e, medicine)
     {
         e.preventDefault();
-        const medicineInfo = {...medicine};
+
+        let medicineInfo;
+        if (!medicine) {
+            medicineInfo = {
+                Id: 0,
+                Barcode: "",
+                ResidentId: activeResident.Id,
+                Drug: "",
+                Strength: "",
+                Directions: "",
+                Notes: ""
+            };
+        } else {
+            medicineInfo = {...medicine};
+        }
+
         setMedicineInfo(medicineInfo);
         setShowMedicineEdit(true);
     }
@@ -109,7 +126,7 @@ export default function ManageDrugPage(props)
         <>
             <AddNewMedicineButton
                 style={{marginBottom: "15px"}}
-                onClick={(e) => onEdit(e, {Id: null})}
+                onClick={(e) => onEdit(e, null)}
             />
             <Table
                 striped
