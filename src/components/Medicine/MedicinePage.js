@@ -16,6 +16,7 @@ import DrugLogGrid from "../DrugLog/DrugLogGrid";
 import DrugLogEdit from "../DrugLog/DrugLogEdit";
 import RefreshMedicineLog from "../../providers/RefreshMedicineLog";
 import AddNewMedicineButton from "../ManageDrugs/AddNewMedicineButton";
+import DeleteMedicine from "../../providers/helpers/DeleteMedicine";
 
 /**
  * MedicinePage
@@ -207,9 +208,9 @@ function MedicinePage(props)
      * Fires when the user clicks on the Delete Drug button
      */
     function deleteDrug() {
-        medicineProvider.delete(activeDrug.Id)
-        .then((response) => {
-            if (response.success) {
+        DeleteMedicine(medicineProvider, activeDrug.Id)
+        .then((deleted) => {
+            if (deleted) {
                 RefreshMedicineList(medicineProvider, activeDrug.ResidentId)
                 .then((data) => {
                     setMedicineList(data);
@@ -218,7 +219,7 @@ function MedicinePage(props)
                     setDrugLogList(null);
                 });
             } else {
-                props.onError(response);
+                props.onError(deleted);
             }
         });
 

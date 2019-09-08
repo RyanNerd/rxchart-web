@@ -5,6 +5,7 @@ import MedicineEdit from "../Medicine/MedicineEdit";
 import ConfirmationDialog from "../Dialog/ConfirmationDialog";
 import RefreshMedicineList from "../../providers/RefreshMedicineList";
 import AddNewMedicineButton from "./AddNewMedicineButton";
+import DeleteMedicine from "../../providers/helpers/DeleteMedicine";
 
 /**
  *
@@ -83,9 +84,17 @@ export default function ManageDrugPage(props)
 
     function deleteMedicine()
     {
+        // TODO: Handle catch(err)
+        DeleteMedicine(medicineProvider, medicineInfo.Id)
+        .then((deleted) => {
+            if (deleted) {
+                RefreshMedicineList(medicineProvider, activeResident.Id)
+                .then((data) => {
+                    setMedicineList(data);
+                });
+            }
+        });
         setShowDeleteMedicine(false);
-        // TODO: Do the actual delete and update.
-        alert(medicineInfo.Drug + ' deleted');
     }
 
     const MedicineDetail = (item) => {
