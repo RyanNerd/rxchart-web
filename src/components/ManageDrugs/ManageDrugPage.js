@@ -22,6 +22,10 @@ export default function ManageDrugPage(props)
     const [ showDeleteMedicine, setShowDeleteMedicine ] = useState(false);
     const [ medicineInfo, setMedicineInfo ] = useState(null);
 
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.getMonth() + 1;
+    const year = today.getFullYear();
 
     if (!medicineList) {
         return null;
@@ -40,7 +44,10 @@ export default function ManageDrugPage(props)
                 Drug: "",
                 Strength: "",
                 Directions: "",
-                Notes: ""
+                Notes: "",
+                FillDateMonth: month,
+                FillDateDay: day,
+                FillDateYear: year
             };
         } else {
             medicineInfo = {...medicine};

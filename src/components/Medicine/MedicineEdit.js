@@ -131,6 +131,43 @@ export default function MedicineEdit(props)
                             />
                         </Col>
                     </Form.Group>
+
+                    <Form.Group as={Row}>
+                        <Form.Label column sm="2">
+                            Fill Date Month
+                        </Form.Label>
+                        <Col sm={2}>
+                            <Form.Control
+                                type="text"
+                                value={drugInfo.FillDateMonth}
+                                name="FillDateMonth"
+                                onChange={(e) => handleOnChange(e)}
+                            />
+                        </Col>
+                        <Form.Label column sm="1">
+                            Day
+                        </Form.Label>
+                        <Col sm={2}>
+                            <Form.Control
+                                type="text"
+                                value={drugInfo.FillDateDay}
+                                name="FillDateDay"
+                                onChange={(e) => handleOnChange(e)}
+                            />
+                        </Col>
+                        <Form.Label column sm="1">
+                            Year
+                        </Form.Label>
+                        <Col sm={3}>
+                            <Form.Control
+                                type="text"
+                                value={drugInfo.FillDateYear}
+                                name="FillDateYear"
+                                onChange={(e) => handleOnChange(e)}
+                            />
+                        </Col>
+                    </Form.Group>
+
                     <Form.Group as={Row} controlId="drug-Directions">
                         <Form.Label column sm="2">
                             Directions

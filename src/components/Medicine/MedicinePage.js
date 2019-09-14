@@ -55,6 +55,11 @@ function MedicinePage(props)
     const medicineProvider = providers.medicineProvider;
     const residentProvider = providers.residentProvider;
 
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.getMonth() + 1;
+    const year = today.getFullYear();
+
     /**
      * Fires on keyPress for the barcode text box
      *
@@ -158,7 +163,10 @@ function MedicinePage(props)
                 Drug: "",
                 Strength: "",
                 Directions: "",
-                Notes: ""
+                Notes: "",
+                FillDateMonth: month,
+                FillDateDay: day,
+                FillDateYear: year
             });
         } else {
             setDrugInfo({...activeDrug});
