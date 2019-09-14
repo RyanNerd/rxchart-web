@@ -38,6 +38,10 @@ export default class ResidentProvider
             if (response.success) {
                 return response.data;
             } else {
+                if (response.status === 404) {
+                    return [];
+                }
+
                 throw new Error(response.toString());
             }
         })

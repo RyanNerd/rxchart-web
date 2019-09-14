@@ -391,6 +391,10 @@ function MedicinePage(props)
                         <ListGroup.Item variant="info">
                             <b>Barcode:</b> {activeDrug.Barcode}
                         </ListGroup.Item>
+
+                        <ListGroup.Item>
+                            <img alt="" style={{paddingTop: "2px"}} src='http://bwipjs-api.metafloor.com/?bcid=code128&scale=1&text=${activeDrug.Barcode}' />
+                        </ListGroup.Item>
                     </ListGroup>
                 </Col>
 

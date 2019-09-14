@@ -1,5 +1,3 @@
-import RefreshMedicineList from "../RefreshMedicineList";
-
 /**
  * Deletes a medicine record given the Id.
  * @param {object} medicineProvider
