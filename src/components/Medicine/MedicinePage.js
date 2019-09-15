@@ -44,6 +44,7 @@ function MedicinePage(props)
     const [ showResidentChangeAlert, setShowResidentChangeAlert ] = useState(false);
     const [ showDeleteDrugLogRecord, setShowDeleteDrugLogRecord ] = useState(false);
     const [ showBarcodeNotFound, setShowBarcodeNotFound ] = useState(false);
+    const [ barcodeImg, setBarcodeImg ] = useState(null);
 
     const [ activeDrug, setActiveDrug ] = useGlobal('activeDrug');
     const [ medicineList, setMedicineList ] = useGlobal('medicineList');
@@ -80,6 +81,7 @@ function MedicinePage(props)
                         setBarcode('');
                         const drug = response.data[0];
                         setActiveDrug(drug);
+                        setBarcodeImg('http://bwipjs-api.metafloor.com/?bcid=code128&scale=1&text=' + drug.Barcode);
                         refreshActiveResident(drug.ResidentId);
                         RefreshMedicineLog(medHistoryProvider, 'ResidentId', drug.ResidentId)
                             .then((data) => setDrugLogList(data));
@@ -200,6 +202,7 @@ function MedicinePage(props)
                     setMedicineList(drugList);
                     setDrugInfo(drugRecord);
                     setActiveDrug(drugRecord);
+                    setBarcodeImg('http://bwipjs-api.metafloor.com/?bcid=code128&scale=1&text=' + activeDrug.Barcode);
                     RefreshMedicineLog(medHistoryProvider, 'ResidentId', drugData.ResidentId)
                         .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
                 })
@@ -224,6 +227,7 @@ function MedicinePage(props)
                     setMedicineList(data);
                     setDrugInfo(null);
                     setActiveDrug(null);
+                    setBarcodeImg(null);
                     setDrugLogList(null);
                 });
             } else {
@@ -360,6 +364,7 @@ function MedicinePage(props)
                                 drugId={activeDrug.Id}
                                 onSelect={(e, drug) => {
                                     setActiveDrug(drug);
+                                    setBarcodeImg('http://bwipjs-api.metafloor.com/?bcid=code128&scale=1&text=' + activeDrug.Barcode);
                                     RefreshMedicineLog(medHistoryProvider, 'ResidentId', drug.ResidentId)
                                         .then((data) => setDrugLogList(data));
                                 }}
@@ -381,7 +386,7 @@ function MedicinePage(props)
                             </Button>
                         </ListGroup.Item>
                         <ListGroup.Item>
-                            <b>Directions</b>
+                            <b>Directions (Fill Date: {activeDrug.FillDateMonth}/{activeDrug.FillDateDay}/{activeDrug.FillDateYear})</b>
                         </ListGroup.Item>
 
                         <ListGroup.Item>
@@ -401,7 +406,11 @@ function MedicinePage(props)
                         </ListGroup.Item>
 
                         <ListGroup.Item>
-                            <img alt="" style={{paddingTop: "2px"}} src='http://bwipjs-api.metafloor.com/?bcid=code128&scale=1&text=${activeDrug.Barcode}' />
+                            <img
+                                alt=""
+                                key={barcodeImg}
+                                style={{paddingTop: "2px"}}
+                                src={barcodeImg}/>
                         </ListGroup.Item>
                     </ListGroup>
                 </Col>
