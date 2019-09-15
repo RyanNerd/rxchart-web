@@ -91,7 +91,6 @@ export default function ManageDrugPage(props)
 
     function deleteMedicine()
     {
-        // TODO: Handle catch(err)
         DeleteMedicine(medicineProvider, medicineInfo.Id)
         .then((deleted) => {
             if (deleted) {

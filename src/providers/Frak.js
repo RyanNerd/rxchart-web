@@ -21,7 +21,6 @@ const DEFAULT_REQUEST_CONTENT_TYPE =
  * A simple implementation of the Fetch API specifically for JSON based Web Service requests and responses
  * See the README for installation and use.
  *
- * @todo Make this TypeScript based and extract it back to the NPM module
  * @license MIT License (c) copyright 2019
  */
 export default class Frak

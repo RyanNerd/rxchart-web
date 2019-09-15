@@ -14,7 +14,6 @@ import {Form} from "react-bootstrap";
  * Display Resident Grid
  * Allow user to edit and add Residents
  *
- * TODO: Update DrugLogList when a resident changes and the resident has meds.
  * @returns {*}
  * @constructor
  */

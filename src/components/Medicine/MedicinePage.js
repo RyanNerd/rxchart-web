@@ -27,11 +27,9 @@ import MedicineListGroup from "./MedicineListGroup";
  *  - Edit / Delete Existing Medicine
  *  - Drug History Grid
  *
- *  TODO: refresh**** should be single responsibility.
- *
  * @returns {*}
  */
-function MedicinePage(props)
+export default function MedicinePage(props)
 {
     const [ barcode, setBarcode ] = useState('');
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
@@ -481,5 +479,3 @@ function MedicinePage(props)
         </>
     );
 }
-
-export default MedicinePage;
