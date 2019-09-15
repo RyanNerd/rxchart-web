@@ -1,12 +1,10 @@
 import React, {useGlobal, useState} from 'reactn';
-import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Alert from 'react-bootstrap/Alert';
 import TabContent from "../../styles/tab_content.css";
-import DrugDropdown from "./DrugDropdown";
 import RefreshMedicineList from "../../providers/RefreshMedicineList";
 import MedicineEdit from "../Medicine/MedicineEdit";
 import {FULLNAME} from "../../utility/common";
@@ -17,6 +15,7 @@ import DrugLogEdit from "../DrugLog/DrugLogEdit";
 import RefreshMedicineLog from "../../providers/RefreshMedicineLog";
 import AddNewMedicineButton from "../ManageDrugs/AddNewMedicineButton";
 import DeleteMedicine from "../../providers/helpers/DeleteMedicine";
+import MedicineListGroup from "./MedicineListGroup";
 
 /**
  * MedicinePage
@@ -44,7 +43,6 @@ function MedicinePage(props)
     const [ showResidentChangeAlert, setShowResidentChangeAlert ] = useState(false);
     const [ showDeleteDrugLogRecord, setShowDeleteDrugLogRecord ] = useState(false);
     const [ showBarcodeNotFound, setShowBarcodeNotFound ] = useState(false);
-    const [ barcodeImg, setBarcodeImg ] = useState(null);
 
     const [ activeDrug, setActiveDrug ] = useGlobal('activeDrug');
     const [ medicineList, setMedicineList ] = useGlobal('medicineList');
@@ -81,7 +79,7 @@ function MedicinePage(props)
                         setBarcode('');
                         const drug = response.data[0];
                         setActiveDrug(drug);
-                        setBarcodeImg('http://bwipjs-api.metafloor.com/?bcid=code128&scale=1&text=' + drug.Barcode);
+                        // setBarcodeImg('http://bwipjs-api.metafloor.com/?bcid=code128&scale=1&text=' + drug.Barcode);
                         refreshActiveResident(drug.ResidentId);
                         RefreshMedicineLog(medHistoryProvider, 'ResidentId', drug.ResidentId)
                             .then((data) => setDrugLogList(data));
@@ -202,7 +200,7 @@ function MedicinePage(props)
                     setMedicineList(drugList);
                     setDrugInfo(drugRecord);
                     setActiveDrug(drugRecord);
-                    setBarcodeImg('http://bwipjs-api.metafloor.com/?bcid=code128&scale=1&text=' + activeDrug.Barcode);
+                    // setBarcodeImg('http://bwipjs-api.metafloor.com/?bcid=code128&scale=1&text=' + activeDrug.Barcode);
                     RefreshMedicineLog(medHistoryProvider, 'ResidentId', drugData.ResidentId)
                         .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
                 })
@@ -227,7 +225,7 @@ function MedicinePage(props)
                     setMedicineList(data);
                     setDrugInfo(null);
                     setActiveDrug(null);
-                    setBarcodeImg(null);
+                    // setBarcodeImg(null);
                     setDrugLogList(null);
                 });
             } else {
@@ -262,6 +260,16 @@ function MedicinePage(props)
     function addEditDrugLog(e, drugLogInfo)
     {
         e.preventDefault();
+
+        // If drugLogInfo is not populated then this is an add operation.
+        if (!drugLogInfo) {
+            drugLogInfo = {
+                Id: null,
+                ResidentId: activeResident.Id,
+                MedicineId: activeDrug.Id,
+                Notes: ""
+            }
+        }
 
         setDrugLogInfo(drugLogInfo);
         setShowDrugLog(true);
@@ -357,62 +365,18 @@ function MedicinePage(props)
             {activeResident && activeResident.Id && activeDrug &&
             <Row>
                 <Col sm={4}>
-                    <ListGroup>
-                        <ListGroup.Item active>
-                            <DrugDropdown
-                                medicineList={medicineList}
-                                drugId={activeDrug.Id}
-                                onSelect={(e, drug) => {
-                                    setActiveDrug(drug);
-                                    setBarcodeImg('http://bwipjs-api.metafloor.com/?bcid=code128&scale=1&text=' + activeDrug.Barcode);
-                                    RefreshMedicineLog(medHistoryProvider, 'ResidentId', drug.ResidentId)
-                                        .then((data) => setDrugLogList(data));
-                                }}
-                            />
-                        </ListGroup.Item>
-                        <ListGroup.Item>
-                            <Button
-                                className="mr-2"
-                                size="md"
-                                variant="primary"
-                                onClick={(e) => addEditDrugLog(e, {
-                                    Id: null,
-                                    ResidentId: activeResident.Id,
-                                    MedicineId: activeDrug.Id,
-                                    Note: ''
-                                })}
-                            >
-                                + Log Drug
-                            </Button>
-                        </ListGroup.Item>
-                        <ListGroup.Item>
-                            <b>Directions (Fill Date: {activeDrug.FillDateMonth}/{activeDrug.FillDateDay}/{activeDrug.FillDateYear})</b>
-                        </ListGroup.Item>
-
-                        <ListGroup.Item>
-                            <p>{activeDrug.Directions}</p>
-                        </ListGroup.Item>
-
-                        <ListGroup.Item>
-                            <b>Notes</b>
-                        </ListGroup.Item>
-
-                        <ListGroup.Item>
-                            <p>{activeDrug.Notes}</p>
-                        </ListGroup.Item>
-
-                        <ListGroup.Item variant="info">
-                            <b>Barcode:</b> {activeDrug.Barcode}
-                        </ListGroup.Item>
-
-                        <ListGroup.Item>
-                            <img
-                                alt=""
-                                key={barcodeImg}
-                                style={{paddingTop: "2px"}}
-                                src={barcodeImg}/>
-                        </ListGroup.Item>
-                    </ListGroup>
+                        {medicineList && activeDrug &&
+                        <MedicineListGroup
+                            medicineList={medicineList}
+                            activeDrug={activeDrug}
+                            drugChanged={(drug) => {
+                                setActiveDrug(drug);
+                                RefreshMedicineLog(medHistoryProvider, 'ResidentId', drug.ResidentId)
+                                    .then((data) => setDrugLogList(data));
+                            }}
+                            addDrugLog={(e) => addEditDrugLog(e)}
+                        />
+                    }
                 </Col>
 
                 <Col sm={8}>
