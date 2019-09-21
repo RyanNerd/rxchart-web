@@ -4,6 +4,10 @@
 .pnp.js
 src/env.js
 
+#lock files
+package-lock.json
+yarn.lock
+
 # testing
 /coverage
 
