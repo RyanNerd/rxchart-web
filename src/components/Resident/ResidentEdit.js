@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button';
 import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
+import {isDayValid, isMonthValid, isYearInvalid, isYearValid} from "../../utility/common";
 
 /**
  * Edit Modal for Resident
@@ -20,7 +21,6 @@ export default function ResidentEdit(props)
     // Set up local initial state
     const [ show, setShow ] = useState(props.show);
     const [ residentInfo, setResidentInfo ] = useState(props.residentInfo);
-    const [ canSave, setCanSave ] = useState(false);
 
     /**
      * Fires when a text field or checkbox is changing.
@@ -65,16 +65,6 @@ export default function ResidentEdit(props)
         setResidentInfo({...props.residentInfo});
     }, [props.residentInfo]);
 
-    // Determine if Save button can be enabled
-    useEffect(() => {
-        setCanSave(false);
-
-        if (residentInfo && residentInfo.FirstName && residentInfo.FirstName.length !== 0) {
-            if (residentInfo.LastName && residentInfo.LastName.length !== 0) {
-                setCanSave(true);
-            }
-        }
-    }, [residentInfo, residentInfo.FirstName, residentInfo.LastName]);
 
     // Prevent render if there is no data.
     if (!residentInfo) {
@@ -86,9 +76,10 @@ export default function ResidentEdit(props)
 
     return (
         <Modal
-            show={show}
-            centered
-            onHide={(e, r)=>{handleHide(e, false)}}
+          centered
+          size="lg"
+          show={show}
+          onHide={(e, r)=>{handleHide(e, false)}}
         >
             <Modal.Header closeButton>
                 <Modal.Title>{residentTitle}</Modal.Title>
@@ -97,66 +88,86 @@ export default function ResidentEdit(props)
             <Modal.Body>
                 <Form>
                     <Form.Group as={Row} controlId="resident-first_name">
-                        <Form.Label column sm="3">
+                        <Form.Label column sm="2">
                             First Name
                         </Form.Label>
-
                         <Col sm="7">
                             <Form.Control
+                                className= {residentInfo.FirstName !== '' ? '' : 'is-invalid'}
                                 type="text"
                                 value={residentInfo.FirstName}
                                 name="FirstName"
                                 onChange={(e) => handleOnChange(e)}
                             />
+                            <div className="invalid-feedback">
+                                First name can not be blank.
+                            </div>
                         </Col>
                     </Form.Group>
                     <Form.Group as={Row} controlId="resident-last_name">
-                        <Form.Label column sm="3">
+                        <Form.Label column sm="2">
                             Last Name
                         </Form.Label>
                         <Col sm="7">
                             <Form.Control
+                                className= {residentInfo.LastName !== '' ? '' : 'is-invalid'}
                                 type="text"
                                 value={residentInfo.LastName}
                                 name="LastName"
                                 onChange={(e) => handleOnChange(e)}
                             />
+                            <div className="invalid-feedback">
+                                Last name can not be blank.
+                            </div>
                         </Col>
                     </Form.Group>
 
                     <Form.Group as={Row}>
-                        <Form.Label column sm={3}>
+                        <Form.Label column sm="2">
                             DOB Month
                         </Form.Label>
-                        <Col sm={2}>
-                        <Form.Control
-                            type="text"
-                            value={residentInfo.DOB_MONTH}
-                            name="DOB_MONTH"
-                            onChange={(e) => handleOnChange(e)}
+                        <Col sm="2">
+                            <Form.Control
+                                className= {isMonthValid(residentInfo.DOB_MONTH)}
+                                type="text"
+                                value={residentInfo.DOB_MONTH}
+                                name="DOB_MONTH"
+                                onChange={(e) => handleOnChange(e)}
                             />
+                            <div className="invalid-feedback">
+                                Enter the month (1-12).
+                            </div>
                         </Col>
+
                         <Form.Label column sm={1}>
                             Day
                         </Form.Label>
                         <Col sm={2}>
                             <Form.Control
+                                className={isDayValid(residentInfo.DOB_DAY, residentInfo.DOB_MONTH)}
                                 type="text"
                                 value={residentInfo.DOB_DAY}
                                 name="DOB_DAY"
                                 onChange={(e) => handleOnChange(e)}
                             />
+                            <div className="invalid-feedback">
+                                Enter a valid day (1-31).
+                            </div>
                         </Col>
                         <Form.Label column sm={1}>
                             Year
                         </Form.Label>
                         <Col sm={3}>
                             <Form.Control
+                                className={isYearValid(residentInfo.DOB_YEAR, true)}
                                 type="text"
                                 value={residentInfo.DOB_YEAR}
                                 name="DOB_YEAR"
                                 onChange={(e) => handleOnChange(e)}
                             />
+                            <div className="invalid-feedback">
+                                Enter a valid birth year.
+                            </div>
                         </Col>
                     </Form.Group>
                 </Form>
@@ -170,9 +181,9 @@ export default function ResidentEdit(props)
                     Cancel
                 </Button>
                 <Button
+                    disabled={isMonthValid(residentInfo.DOB_MONTH) + isDayValid(residentInfo.DOB_DAY, residentInfo.DOB_MONTH) + isYearValid(residentInfo.DOB_YEAR, true) !== ''}
                     onClick={(e) => handleHide(e, true)}
                     variant="primary"
-                    disabled={!canSave}
                 >
                     Save changes
                 </Button>
