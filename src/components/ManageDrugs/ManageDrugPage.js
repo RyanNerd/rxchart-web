@@ -8,6 +8,8 @@ import AddNewMedicineButton from "./AddNewMedicineButton";
 import DeleteMedicine from "../../providers/helpers/DeleteMedicine";
 
 /**
+ * ManageDrugPage
+ * Page for Displaying, editing and adding Medicine
  *
  * @returns {null|*}
  */
@@ -27,10 +29,12 @@ export default function ManageDrugPage(props)
     const month = today.getMonth() + 1;
     const year = today.getFullYear();
 
-    if (!medicineList) {
-        return null;
-    }
-
+    /**
+     * Fires when the Edit button is clicked
+     *
+     * @param {Event} e
+     * @param {object} medicine
+     */
     function onEdit(e, medicine)
     {
         e.preventDefault();
@@ -56,6 +60,7 @@ export default function ManageDrugPage(props)
         setMedicineInfo(medicineInfo);
         setShowMedicineEdit(true);
     }
+
 
     function handleMedicineEditModalClose(drugInfo) {
         if (drugInfo) {
@@ -143,37 +148,40 @@ export default function ManageDrugPage(props)
                 style={{marginBottom: "15px"}}
                 onClick={(e) => onEdit(e, null)}
             />
-            <Table
-                striped
-                bordered
-                hover
-                size="sm"
-            >
-                <thead>
-                <tr>
-                    <th> </th>
-                    <th>
-                        Drug
-                    </th>
-                    <th>
-                        Strength
-                    </th>
-                    <th>
-                        Directions
-                    </th>
-                    <th>
-                        Notes
-                    </th>
-                    <th>
-                        Barcode
-                    </th>
-                    <th> </th>
-                </tr>
-                </thead>
-                <tbody>
+
+            {medicineList &&
+                <Table
+                  striped
+                  bordered
+                  hover
+                  size="sm"
+                >
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>
+                            Drug
+                        </th>
+                        <th>
+                            Strength
+                        </th>
+                        <th>
+                            Directions
+                        </th>
+                        <th>
+                            Notes
+                        </th>
+                        <th>
+                            Barcode
+                        </th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
                     {medicineList.map(MedicineDetail)}
-                </tbody>
-            </Table>
+                    </tbody>
+                </Table>
+            }
 
             {showMedicineEdit &&
                 /* MedicineEdit Modal */

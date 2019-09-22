@@ -5,7 +5,7 @@
  */
 export default function deleteMedicine(medicineProvider, medicineId)
 {
-    medicineProvider.delete(medicineId)
+    return medicineProvider.delete(medicineId)
     .then((response) => {
         return (response.success);
     })
