@@ -18,6 +18,8 @@ export const isMonthValid = (month) => {
 
 export const isDayValid = (day, month) => {
     let maxDay = 28;
+    month = parseInt(month);
+    day = parseInt(day);
     if (month ===1
         || month === 3
         || month === 5
@@ -37,7 +39,9 @@ export const isDayValid = (day, month) => {
 
     return (day >=1 && day <= maxDay) ? '' : 'is-invalid';
 };
+
 export const isYearValid = (year, isDOB) => {
+    year = parseInt(year);
     if (isDOB) {
         const today = new Date();
         const todayYear = today.getFullYear();
