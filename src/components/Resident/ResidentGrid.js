@@ -62,8 +62,8 @@ export default function ResidentGrid(props) {
                     </td>
                 }
 
-                <td>{resident.FirstName}</td>
                 <td>{resident.LastName}</td>
+                <td>{resident.FirstName}</td>
                 <td>{dob}</td>
 
                 {props.onDelete && !resident.deleted_at &&
@@ -93,10 +93,10 @@ export default function ResidentGrid(props) {
                     <th/>
                 }
                 <th>
-                    <span>First Name</span>
+                    <span>Last Name</span>
                 </th>
                 <th>
-                    <span>Last Name</span>
+                    <span>First Name</span>
                 </th>
                 <th>
                     <span>DOB</span>
