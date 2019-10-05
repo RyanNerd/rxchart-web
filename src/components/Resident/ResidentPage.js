@@ -72,6 +72,7 @@ export default function ResidentPage(props)
      */
     function handleModalClose(residentInfo)
     {
+        let isAdd = false;
         if (residentInfo) {
             const residentData = {...residentInfo};
 
@@ -85,9 +86,7 @@ export default function ResidentPage(props)
                 residentProvider.query('*')
                 .then((data) => {
                     setGlobal({residentList: data});
-                    if (activeResident && activeResident.Id === residentData.Id) {
-                        setActiveResident(residentData);
-                    }
+                    setActiveResident(residentData);
                 })
                 .catch((err) => props.onError(err));
             })
