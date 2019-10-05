@@ -1,4 +1,4 @@
-import React, {useState} from 'reactn';
+import React, {useEffect, useState} from 'reactn';
 import ListGroup from "react-bootstrap/ListGroup";
 import DrugDropdown from "./DrugDropdown";
 import Button from "react-bootstrap/Button";
@@ -21,8 +21,16 @@ export default function MedicineListGroup(props)
     const barcodeImageURI = 'http://bwipjs-api.metafloor.com/?bcid=code128&scale=1&text=';
     const [ barcodeImg, setBarcodeImg ] = useState(barcodeImageURI + activeDrug.Barcode);
 
+    /**
+     * Update the barcode image if the barcode has changed
+     */
+    useEffect(() => {
+        setBarcodeImg(barcodeImageURI + props.activeDrug.Barcode);
+    }, [props.activeDrug.Barcode]);
+
+    // Return null if there is not any medicines for the activeResident or if there's not an activeDrug
     if (!medicineList || !activeDrug) {
-        return null;
+      return null;
     }
 
     return (
@@ -33,7 +41,6 @@ export default function MedicineListGroup(props)
                     drugId={activeDrug.Id}
                     onSelect={(e, drug) => {
                         props.drugChanged(drug);
-                        setBarcodeImg(barcodeImageURI + drug.Barcode);
                     }}
                 />
             </ListGroup.Item>
