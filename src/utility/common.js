@@ -26,15 +26,15 @@ export const isDayValid = (day, month) => {
         || month === 7
         || month === 8
         || month === 10
+        || month === 11
         || month === 12) {
         maxDay = 31;
     }
 
     if (month === 4
         || month === 6
-        || month === 9
-        || month ===11) {
-        maxDay =30;
+        || month === 9) {
+        maxDay = 30;
     }
 
     return (day >=1 && day <= maxDay) ? '' : 'is-invalid';
