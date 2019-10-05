@@ -170,6 +170,7 @@ export default function MedicinePage(props)
             setDrugInfo({...activeDrug});
         }
 
+        setBarcode('');
         setShowMedicineEdit(true);
     }
 
@@ -464,6 +465,7 @@ export default function MedicinePage(props)
                         setShowBarcodeNotFound(false);
                     } else {
                         setShowBarcodeNotFound(false);
+                        setBarcode('');
                     }
                 }}
                 onHide={() => setShowBarcodeNotFound(false)}
