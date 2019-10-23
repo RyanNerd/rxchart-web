@@ -14,7 +14,6 @@ import DrugLogGrid from "../DrugLog/DrugLogGrid";
 import DrugLogEdit from "../DrugLog/DrugLogEdit";
 import RefreshMedicineLog from "../../providers/RefreshMedicineLog";
 import AddNewMedicineButton from "../ManageDrugs/AddNewMedicineButton";
-import DeleteMedicine from "../../providers/helpers/DeleteMedicine";
 import MedicineListGroup from "./MedicineListGroup";
 
 /**
@@ -33,7 +32,6 @@ export default function MedicinePage(props)
 {
     const [ barcode, setBarcode ] = useState('');
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
-    const [ showDeleteDrug, setShowDeleteDrug ] = useState(false);
     const [ showUnknownBarcode, setShowUnknownBarcode ] = useState(false);
     const [ showDrugLog, setShowDrugLog ] = useState(false);
     const [ drugInfo, setDrugInfo ] = useState(null);
@@ -208,31 +206,7 @@ export default function MedicinePage(props)
                 });
             });
         }
-
         setShowMedicineEdit(false);
-    }
-
-    /**
-     * Fires when the user clicks on the Delete Drug button
-     */
-    function deleteDrug() {
-        DeleteMedicine(medicineProvider, activeDrug.Id)
-        .then((deleted) => {
-            if (deleted) {
-                RefreshMedicineList(medicineProvider, activeDrug.ResidentId)
-                .then((data) => {
-                    setMedicineList(data);
-                    setDrugInfo(null);
-                    setActiveDrug(null);
-                    // setBarcodeImg(null);
-                    setDrugLogList(null);
-                });
-            } else {
-                props.onError(deleted);
-            }
-        });
-
-        setShowDeleteDrug(false);
     }
 
     /**
@@ -338,22 +312,7 @@ export default function MedicinePage(props)
                                 >
                                     Edit Medicine
                                 </Button>
-
-                                <Button
-                                    className="ml-1"
-                                    size="sm"
-                                    variant="outline-danger"
-                                    onClick={() => setShowDeleteDrug(true)}
-                                >
-                                    <span
-                                        className="ml-1"
-                                        role="img"
-                                        aria-label="delete"
-                                    >
-                                        🗑️ Delete Medicine
-                                    </span>
-                                </Button>
-                            </>
+                           </>
                             }
                         </>
                         }
@@ -405,27 +364,6 @@ export default function MedicinePage(props)
                 onClose={(drugLogRecord) => handleDrugLogEditClose(drugLogRecord)}
             />
 
-            {activeDrug && activeDrug.Id &&
-            <ConfirmationDialog
-                title={"Delete " + activeDrug.Drug}
-                body={
-                    <b style={{color: "red"}}>
-                        Are you sure?
-                    </b>
-                }
-                show={showDeleteDrug}
-                onAnswer={(a) => {
-                    if (a) {
-                        deleteDrug();
-                    } else {
-                        showDeleteDrug(false);
-                    }
-                }}
-                onHide={() => setShowDeleteDrug(false)}
-            />
-            }
-
-            {activeDrug && activeDrug.Id &&
             <ConfirmationDialog
                 title={"Delete Log Record"}
                 body={
@@ -446,7 +384,6 @@ export default function MedicinePage(props)
                 }}
                 onHide={() => setShowDeleteDrugLogRecord(false)}
             />
-            }
 
             {showBarcodeNotFound &&
             <ConfirmationDialog
