@@ -19,17 +19,87 @@ export default class ResidentProvider
     }
 
     /**
+     * Search Interface
+     *
+     * @param {object} options
+     * @returns {Promise<Response>}
+     */
+    search( options) {
+        let uri = this._baseURL + 'resident/search?api_key=' + this._apiKey;
+        return this._frak.post(uri, options)
+        .then((response) => {
+            if (response.success) {
+                return response.data;
+            } else {
+                if (response.status === 404) {
+                    return [];
+                }
+                throw new Error(response.toString());
+            }
+        })
+        .catch((err) => {
+            console.error(err);
+            alert('problem -- see console log');
+        });
+    }
+
+    /**
+     * Restore Interface
+     *
+     * @param {object} record
+     * @returns {Promise<Response>}
+     */
+    restore( record) {
+        console.log('record', record);
+        let uri = this._baseURL + 'resident/restore?api_key=' + this._apiKey;
+        return this._frak.post(uri, record)
+        .then((response) => {
+            if (response.success) {
+                return response.data;
+            } else {
+                if (response.status === 404) {
+                    throw new Error('Record not found to restore.');
+                }
+                throw new Error(response.toString());
+            }
+        })
+        .catch((err) => {
+            console.error(err);
+            alert('problem -- see console log');
+        });
+    }
+
+     /**
      * Query Interface
      *
      * @param {string} value
-     * @param {string} column
+     * @param {array<string>} columns
      * @returns {Promise<Response>}
      */
-    query(value, column)
+    query(value, ...columns)
     {
         let uri = this._baseURL + 'resident/query/'+ value + '?';
+
+        switch (value) {
+            case '*':
+            {
+                break;
+            }
+
+            case '-':
+            {
+                break;
+            }
+
+            default:
+            {
+                uri += 'column_name=' + columns[0] + '&';
+                break;
+            }
+        }
+
         if (value !== '*') {
-            uri += '?column=' + column;
+            uri += '?column=' + columns;
         }
         uri += 'api_key=' + this._apiKey;
 

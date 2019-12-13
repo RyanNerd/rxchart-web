@@ -30,6 +30,18 @@ export default function ResidentPage(props)
 
     const residentProvider = providers.residentProvider;
 
+    function reactivateResident(id) {
+        return residentProvider.restore({restore_id: id})
+        .then((response) => {
+            console.log('reactivate', response);
+            return response;
+        })
+        .catch((error) =>
+        {
+           console.log(error);
+        });
+    }
+
     /**
      * Fires when user clicks the Edit button
      *
@@ -72,7 +84,6 @@ export default function ResidentPage(props)
      */
     function handleModalClose(residentInfo)
     {
-        let isAdd = false;
         if (residentInfo) {
             const residentData = {...residentInfo};
 
@@ -80,19 +91,63 @@ export default function ResidentPage(props)
                 residentData.Id = null;
             }
 
-            residentProvider.post(residentData)
-            .then((response) => {
-                setResidentInfo(response);
-                residentProvider.query('*')
-                .then((data) => {
-                    setGlobal({residentList: data});
-                    setActiveResident(residentData);
-                })
-                .catch((err) => props.onError(err));
-            })
-            .catch((err) => props.onError(err));
-        }
+            const searchExisting = {
+                where: [
+                        {column: "FirstName", value: residentData.FirstName},
+                        {column: "LastName", value: residentData.LastName},
+                        {column: "DOB_YEAR", value: residentData.DOB_YEAR},
+                        {column: "DOB_MONTH", value: residentData.DOB_MONTH},
+                        {column: "DOB_DAY", value: residentData.DOB_DAY}
+                        ],
+                limit: 1,
+                only_trashed: true
+            };
 
+            // Check if the added resident exists but is trashed.
+            residentProvider.search(searchExisting)
+            .then((result) => {
+                // Do we have a trashed resident? Reactivate them, otherwise add as a new resident.
+                if (result.length === 1) {
+                    reactivateResident(result[0].Id)
+                    .then((response) => {
+                        setResidentInfo(response);
+                        residentProvider.search({order_by: [
+                            {column: "LastName", direction: "asc"},
+                            {column: "FirstName", direction: "asc"}
+                            ]
+                        })
+                        .then((residentList) => {
+                            setGlobal({residentList: residentList});
+                            setActiveResident(response);
+                        })
+                        .catch((err) => props.onError(err));
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+                } else {
+                    // Add the new resident
+                    residentProvider.post(residentData)
+                    .then((response) => {
+                        setResidentInfo(response);
+                        residentProvider.search({order_by: [
+                                {column: "LastName", direction: "asc"},
+                                {column: "FirstName", direction: "asc"}
+                            ]
+                        })
+                        .then((residentList) => {
+                            setGlobal({residentList: residentList});
+                            setActiveResident(response);
+                        })
+                        .catch((err) => props.onError(err));
+                    })
+                    .catch((err) => props.onError(err));
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        }
         setShow(false);
     }
 
@@ -131,7 +186,7 @@ export default function ResidentPage(props)
     }
 
     /**
-     * Fires when user confirms to delete resident record
+     * Fires when user confirms to delete resident recorda
      */
     function deleteResident()
     {
@@ -171,17 +226,8 @@ export default function ResidentPage(props)
                     + Resident
                 </Button>
             </OverlayTrigger>
-
-                <Form.Check
-                    className="ml-3"
-                    inline
-                    custom
-                    type="checkbox"
-                    id="resident-show-deleted"
-                    label='Show deleted'
-                    onClick={()=>alert('TODO: Add logic that shows deleted residents')}
-                />
             </Form>
+
             <p><span> </span></p>
 
             <ResidentGrid
