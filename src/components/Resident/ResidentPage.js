@@ -30,6 +30,12 @@ export default function ResidentPage(props)
 
     const residentProvider = providers.residentProvider;
 
+    /**
+     * Reactivate a trashed resident given the primary key
+     *
+     * @param id
+     * @returns {Promise<Response>}
+     */
     function reactivateResident(id) {
         return residentProvider.restore({restore_id: id})
         .then((response) => {
@@ -117,8 +123,24 @@ export default function ResidentPage(props)
                             ]
                         })
                         .then((residentList) => {
+                            // Rehydrate the residentList
                             setGlobal({residentList: residentList});
+                            // Set the reactivated resident as the active resident.
                             setActiveResident(response);
+                            // Rehydrate the MedicineList
+                            RefreshMedicineList(providers.medicineProvider, response.Id)
+                            .then((data) => {
+                                setGlobal({medicineList: data});
+                                // If there are any medicines for the selected resident then
+                                // select the first one and make it the active drug.
+                                if (data && data.length > 0) {
+                                    setGlobal({activeDrug: data[0]});
+                                    // Refresh the drugLogList for the new active drug.
+                                    RefreshMedicineLog(providers.medHistoryProvider, 'ResidentId', data[0].ResidentId)
+                                    .then((data) => setGlobal({drugLogList: data}))
+                                    .catch((err) => props.onError(err));
+                                }
+                            });
                         })
                         .catch((err) => props.onError(err));
                     })
@@ -151,6 +173,12 @@ export default function ResidentPage(props)
         setShow(false);
     }
 
+    /**
+     * Fires when the selected column / row is clicked
+     *
+     * @param e
+     * @param resident
+     */
     function handleOnSelected(e, resident)
     {
         setActiveResident(resident);
@@ -186,7 +214,7 @@ export default function ResidentPage(props)
     }
 
     /**
-     * Fires when user confirms to delete resident recorda
+     * Fires when user confirms to delete resident record
      */
     function deleteResident()
     {
@@ -259,6 +287,7 @@ export default function ResidentPage(props)
                     } else {
                         setResidentToDelete(null);
                     }
+                    setShowDeleteResident(false);
                 }}
                 onHide={() => setShowDeleteResident(false)}
             />

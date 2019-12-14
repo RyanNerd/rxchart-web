@@ -399,11 +399,10 @@ export default function MedicinePage(props)
                 onAnswer={(a) => {
                     if (a) {
                         addEditDrug(null, true);
-                        setShowBarcodeNotFound(false);
                     } else {
-                        setShowBarcodeNotFound(false);
                         setBarcode('');
                     }
+                    setShowBarcodeNotFound(false);
                 }}
                 onHide={() => setShowBarcodeNotFound(false)}
             />
