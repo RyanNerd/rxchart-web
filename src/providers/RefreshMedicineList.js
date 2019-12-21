@@ -8,19 +8,31 @@
  */
 export default function RefreshMedicineList(medicineProvider, residentId)
 {
-   return medicineProvider.query(residentId, 'ResidentId')
-    .then((response) => {
-        if (response.success) {
-            return response.data;
-        } else {
-            if (response.status === 404) {
-                return null;
-            } else {
-                throw response;
-            }
-        }
-    })
-    .catch((err) => {
-        return err;
-    });
+   const searchCriteria =
+       {
+           where: [
+               {column: "ResidentId", value: residentId}
+           ],
+           order_by: [
+               {column: "Drug", direction: "asc"}
+           ]
+       };
+
+   return medicineProvider.search(searchCriteria)
+       .then((response) => {
+           console.log('no error', response);
+           if (response.success) {
+               return response.data;
+           } else {
+               if (response.status === 404) {
+                   return null;
+               } else {
+                   throw response;
+               }
+           }
+       })
+       .catch((err) => {
+           console.log('error', err);
+           return err;
+       });
 }

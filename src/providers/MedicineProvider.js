@@ -19,6 +19,31 @@ export default class MedicineProvider
     }
 
     /**
+     * Search Interface
+     *
+     * @param {object} options
+     * @returns {Promise<Response>}
+     */
+    search( options) {
+        let uri = this._baseURL + 'medicine/search?api_key=' + this._apiKey;
+        return this._frak.post(uri, options)
+        .then((response) => {
+            if (response.success) {
+                return response.data;
+            } else {
+                if (response.status === 404) {
+                    return [];
+                }
+                throw new Error(response.toString());
+            }
+        })
+        .catch((err) => {
+            console.error(err);
+            alert('problem -- see console log');
+        });
+    }
+
+    /**
      * Query interface
      *
      * @param {string} value
