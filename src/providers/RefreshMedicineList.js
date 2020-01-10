@@ -20,7 +20,6 @@ export default function RefreshMedicineList(medicineProvider, residentId)
 
    return medicineProvider.search(searchCriteria)
        .then((response) => {
-           console.log('no error', response);
            if (response.success) {
                return response.data;
            } else {

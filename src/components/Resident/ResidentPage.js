@@ -151,7 +151,6 @@ export default function ResidentPage(props)
                     // Add the new resident
                     residentProvider.post(residentData)
                     .then((response) => {
-                        setResidentInfo(response);
                         residentProvider.search({order_by: [
                                 {column: "LastName", direction: "asc"},
                                 {column: "FirstName", direction: "asc"}
@@ -159,9 +158,15 @@ export default function ResidentPage(props)
                         })
                         .then((residentList) => {
                             setGlobal({residentList: residentList});
-                            setActiveResident(response);
                         })
                         .catch((err) => props.onError(err));
+
+                        return response;
+                    })
+                    .then((response) => {
+                        setResidentInfo(response);
+                        setActiveResident(response);
+                        setGlobal({activeDrug: null, medicineList: null, drugLog: null});
                     })
                     .catch((err) => props.onError(err));
                 }
