@@ -96,6 +96,7 @@ export default function ManageDrugPage(props)
 
     function deleteMedicine()
     {
+        console.log('medicineProvider', medicineProvider);
         DeleteMedicine(medicineProvider, medicineInfo.Id)
         .then((deleted) => {
             if (deleted) {
