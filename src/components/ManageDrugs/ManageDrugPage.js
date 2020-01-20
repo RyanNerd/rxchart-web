@@ -20,6 +20,8 @@ export default function ManageDrugPage(props)
     const [ activeResident ]= useGlobal('activeResident');
     const medicineProvider = providers.medicineProvider;
 
+    console.log('providers', providers);
+
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDeleteMedicine, setShowDeleteMedicine ] = useState(false);
     const [ medicineInfo, setMedicineInfo ] = useState(null);
@@ -96,7 +98,6 @@ export default function ManageDrugPage(props)
 
     function deleteMedicine()
     {
-        console.log('medicineProvider', medicineProvider);
         DeleteMedicine(medicineProvider, medicineInfo.Id)
         .then((deleted) => {
             if (deleted) {
