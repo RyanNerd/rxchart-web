@@ -21,6 +21,7 @@ export default function ManageDrugPage(props)
     const medicineProvider = providers.medicineProvider;
 
     console.log('providers', providers);
+    console.log('medicineProvider', medicineProvider);
 
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDeleteMedicine, setShowDeleteMedicine ] = useState(false);
