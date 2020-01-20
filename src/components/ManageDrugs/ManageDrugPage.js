@@ -20,9 +20,6 @@ export default function ManageDrugPage(props)
     const [ activeResident ]= useGlobal('activeResident');
     const medicineProvider = providers.medicineProvider;
 
-    console.log('providers', providers);
-    console.log('medicineProvider', medicineProvider);
-
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDeleteMedicine, setShowDeleteMedicine ] = useState(false);
     const [ medicineInfo, setMedicineInfo ] = useState(null);
@@ -99,7 +96,13 @@ export default function ManageDrugPage(props)
 
     function deleteMedicine()
     {
-        DeleteMedicine(medicineProvider, medicineInfo.Id)
+        // Work around for a weird bug that manifests itself only in production.
+        let medProvider = medicineProvider;
+        if (medProvider === undefined) {
+            medProvider = providers.medicineProvider;
+        }
+
+        DeleteMedicine(medProvider, medicineInfo.Id)
         .then((deleted) => {
             if (deleted) {
                 RefreshMedicineList(medicineProvider, activeResident.Id)
