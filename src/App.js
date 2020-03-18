@@ -5,11 +5,10 @@ import {FULLNAME} from "./utility/common";
 /**
  * Main Entry Component
  *
- * @param props [isChrome, chromeVersion]
  * @returns {*}
  * @constructor
  */
-function App(props)
+function App()
 {
     const [ activeResident ] = useGlobal('activeResident');
 

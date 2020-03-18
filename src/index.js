@@ -6,9 +6,10 @@ import {initialState} from "./utility/InitialState";
 setGlobal(initialState)
     .then((initialState) => {
         if (initialState.development) {
-            console.log('MedTrax Started', initialState);
+            console.log('RxChart Started', initialState);
         } else {
-            console.log('MedTrax Started');
+            console.log('RxChart' +
+                ' Started');
         }
     }).catch((err) => {
         console.log('Something went wrong', err);
