@@ -33,6 +33,7 @@ export default function MedicinePage(props)
     const [ barcode, setBarcode ] = useState('');
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showUnknownBarcode, setShowUnknownBarcode ] = useState(false);
+    const [ showOTCError, setShowOTCError ] = useState(false);
     const [ showDrugLog, setShowDrugLog ] = useState(false);
     const [ drugInfo, setDrugInfo ] = useState(null);
     const [ drugLogInfo, setDrugLogInfo ] = useState(null);
@@ -75,10 +76,15 @@ export default function MedicinePage(props)
                         setBarcode('');
                         const drug = response.data[0];
                         setActiveDrug(drug);
-                        // setBarcodeImg('http://bwipjs-api.metafloor.com/?bcid=code128&scale=1&text=' + drug.Barcode);
-                        refreshActiveResident(drug.ResidentId);
-                        RefreshMedicineLog(medHistoryProvider, 'ResidentId', drug.ResidentId)
+
+                        // Is this OTC and there isn't an activeResident?
+                        if (drug.OTC && !activeResident) {
+                            setShowOTCError(true);
+                        } else {
+                            refreshActiveResident(drug.ResidentId);
+                            RefreshMedicineLog(medHistoryProvider, 'ResidentId', drug.ResidentId)
                             .then((data) => setDrugLogList(data));
+                        }
                     } else {
                         const err = new Error("Duplicate Barcode -- This shouldn't happen!");
                         props.onError(err);
@@ -414,6 +420,14 @@ export default function MedicinePage(props)
                 show={showUnknownBarcode}
                 onHide={() => setShowUnknownBarcode(false)}
             />
+
+            <InformationDialog
+                title="OTC Barcode"
+                body="You must select the resident before an OTC drug can be logged."
+                show={showOTCError}
+                onHide={() => setShowOTCError(false)}
+            />
+
         </>
     );
 }
