@@ -10,7 +10,7 @@ import Button from "react-bootstrap/Button";
  * Edit Modal for Medicine
  *
  * @param props :
-    *          show {boolean} show/hide this modal
+ *          show {boolean} show/hide this modal
  *          residentInfo {Id: id, FirstName: first_name, etc.}
  *
  * @returns {boolean|*}
@@ -72,6 +72,7 @@ export default function MedicineEdit(props)
     const drugTitleType = drugInfo.Id ? 'Edit ' : 'Add ';
     const drugName = drugInfo.Id ? drugInfo.Drug : 'new drug';
     const fullName = activeResident && FULLNAME(activeResident);
+    const isOTC = props.drugInfo.OTC === 1;
 
     return (
         <Modal
@@ -82,7 +83,12 @@ export default function MedicineEdit(props)
             onEntered={() => textInput.current.focus()}
         >
             <Modal.Header closeButton>
-                <Modal.Title>{drugTitleType} <b style={{color: "blue"}}><i>{drugName}</i></b><span> for </span><b style={{backgroundColor: "yellow"}}>{fullName}</b></Modal.Title>
+                {isOTC ?
+                    <Modal.Title>{drugTitleType} OTC <b style={{color: "blue"}}><i>{drugName}</i></b></Modal.Title>
+                    :
+                    <Modal.Title>{drugTitleType} <b style={{color: "blue"}}><i>{drugName}</i></b><span> for </span><b
+                        style={{backgroundColor: "yellow"}}>{fullName}</b></Modal.Title>
+                }
             </Modal.Header>
 
             <Modal.Body>

@@ -81,7 +81,10 @@ export default function MedicinePage(props)
                         if (drug.OTC && !activeResident) {
                             setShowOTCError(true);
                         } else {
-                            refreshActiveResident(drug.ResidentId);
+                            if (!drug.OTC) {
+                                refreshActiveResident(drug.ResidentId);
+                            }
+
                             RefreshMedicineLog(medHistoryProvider, 'ResidentId', drug.ResidentId)
                             .then((data) => setDrugLogList(data));
                         }
@@ -166,6 +169,7 @@ export default function MedicinePage(props)
                 Strength: "",
                 Directions: "",
                 Notes: "",
+                OTC: 0,
                 FillDateMonth: month,
                 FillDateDay: day,
                 FillDateYear: year
