@@ -1,4 +1,4 @@
-import React, {useGlobal, useState} from 'reactn';
+import React, {useGlobal, useState, useEffect} from 'reactn';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -39,6 +39,7 @@ export default function MedicinePage(props)
     const [ showResidentChangeAlert, setShowResidentChangeAlert ] = useState(false);
     const [ showDeleteDrugLogRecord, setShowDeleteDrugLogRecord ] = useState(false);
     const [ showBarcodeNotFound, setShowBarcodeNotFound ] = useState(false);
+    const [ showLastTakenWarning, setShowLastTakenWarning ] = useState(false);
 
     const [ activeDrug, setActiveDrug ] = useGlobal('activeDrug');
     const [ medicineList, setMedicineList ] = useGlobal('medicineList');
@@ -54,6 +55,42 @@ export default function MedicinePage(props)
     const day = today.getDate();
     const month = today.getMonth() + 1;
     const year = today.getFullYear();
+
+    // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
+    useEffect(() => {
+        if (activeDrug && activeDrug.Id && drugLogList) {
+            const filteredDrugs = activeDrug.Id && drugLogList ? drugLogList.filter(drug => drug.MedicineId === activeDrug.Id) : null;
+            const latestDrug = filteredDrugs && filteredDrugs.length > 0 ? filteredDrugs[0] : null;
+            if (latestDrug) {
+                const latestDrugDate = Math.round((new Date(latestDrug.Created)).getTime() / 1000);
+                const now = Math.round((new Date()).getTime() / 1000);
+                const diff = Math.round((now - latestDrugDate) / 3600);
+                setShowLastTakenWarning(diff);
+            }
+        } else {
+            setShowLastTakenWarning(0);
+        }
+    }, [activeDrug, drugLogList]);
+
+    /**
+     * Given the number of hours since the activeDrug was taken return the warningColor code.
+     * @param {number} hours
+     * @returns {string}
+     */
+    function determineWarningColor(hours) {
+        switch (hours) {
+            case 0: return 'danger';
+            case 1: return 'danger';
+            case 2: return 'danger';
+            case 3: return 'warning';
+            case 4: return 'warning';
+            case 5: return 'warning';
+            case 6: return 'info';
+            case 7: return 'info';
+            case 8: return 'info';
+            default: return 'light';
+        }
+    }
 
     /**
      * Fires on keyPress for the barcode text box
@@ -75,7 +112,6 @@ export default function MedicinePage(props)
                         setBarcode('');
                         const drug = response.data[0];
                         setActiveDrug(drug);
-                        // setBarcodeImg('http://bwipjs-api.metafloor.com/?bcid=code128&scale=1&text=' + drug.Barcode);
                         refreshActiveResident(drug.ResidentId);
                         RefreshMedicineLog(medHistoryProvider, 'ResidentId', drug.ResidentId)
                             .then((data) => setDrugLogList(data));
@@ -197,6 +233,7 @@ export default function MedicinePage(props)
                     setMedicineList(drugList);
                     setDrugInfo(drugRecord);
                     setActiveDrug(drugRecord);
+                    setShowLastTakenWarning(false);
                     // setBarcodeImg('http://bwipjs-api.metafloor.com/?bcid=code128&scale=1&text=' + activeDrug.Barcode);
                     RefreshMedicineLog(medHistoryProvider, 'ResidentId', drugData.ResidentId)
                         .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
@@ -287,7 +324,8 @@ export default function MedicinePage(props)
                     <Form.Label column sm="1">
                         Scan Barcode
                     </Form.Label>
-                    <Col sm="2">
+
+                    <Col sm="3">
                         <Form.Control
                             type="text"
                             value={barcode}
@@ -295,7 +333,8 @@ export default function MedicinePage(props)
                             onChange={(e) => setBarcode(e.target.value)}
                         />
                     </Col>
-                    <Col sm="9">
+
+                    <Col sm="3">
                         {activeResident && activeResident.Id &&
                             <>
                             <AddNewMedicineButton
@@ -304,18 +343,35 @@ export default function MedicinePage(props)
 
                             {activeDrug &&
                                 <>
-                                <Button
-                                    className="ml-1"
-                                    size="sm"
-                                    variant="info"
-                                    onClick={(e) => addEditDrug(e, false)}
-                                >
-                                    Edit Medicine
-                                </Button>
-                           </>
+                                    <Button
+                                        className="ml-2"
+                                        size="sm"
+                                        variant="info"
+                                        onClick={(e) => addEditDrug(e, false)}
+                                    >
+                                        Edit Medicine
+                                    </Button>
+                                </>
                             }
                         </>
                         }
+                    </Col>
+
+                    <Col sm="4">
+                        <Alert
+                            className="ml-1"
+                            show={showLastTakenWarning >= 0 && activeDrug}
+                            variant={determineWarningColor(showLastTakenWarning)}
+                        >
+
+                        {/* Display in BOLD if taken 3 or less hours ago */}
+                        {showLastTakenWarning <= 3 ?
+                            <b>Last Taken (hours): {showLastTakenWarning}</b>
+                            :
+                            <span>Last Taken (hours): {showLastTakenWarning}</span>
+                        }
+
+                        </Alert>
                     </Col>
                 </Form.Group>
             </Form>
