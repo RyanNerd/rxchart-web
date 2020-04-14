@@ -10,6 +10,7 @@ import {FULLNAME} from "./utility/common";
  */
 function App()
 {
+    // @ts-ignore
     const [ activeResident ] = useGlobal('activeResident');
 
     return (

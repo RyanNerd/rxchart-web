@@ -16,6 +16,4 @@ setGlobal(initialState)
     }
 );
 
-// const browser = browserInfo();
-
 ReactDOM.render(<App/>, document.getElementById('root'));
