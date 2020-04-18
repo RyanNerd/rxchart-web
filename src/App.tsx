@@ -10,7 +10,7 @@ import {FULLNAME} from "./utility/common";
  */
 function App()
 {
-    // @ts-ignore
+    // @ts-ignore TS2345: Argument of type '"activeResident"' is not assignable to parameter of type 'never'.
     const [ activeResident ] = useGlobal('activeResident');
 
     return (
