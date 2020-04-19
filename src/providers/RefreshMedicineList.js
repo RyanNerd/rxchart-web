@@ -18,12 +18,5 @@ export default function RefreshMedicineList(medicineProvider, residentId)
            ]
        };
 
-   return medicineProvider.search(searchCriteria)
-       .then((response) => {
-           return response;
-       })
-       .catch((err) => {
-           console.log('error', err);
-           return err;
-       });
+   return medicineProvider.search(searchCriteria);
 }
