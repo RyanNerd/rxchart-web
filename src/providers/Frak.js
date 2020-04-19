@@ -108,6 +108,8 @@ const Frak = (options= null) => {
         // If a body is provided then set it.
         if (body) {
             finalOptions.body = (typeof body) === 'object' ? JSON.stringify(body) : body;
+        } else {
+            delete finalOptions.body;
         }
     }
 

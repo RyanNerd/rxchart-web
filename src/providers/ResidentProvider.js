@@ -172,7 +172,7 @@ export default class ResidentProvider
      */
     delete(residentId)
     {
-        return this._frak.delete_(this._baseURL + 'resident/' + residentId + '?api_key=' + this._apiKey)
+        return this._frak.delete(this._baseURL + 'resident/' + residentId + '?api_key=' + this._apiKey)
         .then((response) => {
             if (response.success) {
                 return response;

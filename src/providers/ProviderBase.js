@@ -111,7 +111,7 @@ export default class ProviderBase
      */
     delete(drugId)
     {
-        return this._frak.delete_(this._baseURL + 'medicine/' + drugId + '?api_key=' + this._apiKey)
+        return this._frak.delete(this._baseURL + 'medicine/' + drugId + '?api_key=' + this._apiKey)
             .then((response) => {
                 if (response.success) {
                     return response;

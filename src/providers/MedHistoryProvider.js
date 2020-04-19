@@ -103,7 +103,7 @@ export default class MedHistoryProvider
 
     delete(drugId)
     {
-        return this._frak.delete_(this._baseURL + 'medhistory/' + drugId + '?api_key=' + this._apiKey)
+        return this._frak.delete(this._baseURL + 'medhistory/' + drugId + '?api_key=' + this._apiKey)
             .then((response) => {
                 if (response.success) {
                     return response;
