@@ -18,23 +18,5 @@ export default function RefreshMedicineList(medicineProvider, residentId)
            ]
        };
 
-   return medicineProvider.search(searchCriteria)
-       .then((response) => {
-           if (response.success) {
-               return response.data;
-           } else {
-               if (response.status === 404) {
-                   return null;
-               } else {
-                   console.log('throw', response);
-                   alert('throw');
-                   throw response;
-               }
-           }
-       })
-       .catch((err) => {
-           console.log('error', err);
-           alert('problem');
-           return err;
-       });
+   return medicineProvider.search(searchCriteria);
 }
