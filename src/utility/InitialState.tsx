@@ -32,6 +32,6 @@ export const initialState = {
         medicineProvider: null,
         medHistoryProvider: null
     },
-    // @ts-ignore
+    // @ts-ignore TS2348: Value of type 'typeof Frak' is not callable. Did you mean to include 'new'?
     frak: Frak()
 };
