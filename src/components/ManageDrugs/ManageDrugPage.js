@@ -61,7 +61,6 @@ export default function ManageDrugPage(props)
         setShowMedicineEdit(true);
     }
 
-
     function handleMedicineEditModalClose(drugInfo) {
         if (drugInfo) {
             const drugData = {...drugInfo};
@@ -85,13 +84,14 @@ export default function ManageDrugPage(props)
                 });
             });
         }
+        setShowMedicineEdit(false);
     }
 
     function onDelete(e, medicine)
     {
         e.preventDefault();
         setMedicineInfo({...medicine});
-         setShowDeleteMedicine(true);
+        setShowDeleteMedicine(true);
     }
 
     function deleteMedicine()
