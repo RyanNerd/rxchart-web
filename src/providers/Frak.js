@@ -12,284 +12,190 @@ const DEFAULT_REQUEST_CONTENT_TYPE =
         TRACE: null // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/TRACE
     };
 
-/*
-    eslint-disable
-*/
-
 /**
- * Frak Class
- * A simple implementation of the Fetch API specifically for JSON based Web Service requests and responses
- * See the README for installation and use.
+ * Frak is wrapper around the fetch API that specifically handles JSON requests and responses.
  *
- * @license MIT License (c) copyright 2019
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch -- init section
+ * @param {object} options The init object that will be passed into the fetch() API call
+ * @returns {{}}
+ * @constructor
  */
-export default class Frak
-{
-    /**
-     * @protected
-     *
-     * Default behavior for failed requests
-     * @property {boolean} _throwErrorOnFailedStatus
-     *
-     * Output details to console.
-     * @property {boolean} _verbose
-     */
+const Frak = (options= null) => {
+    // The public API object returned to the user.
+    const API = {};
 
-    /**
-     * Constructor
-     *
-     * @param {boolean} [throwErrorOnFailedStatus] Set this to true for behavior similar to Jquery's `Ajax.$()`
-     * @param {boolean} [verbose] When true errors and warning will be emited to the console
-     */
-    constructor(throwErrorOnFailedStatus = false, verbose = false)
-    {
-        this._throwErrorOnFailedStatus = throwErrorOnFailedStatus;
-        this._verbose = verbose;
-
-        // Prevent default configuration from being changed.
-        Object.freeze(this._throwErrorOnFailedStatus);
-        Object.freeze(this._verbose);
-    }
-
-    /**
-     * GET web method for the given url
-     *
-     * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/GET
-     * @see @see https://developer.mozilla.org/en-US/docs/Web/API/Request
-     * @public
-     * @param {string} url The endpoint for the GET request
-     * @param {object} [request] Request object that overrides the defaults
-     * @param {boolean} [resolveJsonResponse] Response should resolve to JSON
-     * @returns {Promise<Response>}
-     */
-    get(url, request, resolveJsonResponse = true)
-    {
-        return this._call(url, this._initializeRequest('GET', request), resolveJsonResponse);
-    }
-
-    /**
-     * POST web method for the given url and body
-     *
-     * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
-     * @public
-     * @param {string} url The URL endpoint
-     * @param {object | string} body The body of the request
-     * @param {object} [request] Request object that overrides the defaults
-     * @param {boolean} [resolveJsonResponse] Response should resolve to JSON
-     * @returns {Promise<Response>}
-     */
-    post(url, body, request, resolveJsonResponse = true)
-    {
-        return this._call(url, this._initializeRequest('POST', request, body), resolveJsonResponse);
-    }
-
-    /**
-     * PATCH web method for the given url and body
-     *
-     * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PATCH
-     * @public
-     * @param {string} url - Endpoint for the request
-     * @param {object | string} body - The body of the PATCH request
-     * @param {object} [request] Request object that overrides the defaults
-     * @param {boolean} [resolveJsonResponse] Response should resolve to JSON
-     * @returns {Promise<Response>}
-     */
-    patch(url, body, request, resolveJsonResponse = true)
-    {
-        return this._call(url, this._initializeRequest('PATCH', request, body), resolveJsonResponse);
-    }
-
-    /**
-     * PUT web method for the given url and body
-     *
-     * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PUT
-     * @public
-     * @param {string} url - Endpoint for the PUT method
-     * @param {object | string} body -The body of the PUT request
-     * @param {object} [request] Request object that overrides the defaults
-     * @param {boolean} [resolveJsonResponse] Response should resolve to JSON
-     * @returns {Promise<Response>}
-     */
-    put(url, body, request, resolveJsonResponse = true)
-    {
-        return this._call(url, this._initializeRequest('PUT', request, body), resolveJsonResponse);
-    }
-
-    /**
-     * DELETE web method for the given url
-     *
-     * @description Make note of the trailing UNDERSCORE -- delete_() needed because "delete" is a JS keyword.
-     * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/DELETE
-     * @public
-     * @param {string} url - Endpoint for the DELETE request
-     * @param {object} [request] Request object that overrides the defaults
-     * @param {boolean} [resolveJsonResponse] Response should resolve to JSON
-     * @returns {Promise<Response>}
-     */
-    delete_(url, request, resolveJsonResponse = true)
-    {
-        return this._call(url, this._initializeRequest('DELETE', request), resolveJsonResponse);
-    }
-
-    /**
-     * HEAD web method for the given url
-     *
-     * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/HEAD
-     * @public
-     * @param {string} url Endpoint for the HEAD request.
-     * @param {object} [request] Request object that overrides the defaults
-     * @returns {Promise<Response>}
-     */
-    head(url, request)
-    {
-        return this._call(url, this._initializeRequest('HEAD', request), false);
-    }
-
-    /**
-     * OPTIONS web method for the given url
-     *
-     * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/OPTIONS
-     * @public
-     * @param {string} url Endpoint for the OPTIONS request.
-     * @param {object} [request] Request object that overrides the defaults
-     * @param {boolean} [resolveJsonResponse] Response should resolve to JSON
-     * @returns {Promise<Response>}
-     */
-    options(url, request, resolveJsonResponse = true)
-    {
-        return this._call(url, this._initializeRequest('OPTIONS', request), resolveJsonResponse);
-    }
-
-    /**
-     * CONNECT web method for the given url and optional body.
-     *
-     * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/CONNECT
-     * @public
-     * @param {string} url Endpoint for the CONNECT method.
-     * @param {string | undefined} body - Body to include with the CONNECT request if any.
-     * @param {object} [request] Request object that overrides the defaults
-     * @returns {Promise<Response>}
-     */
-    connect(url, body, request)
-    {
-        return this._call(url, this._initializeRequest('CONNECT', request), false);
-    }
-
-    /**
-     * TRACE web method for the given url
-     *
-     * Note: Included only for completeness. There are potential security exploits with this web method and its
-     * general use is discouraged.
-     *
-     * @link https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html
-     * @public
-     * @param {string} url Endpoint for the TRACE request.
-     * @param {object} [request] Request object that overrides the defaults
-     * @returns {Promise<Response>}
-     */
-    trace(url, request)
-    {
-        return this._call(url, this._initializeRequest('TRACE', request), false);
-    }
-
-    /**
-     * Called prior to the fetch to validate the request object and apply defaults per http method (such as headers).
-     *
-     * @protected
-     * @param {string} method The web method to invoke
-     * @param {object} [request] Request object
-     * @param {string | object} [body] The body of the request (if any)
-     * @returns {object} Request object
-     * @see https://developer.mozilla.org/en-US/docs/Web/API/Request
-     */
-    _initializeRequest(method, request, body)
-    {
-        // Method must be one of the specified HTTP verbs per the HTTP spec
-        // @see: https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html
-        console.assert(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS', 'CONNECT', 'TRACE'].includes(method), 'Invalid method: ' + method);
-
-        if (!request) {
-            request = {mode: 'cors'};
-        }
-
-        if (!request.headers) {
-            request.headers = new Headers();
-        }
-
-        let contentType = DEFAULT_REQUEST_CONTENT_TYPE[method];
-        if (contentType !== null) {
-            request.headers.append('Content-Type', contentType);
-        }
-
-        // If body is present then transform (if needed) and add it as a property to the request.
-        if (body) {
-            request.body = (typeof body) === 'object' ? JSON.stringify(body) : body;
-        }
-
-        // The method cannot be overridden.
-        request.method = method;
-
-        return request;
-    }
+    // Basically a global for the init options when then fetch is made.
+    const finalOptions = {} ;
 
     /**
      * Call to the actual fetch() function as an asynchronous call.
      *
      * @protected
      * @param {string} url The endpoint address
-     * @param {object} request Request object that may include the body and headers objects.
-     * @param {boolean} [resolveJsonResponse] Response should resolve to JSON
      * @returns {Promise<Response>}
      */
-    _call(url, request, resolveJsonResponse = true)
-    {
-        // We're not using arrow functions so let's keep a reference to this.
-        let self = this;
-
+    const callFetch = (url) =>  {
         /**
          * Async call to the Fetch API
          * @see https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
          *
          * @param {string} url Endpoint
-         * @param {object} request Request object
          * @returns {Promise.<Response>}
          */
-        async function doFetch(url, request)
+        async function doFetch(url)
         {
-            let response;
-
             // Asynchronously call fetch() via the await construct.
             try {
-                response = await fetch(url, request);
+                let response = await fetch(url, finalOptions);
 
-                // Should we throw an error when the response is not successful? ($.AJAX behavior)
-                if (self._throwErrorOnFailedStatus && !response.ok) {
-                    throw new Error(JSON.stringify(response));
-                }
-
-                // Should we resolve json if the response.headers Content-Type is JSON? (default is true)
-                if (resolveJsonResponse && typeof response.headers !== 'undefined') {
-                    // If the response content type is JSON then implement the JSON parser on the body
+                // Is the response content JSON? Yes, then return the resolved JSON value.
+                if (typeof response.headers !== 'undefined') {
                     let contentType = response.headers.get('Content-Type');
 
                     // In case the contentType has a backslash we convert it to forward slash
                     contentType = contentType.replace(/\\/, "/");
+
+                    // If the response content type is JSON then implement the JSON parser on the body
                     if (contentType && contentType === JSON_CONTENT_TYPE) {
                         return response.json();
                     }
                 }
 
-                // Frak only natively handles JSON responses if set to do so all others will have standard fetch response.
+                // All successful non-JSON response content resolves as a standard fetch response.
                 return response;
             } catch (e) {
-                if (self._verbose) {
-                    console.error(e);
-                }
-                throw e;
+                return e;
             }
         }
 
         // Do the fetch which in turn returns a Promise<Response>.
-        return doFetch(url, request);
+        return doFetch(url);
     }
+
+    /**
+     *
+     * @param {string} method
+     * @param {string || Blob || BufferSource || FormData || URLSearchParams || ReadableStream || null} body
+     */
+    const initRequest = (method, body= null) => {
+        // Method must be one of the specified HTTP verbs per the HTTP spec
+        // @see: https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html
+        console.assert(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS', 'CONNECT', 'TRACE'].includes(method), 'Invalid method: ' + method);
+
+        // Set the method
+        finalOptions.method = method;
+
+        // Is the headers property in the finalOptions object?
+        if ('headers' in finalOptions) {
+            // Is the headers property NOT an instance of Headers?
+            if (!(finalOptions.headers instanceof Headers)) {
+                finalOptions.headers = new Headers(finalOptions.headers);
+            } else {
+                finalOptions.headers = new Headers();
+            }
+        } else {
+            finalOptions.headers = new Headers();
+        }
+
+        // Set the Content-Type header if we're sending JSON otherwise destroy any existing Content-Type header
+        let contentType = DEFAULT_REQUEST_CONTENT_TYPE[method];
+        if (contentType !== null) {
+            finalOptions.headers.append('Content-Type', contentType);
+        } else {
+            finalOptions.headers.delete('Content-Type');
+        }
+
+        // If a body is provided then set it.
+        if (body) {
+            finalOptions.body = (typeof body) === 'object' ? JSON.stringify(body) : body;
+        }
+    }
+
+    /**
+     * Set the finalOptions
+     * @param options
+     */
+    API.setOptions = (options) => {
+        for (let key in options) {
+            if (options.hasOwnProperty(key)) {
+                if (key === 'method') {
+                    throw new Error('The "method" property should not be present in the options argument.');
+                }
+
+                if (key === 'body') {
+                    throw new Error('The "body" property should not be present in the options argument.');
+                }
+
+                if (key === 'headers') {
+                    if (typeof finalOptions.headers !== 'object') {
+                        throw new Error('The "headers" property must be an object.');
+                    }
+                }
+                finalOptions[key] = options[key];
+            }
+        }
+    }
+
+    /**
+     * Return the current options (finalOptions)
+     * @returns {{}}
+     */
+    API.getOptions = () => {
+        return finalOptions;
+    }
+
+    API.get = (url) => {
+        initRequest('GET');
+        return callFetch(url);
+    }
+
+    API.post = (url, body) => {
+        initRequest('POST', body);
+        return callFetch(url);
+    }
+
+    API.put = (url, body) => {
+        initRequest('PUT', body);
+        return callFetch(url);
+    }
+
+    API.patch = (url, body) => {
+        initRequest('PATCH', body);
+        return callFetch(url);
+    }
+
+    API.delete = (url) => {
+        initRequest('DELETE');
+        return callFetch(url);
+    }
+
+    API.head = (url) => {
+        initRequest('head');
+        return callFetch(url);
+    }
+
+    API.options = (url) => {
+        initRequest('options');
+        return callFetch(url);
+    }
+
+    API.connect = (url) => {
+        initRequest('connect');
+        return callFetch(url);
+    }
+
+    API.trace = (url) => {
+        initRequest('trace');
+        return callFetch(url);
+    }
+
+    // Set the options if they were passed in
+    if (options) {
+        API.setOptions(options);
+    }
+
+    // Expose the public API functions
+    return API;
 }
+
+export default Frak;

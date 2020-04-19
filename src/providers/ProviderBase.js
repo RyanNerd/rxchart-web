@@ -14,7 +14,7 @@ export default class ProviderBase
      */
     constructor(baseUrl, apiKey)
     {
-        this._frak = new Frak();
+        this._frak = Frak();
         this._baseURL = baseUrl;
         this._apiKey = apiKey;
     }

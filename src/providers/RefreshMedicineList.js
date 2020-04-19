@@ -26,12 +26,15 @@ export default function RefreshMedicineList(medicineProvider, residentId)
                if (response.status === 404) {
                    return null;
                } else {
+                   console.log('throw', response);
+                   alert('throw');
                    throw response;
                }
            }
        })
        .catch((err) => {
            console.log('error', err);
+           alert('problem');
            return err;
        });
 }

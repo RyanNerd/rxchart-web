@@ -17,6 +17,7 @@ const baseUrl = process.env.REACT_APP_BASEURL;
 const development = process.env.REACT_APP_DEVELOPMENT === 'true';
 
 let ResidentRecord;
+
 export const initialState = {
     development: development,
     activeDrug: null,
@@ -31,5 +32,6 @@ export const initialState = {
         medicineProvider: null,
         medHistoryProvider: null
     },
-    frak: new Frak()
+    // @ts-ignore
+    frak: Frak()
 };
