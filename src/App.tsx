@@ -10,9 +10,7 @@ import {FULLNAME} from "./utility/common";
  */
 function App()
 {
-    // @ts-ignore TS2345: Argument of type '"activeResident"' is not assignable to parameter of type 'never'.
     const [ activeResident ] = useGlobal('activeResident');
-    // @ts-ignore TS2345
     const [ development ] = useGlobal('development');
     const residentColor = development ? 'blue' : "#edf11e";
 

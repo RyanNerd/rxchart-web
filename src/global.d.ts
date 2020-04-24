@@ -25,5 +25,7 @@ declare module 'reactn/default' {
     export interface State {
         count: number;
         value: string;
+        activeResident: string;
+        development: string;
     }
 }
