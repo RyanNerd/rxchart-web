@@ -8,8 +8,7 @@ setGlobal(initialState)
         if (initialState.development) {
             console.log('RxChart Started', initialState);
         } else {
-            console.log('RxChart' +
-                ' Started');
+            console.log('RxChart Started');
         }
     }).catch((err) => {
         console.log('Something went wrong', err);

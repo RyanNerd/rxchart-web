@@ -10,12 +10,13 @@ import {FULLNAME} from "./utility/common";
  */
 function App()
 {
-    // @ts-ignore TS2345: Argument of type '"activeResident"' is not assignable to parameter of type 'never'.
     const [ activeResident ] = useGlobal('activeResident');
+    const [ development ] = useGlobal('development');
+    const residentColor = development ? 'blue' : "#edf11e";
 
     return (
         <>
-            {activeResident ? <h2 style={{textAlign: "center"}}><span style={{background:"#edf11e"}}>{FULLNAME(activeResident)}</span></h2> : null}
+            {activeResident ? <h2 style={{textAlign: "center"}}><span style={{background: residentColor}}>{FULLNAME(activeResident)}</span></h2> : null}
             <LandingPage/>
         </>
     );
