@@ -18,7 +18,7 @@ export default function MedicineListGroup(props)
 {
     const medicineList = props.medicineList;
     const activeDrug = props.activeDrug;
-    const barcodeImageURI = 'http://bwipjs-api.metafloor.com/?bcid=code128&scale=1&text=';
+    const barcodeImageURI = 'https://bwipjs-api.metafloor.com/?bcid=code128&scale=1&text=';
     const [ barcodeImg, setBarcodeImg ] = useState(barcodeImageURI + activeDrug.Barcode);
 
     /**
