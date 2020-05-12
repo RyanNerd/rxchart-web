@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from 'reactn';
+import React, {useEffect} from 'reactn';
 import ListGroup from "react-bootstrap/ListGroup";
 import DrugDropdown from "./DrugDropdown";
 import Button from "react-bootstrap/Button";
+import bwipjs from 'bwip-js';
 
 /**
  * MedicineListGroup
@@ -18,14 +19,23 @@ export default function MedicineListGroup(props)
 {
     const medicineList = props.medicineList;
     const activeDrug = props.activeDrug;
-    const barcodeImageURI = 'https://bwipjs-api.metafloor.com/?bcid=code128&scale=1&text=';
-    const [ barcodeImg, setBarcodeImg ] = useState(barcodeImageURI + activeDrug.Barcode);
 
     /**
      * Update the barcode image if the barcode has changed
      */
     useEffect(() => {
-        setBarcodeImg(barcodeImageURI + props.activeDrug.Barcode);
+        try {
+            let canvas = bwipjs.toCanvas('barcodeCanvas', {
+                bcid:        'code128',                 // Barcode type
+                text:        props.activeDrug.Barcode,  // Text to encode
+                scale:       2,                         // 2x scaling factor
+                height:      10,                        // Bar height, in millimeters
+                includetext: false,                     // Don't show human-readable text
+                textxalign:  'center'                   // Always good to set this
+            });
+        } catch (e) {
+            console.log('barcode image render error', e);
+        }
     }, [props.activeDrug.Barcode]);
 
     // Return null if there is not any medicines for the activeResident or if there's not an activeDrug
@@ -78,13 +88,11 @@ export default function MedicineListGroup(props)
                 <b>Barcode:</b> {activeDrug.Barcode}
             </ListGroup.Item>
 
+            {props.activeDrug.Barcode &&
             <ListGroup.Item>
-                <img
-                    alt=""
-                    key={barcodeImg}
-                    style={{paddingTop: "2px"}}
-                    src={barcodeImg}/>
+                <canvas id="barcodeCanvas"/>
             </ListGroup.Item>
+            }
         </ListGroup>
     );
 }
