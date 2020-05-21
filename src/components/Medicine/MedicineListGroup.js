@@ -25,6 +25,7 @@ export default function MedicineListGroup(props)
      */
     useEffect(() => {
         try {
+            // eslint-disable-next-line
             let canvas = bwipjs.toCanvas('barcodeCanvas', {
                 bcid:        'code128',                 // Barcode type
                 text:        props.activeDrug.Barcode,  // Text to encode
