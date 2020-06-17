@@ -60,6 +60,13 @@ function LoginPage(props) {
 
                     // Remove alert (in the case where a previous log in attempt failed).
                     setShowAlert(false);
+
+                    // Display the organization name that logged in
+                    const organization = json.data.organization || null;
+                    if (organization) {
+                        // Since this element lives in index.html we use old fashioned JS and DOM manipulation to update
+                        document.getElementById("organization").innerHTML = json.data.organization;
+                    }
                 });
             } else {
                 // Show invalid credentials alert
