@@ -23,6 +23,7 @@ export default function ManageDrugPage(props)
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDeleteMedicine, setShowDeleteMedicine ] = useState(false);
     const [ medicineInfo, setMedicineInfo ] = useState(null);
+    const [ ,setActiveDrug ] = useGlobal('activeDrug');
 
     const today = new Date();
     const day = today.getDate();
@@ -78,6 +79,11 @@ export default function ManageDrugPage(props)
                 RefreshMedicineList(medicineProvider, drugData.ResidentId)
                 .then((drugList) => {
                     setMedicineList(drugList);
+
+                    // Set the activeDrug to the first in the list.
+                    if (drugList.length > 0) {
+                        setActiveDrug(drugList[0]);
+                    }
                 })
                 .catch((err) => {
                     props.onError(err);
