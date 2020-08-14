@@ -25,15 +25,18 @@ export default function MedicineListGroup(props)
      */
     useEffect(() => {
         try {
-            // eslint-disable-next-line
-            let canvas = bwipjs.toCanvas('barcodeCanvas', {
-                bcid:        'code128',                 // Barcode type
-                text:        props.activeDrug.Barcode,  // Text to encode
-                scale:       2,                         // 2x scaling factor
-                height:      10,                        // Bar height, in millimeters
-                includetext: false,                     // Don't show human-readable text
-                textxalign:  'center'                   // Always good to set this
-            });
+            // Only try to create a barcode canvas IF there is actually a barcode value.
+            if (props.activeDrug.Barcode) {
+                // eslint-disable-next-line
+                let canvas = bwipjs.toCanvas('barcodeCanvas', {
+                    bcid: 'code128',                 // Barcode type
+                    text: props.activeDrug.Barcode,  // Text to encode
+                    scale: 2,                        // 2x scaling factor
+                    height: 10,                      // Bar height, in millimeters
+                    includetext: false,              // Don't show human-readable text
+                    textxalign: 'center'             // Always good to set this
+                });
+            }
         } catch (e) {
             console.log('barcode image render error', e);
         }
