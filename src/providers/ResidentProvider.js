@@ -50,7 +50,6 @@ export default class ResidentProvider
      * @returns {Promise<Response>}
      */
     restore( record) {
-        console.log('record', record);
         let uri = this._baseURL + 'resident/restore?api_key=' + this._apiKey;
         return this._frak.post(uri, record)
         .then((response) => {

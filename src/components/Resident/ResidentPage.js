@@ -39,7 +39,6 @@ export default function ResidentPage(props)
     function reactivateResident(id) {
         return residentProvider.restore({restore_id: id})
         .then((response) => {
-            console.log('reactivate', response);
             return response;
         })
         .catch((error) =>
@@ -115,8 +114,8 @@ export default function ResidentPage(props)
                 // Do we have a trashed resident? Reactivate them, otherwise add as a new resident.
                 if (result.length === 1) {
                     reactivateResident(result[0].Id)
-                    .then((response) => {
-                        setResidentInfo(response);
+                    .then((restoredResident) => {
+                        setResidentInfo(restoredResident);
                         residentProvider.search({order_by: [
                             {column: "LastName", direction: "asc"},
                             {column: "FirstName", direction: "asc"}
@@ -126,17 +125,17 @@ export default function ResidentPage(props)
                             // Rehydrate the residentList
                             setGlobal({residentList: residentList});
                             // Set the reactivated resident as the active resident.
-                            setActiveResident(response);
+                            setActiveResident(restoredResident);
                             // Rehydrate the MedicineList
-                            RefreshMedicineList(providers.medicineProvider, response.Id)
-                            .then((data) => {
-                                setGlobal({medicineList: data});
+                            RefreshMedicineList(providers.medicineProvider, restoredResident.Id)
+                            .then((hydratedMedicineList) => {
+                                setGlobal({medicineList: hydratedMedicineList});
                                 // If there are any medicines for the selected resident then
                                 // select the first one and make it the active drug.
-                                if (data && data.length > 0) {
-                                    setGlobal({activeDrug: data[0]});
+                                if (hydratedMedicineList && hydratedMedicineList.length > 0) {
+                                    setGlobal({activeDrug: hydratedMedicineList[0]});
                                     // Refresh the drugLogList for the new active drug.
-                                    RefreshMedicineLog(providers.medHistoryProvider, 'ResidentId', data[0].ResidentId)
+                                      RefreshMedicineLog(providers.medHistoryProvider, 'ResidentId', restoredResident.Id)
                                     .then((data) => setGlobal({drugLogList: data}))
                                     .catch((err) => props.onError(err));
                                 }
