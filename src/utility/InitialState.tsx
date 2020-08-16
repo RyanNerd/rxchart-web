@@ -10,7 +10,7 @@ export type ResidentRecord = {
     DOB_DAY: null | Date,
     Created: null | Date,
     Updated: null | Date,
-    deleted_at: null | Date
+    deleted_at: null | Date,
 }
 
 const baseUrl = process.env.REACT_APP_BASEURL;

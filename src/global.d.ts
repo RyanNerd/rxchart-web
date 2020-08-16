@@ -1,4 +1,5 @@
 import 'reactn';
+import {ResidentRecord} from "./utility/InitialState";
 
 declare module 'reactn/default' {
 
@@ -25,7 +26,7 @@ declare module 'reactn/default' {
     export interface State {
         count: number;
         value: string;
-        activeResident: string;
+        activeResident: ResidentRecord | null;
         development: string;
     }
 }
