@@ -31,8 +31,8 @@ export default function MedicineListGroup(props)
                 let canvas = bwipjs.toCanvas('barcodeCanvas', {
                     bcid: 'code128',                 // Barcode type
                     text: props.activeDrug.Barcode,  // Text to encode
-                    scale: 2,                        // 2x scaling factor
-                    height: 10,                      // Bar height, in millimeters
+                    scale: 1,                        // 2x scaling factor
+                    height: 5,                      // Bar height, in millimeters
                     includetext: false,              // Don't show human-readable text
                     textxalign: 'center'             // Always good to set this
                 });
@@ -63,7 +63,7 @@ export default function MedicineListGroup(props)
                 <ListGroup.Item>
                     <Button
                         className="mr-2"
-                        size="md"
+                        size="sm"
                         variant="primary"
                         onClick={(e) => props.addDrugLog(e)}
                     >
@@ -73,30 +73,23 @@ export default function MedicineListGroup(props)
             }
 
             <ListGroup.Item>
-                <b>Directions (Fill Date: {activeDrug.FillDateMonth}/{activeDrug.FillDateDay}/{activeDrug.FillDateYear})</b>
-            </ListGroup.Item>
-
-            <ListGroup.Item>
-                <p>{activeDrug.Directions}</p>
+                <b>
+                    Directions (Fill Date: {activeDrug.FillDateMonth}/{activeDrug.FillDateDay}/{activeDrug.FillDateYear})
+                </b>
+                <span> {activeDrug.Directions}</span>
             </ListGroup.Item>
 
             <ListGroup.Item>
                 <b>Notes</b>
-            </ListGroup.Item>
-
-            <ListGroup.Item>
                 <p>{activeDrug.Notes}</p>
             </ListGroup.Item>
 
             <ListGroup.Item variant="info">
-                <b>Barcode:</b> {activeDrug.Barcode}
+                <b>Barcode:</b> <span>{activeDrug.Barcode} </span>
+                {props.activeDrug.Barcode &&
+                    <canvas id="barcodeCanvas"/>
+                }
             </ListGroup.Item>
-
-            {props.activeDrug.Barcode &&
-            <ListGroup.Item>
-                <canvas id="barcodeCanvas"/>
-            </ListGroup.Item>
-            }
         </ListGroup>
     );
 }

@@ -363,14 +363,12 @@ export default function MedicinePage(props)
                             show={showLastTakenWarning >= 0 && activeDrug}
                             variant={determineWarningColor(showLastTakenWarning)}
                         >
-
-                        {/* Display in BOLD if taken 3 or less hours ago */}
-                        {showLastTakenWarning <= 3 ?
-                            <b>Last Taken (hours): {showLastTakenWarning}</b>
-                            :
-                            <span>Last Taken (hours): {showLastTakenWarning}</span>
-                        }
-
+                            {/* Display in BOLD if taken 3 or less hours ago */}
+                            {showLastTakenWarning <= 3 ?
+                                <b>Last Taken (hours): {showLastTakenWarning}</b>
+                                :
+                                <span>Last Taken (hours): {showLastTakenWarning}</span>
+                            }
                         </Alert>
                     </Col>
                 </Form.Group>
