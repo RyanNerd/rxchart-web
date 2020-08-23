@@ -9,6 +9,7 @@ import ResidentProvider from './../../providers/ResidentProvider';
 import MedicineProvider from './../../providers/MedicineProvider';
 import {initialState} from "../../utility/InitialState";
 import MedHistoryProvider from "../../providers/MedHistoryProvider";
+// import {OtcProvider} from "../../providers/OtcProvider";
 
 /**
  * Sign in page
@@ -25,8 +26,9 @@ function LoginPage(props) {
     const [ frak ] = useGlobal('frak');
     const [ baseUrl ] = useGlobal('baseUrl');
     const [ residentList, setResidentList ] = useGlobal('residentList');
-    const [ providers , setProviders ] = useGlobal('providers');
+    const [ , setProviders ] = useGlobal('providers');
     const [ development ] = useGlobal('development');
+    // const [ otcList, setOtcList ] = useGlobal('otcList');
 
     /**
      * Fires when the Login Button is clicked
@@ -40,12 +42,18 @@ function LoginPage(props) {
             // Success?
             if (json.success) {
                 // Set the global API key returned from the web service.
-                setApiKey(json.data.apiKey).then(() =>
+                const apiKey = json.data.apiKey;
+                setApiKey(apiKey).then(() =>
                 {
                     // Use global state for Dependency Injection for providers.
-                    providers.residentProvider = new ResidentProvider(baseUrl, json.data.apiKey);
-                    providers.medicineProvider = new MedicineProvider(baseUrl, json.data.apiKey);
-                    providers.medHistoryProvider = new MedHistoryProvider(baseUrl, json.data.apiKey);
+                    const rxFrak = {frak: frak, apiKey: apiKey, baseUrl: baseUrl};
+                    const providers = {
+                        residentProvider: ResidentProvider.init(rxFrak),
+                        medicineProvider: MedicineProvider.init(rxFrak),
+                        medHistoryProvider: MedHistoryProvider.init(rxFrak),
+                        // otcProvider: OtcProvider.Init(this._rxFrak)
+                    }
+
                     setProviders(providers);
 
                     // Load ALL Resident records up front and save them in the global store.
@@ -54,6 +62,9 @@ function LoginPage(props) {
                         .then((data) => setResidentList(data))
                         .catch((err) => props.onError(err));
                     }
+
+                    // TODO: Load ALL OTC medications
+                    // setOtcList([{Id: 1}]);
 
                     // Let the parent component know we are logged in successfully
                     props.onLogin(true);

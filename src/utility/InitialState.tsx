@@ -13,6 +13,13 @@ export type ResidentRecord = {
     deleted_at: null | Date,
 }
 
+export type OtcList = {
+    Id: null | number,
+    DrugName: string,
+    Strength: string,
+    Barcode: number
+}
+
 const baseUrl = process.env.REACT_APP_BASEURL;
 const development = process.env.REACT_APP_DEVELOPMENT === 'true';
 

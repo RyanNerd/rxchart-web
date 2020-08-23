@@ -17,11 +17,11 @@ function App()
     return (
         <>
             {activeResident ?
-                <h2 style={{textAlign: "center"}}>
+                <h4 style={{textAlign: "center"}}>
                     <span style={{background: residentColor}}>
                         {FULLNAME(activeResident)} {activeResident.DOB_MONTH}/{activeResident.DOB_DAY}/{activeResident.DOB_YEAR}
                     </span>
-                </h2> : null
+                </h4> : null
             }
             <LandingPage/>
         </>

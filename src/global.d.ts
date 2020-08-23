@@ -27,6 +27,6 @@ declare module 'reactn/default' {
         count: number;
         value: string;
         activeResident: ResidentRecord | null;
-        development: string;
+        development: boolean;
     }
 }

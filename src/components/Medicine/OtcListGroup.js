@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'reactn';
+import React, {useEffect} from 'reactn';
 import ListGroup from "react-bootstrap/ListGroup";
 import DrugDropdown from "./DrugDropdown";
 import Button from "react-bootstrap/Button";
 import bwipjs from 'bwip-js';
 
 /**
- * MedicineListGroup
+ * OtcListGroup -- Cloned from MedicineListGroup
  * @param {object} props
  *  props:
  *      {array<object>} medicineList Available list of meds for the activeResident
@@ -15,40 +15,10 @@ import bwipjs from 'bwip-js';
  *
  * @return {* || null}
  */
-export default function MedicineListGroup(props)
+export default function OtcListGroup(props)
 {
-    let [warningColor, setWarningColor ] = useState('light');
-
     const medicineList = props.medicineList;
     const activeDrug = props.activeDrug;
-    const lastTaken = props.lastTaken;
-
-    useEffect(() => {
-        let calculatedWarningColor;
-        switch (lastTaken) {
-            case 0: calculatedWarningColor = 'danger';
-                    break;
-            case 1: calculatedWarningColor = 'danger';
-                    break;
-            case 2: calculatedWarningColor = 'danger';
-                    break;
-            case 3: calculatedWarningColor = 'outline-warning';
-                    break;
-            case 4: calculatedWarningColor = 'outline-warning';
-                    break;
-            case 5: calculatedWarningColor = 'outline-warning';
-                    break;
-            case 6: calculatedWarningColor = 'outline-info';
-                    break;
-            case 7: calculatedWarningColor = 'outline-info';
-                    break;
-            case 8: calculatedWarningColor = 'outline-info';
-                    break;
-            default: calculatedWarningColor = 'light';
-        }
-        setWarningColor(calculatedWarningColor);
-    }, [lastTaken]);
-
 
     /**
      * Update the barcode image if the barcode has changed
@@ -58,11 +28,11 @@ export default function MedicineListGroup(props)
             // Only try to create a barcode canvas IF there is actually a barcode value.
             if (props.activeDrug.Barcode) {
                 // eslint-disable-next-line
-                const canvas = bwipjs.toCanvas('barcodeCanvas', {
+                let canvas2 = bwipjs.toCanvas('barcodeCanvas2', {
                     bcid: 'code128',                 // Barcode type
                     text: props.activeDrug.Barcode,  // Text to encode
                     scale: 1,                        // 2x scaling factor
-                    height: 5,                       // Bar height, in millimeters
+                    height: 5,                      // Bar height, in millimeters
                     includetext: false,              // Don't show human-readable text
                     textxalign: 'center'             // Always good to set this
                 });
@@ -74,7 +44,7 @@ export default function MedicineListGroup(props)
 
     // Return null if there is not any medicines for the activeResident or if there's not an activeDrug
     if (!medicineList || !activeDrug) {
-      return null;
+        return null;
     }
 
     return (
@@ -89,25 +59,18 @@ export default function MedicineListGroup(props)
                 />
             </ListGroup.Item>
 
+            {props.addDrugLog &&
             <ListGroup.Item>
                 <Button
+                    className="mr-2"
                     size="sm"
                     variant="primary"
                     onClick={(e) => props.addDrugLog(e)}
                 >
                     + Log Drug
                 </Button>
-
-                <Button
-                    disabled
-                    size="sm"
-                    className="ml-2"
-                    variant={warningColor}
-                >
-                    {/* Display in BOLD if taken 3 or less hours ago */}
-                    {lastTaken <= 3 ? <b>Last Taken (hours): {lastTaken}</b> : <span>Last Taken (hours): {lastTaken}</span>}
-                </Button>
             </ListGroup.Item>
+            }
 
             <ListGroup.Item>
                 <b>
@@ -124,7 +87,7 @@ export default function MedicineListGroup(props)
             <ListGroup.Item variant="info">
                 <b>Barcode:</b> <span>{activeDrug.Barcode} </span>
                 {props.activeDrug.Barcode &&
-                    <canvas id="barcodeCanvas"/>
+                <canvas2 id="barcodeCanvas2"/>
                 }
             </ListGroup.Item>
         </ListGroup>

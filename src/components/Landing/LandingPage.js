@@ -44,14 +44,14 @@ function LandingPage()
                 title={apiKey ? "Logout" : "Login"}
             >
                 <LoginPage
-                    onLogin={(loggedIn) => {setActiveTabKey(loggedIn ? 'drugs' : 'login')}}
+                    onLogin={(loggedIn) => {setActiveTabKey(loggedIn ? 'resident' : 'login')}}
                     onError={(error) => errorOccurred(error)}
                 />
             </Tab>
             <Tab
-                disabled={apiKey === null}
+                disabled={apiKey === null || !activeResident}
                 eventKey="drugs"
-                title="Scan">
+                title="Log">
                 <MedicinePage
                     onError={(error) => errorOccurred(error)}
                 />
@@ -65,14 +65,14 @@ function LandingPage()
                 />
             </Tab>
             <Tab
-                disabled={apiKey === null || activeResident === null}
+                disabled={apiKey === null || !activeResident}
                 eventKey="history"
                 title="Drug History"
             >
                 <DrugHistoryPage/>
             </Tab>
             <Tab
-                disabled={apiKey === null || activeResident === null}
+                disabled={apiKey === null || !activeResident}
                 eventKey="manage"
                 title="Manage Medicine"
             >
