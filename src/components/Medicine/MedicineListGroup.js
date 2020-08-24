@@ -22,7 +22,14 @@ export default function MedicineListGroup(props)
     const medicineList = props.medicineList;
     const activeDrug = props.activeDrug;
     const lastTaken = props.lastTaken;
+    const barCode = activeDrug.Barcode || null;
+    const notes = activeDrug.Notes || null;
+    const directions = activeDrug.Directions || null;
+    const drugId = activeDrug.Id;
+    const fillDate = activeDrug.FillDateMonth ?
+                activeDrug.FillDateMonth + '/' + activeDrug.FillDateDay +'/' + activeDrug.FillDateYear : null;
 
+    // Update the warning color based on the lastTaken hours value
     useEffect(() => {
         let calculatedWarningColor;
         switch (lastTaken) {
@@ -50,27 +57,25 @@ export default function MedicineListGroup(props)
     }, [lastTaken]);
 
 
-    /**
-     * Update the barcode image if the barcode has changed
-     */
+    // Update the barcode image if the barcode has changed
     useEffect(() => {
         try {
             // Only try to create a barcode canvas IF there is actually a barcode value.
-            if (props.activeDrug.Barcode) {
+            if (barCode) {
                 // eslint-disable-next-line
                 const canvas = bwipjs.toCanvas('barcodeCanvas', {
-                    bcid: 'code128',                 // Barcode type
-                    text: props.activeDrug.Barcode,  // Text to encode
-                    scale: 1,                        // 2x scaling factor
-                    height: 5,                       // Bar height, in millimeters
-                    includetext: false,              // Don't show human-readable text
-                    textxalign: 'center'             // Always good to set this
+                    bcid: 'code128',     // Barcode type
+                    text: barCode,       // Text to encode
+                    scale: 1,            // 2x scaling factor
+                    height: 5,           // Bar height, in millimeters
+                    includetext: false,  // Don't show human-readable text
+                    textxalign: 'center' // Always good to set this
                 });
             }
         } catch (e) {
             console.log('barcode image render error', e);
         }
-    }, [props.activeDrug.Barcode]);
+    }, [barCode]);
 
     // Return null if there is not any medicines for the activeResident or if there's not an activeDrug
     if (!medicineList || !activeDrug) {
@@ -82,7 +87,7 @@ export default function MedicineListGroup(props)
             <ListGroup.Item active>
                 <DrugDropdown
                     medicineList={medicineList}
-                    drugId={activeDrug.Id}
+                    drugId={drugId}
                     onSelect={(e, drug) => {
                         props.drugChanged(drug);
                     }}
@@ -109,24 +114,27 @@ export default function MedicineListGroup(props)
                 </Button>
             </ListGroup.Item>
 
-            <ListGroup.Item>
-                <b>
-                    Directions (Fill Date: {activeDrug.FillDateMonth}/{activeDrug.FillDateDay}/{activeDrug.FillDateYear})
-                </b>
-                <span> {activeDrug.Directions}</span>
-            </ListGroup.Item>
+            {directions && directions.length > 0 &&
+                <ListGroup.Item>
+                    <b>
+                        Directions {fillDate && <span>(Fill Date: {fillDate})</span>}
+                    </b>
+                    <span> {activeDrug.Directions}</span>
+                </ListGroup.Item>
+            }
 
-            <ListGroup.Item>
-                <b>Notes</b>
-                <p>{activeDrug.Notes}</p>
-            </ListGroup.Item>
+            {notes && notes.length > 0 &&
+                <ListGroup.Item>
+                    <p><b>Notes: </b>{activeDrug.Notes}</p>
+                </ListGroup.Item>
+            }
 
-            <ListGroup.Item variant="info">
-                <b>Barcode:</b> <span>{activeDrug.Barcode} </span>
-                {props.activeDrug.Barcode &&
-                    <canvas id="barcodeCanvas"/>
-                }
-            </ListGroup.Item>
+            {barCode &&
+                <ListGroup.Item variant="info">
+                        <b>Barcode:</b> <span>{barCode} </span>
+                        <canvas id="barcodeCanvas"/>
+                </ListGroup.Item>
+            }
         </ListGroup>
     );
 }

@@ -148,7 +148,7 @@ const ResidentProvider = {
      * @returns {Promise<Response>}
      */
     post: (residentInfo) => {
-        return ResidentProvider._rxFrak.post(ResidentProvider._baseUrl + 'resident?api_key=' + ResidentProvider._apiKey, residentInfo)
+        return ResidentProvider._frak.post(ResidentProvider._baseUrl + 'resident?api_key=' + ResidentProvider._apiKey, residentInfo)
         .then((response) => {
             if (response.success) {
                 return response.data;
@@ -168,7 +168,7 @@ const ResidentProvider = {
      * @returns {Promise<Response>}
      */
     delete: (residentId) => {
-        return ResidentProvider._rxFrak.delete_(ResidentProvider._baseUrl + 'resident/' + residentId + '?api_key=' + ResidentProvider._apiKey)
+        return ResidentProvider._frak.delete_(ResidentProvider._baseUrl + 'resident/' + residentId + '?api_key=' + ResidentProvider._apiKey)
         .then((response) => {
             if (response.success) {
                 return response;

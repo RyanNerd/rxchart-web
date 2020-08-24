@@ -24,7 +24,8 @@ export default function ResidentPage(props)
     const [ residentInfo, setResidentInfo ] = useState({Id: null});
     const [ showDeleteResident, setShowDeleteResident ] = useState(false);
     const [ residentToDelete, setResidentToDelete ] = useState(null);
-
+    const [ , setMedicineList ] = useGlobal('medicineList');
+    const [ , setDrugLogList ] = useGlobal('drugLogList');
     const [ activeResident, setActiveResident ] = useGlobal('activeResident');
     const [ providers ] = useGlobal('providers');
 
@@ -129,14 +130,13 @@ export default function ResidentPage(props)
                             // Rehydrate the MedicineList
                             RefreshMedicineList(providers.medicineProvider, restoredResident.Id)
                             .then((hydratedMedicineList) => {
-                                setGlobal({medicineList: hydratedMedicineList});
+                                setMedicineList (hydratedMedicineList);
                                 // If there are any medicines for the selected resident then
                                 // select the first one and make it the active drug.
                                 if (hydratedMedicineList && hydratedMedicineList.length > 0) {
-                                    setGlobal({activeDrug: hydratedMedicineList[0]});
                                     // Refresh the drugLogList for the new active drug.
-                                      RefreshMedicineLog(providers.medHistoryProvider, 'ResidentId', restoredResident.Id)
-                                    .then((data) => setGlobal({drugLogList: data}))
+                                    RefreshMedicineLog(providers.medHistoryProvider, 'ResidentId', restoredResident.Id)
+                                    .then((data) => setDrugLogList(data))
                                     .catch((err) => props.onError(err));
                                 }
                             });
@@ -148,6 +148,7 @@ export default function ResidentPage(props)
                     });
                 } else {
                     // Add the new resident
+                    console.log('residentData', residentData);
                     residentProvider.post(residentData)
                     .then((response) => {
                         residentProvider.search({order_by: [
@@ -165,7 +166,7 @@ export default function ResidentPage(props)
                     .then((response) => {
                         setResidentInfo(response);
                         setActiveResident(response);
-                        setGlobal({activeDrug: null, medicineList: null, drugLog: null});
+                        setGlobal({medicineList: null, drugLog: null});
                     })
                     .catch((err) => props.onError(err));
                 }
@@ -192,7 +193,6 @@ export default function ResidentPage(props)
             // If there are any medicines for the selected resident then
             // select the first one and make it the active drug.
             if (data && data.length > 0) {
-                setGlobal({activeDrug: data[0]});
                 // Refresh the drugLogList for the new active drug.
                 RefreshMedicineLog(providers.medHistoryProvider, 'ResidentId', data[0].ResidentId)
                     .then((data) => setGlobal({drugLogList: data}))
@@ -200,8 +200,6 @@ export default function ResidentPage(props)
             }
         })
         .catch((err) => setGlobal({medicineList: null}));
-
-        setGlobal({activeDrug: null});
     }
 
     /**

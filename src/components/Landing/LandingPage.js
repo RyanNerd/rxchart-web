@@ -6,6 +6,7 @@ import ResidentPage from "../Resident/ResidentPage";
 import MedicinePage from "../Medicine/MedicinePage";
 import DrugHistoryPage from "../DrugHistory/DrugHistoryPage";
 import ManageDrugPage from "../ManageDrugs/ManageDrugPage";
+import OtcPage from "../Otc/OtcPage";
 
 function LandingPage()
 {
@@ -50,11 +51,17 @@ function LandingPage()
             </Tab>
             <Tab
                 disabled={apiKey === null || !activeResident}
-                eventKey="drugs"
-                title="Log">
+                eventKey="log"
+                title="Rx">
                 <MedicinePage
                     onError={(error) => errorOccurred(error)}
                 />
+            </Tab>
+            <Tab
+                disabled={apiKey === null || !activeResident}
+                eventKey="otc"
+                title="OTC">
+                <OtcPage/>
             </Tab>
             <Tab
                 disabled={apiKey === null}

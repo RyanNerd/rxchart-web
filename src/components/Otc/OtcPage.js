@@ -11,10 +11,10 @@ import DrugLogGrid from "../DrugLog/DrugLogGrid";
 import DrugLogEdit from "../DrugLog/DrugLogEdit";
 import RefreshMedicineLog from "../../providers/RefreshMedicineLog";
 import AddNewMedicineButton from "../ManageDrugs/AddNewMedicineButton";
-import MedicineListGroup from "./MedicineListGroup";
+import MedicineListGroup from "./../Medicine/MedicineListGroup";
 
 /**
- * MedicinePage
+ * OtcPage
  * This is where most of the logic and data entry will be done so the page is a little busy
  * Features of this page are:
  *  - Manually Add Medicine
@@ -24,7 +24,7 @@ import MedicineListGroup from "./MedicineListGroup";
  *
  * @returns {*}
  */
-export default function MedicinePage(props)
+export default function OtcPage(props)
 {
     const [ barcode, setBarcode ] = useState('');
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
@@ -34,7 +34,6 @@ export default function MedicinePage(props)
     const [ showDeleteDrugLogRecord, setShowDeleteDrugLogRecord ] = useState(false);
     const [ lastTaken, setLastTaken ] = useState(false);
 
-    // const [ activeDrug, setActiveDrug ] = useGlobal('activeDrug');
     const [ activeDrug, setActiveDrug ] = useState(null);
     const [ medicineList, setMedicineList ] = useGlobal('medicineList');
     const [ drugLogList, setDrugLogList ] = useGlobal('drugLogList');
@@ -134,20 +133,20 @@ export default function MedicinePage(props)
             }
 
             medicineProvider.post(drugData)
-            .then((drugRecord) => {
-                RefreshMedicineList(medicineProvider, drugData.ResidentId)
-                .then((drugList) => {
-                    setMedicineList(drugList);
-                    setDrugInfo(drugRecord);
-                    setActiveDrug(drugRecord);
-                    setLastTaken(false);
-                    RefreshMedicineLog(medHistoryProvider, 'ResidentId', drugData.ResidentId)
-                        .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
-                })
-                .catch((err) => {
-                    props.onError(err);
+                .then((drugRecord) => {
+                    RefreshMedicineList(medicineProvider, drugData.ResidentId)
+                        .then((drugList) => {
+                            setMedicineList(drugList);
+                            setDrugInfo(drugRecord);
+                            setActiveDrug(drugRecord);
+                            setLastTaken(false);
+                            RefreshMedicineLog(medHistoryProvider, 'ResidentId', drugData.ResidentId)
+                                .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
+                        })
+                        .catch((err) => {
+                            props.onError(err);
+                        });
                 });
-            });
         }
         setShowMedicineEdit(false);
     }
@@ -160,10 +159,10 @@ export default function MedicinePage(props)
     function deleteDrugLogRecord(drugLogInfo)
     {
         medHistoryProvider.delete(drugLogInfo.Id)
-        .then((response) => {
-            RefreshMedicineLog(medHistoryProvider, 'ResidentId', activeDrug.ResidentId)
-                .then((data) => setDrugLogList(data));
-        });
+            .then((response) => {
+                RefreshMedicineLog(medHistoryProvider, 'ResidentId', activeDrug.ResidentId)
+                    .then((data) => setDrugLogList(data));
+            });
         setShowDeleteDrugLogRecord(false);
     }
 
@@ -246,17 +245,17 @@ export default function MedicinePage(props)
                 <Row>
                     <Col sm="4">
                         {medicineList && activeDrug &&
-                            <MedicineListGroup
-                                lastTaken={lastTaken}
-                                medicineList={medicineList}
-                                activeDrug={activeDrug}
-                                drugChanged={(drug) => {
-                                    setActiveDrug(drug);
-                                    RefreshMedicineLog(medHistoryProvider, 'ResidentId', drug.ResidentId)
-                                        .then((data) => setDrugLogList(data));
-                                }}
-                                addDrugLog={(e) => addEditDrugLog(e)}
-                            />
+                        <MedicineListGroup
+                            lastTaken={lastTaken}
+                            medicineList={medicineList}
+                            activeDrug={activeDrug}
+                            drugChanged={(drug) => {
+                                setActiveDrug(drug);
+                                RefreshMedicineLog(medHistoryProvider, 'ResidentId', drug.ResidentId)
+                                    .then((data) => setDrugLogList(data));
+                            }}
+                            addDrugLog={(e) => addEditDrugLog(e)}
+                        />
                         }
                     </Col>
 
