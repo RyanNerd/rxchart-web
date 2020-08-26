@@ -1,5 +1,3 @@
-import Frak from "../providers/Frak";
-
 export type ResidentRecord = {
     Id : null | number,
     UserId: number,
@@ -29,6 +27,5 @@ export const initialState = {
         residentProvider: null,
         medicineProvider: null,
         medHistoryProvider: null
-    },
-    frak: new Frak()
+    }
 };

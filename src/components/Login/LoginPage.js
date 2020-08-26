@@ -9,7 +9,7 @@ import ResidentProvider from './../../providers/ResidentProvider';
 import MedicineProvider from './../../providers/MedicineProvider';
 import {initialState} from "../../utility/InitialState";
 import MedHistoryProvider from "../../providers/MedHistoryProvider";
-// import {OtcProvider} from "../../providers/OtcProvider";
+import Frak from "../../providers/Frak";
 
 /**
  * Sign in page
@@ -23,18 +23,16 @@ function LoginPage(props) {
     const [ showAlert, setShowAlert ] = useState(false);
 
     const [ apiKey, setApiKey ] = useGlobal('apiKey');
-    const [ frak ] = useGlobal('frak');
     const [ baseUrl ] = useGlobal('baseUrl');
     const [ residentList, setResidentList ] = useGlobal('residentList');
-    const [ , setProviders ] = useGlobal('providers');
     const [ development ] = useGlobal('development');
-    // const [ otcList, setOtcList ] = useGlobal('otcList');
 
     /**
      * Fires when the Login Button is clicked
      */
     function login(e) {
         e.preventDefault();
+        const frak = new Frak();
 
         // Send the user name and password to the web service
         frak.post(baseUrl + 'authenticate', {username: userName, password: password}, {mode: "cors"})

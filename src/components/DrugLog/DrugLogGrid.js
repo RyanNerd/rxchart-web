@@ -78,7 +78,7 @@ export default function DrugLogGrid(props)
                 <td>
                     <Button
                         size="sm"
-                        id={"resident-grid-delete-btn-" + drug.Id}
+                        id={"drug-grid-delete-btn-" + drug.Id}
                         variant="outline-danger"
                         onClick={(e) => props.onDelete(e, drug)}
                     >
