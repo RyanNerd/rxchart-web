@@ -26,6 +26,7 @@ function LoginPage(props) {
     const [ baseUrl ] = useGlobal('baseUrl');
     const [ residentList, setResidentList ] = useGlobal('residentList');
     const [ development ] = useGlobal('development');
+    const [ , setProviders ] = useGlobal('providers');
 
     /**
      * Fires when the Login Button is clicked

@@ -29,6 +29,8 @@ declare module 'reactn/default' {
         activeResident: ResidentRecord | null;
         development: boolean;
         providers: object;
+        drugLogList: null | [];
+        medicineList: null | [];
         residentList: null | [];
         baseUrl: string;
         apiKey: string;

@@ -33,9 +33,8 @@ export default function MedicinePage(props)
     const [ drugLogInfo, setDrugLogInfo ] = useState(null);
     const [ showDeleteDrugLogRecord, setShowDeleteDrugLogRecord ] = useState(false);
     const [ lastTaken, setLastTaken ] = useState(false);
-
-    // const [ activeDrug, setActiveDrug ] = useGlobal('activeDrug');
     const [ activeDrug, setActiveDrug ] = useState(null);
+
     const [ medicineList, setMedicineList ] = useGlobal('medicineList');
     const [ drugLogList, setDrugLogList ] = useGlobal('drugLogList');
     const [ activeResident ] = useGlobal('activeResident');
@@ -288,7 +287,7 @@ export default function MedicinePage(props)
             />
 
             <ConfirmationDialog
-                title={"Delete Log Record"}
+                title="Delete Log Record"
                 body={
                     <>
                         <p>{showDeleteDrugLogRecord.Created}</p>
