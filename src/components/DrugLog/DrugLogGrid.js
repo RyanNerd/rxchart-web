@@ -58,7 +58,6 @@ export default function DrugLogGrid(props)
                     <td>
                         <Button
                             size="sm"
-                            id={"druglog-grid-edit-btn-" + drug.Id}
                             onClick={(e) => props.onEdit(e, drug)}
                         >
                             Edit

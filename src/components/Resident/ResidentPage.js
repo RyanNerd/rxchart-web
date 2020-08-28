@@ -229,7 +229,14 @@ export default function ResidentPage(props)
                     setActiveResident(null);
                 }
 
-                residentProvider.query('*').then((data) => setGlobal({residentList: data}));
+                const searchCriteria =
+                    {
+                        order_by: [
+                            {column: "LastName", direction: "asc"},
+                            {column: "FirstName", direction: "asc"}
+                        ]
+                    };
+                residentProvider.search(searchCriteria).then((data) => setGlobal({residentList: data}));
             } else {
                 props.onError(response);
             }

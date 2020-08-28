@@ -69,57 +69,6 @@ const ResidentProvider = {
         });
     },
 
-     /**
-     * Query Interface
-     *
-     * @param {string} value
-     * @param {array<string>} columns
-     * @returns {Promise<Response>}
-     */
-    query: (value, ...columns) => {
-        let uri = ResidentProvider._baseUrl + 'resident/query/'+ value + '?';
-
-        switch (value) {
-            case '*':
-            {
-                break;
-            }
-
-            case '-':
-            {
-                break;
-            }
-
-            default:
-            {
-                uri += 'column_name=' + columns[0] + '&';
-                break;
-            }
-        }
-
-        if (value !== '*') {
-            uri += '?column=' + columns;
-        }
-        uri += 'api_key=' + ResidentProvider._apiKey;
-
-        return ResidentProvider._frak.get(uri)
-        .then((response) => {
-            if (response.success) {
-                return response.data;
-            } else {
-                if (response.status === 404) {
-                    return [];
-                }
-
-                throw new Error(response);
-            }
-        })
-        .catch((err) => {
-            console.error(err);
-            alert('problem');
-        });
-    },
-
     /**
      * Read Interface
      *

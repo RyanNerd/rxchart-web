@@ -57,9 +57,16 @@ function LoginPage(props) {
 
                     // Load ALL Resident records up front and save them in the global store.
                     if (residentList === null) {
-                        providers.residentProvider.query('*')
-                        .then((data) => setResidentList(data))
-                        .catch((err) => props.onError(err));
+                        const searchCriteria =
+                            {
+                                order_by: [
+                                    {column: "LastName", direction: "asc"},
+                                    {column: "FirstName", direction: "asc"}
+                                ]
+                            };
+                        providers.residentProvider.search(searchCriteria)
+                            .then((data) => setResidentList(data))
+                            .catch((err) => props.onError(err));
                     }
 
                     // TODO: Load ALL OTC medications

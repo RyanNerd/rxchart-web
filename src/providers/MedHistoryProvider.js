@@ -20,42 +20,27 @@ const MedHistoryProvider = {
     },
 
     /**
-     * Query interface
+     * Search Interface
      *
-     * @param {string} value
-     * @param {array<string>} columns
+     * @param {object} options
      * @returns {Promise<Response>}
      */
-    query: (value, ...columns) => {
-        let uri = MedHistoryProvider._baseUrl + 'medhistory/query/'+ value + '?';
-
-        switch (value) {
-            case '*':
-            {
-                break;
-            }
-
-            case '-':
-            {
-                break;
-            }
-
-            default:
-            {
-                uri += 'column_name=' + columns[0] + '&';
-                break;
-            }
-        }
-
-        uri += 'api_key=' + MedHistoryProvider._apiKey;
-
-        return MedHistoryProvider._frak.get(uri)
+    search: ( options) => {
+        let uri = MedHistoryProvider._baseUrl + 'medhistory/search?api_key=' + MedHistoryProvider._apiKey;
+        return MedHistoryProvider._frak.post(uri, options)
         .then((response) => {
-            return response;
+            if (response.success) {
+                return response.data;
+            } else {
+                if (response.status === 404) {
+                    return [];
+                }
+                throw new Error(response.toString());
+            }
         })
         .catch((err) => {
             console.error(err);
-            alert('problem');
+            alert('problem -- see console log');
         });
     },
 
@@ -67,17 +52,17 @@ const MedHistoryProvider = {
      */
     read: (id) => {
         return MedHistoryProvider._frak.get(MedHistoryProvider._baseUrl + 'medhistory/'+ id + '?api_key=' + MedHistoryProvider._apiKey)
-        .then((response) => {
-            if (response.success) {
-                return response.data;
-            } else {
-                throw response;
-            }
-        })
-        .catch((err) => {
-            console.error(err);
-            alert('problem');
-        });
+            .then((response) => {
+                if (response.success) {
+                    return response.data;
+                } else {
+                    throw response;
+                }
+            })
+            .catch((err) => {
+                console.error(err);
+                alert('problem');
+            });
     },
 
     /**
@@ -88,30 +73,30 @@ const MedHistoryProvider = {
      */
     post: (drugInfo) => {
         return MedHistoryProvider._frak.post(MedHistoryProvider._baseUrl + 'medhistory?api_key=' + MedHistoryProvider._apiKey, drugInfo)
-        .then((response) => {
-            if (response.success) {
-                return response.data;
-            } else {
-                throw response;
-            }
-        })
-        .catch((err) => {
-            return err;
-        });
+            .then((response) => {
+                if (response.success) {
+                    return response.data;
+                } else {
+                    throw response;
+                }
+            })
+            .catch((err) => {
+                return err;
+            });
     },
-    
+
     delete: (drugId) => {
         return MedHistoryProvider._frak.delete_(MedHistoryProvider._baseUrl + 'medhistory/' + drugId + '?api_key=' + MedHistoryProvider._apiKey)
-        .then((response) => {
-            if (response.success) {
-                return response;
-            } else {
-                throw response;
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-        });
+            .then((response) => {
+                if (response.success) {
+                    return response;
+                } else {
+                    throw response;
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     }
 }
 

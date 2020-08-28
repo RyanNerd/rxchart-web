@@ -46,46 +46,6 @@ const MedicineProvider = {
     },
 
     /**
-     * Query interface
-     *
-     * @param {string} value
-     * @param {array<string>}columns
-     * @returns {Promise<Response>}
-     */
-    query: (value, ...columns) => {
-        let uri = MedicineProvider._baseUrl + 'medicine/query/'+ value + '?';
-
-        switch (value) {
-            case '*':
-            {
-                break;
-            }
-
-            case '-':
-            {
-                break;
-            }
-
-            default:
-            {
-                uri += 'column_name=' + columns[0] + '&';
-                break;
-            }
-        }
-
-        uri += 'api_key=' + MedicineProvider._apiKey;
-
-        return MedicineProvider._frak.get(uri)
-            .then((response) => {
-                return response;
-            })
-            .catch((err) => {
-                console.error(err);
-                alert('problem');
-            });
-    },
-
-    /**
      * Read interface
      *
      * @param {string | number} id
