@@ -22,6 +22,7 @@ export default function MedicineEdit(props)
     const [ drugInfo, setDrugInfo ] = useState(null);
     const [ activeResident ] = useGlobal('activeResident');
 
+    const otc = props.otc;
     const textInput = useRef(null);
 
     // Observer for show and drugInfo properties
@@ -72,6 +73,10 @@ export default function MedicineEdit(props)
     const drugTitleType = drugInfo.Id ? 'Edit ' : 'Add ';
     const drugName = drugInfo.Id ? drugInfo.Drug : 'new drug';
     const fullName = activeResident && FULLNAME(activeResident);
+    const modalTitle = otc ?
+        (<Modal.Title>{drugTitleType} OTC <b style={{color: "blue"}}><i>{drugName}</i></b></Modal.Title>)
+        :
+        (<Modal.Title>{drugTitleType} <b style={{color: "blue"}}><i>{drugName}</i></b><span> for </span><b style={{backgroundColor: "yellow"}}>{fullName}</b></Modal.Title>);
 
     return (
         <Modal
@@ -82,12 +87,12 @@ export default function MedicineEdit(props)
             onEntered={() => textInput.current.focus()}
         >
             <Modal.Header closeButton>
-                <Modal.Title>{drugTitleType} <b style={{color: "blue"}}><i>{drugName}</i></b><span> for </span><b style={{backgroundColor: "yellow"}}>{fullName}</b></Modal.Title>
+                {modalTitle}
             </Modal.Header>
 
             <Modal.Body>
                 <Form>
-                    <Form.Group as={Row} controlId="drug-name-strength">
+                    <Form.Group as={Row} controlId="otc-drug-name-strength">
                         <Form.Label column sm="2">
                             Drug Name
                         </Form.Label>
@@ -132,6 +137,7 @@ export default function MedicineEdit(props)
                         </Col>
                     </Form.Group>
 
+                    {!otc &&
                     <Form.Group as={Row}>
                         <Form.Label column sm="2">
                             Fill Date Month
@@ -167,6 +173,7 @@ export default function MedicineEdit(props)
                             />
                         </Col>
                     </Form.Group>
+                    }
 
                     <Form.Group as={Row} controlId="drug-Directions">
                         <Form.Label column sm="2">
@@ -185,7 +192,8 @@ export default function MedicineEdit(props)
                         </Col>
                     </Form.Group>
 
-                    <Form.Group as={Row} controlId="drug-Notes">
+                    {!otc &&
+                    <Form.Group as={Row} controlId="otc-drug-Notes">
                         <Form.Label column sm="2">
                             Notes
                         </Form.Label>
@@ -200,6 +208,7 @@ export default function MedicineEdit(props)
                             />
                         </Col>
                     </Form.Group>
+                    }
                 </Form>
             </Modal.Body>
 

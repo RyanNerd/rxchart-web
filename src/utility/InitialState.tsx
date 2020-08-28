@@ -20,6 +20,7 @@ export const initialState = {
     activeResident: ResidentRecord,
     residentList: null,
     medicineList: null,
+    otcList: null,
     drugLogList: null,
     apiKey: null,
     baseUrl: baseUrl,

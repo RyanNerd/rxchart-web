@@ -12,6 +12,7 @@ import DrugLogEdit from "../DrugLog/DrugLogEdit";
 import RefreshMedicineLog from "../../providers/RefreshMedicineLog";
 import AddNewMedicineButton from "../ManageDrugs/AddNewMedicineButton";
 import MedicineListGroup from "./../Medicine/MedicineListGroup";
+import RefreshOtcList from "../../providers/helpers/RefreshOtcList";
 
 /**
  * OtcPage
@@ -35,7 +36,7 @@ export default function OtcPage(props)
     const [ lastTaken, setLastTaken ] = useState(false);
 
     const [ activeDrug, setActiveDrug ] = useState(null);
-    const [ medicineList, setMedicineList ] = useGlobal('medicineList');
+    const [ otcList, setOtcList ] = useGlobal('otcList');
     const [ drugLogList, setDrugLogList ] = useGlobal('drugLogList');
     const [ activeResident ] = useGlobal('activeResident');
     const [ providers ] = useGlobal('providers');
@@ -49,10 +50,10 @@ export default function OtcPage(props)
     const year = today.getFullYear();
 
     useEffect(()=> {
-        if (medicineList && medicineList.length > 0) {
-            setActiveDrug(medicineList[0]);
+        if (otcList && otcList.length > 0) {
+            setActiveDrug(otcList[0]);
         }
-    }, [medicineList]);
+    }, [otcList]);
 
     // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
     useEffect(() => {
@@ -102,6 +103,7 @@ export default function OtcPage(props)
                 Strength: "",
                 Directions: "",
                 Notes: "",
+                OTC: true,
                 FillDateMonth: month,
                 FillDateDay: day,
                 FillDateYear: year
@@ -134,9 +136,9 @@ export default function OtcPage(props)
 
             medicineProvider.post(drugData)
                 .then((drugRecord) => {
-                    RefreshMedicineList(medicineProvider, drugData.ResidentId)
+                    RefreshOtcList(medicineProvider)
                         .then((drugList) => {
-                            setMedicineList(drugList);
+                            setOtcList(drugList);
                             setDrugInfo(drugRecord);
                             setActiveDrug(drugRecord);
                             setLastTaken(false);
@@ -209,10 +211,10 @@ export default function OtcPage(props)
         setShowDrugLog(false);
     }
 
-    return (
+    const otcPage =
+    (
         <>
             <Form className={TabContent}>
-                {activeResident && activeResident.Id &&
                 <Row controlId="medicine-buttons">
                     <Col sm="4">
                         <>
@@ -239,15 +241,14 @@ export default function OtcPage(props)
                     </Col>
                     }
                 </Row>
-                }
 
-                {activeResident && activeResident.Id && activeDrug &&
+                {activeDrug &&
                 <Row>
                     <Col sm="4">
-                        {medicineList && activeDrug &&
+                        {otcList && activeDrug &&
                         <MedicineListGroup
                             lastTaken={lastTaken}
-                            medicineList={medicineList}
+                            medicineList={otcList}
                             activeDrug={activeDrug}
                             drugChanged={(drug) => {
                                 setActiveDrug(drug);
@@ -277,6 +278,7 @@ export default function OtcPage(props)
                 onHide={() => setShowMedicineEdit(!showMedicineEdit)}
                 onClose={(r) => handleMedicineEditModalClose(r)}
                 drugInfo={drugInfo}
+                otc={true}
             />
 
             <DrugLogEdit
@@ -308,4 +310,10 @@ export default function OtcPage(props)
             />
         </>
     );
+
+    if (activeResident && activeResident.Id ) {
+        return otcPage;
+    } else {
+        return null;
+    }
 }
