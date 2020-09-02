@@ -36,6 +36,7 @@ export default function MedicinePage(props)
     const [ activeDrug, setActiveDrug ] = useState(null);
 
     const [ medicineList, setMedicineList ] = useGlobal('medicineList');
+    const [ otcList ] = useGlobal('otcList');
     const [ drugLogList, setDrugLogList ] = useGlobal('drugLogList');
     const [ activeResident ] = useGlobal('activeResident');
     const [ providers ] = useGlobal('providers');
@@ -258,6 +259,7 @@ export default function MedicinePage(props)
                     <Col sm="8">
                         <DrugLogGrid
                             drugLog={drugLogList}
+                            otcList={otcList}
                             drugId={activeDrug && activeDrug.Id}
                             onEdit={(e, r) => addEditDrugLog(e, r)}
                             onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}

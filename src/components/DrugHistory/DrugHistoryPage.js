@@ -1,11 +1,11 @@
-import React, {useGlobal} from 'reactn';
+import React from 'reactn';
 import Button from 'react-bootstrap/Button';
 import DrugLogGrid from "../DrugLog/DrugLogGrid";
 
-export default function DrugHistoryPage()
-{
-    const [ drugLogList ] = useGlobal('drugLogList');
-    const [ medicineList ] = useGlobal('medicineList');
+const DrugHistoryPage = (props) => {
+    const drugLogList = props.drugLogList;
+    const medicineList = props.medicineList;
+    const otcList = props.otcList;
 
     return (
         <>
@@ -21,8 +21,11 @@ export default function DrugHistoryPage()
             <DrugLogGrid
                 drugLog={drugLogList}
                 medicineList={medicineList}
+                otcList={otcList}
                 drugId={null}
             />
         </>
     );
 }
+
+export default DrugHistoryPage;

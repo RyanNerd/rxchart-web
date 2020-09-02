@@ -17,6 +17,10 @@ function LandingPage()
     const [ errorDetails, setErrorDetails ] = useState(null);
     const [ activeTabKey, setActiveTabKey ] = useState('login');
 
+    const [ drugLogList ] = useGlobal('drugLogList');
+    const [ medicineList ] = useGlobal('medicineList');
+    const [ otcList ] = useGlobal('otcList');
+
     function errorOccurred(err)
     {
         if (development) {
@@ -76,7 +80,11 @@ function LandingPage()
                 eventKey="history"
                 title="Drug History"
             >
-                <DrugHistoryPage/>
+                <DrugHistoryPage
+                    drugLogList={drugLogList}
+                    medicineList={medicineList}
+                    otcList={otcList}
+                />
             </Tab>
             <Tab
                 disabled={apiKey === null || !activeResident}

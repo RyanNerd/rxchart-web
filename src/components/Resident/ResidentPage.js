@@ -24,6 +24,8 @@ export default function ResidentPage(props)
     const [ residentInfo, setResidentInfo ] = useState({Id: null});
     const [ showDeleteResident, setShowDeleteResident ] = useState(false);
     const [ residentToDelete, setResidentToDelete ] = useState(null);
+
+    const [ , setResidentList ] = useGlobal('residentList');
     const [ , setMedicineList ] = useGlobal('medicineList');
     const [ , setDrugLogList ] = useGlobal('drugLogList');
     const [ activeResident, setActiveResident ] = useGlobal('activeResident');
@@ -124,7 +126,7 @@ export default function ResidentPage(props)
                         })
                         .then((residentList) => {
                             // Rehydrate the residentList
-                            setGlobal({residentList: residentList});
+                            setResidentList(residentList);
                             // Set the reactivated resident as the active resident.
                             setActiveResident(restoredResident);
                             // Rehydrate the MedicineList
@@ -157,7 +159,7 @@ export default function ResidentPage(props)
                             ]
                         })
                         .then((residentList) => {
-                            setGlobal({residentList: residentList});
+                            setResidentList(residentList);
                         })
                         .catch((err) => props.onError(err));
 
@@ -166,7 +168,7 @@ export default function ResidentPage(props)
                     .then((response) => {
                         setResidentInfo(response);
                         setActiveResident(response);
-                        setGlobal({medicineList: null, drugLog: null});
+                        setMedicineList(null);
                     })
                     .catch((err) => props.onError(err));
                 }
@@ -195,8 +197,8 @@ export default function ResidentPage(props)
             if (data && data.length > 0) {
                 // Refresh the drugLogList for the new active drug.
                 RefreshMedicineLog(providers.medHistoryProvider, data[0].ResidentId)
-                    .then((data) => setGlobal({drugLogList: data}))
-                    .catch((err) => props.onError(err));
+                .then((data) => setDrugLogList(data))
+                .catch((err) => props.onError(err));
             }
         })
         .catch((err) => setGlobal({medicineList: null}));

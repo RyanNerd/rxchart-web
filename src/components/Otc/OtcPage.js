@@ -257,6 +257,7 @@ export default function OtcPage(props)
                     <Col sm="8">
                         <DrugLogGrid
                             drugLog={drugLogList}
+                            otcList={otcList}
                             drugId={activeDrug && activeDrug.Id}
                             onEdit={(e, r) => addEditDrugLog(e, r)}
                             onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}

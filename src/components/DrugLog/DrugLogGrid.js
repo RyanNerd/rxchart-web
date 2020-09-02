@@ -11,10 +11,10 @@ import Table from 'react-bootstrap/Table';
  *                 props.onDelete {cb}
  *                 props.drugId {number}
  *                 props.medicineList {array<object>}
+ *                 props.otcList {array<object>}
  * @returns {null|*}
  */
-export default function DrugLogGrid(props)
-{
+const DrugLogGrid = (props) => {
     if (!props.drugLog || props.drugLog.length === 0) {
         return null;
     }
@@ -23,6 +23,7 @@ export default function DrugLogGrid(props)
     const drugId = props.drugId;
     const filteredDrugs = drugId && drugList ? drugList.filter(drug => drug.MedicineId === drugId) : drugList;
     const medicineList = props.medicineList;
+    const otcList = props.otcList || [];
 
     /**
      * Returns the value of the drug column for the given drugId
@@ -35,9 +36,16 @@ export default function DrugLogGrid(props)
     {
         const medicine =  medicineList.filter(drug => drug.Id === drugId);
         if (medicine.length === 1) {
-            const drug = medicine[0];
-            return drug[columnName];
+                const drug = medicine[0];
+                return drug[columnName];
            }
+
+        const otc = otcList.filter(drug => drug.Id === drugId);
+        if (otc.length === 1) {
+            const otcDrug = otc[0];
+            return otcDrug[columnName];
+        }
+
         return null;
     }
 
@@ -127,3 +135,5 @@ export default function DrugLogGrid(props)
         </Table>
     );
 }
+
+export default DrugLogGrid;
