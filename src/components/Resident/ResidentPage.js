@@ -17,8 +17,7 @@ import {Form} from "react-bootstrap";
  * @returns {*}
  * @constructor
  */
-export default function ResidentPage(props)
-{
+const ResidentPage = (props) => {
     // Establish initial state
     const [ show, setShow ] = useState(false);
     const [ residentInfo, setResidentInfo ] = useState({Id: null});
@@ -306,3 +305,5 @@ export default function ResidentPage(props)
         </>
     );
 }
+
+export default ResidentPage;

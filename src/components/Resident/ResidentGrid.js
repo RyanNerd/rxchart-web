@@ -14,7 +14,7 @@ import {DOB} from "../../utility/common";
  * @returns {*}
  * @constructor
  */
-export default function ResidentGrid(props) {
+const ResidentGrid = (props) => {
     // Get residentsList[] from the global store
     const [ residentList ] = useGlobal('residentList');
 
@@ -112,3 +112,5 @@ export default function ResidentGrid(props) {
         </Table>
     );
 }
+
+export default ResidentGrid;

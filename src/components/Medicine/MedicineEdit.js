@@ -16,8 +16,7 @@ import Button from "react-bootstrap/Button";
  * @returns {boolean|*}
  * @constructor
  */
-export default function MedicineEdit(props)
-{
+const MedicineEdit = (props) => {
     const [ show, setShow ] = useState(props.show);
     const [ drugInfo, setDrugInfo ] = useState(null);
     const [ activeResident ] = useGlobal('activeResident');
@@ -229,3 +228,5 @@ export default function MedicineEdit(props)
         </Modal>
     );
 }
+
+export default MedicineEdit;

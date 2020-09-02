@@ -8,8 +8,7 @@ import DrugHistoryPage from "../DrugHistory/DrugHistoryPage";
 import ManageDrugPage from "../ManageDrugs/ManageDrugPage";
 import OtcPage from "../Otc/OtcPage";
 
-function LandingPage()
-{
+const LandingPage = () => {
     const [ apiKey, setApiKey ] = useGlobal('apiKey');
     const [ activeResident ] = useGlobal('activeResident');
     const [ development ] = useGlobal('development');

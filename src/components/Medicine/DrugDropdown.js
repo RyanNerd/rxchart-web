@@ -13,8 +13,7 @@ import Dropdown from "react-bootstrap/Dropdown";
  *
  * @returns {* | boolean}
  */
-export default function DrugDropdown(props)
-{
+const DrugDropdown = (props) => {
     // Do not render unless we have the required props.
     if (!props.medicineList || props.medicineList.length === 0 || !props.drugId) {
         return false;
@@ -79,3 +78,5 @@ export default function DrugDropdown(props)
         </DropdownButton>
     )
 }
+
+export default DrugDropdown;

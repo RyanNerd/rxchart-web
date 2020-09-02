@@ -24,8 +24,7 @@ import RefreshOtcList from "../../providers/helpers/RefreshOtcList";
  *
  * @returns {*}
  */
-export default function OtcPage(props)
-{
+const OtcPage = (props) => {
     const [ barcode, setBarcode ] = useState('');
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDrugLog, setShowDrugLog ] = useState(false);
@@ -312,3 +311,5 @@ export default function OtcPage(props)
         return null;
     }
 }
+
+export default OtcPage;

@@ -13,8 +13,7 @@ import DeleteMedicine from "../../providers/helpers/DeleteMedicine";
  *
  * @returns {null|*}
  */
-export default function ManageDrugPage(props)
-{
+const ManageDrugPage = (props) => {
     const [ medicineList, setMedicineList ] = useGlobal('medicineList');
     const [ providers ] = useGlobal('providers');
     const [ activeResident ]= useGlobal('activeResident');
@@ -222,3 +221,5 @@ export default function ManageDrugPage(props)
         </>
     );
 }
+
+export default ManageDrugPage;

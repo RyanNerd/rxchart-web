@@ -15,8 +15,7 @@ import bwipjs from 'bwip-js';
  *
  * @return {* || null}
  */
-export default function MedicineListGroup(props)
-{
+const MedicineListGroup = (props) => {
     let [warningColor, setWarningColor ] = useState('light');
 
     const medicineList = props.medicineList;
@@ -138,3 +137,6 @@ export default function MedicineListGroup(props)
         </ListGroup>
     );
 }
+
+export default MedicineListGroup;
+

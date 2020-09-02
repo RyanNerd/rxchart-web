@@ -24,8 +24,7 @@ import MedicineListGroup from "./MedicineListGroup";
  *
  * @returns {*}
  */
-export default function MedicinePage(props)
-{
+const MedicinePage = (props) => {
     const [ barcode, setBarcode ] = useState('');
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDrugLog, setShowDrugLog ] = useState(false);
@@ -307,3 +306,5 @@ export default function MedicinePage(props)
         </>
     );
 }
+
+export default MedicinePage;

@@ -3,8 +3,7 @@ import Tooltip from "react-bootstrap/Tooltip";
 import Button from "react-bootstrap/Button";
 import React from "reactn";
 
-export default function AddNewMedicineButton(props)
-{
+const AddNewMedicineButton = (props) => {
     return (
         <OverlayTrigger
             key="new-drug"
@@ -25,3 +24,5 @@ export default function AddNewMedicineButton(props)
         </OverlayTrigger>
     );
 }
+
+export default AddNewMedicineButton;

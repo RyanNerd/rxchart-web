@@ -16,8 +16,7 @@ import {isDayValid, isMonthValid, isYearValid} from "../../utility/common";
  * @returns {boolean|*}
  * @constructor
  */
-export default function ResidentEdit(props)
-{
+const ResidentEdit = (props) => {
     // Set up local initial state
     const [ show, setShow ] = useState(props.show);
     const [ residentInfo, setResidentInfo ] = useState(props.residentInfo);
@@ -191,3 +190,5 @@ export default function ResidentEdit(props)
         </Modal>
     )
 }
+
+export default ResidentEdit;

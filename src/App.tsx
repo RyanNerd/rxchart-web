@@ -8,8 +8,7 @@ import {FULLNAME} from "./utility/common";
  * @returns {*}
  * @constructor
  */
-function App()
-{
+const App = () => {
     const [ activeResident ] = useGlobal('activeResident');
     const [ development ] = useGlobal('development');
     const residentColor = development ? 'blue' : "#edf11e";

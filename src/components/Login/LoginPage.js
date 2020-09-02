@@ -18,7 +18,7 @@ import RefreshOtcList from "../../providers/helpers/RefreshOtcList";
  * @returns {*}
  * @constructor
  */
-function LoginPage(props) {
+const LoginPage = (props) => {
     const [ userName, setUserName ] = useState('');
     const [ password, setPassword ] = useState('');
     const [ showAlert, setShowAlert ] = useState(false);
