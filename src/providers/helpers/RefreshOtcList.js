@@ -5,7 +5,7 @@
  * @returns {Q.Promise<any> | Promise<T | never> | * | undefined}
  * @constructor
  */
-export default function RefreshMedicineList(medicineProvider)
+export default function RefreshOtcList(medicineProvider)
 {
     const searchCriteria =
         {

@@ -140,7 +140,7 @@ export default function MedicinePage(props)
                     setDrugInfo(drugRecord);
                     setActiveDrug(drugRecord);
                     setLastTaken(false);
-                    RefreshMedicineLog(medHistoryProvider, 'ResidentId', drugData.ResidentId)
+                    RefreshMedicineLog(medHistoryProvider, drugData.ResidentId)
                         .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
                 })
                 .catch((err) => {
@@ -160,7 +160,7 @@ export default function MedicinePage(props)
     {
         medHistoryProvider.delete(drugLogInfo.Id)
         .then((response) => {
-            RefreshMedicineLog(medHistoryProvider, 'ResidentId', activeDrug.ResidentId)
+            RefreshMedicineLog(medHistoryProvider, activeDrug.ResidentId)
                 .then((data) => setDrugLogList(data));
         });
         setShowDeleteDrugLogRecord(false);
@@ -199,7 +199,7 @@ export default function MedicinePage(props)
         if (drugLogInfo) {
             medHistoryProvider.post(drugLogInfo)
                 .then((response) => {
-                    RefreshMedicineLog(medHistoryProvider, 'ResidentId', activeDrug.ResidentId)
+                    RefreshMedicineLog(medHistoryProvider, activeDrug.ResidentId)
                         .then((data) => setDrugLogList(data));
                 })
                 .catch((err) => {
@@ -249,11 +249,7 @@ export default function MedicinePage(props)
                                 lastTaken={lastTaken}
                                 medicineList={medicineList}
                                 activeDrug={activeDrug}
-                                drugChanged={(drug) => {
-                                    setActiveDrug(drug);
-                                    RefreshMedicineLog(medHistoryProvider, 'ResidentId', drug.ResidentId)
-                                        .then((data) => setDrugLogList(data));
-                                }}
+                                drugChanged={(drug) => setActiveDrug(drug)}
                                 addDrugLog={(e) => addEditDrugLog(e)}
                             />
                         }

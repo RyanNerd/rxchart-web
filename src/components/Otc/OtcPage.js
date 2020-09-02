@@ -4,7 +4,6 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import TabContent from "../../styles/tab_content.css";
-import RefreshMedicineList from "../../providers/RefreshMedicineList";
 import MedicineEdit from "../Medicine/MedicineEdit";
 import ConfirmationDialog from "../Dialog/ConfirmationDialog";
 import DrugLogGrid from "../DrugLog/DrugLogGrid";
@@ -142,7 +141,7 @@ export default function OtcPage(props)
                             setDrugInfo(drugRecord);
                             setActiveDrug(drugRecord);
                             setLastTaken(false);
-                            RefreshMedicineLog(medHistoryProvider, 'ResidentId', drugData.ResidentId)
+                            RefreshMedicineLog(medHistoryProvider, activeResident.Id)
                                 .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
                         })
                         .catch((err) => {
@@ -162,7 +161,7 @@ export default function OtcPage(props)
     {
         medHistoryProvider.delete(drugLogInfo.Id)
             .then((response) => {
-                RefreshMedicineLog(medHistoryProvider, 'ResidentId', activeDrug.ResidentId)
+                RefreshMedicineLog(medHistoryProvider, activeResident.Id)
                     .then((data) => setDrugLogList(data));
             });
         setShowDeleteDrugLogRecord(false);
@@ -200,19 +199,18 @@ export default function OtcPage(props)
     function handleDrugLogEditClose(drugLogInfo) {
         if (drugLogInfo) {
             medHistoryProvider.post(drugLogInfo)
-                .then((response) => {
-                    RefreshMedicineLog(medHistoryProvider, 'ResidentId', activeDrug.ResidentId)
-                        .then((data) => setDrugLogList(data));
-                })
-                .catch((err) => {
-                    props.onError(err);
-                });
+            .then((response) => {
+                RefreshMedicineLog(medHistoryProvider, activeResident.Id)
+                .then((data) => {setDrugLogList(data)})
+            })
+            .catch((err) => {
+                props.onError(err);
+            });
         }
         setShowDrugLog(false);
     }
 
-    const otcPage =
-    (
+    const otcPage = (
         <>
             <Form className={TabContent}>
                 <Row controlId="medicine-buttons">
@@ -250,11 +248,7 @@ export default function OtcPage(props)
                             lastTaken={lastTaken}
                             medicineList={otcList}
                             activeDrug={activeDrug}
-                            drugChanged={(drug) => {
-                                setActiveDrug(drug);
-                                RefreshMedicineLog(medHistoryProvider, 'ResidentId', drug.ResidentId)
-                                    .then((data) => setDrugLogList(data));
-                            }}
+                            drugChanged={(drug) => setActiveDrug(drug)}
                             addDrugLog={(e) => addEditDrugLog(e)}
                         />
                         }

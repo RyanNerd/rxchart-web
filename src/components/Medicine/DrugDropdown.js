@@ -74,7 +74,6 @@ export default function DrugDropdown(props)
             size="sm"
             title={title}
             variant="primary"
-            id="medicine-dropdown-button"
         >
             {props.medicineList.map(MedicineDropdownItems)}
         </DropdownButton>

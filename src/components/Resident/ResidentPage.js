@@ -135,7 +135,7 @@ export default function ResidentPage(props)
                                 // select the first one and make it the active drug.
                                 if (hydratedMedicineList && hydratedMedicineList.length > 0) {
                                     // Refresh the drugLogList for the new active drug.
-                                    RefreshMedicineLog(providers.medHistoryProvider, 'ResidentId', restoredResident.Id)
+                                    RefreshMedicineLog(providers.medHistoryProvider, restoredResident.Id)
                                     .then((data) => setDrugLogList(data))
                                     .catch((err) => props.onError(err));
                                 }
@@ -194,7 +194,7 @@ export default function ResidentPage(props)
             // select the first one and make it the active drug.
             if (data && data.length > 0) {
                 // Refresh the drugLogList for the new active drug.
-                RefreshMedicineLog(providers.medHistoryProvider, 'ResidentId', data[0].ResidentId)
+                RefreshMedicineLog(providers.medHistoryProvider, data[0].ResidentId)
                     .then((data) => setGlobal({drugLogList: data}))
                     .catch((err) => props.onError(err));
             }

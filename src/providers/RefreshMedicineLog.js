@@ -1,9 +1,9 @@
-export default function RefreshMedicineLog(medHistoryProvider, columnName, id)
+export default function RefreshMedicineLog(medHistoryProvider, id)
 {
     const searchCriteria =
         {
             where: [
-                {column: columnName, comparison: '=', value: id}
+                {column: 'ResidentId', comparison: '=', value: id}
             ],
 
             order_by: [
@@ -13,7 +13,6 @@ export default function RefreshMedicineLog(medHistoryProvider, columnName, id)
 
     return medHistoryProvider.search(searchCriteria)
     .then((response) => {
-        console.log('MedHistory Response', response);
         if (response.success) {
             return response.data;
         } else {

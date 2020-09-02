@@ -15,7 +15,7 @@ import Table from 'react-bootstrap/Table';
  */
 export default function DrugLogGrid(props)
 {
-    if (!props.drugLog) {
+    if (!props.drugLog || props.drugLog.length === 0) {
         return null;
     }
 

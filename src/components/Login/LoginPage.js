@@ -26,7 +26,7 @@ function LoginPage(props) {
     const [ apiKey, setApiKey ] = useGlobal('apiKey');
     const [ baseUrl ] = useGlobal('baseUrl');
     const [ residentList, setResidentList ] = useGlobal('residentList');
-    const [ otcList, setOtcList ] = useGlobal('otcList');
+    const [ , setOtcList ] = useGlobal('otcList');
     const [ development ] = useGlobal('development');
     const [ , setProviders ] = useGlobal('providers');
 
@@ -73,10 +73,7 @@ function LoginPage(props) {
 
                     // Load ALL OTC medications
                     RefreshOtcList(providers.medicineProvider)
-                        .then((data) => {
-                            console.log('otcList', data);
-                            setOtcList(data);
-                        })
+                        .then((data) => {setOtcList(data)})
                         .catch((err) => setOtcList(null));
 
                     // Let the parent component know we are logged in successfully
