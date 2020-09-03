@@ -34,16 +34,20 @@ const DrugLogGrid = (props) => {
      */
     function drugColumnLookup(drugId, columnName)
     {
-        const medicine =  medicineList.filter(drug => drug.Id === drugId);
-        if (medicine.length === 1) {
+        if (medicineList) {
+            const medicine = medicineList.filter(drug => drug.Id === drugId);
+            if (medicine.length === 1) {
                 const drug = medicine[0];
                 return drug[columnName];
-           }
+            }
+        }
 
-        const otc = otcList.filter(drug => drug.Id === drugId);
-        if (otc.length === 1) {
-            const otcDrug = otc[0];
-            return otcDrug[columnName];
+        if (otcList) {
+            const otc = otcList.filter(drug => drug.Id === drugId);
+            if (otc.length === 1) {
+                const otcDrug = otc[0];
+                return otcDrug[columnName];
+            }
         }
 
         return null;
@@ -72,7 +76,7 @@ const DrugLogGrid = (props) => {
                         </Button>
                     </td>
                 }
-                {medicineList &&
+                {(medicineList || otcList) &&
                     <td>
                         <span><b>{drugColumnLookup(drug.MedicineId, 'Drug')}</b></span> <span>{drugColumnLookup(drug.MedicineId, 'Strength')}</span>
                         <p>{drugColumnLookup(drug.MedicineId, 'Notes')}</p>

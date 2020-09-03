@@ -91,7 +91,7 @@ const MedicineEdit = (props) => {
 
             <Modal.Body>
                 <Form>
-                    <Form.Group as={Row} controlId="otc-drug-name-strength">
+                    <Form.Group as={Row}>
                         <Form.Label column sm="2">
                             Drug Name
                         </Form.Label>

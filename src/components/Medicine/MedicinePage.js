@@ -227,7 +227,7 @@ const MedicinePage = (props) => {
                                 variant="info"
                                 onClick={(e) => addEditDrug(e, false)}
                             >
-                                Edit Medicine
+                                Edit <b>{activeDrug.Drug}</b>
                             </Button>
                             }
                         </>

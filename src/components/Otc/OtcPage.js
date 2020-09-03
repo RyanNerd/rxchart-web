@@ -47,6 +47,14 @@ const OtcPage = (props) => {
     const month = today.getMonth() + 1;
     const year = today.getFullYear();
 
+    // @link https://stackoverflow.com/questions/31005396/filter-array-of-objects-with-another-array-of-objects
+    // We only want to list the OTC drugs on this page that the resident has taken.
+    const otcLogList = drugLogList ? drugLogList.filter((el) => {
+        return otcList.some((f) => {
+            return f.Id === el.MedicineId;
+        });
+    }) : null;
+
     useEffect(()=> {
         if (otcList && otcList.length > 0) {
             setActiveDrug(otcList[0]);
@@ -215,26 +223,33 @@ const OtcPage = (props) => {
                 <Row controlId="medicine-buttons">
                     <Col sm="4">
                         <>
-                            <AddNewMedicineButton
-                                onClick={(e) => addEditDrug(e, true)}
-                            />
-
-                            {activeDrug &&
+                            {/*<AddNewMedicineButton*/}
+                            {/*    onClick={(e) => addEditDrug(e, true)}*/}
+                            {/*/>*/}
                             <Button
-                                className="ml-2"
                                 size="sm"
                                 variant="info"
-                                onClick={(e) => addEditDrug(e, false)}
+                                onClick={(e) => addEditDrug(e, true)}
                             >
-                                Edit Medicine
+                                + OTC
                             </Button>
+
+                            {activeDrug &&
+                                <Button
+                                    className="ml-2"
+                                    size="sm"
+                                    variant="info"
+                                    onClick={(e) => addEditDrug(e, false)}
+                                >
+                                    Edit <b>{activeDrug.Drug}</b>
+                                </Button>
                             }
                         </>
                     </Col>
 
                     {activeDrug &&
                     <Col sm="8">
-                        <span style={{textAlign: "center"}}> <h2>{activeDrug.Drug} History</h2> </span>
+                        <span style={{textAlign: "center"}}> <h2>OTC Drug History</h2> </span>
                     </Col>
                     }
                 </Row>
@@ -255,9 +270,8 @@ const OtcPage = (props) => {
 
                     <Col sm="8">
                         <DrugLogGrid
-                            drugLog={drugLogList}
+                            drugLog={otcLogList}
                             otcList={otcList}
-                            drugId={activeDrug && activeDrug.Id}
                             onEdit={(e, r) => addEditDrugLog(e, r)}
                             onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
                         />
