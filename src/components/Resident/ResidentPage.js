@@ -1,4 +1,4 @@
-import React, {setGlobal, useGlobal, useState} from 'reactn';
+import React, {useGlobal, useState} from 'reactn';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
@@ -190,7 +190,7 @@ const ResidentPage = (props) => {
         setActiveResident(resident);
         RefreshMedicineList(providers.medicineProvider, resident.Id)
         .then((data) => {
-            setGlobal({medicineList: data});
+            setMedicineList(data);
             // If there are any medicines for the selected resident then
             // select the first one and make it the active drug.
             if (data && data.length > 0) {
@@ -200,7 +200,7 @@ const ResidentPage = (props) => {
                 .catch((err) => props.onError(err));
             }
         })
-        .catch((err) => setGlobal({medicineList: null}));
+        .catch((err) => setMedicineList(null));
     }
 
     /**
@@ -237,7 +237,9 @@ const ResidentPage = (props) => {
                             {column: "FirstName", direction: "asc"}
                         ]
                     };
-                residentProvider.search(searchCriteria).then((data) => setGlobal({residentList: data}));
+                residentProvider.search(searchCriteria)
+                    .then((data) => setResidentList(data))
+                    .catch((err) => props.onError(err));
             } else {
                 props.onError(response);
             }
