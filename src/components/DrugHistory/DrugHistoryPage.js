@@ -19,6 +19,7 @@ const DrugHistoryPage = (props) => {
             </Button>
 
             <DrugLogGrid
+                showDrugColumn={true}
                 drugLog={drugLogList}
                 medicineList={medicineList}
                 otcList={otcList}

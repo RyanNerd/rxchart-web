@@ -109,7 +109,7 @@ const MedicineListGroup = (props) => {
                     variant={warningColor}
                 >
                     {/* Display in BOLD if taken 3 or less hours ago */}
-                    {lastTaken <= 3 ? <b>Last Taken (hours): {lastTaken}</b> : <span>Last Taken (hours): {lastTaken}</span>}
+                    {lastTaken !== null && lastTaken <= 3 ? <b>Last Taken (hours): {lastTaken}</b> : <span>Last Taken (hours): {lastTaken}</span>}
                 </Button>
             </ListGroup.Item>
 

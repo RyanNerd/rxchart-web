@@ -11,6 +11,7 @@ import DrugLogEdit from "../DrugLog/DrugLogEdit";
 import RefreshMedicineLog from "../../providers/RefreshMedicineLog";
 import MedicineListGroup from "./../Medicine/MedicineListGroup";
 import RefreshOtcList from "../../providers/helpers/RefreshOtcList";
+import {calculateLastTaken} from "../../utility/common";
 
 /**
  * OtcPage
@@ -57,16 +58,9 @@ const OtcPage = (props) => {
     // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
     useEffect(() => {
         if (activeDrug && activeDrug.Id && drugLogList) {
-            const filteredDrugs = activeDrug.Id && drugLogList ? drugLogList.filter(drug => drug.MedicineId === activeDrug.Id) : null;
-            const latestDrug = filteredDrugs && filteredDrugs.length > 0 ? filteredDrugs[0] : null;
-            if (latestDrug) {
-                const latestDrugDate = Math.round((new Date(latestDrug.Created)).getTime() / 1000);
-                const now = Math.round((new Date()).getTime() / 1000);
-                const diff = Math.round((now - latestDrugDate) / 3600);
-                setLastTaken(diff);
-            }
+                setLastTaken(calculateLastTaken(activeDrug.Id, drugLogList));
         } else {
-            setLastTaken(0);
+            setLastTaken(null);
         }
     }, [activeDrug, drugLogList]);
 
@@ -248,6 +242,7 @@ const OtcPage = (props) => {
 
                     <Col sm="8">
                         <DrugLogGrid
+                            showDrugColumn={true}
                             drugLog={otcLogList}
                             otcList={otcList}
                             onEdit={(e, r) => addEditDrugLog(e, r)}

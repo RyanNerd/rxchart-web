@@ -19,6 +19,7 @@ const DrugLogGrid = (props) => {
         return null;
     }
 
+    const showDrugColumn = props.showDrugColumn;
     const drugList = props.drugLog;
     const drugId = props.drugId;
     const filteredDrugs = drugId && drugList ? drugList.filter(drug => drug.MedicineId === drugId) : drugList;
@@ -76,7 +77,7 @@ const DrugLogGrid = (props) => {
                         </Button>
                     </td>
                 }
-                {(medicineList || otcList) &&
+                {showDrugColumn &&
                     <td>
                         <span><b>{drugColumnLookup(drug.MedicineId, 'Drug')}</b></span> <span>{drugColumnLookup(drug.MedicineId, 'Strength')}</span>
                         <p>{drugColumnLookup(drug.MedicineId, 'Notes')}</p>
@@ -114,7 +115,7 @@ const DrugLogGrid = (props) => {
                 {props.onEdit &&
                     <th> </th>
                 }
-                {(medicineList || otcList) &&
+                {showDrugColumn &&
                     <th>
                         Drug
                     </th>

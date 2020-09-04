@@ -12,6 +12,7 @@ import DrugLogEdit from "../DrugLog/DrugLogEdit";
 import RefreshMedicineLog from "../../providers/RefreshMedicineLog";
 import MedicineListGroup from "./MedicineListGroup";
 import TooltipButton from "../Buttons/TooltipButton";
+import {calculateLastTaken} from "../../utility/common";
 
 /**
  * MedicinePage
@@ -34,7 +35,6 @@ const MedicinePage = (props) => {
     const [ activeDrug, setActiveDrug ] = useState(null);
 
     const [ medicineList, setMedicineList ] = useGlobal('medicineList');
-    const [ otcList ] = useGlobal('otcList');
     const [ drugLogList, setDrugLogList ] = useGlobal('drugLogList');
     const [ activeResident ] = useGlobal('activeResident');
     const [ providers ] = useGlobal('providers');
@@ -56,16 +56,9 @@ const MedicinePage = (props) => {
     // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
     useEffect(() => {
         if (activeDrug && activeDrug.Id && drugLogList) {
-            const filteredDrugs = activeDrug.Id && drugLogList ? drugLogList.filter(drug => drug.MedicineId === activeDrug.Id) : null;
-            const latestDrug = filteredDrugs && filteredDrugs.length > 0 ? filteredDrugs[0] : null;
-            if (latestDrug) {
-                const latestDrugDate = Math.round((new Date(latestDrug.Created)).getTime() / 1000);
-                const now = Math.round((new Date()).getTime() / 1000);
-                const diff = Math.round((now - latestDrugDate) / 3600);
-                setLastTaken(diff);
-            }
+            setLastTaken(calculateLastTaken(activeDrug.Id, drugLogList));
         } else {
-            setLastTaken(0);
+            setLastTaken(null);
         }
     }, [activeDrug, drugLogList]);
 
@@ -252,8 +245,8 @@ const MedicinePage = (props) => {
 
                     <Col sm="8">
                         <DrugLogGrid
+                            showDrugColumn={false}
                             drugLog={drugLogList}
-                            otcList={otcList}
                             drugId={activeDrug && activeDrug.Id}
                             onEdit={(e, r) => addEditDrugLog(e, r)}
                             onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
