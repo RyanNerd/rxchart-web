@@ -25,7 +25,6 @@ import MedicineListGroup from "./MedicineListGroup";
  * @returns {*}
  */
 const MedicinePage = (props) => {
-    const [ barcode, setBarcode ] = useState('');
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDrugLog, setShowDrugLog ] = useState(false);
     const [ drugInfo, setDrugInfo ] = useState(null);
@@ -82,21 +81,13 @@ const MedicinePage = (props) => {
             e.preventDefault();
         }
 
-        // There are multiple entry states:
-        // 1. Barcode gave not found error AND there is an activeResident (add)
-        // 2. User clicked the Add New Medicine button AND there is an activeResident (add)
-        // 3. User clicked Edit Drug Info button [activeResident && activeDrug.Id] (edit)
-
+        // There are two entry states:
+        // 1. User clicked the Add New Medicine button AND there is an activeResident (add)
+        // 2. User clicked Edit Drug Info button [activeResident && activeDrug.Id] (edit)
         if (isAdd) {
-            // Sanity check
-            if (!activeResident || !activeResident.Id) {
-                alert('No active resident selected!');
-                return;
-            }
-
             setDrugInfo({
                 Id: 0,
-                Barcode: barcode,
+                Barcode: "",
                 ResidentId: activeResident.Id,
                 Drug: "",
                 Strength: "",
@@ -110,7 +101,6 @@ const MedicinePage = (props) => {
             setDrugInfo({...activeDrug});
         }
 
-        setBarcode('');
         setShowMedicineEdit(true);
     }
 

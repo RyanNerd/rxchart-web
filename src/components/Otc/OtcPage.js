@@ -9,7 +9,6 @@ import ConfirmationDialog from "../Dialog/ConfirmationDialog";
 import DrugLogGrid from "../DrugLog/DrugLogGrid";
 import DrugLogEdit from "../DrugLog/DrugLogEdit";
 import RefreshMedicineLog from "../../providers/RefreshMedicineLog";
-import AddNewMedicineButton from "../ManageDrugs/AddNewMedicineButton";
 import MedicineListGroup from "./../Medicine/MedicineListGroup";
 import RefreshOtcList from "../../providers/helpers/RefreshOtcList";
 
@@ -25,7 +24,6 @@ import RefreshOtcList from "../../providers/helpers/RefreshOtcList";
  * @returns {*}
  */
 const OtcPage = (props) => {
-    const [ barcode, setBarcode ] = useState('');
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDrugLog, setShowDrugLog ] = useState(false);
     const [ drugInfo, setDrugInfo ] = useState(null);
@@ -41,11 +39,6 @@ const OtcPage = (props) => {
 
     const medHistoryProvider = providers.medHistoryProvider;
     const medicineProvider = providers.medicineProvider;
-
-    const today = new Date();
-    const day = today.getDate();
-    const month = today.getMonth() + 1;
-    const year = today.getFullYear();
 
     // @link https://stackoverflow.com/questions/31005396/filter-array-of-objects-with-another-array-of-objects
     // We only want to list the OTC drugs on this page that the resident has taken.
@@ -89,36 +82,24 @@ const OtcPage = (props) => {
             e.preventDefault();
         }
 
-        // There are multiple entry states:
-        // 1. Barcode gave not found error AND there is an activeResident (add)
-        // 2. User clicked the Add New Medicine button AND there is an activeResident (add)
-        // 3. User clicked Edit Drug Info button [activeResident && activeDrug.Id] (edit)
-
+        // There are two entry states:
+        // 1. User clicked the + OTC button (add)
+        // 2. User clicked Edit Drug Info button (edit)
         if (isAdd) {
-            // Sanity check
-            if (!activeResident || !activeResident.Id) {
-                alert('No active resident selected!');
-                return;
-            }
-
             setDrugInfo({
                 Id: 0,
-                Barcode: barcode,
-                ResidentId: activeResident.Id,
+                Barcode: "",
+                ResidentId: null,
                 Drug: "",
                 Strength: "",
                 Directions: "",
                 Notes: "",
                 OTC: true,
-                FillDateMonth: month,
-                FillDateDay: day,
-                FillDateYear: year
             });
         } else {
             setDrugInfo({...activeDrug});
         }
 
-        setBarcode('');
         setShowMedicineEdit(true);
     }
 
