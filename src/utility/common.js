@@ -51,3 +51,6 @@ export const isYearValid = (year, isDOB) => {
     return (year >= 1900 && year <= 9999) ? '' : 'is-invalid';
 };
 // VALIDATION Functions END
+
+export const randomString = Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15);

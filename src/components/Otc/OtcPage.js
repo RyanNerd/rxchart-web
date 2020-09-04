@@ -204,9 +204,6 @@ const OtcPage = (props) => {
                 <Row controlId="medicine-buttons">
                     <Col sm="4">
                         <>
-                            {/*<AddNewMedicineButton*/}
-                            {/*    onClick={(e) => addEditDrug(e, true)}*/}
-                            {/*/>*/}
                             <Button
                                 size="sm"
                                 variant="info"

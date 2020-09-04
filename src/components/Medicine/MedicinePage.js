@@ -10,8 +10,8 @@ import ConfirmationDialog from "../Dialog/ConfirmationDialog";
 import DrugLogGrid from "../DrugLog/DrugLogGrid";
 import DrugLogEdit from "../DrugLog/DrugLogEdit";
 import RefreshMedicineLog from "../../providers/RefreshMedicineLog";
-import AddNewMedicineButton from "../ManageDrugs/AddNewMedicineButton";
 import MedicineListGroup from "./MedicineListGroup";
+import TooltipButton from "../Buttons/TooltipButton";
 
 /**
  * MedicinePage
@@ -206,9 +206,14 @@ const MedicinePage = (props) => {
                 <Row controlId="medicine-buttons">
                     <Col sm="4">
                         <>
-                            <AddNewMedicineButton
+                            <TooltipButton
+                                tooltip="Manually Add New Medicine"
+                                size="sm"
+                                variant="info"
                                 onClick={(e) => addEditDrug(e, true)}
-                            />
+                            >
+                                + Medicine
+                            </TooltipButton>
 
                             {activeDrug &&
                             <Button

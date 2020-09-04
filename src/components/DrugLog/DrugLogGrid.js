@@ -114,7 +114,7 @@ const DrugLogGrid = (props) => {
                 {props.onEdit &&
                     <th> </th>
                 }
-                {medicineList &&
+                {(medicineList || otcList) &&
                     <th>
                         Drug
                     </th>

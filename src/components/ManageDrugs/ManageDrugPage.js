@@ -4,8 +4,8 @@ import Button from "react-bootstrap/Button";
 import MedicineEdit from "../Medicine/MedicineEdit";
 import ConfirmationDialog from "../Dialog/ConfirmationDialog";
 import RefreshMedicineList from "../../providers/RefreshMedicineList";
-import AddNewMedicineButton from "./AddNewMedicineButton";
 import DeleteMedicine from "../../providers/helpers/DeleteMedicine";
+import TooltipButton from "../Buttons/TooltipButton";
 
 /**
  * ManageDrugPage
@@ -149,10 +149,14 @@ const ManageDrugPage = (props) => {
 
     return (
         <>
-            <AddNewMedicineButton
-                style={{marginBottom: "15px"}}
+            <TooltipButton
+                tooltip="Manually Add New Medicine"
+                size="sm"
+                variant="info"
                 onClick={(e) => onEdit(e, null)}
-            />
+            >
+                + Medicine
+            </TooltipButton>
 
             {medicineList &&
                 <Table
