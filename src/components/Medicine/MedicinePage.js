@@ -13,6 +13,7 @@ import RefreshMedicineLog from "../../providers/RefreshMedicineLog";
 import MedicineListGroup from "./MedicineListGroup";
 import TooltipButton from "../Buttons/TooltipButton";
 import {calculateLastTaken} from "../../utility/common";
+import {newDrugInfo} from "../../utility/InitialState";
 
 /**
  * MedicinePage
@@ -42,11 +43,6 @@ const MedicinePage = (props) => {
     const medHistoryProvider = providers.medHistoryProvider;
     const medicineProvider = providers.medicineProvider;
 
-    const today = new Date();
-    const day = today.getDate();
-    const month = today.getMonth() + 1;
-    const year = today.getFullYear();
-
     useEffect(()=> {
         if (medicineList && medicineList.length > 0) {
             setActiveDrug(medicineList[0]);
@@ -63,37 +59,22 @@ const MedicinePage = (props) => {
     }, [activeDrug, drugLogList]);
 
     /**
-     * Fires when medicine is being manually added or edited.
+     * Fires when medicine is added or edited.
      *
      * @param {Event} e
      * @param {boolean} isAdd
      */
     function addEditDrug(e, isAdd)
     {
-        if (e) {
-            e.preventDefault();
-        }
-
-        // There are two entry states:
-        // 1. User clicked the Add New Medicine button AND there is an activeResident (add)
-        // 2. User clicked Edit Drug Info button [activeResident && activeDrug.Id] (edit)
+        e.preventDefault();
         if (isAdd) {
-            setDrugInfo({
-                Id: 0,
-                Barcode: "",
-                ResidentId: activeResident.Id,
-                Drug: "",
-                Strength: "",
-                Directions: "",
-                Notes: "",
-                FillDateMonth: month,
-                FillDateDay: day,
-                FillDateYear: year
-            });
+            const drugInfo = {...newDrugInfo};
+            drugInfo.OTC = false;
+            drugInfo.ResidentId = activeResident.Id;
+            setDrugInfo(drugInfo);
         } else {
             setDrugInfo({...activeDrug});
         }
-
         setShowMedicineEdit(true);
     }
 

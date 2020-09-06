@@ -30,3 +30,13 @@ export const initialState = {
         medHistoryProvider: null
     }
 };
+
+export const newDrugInfo = {
+    Id: null,
+    Barcode: "",
+    ResidentId: null,
+    Drug: "",
+    Strength: "",
+    Directions: "",
+    Notes: ""
+};

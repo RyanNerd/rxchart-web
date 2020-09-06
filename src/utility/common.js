@@ -60,7 +60,7 @@ export const calculateLastTaken = (drugId, drugLogList) => {
     const filteredDrugs = drugLogList.filter(drug => drug.MedicineId === drugId);
     const latestDrug = filteredDrugs && filteredDrugs.length > 0 ? filteredDrugs[0] : null;
     if (latestDrug) {
-        const latestDrugDate = Math.round((new Date(latestDrug.Created)).getTime() / 1000);
+        const latestDrugDate = Math.round((new Date(latestDrug.Updated)).getTime() / 1000);
         const now = Math.round((new Date()).getTime() / 1000);
         diff = Math.round((now - latestDrugDate) / 3600);
     }

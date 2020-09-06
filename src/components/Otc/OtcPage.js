@@ -12,6 +12,7 @@ import RefreshMedicineLog from "../../providers/RefreshMedicineLog";
 import MedicineListGroup from "./../Medicine/MedicineListGroup";
 import RefreshOtcList from "../../providers/helpers/RefreshOtcList";
 import {calculateLastTaken} from "../../utility/common";
+import {newDrugInfo} from "../../utility/InitialState";
 
 /**
  * OtcPage
@@ -25,9 +26,9 @@ import {calculateLastTaken} from "../../utility/common";
  * @returns {*}
  */
 const OtcPage = (props) => {
+    const [ drugInfo, setDrugInfo ] = useState(newDrugInfo);
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDrugLog, setShowDrugLog ] = useState(false);
-    const [ drugInfo, setDrugInfo ] = useState(null);
     const [ drugLogInfo, setDrugLogInfo ] = useState(null);
     const [ showDeleteDrugLogRecord, setShowDeleteDrugLogRecord ] = useState(false);
     const [ lastTaken, setLastTaken ] = useState(false);
@@ -65,35 +66,22 @@ const OtcPage = (props) => {
     }, [activeDrug, drugLogList]);
 
     /**
-     * Fires when medicine is being manually added or edited.
+     * Fires when medicine is added or edited.
      *
      * @param {Event} e
      * @param {boolean} isAdd
      */
     function addEditDrug(e, isAdd)
     {
-        if (e) {
-            e.preventDefault();
-        }
+        e.preventDefault();
 
-        // There are two entry states:
-        // 1. User clicked the + OTC button (add)
-        // 2. User clicked Edit Drug Info button (edit)
         if (isAdd) {
-            setDrugInfo({
-                Id: 0,
-                Barcode: "",
-                ResidentId: null,
-                Drug: "",
-                Strength: "",
-                Directions: "",
-                Notes: "",
-                OTC: true,
-            });
+            const drugInfo = {...newDrugInfo};
+            drugInfo.OTC = true;
+            setDrugInfo(drugInfo);
         } else {
             setDrugInfo({...activeDrug});
         }
-
         setShowMedicineEdit(true);
     }
 
