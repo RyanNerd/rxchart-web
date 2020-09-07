@@ -7,6 +7,7 @@ import MedicinePage from "../Medicine/MedicinePage";
 import DrugHistoryPage from "../DrugHistory/DrugHistoryPage";
 import ManageDrugPage from "../ManageDrugs/ManageDrugPage";
 import OtcPage from "../Otc/OtcPage";
+import ManageOtcPage from "../ManageOtc/ManageOtcPage";
 
 const LandingPage = () => {
     const [ apiKey, setApiKey ] = useGlobal('apiKey');
@@ -88,9 +89,18 @@ const LandingPage = () => {
             <Tab
                 disabled={apiKey === null || !activeResident}
                 eventKey="manage"
-                title="Manage Medicine"
+                title="Manage Rx"
             >
                 <ManageDrugPage
+                    onError={(error) => errorOccurred(error)}
+                />
+            </Tab>
+            <Tab
+                disabled={apiKey === null}
+                eventKey="manage-otc"
+                title="Manage OTC"
+            >
+                <ManageOtcPage
                     onError={(error) => errorOccurred(error)}
                 />
             </Tab>
