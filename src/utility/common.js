@@ -55,6 +55,12 @@ export const isYearValid = (year, isDOB) => {
 export const randomString = Math.random().toString(36).substring(2, 15) +
     Math.random().toString(36).substring(2, 15);
 
+/**
+ * Return in hours how long it has been since a drug was last taken.
+ * @param {number} drugId
+ * @param {array<object>} drugLogList
+ * @returns {null | number}
+ */
 export const calculateLastTaken = (drugId, drugLogList) => {
     let diff = null;
     const filteredDrugs = drugLogList.filter(drug => drug.MedicineId === drugId);

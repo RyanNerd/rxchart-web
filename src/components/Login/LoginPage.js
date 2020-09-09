@@ -1,4 +1,4 @@
-import React, {setGlobal, useGlobal, useState} from 'reactn';
+import React, {setGlobal, useGlobal, useState, useRef} from 'reactn';
 import Alert from 'react-bootstrap/Alert';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
@@ -11,6 +11,7 @@ import {initialState} from "../../utility/InitialState";
 import MedHistoryProvider from "../../providers/MedHistoryProvider";
 import Frak from "../../providers/Frak";
 import RefreshOtcList from "../../providers/helpers/RefreshOtcList";
+import {useEffect} from "react";
 
 /**
  * Sign in page
@@ -29,6 +30,11 @@ const LoginPage = (props) => {
     const [ , setOtcList ] = useGlobal('otcList');
     const [ development ] = useGlobal('development');
     const [ , setProviders ] = useGlobal('providers');
+
+    const focusRef = useRef(null);
+    const key = props.activeTabKey | null;
+
+    useEffect(() => props.updateFocusRef(focusRef), [props, key]);
 
     /**
      * Fires when the Login Button is clicked
@@ -121,6 +127,7 @@ const LoginPage = (props) => {
                     type="text"
                     value={userName}
                     onChange={(e) => setUserName(e.target.value)}
+                    ref={focusRef}
                 />
                 </Col>
             </Form.Group>

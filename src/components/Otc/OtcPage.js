@@ -1,4 +1,4 @@
-import React, {useGlobal, useState, useEffect} from 'reactn';
+import React, {useGlobal, useState, useEffect, useRef} from 'reactn';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -13,6 +13,7 @@ import MedicineListGroup from "./../Medicine/MedicineListGroup";
 import RefreshOtcList from "../../providers/helpers/RefreshOtcList";
 import {calculateLastTaken} from "../../utility/common";
 import {newDrugInfo} from "../../utility/InitialState";
+import Table from "react-bootstrap/Table";
 
 /**
  * OtcPage
@@ -32,6 +33,7 @@ const OtcPage = (props) => {
     const [ drugLogInfo, setDrugLogInfo ] = useState(null);
     const [ showDeleteDrugLogRecord, setShowDeleteDrugLogRecord ] = useState(false);
     const [ lastTaken, setLastTaken ] = useState(false);
+    const [ searchText, setSearchText ] = useState('');
 
     const [ activeDrug, setActiveDrug ] = useState(null);
     const [ otcList, setOtcList ] = useGlobal('otcList');
@@ -42,6 +44,9 @@ const OtcPage = (props) => {
     const medHistoryProvider = providers.medHistoryProvider;
     const medicineProvider = providers.medicineProvider;
 
+    const focusRef = useRef(null);
+    const key = props.activeTabKey | null;
+
     // @link https://stackoverflow.com/questions/31005396/filter-array-of-objects-with-another-array-of-objects
     // We only want to list the OTC drugs on this page that the resident has taken.
     const otcLogList = drugLogList ? drugLogList.filter((el) => {
@@ -49,6 +54,14 @@ const OtcPage = (props) => {
             return f.Id === el.MedicineId;
         });
     }) : null;
+
+    useEffect(() => props.updateFocusRef(focusRef), [props, key]);
+
+    useEffect(() => {
+        if (searchText && searchText.length > 2) {
+            console.log('search', searchText)
+        }
+    }, [searchText]);
 
     useEffect(()=> {
         if (otcList && otcList.length > 0) {
@@ -181,38 +194,45 @@ const OtcPage = (props) => {
     }
 
     const otcPage = (
-        <>
-            <Form className={TabContent}>
-                <Row controlId="medicine-buttons">
-                    <Col sm="4">
-                        <>
+        <Form>
+            <Form.Group className={TabContent} as={Row}>
+                <Form.Group as={Col} sm="4">
+                    <Form.Group as={Row}>
+                        <Button
+                            size="sm"
+                            variant="info"
+                            onClick={(e) => addEditDrug(e, true)}
+                        >
+                            + OTC
+                        </Button>
+
+                        {activeDrug &&
                             <Button
+                                className="ml-2"
                                 size="sm"
                                 variant="info"
-                                onClick={(e) => addEditDrug(e, true)}
+                                onClick={(e) => addEditDrug(e, false)}
                             >
-                                + OTC
+                                Edit <b>{activeDrug.Drug}</b>
                             </Button>
+                        }
+                    </Form.Group>
+                    <Form.Group as={Row}>
+                        <Form.Control
+                            type="text"
+                            value={searchText}
+                            onChange={(e) => setSearchText(e.target.value)}
+                            placeholder="Search OTC"
+                            ref={focusRef}
+                        />
+                    </Form.Group>
+                </Form.Group>
 
-                            {activeDrug &&
-                                <Button
-                                    className="ml-2"
-                                    size="sm"
-                                    variant="info"
-                                    onClick={(e) => addEditDrug(e, false)}
-                                >
-                                    Edit <b>{activeDrug.Drug}</b>
-                                </Button>
-                            }
-                        </>
-                    </Col>
-
-                    {activeDrug &&
-                    <Col sm="8">
-                        <span style={{textAlign: "center"}}> <h2>OTC Drug History</h2> </span>
-                    </Col>
-                    }
-                </Row>
+                {activeDrug &&
+                <Col sm="8">
+                    <span style={{textAlign: "center"}}> <h2>OTC Drug History</h2> </span>
+                </Col>
+                }
 
                 {activeDrug &&
                 <Row>
@@ -229,17 +249,33 @@ const OtcPage = (props) => {
                     </Col>
 
                     <Col sm="8">
-                        <DrugLogGrid
-                            showDrugColumn={true}
-                            drugLog={otcLogList}
-                            otcList={otcList}
-                            onEdit={(e, r) => addEditDrugLog(e, r)}
-                            onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
-                        />
+                        {otcLogList && otcLogList.length > 0 ?
+                            (<DrugLogGrid
+                                showDrugColumn={true}
+                                drugLog={otcLogList}
+                                otcList={otcList}
+                                onEdit={(e, r) => addEditDrugLog(e, r)}
+                                onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
+                            />)
+                                :
+                            (<Table
+                                size="sm"
+                                style={{tableLayout: "fixed"}}
+                            >
+                                <thead>
+                                    <tr>
+                                        <th style={{textAlign: "center"}}>
+                                            <span>No OTC medications Logged</span>
+                                        </th>
+                                    </tr>
+                                </thead>
+                            </Table>)
+                        }
+
                     </Col>
                 </Row>
                 }
-            </Form>
+            </Form.Group>
 
             {/* MedicineEdit Modal*/}
             <MedicineEdit
@@ -258,7 +294,7 @@ const OtcPage = (props) => {
             />
 
             <ConfirmationDialog
-                title={"Delete Log Record"}
+                title="Delete Log Record"
                 body={
                     <>
                         <p>{showDeleteDrugLogRecord.Created}</p>
@@ -277,7 +313,7 @@ const OtcPage = (props) => {
                 }}
                 onHide={() => setShowDeleteDrugLogRecord(false)}
             />
-        </>
+        </Form>
     );
 
     if (activeResident && activeResident.Id ) {
