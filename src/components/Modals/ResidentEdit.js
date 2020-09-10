@@ -26,8 +26,7 @@ const ResidentEdit = (props) => {
      *
      * @param  e
      */
-    function handleOnChange(e)
-    {
+    const handleOnChange = (e) => {
         const target = e.target;
         let value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
@@ -39,11 +38,10 @@ const ResidentEdit = (props) => {
     /**
      * Fires when the user clicks on save or cancel
      *
-     * @param {event} e
+     * @param {MouseEvent} e
      * @param {boolean} shouldSave
      */
-    function handleHide(e, shouldSave)
-    {
+    const handleHide = (e, shouldSave) => {
         if (shouldSave) {
             props.onClose({...residentInfo});
         } else {

@@ -34,8 +34,7 @@ const ManageDrugPage = (props) => {
      * @param {Event} e
      * @param {object} medicine
      */
-    function onEdit(e, medicine)
-    {
+    const onEdit = (e, medicine) => {
         e.preventDefault();
 
         let medicineInfo;
@@ -60,7 +59,7 @@ const ManageDrugPage = (props) => {
         setShowMedicineEdit(true);
     }
 
-    function handleMedicineEditModalClose(drugInfo) {
+    const handleMedicineEditModalClose = (drugInfo) => {
         if (drugInfo) {
             const drugData = {...drugInfo};
 
@@ -86,15 +85,13 @@ const ManageDrugPage = (props) => {
         setShowMedicineEdit(false);
     }
 
-    function onDelete(e, medicine)
-    {
+    const onDelete = (e, medicine) => {
         e.preventDefault();
         setMedicineInfo({...medicine});
         setShowDeleteMedicine(true);
     }
 
-    function deleteMedicine()
-    {
+    const deleteMedicine = () => {
         // Work around for a weird bug that manifests itself only in production.
         let medProvider = medicineProvider;
         if (medProvider === undefined) {

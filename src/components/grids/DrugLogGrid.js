@@ -33,8 +33,7 @@ const DrugLogGrid = (props) => {
      * @param {string} columnName
      * @returns {null|*}
      */
-    function drugColumnLookup(drugId, columnName)
-    {
+    const drugColumnLookup = (drugId, columnName) => {
         if (medicineList) {
             const medicine = medicineList.filter(drug => drug.Id === drugId);
             if (medicine.length === 1) {

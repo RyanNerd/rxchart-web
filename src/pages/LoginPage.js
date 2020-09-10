@@ -39,7 +39,7 @@ const LoginPage = (props) => {
     /**
      * Fires when the Login Button is clicked
      */
-    function login(e) {
+    const login = (e) => {
         e.preventDefault();
         const frak = new Frak();
 
@@ -107,7 +107,7 @@ const LoginPage = (props) => {
     /**
      * Fires when the Logout Button is clicked
      */
-    function logout(e) {
+    const logout = (e) => {
         e.preventDefault();
 
         setGlobal(initialState)

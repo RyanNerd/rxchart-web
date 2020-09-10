@@ -37,8 +37,7 @@ const MedicineEdit = (props) => {
      *
      * @param  e
      */
-    function handleOnChange(e)
-    {
+    const handleOnChange = (e) => {
         const target = e.target;
         let value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
@@ -53,8 +52,7 @@ const MedicineEdit = (props) => {
      * @param {event} e
      * @param {boolean} shouldSave
      */
-    function handleHide(e, shouldSave)
-    {
+    const handleHide = (e, shouldSave) => {
         if (shouldSave) {
             props.onClose({...drugInfo});
         } else {

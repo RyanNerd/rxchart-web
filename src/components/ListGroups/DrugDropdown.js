@@ -4,7 +4,6 @@ import Dropdown from "react-bootstrap/Dropdown";
 
 /**
  * Drug Dropdown
- * Pure function component
  *
  * @param props
  *  - drugId {int} active drug record Id
@@ -58,8 +57,7 @@ const DrugDropdown = (props) => {
      * @param {int} drugId
      * @returns {object | null}
      */
-    function getDrugById(drugId)
-    {
+    const getDrugById = (drugId) => {
         for (let drug of props.medicineList) {
             if (drug.Id === drugId) {
                 return drug;

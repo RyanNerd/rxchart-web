@@ -1,5 +1,4 @@
-export default function RefreshMedicineLog(medHistoryProvider, id)
-{
+const RefreshMedicineLog = (medHistoryProvider, id) => {
     const searchCriteria =
         {
             where: [
@@ -26,3 +25,6 @@ export default function RefreshMedicineLog(medHistoryProvider, id)
         return err;
     }));
 }
+
+export default RefreshMedicineLog;
+

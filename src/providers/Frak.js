@@ -254,8 +254,7 @@ export default class Frak
          * @param {object} request Request object
          * @returns {Promise.<Response>}
          */
-        async function doFetch(url, request)
-        {
+        const doFetch  = async (url, request) => {
             let response;
 
             // Asynchronously call fetch() via the await construct.

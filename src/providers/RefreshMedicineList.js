@@ -6,8 +6,7 @@
  * @returns {Q.Promise<any> | Promise<T | never> | * | undefined}
  * @constructor
  */
-export default function RefreshMedicineList(medicineProvider, residentId)
-{
+const RefreshMedicineList = (medicineProvider, residentId) => {
    const searchCriteria =
        {
            where: [
@@ -20,3 +19,5 @@ export default function RefreshMedicineList(medicineProvider, residentId)
 
    return medicineProvider.search(searchCriteria);
 }
+
+export default RefreshMedicineList;

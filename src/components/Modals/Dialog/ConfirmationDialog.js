@@ -10,7 +10,7 @@ const ConfirmationDialog = (props) => {
     // Observer for show
     useEffect(() => {setShow(props.show)}, [props.show]);
 
-    function handleAnswer(e, answer) {
+    const handleAnswer = (e, answer) => {
         e.preventDefault();
 
         props.onAnswer(answer);

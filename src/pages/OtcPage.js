@@ -84,8 +84,7 @@ const OtcPage = (props) => {
      * @param {Event} e
      * @param {boolean} isAdd
      */
-    function addEditDrug(e, isAdd)
-    {
+    const addEditDrug = (e, isAdd) => {
         e.preventDefault();
 
         if (isAdd) {
@@ -103,8 +102,7 @@ const OtcPage = (props) => {
      *
      * @param {object | null} drugInfo
      */
-    function handleMedicineEditModalClose(drugInfo)
-    {
+    const handleMedicineEditModalClose = (drugInfo) => {
         if (drugInfo) {
             const drugData = {...drugInfo};
 
@@ -140,8 +138,7 @@ const OtcPage = (props) => {
      *
      * @param {object} drugLogInfo
      */
-    function deleteDrugLogRecord(drugLogInfo)
-    {
+    const deleteDrugLogRecord = (drugLogInfo) => {
         medHistoryProvider.delete(drugLogInfo.Id)
             .then((response) => {
                 RefreshMedicineLog(medHistoryProvider, activeResident.Id)
@@ -156,8 +153,7 @@ const OtcPage = (props) => {
      * @param {Event} e
      * @param {object} drugLogInfo
      */
-    function addEditDrugLog(e, drugLogInfo)
-    {
+    const addEditDrugLog = (e, drugLogInfo) => {
         e.preventDefault();
 
         // If drugLogInfo is not populated then this is an add operation.
@@ -179,7 +175,7 @@ const OtcPage = (props) => {
      *
      * @param {object | null} drugLogInfo
      */
-    function handleDrugLogEditClose(drugLogInfo) {
+    const handleDrugLogEditClose = (drugLogInfo) => {
         if (drugLogInfo) {
             medHistoryProvider.post(drugLogInfo)
             .then((response) => {
