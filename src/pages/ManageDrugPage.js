@@ -1,11 +1,11 @@
 import React, {useGlobal, useState} from 'reactn';
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
-import MedicineEdit from "../Medicine/MedicineEdit";
-import ConfirmationDialog from "../Dialog/ConfirmationDialog";
-import RefreshMedicineList from "../../providers/RefreshMedicineList";
-import DeleteMedicine from "../../providers/helpers/DeleteMedicine";
-import TooltipButton from "../Buttons/TooltipButton";
+import MedicineEdit from "../components/Modals/MedicineEdit";
+import ConfirmationDialog from "../components/Modals/Dialog/ConfirmationDialog";
+import RefreshMedicineList from "../providers/RefreshMedicineList";
+import DeleteMedicine from "../providers/helpers/DeleteMedicine";
+import TooltipButton from "../components/Buttons/TooltipButton";
 
 /**
  * ManageDrugPage

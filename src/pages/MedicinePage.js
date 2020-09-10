@@ -1,22 +1,23 @@
-import React, {useGlobal, useState, useEffect, useRef} from 'reactn';
+import React, {useGlobal, useState, useEffect} from 'reactn';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
-import TabContent from "../../styles/tab_content.css";
-import MedicineEdit from "../Medicine/MedicineEdit";
-import ConfirmationDialog from "../Dialog/ConfirmationDialog";
-import DrugLogGrid from "../DrugLog/DrugLogGrid";
-import DrugLogEdit from "../DrugLog/DrugLogEdit";
-import RefreshMedicineLog from "../../providers/RefreshMedicineLog";
-import MedicineListGroup from "./../Medicine/MedicineListGroup";
-import RefreshOtcList from "../../providers/helpers/RefreshOtcList";
-import {calculateLastTaken} from "../../utility/common";
-import {newDrugInfo} from "../../utility/InitialState";
-import Table from "react-bootstrap/Table";
+import TabContent from "../styles/tab_content.css";
+import RefreshMedicineList from "../providers/RefreshMedicineList";
+import MedicineEdit from "../components/Modals/MedicineEdit";
+import ConfirmationDialog from "../components/Modals/Dialog/ConfirmationDialog";
+import DrugLogGrid from "../components/grids/DrugLogGrid";
+import DrugLogEdit from "../components/Modals/DrugLogEdit";
+import RefreshMedicineLog from "../providers/RefreshMedicineLog";
+import MedicineListGroup from "../components/ListGroups/MedicineListGroup";
+import TooltipButton from "../components/Buttons/TooltipButton";
+import {calculateLastTaken} from "../utility/common";
+import {newDrugInfo} from "../utility/InitialState";
+import {act} from "react-dom/test-utils";
 
 /**
- * OtcPage
+ * MedicinePage
  * This is where most of the logic and data entry will be done so the page is a little busy
  * Features of this page are:
  *  - Manually Add Medicine
@@ -26,17 +27,16 @@ import Table from "react-bootstrap/Table";
  *
  * @returns {*}
  */
-const OtcPage = (props) => {
-    const [ drugInfo, setDrugInfo ] = useState(newDrugInfo);
+const MedicinePage = (props) => {
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDrugLog, setShowDrugLog ] = useState(false);
+    const [ drugInfo, setDrugInfo ] = useState(null);
     const [ drugLogInfo, setDrugLogInfo ] = useState(null);
     const [ showDeleteDrugLogRecord, setShowDeleteDrugLogRecord ] = useState(false);
     const [ lastTaken, setLastTaken ] = useState(false);
-    const [ searchText, setSearchText ] = useState('');
-
     const [ activeDrug, setActiveDrug ] = useState(null);
-    const [ otcList, setOtcList ] = useGlobal('otcList');
+
+    const [ medicineList, setMedicineList ] = useGlobal('medicineList');
     const [ drugLogList, setDrugLogList ] = useGlobal('drugLogList');
     const [ activeResident ] = useGlobal('activeResident');
     const [ providers ] = useGlobal('providers');
@@ -44,35 +44,16 @@ const OtcPage = (props) => {
     const medHistoryProvider = providers.medHistoryProvider;
     const medicineProvider = providers.medicineProvider;
 
-    const focusRef = useRef(null);
-    const key = props.activeTabKey | null;
-
-    // @link https://stackoverflow.com/questions/31005396/filter-array-of-objects-with-another-array-of-objects
-    // We only want to list the OTC drugs on this page that the resident has taken.
-    const otcLogList = drugLogList ? drugLogList.filter((el) => {
-        return otcList.some((f) => {
-            return f.Id === el.MedicineId;
-        });
-    }) : null;
-
-    useEffect(() => props.updateFocusRef(focusRef), [props, key]);
-
-    useEffect(() => {
-        if (searchText && searchText.length > 2) {
-            console.log('search', searchText)
-        }
-    }, [searchText]);
-
     useEffect(()=> {
-        if (otcList && otcList.length > 0) {
-            setActiveDrug(otcList[0]);
+        if (medicineList && medicineList.length > 0) {
+            setActiveDrug(medicineList[0]);
         }
-    }, [otcList]);
+    }, [medicineList]);
 
     // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
     useEffect(() => {
         if (activeDrug && activeDrug.Id && drugLogList) {
-                setLastTaken(calculateLastTaken(activeDrug.Id, drugLogList));
+            setLastTaken(calculateLastTaken(activeDrug.Id, drugLogList));
         } else {
             setLastTaken(null);
         }
@@ -87,10 +68,10 @@ const OtcPage = (props) => {
     function addEditDrug(e, isAdd)
     {
         e.preventDefault();
-
         if (isAdd) {
             const drugInfo = {...newDrugInfo};
-            drugInfo.OTC = true;
+            drugInfo.OTC = false;
+            drugInfo.ResidentId = activeResident.Id;
             setDrugInfo(drugInfo);
         } else {
             setDrugInfo({...activeDrug});
@@ -117,20 +98,20 @@ const OtcPage = (props) => {
             }
 
             medicineProvider.post(drugData)
-                .then((drugRecord) => {
-                    RefreshOtcList(medicineProvider)
-                        .then((drugList) => {
-                            setOtcList(drugList);
-                            setDrugInfo(drugRecord);
-                            setActiveDrug(drugRecord);
-                            setLastTaken(false);
-                            RefreshMedicineLog(medHistoryProvider, activeResident.Id)
-                                .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
-                        })
-                        .catch((err) => {
-                            props.onError(err);
-                        });
+            .then((drugRecord) => {
+                RefreshMedicineList(medicineProvider, drugData.ResidentId)
+                .then((drugList) => {
+                    setMedicineList(drugList);
+                    setDrugInfo(drugRecord);
+                    setActiveDrug(drugRecord);
+                    setLastTaken(false);
+                    RefreshMedicineLog(medHistoryProvider, drugData.ResidentId)
+                        .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
+                })
+                .catch((err) => {
+                    props.onError(err);
                 });
+            });
         }
         setShowMedicineEdit(false);
     }
@@ -143,10 +124,10 @@ const OtcPage = (props) => {
     function deleteDrugLogRecord(drugLogInfo)
     {
         medHistoryProvider.delete(drugLogInfo.Id)
-            .then((response) => {
-                RefreshMedicineLog(medHistoryProvider, activeResident.Id)
-                    .then((data) => setDrugLogList(data));
-            });
+        .then((response) => {
+            RefreshMedicineLog(medHistoryProvider, activeDrug.ResidentId)
+                .then((data) => setDrugLogList(data));
+        });
         setShowDeleteDrugLogRecord(false);
     }
 
@@ -182,29 +163,30 @@ const OtcPage = (props) => {
     function handleDrugLogEditClose(drugLogInfo) {
         if (drugLogInfo) {
             medHistoryProvider.post(drugLogInfo)
-            .then((response) => {
-                RefreshMedicineLog(medHistoryProvider, activeResident.Id)
-                .then((data) => {setDrugLogList(data)})
-            })
-            .catch((err) => {
-                props.onError(err);
-            });
+                .then((response) => {
+                    RefreshMedicineLog(medHistoryProvider, activeDrug.ResidentId)
+                        .then((data) => setDrugLogList(data));
+                })
+                .catch((err) => {
+                    props.onError(err);
+                });
         }
         setShowDrugLog(false);
     }
 
-    const otcPage = (
-        <Form>
-            <Form.Group className={TabContent} as={Row}>
-                <Form.Group as={Col} sm="4">
-                    <Form.Group as={Row}>
-                        <Button
+    const medicinePage = (
+        <>
+            <Form className={TabContent}>
+                <Form.Group as={Row} controlId="medicine-buttons">
+                    <Col sm="4">
+                        <TooltipButton
+                            tooltip="Manually Add New Medicine"
                             size="sm"
                             variant="info"
                             onClick={(e) => addEditDrug(e, true)}
                         >
-                            + OTC
-                        </Button>
+                            + Medicine
+                        </TooltipButton>
 
                         {activeDrug &&
                             <Button
@@ -216,66 +198,41 @@ const OtcPage = (props) => {
                                 Edit <b>{activeDrug.Drug}</b>
                             </Button>
                         }
-                    </Form.Group>
-                    <Form.Group as={Row}>
-                        <Form.Control
-                            type="text"
-                            value={searchText}
-                            onChange={(e) => setSearchText(e.target.value)}
-                            placeholder="Search OTC"
-                            ref={focusRef}
-                        />
-                    </Form.Group>
+                    </Col>
+
+                    {activeDrug &&
+                        <Col sm="8">
+                            <span style={{textAlign: "center"}}> <h2>{activeDrug.Drug} History</h2> </span>
+                        </Col>
+                    }
                 </Form.Group>
 
                 {activeDrug &&
-                <Col sm="8">
-                    <span style={{textAlign: "center"}}> <h2>OTC Drug History</h2> </span>
-                </Col>
-                }
+                    <Row>
+                        <Col sm="4">
+                            {medicineList && activeDrug &&
+                                <MedicineListGroup
+                                    lastTaken={lastTaken}
+                                    medicineList={medicineList}
+                                    activeDrug={activeDrug}
+                                    drugChanged={(drug) => setActiveDrug(drug)}
+                                    addDrugLog={(e) => addEditDrugLog(e)}
+                                />
+                            }
+                        </Col>
 
-                {activeDrug &&
-                <Row>
-                    <Col sm="4">
-                        {otcList && activeDrug &&
-                        <MedicineListGroup
-                            lastTaken={lastTaken}
-                            medicineList={otcList}
-                            activeDrug={activeDrug}
-                            drugChanged={(drug) => setActiveDrug(drug)}
-                            addDrugLog={(e) => addEditDrugLog(e)}
-                        />
-                        }
-                    </Col>
-
-                    <Col sm="8">
-                        {otcLogList && otcLogList.length > 0 ?
-                            (<DrugLogGrid
-                                showDrugColumn={true}
-                                drugLog={otcLogList}
-                                otcList={otcList}
+                        <Col sm="8">
+                            <DrugLogGrid
+                                showDrugColumn={false}
+                                drugLog={drugLogList}
+                                drugId={activeDrug && activeDrug.Id}
                                 onEdit={(e, r) => addEditDrugLog(e, r)}
                                 onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
-                            />)
-                                :
-                            (<Table
-                                size="sm"
-                                style={{tableLayout: "fixed"}}
-                            >
-                                <thead>
-                                    <tr>
-                                        <th style={{textAlign: "center"}}>
-                                            <span>No OTC medications Logged</span>
-                                        </th>
-                                    </tr>
-                                </thead>
-                            </Table>)
-                        }
-
-                    </Col>
-                </Row>
+                            />
+                        </Col>
+                    </Row>
                 }
-            </Form.Group>
+            </Form>
 
             {/* MedicineEdit Modal*/}
             <MedicineEdit
@@ -283,7 +240,6 @@ const OtcPage = (props) => {
                 onHide={() => setShowMedicineEdit(!showMedicineEdit)}
                 onClose={(r) => handleMedicineEditModalClose(r)}
                 drugInfo={drugInfo}
-                otc={true}
             />
 
             <DrugLogEdit
@@ -313,14 +269,14 @@ const OtcPage = (props) => {
                 }}
                 onHide={() => setShowDeleteDrugLogRecord(false)}
             />
-        </Form>
+        </>
     );
 
-    if (activeResident && activeResident.Id ) {
-        return otcPage;
+    if (activeResident && activeResident.Id) {
+        return medicinePage;
     } else {
         return null;
     }
 }
 
-export default OtcPage;
+export default MedicinePage;

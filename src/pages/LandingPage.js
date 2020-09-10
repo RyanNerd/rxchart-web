@@ -1,13 +1,13 @@
 import React, {useGlobal, useState} from 'reactn';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
-import LoginPage from './../Login/LoginPage';
-import ResidentPage from "../Resident/ResidentPage";
-import MedicinePage from "../Medicine/MedicinePage";
-import DrugHistoryPage from "../DrugHistory/DrugHistoryPage";
-import ManageDrugPage from "../ManageDrugs/ManageDrugPage";
-import OtcPage from "../Otc/OtcPage";
-import ManageOtcPage from "../ManageOtc/ManageOtcPage";
+import LoginPage from './LoginPage';
+import ResidentPage from "./ResidentPage";
+import MedicinePage from "./MedicinePage";
+import DrugHistoryPage from "./DrugHistoryPage";
+import ManageDrugPage from "./ManageDrugPage";
+import OtcPage from "./OtcPage";
+import ManageOtcPage from "./ManageOtcPage";
 
 const LandingPage = () => {
     const [ apiKey, setApiKey ] = useGlobal('apiKey');

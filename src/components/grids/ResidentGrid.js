@@ -46,6 +46,7 @@ const ResidentGrid = (props) => {
                             variant="outline-info"
                             checked={isSelected}
                             onClick={(e) => props.onSelected(e, resident)}
+                            value={resident.Id}
                         />
                     </td>
                 }

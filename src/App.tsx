@@ -1,4 +1,4 @@
-import LandingPage from "./components/Landing/LandingPage";
+import LandingPage from "./pages/LandingPage";
 import React, {useGlobal} from 'reactn';
 import {FULLNAME} from "./utility/common";
 

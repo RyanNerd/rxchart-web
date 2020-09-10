@@ -1,6 +1,6 @@
 import React from 'reactn';
 import Button from 'react-bootstrap/Button';
-import DrugLogGrid from "../DrugLog/DrugLogGrid";
+import DrugLogGrid from "../components/grids/DrugLogGrid";
 
 const DrugHistoryPage = (props) => {
     const drugLogList = props.drugLogList;

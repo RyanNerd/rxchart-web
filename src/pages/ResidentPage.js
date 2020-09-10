@@ -2,12 +2,12 @@ import React, {useGlobal, useState} from 'reactn';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
-import ResidentGrid from './ResidentGrid';
-import ResidentEdit from './ResidentEdit';
-import {FULLNAME} from '../../utility/common';
-import RefreshMedicineList from "../../providers/RefreshMedicineList";
-import RefreshMedicineLog from "../../providers/RefreshMedicineLog";
-import ConfirmationDialog from "../Dialog/ConfirmationDialog";
+import ResidentGrid from '../components/grids/ResidentGrid';
+import ResidentEdit from '../components/Modals/ResidentEdit';
+import {FULLNAME} from '../utility/common';
+import RefreshMedicineList from "../providers/RefreshMedicineList";
+import RefreshMedicineLog from "../providers/RefreshMedicineLog";
+import ConfirmationDialog from "../components/Modals/Dialog/ConfirmationDialog";
 import {Form} from "react-bootstrap";
 
 /**
@@ -38,7 +38,7 @@ const ResidentPage = (props) => {
      * @param id
      * @returns {Promise<Response>}
      */
-    function reactivateResident(id) {
+    const reactivateResident = (id) => {
         return residentProvider.restore({restore_id: id})
         .then((response) => {
             return response;
@@ -52,11 +52,10 @@ const ResidentPage = (props) => {
     /**
      * Fires when user clicks the Edit button
      *
-     * @param e
+     * @param {MouseEvent} e
      * @param resident
      */
-    function handleOnEdit(e, resident)
-    {
+    const handleOnEdit = (e, resident) => {
         e.preventDefault();
 
         setResidentInfo({...resident});
@@ -66,10 +65,9 @@ const ResidentPage = (props) => {
     /**
      * Fires when user clicks the + (add) button
      *
-     * @param e
+     * @param {MouseEvent} e
      */
-    function handleAdd(e)
-    {
+    const handleAdd = (e) => {
         e.preventDefault();
 
         setResidentInfo({
@@ -89,8 +87,7 @@ const ResidentPage = (props) => {
      *
      * @param {object | null} residentInfo
      */
-    function handleModalClose(residentInfo)
-    {
+    const handleModalClose = (residentInfo) => {
         if (residentInfo) {
             const residentData = {...residentInfo};
 
@@ -149,9 +146,8 @@ const ResidentPage = (props) => {
                     });
                 } else {
                     // Add the new resident
-                    console.log('residentData', residentData);
                     residentProvider.post(residentData)
-                    .then((response) => {
+                    .then((newResident) => {
                         residentProvider.search({order_by: [
                                 {column: "LastName", direction: "asc"},
                                 {column: "FirstName", direction: "asc"}
@@ -161,13 +157,11 @@ const ResidentPage = (props) => {
                             setResidentList(residentList);
                         })
                         .catch((err) => props.onError(err));
-
-                        return response;
+                        return newResident;
                     })
-                    .then((response) => {
-                        setResidentInfo(response);
-                        setActiveResident(response);
-                        setMedicineList(null);
+                    .then((newResident) => {
+                        setResidentInfo(newResident);
+                        handleOnSelected(null, newResident);
                     })
                     .catch((err) => props.onError(err));
                 }
@@ -182,22 +176,28 @@ const ResidentPage = (props) => {
     /**
      * Fires when the selected column / row is clicked
      *
-     * @param e
-     * @param resident
+     * @param {MouseEvent|null} e
+     * @param {object} resident
      */
-    function handleOnSelected(e, resident)
-    {
+    const handleOnSelected = (e, resident) => {
+        if (e) {
+            e.preventDefault();
+        }
+
         setActiveResident(resident);
         RefreshMedicineList(providers.medicineProvider, resident.Id)
         .then((data) => {
-            setMedicineList(data);
             // If there are any medicines for the selected resident then
             // select the first one and make it the active drug.
             if (data && data.length > 0) {
+                setMedicineList(data);
                 // Refresh the drugLogList for the new active drug.
                 RefreshMedicineLog(providers.medHistoryProvider, data[0].ResidentId)
                 .then((data) => setDrugLogList(data))
                 .catch((err) => props.onError(err));
+            } else {
+                setMedicineList(null);
+                setDrugLogList(null);
             }
         })
         .catch((err) => setMedicineList(null));
@@ -206,11 +206,10 @@ const ResidentPage = (props) => {
     /**
      * Fires when user clicks on resident trash icon
      *
-     * @param {event} e
+     * @param {MouseEvent} e
      * @param {object} resident
      */
-    function handleOnDelete(e, resident)
-    {
+    const handleOnDelete = (e, resident) =>  {
         e.preventDefault();
         setResidentToDelete(resident);
         setShowDeleteResident(true);
@@ -219,8 +218,7 @@ const ResidentPage = (props) => {
     /**
      * Fires when user confirms to delete resident record
      */
-    function deleteResident()
-    {
+    const deleteResident = () => {
         // Perform the DELETE API call
         residentProvider.delete(residentToDelete.Id)
         .then((response) => {

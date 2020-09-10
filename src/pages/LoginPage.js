@@ -4,13 +4,13 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
-import TabContent from './../../styles/tab_content.css';
-import ResidentProvider from './../../providers/ResidentProvider';
-import MedicineProvider from './../../providers/MedicineProvider';
-import {initialState} from "../../utility/InitialState";
-import MedHistoryProvider from "../../providers/MedHistoryProvider";
-import Frak from "../../providers/Frak";
-import RefreshOtcList from "../../providers/helpers/RefreshOtcList";
+import TabContent from '../styles/tab_content.css';
+import ResidentProvider from '../providers/ResidentProvider';
+import MedicineProvider from '../providers/MedicineProvider';
+import {initialState} from "../utility/InitialState";
+import MedHistoryProvider from "../providers/MedHistoryProvider";
+import Frak from "../providers/Frak";
+import RefreshOtcList from "../providers/helpers/RefreshOtcList";
 import {useEffect} from "react";
 
 /**
@@ -58,7 +58,6 @@ const LoginPage = (props) => {
                         residentProvider: ResidentProvider.init(rxFrak),
                         medicineProvider: MedicineProvider.init(rxFrak),
                         medHistoryProvider: MedHistoryProvider.init(rxFrak),
-                        // otcProvider: OtcProvider.Init(this._rxFrak)
                     }
 
                     setProviders(providers);
