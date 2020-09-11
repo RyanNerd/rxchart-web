@@ -14,6 +14,7 @@ import RefreshOtcList from "../providers/helpers/RefreshOtcList";
 import {calculateLastTaken} from "../utility/common";
 import {newDrugInfo} from "../utility/InitialState";
 import Table from "react-bootstrap/Table";
+import PropTypes from 'prop-types';
 
 /**
  * OtcPage
@@ -46,6 +47,7 @@ const OtcPage = (props) => {
 
     const focusRef = useRef(null);
     const key = props.activeTabKey | null;
+    const onError = props.onError;
 
     // @link https://stackoverflow.com/questions/31005396/filter-array-of-objects-with-another-array-of-objects
     // We only want to list the OTC drugs on this page that the resident has taken.
@@ -126,7 +128,7 @@ const OtcPage = (props) => {
                                 .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
                         })
                         .catch((err) => {
-                            props.onError(err);
+                            onError(err);
                         });
                 });
         }
@@ -183,7 +185,7 @@ const OtcPage = (props) => {
                 .then((data) => {setDrugLogList(data)})
             })
             .catch((err) => {
-                props.onError(err);
+                onError(err);
             });
         }
         setShowDrugLog(false);
@@ -317,6 +319,12 @@ const OtcPage = (props) => {
     } else {
         return null;
     }
+}
+
+OtcPage.propTypes = {
+    activeTabKey: PropTypes.string,
+    onError: PropTypes.func.isRequired,
+    updateFocusRef: PropTypes.func.isRequired
 }
 
 export default OtcPage;

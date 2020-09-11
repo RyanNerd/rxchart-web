@@ -1,6 +1,7 @@
 import React from 'reactn';
 import Button from 'react-bootstrap/Button';
 import DrugLogGrid from "../components/grids/DrugLogGrid";
+import PropTypes from 'prop-types';
 
 const DrugHistoryPage = (props) => {
     const drugLogList = props.drugLogList;
@@ -27,6 +28,12 @@ const DrugHistoryPage = (props) => {
             />
         </>
     );
+}
+
+DrugHistoryPage.propTypes = {
+    drugLogList: PropTypes.arrayOf(PropTypes.object),
+    medicineList: PropTypes.arrayOf(PropTypes.object),
+    otcList: PropTypes.arrayOf(PropTypes.object)
 }
 
 export default DrugHistoryPage;

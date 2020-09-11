@@ -9,6 +9,7 @@ import RefreshMedicineList from "../providers/RefreshMedicineList";
 import RefreshMedicineLog from "../providers/RefreshMedicineLog";
 import ConfirmationDialog from "../components/Modals/Dialog/ConfirmationDialog";
 import {Form} from "react-bootstrap";
+import PropTypes from 'prop-types';
 
 /**
  * Display Resident Grid
@@ -18,7 +19,6 @@ import {Form} from "react-bootstrap";
  * @constructor
  */
 const ResidentPage = (props) => {
-    // Establish initial state
     const [ show, setShow ] = useState(false);
     const [ residentInfo, setResidentInfo ] = useState({Id: null});
     const [ showDeleteResident, setShowDeleteResident ] = useState(false);
@@ -31,6 +31,7 @@ const ResidentPage = (props) => {
     const [ providers ] = useGlobal('providers');
 
     const residentProvider = providers.residentProvider;
+    const onError = props.onError;
 
     /**
      * Reactivate a trashed resident given the primary key
@@ -139,7 +140,7 @@ const ResidentPage = (props) => {
                                 }
                             });
                         })
-                        .catch((err) => props.onError(err));
+                        .catch((err) => onError(err));
                     })
                     .catch((error) => {
                         console.log(error);
@@ -156,14 +157,14 @@ const ResidentPage = (props) => {
                         .then((residentList) => {
                             setResidentList(residentList);
                         })
-                        .catch((err) => props.onError(err));
+                        .catch((err) => onError(err));
                         return newResident;
                     })
                     .then((newResident) => {
                         setResidentInfo(newResident);
                         handleOnSelected(null, newResident);
                     })
-                    .catch((err) => props.onError(err));
+                    .catch((err) => onError(err));
                 }
             })
             .catch((error) => {
@@ -194,7 +195,7 @@ const ResidentPage = (props) => {
                 // Refresh the drugLogList for the new active drug.
                 RefreshMedicineLog(providers.medHistoryProvider, data[0].ResidentId)
                 .then((data) => setDrugLogList(data))
-                .catch((err) => props.onError(err));
+                .catch((err) => onError(err));
             } else {
                 setMedicineList(null);
                 setDrugLogList(null);
@@ -237,9 +238,9 @@ const ResidentPage = (props) => {
                     };
                 residentProvider.search(searchCriteria)
                     .then((data) => setResidentList(data))
-                    .catch((err) => props.onError(err));
+                    .catch((err) => onError(err));
             } else {
-                props.onError(response);
+                onError(response);
             }
         });
     }
@@ -304,6 +305,11 @@ const ResidentPage = (props) => {
             }
         </>
     );
+}
+
+ResidentPage.propTypes = {
+    onError: PropTypes.func.isRequired,
+
 }
 
 export default ResidentPage;

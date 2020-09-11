@@ -1,4 +1,4 @@
-import React, {setGlobal, useGlobal, useState, useRef} from 'reactn';
+import React, {setGlobal, useGlobal, useState, useRef, useEffect} from 'reactn';
 import Alert from 'react-bootstrap/Alert';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
@@ -11,7 +11,7 @@ import {initialState} from "../utility/InitialState";
 import MedHistoryProvider from "../providers/MedHistoryProvider";
 import Frak from "../providers/Frak";
 import RefreshOtcList from "../providers/helpers/RefreshOtcList";
-import {useEffect} from "react";
+import PropTypes from 'prop-types';
 
 /**
  * Sign in page
@@ -28,11 +28,11 @@ const LoginPage = (props) => {
     const [ baseUrl ] = useGlobal('baseUrl');
     const [ residentList, setResidentList ] = useGlobal('residentList');
     const [ , setOtcList ] = useGlobal('otcList');
-    const [ development ] = useGlobal('development');
     const [ , setProviders ] = useGlobal('providers');
 
     const focusRef = useRef(null);
     const key = props.activeTabKey | null;
+    const onError = props.onError;
 
     useEffect(() => props.updateFocusRef(focusRef), [props, key]);
 
@@ -73,7 +73,7 @@ const LoginPage = (props) => {
                             };
                         providers.residentProvider.search(searchCriteria)
                             .then((data) => setResidentList(data))
-                            .catch((err) => props.onError(err));
+                            .catch((err) => onError(err));
                     }
 
                     // Load ALL OTC medications
@@ -100,7 +100,7 @@ const LoginPage = (props) => {
             }
         })
         .catch((err) => {
-            props.onError(err);
+            onError(err);
         });
     }
 
@@ -112,7 +112,7 @@ const LoginPage = (props) => {
 
         setGlobal(initialState)
         .then(()=> console.log('logout successful'))
-        .catch((err) => console.error('logout error', development ? err : ''));
+        .catch((err) => onError(err))
     }
 
     const signIn = (
@@ -183,6 +183,12 @@ const LoginPage = (props) => {
             {apiKey === null ? (signIn) : (signOut)}
         </Form>
     );
+}
+
+LoginPage.propTypes = {
+    activeTabKey: PropTypes.string,
+    onError: PropTypes.func.isRequired,
+    updateFocusRef: PropTypes.func.isRequired
 }
 
 export default LoginPage;

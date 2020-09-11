@@ -6,6 +6,7 @@ import ConfirmationDialog from "../components/Modals/Dialog/ConfirmationDialog";
 import RefreshMedicineList from "../providers/RefreshMedicineList";
 import DeleteMedicine from "../providers/helpers/DeleteMedicine";
 import TooltipButton from "../components/Buttons/TooltipButton";
+import PropTypes from 'prop-types';
 
 /**
  * ManageDrugPage
@@ -221,6 +222,10 @@ const ManageDrugPage = (props) => {
             }
         </>
     );
+}
+
+ManageDrugPage.propTypes = {
+    onError: PropTypes.func.isRequired
 }
 
 export default ManageDrugPage;

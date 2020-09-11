@@ -14,7 +14,7 @@ import MedicineListGroup from "../components/ListGroups/MedicineListGroup";
 import TooltipButton from "../components/Buttons/TooltipButton";
 import {calculateLastTaken} from "../utility/common";
 import {newDrugInfo} from "../utility/InitialState";
-import {act} from "react-dom/test-utils";
+import PropTypes from 'prop-types';
 
 /**
  * MedicinePage
@@ -43,6 +43,7 @@ const MedicinePage = (props) => {
 
     const medHistoryProvider = providers.medHistoryProvider;
     const medicineProvider = providers.medicineProvider;
+    const onError = props.onError;
 
     useEffect(()=> {
         if (medicineList && medicineList.length > 0) {
@@ -107,7 +108,7 @@ const MedicinePage = (props) => {
                         .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
                 })
                 .catch((err) => {
-                    props.onError(err);
+                    onError(err);
                 });
             });
         }
@@ -164,7 +165,7 @@ const MedicinePage = (props) => {
                         .then((data) => setDrugLogList(data));
                 })
                 .catch((err) => {
-                    props.onError(err);
+                    onError(err);
                 });
         }
         setShowDrugLog(false);
@@ -273,6 +274,10 @@ const MedicinePage = (props) => {
     } else {
         return null;
     }
+}
+
+MedicinePage.propTypes = {
+    onError: PropTypes.func.isRequired
 }
 
 export default MedicinePage;

@@ -6,6 +6,7 @@ import ConfirmationDialog from "../components/Modals/Dialog/ConfirmationDialog";
 import DeleteMedicine from "../providers/helpers/DeleteMedicine";
 import TooltipButton from "../components/Buttons/TooltipButton";
 import RefreshOtcList from "../providers/helpers/RefreshOtcList";
+import PropTypes from 'prop-types';
 
 /**
  * ManageOtcPage
@@ -65,9 +66,10 @@ const ManageOtcPage = (props) => {
             medicineProvider.post(drugData)
                 .then((drugRecord) => {
                     RefreshOtcList(providers.medicineProvider)
-                        .then((data) => {setOtcList(data)})
-                        .catch((err) => setOtcList(null));
-                });
+                    .then((data) => {setOtcList(data)})
+                    .catch((err) => setOtcList(null));
+                })
+                .catch((err) => props.onError(err));
         }
 
         setShowMedicineEdit(false);
@@ -90,8 +92,8 @@ const ManageOtcPage = (props) => {
             .then((deleted) => {
                 if (deleted) {
                     RefreshOtcList(providers.medicineProvider)
-                        .then((data) => {setOtcList(data)})
-                        .catch((err) => setOtcList(null));
+                    .then((data) => setOtcList(data))
+                    .catch((err) => setOtcList(null));
                 }
             });
         setShowDeleteMedicine(false);
@@ -205,6 +207,10 @@ const ManageOtcPage = (props) => {
             }
         </>
     );
+}
+
+ManageOtcPage.propTypes = {
+    onError: PropTypes.func.isRequired
 }
 
 export default ManageOtcPage;

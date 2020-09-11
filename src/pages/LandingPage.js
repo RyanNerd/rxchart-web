@@ -78,6 +78,7 @@ const LandingPage = () => {
                 eventKey="otc"
                 title="OTC">
                 <OtcPage
+                    onError={(error) => errorOccurred(error)}
                     updateFocusRef={(ref) => setFocus(ref)}
                     activeTabKey={activeTabKey}
                 />

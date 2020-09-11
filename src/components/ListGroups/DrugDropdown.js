@@ -18,7 +18,24 @@ const DrugDropdown = (props) => {
         return false;
     }
 
-    const activeDrug = getDrugById(props.drugId);
+
+    /**
+     * Get the drug object from the medicineList given the drugId
+     *
+     * @param {int} drugId
+     * @returns {object | null}
+     */
+    const getDrugById = (drugId) => {
+        for (let drug of props.medicineList) {
+            if (drug.Id === drugId) {
+                return drug;
+            }
+        }
+        return null;
+    }
+
+    const drugId = props.drugId;
+    const activeDrug = getDrugById(drugId);
 
     // Do not render if there isn't an active drug.
     if (!activeDrug) {
@@ -50,21 +67,6 @@ const DrugDropdown = (props) => {
             </Dropdown.Item>
         );
     };
-
-    /**
-     * Get the drug object from the medicineList given the drugId
-     *
-     * @param {int} drugId
-     * @returns {object | null}
-     */
-    const getDrugById = (drugId) => {
-        for (let drug of props.medicineList) {
-            if (drug.Id === drugId) {
-                return drug;
-            }
-        }
-        return null;
-    }
 
     return (
         <DropdownButton
