@@ -32,12 +32,11 @@ const ManageDrugPage = (props) => {
     /**
      * Fires when the Edit button is clicked
      *
-     * @param {Event} e
+     * @param {MouseEvent} e
      * @param {object} medicine
      */
     const onEdit = (e, medicine) => {
         e.preventDefault();
-
         let medicineInfo;
         if (!medicine) {
             medicineInfo = {
@@ -86,14 +85,21 @@ const ManageDrugPage = (props) => {
         setShowMedicineEdit(false);
     }
 
+    /**
+     * Handle the delete click event.
+     *
+     * @param {MouseEvent} e
+     * @param {object} medicine
+
+     */
     const onDelete = (e, medicine) => {
         e.preventDefault();
         setMedicineInfo({...medicine});
         setShowDeleteMedicine(true);
     }
 
+    // Work around for a weird bug that manifests itself only in production.
     const deleteMedicine = () => {
-        // Work around for a weird bug that manifests itself only in production.
         let medProvider = medicineProvider;
         if (medProvider === undefined) {
             medProvider = providers.medicineProvider;

@@ -51,9 +51,9 @@ const OtcPage = (props) => {
 
     // @link https://stackoverflow.com/questions/31005396/filter-array-of-objects-with-another-array-of-objects
     // We only want to list the OTC drugs on this page that the resident has taken.
-    const otcLogList = drugLogList ? drugLogList.filter((el) => {
+    const otcLogList = drugLogList ? drugLogList.filter((drug) => {
         return otcList.some((f) => {
-            return f.Id === el.MedicineId;
+            return f.Id === drug.MedicineId;
         });
     }) : null;
 
@@ -83,12 +83,11 @@ const OtcPage = (props) => {
     /**
      * Fires when medicine is added or edited.
      *
-     * @param {Event} e
+     * @param {MouseEvent} e
      * @param {boolean} isAdd
      */
     const addEditDrug = (e, isAdd) => {
         e.preventDefault();
-
         if (isAdd) {
             const drugInfo = {...newDrugInfo};
             drugInfo.OTC = true;

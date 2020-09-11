@@ -11,9 +11,13 @@ const ConfirmationDialog = (props) => {
     // Observer for show
     useEffect(() => {setShow(props.show)}, [props.show]);
 
+    /**
+     * Handle button click event.
+     * @param {MouseEvent} e
+     * @param answer
+     */
     const handleAnswer = (e, answer) => {
         e.preventDefault();
-
         props.onAnswer(answer);
         setShow(false);
     }
@@ -55,6 +59,7 @@ const ConfirmationDialog = (props) => {
 ConfirmationDialog.propTypes = {
     body: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
     title: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
+    onAnswer: PropTypes.func
 }
 
 export default ConfirmationDialog;

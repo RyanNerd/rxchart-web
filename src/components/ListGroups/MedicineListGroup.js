@@ -88,9 +88,7 @@ const MedicineListGroup = (props) => {
                 <DrugDropdown
                     medicineList={medicineList}
                     drugId={drugId}
-                    onSelect={(e, drug) => {
-                        props.drugChanged(drug);
-                    }}
+                    onSelect={(e, drug) => props.drugChanged(drug)}
                 />
             </ListGroup.Item>
 

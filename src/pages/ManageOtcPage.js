@@ -26,12 +26,11 @@ const ManageOtcPage = (props) => {
     /**
      * Fires when the Edit button is clicked
      *
-     * @param {Event} e
+     * @param {MouseEvent} e
      * @param {object} medicine
      */
     const onEdit = (e, medicine) => {
         e.preventDefault();
-
         let medicineInfo;
         if (!medicine) {
             medicineInfo = {
@@ -75,6 +74,12 @@ const ManageOtcPage = (props) => {
         setShowMedicineEdit(false);
     }
 
+    /**
+     * Handle the click event for delete
+     *
+     * @param {MouseEvent} e
+     * @param {object} medicine
+     */
     const onDelete = (e, medicine) => {
         e.preventDefault();
         setMedicineInfo({...medicine});

@@ -50,10 +50,11 @@ const MedicineEdit = (props) => {
     /**
      * Fires when the user clicks on save or cancel
      *
-     * @param {event} e
+     * @param {MouseEvent} e
      * @param {boolean} shouldSave
      */
     const handleHide = (e, shouldSave) => {
+        e.preventDefault();
         if (shouldSave) {
             props.onClose({...drugInfo});
         } else {

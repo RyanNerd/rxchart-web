@@ -132,12 +132,11 @@ const MedicinePage = (props) => {
     /**
      * Fires when user clicks on +Log or the drug log edit button
      *
-     * @param {Event} e
+     * @param {MouseEvent} e
      * @param {object} drugLogInfo
      */
     const addEditDrugLog = (e, drugLogInfo) => {
         e.preventDefault();
-
         // If drugLogInfo is not populated then this is an add operation.
         if (!drugLogInfo) {
             drugLogInfo = {
