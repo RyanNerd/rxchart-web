@@ -3,6 +3,7 @@ import Button from 'react-bootstrap/Button';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import Table from 'react-bootstrap/Table';
 import {DOB} from "../../utility/common";
+import PropTypes from 'prop-types';
 
 /**
  * ResidentGrid component
@@ -15,8 +16,11 @@ import {DOB} from "../../utility/common";
  * @constructor
  */
 const ResidentGrid = (props) => {
-    // Get residentsList[] from the global store
     const [ residentList ] = useGlobal('residentList');
+    const onSelected = props.onSelected;
+    const onEdit = props.onEdit;
+    const onDelete = props.onDelete;
+    const activeResident = props.activeResident;
 
     /**
      * Resident Child Table Component
@@ -30,14 +34,14 @@ const ResidentGrid = (props) => {
         const dob = DOB(resident);
 
         // Determine if this row is selected [for radio ToggleButtons]
-        const isSelected = props.onSelected && props.activeResident && resident.Id === props.activeResident.Id;
+        const isSelected = onSelected && activeResident && resident.Id === activeResident.Id;
 
         return (
             <tr
                 key={'resident-grid-row-' + resident.Id}
                 id={'resident-grid-row-' + resident.Id}
             >
-                {props.onSelected &&
+                {onSelected &&
                     <td>
                         <ToggleButton
                             id={"resident-grid-select-btn-" + resident.Id}
@@ -45,18 +49,18 @@ const ResidentGrid = (props) => {
                             name="resident-list"
                             variant="outline-info"
                             checked={isSelected}
-                            onClick={(e) => props.onSelected(e, resident)}
+                            onClick={(e) => onSelected(e, resident)}
                             value={resident.Id}
                         />
                     </td>
                 }
 
-                {props.onEdit &&
+                {onEdit &&
                     <td>
                         <Button
                             size="sm"
                             id={"resident-grid-edit-btn-" + resident.Id}
-                            onClick={(e) => props.onEdit(e, resident)}
+                            onClick={(e) => onEdit(e, resident)}
                         >
                             Edit
                         </Button>
@@ -67,13 +71,13 @@ const ResidentGrid = (props) => {
                 <td>{resident.FirstName}</td>
                 <td>{dob}</td>
 
-                {props.onDelete && !resident.deleted_at &&
+                {onDelete && !resident.deleted_at &&
                     <td>
                         <Button
                             size="sm"
                             id={"resident-grid-delete-btn-" + resident.Id}
                             variant="outline-danger"
-                            onClick={(e) => props.onDelete(e, resident)}
+                            onClick={(e) => onDelete(e, resident)}
                         >
                             <span role="img" aria-label="delete">🗑️</span>
                         </Button>
@@ -87,10 +91,10 @@ const ResidentGrid = (props) => {
         <Table striped bordered hover size="sm">
             <thead>
             <tr>
-                {props.onSelected &&
+                {onSelected &&
                     <th>Selected</th>
                 }
-                {props.onEdit &&
+                {onEdit &&
                     <th/>
                 }
                 <th>
@@ -102,7 +106,7 @@ const ResidentGrid = (props) => {
                 <th>
                     <span>DOB</span>
                 </th>
-                {props.onDelete &&
+                {onDelete &&
                     <th/>
                 }
             </tr>
@@ -112,6 +116,13 @@ const ResidentGrid = (props) => {
             </tbody>
         </Table>
     );
+}
+
+ResidentGrid.propTypes = {
+    onSelected: PropTypes.func,
+    onEdit: PropTypes.func,
+    onDelete: PropTypes.func,
+    activeResident: PropTypes.object
 }
 
 export default ResidentGrid;

@@ -5,6 +5,7 @@ import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import {isDayValid, isMonthValid, isYearValid} from "../../utility/common";
+import PropTypes from 'prop-types';
 
 /**
  * Edit Modal for Resident
@@ -187,6 +188,12 @@ const ResidentEdit = (props) => {
             </Modal.Footer>
         </Modal>
     )
+}
+
+ResidentEdit.propTypes = {
+    show: PropTypes.bool,
+    residentInfo: PropTypes.object,
+    onClose: PropTypes.func,
 }
 
 export default ResidentEdit;

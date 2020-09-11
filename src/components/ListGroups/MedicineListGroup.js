@@ -3,6 +3,7 @@ import ListGroup from "react-bootstrap/ListGroup";
 import DrugDropdown from "./DrugDropdown";
 import Button from "react-bootstrap/Button";
 import bwipjs from 'bwip-js';
+import PropTypes from 'prop-types';
 
 /**
  * MedicineListGroup
@@ -138,5 +139,12 @@ const MedicineListGroup = (props) => {
     );
 }
 
-export default MedicineListGroup;
+MedicineListGroup.propTypes = {
+    medicineList: PropTypes.arrayOf(PropTypes.object),
+    activeDrug: PropTypes.object,
+    lastTaken: PropTypes.number,
+    drugChanged: PropTypes.func,
+    addDrugLog: PropTypes.func
+}
 
+export default MedicineListGroup;

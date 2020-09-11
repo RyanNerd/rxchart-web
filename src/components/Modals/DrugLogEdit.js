@@ -4,11 +4,12 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
+import PropTypes from 'prop-types';
 
 /**
  * Edit Modal for DrugLog
  *
- * @param props :
+ * @param {object} props :
  *          show {boolean} show/hide this modal
  *          drugLogInfo {Id: id, Note: ""}
  *
@@ -17,7 +18,7 @@ import Button from "react-bootstrap/Button";
  */
 const DrugLogEdit = (props) => {
     const [ show, setShow ] = useState(props.show);
-    const [ drugLogInfo, setDrugLogInfo ] = useState(null);
+    const [ drugLogInfo, setDrugLogInfo ] = useState(props.drugLogInfo);
 
     const textInput = useRef(null);
 
@@ -112,6 +113,13 @@ const DrugLogEdit = (props) => {
             </Modal.Footer>
         </Modal>
     );
+}
+
+DrugLogEdit.propTypes = {
+    show: PropTypes.bool,
+    drugLogInfo: PropTypes.object,
+    onHide: PropTypes.func,
+    onClose: PropTypes.func
 }
 
 export default DrugLogEdit;

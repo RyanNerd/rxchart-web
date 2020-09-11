@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'reactn';
 import Modal from 'react-bootstrap/Modal';
 import Button from "react-bootstrap/Button";
+import PropTypes from 'prop-types';
 
 const ConfirmationDialog = (props) => {
     const [ show, setShow ] = useState(props.show);
@@ -49,6 +50,11 @@ const ConfirmationDialog = (props) => {
             </Modal.Footer>
         </Modal>
     );
+}
+
+ConfirmationDialog.propTypes = {
+    body: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
+    title: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
 }
 
 export default ConfirmationDialog;

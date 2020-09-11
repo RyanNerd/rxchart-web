@@ -1,6 +1,7 @@
 import React from 'reactn';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
+import PropTypes from 'prop-types';
 
 /**
  * DrugLogGrid
@@ -138,6 +139,15 @@ const DrugLogGrid = (props) => {
             </tbody>
         </Table>
     );
+}
+
+DrugLogGrid.propTypes = {
+    drugLog: PropTypes.arrayOf(PropTypes.object),
+    onEdit: PropTypes.func,
+    onDelete: PropTypes.func,
+    drugId: PropTypes.number,
+    medicineList: PropTypes.arrayOf(PropTypes.object),
+    otcList: PropTypes.arrayOf(PropTypes.object)
 }
 
 export default DrugLogGrid;

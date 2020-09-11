@@ -1,6 +1,7 @@
 import React from 'reactn';
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
+import PropTypes from 'prop-types';
 
 /**
  * Drug Dropdown
@@ -13,11 +14,13 @@ import Dropdown from "react-bootstrap/Dropdown";
  * @returns {* | boolean}
  */
 const DrugDropdown = (props) => {
+    const medicineList = props.medicineList;
+    const drugId = props.drugId;
+
     // Do not render unless we have the required props.
-    if (!props.medicineList || props.medicineList.length === 0 || !props.drugId) {
+    if (!medicineList || medicineList.length === 0 || !drugId) {
         return false;
     }
-
 
     /**
      * Get the drug object from the medicineList given the drugId
@@ -26,7 +29,7 @@ const DrugDropdown = (props) => {
      * @returns {object | null}
      */
     const getDrugById = (drugId) => {
-        for (let drug of props.medicineList) {
+        for (let drug of medicineList) {
             if (drug.Id === drugId) {
                 return drug;
             }
@@ -34,7 +37,7 @@ const DrugDropdown = (props) => {
         return null;
     }
 
-    const drugId = props.drugId;
+
     const activeDrug = getDrugById(drugId);
 
     // Do not render if there isn't an active drug.
@@ -61,7 +64,7 @@ const DrugDropdown = (props) => {
         return (
             <Dropdown.Item
                 key={medicine.Id}
-                active={medicine.Id === props.drugId}
+                active={medicine.Id === drugId}
                 onSelect={(e) =>props.onSelect(e, medicine)}>
                     {drugDetail}
             </Dropdown.Item>
@@ -74,9 +77,15 @@ const DrugDropdown = (props) => {
             title={title}
             variant="primary"
         >
-            {props.medicineList.map(MedicineDropdownItems)}
+            {medicineList.map(MedicineDropdownItems)}
         </DropdownButton>
     )
+}
+
+DrugDropdown.propTypes = {
+    medicineList: PropTypes.arrayOf(PropTypes.object),
+    onSelect: PropTypes.func,
+    drugId: PropTypes.number
 }
 
 export default DrugDropdown;

@@ -5,13 +5,14 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
+import PropTypes from 'prop-types';
 
 /**
  * Edit Modal for Medicine
  *
- * @param props :
-    *          show {boolean} show/hide this modal
- *          residentInfo {Id: id, FirstName: first_name, etc.}
+ * @param {object} props :
+ *          show {boolean} show/hide this modal
+ *          drugInfo {Id: id, Drug: drug_name, etc.}
  *
  * @returns {boolean|*}
  * @constructor
@@ -225,6 +226,14 @@ const MedicineEdit = (props) => {
             </Modal.Footer>
         </Modal>
     );
+}
+
+MedicineEdit.propTypes = {
+    show: PropTypes.bool,
+    otc: PropTypes.bool,
+    drugInfo: PropTypes.object,
+    onClose: PropTypes.func,
+    onHide: PropTypes.func
 }
 
 export default MedicineEdit;

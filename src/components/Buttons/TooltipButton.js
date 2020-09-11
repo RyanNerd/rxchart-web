@@ -3,6 +3,7 @@ import Tooltip from "react-bootstrap/Tooltip";
 import Button from "react-bootstrap/Button";
 import React from "reactn";
 import {randomString} from "../../utility/common";
+import PropTypes from 'prop-types';
 
 /**
  * Button with a tooltip overlay
@@ -32,6 +33,12 @@ const TooltipButton = (props) => {
             </Button>
         </OverlayTrigger>
     );
+}
+
+TooltipButton.propTypes = {
+    placement: PropTypes.string,
+    tooltip: PropTypes.oneOfType([PropTypes.element.isRequired, PropTypes.string.isRequired]),
+    toolTipId: PropTypes.string
 }
 
 export default TooltipButton;
