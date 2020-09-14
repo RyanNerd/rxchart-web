@@ -50,49 +50,49 @@ const LoginPage = (props) => {
             if (json.success) {
                 // Set the global API key returned from the web service.
                 const apiKey = json.data.apiKey;
-                setApiKey(apiKey).then(() =>
-                {
+                setApiKey(apiKey).then(() => {
                     // Use global state for Dependency Injection for providers.
                     const rxFrak = {frak: frak, apiKey: apiKey, baseUrl: baseUrl};
                     const providers = {
                         residentProvider: ResidentProvider.init(rxFrak),
                         medicineProvider: MedicineProvider.init(rxFrak),
                         medHistoryProvider: MedHistoryProvider.init(rxFrak),
-                    }
+                }
 
-                    setProviders(providers);
+                setProviders(providers);
 
-                    // Load ALL Resident records up front and save them in the global store.
-                    if (residentList === null) {
-                        const searchCriteria =
-                            {
-                                order_by: [
-                                    {column: "LastName", direction: "asc"},
-                                    {column: "FirstName", direction: "asc"}
-                                ]
-                            };
-                        providers.residentProvider.search(searchCriteria)
-                            .then((data) => setResidentList(data))
-                            .catch((err) => onError(err));
-                    }
+                // Load ALL Resident records up front and save them in the global store.
+                if (residentList === null) {
+                    const searchCriteria =
+                        {
+                            order_by: [
+                                {column: "LastName", direction: "asc"},
+                                {column: "FirstName", direction: "asc"}
+                            ]
+                        };
 
-                    // Load ALL OTC medications
-                    RefreshOtcList(providers.medicineProvider)
-                        .then((data) => {setOtcList(data)})
-                        .catch((err) => setOtcList(null));
+                    providers.residentProvider.search(searchCriteria)
+                        .then((data) => setResidentList(data))
+                        .catch((err) => onError(err));
+                }
 
-                    // Let the parent component know we are logged in successfully
-                    props.onLogin(true);
+                // Load ALL OTC medications
+                RefreshOtcList(providers.medicineProvider)
+                    .then((data) => {setOtcList(data)})
+                    .catch((err) => setOtcList(null));
 
-                    // Remove alert (in the case where a previous log in attempt failed).
-                    setShowAlert(false);
+                // Let the parent component know we are logged in successfully
+                props.onLogin(true);
 
-                    // Display the organization name that logged in
-                    const organization = json.data.organization || null;
-                    if (organization) {
-                        // Since this element lives in index.html we use old fashioned JS and DOM manipulation to update
-                        document.getElementById("organization").innerHTML = json.data.organization;
-                    }
+                // Remove alert (in the case where a previous log in attempt failed).
+                setShowAlert(false);
+
+                // Display the organization name that logged in
+                const organization = json.data.organization || null;
+                if (organization) {
+                    // Since this element lives in index.html we use old fashioned JS and DOM manipulation to update
+                    document.getElementById("organization").innerHTML = json.data.organization;
+                }
                 });
             } else {
                 // Show invalid credentials alert
@@ -140,6 +140,11 @@ const LoginPage = (props) => {
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        onKeyUp={(e) => {
+                            if (e.keyCode === 13) {
+                                login(e);
+                            }
+                        }}
                     />
                 </Col>
             </Form.Group>
