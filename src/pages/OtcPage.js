@@ -35,7 +35,7 @@ const OtcPage = (props) => {
     const [ showDeleteDrugLogRecord, setShowDeleteDrugLogRecord ] = useState(false);
     const [ lastTaken, setLastTaken ] = useState(false);
     const [ searchText, setSearchText ] = useState('');
-
+    const [ searchIsValid, setSearchIsValid ] = useState(null);
     const [ activeDrug, setActiveDrug ] = useState(null);
     const [ otcList, setOtcList ] = useGlobal('otcList');
     const [ drugLogList, setDrugLogList ] = useGlobal('drugLogList');
@@ -51,19 +51,13 @@ const OtcPage = (props) => {
 
     // @link https://stackoverflow.com/questions/31005396/filter-array-of-objects-with-another-array-of-objects
     // We only want to list the OTC drugs on this page that the resident has taken.
-    const otcLogList = drugLogList ? drugLogList.filter((drug) => {
+    const otcLogList = (otcList && otcList.length > 0 ) && drugLogList ? drugLogList.filter((drug) => {
         return otcList.some((f) => {
             return f.Id === drug.MedicineId;
         });
     }) : null;
 
     useEffect(() => props.updateFocusRef(focusRef), [props, key]);
-
-    useEffect(() => {
-        if (searchText && searchText.length > 2) {
-            console.log('search', searchText)
-        }
-    }, [searchText]);
 
     useEffect(()=> {
         if (otcList && otcList.length > 0) {
@@ -74,11 +68,41 @@ const OtcPage = (props) => {
     // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
     useEffect(() => {
         if (activeDrug && activeDrug.Id && drugLogList) {
-                setLastTaken(calculateLastTaken(activeDrug.Id, drugLogList));
+            setLastTaken(calculateLastTaken(activeDrug.Id, drugLogList));
+
+            const searchTextLength = searchText ? searchText.length : null;
+            if (searchTextLength &&
+                searchText.substr(0, searchTextLength).toLowerCase() !==
+                activeDrug.Drug.substr(0, searchTextLength).toLowerCase()) {
+                    setSearchText('');
+                    setSearchIsValid(null);
+            }
         } else {
             setLastTaken(null);
         }
-    }, [activeDrug, drugLogList]);
+    }, [searchText, activeDrug, drugLogList]);
+
+    /**
+     * Handle the search box text changes.
+     *
+     * @param {KeyboardEvent} e
+     */
+    const handleSearchKeypress = (e) => {
+        const searchValue = e.target.value;
+        setSearchText(searchValue);
+        const textLen = searchValue ? searchValue.length : 0;
+        if (textLen > 0) {
+            const otcDrugMatch = otcList.filter(drug => (drug.Drug.substr(0, textLen).toLowerCase() === searchValue.toLowerCase()));
+            if (otcDrugMatch && otcDrugMatch.length > 0) {
+                setActiveDrug(otcDrugMatch[otcDrugMatch.length-1]);
+                setSearchIsValid(true);
+            } else {
+                setSearchIsValid(false);
+            }
+        } else {
+            setSearchIsValid(null);
+        }
+    }
 
     /**
      * Fires when medicine is added or edited.
@@ -193,7 +217,7 @@ const OtcPage = (props) => {
     const otcPage = (
         <Form>
             <Form.Group className={TabContent} as={Row}>
-                <Form.Group as={Col} sm="4">
+                <Form.Group as={Col} sm="5">
                     <Form.Group as={Row}>
                         <Button
                             size="sm"
@@ -214,26 +238,35 @@ const OtcPage = (props) => {
                             </Button>
                         }
                     </Form.Group>
-                    <Form.Group as={Row}>
-                        <Form.Control
-                            type="text"
-                            value={searchText}
-                            onChange={(e) => setSearchText(e.target.value)}
-                            placeholder="Search OTC"
-                            ref={focusRef}
-                        />
-                    </Form.Group>
+
+                    {otcList && otcList.length > 0 &&
+                        <Form.Group as={Row}>
+                            <Form.Control
+                                style={{width: "220px"}}
+                                isValid={searchIsValid}
+                                type="search"
+                                value={searchText}
+                                onChange={(e) => handleSearchKeypress(e)}
+                                placeholder="Search OTC"
+                                ref={focusRef}
+                            />
+
+                            {activeDrug &&
+                            <h3 className="ml-4"><b>{activeDrug.Drug}</b></h3>
+                            }
+                        </Form.Group>
+                    }
                 </Form.Group>
 
                 {activeDrug &&
-                <Col sm="8">
+                <Col sm="7">
                     <span style={{textAlign: "center"}}> <h2>OTC Drug History</h2> </span>
                 </Col>
                 }
 
                 {activeDrug &&
                 <Row>
-                    <Col sm="4">
+                    <Col sm="5">
                         {otcList && activeDrug &&
                         <MedicineListGroup
                             lastTaken={lastTaken}
@@ -245,7 +278,7 @@ const OtcPage = (props) => {
                         }
                     </Col>
 
-                    <Col sm="8">
+                    <Col sm="7">
                         {otcLogList && otcLogList.length > 0 ?
                             (<DrugLogGrid
                                 showDrugColumn={true}
@@ -313,7 +346,7 @@ const OtcPage = (props) => {
         </Form>
     );
 
-    if (activeResident && activeResident.Id ) {
+    if (activeResident && activeResident.Id) {
         return otcPage;
     } else {
         return null;

@@ -1,4 +1,4 @@
-import React, {useGlobal, useState, useEffect} from 'reactn';
+import React, {useGlobal, useState, useEffect, useRef} from 'reactn';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -35,6 +35,10 @@ const MedicinePage = (props) => {
     const [ showDeleteDrugLogRecord, setShowDeleteDrugLogRecord ] = useState(false);
     const [ lastTaken, setLastTaken ] = useState(false);
     const [ activeDrug, setActiveDrug ] = useState(null);
+    const [ searchText, setSearchText ] = useState('');
+    const [ searchIsValid, setSearchIsValid ] = useState(false)
+    const [ showSearch, setShowSearch ] = useState(false);
+    const focusRef = useRef(null);
 
     const [ medicineList, setMedicineList ] = useGlobal('medicineList');
     const [ drugLogList, setDrugLogList ] = useGlobal('drugLogList');
@@ -55,10 +59,24 @@ const MedicinePage = (props) => {
     useEffect(() => {
         if (activeDrug && activeDrug.Id && drugLogList) {
             setLastTaken(calculateLastTaken(activeDrug.Id, drugLogList));
+
+            const searchTextLength = searchText ? searchText.length : null;
+            if (searchTextLength &&
+                searchText.substr(0, searchTextLength).toLowerCase() !==
+                activeDrug.Drug.substr(0, searchTextLength).toLowerCase()) {
+                    setSearchText('');
+                    setSearchIsValid(null);
+            }
         } else {
             setLastTaken(null);
         }
-    }, [activeDrug, drugLogList]);
+    }, [activeDrug, drugLogList, searchText]);
+
+    useEffect(() => {
+        if (focusRef && focusRef.current && showSearch) {
+            focusRef.current.focus();
+        }
+    }, [showSearch]);
 
     /**
      * Fires when medicine is added or edited.
@@ -170,12 +188,35 @@ const MedicinePage = (props) => {
         setShowDrugLog(false);
     }
 
+    /**
+     * Handle the search box text changes.
+     *
+     * @param {KeyboardEvent<HTMLInputElement>} e
+     */
+    const handleSearchKeypress = (e) => {
+        const searchValue = e.target.value;
+        setSearchText(searchValue);
+        const textLen = searchValue ? searchValue.length : 0;
+        if (textLen > 0) {
+            const drugMatch = medicineList.filter(drug => (drug.Drug.substr(0, textLen).toLowerCase() === searchValue.toLowerCase()));
+            if (drugMatch && drugMatch.length > 0) {
+                setActiveDrug(drugMatch[drugMatch.length-1]);
+                setSearchIsValid(true);
+            } else {
+                setSearchIsValid(false);
+            }
+        } else {
+            setSearchIsValid(null);
+        }
+    }
+
     const medicinePage = (
         <>
-            <Form className={TabContent}>
-                <Form.Group as={Row} controlId="medicine-buttons">
-                    <Col sm="4">
+            <Form className={TabContent} as={Row}>
+                <Form.Group as={Col} controlId="medicine-buttons">
+                    <Form.Group as={Row} sm="4">
                         <TooltipButton
+                            className="mr-1"
                             tooltip="Manually Add New Medicine"
                             size="sm"
                             variant="info"
@@ -186,7 +227,7 @@ const MedicinePage = (props) => {
 
                         {activeDrug &&
                             <Button
-                                className="ml-2"
+                                className="mr-2"
                                 size="sm"
                                 variant="info"
                                 onClick={(e) => addEditDrug(e, false)}
@@ -194,14 +235,39 @@ const MedicinePage = (props) => {
                                 Edit <b>{activeDrug.Drug}</b>
                             </Button>
                         }
-                    </Col>
 
-                    {activeDrug &&
-                        <Col sm="8">
-                            <span style={{textAlign: "center"}}> <h2>{activeDrug.Drug} History</h2> </span>
-                        </Col>
+                        {medicineList && medicineList.length > 0 &&
+                        <Button
+                            className="mr-3"
+                            size="sm"
+                            variant="secondary"
+                            onClick={(e) => setShowSearch(!showSearch)}
+                        >
+                            Toggle Search
+                        </Button>
+                        }
+                    </Form.Group>
+
+                    {showSearch &&
+                    <Form.Group as={Row}>
+                        <Form.Control
+                            isValid={searchIsValid}
+                            type="search"
+                            value={searchText}
+                            onChange={(e) => handleSearchKeypress(e)}
+                            placeholder="Search drugs"
+                            ref={focusRef}
+                        />
+                    </Form.Group>
                     }
+
                 </Form.Group>
+
+                {activeDrug &&
+                <Col sm="8">
+                    <span style={{textAlign: "center"}}> <h2>{activeDrug.Drug} History</h2> </span>
+                </Col>
+                }
 
                 {activeDrug &&
                     <Row>
