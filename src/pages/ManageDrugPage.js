@@ -74,8 +74,8 @@ const ManageDrugPage = (props) => {
         setShowDeleteMedicine(true);
     }
 
-    // Work around for a weird bug that manifests itself only in production.
     const deleteMedicine = () => {
+        // Work around for a weird bug that manifests itself only in production.
         let medProvider = medicineProvider;
         if (medProvider === undefined) {
             medProvider = providers.medicineProvider;
