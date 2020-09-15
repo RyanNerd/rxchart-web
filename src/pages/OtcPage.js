@@ -67,14 +67,14 @@ const OtcPage = (props) => {
         }
     }, [otcList]);
 
+    // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
     useEffect(() => {
         if (activeDrug && activeDrug.Id && drugLogList) {
-            // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
             setLastTaken(calculateLastTaken(activeDrug.Id, drugLogList));
         } else {
             setLastTaken(null);
         }
-    }, [searchText, activeDrug, drugLogList]);
+    }, [activeDrug, drugLogList]);
 
     // Handle if the search text has a match in the otcList.
     useEffect(() =>{

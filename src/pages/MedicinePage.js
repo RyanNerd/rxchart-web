@@ -57,20 +57,37 @@ const MedicinePage = (props) => {
         }
     }, [medicineList]);
 
+    // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
     useEffect(() => {
         if (activeDrug && activeDrug.Id && drugLogList) {
-            // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
             setLastTaken(calculateLastTaken(activeDrug.Id, drugLogList));
         } else {
             setLastTaken(null);
         }
-    }, [activeDrug, drugLogList, searchText]);
+    }, [activeDrug, drugLogList]);
 
+    // Set focus to the search input if it is shown and the page key has changed
     useEffect(() => {
         if (focusRef && focusRef.current && showSearch) {
             focusRef.current.focus();
         }
     }, [showSearch, key]);
+
+    // Handle if the search text has a match in the otcList.
+    useEffect(() =>{
+        const textLen = searchText ? searchText.length : 0;
+        if (textLen > 0) {
+            const drugMatch = medicineList.filter(drug => (drug.Drug.substr(0, textLen).toLowerCase() === searchText.toLowerCase()));
+            if (drugMatch && drugMatch.length > 0) {
+                setActiveDrug(drugMatch[0]);
+                setSearchIsValid(true);
+            } else {
+                setSearchIsValid(false);
+            }
+        } else {
+            setSearchIsValid(null);
+        }
+    }, [searchText, medicineList]);
 
     /**
      * Fires when medicine is added or edited.
@@ -182,27 +199,11 @@ const MedicinePage = (props) => {
         setShowDrugLog(false);
     }
 
-    // Handle if the search text has a match in the otcList.
-    useEffect(() =>{
-        const textLen = searchText ? searchText.length : 0;
-        if (textLen > 0) {
-            const drugMatch = medicineList.filter(drug => (drug.Drug.substr(0, textLen).toLowerCase() === searchText.toLowerCase()));
-            if (drugMatch && drugMatch.length > 0) {
-                setActiveDrug(drugMatch[0]);
-                setSearchIsValid(true);
-            } else {
-                setSearchIsValid(false);
-            }
-        } else {
-            setSearchIsValid(null);
-        }
-    }, [searchText, medicineList]);
-
     const medicinePage = (
         <>
             <Form className={TabContent} as={Row}>
                 <Form.Group as={Col} controlId="medicine-buttons">
-                    <Form.Group as={Row} sm="4">
+                    <Form.Group as={Row} sm="5">
                         <TooltipButton
                             className="mr-1"
                             tooltip="Manually Add New Medicine"
@@ -252,14 +253,14 @@ const MedicinePage = (props) => {
                 </Form.Group>
 
                 {activeDrug &&
-                <Col sm="8">
+                <Col sm="7">
                     <span style={{textAlign: "center"}}> <h2>{activeDrug.Drug} History</h2> </span>
                 </Col>
                 }
 
                 {activeDrug &&
                     <Row>
-                        <Col sm="4">
+                        <Col sm="5">
                             {medicineList && activeDrug &&
                                 <MedicineListGroup
                                     lastTaken={lastTaken}
@@ -271,7 +272,7 @@ const MedicinePage = (props) => {
                             }
                         </Col>
 
-                        <Col sm="8">
+                        <Col sm="7">
                             <DrugLogGrid
                                 showDrugColumn={false}
                                 drugLog={drugLogList}
