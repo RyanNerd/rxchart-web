@@ -80,14 +80,21 @@ const MedicinePage = (props) => {
             const drugMatch = medicineList.filter(drug => (drug.Drug.substr(0, textLen).toLowerCase() === searchText.toLowerCase()));
             if (drugMatch && drugMatch.length > 0) {
                 setActiveDrug(drugMatch[0]);
+            }
+        }
+    }, [searchText, medicineList]);
+
+    // Show or hide the valid search icon
+    useEffect(() => {
+        const textLen = searchText ? searchText.length : 0;
+        if (activeDrug) {
+            if (activeDrug.Drug.substr(0, textLen).toLowerCase() === searchText.toLowerCase()) {
                 setSearchIsValid(true);
             } else {
                 setSearchIsValid(false);
             }
-        } else {
-            setSearchIsValid(null);
         }
-    }, [searchText, medicineList]);
+    }, [activeDrug, searchText]);
 
     /**
      * Fires when medicine is added or edited.
@@ -240,6 +247,7 @@ const MedicinePage = (props) => {
                     {showSearch &&
                     <Form.Group as={Row}>
                         <Form.Control
+                            style={{width: "220px"}}
                             isValid={searchIsValid}
                             type="search"
                             value={searchText}
@@ -247,6 +255,10 @@ const MedicinePage = (props) => {
                             placeholder="Search medicine"
                             ref={focusRef}
                         />
+
+                        {activeDrug &&
+                        <h3 className="ml-4"><b>{activeDrug.Drug}</b></h3>
+                        }
                     </Form.Group>
                     }
 

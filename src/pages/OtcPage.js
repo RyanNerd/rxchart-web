@@ -92,6 +92,18 @@ const OtcPage = (props) => {
         }
     }, [searchText, otcList]);
 
+    // Show or hide the valid search icon
+    useEffect(() => {
+        const textLen = searchText ? searchText.length : 0;
+        if (activeDrug) {
+            if (activeDrug.Drug.substr(0, textLen).toLowerCase() === searchText.toLowerCase()) {
+                setSearchIsValid(true);
+            } else {
+                setSearchIsValid(false);
+            }
+        }
+    }, [activeDrug, searchText]);
+    
     /**
      * Fires when medicine is added or edited.
      *
