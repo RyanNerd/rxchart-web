@@ -7,21 +7,24 @@ import DeleteMedicine from "../providers/helpers/DeleteMedicine";
 import TooltipButton from "../components/Buttons/TooltipButton";
 import RefreshOtcList from "../providers/helpers/RefreshOtcList";
 import PropTypes from 'prop-types';
+import {handleMedicineEditModalClose} from "../utility/helpers";
 
 /**
  * ManageOtcPage
- * Page for Displaying, editing and adding Medicine
+ * Page for Displaying, editing and adding OTC drugs
  *
  * @returns {null|*}
  */
 const ManageOtcPage = (props) => {
     const [ otcList, setOtcList ] = useGlobal('otcList');
     const [ providers ] = useGlobal('providers');
-    const medicineProvider = providers.medicineProvider;
 
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDeleteMedicine, setShowDeleteMedicine ] = useState(false);
     const [ medicineInfo, setMedicineInfo ] = useState(null);
+
+    const medicineProvider = providers.medicineProvider;
+    const onError = props.onError;
 
     /**
      * Fires when the Edit button is clicked
@@ -48,30 +51,6 @@ const ManageOtcPage = (props) => {
 
         setMedicineInfo(medicineInfo);
         setShowMedicineEdit(true);
-    }
-
-    const handleMedicineEditModalClose = (drugInfo) => {
-        if (drugInfo) {
-            const drugData = {...drugInfo};
-
-            if (!drugData.Id) {
-                drugData.Id = null;
-            }
-
-            if (drugData.Notes === '') {
-                drugData.Notes = null;
-            }
-
-            medicineProvider.post(drugData)
-                .then((drugRecord) => {
-                    RefreshOtcList(providers.medicineProvider)
-                    .then((data) => {setOtcList(data)})
-                    .catch((err) => setOtcList(null));
-                })
-                .catch((err) => props.onError(err));
-        }
-
-        setShowMedicineEdit(false);
     }
 
     /**
@@ -140,6 +119,7 @@ const ManageOtcPage = (props) => {
     return (
         <>
             <TooltipButton
+                className="mb-2"
                 tooltip="Manually Add New OTC"
                 size="sm"
                 variant="info"
@@ -185,7 +165,10 @@ const ManageOtcPage = (props) => {
                 otc={true}
                 show={showMedicineEdit}
                 onHide={() => setShowMedicineEdit(!showMedicineEdit)}
-                onClose={(r) => handleMedicineEditModalClose(r)}
+                onClose={(r) => {
+                    handleMedicineEditModalClose(r, medicineProvider, ()=>RefreshOtcList(medicineProvider), setOtcList, onError);
+                    setShowMedicineEdit(false);
+                }}
                 drugInfo={medicineInfo}
             />
             }

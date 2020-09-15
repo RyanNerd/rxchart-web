@@ -49,17 +49,19 @@ const MedicinePage = (props) => {
     const medicineProvider = providers.medicineProvider;
     const onError = props.onError;
 
+    // Set the activeDrug when the medicineList changes.
     useEffect(()=> {
         if (medicineList && medicineList.length > 0) {
             setActiveDrug(medicineList[0]);
         }
     }, [medicineList]);
 
-    // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
     useEffect(() => {
         if (activeDrug && activeDrug.Id && drugLogList) {
+            // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
             setLastTaken(calculateLastTaken(activeDrug.Id, drugLogList));
 
+            // Check if the search text matches the active drug and if not reset the search.
             const searchTextLength = searchText ? searchText.length : null;
             if (searchTextLength &&
                 searchText.substr(0, searchTextLength).toLowerCase() !==

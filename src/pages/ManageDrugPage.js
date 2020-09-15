@@ -7,6 +7,7 @@ import RefreshMedicineList from "../providers/RefreshMedicineList";
 import DeleteMedicine from "../providers/helpers/DeleteMedicine";
 import TooltipButton from "../components/Buttons/TooltipButton";
 import PropTypes from 'prop-types';
+import {handleMedicineEditModalClose} from "../utility/helpers";
 
 /**
  * ManageDrugPage
@@ -18,12 +19,13 @@ const ManageDrugPage = (props) => {
     const [ medicineList, setMedicineList ] = useGlobal('medicineList');
     const [ providers ] = useGlobal('providers');
     const [ activeResident ]= useGlobal('activeResident');
-    const medicineProvider = providers.medicineProvider;
 
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDeleteMedicine, setShowDeleteMedicine ] = useState(false);
     const [ medicineInfo, setMedicineInfo ] = useState(null);
 
+    const medicineProvider = providers.medicineProvider;
+    const onError = props.onError;
     const today = new Date();
     const day = today.getDate();
     const month = today.getMonth() + 1;
@@ -57,32 +59,6 @@ const ManageDrugPage = (props) => {
 
         setMedicineInfo(medicineInfo);
         setShowMedicineEdit(true);
-    }
-
-    const handleMedicineEditModalClose = (drugInfo) => {
-        if (drugInfo) {
-            const drugData = {...drugInfo};
-
-            if (!drugData.Id) {
-                drugData.Id = null;
-            }
-
-            if (drugData.Notes === '') {
-                drugData.Notes = null;
-            }
-
-            medicineProvider.post(drugData)
-            .then((drugRecord) => {
-                RefreshMedicineList(medicineProvider, drugData.ResidentId)
-                .then((drugList) => {
-                    setMedicineList(drugList);
-                })
-                .catch((err) => {
-                    props.onError(err);
-                });
-            });
-        }
-        setShowMedicineEdit(false);
     }
 
     /**
@@ -154,6 +130,7 @@ const ManageDrugPage = (props) => {
     return (
         <>
             <TooltipButton
+                className="mb-2"
                 tooltip="Manually Add New Medicine"
                 size="sm"
                 variant="info"
@@ -201,7 +178,10 @@ const ManageDrugPage = (props) => {
                 <MedicineEdit
                     show={showMedicineEdit}
                     onHide={() => setShowMedicineEdit(!showMedicineEdit)}
-                    onClose={(r) => handleMedicineEditModalClose(r)}
+                    onClose={(r) => {
+                        handleMedicineEditModalClose(r, medicineProvider, ()=>RefreshMedicineList(medicineProvider, r.ResidentId), setMedicineList, onError);
+                        setShowMedicineEdit(false);
+                    }}
                     drugInfo={medicineInfo}
                 />
             }

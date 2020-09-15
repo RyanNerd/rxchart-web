@@ -57,19 +57,22 @@ const OtcPage = (props) => {
         });
     }) : null;
 
+    // Set focus to the search input when this page is selected.
     useEffect(() => props.updateFocusRef(focusRef), [props, key]);
 
+    // Set the active drug when the otcList changes.
     useEffect(()=> {
         if (otcList && otcList.length > 0) {
             setActiveDrug(otcList[0]);
         }
     }, [otcList]);
 
-    // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
     useEffect(() => {
         if (activeDrug && activeDrug.Id && drugLogList) {
+            // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
             setLastTaken(calculateLastTaken(activeDrug.Id, drugLogList));
 
+            // Check if the search text matches the active drug and if not reset the search.
             const searchTextLength = searchText ? searchText.length : null;
             if (searchTextLength &&
                 searchText.substr(0, searchTextLength).toLowerCase() !==
