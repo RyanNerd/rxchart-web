@@ -37,7 +37,6 @@ const MedicinePage = (props) => {
     const [ activeDrug, setActiveDrug ] = useState(null);
     const [ searchText, setSearchText ] = useState('');
     const [ searchIsValid, setSearchIsValid ] = useState(false)
-    const [ showSearch, setShowSearch ] = useState(false);
     const focusRef = useRef(null);
 
     const [ medicineList, setMedicineList ] = useGlobal('medicineList');
@@ -66,12 +65,12 @@ const MedicinePage = (props) => {
         }
     }, [activeDrug, drugLogList]);
 
-    // Set focus to the search input if it is shown and the page key has changed
+    // Set focus to the search input if the page key has changed
     useEffect(() => {
-        if (focusRef && focusRef.current && showSearch) {
+        if (focusRef && focusRef.current) {
             focusRef.current.focus();
         }
-    }, [showSearch, key]);
+    }, [key]);
 
     // Handle if the search text has a match in the otcList.
     useEffect(() =>{
@@ -231,20 +230,8 @@ const MedicinePage = (props) => {
                                 Edit <b>{activeDrug.Drug}</b>
                             </Button>
                         }
-
-                        {medicineList && medicineList.length > 0 &&
-                        <Button
-                            className="mr-3"
-                            size="sm"
-                            variant="secondary"
-                            onClick={(e) => setShowSearch(!showSearch)}
-                        >
-                            Toggle Search
-                        </Button>
-                        }
                     </Form.Group>
 
-                    {showSearch &&
                     <Form.Group as={Row}>
                         <Form.Control
                             style={{width: "220px"}}
@@ -260,8 +247,6 @@ const MedicinePage = (props) => {
                         <h3 className="ml-4"><b>{activeDrug.Drug}</b></h3>
                         }
                     </Form.Group>
-                    }
-
                 </Form.Group>
 
                 {activeDrug &&
