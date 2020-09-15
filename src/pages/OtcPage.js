@@ -46,7 +46,7 @@ const OtcPage = (props) => {
     const medicineProvider = providers.medicineProvider;
 
     const focusRef = useRef(null);
-    const key = props.activeTabKey | null;
+    const key = props.activeTabKey || null;
     const onError = props.onError;
 
     // @link https://stackoverflow.com/questions/31005396/filter-array-of-objects-with-another-array-of-objects
@@ -71,33 +71,18 @@ const OtcPage = (props) => {
         if (activeDrug && activeDrug.Id && drugLogList) {
             // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
             setLastTaken(calculateLastTaken(activeDrug.Id, drugLogList));
-
-            // Check if the search text matches the active drug and if not reset the search.
-            const searchTextLength = searchText ? searchText.length : null;
-            if (searchTextLength &&
-                searchText.substr(0, searchTextLength).toLowerCase() !==
-                activeDrug.Drug.substr(0, searchTextLength).toLowerCase()) {
-                    setSearchText('');
-                    setSearchIsValid(null);
-            }
         } else {
             setLastTaken(null);
         }
     }, [searchText, activeDrug, drugLogList]);
 
-    /**
-     * Handle the search box text changes.
-     *
-     * @param {KeyboardEvent} e
-     */
-    const handleSearchKeypress = (e) => {
-        const searchValue = e.target.value;
-        setSearchText(searchValue);
-        const textLen = searchValue ? searchValue.length : 0;
+    // Handle if the search text has a match in the otcList.
+    useEffect(() =>{
+        const textLen = searchText ? searchText.length : 0;
         if (textLen > 0) {
-            const otcDrugMatch = otcList.filter(drug => (drug.Drug.substr(0, textLen).toLowerCase() === searchValue.toLowerCase()));
+            const otcDrugMatch = otcList.filter(drug => (drug.Drug.substr(0, textLen).toLowerCase() === searchText.toLowerCase()));
             if (otcDrugMatch && otcDrugMatch.length > 0) {
-                setActiveDrug(otcDrugMatch[otcDrugMatch.length-1]);
+                setActiveDrug(otcDrugMatch[0]);
                 setSearchIsValid(true);
             } else {
                 setSearchIsValid(false);
@@ -105,7 +90,7 @@ const OtcPage = (props) => {
         } else {
             setSearchIsValid(null);
         }
-    }
+    }, [searchText, otcList]);
 
     /**
      * Fires when medicine is added or edited.
@@ -249,7 +234,7 @@ const OtcPage = (props) => {
                                 isValid={searchIsValid}
                                 type="search"
                                 value={searchText}
-                                onChange={(e) => handleSearchKeypress(e)}
+                                onChange={(e) => setSearchText(e.target.value)}
                                 placeholder="Search OTC"
                                 ref={focusRef}
                             />
@@ -349,7 +334,7 @@ const OtcPage = (props) => {
         </Form>
     );
 
-    if (activeResident && activeResident.Id) {
+    if ((activeResident && activeResident.Id)) {
         return otcPage;
     } else {
         return null;

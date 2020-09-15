@@ -48,6 +48,7 @@ const MedicinePage = (props) => {
     const medHistoryProvider = providers.medHistoryProvider;
     const medicineProvider = providers.medicineProvider;
     const onError = props.onError;
+    const key = props.activeTabKey || null;
 
     // Set the activeDrug when the medicineList changes.
     useEffect(()=> {
@@ -60,15 +61,6 @@ const MedicinePage = (props) => {
         if (activeDrug && activeDrug.Id && drugLogList) {
             // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
             setLastTaken(calculateLastTaken(activeDrug.Id, drugLogList));
-
-            // Check if the search text matches the active drug and if not reset the search.
-            const searchTextLength = searchText ? searchText.length : null;
-            if (searchTextLength &&
-                searchText.substr(0, searchTextLength).toLowerCase() !==
-                activeDrug.Drug.substr(0, searchTextLength).toLowerCase()) {
-                    setSearchText('');
-                    setSearchIsValid(null);
-            }
         } else {
             setLastTaken(null);
         }
@@ -78,7 +70,7 @@ const MedicinePage = (props) => {
         if (focusRef && focusRef.current && showSearch) {
             focusRef.current.focus();
         }
-    }, [showSearch]);
+    }, [showSearch, key]);
 
     /**
      * Fires when medicine is added or edited.
@@ -190,19 +182,13 @@ const MedicinePage = (props) => {
         setShowDrugLog(false);
     }
 
-    /**
-     * Handle the search box text changes.
-     *
-     * @param {KeyboardEvent<HTMLInputElement>} e
-     */
-    const handleSearchKeypress = (e) => {
-        const searchValue = e.target.value;
-        setSearchText(searchValue);
-        const textLen = searchValue ? searchValue.length : 0;
+    // Handle if the search text has a match in the otcList.
+    useEffect(() =>{
+        const textLen = searchText ? searchText.length : 0;
         if (textLen > 0) {
-            const drugMatch = medicineList.filter(drug => (drug.Drug.substr(0, textLen).toLowerCase() === searchValue.toLowerCase()));
+            const drugMatch = medicineList.filter(drug => (drug.Drug.substr(0, textLen).toLowerCase() === searchText.toLowerCase()));
             if (drugMatch && drugMatch.length > 0) {
-                setActiveDrug(drugMatch[drugMatch.length-1]);
+                setActiveDrug(drugMatch[0]);
                 setSearchIsValid(true);
             } else {
                 setSearchIsValid(false);
@@ -210,7 +196,7 @@ const MedicinePage = (props) => {
         } else {
             setSearchIsValid(null);
         }
-    }
+    }, [searchText, medicineList]);
 
     const medicinePage = (
         <>
@@ -256,8 +242,8 @@ const MedicinePage = (props) => {
                             isValid={searchIsValid}
                             type="search"
                             value={searchText}
-                            onChange={(e) => handleSearchKeypress(e)}
-                            placeholder="Search drugs"
+                            onChange={(e) => setSearchText(e.target.value)}
+                            placeholder="Search medicine"
                             ref={focusRef}
                         />
                     </Form.Group>

@@ -70,6 +70,7 @@ const LandingPage = () => {
                 eventKey="log"
                 title="Rx">
                 <MedicinePage
+                    activeTabKey={activeTabKey}
                     onError={(error) => errorOccurred(error)}
                 />
             </Tab>
