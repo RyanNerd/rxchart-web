@@ -49,12 +49,14 @@ const MedicinePage = (props) => {
     const onError = props.onError;
     const key = props.activeTabKey || null;
 
-    // Set the activeDrug when the medicineList changes.
+    // Set the activeDrug when the medicineList changes or the activeResident.
     useEffect(()=> {
         if (medicineList && medicineList.length > 0) {
             setActiveDrug(medicineList[0]);
+        } else {
+            setActiveDrug(null);
         }
-    }, [medicineList]);
+    }, [medicineList, activeResident]);
 
     // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
     useEffect(() => {
@@ -72,11 +74,13 @@ const MedicinePage = (props) => {
         }
     }, [key]);
 
-    // Handle if the search text has a match in the otcList.
+    // Handle if the search text has a match in the medicineList.
     useEffect(() =>{
         const textLen = searchText ? searchText.length : 0;
-        if (textLen > 0) {
-            const drugMatch = medicineList.filter(drug => (drug.Drug.substr(0, textLen).toLowerCase() === searchText.toLowerCase()));
+        if (textLen > 0 && medicineList && medicineList.length > 0) {
+            const drugMatch =
+                medicineList.filter(drug =>
+                    (drug.Drug.substr(0, textLen).toLowerCase() === searchText.toLowerCase()));
             if (drugMatch && drugMatch.length > 0) {
                 setActiveDrug(drugMatch[0]);
             }
@@ -158,9 +162,10 @@ const MedicinePage = (props) => {
     const deleteDrugLogRecord = (drugLogInfo) => {
         medHistoryProvider.delete(drugLogInfo.Id)
         .then((response) => {
-            RefreshMedicineLog(medHistoryProvider, activeDrug.ResidentId)
-                .then((data) => setDrugLogList(data));
-        });
+            RefreshMedicineLog(medHistoryProvider, activeResident.Id).then((data) => setDrugLogList(data));
+        })
+        .catch((err) => onError(err));
+
         setShowDeleteDrugLogRecord(false);
     }
 
@@ -232,21 +237,23 @@ const MedicinePage = (props) => {
                         }
                     </Form.Group>
 
-                    <Form.Group as={Row}>
-                        <Form.Control
-                            style={{width: "220px"}}
-                            isValid={searchIsValid}
-                            type="search"
-                            value={searchText}
-                            onChange={(e) => setSearchText(e.target.value)}
-                            placeholder="Search medicine"
-                            ref={focusRef}
-                        />
+                    {medicineList && medicineList.length > 0 &&
+                        <Form.Group as={Row}>
+                            <Form.Control
+                                style={{width: "220px"}}
+                                isValid={searchIsValid}
+                                type="search"
+                                value={searchText}
+                                onChange={(e) => setSearchText(e.target.value)}
+                                placeholder="Search medicine"
+                                ref={focusRef}
+                            />
 
-                        {activeDrug &&
-                        <h3 className="ml-4"><b>{activeDrug.Drug}</b></h3>
-                        }
-                    </Form.Group>
+                            {activeDrug &&
+                            <h3 className="ml-4"><b>{activeDrug.Drug}</b></h3>
+                            }
+                        </Form.Group>
+                    }
                 </Form.Group>
 
                 {activeDrug &&
@@ -255,18 +262,16 @@ const MedicinePage = (props) => {
                 </Col>
                 }
 
-                {activeDrug &&
+                {activeDrug && medicineList &&
                     <Row>
                         <Col sm="5">
-                            {medicineList && activeDrug &&
-                                <MedicineListGroup
-                                    lastTaken={lastTaken}
-                                    medicineList={medicineList}
-                                    activeDrug={activeDrug}
-                                    drugChanged={(drug) => setActiveDrug(drug)}
-                                    addDrugLog={(e) => addEditDrugLog(e)}
-                                />
-                            }
+                            <MedicineListGroup
+                                lastTaken={lastTaken}
+                                medicineList={medicineList}
+                                activeDrug={activeDrug}
+                                drugChanged={(drug) => setActiveDrug(drug)}
+                                addDrugLog={(e) => addEditDrugLog(e)}
+                            />
                         </Col>
 
                         <Col sm="7">

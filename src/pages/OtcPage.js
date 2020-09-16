@@ -79,7 +79,7 @@ const OtcPage = (props) => {
     // Handle if the search text has a match in the otcList.
     useEffect(() =>{
         const textLen = searchText ? searchText.length : 0;
-        if (textLen > 0) {
+        if (textLen > 0 && otcList && otcList.length > 0) {
             const otcDrugMatch = otcList.filter(drug => (drug.Drug.substr(0, textLen).toLowerCase() === searchText.toLowerCase()));
             if (otcDrugMatch && otcDrugMatch.length > 0) {
                 setActiveDrug(otcDrugMatch[0]);
@@ -140,20 +140,20 @@ const OtcPage = (props) => {
             }
 
             medicineProvider.post(drugData)
-                .then((drugRecord) => {
-                    RefreshOtcList(medicineProvider)
-                        .then((drugList) => {
-                            setOtcList(drugList);
-                            setDrugInfo(drugRecord);
-                            setActiveDrug(drugRecord);
-                            setLastTaken(false);
-                            RefreshMedicineLog(medHistoryProvider, activeResident.Id)
-                                .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
-                        })
-                        .catch((err) => {
-                            onError(err);
-                        });
+            .then((drugRecord) => {
+                RefreshOtcList(medicineProvider)
+                .then((drugList) => {
+                    setOtcList(drugList);
+                    setDrugInfo(drugRecord);
+                    setActiveDrug(drugRecord);
+                    setLastTaken(false);
+                    RefreshMedicineLog(medHistoryProvider, activeResident.Id)
+                        .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
+                })
+                .catch((err) => {
+                    onError(err);
                 });
+            });
         }
         setShowMedicineEdit(false);
     }
@@ -165,17 +165,18 @@ const OtcPage = (props) => {
      */
     const deleteDrugLogRecord = (drugLogInfo) => {
         medHistoryProvider.delete(drugLogInfo.Id)
-            .then((response) => {
-                RefreshMedicineLog(medHistoryProvider, activeResident.Id)
-                    .then((data) => setDrugLogList(data));
-            });
+        .then((response) => {
+            RefreshMedicineLog(medHistoryProvider, activeResident.Id).then((data) => setDrugLogList(data));
+        })
+        .catch((err) => onError(err));
+
         setShowDeleteDrugLogRecord(false);
     }
 
     /**
      * Fires when user clicks on +Log or the drug log edit button
      *
-     * @param {Event} e
+     * @param {MouseEvent} e
      * @param {object} drugLogInfo
      */
     const addEditDrugLog = (e, drugLogInfo) => {
@@ -264,10 +265,9 @@ const OtcPage = (props) => {
                 </Col>
                 }
 
-                {activeDrug &&
+                {activeDrug && otcList &&
                 <Row>
                     <Col sm="5">
-                        {otcList && activeDrug &&
                         <MedicineListGroup
                             lastTaken={lastTaken}
                             medicineList={otcList}
@@ -275,33 +275,16 @@ const OtcPage = (props) => {
                             drugChanged={(drug) => setActiveDrug(drug)}
                             addDrugLog={(e) => addEditDrugLog(e)}
                         />
-                        }
                     </Col>
 
                     <Col sm="7">
-                        {otcLogList && otcLogList.length > 0 ?
-                            (<DrugLogGrid
-                                showDrugColumn={true}
-                                drugLog={otcLogList}
-                                otcList={otcList}
-                                onEdit={(e, r) => addEditDrugLog(e, r)}
-                                onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
-                            />)
-                                :
-                            (<Table
-                                size="sm"
-                                style={{tableLayout: "fixed"}}
-                            >
-                                <thead>
-                                    <tr>
-                                        <th style={{textAlign: "center"}}>
-                                            <span>No OTC medications Logged</span>
-                                        </th>
-                                    </tr>
-                                </thead>
-                            </Table>)
-                        }
-
+                        <DrugLogGrid
+                            showDrugColumn={true}
+                            drugLog={otcLogList}
+                            otcList={otcList}
+                            onEdit={(e, r) => addEditDrugLog(e, r)}
+                            onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
+                        />
                     </Col>
                 </Row>
                 }

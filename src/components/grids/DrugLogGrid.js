@@ -17,7 +17,20 @@ import PropTypes from 'prop-types';
  */
 const DrugLogGrid = (props) => {
     if (!props.drugLog || props.drugLog.length === 0) {
-        return null;
+        return (
+            <Table
+                size="sm"
+                style={{tableLayout: "fixed"}}
+            >
+                <thead>
+                <tr>
+                    <th style={{textAlign: "center"}}>
+                        <span>No Medications Logged</span>
+                    </th>
+                </tr>
+                </thead>
+            </Table>
+        );
     }
 
     const showDrugColumn = props.showDrugColumn;
