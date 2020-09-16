@@ -75,23 +75,46 @@ const MedicinePage = (props) => {
     }, [key]);
 
     // Handle if the search text has a match in the medicineList.
-    useEffect(() =>{
+    useEffect(() => {
         const textLen = searchText ? searchText.length : 0;
         if (textLen > 0 && medicineList && medicineList.length > 0) {
-            const drugMatch =
-                medicineList.filter(drug =>
-                    (drug.Drug.substr(0, textLen).toLowerCase() === searchText.toLowerCase()));
+            let drugMatch = null;
+            const c = searchText.substr(0,1);
+            // Is the first character a digit? If so, search the Barcode otherwise search the Drug name
+            if (c >= '0' && c <= '9') {
+                drugMatch =
+                    medicineList.filter(drug =>
+                        (drug.Barcode.substr(0, textLen).toLowerCase() === searchText.toLowerCase()));
+            } else {
+                drugMatch =
+                    medicineList.filter(drug =>
+                        (drug.Drug.substr(0, textLen).toLowerCase() === searchText.toLowerCase()));
+
+            }
             if (drugMatch && drugMatch.length > 0) {
                 setActiveDrug(drugMatch[0]);
             }
         }
     }, [searchText, medicineList]);
 
+    // Reset the search text input when the activeResident changes
+    useEffect(() => {
+        setSearchText('');
+    }, [activeResident]);
+
     // Show or hide the valid search icon
     useEffect(() => {
         const textLen = searchText ? searchText.length : 0;
         if (activeDrug) {
-            if (activeDrug.Drug.substr(0, textLen).toLowerCase() === searchText.toLowerCase()) {
+            let searched;
+            const c = searchText.substr(0,1);
+            // Is the first character a digit? If so, search the Barcode otherwise search the Drug name
+            if (c >= '0' && c <= '9') {
+                searched = activeDrug.Barcode;
+            } else {
+                searched = activeDrug.Drug;
+            }
+            if (searched.substr(0, textLen).toLowerCase() === searchText.substr(0, textLen).toLowerCase()) {
                 setSearchIsValid(true);
             } else {
                 setSearchIsValid(false);

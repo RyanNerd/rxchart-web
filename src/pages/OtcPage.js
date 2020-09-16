@@ -13,7 +13,6 @@ import MedicineListGroup from "../components/ListGroups/MedicineListGroup";
 import RefreshOtcList from "../providers/helpers/RefreshOtcList";
 import {calculateLastTaken} from "../utility/common";
 import {newDrugInfo} from "../utility/InitialState";
-import Table from "react-bootstrap/Table";
 import PropTypes from 'prop-types';
 
 /**
@@ -37,6 +36,8 @@ const OtcPage = (props) => {
     const [ searchText, setSearchText ] = useState('');
     const [ searchIsValid, setSearchIsValid ] = useState(null);
     const [ activeDrug, setActiveDrug ] = useState(null);
+    const [ otcLogList, setOtcLogList ] = useState(null);
+
     const [ otcList, setOtcList ] = useGlobal('otcList');
     const [ drugLogList, setDrugLogList ] = useGlobal('drugLogList');
     const [ activeResident ] = useGlobal('activeResident');
@@ -48,24 +49,30 @@ const OtcPage = (props) => {
     const focusRef = useRef(null);
     const key = props.activeTabKey || null;
     const onError = props.onError;
+    const updateFocusRef = props.updateFocusRef;
 
-    // @link https://stackoverflow.com/questions/31005396/filter-array-of-objects-with-another-array-of-objects
     // We only want to list the OTC drugs on this page that the resident has taken.
-    const otcLogList = (otcList && otcList.length > 0 ) && drugLogList ? drugLogList.filter((drug) => {
-        return otcList.some((f) => {
-            return f.Id === drug.MedicineId;
-        });
-    }) : null;
+    useEffect(() => {
+        // @link https://stackoverflow.com/questions/31005396/filter-array-of-objects-with-another-array-of-objects
+        const otc = (otcList && otcList.length > 0 ) && drugLogList ? drugLogList.filter((drug) => {
+            return otcList.some((f) => {
+                return f.Id === drug.MedicineId;
+            });
+        }) : null;
+        setOtcLogList(otc);
+    }, [drugLogList, otcList])
 
     // Set focus to the search input when this page is selected.
-    useEffect(() => props.updateFocusRef(focusRef), [props, key]);
+    useEffect(() => updateFocusRef(focusRef), [updateFocusRef, key]);
 
     // Set the active drug when the otcList changes.
     useEffect(()=> {
         if (otcList && otcList.length > 0) {
             setActiveDrug(otcList[0]);
+        } else {
+            setActiveDrug(null);
         }
-    }, [otcList]);
+    }, [otcList, activeResident]);
 
     // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
     useEffect(() => {
@@ -77,13 +84,22 @@ const OtcPage = (props) => {
     }, [activeDrug, drugLogList]);
 
     // Handle if the search text has a match in the otcList.
-    useEffect(() =>{
+    useEffect(() => {
         const textLen = searchText ? searchText.length : 0;
         if (textLen > 0 && otcList && otcList.length > 0) {
-            const otcDrugMatch =
-                otcList.filter(drug =>
-                    (drug.Drug.substr(0, textLen).toLowerCase() === searchText.toLowerCase())
+            let otcDrugMatch = null;
+            const c = searchText.substr(0,1);
+            // Is the first character a digit? If so, search the Barcode otherwise search the Drug name
+            if (c >= '0' && c <= '9') {
+               otcDrugMatch = otcList.filter(drug =>
+                    (drug.Barcode.substr(0, textLen).toLowerCase() === searchText.toLowerCase())
                 );
+            } else {
+                otcDrugMatch =
+                    otcList.filter(drug =>
+                        (drug.Drug.substr(0, textLen).toLowerCase() === searchText.toLowerCase())
+                    );
+            }
             if (otcDrugMatch && otcDrugMatch.length > 0) {
                 setActiveDrug(otcDrugMatch[0]);
             }
@@ -94,14 +110,27 @@ const OtcPage = (props) => {
     useEffect(() => {
         const textLen = searchText ? searchText.length : 0;
         if (activeDrug) {
-            if (activeDrug.Drug.substr(0, textLen).toLowerCase() === searchText.toLowerCase()) {
+            let searched;
+            const c = searchText.substr(0,1);
+            // Is the first character a digit? If so, search the Barcode otherwise search the Drug name
+            if (c >= '0' && c <= '9') {
+                searched = activeDrug.Barcode;
+            } else {
+                searched = activeDrug.Drug;
+            }
+            if (searched.substr(0, textLen).toLowerCase() === searchText.substr(0, textLen).toLowerCase()) {
                 setSearchIsValid(true);
             } else {
                 setSearchIsValid(false);
             }
         }
     }, [activeDrug, searchText]);
-    
+
+    // Reset the search text input when the resident changes.
+    useEffect(() => {
+        setSearchText('');
+    }, [activeResident]);
+
     /**
      * Fires when medicine is added or edited.
      *
