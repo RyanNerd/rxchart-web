@@ -80,15 +80,13 @@ const OtcPage = (props) => {
     useEffect(() =>{
         const textLen = searchText ? searchText.length : 0;
         if (textLen > 0 && otcList && otcList.length > 0) {
-            const otcDrugMatch = otcList.filter(drug => (drug.Drug.substr(0, textLen).toLowerCase() === searchText.toLowerCase()));
+            const otcDrugMatch =
+                otcList.filter(drug =>
+                    (drug.Drug.substr(0, textLen).toLowerCase() === searchText.toLowerCase())
+                );
             if (otcDrugMatch && otcDrugMatch.length > 0) {
                 setActiveDrug(otcDrugMatch[0]);
-                setSearchIsValid(true);
-            } else {
-                setSearchIsValid(false);
             }
-        } else {
-            setSearchIsValid(null);
         }
     }, [searchText, otcList]);
 
