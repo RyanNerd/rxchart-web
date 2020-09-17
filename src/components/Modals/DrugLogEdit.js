@@ -19,7 +19,7 @@ import PropTypes from 'prop-types';
 const DrugLogEdit = (props) => {
     const [ show, setShow ] = useState(props.show);
     const [ drugLogInfo, setDrugLogInfo ] = useState(props.drugLogInfo);
-
+    const [ canSave, setCanSave ] = useState(false);
     const textInput = useRef(null);
 
     // Observer for show and drugInfo properties
@@ -29,6 +29,15 @@ const DrugLogEdit = (props) => {
             setDrugLogInfo(props.drugLogInfo);
         }
     }, [props.show, props.drugLogInfo]);
+
+    // Disable the Save button if Notes are empty.
+    useEffect(() => {
+        if (drugLogInfo && drugLogInfo.Notes.length > 0) {
+            setCanSave(true);
+        } else {
+            setCanSave(false);
+        }
+    }, [drugLogInfo]);
 
     /**
      * Fires when a text field or checkbox is changing.
@@ -106,6 +115,7 @@ const DrugLogEdit = (props) => {
                     Cancel
                 </Button>
                 <Button
+                    disabled={!canSave}
                     onClick={(e) => handleHide(e, true)}
                     variant="primary"
                 >
