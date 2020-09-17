@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'reactn';
+import React, {useEffect, useState} from 'reactn';
 import ListGroup from "react-bootstrap/ListGroup";
 import DrugDropdown from "./DrugDropdown";
 import Button from "react-bootstrap/Button";
@@ -56,7 +56,6 @@ const MedicineListGroup = (props) => {
         setWarningColor(calculatedWarningColor);
     }, [lastTaken]);
 
-
     // Update the barcode image if the barcode has changed
     useEffect(() => {
         try {
@@ -76,11 +75,6 @@ const MedicineListGroup = (props) => {
             console.log('barcode image render error', e);
         }
     }, [barCode]);
-
-    // Return null if there is not any medicines for the activeResident or if there's not an activeDrug
-    if (!medicineList || !activeDrug) {
-      return null;
-    }
 
     return (
         <ListGroup>
