@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'reactn';
+import React, {useEffect, useState, useRef} from 'reactn';
 import ListGroup from "react-bootstrap/ListGroup";
 import DrugDropdown from "./DrugDropdown";
 import Button from "react-bootstrap/Button";
@@ -17,7 +17,7 @@ import PropTypes from 'prop-types';
  * @return {* || null}
  */
 const MedicineListGroup = (props) => {
-    let [warningColor, setWarningColor ] = useState('light');
+    const [warningColor, setWarningColor ] = useState('light');
 
     const medicineList = props.medicineList;
     const activeDrug = props.activeDrug;

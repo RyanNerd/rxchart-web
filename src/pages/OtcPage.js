@@ -293,27 +293,27 @@ const OtcPage = (props) => {
                 }
 
                 {activeDrug && otcList &&
-                <Row>
-                    <Col sm="5">
-                        <MedicineListGroup
-                            lastTaken={lastTaken}
-                            medicineList={otcList}
-                            activeDrug={activeDrug}
-                            drugChanged={(drug) => setActiveDrug(drug)}
-                            addDrugLog={(e) => addEditDrugLog(e)}
-                        />
-                    </Col>
+                    <Row>
+                        <Col sm="5">
+                            <MedicineListGroup
+                                lastTaken={lastTaken}
+                                medicineList={otcList}
+                                activeDrug={activeDrug}
+                                drugChanged={(drug) => setActiveDrug(drug)}
+                                addDrugLog={(e) => addEditDrugLog(e)}
+                            />
+                        </Col>
 
-                    <Col sm="7">
-                        <DrugLogGrid
-                            showDrugColumn={true}
-                            drugLog={otcLogList}
-                            otcList={otcList}
-                            onEdit={(e, r) => addEditDrugLog(e, r)}
-                            onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
-                        />
-                    </Col>
-                </Row>
+                        <Col sm="7">
+                            <DrugLogGrid
+                                showDrugColumn={true}
+                                drugLog={otcLogList}
+                                otcList={otcList}
+                                onEdit={(e, r) => addEditDrugLog(e, r)}
+                                onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
+                            />
+                        </Col>
+                    </Row>
                 }
             </Form.Group>
 
