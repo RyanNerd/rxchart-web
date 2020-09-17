@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'reactn';
+import React, {useEffect, useRef, useState} from 'reactn';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from "react-bootstrap/Form";
@@ -21,6 +21,7 @@ const ResidentEdit = (props) => {
     // Set up local initial state
     const [ show, setShow ] = useState(props.show);
     const [ residentInfo, setResidentInfo ] = useState(props.residentInfo);
+    const focusRef = useRef(null);
 
     /**
      * Fires when a text field or checkbox is changing.
@@ -63,7 +64,6 @@ const ResidentEdit = (props) => {
         setResidentInfo({...props.residentInfo});
     }, [props.residentInfo]);
 
-
     // Prevent render if there is no data.
     if (!residentInfo) {
         return false;
@@ -71,13 +71,13 @@ const ResidentEdit = (props) => {
 
     const residentTitle = residentInfo.Id ? 'Edit Resident' : 'Add New Resident';
 
-
     return (
         <Modal
           centered
           size="lg"
           show={show}
           onHide={(e, r)=>{handleHide(e, false)}}
+          onEntered={() => focusRef.current.focus()}
         >
             <Modal.Header closeButton>
                 <Modal.Title>{residentTitle}</Modal.Title>
@@ -96,6 +96,7 @@ const ResidentEdit = (props) => {
                                 value={residentInfo.FirstName}
                                 name="FirstName"
                                 onChange={(e) => handleOnChange(e)}
+                                ref={focusRef}
                             />
                             <div className="invalid-feedback">
                                 First name can not be blank.
