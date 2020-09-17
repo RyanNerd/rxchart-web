@@ -20,6 +20,7 @@ import PropTypes from 'prop-types';
 const MedicineEdit = (props) => {
     const [ show, setShow ] = useState(props.show);
     const [ drugInfo, setDrugInfo ] = useState(null);
+    const [ canSave, setCanSave ] = useState(false);
     const [ activeResident ] = useGlobal('activeResident');
 
     const otc = props.otc;
@@ -33,6 +34,14 @@ const MedicineEdit = (props) => {
         }
     }, [props.show, props.drugInfo]);
 
+    // Disable the Save button if the Drug name is empty.
+    useEffect(() => {
+        if (drugInfo && drugInfo.Drug.length > 0) {
+            setCanSave(true);
+        } else {
+            setCanSave(false);
+        }
+    }, [drugInfo]);
     /**
      * Fires when a text field or checkbox is changing.
      *
@@ -219,6 +228,7 @@ const MedicineEdit = (props) => {
                     Cancel
                 </Button>
                 <Button
+                    disabled={!canSave}
                     onClick={(e) => handleHide(e, true)}
                     variant="primary"
                 >
