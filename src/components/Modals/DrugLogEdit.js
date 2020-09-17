@@ -22,22 +22,14 @@ const DrugLogEdit = (props) => {
     const [ canSave, setCanSave ] = useState(false);
     const textInput = useRef(null);
 
-    // Observer for show and drugInfo properties
-    useEffect(() => {
-        if (props.drugLogInfo !== null) {
-            setShow(props.show);
-            setDrugLogInfo(props.drugLogInfo);
-        }
-    }, [props.show, props.drugLogInfo]);
+    // Observer for show
+    useEffect(() => {setShow(props.show)}, [props.show]);
+
+    // Observer for drugInfo
+    useEffect(() => {setDrugLogInfo(props.drugLogInfo)}, [props.drugLogInfo]);
 
     // Disable the Save button if Notes are empty.
-    useEffect(() => {
-        if (drugLogInfo && drugLogInfo.Notes.length > 0) {
-            setCanSave(true);
-        } else {
-            setCanSave(false);
-        }
-    }, [drugLogInfo]);
+    useEffect(() => {setCanSave(drugLogInfo && drugLogInfo.Notes.length > 0)}, [drugLogInfo]);
 
     /**
      * Fires when a text field or checkbox is changing.

@@ -26,22 +26,15 @@ const MedicineEdit = (props) => {
     const otc = props.otc;
     const textInput = useRef(null);
 
-    // Observer for show and drugInfo properties
-    useEffect(() => {
-        if (props.drugInfo) {
-            setShow(props.show);
-            setDrugInfo(props.drugInfo);
-        }
-    }, [props.show, props.drugInfo]);
+    // Observer for show
+    useEffect(() => {setShow(props.show)}, [props.show]);
+
+    // Observer for drugInfo
+    useEffect(() => {setDrugInfo(props.drugInfo)}, [props.drugInfo]);
 
     // Disable the Save button if the Drug name is empty.
-    useEffect(() => {
-        if (drugInfo && drugInfo.Drug.length > 0) {
-            setCanSave(true);
-        } else {
-            setCanSave(false);
-        }
-    }, [drugInfo]);
+    useEffect(() => {setCanSave(drugInfo && drugInfo.Drug.length > 0)}, [drugInfo]);
+
     /**
      * Fires when a text field or checkbox is changing.
      *

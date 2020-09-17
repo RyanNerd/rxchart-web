@@ -53,16 +53,11 @@ const ResidentEdit = (props) => {
         setShow(false);
     }
 
-    // Observer for show property
-    useEffect(() => {
-        setShow(props.show)
-    }, [props.show]);
-
+    // Observer for show
+    useEffect(() => {setShow(props.show)}, [props.show]);
 
     // Observer for residentInfo property
-    useEffect(() => {
-        setResidentInfo({...props.residentInfo});
-    }, [props.residentInfo]);
+    useEffect(() => {setResidentInfo({...props.residentInfo})}, [props.residentInfo]);
 
     // Prevent render if there is no data.
     if (!residentInfo) {
