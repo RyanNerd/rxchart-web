@@ -22,6 +22,8 @@ const MedicineListGroup = (props) => {
     const medicineList = props.medicineList;
     const activeDrug = props.activeDrug;
     const lastTaken = props.lastTaken;
+    const drugChanged = props.drugChanged;
+    const addDrugLog = props.addDrugLog;
     const barCode = activeDrug.Barcode || null;
     const notes = activeDrug.Notes || null;
     const directions = activeDrug.Directions || null;
@@ -82,7 +84,7 @@ const MedicineListGroup = (props) => {
                 <DrugDropdown
                     medicineList={medicineList}
                     drugId={drugId}
-                    onSelect={(e, drug) => props.drugChanged(drug)}
+                    onSelect={(e, drug) => drugChanged(drug)}
                 />
             </ListGroup.Item>
 
@@ -90,7 +92,7 @@ const MedicineListGroup = (props) => {
                 <Button
                     size="sm"
                     variant="primary"
-                    onClick={(e) => props.addDrugLog(e)}
+                    onClick={(e) => addDrugLog(e)}
                 >
                     + Log Drug
                 </Button>
