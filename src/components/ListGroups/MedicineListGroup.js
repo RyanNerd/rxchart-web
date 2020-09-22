@@ -18,7 +18,6 @@ import PropTypes from 'prop-types';
  */
 const MedicineListGroup = (props) => {
     const [warningColor, setWarningColor ] = useState('light');
-
     const medicineList = props.medicineList;
     const activeDrug = props.activeDrug;
     const lastTaken = props.lastTaken;

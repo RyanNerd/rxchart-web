@@ -1,6 +1,6 @@
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import Modal from 'react-bootstrap/Modal';
-import {FULLNAME} from "../../utility/common";
+import {FullName} from "../../utility/common";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -73,7 +73,7 @@ const MedicineEdit = (props) => {
 
     const drugTitleType = drugInfo.Id ? 'Edit ' : 'Add ';
     const drugName = drugInfo.Id ? drugInfo.Drug : 'new drug';
-    const fullName = activeResident && FULLNAME(activeResident);
+    const fullName = activeResident && FullName(activeResident);
     const modalTitle = otc ?
         (<Modal.Title>{drugTitleType} OTC <b style={{color: "blue"}}><i>{drugName}</i></b></Modal.Title>)
         :

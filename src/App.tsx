@@ -1,6 +1,6 @@
 import LandingPage from "./pages/LandingPage";
 import React, {useGlobal} from 'reactn';
-import {FULLNAME} from "./utility/common";
+import {FullName} from "./utility/common";
 
 /**
  * Main Entry Component
@@ -19,7 +19,7 @@ const App = () => {
             {activeResident ?
                 <h4 style={{textAlign: "center"}}>
                     <span style={{background: residentColor, color: residentForegroundColor}}>
-                        {FULLNAME(activeResident)} {activeResident.DOB_MONTH}/{activeResident.DOB_DAY}/{activeResident.DOB_YEAR}
+                        {FullName(activeResident)} {activeResident.DOB_MONTH}/{activeResident.DOB_DAY}/{activeResident.DOB_YEAR}
                     </span>
                 </h4> : null
             }

@@ -4,7 +4,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import ResidentGrid from '../components/grids/ResidentGrid';
 import ResidentEdit from '../components/Modals/ResidentEdit';
-import {FULLNAME} from '../utility/common';
+import {FullName} from '../utility/common';
 import RefreshMedicineList from "../providers/RefreshMedicineList";
 import RefreshMedicineLog from "../providers/RefreshMedicineLog";
 import ConfirmationDialog from "../components/Modals/Dialog/ConfirmationDialog";
@@ -285,7 +285,7 @@ const ResidentPage = (props) => {
 
             {residentToDelete &&
             <ConfirmationDialog
-                title={"Delete " + FULLNAME(residentToDelete)}
+                title={"Delete " + FullName(residentToDelete)}
                 body={
                     <b style={{color: "red"}}>
                         Are you sure?
