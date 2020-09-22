@@ -29,8 +29,17 @@ const MedicineEdit = (props) => {
     // Observer for show
     useEffect(() => {setShow(props.show)}, [props.show]);
 
-    // Observer for drugInfo
-    useEffect(() => {setDrugInfo(props.drugInfo)}, [props.drugInfo]);
+    // Observer/mutator for drugInfo
+    useEffect(() => {
+        const info = props.drugInfo;
+        if (info && info.Directions === null) {
+            info.Directions = '';
+        }
+        if (info && info.Notes === null) {
+            info.Notes = '';
+        }
+        setDrugInfo(info);
+    }, [props.drugInfo]);
 
     // Disable the Save button if the Drug name is empty.
     useEffect(() => {setCanSave(drugInfo && drugInfo.Drug.length > 0)}, [drugInfo]);

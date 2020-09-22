@@ -158,6 +158,10 @@ const MedicinePage = (props) => {
                 drugData.Notes = null;
             }
 
+            if (drugData.Directions === '') {
+                drugData.Directions = null;
+            }
+
             medicineProvider.post(drugData)
             .then((drugRecord) => {
                 RefreshMedicineList(medicineProvider, drugData.ResidentId)
