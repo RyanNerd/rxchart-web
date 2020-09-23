@@ -201,7 +201,7 @@ const ResidentPage = (props) => {
                 setDrugLogList(null);
             }
         })
-        .catch((err) => setMedicineList(null));
+        .catch(() => setMedicineList(null));
     }
 
     /**
@@ -285,7 +285,7 @@ const ResidentPage = (props) => {
 
             {residentToDelete &&
             <ConfirmationDialog
-                title={"Delete " + FullName(residentToDelete)}
+                title={"Deactivate " + FullName(residentToDelete)}
                 body={
                     <b style={{color: "red"}}>
                         Are you sure?
