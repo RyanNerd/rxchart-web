@@ -66,7 +66,7 @@ const MedicineListGroup = (props) => {
                 const canvas = bwipjs.toCanvas('barcodeCanvas', {
                     bcid: 'code128',     // Barcode type
                     text: barCode,       // Text to encode
-                    scale: 1,            // 2x scaling factor
+                    scale: 1,            // 1x scaling factor
                     height: 5,           // Bar height, in millimeters
                     includetext: false,  // Don't show human-readable text
                     textxalign: 'center' // Always good to set this

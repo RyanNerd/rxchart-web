@@ -2,7 +2,7 @@ import React, {useGlobal, useState} from 'reactn';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
-import ResidentGrid from '../components/grids/ResidentGrid';
+import ResidentGrid from '../components/Grids/ResidentGrid';
 import ResidentEdit from '../components/Modals/ResidentEdit';
 import {FullName} from '../utility/common';
 import RefreshMedicineList from "../providers/RefreshMedicineList";

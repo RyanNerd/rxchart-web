@@ -7,7 +7,7 @@ import {DrugLogRecord, ResidentRecord} from "./InitialState";
  * @return {string}
  */
 export const DOB = (resident: ResidentRecord): string => {
-    return DateToString(resident.DOB_MONTH, resident.DOB_DAY,resident.DOB_YEAR);
+    return DateToString(resident.DOB_MONTH, resident.DOB_DAY, resident.DOB_YEAR);
 };
 
 /**
@@ -25,7 +25,7 @@ export const DateToString = (month: number, day: number, year: number): string =
 /**
  * Given a ResidentRecord return the first and last name of the resident in the format: first last
  *
- * @param resident
+ * @param {ResidentRecord} resident
  */
 export const FullName = (resident: ResidentRecord): string => {
     return resident.FirstName.trim() + ' ' + resident.LastName.trim();
@@ -35,7 +35,7 @@ export const FullName = (resident: ResidentRecord): string => {
 /**
  * Given a month numeric return 'is-invalid' if the number isn't between 1 and 12, otherwise return ''.
  *
- * @param month
+ * @param {number} month
  * @returns {string}
  */
 export const isMonthValid = (month: number): string => {
@@ -45,8 +45,8 @@ export const isMonthValid = (month: number): string => {
 /**
  * Given the day and month returns 'is-invalid' if the month and day pair isn't a valid date, otherwise return ''.
  *
- * @param day
- * @param month
+ * @param {string} day
+ * @param {string} month
  * @return {string}
  */
 export const isDayValid = (day: string, month: string): string => {

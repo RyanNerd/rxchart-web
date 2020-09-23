@@ -12,7 +12,6 @@ import PropTypes from 'prop-types';
  * @param {object} props :
  *          show {boolean} show/hide this modal
  *          drugLogInfo {Id: id, Note: ""}
- *
  * @returns {boolean|*}
  * @constructor
  */
@@ -34,13 +33,12 @@ const DrugLogEdit = (props) => {
     /**
      * Fires when a text field or checkbox is changing.
      *
-     * @param  e
+     * @param {KeyboardEvent} e
      */
     const handleOnChange = (e) => {
         const target = e.target;
         let value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
-
         drugLogInfo[name] = value;
         setDrugLogInfo({...drugLogInfo});
     }
@@ -58,7 +56,6 @@ const DrugLogEdit = (props) => {
         } else {
             props.onClose(null);
         }
-
         setShow(false);
     }
 

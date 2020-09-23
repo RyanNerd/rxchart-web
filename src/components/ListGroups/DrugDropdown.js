@@ -37,7 +37,6 @@ const DrugDropdown = (props) => {
         return null;
     }
 
-
     const activeDrug = getDrugById(drugId);
 
     // Do not render if there isn't an active drug.

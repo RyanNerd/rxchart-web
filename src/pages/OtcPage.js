@@ -6,7 +6,7 @@ import Form from 'react-bootstrap/Form';
 import TabContent from "../styles/tab_content.css";
 import MedicineEdit from "../components/Modals/MedicineEdit";
 import ConfirmationDialog from "../components/Modals/Dialog/ConfirmationDialog";
-import DrugLogGrid from "../components/grids/DrugLogGrid";
+import DrugLogGrid from "../components/Grids/DrugLogGrid";
 import DrugLogEdit from "../components/Modals/DrugLogEdit";
 import RefreshMedicineLog from "../providers/RefreshMedicineLog";
 import MedicineListGroup from "../components/ListGroups/MedicineListGroup";
@@ -166,6 +166,10 @@ const OtcPage = (props) => {
                 drugData.Notes = null;
             }
 
+            if (drugInfo.Directions === '') {
+                drugData.Directions = null;
+            }
+
             medicineProvider.post(drugData)
             .then((drugRecord) => {
                 RefreshOtcList(medicineProvider)
@@ -280,16 +284,16 @@ const OtcPage = (props) => {
                             />
 
                             {activeDrug &&
-                            <h3 className="ml-4"><b>{activeDrug.Drug}</b></h3>
+                                <h3 className="ml-4"><b>{activeDrug.Drug}</b></h3>
                             }
                         </Form.Group>
                     }
                 </Form.Group>
 
                 {activeDrug &&
-                <Col sm="7">
-                    <span style={{textAlign: "center"}}> <h2>OTC Drug History</h2> </span>
-                </Col>
+                    <Col sm="7">
+                        <span style={{textAlign: "center"}}> <h2>OTC Drug History</h2> </span>
+                    </Col>
                 }
 
                 {activeDrug && otcList &&

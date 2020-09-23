@@ -26,13 +26,12 @@ const ResidentEdit = (props) => {
     /**
      * Fires when a text field or checkbox is changing.
      *
-     * @param  e
+     * @param {KeyboardEvent} e
      */
     const handleOnChange = (e) => {
         const target = e.target;
         let value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
-
         residentInfo[name] = value;
         setResidentInfo({...residentInfo});
     }
@@ -49,7 +48,6 @@ const ResidentEdit = (props) => {
         } else {
             props.onClose(null);
         }
-
         setShow(false);
     }
 

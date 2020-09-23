@@ -34,10 +34,13 @@ const LoginPage = (props) => {
     const key = props.activeTabKey | null;
     const onError = props.onError;
 
+    // Set focus to the user name field when this page is active.
     useEffect(() => props.updateFocusRef(focusRef), [props, key]);
 
     /**
      * Fires when the Login Button is clicked
+     *
+     * @param {MouseEvent} e
      */
     const login = (e) => {
         e.preventDefault();
@@ -106,6 +109,8 @@ const LoginPage = (props) => {
 
     /**
      * Fires when the Logout Button is clicked
+     *
+     * @param {MouseEvent} e
      */
     const logout = (e) => {
         e.preventDefault();

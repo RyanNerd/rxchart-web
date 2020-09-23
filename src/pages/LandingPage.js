@@ -32,6 +32,11 @@ const LandingPage = () => {
         }
     }
 
+    /**
+     * Error handler
+     *
+     * @param {ErrorEvent | null} err
+     */
     const errorOccurred = (err) => {
         if (development) {
             console.error('Error', err);

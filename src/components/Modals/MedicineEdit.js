@@ -47,13 +47,12 @@ const MedicineEdit = (props) => {
     /**
      * Fires when a text field or checkbox is changing.
      *
-     * @param  e
+     * @param {KeyboardEvent} e
      */
     const handleOnChange = (e) => {
         const target = e.target;
         let value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
-
         drugInfo[name] = value;
         setDrugInfo({...drugInfo});
     }
@@ -71,7 +70,6 @@ const MedicineEdit = (props) => {
         } else {
             props.onClose(null);
         }
-
         setShow(false);
     }
 

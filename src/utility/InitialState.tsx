@@ -20,10 +20,9 @@ export type DrugLogRecord = {
 const baseUrl = process.env.REACT_APP_BASEURL;
 const development = process.env.REACT_APP_DEVELOPMENT === 'true';
 
-let ResidentRecord;
 export const initialState = {
     development: development,
-    activeResident: ResidentRecord,
+    activeResident: null,
     residentList: null,
     medicineList: null,
     otcList: null,

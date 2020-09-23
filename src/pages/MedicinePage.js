@@ -7,7 +7,7 @@ import TabContent from "../styles/tab_content.css";
 import RefreshMedicineList from "../providers/RefreshMedicineList";
 import MedicineEdit from "../components/Modals/MedicineEdit";
 import ConfirmationDialog from "../components/Modals/Dialog/ConfirmationDialog";
-import DrugLogGrid from "../components/grids/DrugLogGrid";
+import DrugLogGrid from "../components/Grids/DrugLogGrid";
 import DrugLogEdit from "../components/Modals/DrugLogEdit";
 import RefreshMedicineLog from "../providers/RefreshMedicineLog";
 import MedicineListGroup from "../components/ListGroups/MedicineListGroup";
@@ -170,7 +170,7 @@ const MedicinePage = (props) => {
                     setDrugInfo(drugRecord);
                     setActiveDrug(drugRecord);
                     setLastTaken(false);
-                    RefreshMedicineLog(medHistoryProvider, drugData.ResidentId)
+                    RefreshMedicineLog(medHistoryProvider, activeResident.Id)
                         .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
                 })
                 .catch((err) => {
@@ -277,16 +277,16 @@ const MedicinePage = (props) => {
                             />
 
                             {activeDrug &&
-                            <h3 className="ml-4"><b>{activeDrug.Drug}</b></h3>
+                                <h3 className="ml-4"><b>{activeDrug.Drug}</b></h3>
                             }
                         </Form.Group>
                     }
                 </Form.Group>
 
                 {activeDrug &&
-                <Col sm="7">
-                    <span style={{textAlign: "center"}}> <h2>{activeDrug.Drug} History</h2> </span>
-                </Col>
+                    <Col sm="7">
+                        <span style={{textAlign: "center"}}> <h2>{activeDrug.Drug} History</h2> </span>
+                    </Col>
                 }
 
                 {activeDrug && medicineList &&

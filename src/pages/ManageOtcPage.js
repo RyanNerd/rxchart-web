@@ -1,6 +1,6 @@
 import React, {useGlobal, useState} from 'reactn';
 import Table from "react-bootstrap/Table";
-import Button from "react-bootstrap/Button";
+import MedicineDetail from "../components/Grids/MedicineDetail";
 import MedicineEdit from "../components/Modals/MedicineEdit";
 import ConfirmationDialog from "../components/Modals/Dialog/ConfirmationDialog";
 import DeleteMedicine from "../providers/helpers/DeleteMedicine";
@@ -65,6 +65,9 @@ const ManageOtcPage = (props) => {
         setShowDeleteMedicine(true);
     }
 
+    /**
+     * Fires when user confirms to delete the medicine
+     */
     const deleteMedicine = () => {
         // Work around for a weird bug that manifests itself only in production.
         let medProvider = medicineProvider;
@@ -82,39 +85,6 @@ const ManageOtcPage = (props) => {
             });
         setShowDeleteMedicine(false);
     }
-
-    const MedicineDetail = (item) => {
-        return (
-            <tr
-                key={'medicine-grid-row-' + item.Id}
-                id={'medicine-grid-row-' + item.Id}
-            >
-                <td>
-                    <Button
-                        size="sm"
-                        id={"medicine-edit-btn-" + item.Id}
-                        onClick={(e) => onEdit(e, item)}
-                    >
-                        Edit
-                    </Button>
-                </td>
-                <td>{item.Drug}</td>
-                <td>{item.Strength}</td>
-                <td>{item.Directions}</td>
-                <td>{item.Barcode}</td>
-                <td>
-                    <Button
-                        size="sm"
-                        id={"medicine-grid-delete-btn-" + item.Id}
-                        variant="outline-danger"
-                        onClick={(e) => onDelete(e, item)}
-                    >
-                        <span role="img" aria-label="delete">🗑️</span>
-                    </Button>
-                </td>
-            </tr>
-        )
-    };
 
     return (
         <>
@@ -154,7 +124,7 @@ const ManageOtcPage = (props) => {
                 </tr>
                 </thead>
                 <tbody>
-                {otcList.map(MedicineDetail)}
+                {otcList.map((drug) => MedicineDetail(drug, onDelete, onEdit, false))}
                 </tbody>
             </Table>
             }
