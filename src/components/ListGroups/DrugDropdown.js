@@ -72,7 +72,7 @@ const DrugDropdown = (props) => {
 
     return (
         <DropdownButton
-            size="sm"
+            size="lg"
             title={title}
             variant="primary"
         >

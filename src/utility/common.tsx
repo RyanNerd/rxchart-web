@@ -96,8 +96,10 @@ export const isYearValid = (year: string, isDOB: boolean): string => {
  * Return a random string.
  * @return {string}
  */
-export const randomString: string = Math.random().toString(36).substring(2, 15) +
-    Math.random().toString(36).substring(2, 15);
+export const randomString = (): string => {
+    return Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15)
+};
 
 /**
  * Return in hours how long it has been since a drug was last taken.

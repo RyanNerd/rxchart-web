@@ -305,6 +305,7 @@ const OtcPage = (props) => {
                                 activeDrug={activeDrug}
                                 drugChanged={(drug) => setActiveDrug(drug)}
                                 addDrugLog={(e) => addEditDrugLog(e)}
+                                canvasId={"otc-barcode"}
                             />
                         </Col>
 

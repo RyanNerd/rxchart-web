@@ -298,6 +298,7 @@ const MedicinePage = (props) => {
                                 activeDrug={activeDrug}
                                 drugChanged={(drug) => setActiveDrug(drug)}
                                 addDrugLog={(e) => addEditDrugLog(e)}
+                                canvasId={'med-barcode'}
                             />
                         </Col>
 
