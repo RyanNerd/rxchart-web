@@ -17,18 +17,15 @@ export type DrugLogRecord = {
     Updated: Date
 }
 
-const baseUrl = process.env.REACT_APP_BASEURL;
-const development = process.env.REACT_APP_DEVELOPMENT === 'true';
-
 export const initialState = {
-    development: development,
+    development: process.env.REACT_APP_DEVELOPMENT === 'true',
     activeResident: null,
     residentList: null,
     medicineList: null,
     otcList: null,
     drugLogList: null,
     apiKey: null,
-    baseUrl: baseUrl,
+    baseUrl: process.env.REACT_APP_BASEURL,
     providers: {
         residentProvider: null,
         medicineProvider: null,
