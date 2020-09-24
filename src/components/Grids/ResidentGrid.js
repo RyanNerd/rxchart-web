@@ -42,7 +42,7 @@ const ResidentGrid = (props) => {
                 id={'resident-grid-row-' + resident.Id}
             >
                 {onSelected &&
-                    <td>
+                    <td style={{textAlign: 'center', verticalAlign: "middle"}}>
                         <ToggleButton
                             id={"resident-grid-select-btn-" + resident.Id}
                             type="radio"
@@ -55,24 +55,24 @@ const ResidentGrid = (props) => {
                     </td>
                 }
 
+                <td style={{verticalAlign: "middle"}}>{resident.LastName}</td>
+                <td style={{verticalAlign: "middle"}}>{resident.FirstName}</td>
+                <td style={{verticalAlign: "middle"}}>{dob}</td>
+
                 {onEdit &&
-                    <td>
-                        <Button
-                            size="sm"
-                            id={"resident-grid-edit-btn-" + resident.Id}
-                            onClick={(e) => onEdit(e, resident)}
-                        >
-                            Edit
-                        </Button>
-                    </td>
+                <td style={{textAlign: 'center', verticalAlign: "middle"}}>
+                    <Button
+                        size="sm"
+                        id={"resident-grid-edit-btn-" + resident.Id}
+                        onClick={(e) => onEdit(e, resident)}
+                    >
+                        Edit
+                    </Button>
+                </td>
                 }
 
-                <td>{resident.LastName}</td>
-                <td>{resident.FirstName}</td>
-                <td>{dob}</td>
-
                 {onDelete && !resident.deleted_at &&
-                    <td>
+                    <td style={{textAlign: 'center', verticalAlign: "middle"}}>
                         <Button
                             size="sm"
                             id={"resident-grid-delete-btn-" + resident.Id}
@@ -88,14 +88,11 @@ const ResidentGrid = (props) => {
     };
 
     return (
-        <Table striped bordered hover size="sm">
+        <Table striped bordered hover size="sm" className="w-auto">
             <thead>
             <tr>
                 {onSelected &&
                     <th>Selected</th>
-                }
-                {onEdit &&
-                    <th/>
                 }
                 <th>
                     <span>Last Name</span>
@@ -106,6 +103,9 @@ const ResidentGrid = (props) => {
                 <th>
                     <span>DOB</span>
                 </th>
+                {onEdit &&
+                    <th/>
+                }
                 {onDelete &&
                     <th/>
                 }

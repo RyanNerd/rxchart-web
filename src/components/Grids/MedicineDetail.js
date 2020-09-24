@@ -16,7 +16,7 @@ const MedicineDetail = (drug, onDelete, onEdit, includeNotes) => {
             key={'medicine-grid-row-' + drug.Id}
             id={'medicine-grid-row-' + drug.Id}
         >
-            <td>
+            <td style={{textAlign: 'center', verticalAlign: "middle"}}>
                 <Button
                     size="sm"
                     id={"medicine-edit-btn-" + drug.Id}
@@ -32,7 +32,7 @@ const MedicineDetail = (drug, onDelete, onEdit, includeNotes) => {
                 <td>{drug.Notes}</td>
             }
             <td>{drug.Barcode}</td>
-            <td>
+            <td style={{textAlign: 'center', verticalAlign: "middle"}}>
                 <Button
                     size="sm"
                     id={"medicine-grid-delete-btn-" + drug.Id}

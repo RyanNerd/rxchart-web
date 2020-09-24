@@ -130,59 +130,6 @@ const MedicineEdit = (props) => {
                         </Col>
                     </Form.Group>
 
-                    <Form.Group as={Row} controlId="drug-barcode">
-                        <Form.Label column sm="2">
-                            Barcode
-                        </Form.Label>
-
-                        <Col sm="9">
-                            <Form.Control
-                                type="text"
-                                value={drugInfo.Barcode}
-                                name="Barcode"
-                                onChange={(e) => handleOnChange(e)}
-                            />
-                        </Col>
-                    </Form.Group>
-
-                    {!otc &&
-                    <Form.Group as={Row}>
-                        <Form.Label column sm="2">
-                            Fill Date Month
-                        </Form.Label>
-                        <Col sm={2}>
-                            <Form.Control
-                                type="text"
-                                value={drugInfo.FillDateMonth}
-                                name="FillDateMonth"
-                                onChange={(e) => handleOnChange(e)}
-                            />
-                        </Col>
-                        <Form.Label column sm="1">
-                            Day
-                        </Form.Label>
-                        <Col sm={2}>
-                            <Form.Control
-                                type="text"
-                                value={drugInfo.FillDateDay}
-                                name="FillDateDay"
-                                onChange={(e) => handleOnChange(e)}
-                            />
-                        </Col>
-                        <Form.Label column sm="1">
-                            Year
-                        </Form.Label>
-                        <Col sm={3}>
-                            <Form.Control
-                                type="text"
-                                value={drugInfo.FillDateYear}
-                                name="FillDateYear"
-                                onChange={(e) => handleOnChange(e)}
-                            />
-                        </Col>
-                    </Form.Group>
-                    }
-
                     <Form.Group as={Row} controlId="drug-Directions">
                         <Form.Label column sm="2">
                             Directions
@@ -212,6 +159,62 @@ const MedicineEdit = (props) => {
                                 rows="3"
                                 value={drugInfo.Notes}
                                 name="Notes"
+                                onChange={(e) => handleOnChange(e)}
+                            />
+                        </Col>
+                    </Form.Group>
+                    }
+
+                    <Form.Group as={Row} controlId="drug-barcode">
+                        <Form.Label column sm="2">
+                            Barcode
+                        </Form.Label>
+
+                        <Col sm="9">
+                            <Form.Control
+                                type="text"
+                                value={drugInfo.Barcode}
+                                name="Barcode"
+                                onChange={(e) => handleOnChange(e)}
+                            />
+                        </Col>
+                    </Form.Group>
+
+                    {!otc &&
+                    <Form.Group as={Row}>
+                        <Form.Label column sm="2">
+                            Fill Date
+                        </Form.Label>
+                        <Form.Label column sm="1">
+                            Month
+                        </Form.Label>
+                        <Col sm={1}>
+                            <Form.Control
+                                type="text"
+                                value={drugInfo.FillDateMonth}
+                                name="FillDateMonth"
+                                onChange={(e) => handleOnChange(e)}
+                            />
+                        </Col>
+                        <Form.Label column sm="1">
+                            Day
+                        </Form.Label>
+                        <Col sm={1}>
+                            <Form.Control
+                                type="text"
+                                value={drugInfo.FillDateDay}
+                                name="FillDateDay"
+                                onChange={(e) => handleOnChange(e)}
+                            />
+                        </Col>
+                        <Form.Label column sm="1">
+                            Year
+                        </Form.Label>
+                        <Col sm={2}>
+                            <Form.Control
+                                type="text"
+                                value={drugInfo.FillDateYear}
+                                name="FillDateYear"
                                 onChange={(e) => handleOnChange(e)}
                             />
                         </Col>
