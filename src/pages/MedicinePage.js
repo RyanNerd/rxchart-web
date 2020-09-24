@@ -334,13 +334,13 @@ const MedicinePage = (props) => {
                 title="Delete Log Record"
                 body={
                     <>
-                        <p>{showDeleteDrugLogRecord.Created}</p>
+                        <p>{showDeleteDrugLogRecord.Updated}</p>
                         <b style={{color: "red"}}>
                             Are you sure?
                         </b>
                     </>
                 }
-                show={showDeleteDrugLogRecord}
+                show={showDeleteDrugLogRecord instanceof Object}
                 onAnswer={(a) => {
                     if (a) {
                         deleteDrugLogRecord(showDeleteDrugLogRecord);
