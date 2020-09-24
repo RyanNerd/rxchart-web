@@ -15,7 +15,7 @@ import PropTypes from 'prop-types';
 const TooltipButton = (props) => {
     const placement = props.placement || 'top';
     const tooltip = props.tooltip || null;
-    const tooltipId = props.tooltipId || randomString;
+    const tooltipId = props.tooltipId || randomString();
 
     return (
         <OverlayTrigger

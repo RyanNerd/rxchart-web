@@ -24,6 +24,7 @@ const MedicineListGroup = (props) => {
     const drugChanged = props.drugChanged;
     const addDrugLog = props.addDrugLog;
     const canvasId = props.canvasId;
+    const canvasUpdated = props.canvasUpdated || null;
     const barCode = activeDrug.Barcode || null;
     const notes = activeDrug.Notes || null;
     const directions = activeDrug.Directions || null;
@@ -63,8 +64,10 @@ const MedicineListGroup = (props) => {
     useEffect(() => {
         // Only try to create a barcode canvas IF there is actually a barcode value.
         const canvas = barCode ? drawBarcode(barCode, canvasId) : null;
-        props.canvas = canvas;
-    }, [barCode, canvasId]);
+        if (canvasUpdated) {
+            canvasUpdated(canvas);
+        }
+    }, [barCode, canvasId, canvasUpdated]);
 
     return (
         <ListGroup>
@@ -129,11 +132,11 @@ const MedicineListGroup = (props) => {
 MedicineListGroup.propTypes = {
     medicineList: PropTypes.arrayOf(PropTypes.object).isRequired,
     activeDrug: PropTypes.object.isRequired,
-    lastTaken: PropTypes.number.isRequired,
+    lastTaken: PropTypes.number,
     drugChanged: PropTypes.func.isRequired,
     addDrugLog: PropTypes.func.isRequired,
     canvasId: PropTypes.string.isRequired,
-    canvas: PropTypes.element
+    canvasUpdated: PropTypes.func
 }
 
 export default MedicineListGroup;
