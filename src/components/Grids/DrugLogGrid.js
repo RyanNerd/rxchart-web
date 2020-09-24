@@ -81,7 +81,7 @@ const DrugLogGrid = (props) => {
                 id={'druglog-grid-row-' + drug.Id}
             >
                 {props.onEdit &&
-                    <td>
+                    <td style={{textAlign: 'center', verticalAlign: "middle"}}>
                         <Button
                             size="sm"
                             onClick={(e) => props.onEdit(e, drug)}
@@ -96,20 +96,20 @@ const DrugLogGrid = (props) => {
                         <p>{drugColumnLookup(drug.MedicineId, 'Notes')}</p>
                     </td>
                 }
-                <td>{drug.Created}</td>
-                <td>{drug.Updated}</td>
-                <td>{drug.Notes}</td>
+                <td style={{textAlign: 'center', verticalAlign: "middle"}}>{drug.Created}</td>
+                <td style={{textAlign: 'center', verticalAlign: "middle"}}>{drug.Updated}</td>
+                <td style={{textAlign: 'center', verticalAlign: "middle"}}>{drug.Notes}</td>
                 {props.onDelete &&
-                <td>
-                    <Button
-                        size="sm"
-                        id={"drug-grid-delete-btn-" + drug.Id}
-                        variant="outline-danger"
-                        onClick={(e) => props.onDelete(e, drug)}
-                    >
-                        <span role="img" aria-label="delete">🗑️</span>
-                    </Button>
-                </td>
+                    <td style={{textAlign: 'center', verticalAlign: "middle"}}>
+                        <Button
+                            size="sm"
+                            id={"drug-grid-delete-btn-" + drug.Id}
+                            variant="outline-danger"
+                            onClick={(e) => props.onDelete(e, drug)}
+                        >
+                            <span role="img" aria-label="delete">🗑️</span>
+                        </Button>
+                    </td>
                 }
             </tr>
         );

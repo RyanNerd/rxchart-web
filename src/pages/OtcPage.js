@@ -290,13 +290,44 @@ const OtcPage = (props) => {
                     }
                 </Form.Group>
 
-                {activeDrug &&
+                {activeDrug && otcList &&
+                    <>
                     <Col sm="7">
                         <span style={{textAlign: "center"}}> <h2>OTC Drug History</h2> </span>
-                    </Col>
-                }
+                        <Button
+                            variant="outline-primary"
+                            className="mr-2"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                const drugLogInfo = {
+                                    Id: null,
+                                    ResidentId: activeResident.Id,
+                                    MedicineId: activeDrug.Id,
+                                    Notes: "1"
+                                };
+                                handleDrugLogEditClose(drugLogInfo);
+                            }}
+                        >
+                            Log 1 {activeDrug.Drug}
+                        </Button>
 
-                {activeDrug && otcList &&
+                        <Button
+                            variant="outline-primary"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                const drugLogInfo = {
+                                    Id: null,
+                                    ResidentId: activeResident.Id,
+                                    MedicineId: activeDrug.Id,
+                                    Notes: "2"
+                                };
+                                handleDrugLogEditClose(drugLogInfo);
+                            }}
+                        >
+                            Log 2 {activeDrug.Drug}
+                        </Button>
+                    </Col>
+
                     <Row>
                         <Col sm="5">
                             <MedicineListGroup
@@ -319,6 +350,7 @@ const OtcPage = (props) => {
                             />
                         </Col>
                     </Row>
+                    </>
                 }
             </Form.Group>
 
