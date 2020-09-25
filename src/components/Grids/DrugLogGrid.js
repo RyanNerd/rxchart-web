@@ -38,6 +38,7 @@ const DrugLogGrid = props => {
     const filteredDrugs = drugId && drugList ? drugList.filter(drug => drug.MedicineId === drugId) : drugList;
     const medicineList = props.medicineList;
     const otcList = props.otcList || [];
+    const condensed = props.condensed || false;
 
     /**
      * Returns the value of the drug column for the given drugId
@@ -115,7 +116,7 @@ const DrugLogGrid = props => {
     };
 
     return <RxTable
-        condensed={props.condensed}
+        condensed={condensed ? 1 : 0}
         striped
         bordered
         hover
@@ -132,13 +133,13 @@ const DrugLogGrid = props => {
                     Drug
                 </th>
             }
-            <th>
+            <th style={{textAlign: 'center', verticalAlign: "middle"}}>
                 <span>Created</span>
             </th>
-            <th>
+            <th style={{textAlign: 'center', verticalAlign: "middle"}}>
                 <span>Updated</span>
             </th>
-            <th>
+            <th style={{textAlign: 'center', verticalAlign: "middle"}}>
                 <span>Amount</span>
             </th>
             {props.onDelete &&

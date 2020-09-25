@@ -238,6 +238,22 @@ const MedicinePage = (props) => {
         setShowDrugLog(false);
     }
 
+    /**
+     * Fires when the Log 1 or Log 2 buttons are clicked.
+     *
+     * @param {number} amount
+     */
+    const handleLogDrugAmount = (amount) => {
+        const notes = amount.toString();
+        const drugLogInfo = {
+            Id: null,
+            ResidentId: activeResident.Id,
+            MedicineId: activeDrug.Id,
+            Notes: notes
+        };
+        handleDrugLogEditClose(drugLogInfo);
+    }
+
     const medicinePage = (
         <>
             <Form className={TabContent} as={Row}>
@@ -294,13 +310,7 @@ const MedicinePage = (props) => {
                             className="mr-2"
                             onClick={(e) => {
                                 e.preventDefault();
-                                const drugLogInfo = {
-                                    Id: null,
-                                    ResidentId: activeResident.Id,
-                                    MedicineId: activeDrug.Id,
-                                    Notes: "1"
-                                };
-                                handleDrugLogEditClose(drugLogInfo);
+                                handleLogDrugAmount(1);
                             }}
                         >
                             Log 1 {activeDrug.Drug}
@@ -312,13 +322,7 @@ const MedicinePage = (props) => {
                             variant="outline-primary"
                             onClick={(e) => {
                                 e.preventDefault();
-                                const drugLogInfo = {
-                                    Id: null,
-                                    ResidentId: activeResident.Id,
-                                    MedicineId: activeDrug.Id,
-                                    Notes: "2"
-                                };
-                                handleDrugLogEditClose(drugLogInfo);
+                                handleLogDrugAmount(2);
                             }}
                         >
                             Log 2 {activeDrug.Drug}
@@ -337,6 +341,7 @@ const MedicinePage = (props) => {
                                 activeDrug={activeDrug}
                                 drugChanged={(drug) => setActiveDrug(drug)}
                                 addDrugLog={(e) => addEditDrugLog(e)}
+                                logDrug={(amount) => handleLogDrugAmount(amount)}
                                 canvasId={'med-barcode'}
                             />
                         </Col>

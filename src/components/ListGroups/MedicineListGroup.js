@@ -4,7 +4,7 @@ import DrugDropdown from "./DrugDropdown";
 import TooltipButton from "../Buttons/TooltipButton";
 import PropTypes from 'prop-types';
 import {drawBarcode} from "../../utility/drawBarcode";
-import LastTakenButton from "../Buttons/LastTakenButton";
+import Button from "react-bootstrap/Button";
 
 /**
  * MedicineListGroup
@@ -25,6 +25,7 @@ const MedicineListGroup = (props) => {
     const addDrugLog = props.addDrugLog;
     const canvasId = props.canvasId;
     const canvasUpdated = props.canvasUpdated || null;
+    const logDrug = props.logDrug;
     const barCode = activeDrug.Barcode || null;
     const notes = activeDrug.Notes || null;
     const directions = activeDrug.Directions || null;
@@ -56,18 +57,22 @@ const MedicineListGroup = (props) => {
                     tooltip={lastTaken <= 1 && lastTaken !== null ? activeDrug.Drug + " taken in the last hour" : null}
                     placement="top"
                     className="mr-2"
-                    size="lg"
                     variant={lastTaken === 0 ? "warning" : "primary"}
                     onClick={(e) => addDrugLog(e)}
                 >
                     + Log Drug
                 </TooltipButton>
 
-                <LastTakenButton
-                    size="lg"
-                    lastTaken={lastTaken}
-                />
-
+                <Button
+                    disabled={lastTaken === 0}
+                    variant="outline-primary"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        logDrug(1);
+                    }}
+                >
+                    Log 1 {activeDrug.Drug}
+                </Button>
             </ListGroup.Item>
 
             {directions && directions.length > 0 &&
