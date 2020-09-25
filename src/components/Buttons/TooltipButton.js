@@ -17,6 +17,15 @@ const TooltipButton = (props) => {
     const tooltip = props.tooltip || null;
     const tooltipId = props.tooltipId || randomString();
 
+    if (tooltip === null) {
+        return (
+            <Button
+                {...props}
+            >
+                {props.children}
+            </Button>)
+    }
+
     return (
         <OverlayTrigger
             placement={placement}

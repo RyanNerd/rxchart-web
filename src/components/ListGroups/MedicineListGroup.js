@@ -1,9 +1,10 @@
-import React, {useEffect, useState} from 'reactn';
+import React, {useEffect} from 'reactn';
 import ListGroup from "react-bootstrap/ListGroup";
 import DrugDropdown from "./DrugDropdown";
-import Button from "react-bootstrap/Button";
+import TooltipButton from "../Buttons/TooltipButton";
 import PropTypes from 'prop-types';
 import {drawBarcode} from "../../utility/drawBarcode";
+import LastTakenButton from "../Buttons/LastTakenButton";
 
 /**
  * MedicineListGroup
@@ -17,7 +18,6 @@ import {drawBarcode} from "../../utility/drawBarcode";
  * @return {* || null}
  */
 const MedicineListGroup = (props) => {
-    const [warningColor, setWarningColor ] = useState('light');
     const medicineList = props.medicineList;
     const activeDrug = props.activeDrug;
     const lastTaken = props.lastTaken;
@@ -31,34 +31,6 @@ const MedicineListGroup = (props) => {
     const drugId = activeDrug.Id;
     const fillDate = activeDrug.FillDateMonth ?
                 activeDrug.FillDateMonth + '/' + activeDrug.FillDateDay +'/' + activeDrug.FillDateYear : null;
-
-
-    // Update the warning color based on the lastTaken hours value
-    useEffect(() => {
-        let calculatedWarningColor;
-        switch (lastTaken) {
-            case 0: calculatedWarningColor = 'danger';
-                    break;
-            case 1: calculatedWarningColor = 'danger';
-                    break;
-            case 2: calculatedWarningColor = 'danger';
-                    break;
-            case 3: calculatedWarningColor = 'outline-warning';
-                    break;
-            case 4: calculatedWarningColor = 'outline-warning';
-                    break;
-            case 5: calculatedWarningColor = 'outline-warning';
-                    break;
-            case 6: calculatedWarningColor = 'outline-info';
-                    break;
-            case 7: calculatedWarningColor = 'outline-info';
-                    break;
-            case 8: calculatedWarningColor = 'outline-info';
-                    break;
-            default: calculatedWarningColor = 'light';
-        }
-        setWarningColor(calculatedWarningColor);
-    }, [lastTaken]);
 
     // Update the barcode image if the barcode has changed
     useEffect(() => {
@@ -80,23 +52,22 @@ const MedicineListGroup = (props) => {
             </ListGroup.Item>
 
             <ListGroup.Item>
-                <Button
+                <TooltipButton
+                    tooltip={lastTaken <= 1 && lastTaken !== null ? activeDrug.Drug + " taken in the last hour" : null}
+                    placement="top"
+                    className="mr-2"
                     size="lg"
-                    variant="primary"
+                    variant={lastTaken === 0 ? "warning" : "primary"}
                     onClick={(e) => addDrugLog(e)}
                 >
                     + Log Drug
-                </Button>
+                </TooltipButton>
 
-                <Button
-                    disabled
+                <LastTakenButton
                     size="lg"
-                    className="ml-2"
-                    variant={warningColor}
-                >
-                    {/* Display in BOLD if taken 3 or less hours ago */}
-                    {lastTaken !== null && lastTaken <= 3 ? <b>Last Taken (hours): {lastTaken}</b> : <span>Last Taken (hours): {lastTaken}</span>}
-                </Button>
+                    lastTaken={lastTaken}
+                />
+
             </ListGroup.Item>
 
             {directions && directions.length > 0 &&

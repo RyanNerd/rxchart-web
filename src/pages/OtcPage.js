@@ -14,6 +14,7 @@ import RefreshOtcList from "../providers/helpers/RefreshOtcList";
 import {calculateLastTaken} from "../utility/common";
 import {newDrugInfo} from "../utility/InitialState";
 import PropTypes from 'prop-types';
+import LastTakenButton from "../components/Buttons/LastTakenButton";
 
 /**
  * OtcPage
@@ -295,6 +296,7 @@ const OtcPage = (props) => {
                     <Col sm="7">
                         <span style={{textAlign: "center"}}> <h2>OTC Drug History</h2> </span>
                         <Button
+                            disabled={lastTaken === 0}
                             variant="outline-primary"
                             className="mr-2"
                             onClick={(e) => {
@@ -312,6 +314,8 @@ const OtcPage = (props) => {
                         </Button>
 
                         <Button
+                            disabled={lastTaken === 0}
+                            className="mr-3"
                             variant="outline-primary"
                             onClick={(e) => {
                                 e.preventDefault();
@@ -326,6 +330,10 @@ const OtcPage = (props) => {
                         >
                             Log 2 {activeDrug.Drug}
                         </Button>
+
+                        <LastTakenButton
+                            lastTaken={lastTaken}
+                        />
                     </Col>
 
                     <Row>

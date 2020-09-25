@@ -75,6 +75,9 @@ const DrugLogGrid = (props) => {
      */
     const DrugRow = (drug) =>
     {
+        const drugName = drugColumnLookup(drug.MedicineId, 'Drug');
+        const drugStrength = drugColumnLookup(drug.MedicineId, 'Strength');
+
         return (
             <tr
                 key={'druglog-grid-row-' + drug.Id}
@@ -91,9 +94,8 @@ const DrugLogGrid = (props) => {
                     </td>
                 }
                 {showDrugColumn &&
-                    <td>
-                        <span><b>{drugColumnLookup(drug.MedicineId, 'Drug')}</b></span> <span>{drugColumnLookup(drug.MedicineId, 'Strength')}</span>
-                        <p>{drugColumnLookup(drug.MedicineId, 'Notes')}</p>
+                    <td style={{verticalAlign: "middle"}}>
+                        <span><b>{drugName}</b></span> <span>{drugStrength}</span>
                     </td>
                 }
                 <td style={{textAlign: 'center', verticalAlign: "middle"}}>{drug.Created}</td>
@@ -117,6 +119,7 @@ const DrugLogGrid = (props) => {
 
     return (
         <Table
+            className={props.condensed ? "w-auto" : null}
             striped
             bordered
             hover
@@ -159,6 +162,7 @@ DrugLogGrid.propTypes = {
     onEdit: PropTypes.func,
     onDelete: PropTypes.func,
     drugId: PropTypes.number,
+    condensed: PropTypes.bool,
     medicineList: PropTypes.arrayOf(PropTypes.object),
     otcList: PropTypes.arrayOf(PropTypes.object)
 }

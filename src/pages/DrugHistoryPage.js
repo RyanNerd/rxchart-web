@@ -20,6 +20,7 @@ const DrugHistoryPage = (props) => {
             </Button>
 
             <DrugLogGrid
+                condensed={true}
                 showDrugColumn={true}
                 drugLog={drugLogList}
                 medicineList={medicineList}
