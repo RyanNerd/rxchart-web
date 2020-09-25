@@ -1,11 +1,13 @@
 import React, {useGlobal, useState} from 'reactn';
 import Table from "react-bootstrap/Table";
-import Button from "react-bootstrap/Button";
-import MedicineEdit from "../Medicine/MedicineEdit";
-import ConfirmationDialog from "../Dialog/ConfirmationDialog";
-import RefreshMedicineList from "../../providers/RefreshMedicineList";
-import AddNewMedicineButton from "./AddNewMedicineButton";
-import DeleteMedicine from "../../providers/helpers/DeleteMedicine";
+import MedicineDetail from "../components/Grids/MedicineDetail";
+import MedicineEdit from "../components/Modals/MedicineEdit";
+import ConfirmationDialog from "../components/Modals/Dialog/ConfirmationDialog";
+import RefreshMedicineList from "../providers/RefreshMedicineList";
+import DeleteMedicine from "../providers/helpers/DeleteMedicine";
+import TooltipButton from "../components/Buttons/TooltipButton";
+import PropTypes from 'prop-types';
+import {handleMedicineEditModalClose} from "../utility/helpers";
 
 /**
  * ManageDrugPage
@@ -13,18 +15,17 @@ import DeleteMedicine from "../../providers/helpers/DeleteMedicine";
  *
  * @returns {null|*}
  */
-export default function ManageDrugPage(props)
-{
+const ManageDrugPage = (props) => {
     const [ medicineList, setMedicineList ] = useGlobal('medicineList');
     const [ providers ] = useGlobal('providers');
     const [ activeResident ]= useGlobal('activeResident');
-    const medicineProvider = providers.medicineProvider;
 
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDeleteMedicine, setShowDeleteMedicine ] = useState(false);
     const [ medicineInfo, setMedicineInfo ] = useState(null);
-    const [ ,setActiveDrug ] = useGlobal('activeDrug');
 
+    const medicineProvider = providers.medicineProvider;
+    const onError = props.onError;
     const today = new Date();
     const day = today.getDate();
     const month = today.getMonth() + 1;
@@ -33,13 +34,11 @@ export default function ManageDrugPage(props)
     /**
      * Fires when the Edit button is clicked
      *
-     * @param {Event} e
+     * @param {MouseEvent} e
      * @param {object} medicine
      */
-    function onEdit(e, medicine)
-    {
+    const onEdit = (e, medicine) => {
         e.preventDefault();
-
         let medicineInfo;
         if (!medicine) {
             medicineInfo = {
@@ -62,46 +61,23 @@ export default function ManageDrugPage(props)
         setShowMedicineEdit(true);
     }
 
-    function handleMedicineEditModalClose(drugInfo) {
-        if (drugInfo) {
-            const drugData = {...drugInfo};
+    /**
+     * Handle the delete click event.
+     *
+     * @param {MouseEvent} e
+     * @param {object} medicine
 
-            if (!drugData.Id) {
-                drugData.Id = null;
-            }
-
-            if (drugData.Notes === '') {
-                drugData.Notes = null;
-            }
-
-            medicineProvider.post(drugData)
-            .then((drugRecord) => {
-                RefreshMedicineList(medicineProvider, drugData.ResidentId)
-                .then((drugList) => {
-                    setMedicineList(drugList);
-
-                    // Set the activeDrug to the first in the list.
-                    if (drugList.length > 0) {
-                        setActiveDrug(drugList[0]);
-                    }
-                })
-                .catch((err) => {
-                    props.onError(err);
-                });
-            });
-        }
-        setShowMedicineEdit(false);
-    }
-
-    function onDelete(e, medicine)
-    {
+     */
+    const onDelete = (e, medicine) => {
         e.preventDefault();
         setMedicineInfo({...medicine});
         setShowDeleteMedicine(true);
     }
 
-    function deleteMedicine()
-    {
+    /**
+     * Fires when user confirms to delete the medication.
+     */
+    const deleteMedicine = () => {
         // Work around for a weird bug that manifests itself only in production.
         let medProvider = medicineProvider;
         if (medProvider === undefined) {
@@ -120,46 +96,17 @@ export default function ManageDrugPage(props)
         setShowDeleteMedicine(false);
     }
 
-    const MedicineDetail = (item) => {
-        return (
-            <tr
-                key={'medicine-grid-row-' + item.Id}
-                id={'medicine-grid-row-' + item.Id}
-            >
-                <td>
-                    <Button
-                        size="sm"
-                        id={"medicine-edit-btn-" + item.Id}
-                        onClick={(e) => onEdit(e, item)}
-                    >
-                        Edit
-                    </Button>
-                </td>
-                <td>{item.Drug}</td>
-                <td>{item.Strength}</td>
-                <td>{item.Directions}</td>
-                <td>{item.Notes}</td>
-                <td>{item.Barcode}</td>
-                <td>
-                    <Button
-                        size="sm"
-                        id={"medicine-grid-delete-btn-" + item.Id}
-                        variant="outline-danger"
-                        onClick={(e) => onDelete(e, item)}
-                    >
-                        <span role="img" aria-label="delete">🗑️</span>
-                    </Button>
-                </td>
-            </tr>
-        )
-    };
-
     return (
         <>
-            <AddNewMedicineButton
-                style={{marginBottom: "15px"}}
+            <TooltipButton
+                className="mb-2"
+                tooltip="Manually Add New Medicine"
+                size="sm"
+                variant="info"
                 onClick={(e) => onEdit(e, null)}
-            />
+            >
+                + Medicine
+            </TooltipButton>
 
             {medicineList &&
                 <Table
@@ -190,7 +137,7 @@ export default function ManageDrugPage(props)
                     </tr>
                     </thead>
                     <tbody>
-                    {medicineList.map(MedicineDetail)}
+                    {medicineList.map((drug) => MedicineDetail(drug, onDelete, onEdit, true))}
                     </tbody>
                 </Table>
             }
@@ -200,7 +147,10 @@ export default function ManageDrugPage(props)
                 <MedicineEdit
                     show={showMedicineEdit}
                     onHide={() => setShowMedicineEdit(!showMedicineEdit)}
-                    onClose={(r) => handleMedicineEditModalClose(r)}
+                    onClose={(r) => {
+                        handleMedicineEditModalClose(r, medicineProvider, () => RefreshMedicineList(medicineProvider, r.ResidentId), setMedicineList, onError);
+                        setShowMedicineEdit(false);
+                    }}
                     drugInfo={medicineInfo}
                 />
             }
@@ -228,3 +178,9 @@ export default function ManageDrugPage(props)
         </>
     );
 }
+
+ManageDrugPage.propTypes = {
+    onError: PropTypes.func.isRequired
+}
+
+export default ManageDrugPage;

@@ -4,43 +4,41 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
+import PropTypes from 'prop-types';
 
 /**
  * Edit Modal for DrugLog
  *
- * @param props :
+ * @param {object} props :
  *          show {boolean} show/hide this modal
  *          drugLogInfo {Id: id, Note: ""}
- *
  * @returns {boolean|*}
  * @constructor
  */
-export default function DrugLogEdit(props)
-{
+const DrugLogEdit = (props) => {
     const [ show, setShow ] = useState(props.show);
-    const [ drugLogInfo, setDrugLogInfo ] = useState(null);
-
+    const [ drugLogInfo, setDrugLogInfo ] = useState(props.drugLogInfo);
+    const [ canSave, setCanSave ] = useState(false);
     const textInput = useRef(null);
 
-    // Observer for show and drugInfo properties
-    useEffect(() => {
-        if (props.drugLogInfo !== null) {
-            setShow(props.show);
-            setDrugLogInfo(props.drugLogInfo);
-        }
-    }, [props.show, props.drugLogInfo]);
+    // Observer for show
+    useEffect(() => {setShow(props.show)}, [props.show]);
+
+    // Observer for drugInfo
+    useEffect(() => {setDrugLogInfo(props.drugLogInfo)}, [props.drugLogInfo]);
+
+    // Disable the Save button if Notes are empty.
+    useEffect(() => {setCanSave(drugLogInfo && drugLogInfo.Notes.length > 0)}, [drugLogInfo]);
 
     /**
      * Fires when a text field or checkbox is changing.
      *
-     * @param  e
+     * @param {KeyboardEvent} e
      */
-    function handleOnChange(e)
-    {
+    const handleOnChange = (e) => {
         const target = e.target;
         let value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
-
         drugLogInfo[name] = value;
         setDrugLogInfo({...drugLogInfo});
     }
@@ -48,17 +46,16 @@ export default function DrugLogEdit(props)
     /**
      * Fires when the user clicks on save or cancel
      *
-     * @param {event} e
+     * @param {MouseEvent} e
      * @param {boolean} shouldSave
      */
-    function handleHide(e, shouldSave)
-    {
+    const handleHide = (e, shouldSave) => {
+        e.preventDefault();
         if (shouldSave) {
             props.onClose({...drugLogInfo});
         } else {
             props.onClose(null);
         }
-
         setShow(false);
     }
 
@@ -107,6 +104,7 @@ export default function DrugLogEdit(props)
                     Cancel
                 </Button>
                 <Button
+                    disabled={!canSave}
                     onClick={(e) => handleHide(e, true)}
                     variant="primary"
                 >
@@ -116,3 +114,12 @@ export default function DrugLogEdit(props)
         </Modal>
     );
 }
+
+DrugLogEdit.propTypes = {
+    show: PropTypes.bool,
+    drugLogInfo: PropTypes.object,
+    onHide: PropTypes.func,
+    onClose: PropTypes.func
+}
+
+export default DrugLogEdit;

@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'reactn';
 import Modal from 'react-bootstrap/Modal';
 import Button from "react-bootstrap/Button";
+import PropTypes from 'prop-types';
 
-export default function ConfirmationDialog(props)
-{
+const ConfirmationDialog = (props) => {
     const [ show, setShow ] = useState(props.show);
     const body = props.body ? props.body : 'Confirm?';
     const title = props.title ? props.title : 'Confirmation Dialog';
@@ -11,9 +11,13 @@ export default function ConfirmationDialog(props)
     // Observer for show
     useEffect(() => {setShow(props.show)}, [props.show]);
 
-    function handleAnswer(e, answer) {
+    /**
+     * Handle button click event.
+     * @param {MouseEvent} e
+     * @param answer
+     */
+    const handleAnswer = (e, answer) => {
         e.preventDefault();
-
         props.onAnswer(answer);
         setShow(false);
     }
@@ -51,3 +55,11 @@ export default function ConfirmationDialog(props)
         </Modal>
     );
 }
+
+ConfirmationDialog.propTypes = {
+    body: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
+    title: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
+    onAnswer: PropTypes.func
+}
+
+export default ConfirmationDialog;

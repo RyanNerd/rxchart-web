@@ -3,8 +3,7 @@
  * @param {object} medicineProvider
  * @param {number} medicineId
  */
-export default function deleteMedicine(medicineProvider, medicineId)
-{
+const deleteMedicine = (medicineProvider, medicineId) => {
     return medicineProvider.delete(medicineId)
     .then((response) => {
         return (response.success);
@@ -13,3 +12,5 @@ export default function deleteMedicine(medicineProvider, medicineId)
         return err
     });
 }
+
+export default deleteMedicine;

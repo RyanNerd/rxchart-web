@@ -1,22 +1,23 @@
-import Frak from './Frak';
-
 /**
  * ResidentProvider API service connector
  */
-export default class ResidentProvider
-{
+const ResidentProvider = {
+    /** @property {Frak | null} */
+    _frak: null,
+    _baseUrl: null,
+    _apiKey: null,
+
     /**
      * ResidentProvider Constructor
      *
-     * @param {string} baseUrl
-     * @param {string} apiKey
+     * @param {object} rxFrak
      */
-    constructor(baseUrl, apiKey)
-    {
-        this._frak = new Frak();
-        this._baseURL = baseUrl;
-        this._apiKey = apiKey;
-    }
+    init: (rxFrak) => {
+        ResidentProvider._frak = rxFrak.frak;
+        ResidentProvider._baseUrl = rxFrak.baseUrl;
+        ResidentProvider._apiKey = rxFrak.apiKey;
+        return ResidentProvider;
+    },
 
     /**
      * Search Interface
@@ -24,9 +25,9 @@ export default class ResidentProvider
      * @param {object} options
      * @returns {Promise<Response>}
      */
-    search( options) {
-        let uri = this._baseURL + 'resident/search?api_key=' + this._apiKey;
-        return this._frak.post(uri, options)
+    search: ( options) => {
+        let uri = ResidentProvider._baseUrl + 'resident/search?api_key=' + ResidentProvider._apiKey;
+        return ResidentProvider._frak.post(uri, options)
         .then((response) => {
             if (response.success) {
                 return response.data;
@@ -41,7 +42,7 @@ export default class ResidentProvider
             console.error(err);
             alert('problem -- see console log');
         });
-    }
+    },
 
     /**
      * Restore Interface
@@ -49,9 +50,9 @@ export default class ResidentProvider
      * @param {object} record
      * @returns {Promise<Response>}
      */
-    restore( record) {
-        let uri = this._baseURL + 'resident/restore?api_key=' + this._apiKey;
-        return this._frak.post(uri, record)
+    restore: ( record) => {
+        let uri = ResidentProvider._baseUrl + 'resident/restore?api_key=' + ResidentProvider._apiKey;
+        return ResidentProvider._frak.post(uri, record)
         .then((response) => {
             if (response.success) {
                 return response.data;
@@ -66,59 +67,7 @@ export default class ResidentProvider
             console.error(err);
             alert('problem -- see console log');
         });
-    }
-
-     /**
-     * Query Interface
-     *
-     * @param {string} value
-     * @param {array<string>} columns
-     * @returns {Promise<Response>}
-     */
-    query(value, ...columns)
-    {
-        let uri = this._baseURL + 'resident/query/'+ value + '?';
-
-        switch (value) {
-            case '*':
-            {
-                break;
-            }
-
-            case '-':
-            {
-                break;
-            }
-
-            default:
-            {
-                uri += 'column_name=' + columns[0] + '&';
-                break;
-            }
-        }
-
-        if (value !== '*') {
-            uri += '?column=' + columns;
-        }
-        uri += 'api_key=' + this._apiKey;
-
-        return this._frak.get(uri)
-        .then((response) => {
-            if (response.success) {
-                return response.data;
-            } else {
-                if (response.status === 404) {
-                    return [];
-                }
-
-                throw new Error(response.toString());
-            }
-        })
-        .catch((err) => {
-            console.error(err);
-            alert('problem');
-        });
-    }
+    },
 
     /**
      * Read Interface
@@ -126,9 +75,8 @@ export default class ResidentProvider
      * @param {string | number} id
      * @returns {Promise<Response>}
      */
-    read(id)
-    {
-        return this._frak.get(this._baseURL + 'resident/'+ id + '?api_key=' + this._apiKey)
+    read: (id) => {
+        return ResidentProvider._frak.get(ResidentProvider._baseUrl + 'resident/'+ id + '?api_key=' + ResidentProvider._apiKey)
         .then((response) => {
             if (response.success) {
                 return response.data;
@@ -140,7 +88,7 @@ export default class ResidentProvider
             console.error(err);
             alert('problem');
         });
-    }
+    },
 
     /**
      * Post interface
@@ -148,9 +96,8 @@ export default class ResidentProvider
      * @param {object} residentInfo
      * @returns {Promise<Response>}
      */
-    post(residentInfo)
-    {
-        return this._frak.post(this._baseURL + 'resident?api_key=' + this._apiKey, residentInfo)
+    post: (residentInfo) => {
+        return ResidentProvider._frak.post(ResidentProvider._baseUrl + 'resident?api_key=' + ResidentProvider._apiKey, residentInfo)
         .then((response) => {
             if (response.success) {
                 return response.data;
@@ -161,7 +108,7 @@ export default class ResidentProvider
         .catch((err) => {
             return err;
         })
-    }
+    },
 
     /**
      * Delete interface
@@ -169,9 +116,8 @@ export default class ResidentProvider
      * @param {string | number} residentId
      * @returns {Promise<Response>}
      */
-    delete(residentId)
-    {
-        return this._frak.delete_(this._baseURL + 'resident/' + residentId + '?api_key=' + this._apiKey)
+    delete: (residentId) => {
+        return ResidentProvider._frak.delete_(ResidentProvider._baseUrl + 'resident/' + residentId + '?api_key=' + ResidentProvider._apiKey)
         .then((response) => {
             if (response.success) {
                 return response;
@@ -184,3 +130,5 @@ export default class ResidentProvider
         });
     }
 }
+
+export default ResidentProvider;

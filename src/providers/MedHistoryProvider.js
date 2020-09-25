@@ -1,62 +1,48 @@
-import Frak from './Frak';
-
 /**
  * MedHistoryProvider API Connector
  */
-export default class MedHistoryProvider
-{
+const MedHistoryProvider = {
+    /** @property {Frak} */
+    _frak: null,
+    _baseUrl: null,
+    _apiKey: null,
+
     /**
      * @constructor
-     * @param {string} baseUrl
-     * @param {string} apiKey
+     * @param {object} rxFrak
      */
-    constructor(baseUrl, apiKey)
+    init: (rxFrak) =>
     {
-        this._frak = new Frak();
-        this._baseURL = baseUrl;
-        this._apiKey = apiKey;
-    }
+        MedHistoryProvider._frak = rxFrak.frak;
+        MedHistoryProvider._baseUrl = rxFrak.baseUrl;
+        MedHistoryProvider._apiKey = rxFrak.apiKey;
+        return MedHistoryProvider;
+    },
 
     /**
-     * Query interface
+     * Search Interface
      *
-     * @param {string} value
-     * @param {array<string>} columns
+     * @param {object} options
      * @returns {Promise<Response>}
      */
-    query(value, ...columns)
-    {
-        let uri = this._baseURL + 'medhistory/query/'+ value + '?';
-
-        switch (value) {
-            case '*':
-            {
-                break;
-            }
-
-            case '-':
-            {
-                break;
-            }
-
-            default:
-            {
-                uri += 'column_name=' + columns[0] + '&';
-                break;
-            }
-        }
-
-        uri += 'api_key=' + this._apiKey;
-
-        return this._frak.get(uri)
+    search: ( options) => {
+        let uri = MedHistoryProvider._baseUrl + 'medhistory/search?api_key=' + MedHistoryProvider._apiKey;
+        return MedHistoryProvider._frak.post(uri, options)
         .then((response) => {
-            return response;
+            if (response.success) {
+                return response.data;
+            } else {
+                if (response.status === 404) {
+                    return [];
+                }
+                throw new Error(response.toString());
+            }
         })
         .catch((err) => {
             console.error(err);
-            alert('problem');
+            alert('problem -- see console log');
         });
-    }
+    },
 
     /**
      * Read interface
@@ -64,21 +50,20 @@ export default class MedHistoryProvider
      * @param {string | number} id
      * @returns {Promise<Response>}
      */
-    read(id)
-    {
-        return this._frak.get(this._baseURL + 'medhistory/'+ id + '?api_key=' + this._apiKey)
-        .then((response) => {
-            if (response.success) {
-                return response.data;
-            } else {
-                throw response;
-            }
-        })
-        .catch((err) => {
-            console.error(err);
-            alert('problem');
-        });
-    }
+    read: (id) => {
+        return MedHistoryProvider._frak.get(MedHistoryProvider._baseUrl + 'medhistory/'+ id + '?api_key=' + MedHistoryProvider._apiKey)
+            .then((response) => {
+                if (response.success) {
+                    return response.data;
+                } else {
+                    throw response;
+                }
+            })
+            .catch((err) => {
+                console.error(err);
+                alert('problem');
+            });
+    },
 
     /**
      * Post interface
@@ -86,24 +71,22 @@ export default class MedHistoryProvider
      * @param {object} drugInfo
      * @returns {Promise<Response>}
      */
-    post(drugInfo)
-    {
-        return this._frak.post(this._baseURL + 'medhistory?api_key=' + this._apiKey, drugInfo)
-        .then((response) => {
-            if (response.success) {
-                return response.data;
-            } else {
-                throw response;
-            }
-        })
-        .catch((err) => {
-            return err;
-        });
-    }
+    post: (drugInfo) => {
+        return MedHistoryProvider._frak.post(MedHistoryProvider._baseUrl + 'medhistory?api_key=' + MedHistoryProvider._apiKey, drugInfo)
+            .then((response) => {
+                if (response.success) {
+                    return response.data;
+                } else {
+                    throw response;
+                }
+            })
+            .catch((err) => {
+                return err;
+            });
+    },
 
-    delete(drugId)
-    {
-        return this._frak.delete_(this._baseURL + 'medhistory/' + drugId + '?api_key=' + this._apiKey)
+    delete: (drugId) => {
+        return MedHistoryProvider._frak.delete_(MedHistoryProvider._baseUrl + 'medhistory/' + drugId + '?api_key=' + MedHistoryProvider._apiKey)
             .then((response) => {
                 if (response.success) {
                     return response;
@@ -116,3 +99,5 @@ export default class MedHistoryProvider
             });
     }
 }
+
+export default MedHistoryProvider;

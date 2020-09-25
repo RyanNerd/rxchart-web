@@ -1,22 +1,24 @@
-import Frak from './Frak';
-
 /**
  * MedicineProvider API connector
  */
-export default class MedicineProvider
-{
+const MedicineProvider = {
+    /** @property {Frak} */
+    _frak: null,
+    _baseUrl: null,
+    _apiKey: null,
+
     /**
-     * Constructor
-     *
-     * @param {string} baseUrl
-     * @param {string} apiKey
+     * MedicineProvider constructor
+     * 
+     * @constructor
+     * @param rxFrak
      */
-    constructor(baseUrl, apiKey)
-    {
-        this._frak = new Frak();
-        this._baseURL = baseUrl;
-        this._apiKey = apiKey;
-    }
+    init: (rxFrak) => {
+        MedicineProvider._frak = rxFrak.frak;
+        MedicineProvider._apiKey = rxFrak.apiKey;
+        MedicineProvider._baseUrl = rxFrak.baseUrl;
+        return MedicineProvider;
+    },
 
     /**
      * Search Interface
@@ -24,9 +26,9 @@ export default class MedicineProvider
      * @param {object} options
      * @returns {Promise<Response>}
      */
-    search( options) {
-        let uri = this._baseURL + 'medicine/search?api_key=' + this._apiKey;
-        return this._frak.post(uri, options)
+    search: ( options) => {
+        let uri = MedicineProvider._baseUrl + 'medicine/search?api_key=' + MedicineProvider._apiKey;
+        return MedicineProvider._frak.post(uri, options)
         .then((response) => {
             if (response.success) {
                 return response.data;
@@ -41,48 +43,7 @@ export default class MedicineProvider
             console.error(err);
             alert('problem -- see console log');
         });
-    }
-
-    /**
-     * Query interface
-     *
-     * @param {string} value
-     * @param {array<string>}columns
-     * @returns {Promise<Response>}
-     */
-    query(value, ...columns)
-    {
-        let uri = this._baseURL + 'medicine/query/'+ value + '?';
-
-        switch (value) {
-            case '*':
-            {
-                break;
-            }
-
-            case '-':
-            {
-                break;
-            }
-
-            default:
-            {
-                uri += 'column_name=' + columns[0] + '&';
-                break;
-            }
-        }
-
-        uri += 'api_key=' + this._apiKey;
-
-        return this._frak.get(uri)
-            .then((response) => {
-                return response;
-            })
-            .catch((err) => {
-                console.error(err);
-                alert('problem');
-            });
-    }
+    },
 
     /**
      * Read interface
@@ -90,9 +51,8 @@ export default class MedicineProvider
      * @param {string | number} id
      * @returns {Promise<Response>}
      */
-    read(id)
-    {
-        return this._frak.get(this._baseURL + 'medicine/'+ id + '?api_key=' + this._apiKey)
+    read: (id) => {
+        return MedicineProvider._frak.get(MedicineProvider._baseUrl + 'medicine/'+ id + '?api_key=' + MedicineProvider._apiKey)
         .then((response) => {
             if (response.success) {
                 return response.data;
@@ -104,7 +64,7 @@ export default class MedicineProvider
             console.error(err);
             alert('problem');
         });
-    }
+    },
 
     /**
      * Post interface
@@ -112,9 +72,8 @@ export default class MedicineProvider
      * @param {object} drugInfo
      * @returns {Promise<Response>}
      */
-    post(drugInfo)
-    {
-        return this._frak.post(this._baseURL + 'medicine?api_key=' + this._apiKey, drugInfo)
+    post: (drugInfo) => {
+        return MedicineProvider._frak.post(MedicineProvider._baseUrl + 'medicine?api_key=' + MedicineProvider._apiKey, drugInfo)
         .then((response) => {
             if (response.success) {
                 return response.data;
@@ -125,7 +84,7 @@ export default class MedicineProvider
         .catch((err) => {
            return err;
         });
-    }
+    },
 
     /**
      * Delete interface
@@ -133,9 +92,8 @@ export default class MedicineProvider
      * @param {string | number} drugId
      * @returns {Promise<Response>}
      */
-    delete(drugId)
-    {
-        return this._frak.delete_(this._baseURL + 'medicine/' + drugId + '?api_key=' + this._apiKey)
+    delete: (drugId) => {
+        return MedicineProvider._frak.delete_(MedicineProvider._baseUrl + 'medicine/' + drugId + '?api_key=' + MedicineProvider._apiKey)
         .then((response) => {
             if (response.success) {
                 return response;
@@ -148,3 +106,5 @@ export default class MedicineProvider
         });
     }
 }
+
+export default MedicineProvider;

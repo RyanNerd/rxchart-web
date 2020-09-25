@@ -1,14 +1,17 @@
-import React, {setGlobal, useGlobal, useState} from 'reactn';
+import React, {setGlobal, useGlobal, useState, useRef, useEffect} from 'reactn';
 import Alert from 'react-bootstrap/Alert';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
-import TabContent from './../../styles/tab_content.css';
-import ResidentProvider from './../../providers/ResidentProvider';
-import MedicineProvider from './../../providers/MedicineProvider';
-import {initialState} from "../../utility/InitialState";
-import MedHistoryProvider from "../../providers/MedHistoryProvider";
+import TabContent from '../styles/tab_content.css';
+import ResidentProvider from '../providers/ResidentProvider';
+import MedicineProvider from '../providers/MedicineProvider';
+import {initialState} from "../utility/InitialState";
+import MedHistoryProvider from "../providers/MedHistoryProvider";
+import Frak from "../providers/Frak";
+import RefreshOtcList from "../providers/helpers/RefreshOtcList";
+import PropTypes from 'prop-types';
 
 /**
  * Sign in page
@@ -16,23 +19,32 @@ import MedHistoryProvider from "../../providers/MedHistoryProvider";
  * @returns {*}
  * @constructor
  */
-function LoginPage(props) {
+const LoginPage = (props) => {
     const [ userName, setUserName ] = useState('');
     const [ password, setPassword ] = useState('');
     const [ showAlert, setShowAlert ] = useState(false);
 
     const [ apiKey, setApiKey ] = useGlobal('apiKey');
-    const [ frak ] = useGlobal('frak');
     const [ baseUrl ] = useGlobal('baseUrl');
     const [ residentList, setResidentList ] = useGlobal('residentList');
-    const [ providers , setProviders ] = useGlobal('providers');
-    const [ development ] = useGlobal('development');
+    const [ , setOtcList ] = useGlobal('otcList');
+    const [ , setProviders ] = useGlobal('providers');
+
+    const focusRef = useRef(null);
+    const key = props.activeTabKey | null;
+    const onError = props.onError;
+
+    // Set focus to the user name field when this page is active.
+    useEffect(() => props.updateFocusRef(focusRef), [props, key]);
 
     /**
      * Fires when the Login Button is clicked
+     *
+     * @param {MouseEvent} e
      */
-    function login(e) {
+    const login = (e) => {
         e.preventDefault();
+        const frak = new Frak();
 
         // Send the user name and password to the web service
         frak.post(baseUrl + 'authenticate', {username: userName, password: password}, {mode: "cors"})
@@ -40,33 +52,50 @@ function LoginPage(props) {
             // Success?
             if (json.success) {
                 // Set the global API key returned from the web service.
-                setApiKey(json.data.apiKey).then(() =>
-                {
+                const apiKey = json.data.apiKey;
+                setApiKey(apiKey).then(() => {
                     // Use global state for Dependency Injection for providers.
-                    providers.residentProvider = new ResidentProvider(baseUrl, json.data.apiKey);
-                    providers.medicineProvider = new MedicineProvider(baseUrl, json.data.apiKey);
-                    providers.medHistoryProvider = new MedHistoryProvider(baseUrl, json.data.apiKey);
-                    setProviders(providers);
+                    const rxFrak = {frak: frak, apiKey: apiKey, baseUrl: baseUrl};
+                    const providers = {
+                        residentProvider: ResidentProvider.init(rxFrak),
+                        medicineProvider: MedicineProvider.init(rxFrak),
+                        medHistoryProvider: MedHistoryProvider.init(rxFrak),
+                }
 
-                    // Load ALL Resident records up front and save them in the global store.
-                    if (residentList === null) {
-                        providers.residentProvider.query('*')
+                setProviders(providers);
+
+                // Load ALL Resident records up front and save them in the global store.
+                if (residentList === null) {
+                    const searchCriteria =
+                        {
+                            order_by: [
+                                {column: "LastName", direction: "asc"},
+                                {column: "FirstName", direction: "asc"}
+                            ]
+                        };
+
+                    providers.residentProvider.search(searchCriteria)
                         .then((data) => setResidentList(data))
-                        .catch((err) => props.onError(err));
-                    }
+                        .catch((err) => onError(err));
+                }
 
-                    // Let the parent component know we are logged in successfully
-                    props.onLogin(true);
+                // Load ALL OTC medications
+                RefreshOtcList(providers.medicineProvider)
+                    .then((data) => {setOtcList(data)})
+                    .catch((err) => setOtcList(null));
 
-                    // Remove alert (in the case where a previous log in attempt failed).
-                    setShowAlert(false);
+                // Let the parent component know we are logged in successfully
+                props.onLogin(true);
 
-                    // Display the organization name that logged in
-                    const organization = json.data.organization || null;
-                    if (organization) {
-                        // Since this element lives in index.html we use old fashioned JS and DOM manipulation to update
-                        document.getElementById("organization").innerHTML = json.data.organization;
-                    }
+                // Remove alert (in the case where a previous log in attempt failed).
+                setShowAlert(false);
+
+                // Display the organization name that logged in
+                const organization = json.data.organization || null;
+                if (organization) {
+                    // Since this element lives in index.html we use old fashioned JS and DOM manipulation to update
+                    document.getElementById("organization").innerHTML = json.data.organization;
+                }
                 });
             } else {
                 // Show invalid credentials alert
@@ -74,19 +103,21 @@ function LoginPage(props) {
             }
         })
         .catch((err) => {
-            props.onError(err);
+            onError(err);
         });
     }
 
     /**
      * Fires when the Logout Button is clicked
+     *
+     * @param {MouseEvent} e
      */
-    function logout(e) {
+    const logout = (e) => {
         e.preventDefault();
 
         setGlobal(initialState)
         .then(()=> console.log('logout successful'))
-        .catch((err) => console.error('logout error', development ? err : ''));
+        .catch((err) => onError(err))
     }
 
     const signIn = (
@@ -100,6 +131,7 @@ function LoginPage(props) {
                     type="text"
                     value={userName}
                     onChange={(e) => setUserName(e.target.value)}
+                    ref={focusRef}
                 />
                 </Col>
             </Form.Group>
@@ -113,6 +145,11 @@ function LoginPage(props) {
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        onKeyUp={(e) => {
+                            if (e.keyCode === 13) {
+                                login(e);
+                            }
+                        }}
                     />
                 </Col>
             </Form.Group>
@@ -156,6 +193,12 @@ function LoginPage(props) {
             {apiKey === null ? (signIn) : (signOut)}
         </Form>
     );
+}
+
+LoginPage.propTypes = {
+    activeTabKey: PropTypes.string,
+    onError: PropTypes.func.isRequired,
+    updateFocusRef: PropTypes.func.isRequired
 }
 
 export default LoginPage;

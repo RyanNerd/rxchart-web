@@ -1,35 +1,44 @@
-import Frak from "../providers/Frak";
-
 export type ResidentRecord = {
     Id : null | number,
     UserId: number,
     LastName: string,
     FirstName: string,
-    DOB_YEAR: null | Date,
-    DOB_MONTH: null | Date,
-    DOB_DAY: null | Date,
+    DOB_YEAR: number,
+    DOB_MONTH: number,
+    DOB_DAY: number,
     Created: null | Date,
     Updated: null | Date,
     deleted_at: null | Date,
 }
 
-const baseUrl = process.env.REACT_APP_BASEURL;
-const development = process.env.REACT_APP_DEVELOPMENT === 'true';
+export type DrugLogRecord = {
+    Id: null | number,
+    MedicineId: number,
+    Updated: Date
+}
 
-let ResidentRecord;
 export const initialState = {
-    development: development,
-    activeDrug: null,
-    activeResident: ResidentRecord,
+    development: process.env.REACT_APP_DEVELOPMENT === 'true',
+    activeResident: null,
     residentList: null,
     medicineList: null,
+    otcList: null,
     drugLogList: null,
     apiKey: null,
-    baseUrl: baseUrl,
+    baseUrl: process.env.REACT_APP_BASEURL,
     providers: {
         residentProvider: null,
         medicineProvider: null,
         medHistoryProvider: null
-    },
-    frak: new Frak()
+    }
+};
+
+export const newDrugInfo = {
+    Id: null,
+    Barcode: "",
+    ResidentId: null,
+    Drug: "",
+    Strength: "",
+    Directions: "",
+    Notes: ""
 };

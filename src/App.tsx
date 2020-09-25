@@ -1,6 +1,6 @@
-import LandingPage from "./components/Landing/LandingPage";
+import LandingPage from "./pages/LandingPage";
 import React, {useGlobal} from 'reactn';
-import {FULLNAME} from "./utility/common";
+import {FullName} from "./utility/common";
 
 /**
  * Main Entry Component
@@ -8,20 +8,20 @@ import {FULLNAME} from "./utility/common";
  * @returns {*}
  * @constructor
  */
-function App()
-{
+const App = () => {
     const [ activeResident ] = useGlobal('activeResident');
     const [ development ] = useGlobal('development');
     const residentColor = development ? 'blue' : "#edf11e";
+    const residentForegroundColor = development ? "#fffff0" : "black";
 
     return (
         <>
             {activeResident ?
-                <h2 style={{textAlign: "center"}}>
-                    <span style={{background: residentColor}}>
-                        {FULLNAME(activeResident)} {activeResident.DOB_MONTH}/{activeResident.DOB_DAY}/{activeResident.DOB_YEAR}
+                <h4 style={{textAlign: "center"}}>
+                    <span style={{background: residentColor, color: residentForegroundColor}}>
+                        {FullName(activeResident)} {activeResident.DOB_MONTH}/{activeResident.DOB_DAY}/{activeResident.DOB_YEAR}
                     </span>
-                </h2> : null
+                </h4> : null
             }
             <LandingPage/>
         </>

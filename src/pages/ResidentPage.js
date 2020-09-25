@@ -1,14 +1,15 @@
-import React, {setGlobal, useGlobal, useState} from 'reactn';
+import React, {useGlobal, useState} from 'reactn';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
-import ResidentGrid from './ResidentGrid';
-import ResidentEdit from './ResidentEdit';
-import {FULLNAME} from '../../utility/common';
-import RefreshMedicineList from "../../providers/RefreshMedicineList";
-import RefreshMedicineLog from "../../providers/RefreshMedicineLog";
-import ConfirmationDialog from "../Dialog/ConfirmationDialog";
+import ResidentGrid from '../components/Grids/ResidentGrid';
+import ResidentEdit from '../components/Modals/ResidentEdit';
+import {FullName} from '../utility/common';
+import RefreshMedicineList from "../providers/RefreshMedicineList";
+import RefreshMedicineLog from "../providers/RefreshMedicineLog";
+import ConfirmationDialog from "../components/Modals/Dialog/ConfirmationDialog";
 import {Form} from "react-bootstrap";
+import PropTypes from 'prop-types';
 
 /**
  * Display Resident Grid
@@ -17,18 +18,20 @@ import {Form} from "react-bootstrap";
  * @returns {*}
  * @constructor
  */
-export default function ResidentPage(props)
-{
-    // Establish initial state
+const ResidentPage = (props) => {
     const [ show, setShow ] = useState(false);
     const [ residentInfo, setResidentInfo ] = useState({Id: null});
     const [ showDeleteResident, setShowDeleteResident ] = useState(false);
     const [ residentToDelete, setResidentToDelete ] = useState(null);
 
+    const [ , setResidentList ] = useGlobal('residentList');
+    const [ , setMedicineList ] = useGlobal('medicineList');
+    const [ , setDrugLogList ] = useGlobal('drugLogList');
     const [ activeResident, setActiveResident ] = useGlobal('activeResident');
     const [ providers ] = useGlobal('providers');
 
     const residentProvider = providers.residentProvider;
+    const onError = props.onError;
 
     /**
      * Reactivate a trashed resident given the primary key
@@ -36,7 +39,7 @@ export default function ResidentPage(props)
      * @param id
      * @returns {Promise<Response>}
      */
-    function reactivateResident(id) {
+    const reactivateResident = (id) => {
         return residentProvider.restore({restore_id: id})
         .then((response) => {
             return response;
@@ -50,11 +53,10 @@ export default function ResidentPage(props)
     /**
      * Fires when user clicks the Edit button
      *
-     * @param e
+     * @param {MouseEvent} e
      * @param resident
      */
-    function handleOnEdit(e, resident)
-    {
+    const handleOnEdit = (e, resident) => {
         e.preventDefault();
 
         setResidentInfo({...resident});
@@ -64,10 +66,9 @@ export default function ResidentPage(props)
     /**
      * Fires when user clicks the + (add) button
      *
-     * @param e
+     * @param {MouseEvent} e
      */
-    function handleAdd(e)
-    {
+    const handleAdd = (e) => {
         e.preventDefault();
 
         setResidentInfo({
@@ -87,8 +88,7 @@ export default function ResidentPage(props)
      *
      * @param {object | null} residentInfo
      */
-    function handleModalClose(residentInfo)
-    {
+    const handleModalClose = (residentInfo) => {
         if (residentInfo) {
             const residentData = {...residentInfo};
 
@@ -123,25 +123,24 @@ export default function ResidentPage(props)
                         })
                         .then((residentList) => {
                             // Rehydrate the residentList
-                            setGlobal({residentList: residentList});
+                            setResidentList(residentList);
                             // Set the reactivated resident as the active resident.
                             setActiveResident(restoredResident);
                             // Rehydrate the MedicineList
                             RefreshMedicineList(providers.medicineProvider, restoredResident.Id)
                             .then((hydratedMedicineList) => {
-                                setGlobal({medicineList: hydratedMedicineList});
+                                setMedicineList (hydratedMedicineList);
                                 // If there are any medicines for the selected resident then
                                 // select the first one and make it the active drug.
                                 if (hydratedMedicineList && hydratedMedicineList.length > 0) {
-                                    setGlobal({activeDrug: hydratedMedicineList[0]});
                                     // Refresh the drugLogList for the new active drug.
-                                      RefreshMedicineLog(providers.medHistoryProvider, 'ResidentId', restoredResident.Id)
-                                    .then((data) => setGlobal({drugLogList: data}))
+                                    RefreshMedicineLog(providers.medHistoryProvider, restoredResident.Id)
+                                    .then((data) => setDrugLogList(data))
                                     .catch((err) => props.onError(err));
                                 }
                             });
                         })
-                        .catch((err) => props.onError(err));
+                        .catch((err) => onError(err));
                     })
                     .catch((error) => {
                         console.log(error);
@@ -149,25 +148,23 @@ export default function ResidentPage(props)
                 } else {
                     // Add the new resident
                     residentProvider.post(residentData)
-                    .then((response) => {
+                    .then((newResident) => {
                         residentProvider.search({order_by: [
                                 {column: "LastName", direction: "asc"},
                                 {column: "FirstName", direction: "asc"}
                             ]
                         })
                         .then((residentList) => {
-                            setGlobal({residentList: residentList});
+                            setResidentList(residentList);
                         })
-                        .catch((err) => props.onError(err));
-
-                        return response;
+                        .catch((err) => onError(err));
+                        return newResident;
                     })
-                    .then((response) => {
-                        setResidentInfo(response);
-                        setActiveResident(response);
-                        setGlobal({activeDrug: null, medicineList: null, drugLog: null});
+                    .then((newResident) => {
+                        setResidentInfo(newResident);
+                        handleOnSelected(null, newResident);
                     })
-                    .catch((err) => props.onError(err));
+                    .catch((err) => onError(err));
                 }
             })
             .catch((error) => {
@@ -180,38 +177,40 @@ export default function ResidentPage(props)
     /**
      * Fires when the selected column / row is clicked
      *
-     * @param e
-     * @param resident
+     * @param {MouseEvent|null} e
+     * @param {object} resident
      */
-    function handleOnSelected(e, resident)
-    {
+    const handleOnSelected = (e, resident) => {
+        if (e) {
+            e.preventDefault();
+        }
+
         setActiveResident(resident);
         RefreshMedicineList(providers.medicineProvider, resident.Id)
         .then((data) => {
-            setGlobal({medicineList: data});
             // If there are any medicines for the selected resident then
             // select the first one and make it the active drug.
             if (data && data.length > 0) {
-                setGlobal({activeDrug: data[0]});
+                setMedicineList(data);
                 // Refresh the drugLogList for the new active drug.
-                RefreshMedicineLog(providers.medHistoryProvider, 'ResidentId', data[0].ResidentId)
-                    .then((data) => setGlobal({drugLogList: data}))
-                    .catch((err) => props.onError(err));
+                RefreshMedicineLog(providers.medHistoryProvider, data[0].ResidentId)
+                .then((data) => setDrugLogList(data))
+                .catch((err) => onError(err));
+            } else {
+                setMedicineList(null);
+                setDrugLogList(null);
             }
         })
-        .catch((err) => setGlobal({medicineList: null}));
-
-        setGlobal({activeDrug: null});
+        .catch(() => setMedicineList(null));
     }
 
     /**
      * Fires when user clicks on resident trash icon
      *
-     * @param {event} e
+     * @param {MouseEvent} e
      * @param {object} resident
      */
-    function handleOnDelete(e, resident)
-    {
+    const handleOnDelete = (e, resident) =>  {
         e.preventDefault();
         setResidentToDelete(resident);
         setShowDeleteResident(true);
@@ -220,8 +219,7 @@ export default function ResidentPage(props)
     /**
      * Fires when user confirms to delete resident record
      */
-    function deleteResident()
-    {
+    const deleteResident = () => {
         // Perform the DELETE API call
         residentProvider.delete(residentToDelete.Id)
         .then((response) => {
@@ -231,9 +229,18 @@ export default function ResidentPage(props)
                     setActiveResident(null);
                 }
 
-                residentProvider.query('*').then((data) => setGlobal({residentList: data}));
+                const searchCriteria =
+                    {
+                        order_by: [
+                            {column: "LastName", direction: "asc"},
+                            {column: "FirstName", direction: "asc"}
+                        ]
+                    };
+                residentProvider.search(searchCriteria)
+                    .then((data) => setResidentList(data))
+                    .catch((err) => onError(err));
             } else {
-                props.onError(response);
+                onError(response);
             }
         });
     }
@@ -278,7 +285,7 @@ export default function ResidentPage(props)
 
             {residentToDelete &&
             <ConfirmationDialog
-                title={"Delete " + FULLNAME(residentToDelete)}
+                title={"Deactivate " + FullName(residentToDelete)}
                 body={
                     <b style={{color: "red"}}>
                         Are you sure?
@@ -299,3 +306,10 @@ export default function ResidentPage(props)
         </>
     );
 }
+
+ResidentPage.propTypes = {
+    onError: PropTypes.func.isRequired,
+
+}
+
+export default ResidentPage;

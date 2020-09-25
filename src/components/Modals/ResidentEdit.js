@@ -1,10 +1,11 @@
-import React, {useEffect, useState} from 'reactn';
+import React, {useEffect, useRef, useState} from 'reactn';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import {isDayValid, isMonthValid, isYearValid} from "../../utility/common";
+import PropTypes from 'prop-types';
 
 /**
  * Edit Modal for Resident
@@ -16,23 +17,21 @@ import {isDayValid, isMonthValid, isYearValid} from "../../utility/common";
  * @returns {boolean|*}
  * @constructor
  */
-export default function ResidentEdit(props)
-{
+const ResidentEdit = (props) => {
     // Set up local initial state
     const [ show, setShow ] = useState(props.show);
     const [ residentInfo, setResidentInfo ] = useState(props.residentInfo);
+    const focusRef = useRef(null);
 
     /**
      * Fires when a text field or checkbox is changing.
      *
-     * @param  e
+     * @param {KeyboardEvent} e
      */
-    function handleOnChange(e)
-    {
+    const handleOnChange = (e) => {
         const target = e.target;
         let value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
-
         residentInfo[name] = value;
         setResidentInfo({...residentInfo});
     }
@@ -40,31 +39,23 @@ export default function ResidentEdit(props)
     /**
      * Fires when the user clicks on save or cancel
      *
-     * @param {event} e
+     * @param {MouseEvent} e
      * @param {boolean} shouldSave
      */
-    function handleHide(e, shouldSave)
-    {
+    const handleHide = (e, shouldSave) => {
         if (shouldSave) {
             props.onClose({...residentInfo});
         } else {
             props.onClose(null);
         }
-
         setShow(false);
     }
 
-    // Observer for show property
-    useEffect(() => {
-        setShow(props.show)
-    }, [props.show]);
-
+    // Observer for show
+    useEffect(() => {setShow(props.show)}, [props.show]);
 
     // Observer for residentInfo property
-    useEffect(() => {
-        setResidentInfo({...props.residentInfo});
-    }, [props.residentInfo]);
-
+    useEffect(() => {setResidentInfo({...props.residentInfo})}, [props.residentInfo]);
 
     // Prevent render if there is no data.
     if (!residentInfo) {
@@ -73,13 +64,13 @@ export default function ResidentEdit(props)
 
     const residentTitle = residentInfo.Id ? 'Edit Resident' : 'Add New Resident';
 
-
     return (
         <Modal
           centered
           size="lg"
           show={show}
           onHide={(e, r)=>{handleHide(e, false)}}
+          onEntered={() => focusRef.current.focus()}
         >
             <Modal.Header closeButton>
                 <Modal.Title>{residentTitle}</Modal.Title>
@@ -98,6 +89,7 @@ export default function ResidentEdit(props)
                                 value={residentInfo.FirstName}
                                 name="FirstName"
                                 onChange={(e) => handleOnChange(e)}
+                                ref={focusRef}
                             />
                             <div className="invalid-feedback">
                                 First name can not be blank.
@@ -191,3 +183,11 @@ export default function ResidentEdit(props)
         </Modal>
     )
 }
+
+ResidentEdit.propTypes = {
+    show: PropTypes.bool,
+    residentInfo: PropTypes.object,
+    onClose: PropTypes.func,
+}
+
+export default ResidentEdit;

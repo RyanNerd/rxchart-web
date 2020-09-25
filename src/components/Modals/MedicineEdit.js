@@ -1,48 +1,58 @@
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import Modal from 'react-bootstrap/Modal';
-import {FULLNAME} from "../../utility/common";
+import {FullName} from "../../utility/common";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
+import PropTypes from 'prop-types';
 
 /**
  * Edit Modal for Medicine
  *
- * @param props :
-    *          show {boolean} show/hide this modal
- *          residentInfo {Id: id, FirstName: first_name, etc.}
+ * @param {object} props :
+ *          show {boolean} show/hide this modal
+ *          drugInfo {Id: id, Drug: drug_name, etc.}
  *
  * @returns {boolean|*}
  * @constructor
  */
-export default function MedicineEdit(props)
-{
+const MedicineEdit = (props) => {
     const [ show, setShow ] = useState(props.show);
     const [ drugInfo, setDrugInfo ] = useState(null);
+    const [ canSave, setCanSave ] = useState(false);
     const [ activeResident ] = useGlobal('activeResident');
 
+    const otc = props.otc;
     const textInput = useRef(null);
 
-    // Observer for show and drugInfo properties
+    // Observer for show
+    useEffect(() => {setShow(props.show)}, [props.show]);
+
+    // Observer/mutator for drugInfo
     useEffect(() => {
-        if (props.drugInfo) {
-            setShow(props.show);
-            setDrugInfo(props.drugInfo);
+        const info = props.drugInfo;
+        if (info && info.Directions === null) {
+            info.Directions = '';
         }
-    }, [props.show, props.drugInfo]);
+        if (info && info.Notes === null) {
+            info.Notes = '';
+        }
+        setDrugInfo(info);
+    }, [props.drugInfo]);
+
+    // Disable the Save button if the Drug name is empty.
+    useEffect(() => {setCanSave(drugInfo && drugInfo.Drug.length > 0)}, [drugInfo]);
 
     /**
      * Fires when a text field or checkbox is changing.
      *
-     * @param  e
+     * @param {KeyboardEvent} e
      */
-    function handleOnChange(e)
-    {
+    const handleOnChange = (e) => {
         const target = e.target;
         let value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
-
         drugInfo[name] = value;
         setDrugInfo({...drugInfo});
     }
@@ -50,17 +60,16 @@ export default function MedicineEdit(props)
     /**
      * Fires when the user clicks on save or cancel
      *
-     * @param {event} e
+     * @param {MouseEvent} e
      * @param {boolean} shouldSave
      */
-    function handleHide(e, shouldSave)
-    {
+    const handleHide = (e, shouldSave) => {
+        e.preventDefault();
         if (shouldSave) {
             props.onClose({...drugInfo});
         } else {
             props.onClose(null);
         }
-
         setShow(false);
     }
 
@@ -71,7 +80,11 @@ export default function MedicineEdit(props)
 
     const drugTitleType = drugInfo.Id ? 'Edit ' : 'Add ';
     const drugName = drugInfo.Id ? drugInfo.Drug : 'new drug';
-    const fullName = activeResident && FULLNAME(activeResident);
+    const fullName = activeResident && FullName(activeResident);
+    const modalTitle = otc ?
+        (<Modal.Title>{drugTitleType} OTC <b style={{color: "blue"}}><i>{drugName}</i></b></Modal.Title>)
+        :
+        (<Modal.Title>{drugTitleType} <b style={{color: "blue"}}><i>{drugName}</i></b><span> for </span><b style={{backgroundColor: "yellow"}}>{fullName}</b></Modal.Title>);
 
     return (
         <Modal
@@ -82,12 +95,12 @@ export default function MedicineEdit(props)
             onEntered={() => textInput.current.focus()}
         >
             <Modal.Header closeButton>
-                <Modal.Title>{drugTitleType} <b style={{color: "blue"}}><i>{drugName}</i></b><span> for </span><b style={{backgroundColor: "yellow"}}>{fullName}</b></Modal.Title>
+                {modalTitle}
             </Modal.Header>
 
             <Modal.Body>
                 <Form>
-                    <Form.Group as={Row} controlId="drug-name-strength">
+                    <Form.Group as={Row}>
                         <Form.Label column sm="2">
                             Drug Name
                         </Form.Label>
@@ -117,57 +130,6 @@ export default function MedicineEdit(props)
                         </Col>
                     </Form.Group>
 
-                    <Form.Group as={Row} controlId="drug-barcode">
-                        <Form.Label column sm="2">
-                            Barcode
-                        </Form.Label>
-
-                        <Col sm="9">
-                            <Form.Control
-                                type="text"
-                                value={drugInfo.Barcode}
-                                name="Barcode"
-                                onChange={(e) => handleOnChange(e)}
-                            />
-                        </Col>
-                    </Form.Group>
-
-                    <Form.Group as={Row}>
-                        <Form.Label column sm="2">
-                            Fill Date Month
-                        </Form.Label>
-                        <Col sm={2}>
-                            <Form.Control
-                                type="text"
-                                value={drugInfo.FillDateMonth}
-                                name="FillDateMonth"
-                                onChange={(e) => handleOnChange(e)}
-                            />
-                        </Col>
-                        <Form.Label column sm="1">
-                            Day
-                        </Form.Label>
-                        <Col sm={2}>
-                            <Form.Control
-                                type="text"
-                                value={drugInfo.FillDateDay}
-                                name="FillDateDay"
-                                onChange={(e) => handleOnChange(e)}
-                            />
-                        </Col>
-                        <Form.Label column sm="1">
-                            Year
-                        </Form.Label>
-                        <Col sm={3}>
-                            <Form.Control
-                                type="text"
-                                value={drugInfo.FillDateYear}
-                                name="FillDateYear"
-                                onChange={(e) => handleOnChange(e)}
-                            />
-                        </Col>
-                    </Form.Group>
-
                     <Form.Group as={Row} controlId="drug-Directions">
                         <Form.Label column sm="2">
                             Directions
@@ -185,7 +147,8 @@ export default function MedicineEdit(props)
                         </Col>
                     </Form.Group>
 
-                    <Form.Group as={Row} controlId="drug-Notes">
+                    {!otc &&
+                    <Form.Group as={Row} controlId="otc-drug-Notes">
                         <Form.Label column sm="2">
                             Notes
                         </Form.Label>
@@ -200,6 +163,63 @@ export default function MedicineEdit(props)
                             />
                         </Col>
                     </Form.Group>
+                    }
+
+                    <Form.Group as={Row} controlId="drug-barcode">
+                        <Form.Label column sm="2">
+                            Barcode
+                        </Form.Label>
+
+                        <Col sm="9">
+                            <Form.Control
+                                type="text"
+                                value={drugInfo.Barcode}
+                                name="Barcode"
+                                onChange={(e) => handleOnChange(e)}
+                            />
+                        </Col>
+                    </Form.Group>
+
+                    {!otc &&
+                    <Form.Group as={Row}>
+                        <Form.Label column sm="2">
+                            Fill Date
+                        </Form.Label>
+                        <Form.Label column sm="1">
+                            Month
+                        </Form.Label>
+                        <Col sm={1}>
+                            <Form.Control
+                                type="text"
+                                value={drugInfo.FillDateMonth}
+                                name="FillDateMonth"
+                                onChange={(e) => handleOnChange(e)}
+                            />
+                        </Col>
+                        <Form.Label column sm="1">
+                            Day
+                        </Form.Label>
+                        <Col sm={1}>
+                            <Form.Control
+                                type="text"
+                                value={drugInfo.FillDateDay}
+                                name="FillDateDay"
+                                onChange={(e) => handleOnChange(e)}
+                            />
+                        </Col>
+                        <Form.Label column sm="1">
+                            Year
+                        </Form.Label>
+                        <Col sm={2}>
+                            <Form.Control
+                                type="text"
+                                value={drugInfo.FillDateYear}
+                                name="FillDateYear"
+                                onChange={(e) => handleOnChange(e)}
+                            />
+                        </Col>
+                    </Form.Group>
+                    }
                 </Form>
             </Modal.Body>
 
@@ -211,6 +231,7 @@ export default function MedicineEdit(props)
                     Cancel
                 </Button>
                 <Button
+                    disabled={!canSave}
                     onClick={(e) => handleHide(e, true)}
                     variant="primary"
                 >
@@ -220,3 +241,13 @@ export default function MedicineEdit(props)
         </Modal>
     );
 }
+
+MedicineEdit.propTypes = {
+    show: PropTypes.bool,
+    otc: PropTypes.bool,
+    drugInfo: PropTypes.object,
+    onClose: PropTypes.func,
+    onHide: PropTypes.func
+}
+
+export default MedicineEdit;

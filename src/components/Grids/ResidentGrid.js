@@ -3,6 +3,7 @@ import Button from 'react-bootstrap/Button';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import Table from 'react-bootstrap/Table';
 import {DOB} from "../../utility/common";
+import PropTypes from 'prop-types';
 
 /**
  * ResidentGrid component
@@ -14,9 +15,12 @@ import {DOB} from "../../utility/common";
  * @returns {*}
  * @constructor
  */
-export default function ResidentGrid(props) {
-    // Get residentsList[] from the global store
+const ResidentGrid = (props) => {
     const [ residentList ] = useGlobal('residentList');
+    const onSelected = props.onSelected;
+    const onEdit = props.onEdit;
+    const onDelete = props.onDelete;
+    const activeResident = props.activeResident;
 
     /**
      * Resident Child Table Component
@@ -30,49 +34,50 @@ export default function ResidentGrid(props) {
         const dob = DOB(resident);
 
         // Determine if this row is selected [for radio ToggleButtons]
-        const isSelected = props.onSelected && props.activeResident && resident.Id === props.activeResident.Id;
+        const isSelected = onSelected && activeResident && resident.Id === activeResident.Id;
 
         return (
             <tr
                 key={'resident-grid-row-' + resident.Id}
                 id={'resident-grid-row-' + resident.Id}
             >
-                {props.onSelected &&
-                    <td>
+                {onSelected &&
+                    <td style={{textAlign: 'center', verticalAlign: "middle"}}>
                         <ToggleButton
                             id={"resident-grid-select-btn-" + resident.Id}
                             type="radio"
                             name="resident-list"
                             variant="outline-info"
                             checked={isSelected}
-                            onClick={(e) => props.onSelected(e, resident)}
+                            onClick={(e) => onSelected(e, resident)}
+                            value={resident.Id}
                         />
                     </td>
                 }
 
-                {props.onEdit &&
-                    <td>
-                        <Button
-                            size="sm"
-                            id={"resident-grid-edit-btn-" + resident.Id}
-                            onClick={(e) => props.onEdit(e, resident)}
-                        >
-                            Edit
-                        </Button>
-                    </td>
+                <td style={{verticalAlign: "middle"}}>{resident.LastName}</td>
+                <td style={{verticalAlign: "middle"}}>{resident.FirstName}</td>
+                <td style={{verticalAlign: "middle"}}>{dob}</td>
+
+                {onEdit &&
+                <td style={{textAlign: 'center', verticalAlign: "middle"}}>
+                    <Button
+                        size="sm"
+                        id={"resident-grid-edit-btn-" + resident.Id}
+                        onClick={(e) => onEdit(e, resident)}
+                    >
+                        Edit
+                    </Button>
+                </td>
                 }
 
-                <td>{resident.LastName}</td>
-                <td>{resident.FirstName}</td>
-                <td>{dob}</td>
-
-                {props.onDelete && !resident.deleted_at &&
-                    <td>
+                {onDelete && !resident.deleted_at &&
+                    <td style={{textAlign: 'center', verticalAlign: "middle"}}>
                         <Button
                             size="sm"
                             id={"resident-grid-delete-btn-" + resident.Id}
                             variant="outline-danger"
-                            onClick={(e) => props.onDelete(e, resident)}
+                            onClick={(e) => onDelete(e, resident)}
                         >
                             <span role="img" aria-label="delete">🗑️</span>
                         </Button>
@@ -83,14 +88,11 @@ export default function ResidentGrid(props) {
     };
 
     return (
-        <Table striped bordered hover size="sm">
+        <Table striped bordered hover size="sm" className="w-auto">
             <thead>
             <tr>
-                {props.onSelected &&
+                {onSelected &&
                     <th>Selected</th>
-                }
-                {props.onEdit &&
-                    <th/>
                 }
                 <th>
                     <span>Last Name</span>
@@ -101,7 +103,10 @@ export default function ResidentGrid(props) {
                 <th>
                     <span>DOB</span>
                 </th>
-                {props.onDelete &&
+                {onEdit &&
+                    <th/>
+                }
+                {onDelete &&
                     <th/>
                 }
             </tr>
@@ -112,3 +117,12 @@ export default function ResidentGrid(props) {
         </Table>
     );
 }
+
+ResidentGrid.propTypes = {
+    onSelected: PropTypes.func,
+    onEdit: PropTypes.func,
+    onDelete: PropTypes.func,
+    activeResident: PropTypes.object
+}
+
+export default ResidentGrid;

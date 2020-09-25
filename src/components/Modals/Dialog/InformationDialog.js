@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'reactn';
 import Modal from 'react-bootstrap/Modal';
+import PropTypes from 'prop-types';
 
-export default function InformationDialog(props)
-{
+const InformationDialog = (props) => {
     const [ show, setShow ] = useState(props.show);
     const body = props.body ? props.body : '';
     const title = props.title ? props.title : 'Information';
@@ -29,3 +29,11 @@ export default function InformationDialog(props)
         </Modal>
     );
 }
+
+InformationDialog.propTypes = {
+    body: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
+    title: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
+    size: PropTypes.string
+}
+
+export default InformationDialog;

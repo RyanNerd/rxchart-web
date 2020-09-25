@@ -1,10 +1,10 @@
 import React from 'reactn';
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
+import PropTypes from 'prop-types';
 
 /**
  * Drug Dropdown
- * Pure function component
  *
  * @param props
  *  - drugId {int} active drug record Id
@@ -13,14 +13,31 @@ import Dropdown from "react-bootstrap/Dropdown";
  *
  * @returns {* | boolean}
  */
-export default function DrugDropdown(props)
-{
+const DrugDropdown = (props) => {
+    const medicineList = props.medicineList;
+    const drugId = props.drugId;
+
     // Do not render unless we have the required props.
-    if (!props.medicineList || props.medicineList.length === 0 || !props.drugId) {
+    if (!medicineList || medicineList.length === 0 || !drugId) {
         return false;
     }
 
-    const activeDrug = getDrugById(props.drugId);
+    /**
+     * Get the drug object from the medicineList given the drugId
+     *
+     * @param {int} drugId
+     * @returns {object | null}
+     */
+    const getDrugById = (drugId) => {
+        for (let drug of medicineList) {
+            if (drug.Id === drugId) {
+                return drug;
+            }
+        }
+        return null;
+    }
+
+    const activeDrug = getDrugById(drugId);
 
     // Do not render if there isn't an active drug.
     if (!activeDrug) {
@@ -46,37 +63,28 @@ export default function DrugDropdown(props)
         return (
             <Dropdown.Item
                 key={medicine.Id}
-                active={medicine.Id === props.drugId}
+                active={medicine.Id === drugId}
                 onSelect={(e) =>props.onSelect(e, medicine)}>
                     {drugDetail}
             </Dropdown.Item>
         );
     };
 
-    /**
-     * Get the drug object from the medicineList given the drugId
-     *
-     * @param {int} drugId
-     * @returns {object | null}
-     */
-    function getDrugById(drugId)
-    {
-        for (let drug of props.medicineList) {
-            if (drug.Id === drugId) {
-                return drug;
-            }
-        }
-        return null;
-    }
-
     return (
         <DropdownButton
-            size="sm"
+            size="lg"
             title={title}
             variant="primary"
-            id="medicine-dropdown-button"
         >
-            {props.medicineList.map(MedicineDropdownItems)}
+            {medicineList.map(MedicineDropdownItems)}
         </DropdownButton>
     )
 }
+
+DrugDropdown.propTypes = {
+    medicineList: PropTypes.arrayOf(PropTypes.object),
+    onSelect: PropTypes.func,
+    drugId: PropTypes.number
+}
+
+export default DrugDropdown;

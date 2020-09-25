@@ -1,14 +1,15 @@
 import React, {useGlobal, useState} from 'reactn';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
-import LoginPage from './../Login/LoginPage';
-import ResidentPage from "../Resident/ResidentPage";
-import MedicinePage from "../Medicine/MedicinePage";
-import DrugHistoryPage from "../DrugHistory/DrugHistoryPage";
-import ManageDrugPage from "../ManageDrugs/ManageDrugPage";
+import LoginPage from './LoginPage';
+import ResidentPage from "./ResidentPage";
+import MedicinePage from "./MedicinePage";
+import DrugHistoryPage from "./DrugHistoryPage";
+import ManageDrugPage from "./ManageDrugPage";
+import OtcPage from "./OtcPage";
+import ManageOtcPage from "./ManageOtcPage";
 
-function LandingPage()
-{
+const LandingPage = () => {
     const [ apiKey, setApiKey ] = useGlobal('apiKey');
     const [ activeResident ] = useGlobal('activeResident');
     const [ development ] = useGlobal('development');
@@ -16,8 +17,27 @@ function LandingPage()
     const [ errorDetails, setErrorDetails ] = useState(null);
     const [ activeTabKey, setActiveTabKey ] = useState('login');
 
-    function errorOccurred(err)
-    {
+    const [ drugLogList ] = useGlobal('drugLogList');
+    const [ medicineList ] = useGlobal('medicineList');
+    const [ otcList ] = useGlobal('otcList');
+
+    /**
+     * Given a ref set focus if it exists and is current.
+     *
+     * @param {React.Ref} ref
+     */
+    const setFocus = (ref) => {
+        if (ref && ref.current) {
+            ref.current.focus();
+        }
+    }
+
+    /**
+     * Error handler
+     *
+     * @param {ErrorEvent | null} err
+     */
+    const errorOccurred = (err) => {
         if (development) {
             console.error('Error', err);
             if (err) {
@@ -44,16 +64,29 @@ function LandingPage()
                 title={apiKey ? "Logout" : "Login"}
             >
                 <LoginPage
-                    onLogin={(loggedIn) => {setActiveTabKey(loggedIn ? 'drugs' : 'login')}}
+                    onLogin={(loggedIn) => {setActiveTabKey(loggedIn ? 'resident' : 'login')}}
+                    onError={(error) => errorOccurred(error)}
+                    updateFocusRef={(ref) => setFocus(ref)}
+                    activeTabKey={activeTabKey}
+                />
+            </Tab>
+            <Tab
+                disabled={apiKey === null || !activeResident}
+                eventKey="log"
+                title="Rx">
+                <MedicinePage
+                    activeTabKey={activeTabKey}
                     onError={(error) => errorOccurred(error)}
                 />
             </Tab>
             <Tab
-                disabled={apiKey === null}
-                eventKey="drugs"
-                title="Scan">
-                <MedicinePage
+                disabled={apiKey === null || !activeResident}
+                eventKey="otc"
+                title="OTC">
+                <OtcPage
                     onError={(error) => errorOccurred(error)}
+                    updateFocusRef={(ref) => setFocus(ref)}
+                    activeTabKey={activeTabKey}
                 />
             </Tab>
             <Tab
@@ -65,18 +98,31 @@ function LandingPage()
                 />
             </Tab>
             <Tab
-                disabled={apiKey === null || activeResident === null}
+                disabled={apiKey === null || !activeResident}
                 eventKey="history"
                 title="Drug History"
             >
-                <DrugHistoryPage/>
+                <DrugHistoryPage
+                    drugLogList={drugLogList}
+                    medicineList={medicineList}
+                    otcList={otcList}
+                />
             </Tab>
             <Tab
-                disabled={apiKey === null || activeResident === null}
+                disabled={apiKey === null || !activeResident}
                 eventKey="manage"
-                title="Manage Medicine"
+                title="Manage Rx"
             >
                 <ManageDrugPage
+                    onError={(error) => errorOccurred(error)}
+                />
+            </Tab>
+            <Tab
+                disabled={apiKey === null}
+                eventKey="manage-otc"
+                title="Manage OTC"
+            >
+                <ManageOtcPage
                     onError={(error) => errorOccurred(error)}
                 />
             </Tab>
