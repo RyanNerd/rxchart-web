@@ -15,15 +15,12 @@ import {calculateLastTaken} from "../utility/common";
 import {newDrugInfo} from "../utility/InitialState";
 import PropTypes from 'prop-types';
 import LastTakenButton from "../components/Buttons/LastTakenButton";
+import searchDrugs from "../utility/searchDrugs";
+import isSearchValid from "../utility/isSearchValid";
 
 /**
  * OtcPage
- * This is where most of the logic and data entry will be done so the page is a little busy
- * Features of this page are:
- *  - Manually Add Medicine
- *  - Add Drug to Medicine Log
- *  - Edit / Delete Existing Medicine
- *  - Drug History Grid
+ * UI for logging OTC medications
  *
  * @returns {*}
  */
@@ -86,45 +83,15 @@ const OtcPage = (props) => {
 
     // Handle if the search text has a match in the otcList.
     useEffect(() => {
-        const textLen = searchText ? searchText.length : 0;
-        if (textLen > 0 && otcList && otcList.length > 0) {
-            let otcDrugMatch = null;
-            const c = searchText.substr(0,1);
-            // Is the first character a digit? If so, search the Barcode otherwise search the Drug name
-            if (c >= '0' && c <= '9') {
-               otcDrugMatch = otcList.filter(drug =>
-                    (drug.Barcode.substr(0, textLen).toLowerCase() === searchText.toLowerCase())
-                );
-            } else {
-                otcDrugMatch =
-                    otcList.filter(drug =>
-                        (drug.Drug.substr(0, textLen).toLowerCase() === searchText.toLowerCase())
-                    );
-            }
-            if (otcDrugMatch && otcDrugMatch.length > 0) {
-                setActiveDrug(otcDrugMatch[0]);
-            }
+        const drugMatch = searchDrugs(searchText, otcList);
+        if (drugMatch) {
+            setActiveDrug(drugMatch);
         }
     }, [searchText, otcList]);
 
     // Show or hide the valid search icon
     useEffect(() => {
-        const textLen = searchText ? searchText.length : 0;
-        if (activeDrug) {
-            let searched;
-            const c = searchText.substr(0,1);
-            // Is the first character a digit? If so, search the Barcode otherwise search the Drug name
-            if (c >= '0' && c <= '9') {
-                searched = activeDrug.Barcode;
-            } else {
-                searched = activeDrug.Drug;
-            }
-            if (searched.substr(0, textLen).toLowerCase() === searchText.substr(0, textLen).toLowerCase()) {
-                setSearchIsValid(true);
-            } else {
-                setSearchIsValid(false);
-            }
-        }
+        setSearchIsValid(isSearchValid(searchText, activeDrug));
     }, [activeDrug, searchText]);
 
     // Reset the search text input when the resident changes.

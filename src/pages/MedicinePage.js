@@ -16,15 +16,12 @@ import {calculateLastTaken} from "../utility/common";
 import {newDrugInfo} from "../utility/InitialState";
 import PropTypes from 'prop-types';
 import LastTakenButton from "../components/Buttons/LastTakenButton";
+import searchDrugs from "../utility/searchDrugs";
+import isSearchValid from "../utility/isSearchValid";
 
 /**
  * MedicinePage
- * This is where most of the logic and data entry will be done so the page is a little busy
- * Features of this page are:
- *  - Manually Add Medicine
- *  - Add Drug to Medicine Log
- *  - Edit / Delete Existing Medicine
- *  - Drug History Grid
+ * UI for logging prescription medications
  *
  * @returns {*}
  */
@@ -34,7 +31,7 @@ const MedicinePage = (props) => {
     const [ drugInfo, setDrugInfo ] = useState(null);
     const [ drugLogInfo, setDrugLogInfo ] = useState(null);
     const [ showDeleteDrugLogRecord, setShowDeleteDrugLogRecord ] = useState(false);
-    const [ lastTaken, setLastTaken ] = useState(false);
+    const [ lastTaken, setLastTaken ] = useState(null);
     const [ activeDrug, setActiveDrug ] = useState(null);
     const [ searchText, setSearchText ] = useState('');
     const [ searchIsValid, setSearchIsValid ] = useState(false)
@@ -77,24 +74,9 @@ const MedicinePage = (props) => {
 
     // Handle if the search text has a match in the medicineList.
     useEffect(() => {
-        const textLen = searchText ? searchText.length : 0;
-        if (textLen > 0 && medicineList && medicineList.length > 0) {
-            let drugMatch = null;
-            const c = searchText.substr(0,1);
-            // Is the first character a digit? If so, search the Barcode otherwise search the Drug name
-            if (c >= '0' && c <= '9') {
-                drugMatch =
-                    medicineList.filter(drug =>
-                        (drug.Barcode.substr(0, textLen).toLowerCase() === searchText.toLowerCase()));
-            } else {
-                drugMatch =
-                    medicineList.filter(drug =>
-                        (drug.Drug.substr(0, textLen).toLowerCase() === searchText.toLowerCase()));
-
-            }
-            if (drugMatch && drugMatch.length > 0) {
-                setActiveDrug(drugMatch[0]);
-            }
+        const drugMatch = searchDrugs(searchText, medicineList);
+        if (drugMatch) {
+            setActiveDrug(drugMatch);
         }
     }, [searchText, medicineList]);
 
@@ -105,22 +87,7 @@ const MedicinePage = (props) => {
 
     // Show or hide the valid search icon
     useEffect(() => {
-        const textLen = searchText ? searchText.length : 0;
-        if (activeDrug) {
-            let searched;
-            const c = searchText.substr(0,1);
-            // Is the first character a digit? If so, search the Barcode otherwise search the Drug name
-            if (c >= '0' && c <= '9') {
-                searched = activeDrug.Barcode;
-            } else {
-                searched = activeDrug.Drug;
-            }
-            if (searched.substr(0, textLen).toLowerCase() === searchText.substr(0, textLen).toLowerCase()) {
-                setSearchIsValid(true);
-            } else {
-                setSearchIsValid(false);
-            }
-        }
+        setSearchIsValid(isSearchValid(searchText, activeDrug));
     }, [activeDrug, searchText]);
 
     /**
