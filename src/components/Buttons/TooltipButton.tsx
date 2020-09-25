@@ -28,15 +28,17 @@ const TooltipButton = (props: IProps): JSX.Element => {
         children
     } = props;
 
+    const button = (
+        <Button
+            {...props}
+        >
+            {children}
+        </Button>
+    )
+
     // If tooltip isn't given then return a regular Button with no overlay
     if (!tooltip) {
-        return (
-            <Button
-                {...props}
-            >
-                {children}
-            </Button>
-        )
+        return button;
     }
 
     return (
@@ -48,11 +50,7 @@ const TooltipButton = (props: IProps): JSX.Element => {
                 </Tooltip>
             }
         >
-            <Button
-                {...props}
-            >
-                {props.children}
-            </Button>
+            {button}
         </OverlayTrigger>
     );
 }

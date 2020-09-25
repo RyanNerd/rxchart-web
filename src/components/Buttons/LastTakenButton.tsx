@@ -1,13 +1,23 @@
 import React from "reactn";
 import Button from "react-bootstrap/Button";
 import PropTypes from 'prop-types';
+import {ReactChildren} from "react";
 
-const LastTakenButton = (props) => {
-    const lastTaken = props.lastTaken;
-    const content = props.children || (
+interface IProps {
+    lastTaken?: number | undefined
+    children: ReactChildren
+}
+
+const LastTakenButton = (props: IProps) => {
+    const {
+        lastTaken,
+        children
+    } = props;
+
+    const content = children || (
         <>
             {/* Display in BOLD if taken 3 or less hours ago */}
-            {lastTaken !== null && lastTaken <= 3 ? <b>Last Taken (hours): {lastTaken}</b> :
+            {lastTaken !== null && lastTaken && lastTaken <= 3 ? <b>Last Taken (hours): {lastTaken}</b> :
             <span>Last Taken (hours): {lastTaken}</span>}
         </>
     );
