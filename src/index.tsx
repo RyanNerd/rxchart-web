@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom';
 import React, {setGlobal} from "reactn";
 import App from './App';
-import {initialState} from "./utility/InitialState";
+import {initialState} from "./utility/initialState";
 
 setGlobal(initialState)
     .then((initialState) => {

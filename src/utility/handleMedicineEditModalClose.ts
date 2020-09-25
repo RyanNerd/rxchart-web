@@ -6,6 +6,7 @@
  * @param {Promise} refreshList
  * @param {function} setDrugList
  * @param {function} onError
+ * @returns {void}
  */
 export const handleMedicineEditModalClose = (
         drugInfo: {Id: number | null, Notes: string | null},
@@ -13,7 +14,7 @@ export const handleMedicineEditModalClose = (
         refreshList: Function,
         setDrugList: Function,
         onError: Function
-    ) => {
+    ): void => {
     if (drugInfo) {
         const drugData = {...drugInfo};
 

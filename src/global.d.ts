@@ -1,5 +1,5 @@
 import 'reactn';
-import {ResidentRecord} from "./utility/InitialState";
+import {ResidentRecord} from "./types/RecordTypes";
 
 declare module 'reactn/default' {
 

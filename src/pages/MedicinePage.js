@@ -13,11 +13,12 @@ import RefreshMedicineLog from "../providers/RefreshMedicineLog";
 import MedicineListGroup from "../components/ListGroups/MedicineListGroup";
 import TooltipButton from "../components/Buttons/TooltipButton";
 import {calculateLastTaken} from "../utility/common";
-import {newDrugInfo} from "../utility/InitialState";
+import {newDrugInfo} from "../types/RecordTypes";
 import PropTypes from 'prop-types';
 import LastTakenButton from "../components/Buttons/LastTakenButton";
 import searchDrugs from "../utility/searchDrugs";
 import isSearchValid from "../utility/isSearchValid";
+import logButtonColor from "../utility/logButtonColor";
 
 /**
  * MedicinePage
@@ -273,7 +274,7 @@ const MedicinePage = (props) => {
                         <span style={{textAlign: "center"}}> <h2>{activeDrug.Drug} History</h2> </span>
                         <Button
                             disabled={lastTaken === 0}
-                            variant="outline-primary"
+                            variant={"outline-" + logButtonColor(lastTaken)}
                             className="mr-2"
                             onClick={(e) => {
                                 e.preventDefault();
@@ -286,7 +287,7 @@ const MedicinePage = (props) => {
                         <Button
                             disabled={lastTaken === 0}
                             className="mr-3"
-                            variant="outline-primary"
+                            variant={"outline-" + logButtonColor(lastTaken)}
                             onClick={(e) => {
                                 e.preventDefault();
                                 handleLogDrugAmount(2);

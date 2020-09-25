@@ -5,6 +5,7 @@ import TooltipButton from "../Buttons/TooltipButton";
 import PropTypes from 'prop-types';
 import {drawBarcode} from "../../utility/drawBarcode";
 import Button from "react-bootstrap/Button";
+import logButtonColor from "../../utility/logButtonColor";
 
 /**
  * MedicineListGroup
@@ -42,6 +43,23 @@ const MedicineListGroup = (props) => {
         }
     }, [barCode, canvasId, canvasUpdated]);
 
+    /**
+     * Determine the tooltip text given the number of hours the drug was last taken
+     *
+     * @param {number | null | boolean} lastTaken
+     * @returns {string|null}
+     */
+    const tooltipText = (lastTaken) => {
+        if (lastTaken === null || lastTaken === false) return null;
+        if (lastTaken <= 1) {
+            return activeDrug.Drug + " taken in the last hour";
+        }
+        if (lastTaken <=4) {
+            return activeDrug.Drug + " recently taken";
+        }
+        return null;
+    }
+
     return (
         <ListGroup>
             <ListGroup.Item active>
@@ -54,10 +72,10 @@ const MedicineListGroup = (props) => {
 
             <ListGroup.Item>
                 <TooltipButton
-                    tooltip={lastTaken <= 1 && lastTaken !== null ? activeDrug.Drug + " taken in the last hour" : null}
+                    tooltip={tooltipText(lastTaken)}
                     placement="top"
                     className="mr-2"
-                    variant={lastTaken === 0 ? "warning" : "primary"}
+                    variant={logButtonColor(lastTaken)}
                     onClick={(e) => addDrugLog(e)}
                 >
                     + Log Drug
@@ -65,7 +83,7 @@ const MedicineListGroup = (props) => {
 
                 <Button
                     disabled={lastTaken === 0}
-                    variant="outline-primary"
+                    variant={"outline-" + logButtonColor(lastTaken)}
                     onClick={(e) => {
                         e.preventDefault();
                         logDrug(1);

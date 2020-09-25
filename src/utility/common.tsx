@@ -1,4 +1,4 @@
-import {DrugLogRecord, ResidentRecord} from "./InitialState";
+import {DrugLogRecord, ResidentRecord} from "../types/RecordTypes";
 
 /**
  * Given a ResidentRecord return the resident's DOB as a string.
