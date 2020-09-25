@@ -24,7 +24,7 @@ const ResidentPage = (props) => {
     const [ showDeleteResident, setShowDeleteResident ] = useState(false);
     const [ residentToDelete, setResidentToDelete ] = useState(null);
 
-    const [ , setResidentList ] = useGlobal('residentList');
+    const [ residentList, setResidentList ] = useGlobal('residentList');
     const [ , setMedicineList ] = useGlobal('medicineList');
     const [ , setDrugLogList ] = useGlobal('drugLogList');
     const [ activeResident, setActiveResident ] = useGlobal('activeResident');
@@ -274,6 +274,7 @@ const ResidentPage = (props) => {
                 onSelected={(e, resident) => handleOnSelected(e, resident)}
                 onDelete={(e, resident) => handleOnDelete(e, resident)}
                 activeResident={activeResident}
+                residentList={residentList}
             />
 
             {/* ResidentEdit Modal */}

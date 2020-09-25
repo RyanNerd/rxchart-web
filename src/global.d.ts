@@ -32,7 +32,7 @@ declare module 'reactn/default' {
         drugLogList: null | [];
         medicineList: null | [];
         otcList: null | [];
-        residentList: any;
+        residentList: Array<ResidentRecord>;
         baseUrl: string;
         apiKey: string;
     }

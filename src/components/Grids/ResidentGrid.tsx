@@ -1,26 +1,35 @@
-import React, {useGlobal} from 'reactn';
+import React from 'reactn';
 import Button from 'react-bootstrap/Button';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import Table from 'react-bootstrap/Table';
 import {DOB} from "../../utility/common";
-import PropTypes from 'prop-types';
+import {ResidentRecord} from "../../types/RecordTypes";
+
+interface IProps {
+    onSelected?: Function,
+    onEdit?: Function,
+    onDelete?: Function,
+    activeResident: ResidentRecord
+    residentList: Array<ResidentRecord>
+}
 
 /**
  * ResidentGrid component
  *
- * @param props :
- *          onEdit(e, resident) Callback when edit button clicked
- *          onSelected(e, resident) Callback when selected toggle button clicked
- *          activeResidentId {int} The currently selected resident Id
- * @returns {*}
+ * @param props {
+ *          onEdit: (MouseEvent, object),
+ *          onSelected(MouseEvent, object)}
+ * @returns {JSX.Element}
  * @constructor
  */
-const ResidentGrid = (props) => {
-    const [ residentList ] = useGlobal('residentList');
-    const onSelected = props.onSelected;
-    const onEdit = props.onEdit;
-    const onDelete = props.onDelete;
-    const activeResident = props.activeResident;
+const ResidentGrid = (props: IProps): JSX.Element => {
+    const {
+        onSelected,
+        onEdit,
+        onDelete,
+        activeResident,
+        residentList
+    } = props;
 
     /**
      * Resident Child Table Component
@@ -29,7 +38,7 @@ const ResidentGrid = (props) => {
      * @returns {null | ResidentRow}
      * @constructor
      */
-    const ResidentRow = (resident) => {
+    const ResidentRow = (resident: ResidentRecord) => {
         // Get formatted DOB
         const dob = DOB(resident);
 
@@ -116,13 +125,6 @@ const ResidentGrid = (props) => {
             </tbody>
         </Table>
     );
-}
-
-ResidentGrid.propTypes = {
-    onSelected: PropTypes.func,
-    onEdit: PropTypes.func,
-    onDelete: PropTypes.func,
-    activeResident: PropTypes.object
 }
 
 export default ResidentGrid;
