@@ -7,7 +7,13 @@
  * @param {function} setDrugList
  * @param {function} onError
  */
-export const handleMedicineEditModalClose = (drugInfo, medicineProvider, refreshList, setDrugList, onError) => {
+export const handleMedicineEditModalClose = (
+        drugInfo: {Id: number | null, Notes: string | null},
+        medicineProvider: {post: Function},
+        refreshList: Function,
+        setDrugList: Function,
+        onError: Function
+    ) => {
     if (drugInfo) {
         const drugData = {...drugInfo};
 
@@ -20,11 +26,11 @@ export const handleMedicineEditModalClose = (drugInfo, medicineProvider, refresh
         }
 
         medicineProvider.post(drugData)
-        .then((drugRecord) => {
+        .then((drugRecord: object) => {
             refreshList(medicineProvider)
-                .then((data) => {setDrugList(data)})
-                .catch((err) => setDrugList(null));
+                .then((data: Array<object>) => {setDrugList(data)})
+                .catch((err: Error) => setDrugList(null));
         })
-        .catch((err) => onError(err));
+        .catch((err: Error) => onError(err));
     }
 }
