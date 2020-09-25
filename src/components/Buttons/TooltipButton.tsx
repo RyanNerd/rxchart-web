@@ -3,27 +3,40 @@ import Tooltip from "react-bootstrap/Tooltip";
 import Button from "react-bootstrap/Button";
 import React from "reactn";
 import {randomString} from "../../utility/common";
-import PropTypes from 'prop-types';
+import {ReactChildren, ReactNode} from "react";
+import {Placement} from "react-bootstrap/Overlay";
+
+interface IProps {
+    placement: Placement
+    tooltip?: string | ReactNode;
+    tooltipId?: string;
+    children: ReactChildren;
+}
 
 /**
  * Button with a tooltip overlay
  *
- * @param {object} props .placement, .tooltip, .tooltipId
+ * @param {placement = 'top', tooltip, tooltipId = randomString(), children} props
  * @returns {JSX.Element}
  * @constructor
  */
-const TooltipButton = (props) => {
-    const placement = props.placement || 'top';
-    const tooltip = props.tooltip || null;
-    const tooltipId = props.tooltipId || randomString();
+const TooltipButton = (props: IProps): JSX.Element => {
+    const {
+        placement = 'top',
+        tooltip,
+        tooltipId = randomString(),
+        children
+    } = props;
 
-    if (tooltip === null) {
+    // If tooltip isn't given then return a regular Button with no overlay
+    if (!tooltip) {
         return (
             <Button
                 {...props}
             >
-                {props.children}
-            </Button>)
+                {children}
+            </Button>
+        )
     }
 
     return (
@@ -42,12 +55,6 @@ const TooltipButton = (props) => {
             </Button>
         </OverlayTrigger>
     );
-}
-
-TooltipButton.propTypes = {
-    placement: PropTypes.string,
-    tooltip: PropTypes.oneOfType([PropTypes.element.isRequired, PropTypes.string.isRequired]),
-    toolTipId: PropTypes.string
 }
 
 export default TooltipButton;
