@@ -2,10 +2,10 @@
  * Returns a string of a drug that soft matches in the given drugList if found, otherwise returns a null;
  *
  * @param {string} searchText
- * @param {array<object>} drugList
+ * @param {array<{Barcode: string, Drug: string}>} drugList
  * @returns {null | string}
  */
-const searchDrugs = (searchText, drugList) => {
+const searchDrugs = (searchText: string, drugList: Array<{Barcode: string, Drug: string}>) => {
     const textLen = searchText ? searchText.length : 0;
     if (textLen > 0 && drugList && drugList.length > 0) {
         let drugMatch = null;

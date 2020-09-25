@@ -2,10 +2,10 @@
  * Given the searchText and activeDrug determine if the search is valid and return true if so, otherwise false.
  *
  * @param {string} searchText
- * @param {object} activeDrug
+ * @param {{Barcode: string, Drug: string}} activeDrug
  * @returns {boolean}
  */
-const isSearchValid = (searchText, activeDrug) => {
+const isSearchValid = (searchText: string, activeDrug: {Barcode: string, Drug: string}): boolean => {
     const textLen = searchText ? searchText.length : 0;
     if (activeDrug) {
         let searched;
@@ -18,6 +18,7 @@ const isSearchValid = (searchText, activeDrug) => {
         }
         return searched.substr(0, textLen).toLowerCase() === searchText.substr(0, textLen).toLowerCase();
     }
+    return false;
 }
 
 export default isSearchValid;
