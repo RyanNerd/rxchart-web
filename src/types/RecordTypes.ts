@@ -14,7 +14,20 @@ export type ResidentRecord = {
 export type DrugLogRecord = {
     Id: null | number,
     MedicineId: number,
+    Notes: string,
+    Created: null | Date,
     Updated: Date
+}
+
+export type MedicineRecord = {
+    Id: number | null,
+    Barcode: string | null,
+    ResidentId: number | null,
+    Drug: string,
+    Strength: string | null,
+    Directions: string | null,
+    Notes: string,
+    [key: string]: any
 }
 
 export const newDrugInfo = {

@@ -3,14 +3,15 @@ import Tooltip from "react-bootstrap/Tooltip";
 import Button from "react-bootstrap/Button";
 import React from "reactn";
 import {randomString} from "../../utility/common";
-import {ReactChildren, ReactNode} from "react";
+import {ReactNode} from "react";
 import {Placement} from "react-bootstrap/Overlay";
 
 interface IProps {
     placement: Placement
     tooltip?: string | ReactNode;
     tooltipId?: string;
-    children: ReactChildren;
+    children: JSX.Element[] | JSX.Element
+    [key: string]: any
 }
 
 /**
