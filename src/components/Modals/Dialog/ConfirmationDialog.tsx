@@ -1,34 +1,49 @@
 import React, {useEffect, useState} from 'reactn';
 import Modal from 'react-bootstrap/Modal';
 import Button from "react-bootstrap/Button";
-import PropTypes from 'prop-types';
+import {MouseEvent} from "react";
 
-const ConfirmationDialog = (props) => {
-    const [ show, setShow ] = useState(props.show);
-    const body = props.body ? props.body : 'Confirm?';
-    const title = props.title ? props.title : 'Confirmation Dialog';
+interface IProps {
+    body: JSX.Element | JSX.Element[] | string,
+    show: boolean,
+    title: JSX.Element | JSX.Element[] | string,
+    onAnswer: (a: boolean) => void,
+    onHide: Function
+}
+
+const ConfirmationDialog = (props: IProps) => {
+    const {
+        show,
+        body = 'Confirm?',
+        title = 'Confirmation Dialog',
+        onAnswer,
+        onHide
+    } = props;
+
+
+    const [ shouldShow, setShouldShow ] = useState(show);
 
     // Observer for show
-    useEffect(() => {setShow(props.show)}, [props.show]);
+    useEffect(() => {setShouldShow(show)}, [show]);
 
     /**
      * Handle button click event.
      * @param {MouseEvent} e
      * @param answer
      */
-    const handleAnswer = (e, answer) => {
+    const handleAnswer = (e: React.MouseEvent<HTMLElement>, answer: boolean) => {
         e.preventDefault();
-        props.onAnswer(answer);
-        setShow(false);
+        onAnswer(answer);
+        setShouldShow(false);
     }
 
     return (
         <Modal
             size="sm"
-            show={show}
+            show={shouldShow}
             backdrop="static"
             centered
-            onHide={() => props.onHide()}
+            onHide={() => onHide()}
         >
             <Modal.Header>
                 <Modal.Title>{title}</Modal.Title>
@@ -54,12 +69,6 @@ const ConfirmationDialog = (props) => {
             </Modal.Footer>
         </Modal>
     );
-}
-
-ConfirmationDialog.propTypes = {
-    body: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
-    title: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
-    onAnswer: PropTypes.func
 }
 
 export default ConfirmationDialog;
