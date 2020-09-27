@@ -1,7 +1,13 @@
 import React from 'reactn';
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
-import PropTypes from 'prop-types';
+import {MedicineRecord} from "../../types/RecordTypes";
+
+interface IProps {
+    medicineList: Array<MedicineRecord>,
+    drugId: number,
+    onSelect: Function
+}
 
 /**
  * Drug Dropdown
@@ -13,9 +19,8 @@ import PropTypes from 'prop-types';
  *
  * @returns {* | boolean}
  */
-const DrugDropdown = (props) => {
-    const medicineList = props.medicineList;
-    const drugId = props.drugId;
+const DrugDropdown = (props: IProps) => {
+    const {medicineList, drugId} = props;
 
     // Do not render unless we have the required props.
     if (!medicineList || medicineList.length === 0 || !drugId) {
@@ -28,8 +33,8 @@ const DrugDropdown = (props) => {
      * @param {int} drugId
      * @returns {object | null}
      */
-    const getDrugById = (drugId) => {
-        for (let drug of medicineList) {
+    const getDrugById = (drugId: number) => {
+        for (const drug of medicineList) {
             if (drug.Id === drugId) {
                 return drug;
             }
@@ -55,14 +60,14 @@ const DrugDropdown = (props) => {
      * @param {object} medicine
      * @returns {*}
      */
-    const MedicineDropdownItems = (medicine) => {
+    const MedicineDropdownItems = (medicine: MedicineRecord) => {
         const drug = medicine.Drug;
         const strength = medicine.Strength ? medicine.Strength : '';
         const drugDetail = drug + ' ' + strength;
-
+        const key = medicine.Id?.toString();
         return (
             <Dropdown.Item
-                key={medicine.Id}
+                key={key}
                 active={medicine.Id === drugId}
                 onSelect={(e) =>props.onSelect(e, medicine)}>
                     {drugDetail}
@@ -79,12 +84,6 @@ const DrugDropdown = (props) => {
             {medicineList.map(MedicineDropdownItems)}
         </DropdownButton>
     )
-}
-
-DrugDropdown.propTypes = {
-    medicineList: PropTypes.arrayOf(PropTypes.object),
-    onSelect: PropTypes.func,
-    drugId: PropTypes.number
 }
 
 export default DrugDropdown;
