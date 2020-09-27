@@ -1,5 +1,6 @@
 import Button from "react-bootstrap/Button";
 import React from "reactn";
+import {MedicineRecord} from "../../types/RecordTypes";
 
 /**
  * MedicineDetail table row
@@ -10,7 +11,12 @@ import React from "reactn";
  * @param {boolean} includeNotes
  * @return {JSX.Element}
  */
-const MedicineDetail = (drug, onDelete, onEdit, includeNotes) => {
+const MedicineDetail = (
+        drug: MedicineRecord,
+        onDelete: Function,
+        onEdit: Function,
+        includeNotes: boolean
+    ): JSX.Element => {
     return (
         <tr
             key={'medicine-grid-row-' + drug.Id}
