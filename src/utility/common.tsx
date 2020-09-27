@@ -108,8 +108,12 @@ export const randomString = (): string => {
  * @returns {null | number}
  */
 export const calculateLastTaken = (drugId: number, drugLogList:Array<DrugLogRecord>): number | null => {
+    if (drugLogList === null) {
+        return null;
+    }
+
     let diff = null;
-    const filteredDrugs = drugLogList.filter(drug => drug.MedicineId === drugId);
+    const filteredDrugs = drugLogList.filter(drug => drug && drug.MedicineId === drugId);
     const latestDrug = filteredDrugs && filteredDrugs.length > 0 ? filteredDrugs[0] : null;
     if (latestDrug) {
         const latestDrugDate = Math.round((new Date(latestDrug.Updated)).getTime() / 1000);

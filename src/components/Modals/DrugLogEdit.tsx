@@ -4,7 +4,15 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
-import PropTypes from 'prop-types';
+import {DrugLogRecord} from "../../types/RecordTypes";
+import {RefObject} from "react";
+
+interface IProps {
+    show: boolean,
+    drugLogInfo: DrugLogRecord,
+    onClose: (drugLogInfo: DrugLogRecord) => void,
+    onHide: () => void
+}
 
 /**
  * Edit Modal for DrugLog
@@ -15,32 +23,39 @@ import PropTypes from 'prop-types';
  * @returns {boolean|*}
  * @constructor
  */
-const DrugLogEdit = (props) => {
+const DrugLogEdit = (props: IProps) => {
+    const onClose = props.onClose;
     const [ show, setShow ] = useState(props.show);
     const [ drugLogInfo, setDrugLogInfo ] = useState(props.drugLogInfo);
+    const onHide = props.onHide;
     const [ canSave, setCanSave ] = useState(false);
-    const textInput = useRef(null);
+    const textInput = useRef<any>(null);
 
     // Observer for show
-    useEffect(() => {setShow(props.show)}, [props.show]);
+    // useEffect(() => {set_Show(show)}, [show]);
 
     // Observer for drugInfo
-    useEffect(() => {setDrugLogInfo(props.drugLogInfo)}, [props.drugLogInfo]);
+    //useEffect(() => {set_DrugLogInfo(drugLogInfo)}, [drugLogInfo]);
 
     // Disable the Save button if Notes are empty.
-    useEffect(() => {setCanSave(drugLogInfo && drugLogInfo.Notes.length > 0)}, [drugLogInfo]);
+    useEffect(() => {
+        const canSave = (drugLogInfo && drugLogInfo.Notes.length > 0) || false;
+        setCanSave(canSave);
+    }, [drugLogInfo]);
 
     /**
      * Fires when a text field or checkbox is changing.
      *
      * @param {KeyboardEvent} e
      */
-    const handleOnChange = (e) => {
-        const target = e.target;
+    const handleOnChange = (e: React.MouseEvent<HTMLElement>) => {
+        const target = e.target as HTMLInputElement;
         let value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
-        drugLogInfo[name] = value;
-        setDrugLogInfo({...drugLogInfo});
+        if (drugLogInfo !== null) {
+            drugLogInfo[name] = value;
+            setDrugLogInfo({...drugLogInfo});
+        }
     }
 
     /**
@@ -49,12 +64,13 @@ const DrugLogEdit = (props) => {
      * @param {MouseEvent} e
      * @param {boolean} shouldSave
      */
-    const handleHide = (e, shouldSave) => {
+    const handleHide = (e: React.MouseEvent<HTMLElement>, shouldSave: boolean) => {
         e.preventDefault();
         if (shouldSave) {
-            props.onClose({...drugLogInfo});
+            const saveDrugLogInfo = {...drugLogInfo} as DrugLogRecord;
+            onClose(saveDrugLogInfo);
         } else {
-            props.onClose(null);
+            onClose(null);
         }
         setShow(false);
     }
@@ -66,11 +82,14 @@ const DrugLogEdit = (props) => {
 
      return (
         <Modal
-            size="md"
             show={show}
             centered
-            onHide={() => props.onHide()}
-            onEntered={() => textInput.current.focus()}
+            onHide={() => onHide()}
+            onEntered={() => {
+                if (textInput && textInput.current) {
+                    textInput.current.focus();
+                }
+            }}
         >
             <Modal.Header closeButton>
                 <Modal.Title>Drug Log</Modal.Title>
@@ -86,10 +105,10 @@ const DrugLogEdit = (props) => {
                         <Col md="8">
                             <Form.Control
                                 as="textarea"
-                                ref={textInput}
+                                ref={textInput as RefObject<any>}
                                 value={drugLogInfo.Notes}
                                 name="Notes"
-                                onChange={(e) => handleOnChange(e)}
+                                onChange={(e: any) => handleOnChange(e)}
                             />
                         </Col>
                     </Form.Group>
@@ -113,13 +132,6 @@ const DrugLogEdit = (props) => {
             </Modal.Footer>
         </Modal>
     );
-}
-
-DrugLogEdit.propTypes = {
-    show: PropTypes.bool,
-    drugLogInfo: PropTypes.object,
-    onHide: PropTypes.func,
-    onClose: PropTypes.func
 }
 
 export default DrugLogEdit;

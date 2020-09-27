@@ -27,7 +27,7 @@ interface IProps {
  *                 props.otcList {array<object>}
  * @returns {null|*}
  */
-const DrugLogGrid = (props: IProps) => {
+const DrugLogGrid = (props: IProps): JSX.Element => {
     const {
         drugLog,
         onEdit,
@@ -54,7 +54,7 @@ const DrugLogGrid = (props: IProps) => {
         </Table>;
     }
 
-    const filteredDrugs = drugId && drugLog ? drugLog.filter(drug => drug.MedicineId === drugId) : drugLog;
+    const filteredDrugs = drugId && drugLog ? drugLog.filter(drug => drug && drug.MedicineId === drugId) : drugLog;
 
     /**
      * Returns the value of the drug column for the given drugId
@@ -63,8 +63,8 @@ const DrugLogGrid = (props: IProps) => {
      * @param {string} columnName
      * @returns {null|*}
      */
-    const drugColumnLookup = (drugId: number, columnName: string) => {
-        if (medicineList) {
+    const drugColumnLookup = (drugId?: number, columnName?: string) => {
+        if (medicineList && drugId && columnName) {
             const medicine = medicineList.filter(drug => drug.Id === drugId);
             if (medicine.length === 1) {
                 const drug = medicine[0];
@@ -72,7 +72,7 @@ const DrugLogGrid = (props: IProps) => {
             }
         }
 
-        if (otcList) {
+        if (otcList && columnName) {
             const otc = otcList.filter(drug => drug.Id === drugId);
             if (otc.length === 1) {
                 const otcDrug = otc[0];
@@ -89,8 +89,12 @@ const DrugLogGrid = (props: IProps) => {
      * @param {object} drug
      * @returns {*}
      */
-    const DrugRow = (drug: DrugLogRecord) =>
+    const DrugRow = (drug: DrugLogRecord): JSX.Element | null =>
     {
+        if (drug === null) {
+            return null;
+        }
+
         const drugName = drugColumnLookup(drug.MedicineId, 'Drug');
         const drugStrength = drugColumnLookup(drug.MedicineId, 'Strength');
 
