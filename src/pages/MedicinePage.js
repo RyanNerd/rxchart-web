@@ -6,7 +6,7 @@ import Form from 'react-bootstrap/Form';
 import TabContent from "../styles/tab_content.css";
 import RefreshMedicineList from "../providers/RefreshMedicineList";
 import MedicineEdit from "../components/Modals/MedicineEdit";
-import ConfirmationDialog from "../components/Modals/Dialog/ConfirmationDialog";
+import ConfirmationDialog from "../components/Modals/ConfirmationDialog";
 import DrugLogGrid from "../components/Grids/DrugLogGrid";
 import DrugLogEdit from "../components/Modals/DrugLogEdit";
 import RefreshMedicineLog from "../providers/RefreshMedicineLog";

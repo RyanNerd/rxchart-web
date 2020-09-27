@@ -2,7 +2,7 @@ import React, {useGlobal, useState} from 'reactn';
 import Table from "react-bootstrap/Table";
 import MedicineDetail from "../components/Grids/MedicineDetail";
 import MedicineEdit from "../components/Modals/MedicineEdit";
-import ConfirmationDialog from "../components/Modals/Dialog/ConfirmationDialog";
+import ConfirmationDialog from "../components/Modals/ConfirmationDialog";
 import DeleteMedicine from "../providers/helpers/DeleteMedicine";
 import TooltipButton from "../components/Buttons/TooltipButton";
 import RefreshOtcList from "../providers/helpers/RefreshOtcList";

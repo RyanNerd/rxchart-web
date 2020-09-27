@@ -7,7 +7,7 @@ import ResidentEdit from '../components/Modals/ResidentEdit';
 import {FullName} from '../utility/common';
 import RefreshMedicineList from "../providers/RefreshMedicineList";
 import RefreshMedicineLog from "../providers/RefreshMedicineLog";
-import ConfirmationDialog from "../components/Modals/Dialog/ConfirmationDialog";
+import ConfirmationDialog from "../components/Modals/ConfirmationDialog";
 import {Form} from "react-bootstrap";
 import PropTypes from 'prop-types';
 
