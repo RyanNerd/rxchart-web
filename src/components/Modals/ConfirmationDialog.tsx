@@ -2,16 +2,18 @@ import React, {useEffect, useState} from 'reactn';
 import Modal from 'react-bootstrap/Modal';
 import Button from "react-bootstrap/Button";
 import {MouseEvent} from "react";
+import ModalBody from "react-bootstrap/ModalBody";
+import {ModalTitle} from "react-bootstrap";
 
 interface IProps {
-    body: JSX.Element | JSX.Element[] | string,
+    body: typeof ModalBody,
     show: boolean,
-    title: JSX.Element | JSX.Element[] | string,
+    title: typeof ModalTitle,
     onAnswer: (a: boolean) => void,
-    onHide: Function
+    onHide: () => void
 }
 
-const ConfirmationDialog = (props: IProps) => {
+const ConfirmationDialog = (props: IProps): JSX.Element => {
     const {
         show,
         body = 'Confirm?',
