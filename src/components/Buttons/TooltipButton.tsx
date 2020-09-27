@@ -10,7 +10,7 @@ interface IProps {
     placement: Placement
     tooltip?: string | ReactNode;
     tooltipId?: string;
-    children: JSX.Element[] | JSX.Element
+    children: JSX.Element[] | JSX.Element | string
     [key: string]: any
 }
 

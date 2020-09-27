@@ -5,7 +5,7 @@ import {MedicineRecord} from "../../types/RecordTypes";
 
 interface IProps {
     medicineList: Array<MedicineRecord>,
-    drugId: number,
+    drugId: number | null,
     onSelect: Function
 }
 
@@ -19,12 +19,12 @@ interface IProps {
  *
  * @returns {* | boolean}
  */
-const DrugDropdown = (props: IProps) => {
+const DrugDropdown = (props: IProps): JSX.Element | null => {
     const {medicineList, drugId} = props;
 
     // Do not render unless we have the required props.
     if (!medicineList || medicineList.length === 0 || !drugId) {
-        return false;
+        return null;
     }
 
     /**
@@ -46,7 +46,7 @@ const DrugDropdown = (props: IProps) => {
 
     // Do not render if there isn't an active drug.
     if (!activeDrug) {
-        return false;
+        return null;
     }
 
     // Figure out the display title
