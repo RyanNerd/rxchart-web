@@ -8,8 +8,10 @@
  * @param {function} onError
  * @returns {void}
  */
+import {MedicineRecord} from "../types/RecordTypes";
+
 export const handleMedicineEditModalClose = (
-        drugInfo: {Id: number | null, Notes: string | null},
+        drugInfo: MedicineRecord | null,
         medicineProvider: {post: Function},
         refreshList: Function,
         setDrugList: Function,
@@ -26,11 +28,18 @@ export const handleMedicineEditModalClose = (
             drugData.Notes = null;
         }
 
+        if (drugData.Directions === '') {
+            drugData.Directions = null;
+        }
+
         medicineProvider.post(drugData)
         .then((drugRecord: object) => {
             refreshList(medicineProvider)
-                .then((data: Array<object>) => {setDrugList(data)})
-                .catch((err: Error) => setDrugList(null));
+            .then((data: Array<object>) => {setDrugList(data)})
+            .catch((err: Error) => {
+                console.log('handleMedicineEditClose error', err)
+                setDrugList(null);
+            });
         })
         .catch((err: Error) => onError(err));
     }

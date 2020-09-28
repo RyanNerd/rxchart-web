@@ -9,7 +9,7 @@ import {MedicineRecord} from "../../types/RecordTypes";
 
 interface IProps {
     show: boolean,
-    otc: boolean,
+    otc?: boolean,
     drugInfo: MedicineRecord,
     onClose: (r: MedicineRecord | null) => void,
     onHide: () => void
@@ -27,8 +27,8 @@ interface IProps {
  */
 const MedicineEdit = (props: IProps) => {
     const [ show, setShow ] = useState(props.show);
-    const [ drugInfo, setDrugInfo ] = useState(props.drugInfo);
-    const [ canSave, setCanSave ] = useState(false);
+    const [ drugInfo, setDrugInfo ] = useState<MedicineRecord>(props.drugInfo);
+    const [ canSave, setCanSave ] = useState<boolean>(false);
     const [ activeResident ] = useGlobal('activeResident');
 
     const otc = props.otc;
@@ -39,7 +39,7 @@ const MedicineEdit = (props: IProps) => {
 
     // Observer/mutator for drugInfo
     useEffect(() => {
-        const info = props.drugInfo;
+        const info = {...props.drugInfo};
         if (info && info.Directions === null) {
             info.Directions = '';
         }
@@ -50,7 +50,13 @@ const MedicineEdit = (props: IProps) => {
     }, [props.drugInfo]);
 
     // Disable the Save button if the Drug name is empty.
-    useEffect(() => {setCanSave(drugInfo && drugInfo.Drug.length > 0)}, [drugInfo]);
+    useEffect(() => {
+        if (drugInfo && drugInfo.Drug) {
+            if (drugInfo.Drug.length > 0) {
+                setCanSave(true);
+            }
+        }
+    }, [drugInfo]);
 
     /**
      * Fires when a text field or checkbox is changing.
@@ -83,7 +89,7 @@ const MedicineEdit = (props: IProps) => {
 
     // Short circuit render if there is no drugInfo record.
     if (!drugInfo) {
-        return false;
+        return null;
     }
 
     const drugTitleType = drugInfo.Id ? 'Edit ' : 'Add ';
@@ -169,7 +175,7 @@ const MedicineEdit = (props: IProps) => {
                             <Form.Control
                                 as="textarea"
                                 rows={3}
-                                value={drugInfo.Notes}
+                                value={(drugInfo && drugInfo.Notes) || ''}
                                 name="Notes"
                                 onChange={(e) => handleOnChange(e)}
                             />

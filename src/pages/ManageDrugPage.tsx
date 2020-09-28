@@ -8,6 +8,12 @@ import DeleteMedicine from "../providers/helpers/DeleteMedicine";
 import TooltipButton from "../components/Buttons/TooltipButton";
 import PropTypes from 'prop-types';
 import {handleMedicineEditModalClose} from "../utility/handleMedicineEditModalClose";
+import MedicineProvider from "../providers/MedicineProvider";
+import {MedicineRecord} from "../types/RecordTypes";
+
+interface IProps {
+    onError: () => void
+}
 
 /**
  * ManageDrugPage
@@ -15,16 +21,16 @@ import {handleMedicineEditModalClose} from "../utility/handleMedicineEditModalCl
  *
  * @returns {null|*}
  */
-const ManageDrugPage = (props) => {
+const ManageDrugPage = (props: IProps) => {
     const [ medicineList, setMedicineList ] = useGlobal('medicineList');
-    const [ providers ] = useGlobal('providers');
+    const [ providers ] = useGlobal<any>('providers');
     const [ activeResident ]= useGlobal('activeResident');
 
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDeleteMedicine, setShowDeleteMedicine ] = useState(false);
-    const [ medicineInfo, setMedicineInfo ] = useState(null);
+    const [ medicineInfo, setMedicineInfo ] = useState<MedicineRecord | null>(null);
 
-    const medicineProvider = providers.medicineProvider;
+    const medicineProvider = providers.medicineProvider as typeof MedicineProvider;
     const onError = props.onError;
     const today = new Date();
     const day = today.getDate();
@@ -37,14 +43,14 @@ const ManageDrugPage = (props) => {
      * @param {MouseEvent} e
      * @param {object} medicine
      */
-    const onEdit = (e, medicine) => {
+    const onEdit = (e: React.MouseEvent<HTMLElement>, medicine: MedicineRecord | null) => {
         e.preventDefault();
         let medicineInfo;
         if (!medicine) {
             medicineInfo = {
-                Id: 0,
+                Id: null,
                 Barcode: "",
-                ResidentId: activeResident.Id,
+                ResidentId: activeResident?.Id,
                 Drug: "",
                 Strength: "",
                 Directions: "",
@@ -52,7 +58,7 @@ const ManageDrugPage = (props) => {
                 FillDateMonth: month,
                 FillDateDay: day,
                 FillDateYear: year
-            };
+            } as MedicineRecord;
         } else {
             medicineInfo = {...medicine};
         }
@@ -68,7 +74,7 @@ const ManageDrugPage = (props) => {
      * @param {object} medicine
 
      */
-    const onDelete = (e, medicine) => {
+    const onDelete = (e: React.MouseEvent<HTMLElement>, medicine: MedicineRecord) => {
         e.preventDefault();
         setMedicineInfo({...medicine});
         setShowDeleteMedicine(true);
@@ -83,17 +89,20 @@ const ManageDrugPage = (props) => {
         if (medProvider === undefined) {
             medProvider = providers.medicineProvider;
         }
-
-        DeleteMedicine(medProvider, medicineInfo.Id)
-        .then((deleted) => {
-            if (deleted) {
-                RefreshMedicineList(medicineProvider, activeResident.Id)
-                .then((data) => {
-                    setMedicineList(data);
+        if (medicineInfo && medicineInfo.Id && activeResident) {
+            DeleteMedicine(medProvider, medicineInfo.Id)
+                .then((deleted: object) => {
+                    if (deleted) {
+                        if (activeResident.Id) {
+                            RefreshMedicineList(medicineProvider, activeResident.Id)
+                            .then((data) => {
+                                setMedicineList(data).then(() => {});
+                            });
+                        }
+                    }
                 });
-            }
-        });
-        setShowDeleteMedicine(false);
+            setShowDeleteMedicine(false);
+        }
     }
 
     return (
@@ -103,7 +112,7 @@ const ManageDrugPage = (props) => {
                 tooltip="Manually Add New Medicine"
                 size="sm"
                 variant="info"
-                onClick={(e) => onEdit(e, null)}
+                onClick={(e: React.MouseEvent<HTMLElement>) => onEdit(e, null)}
             >
                 + Medicine
             </TooltipButton>
@@ -117,7 +126,7 @@ const ManageDrugPage = (props) => {
                 >
                     <thead>
                     <tr>
-                        <th></th>
+                        <th> </th>
                         <th>
                             Drug
                         </th>
@@ -133,7 +142,7 @@ const ManageDrugPage = (props) => {
                         <th>
                             Barcode
                         </th>
-                        <th></th>
+                        <th> </th>
                     </tr>
                     </thead>
                     <tbody>
@@ -142,13 +151,17 @@ const ManageDrugPage = (props) => {
                 </Table>
             }
 
-            {showMedicineEdit &&
+            {showMedicineEdit && medicineInfo &&
                 /* MedicineEdit Modal */
                 <MedicineEdit
                     show={showMedicineEdit}
                     onHide={() => setShowMedicineEdit(!showMedicineEdit)}
                     onClose={(r) => {
-                        handleMedicineEditModalClose(r, medicineProvider, () => RefreshMedicineList(medicineProvider, r.ResidentId), setMedicineList, onError);
+                        const residentId = activeResident && activeResident.Id;
+                        if (residentId) {
+                            handleMedicineEditModalClose(r, medicineProvider, () =>
+                                RefreshMedicineList(medicineProvider, residentId), setMedicineList, onError);
+                        }
                         setShowMedicineEdit(false);
                     }}
                     drugInfo={medicineInfo}

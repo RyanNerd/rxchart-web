@@ -6,9 +6,9 @@ import ModalBody from "react-bootstrap/ModalBody";
 import {ModalTitle} from "react-bootstrap";
 
 interface IProps {
-    body: typeof ModalBody,
+    body: typeof ModalBody | JSX.Element | JSX.Element[] | string,
     show: boolean,
-    title: typeof ModalTitle,
+    title: typeof ModalTitle | string,
     onAnswer: (a: boolean) => void,
     onHide: () => void
 }

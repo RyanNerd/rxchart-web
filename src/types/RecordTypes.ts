@@ -28,7 +28,7 @@ export type MedicineRecord = {
     Drug: string,
     Strength: string | null,
     Directions: string | null,
-    Notes: string,
+    Notes: string | null,
     [key: string]: any
 }
 
