@@ -1,11 +1,9 @@
 /**
- * Helper function that rehydrates the otcList global state
- *
- * @param medicineProvider
- * @returns {Q.Promise<any> | Promise<T | never> | * | undefined}
- * @constructor
+ * Helper function that rehydrates the otcList
  */
-const RefreshOtcList = (medicineProvider) => {
+import MedicineProvider from "../MedicineProvider";
+
+const RefreshOtcList = (medicineProvider: typeof MedicineProvider): Promise<any> => {
     const searchCriteria =
         {
             where: [
