@@ -3,10 +3,12 @@
  *
  * @param medicineProvider
  * @param residentId
- * @returns {Q.Promise<any> | Promise<T | never> | * | undefined}
+ * @returns
  * @constructor
  */
-const RefreshMedicineList = (medicineProvider, residentId) => {
+import MedicineProvider from "./MedicineProvider";
+
+const RefreshMedicineList = (medicineProvider: typeof MedicineProvider, residentId: number | string): Promise<any> => {
    const searchCriteria =
        {
            where: [
