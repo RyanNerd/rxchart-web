@@ -48,7 +48,7 @@ const DrugLogEdit = (props: IProps) => {
      *
      * @param {KeyboardEvent} e
      */
-    const handleOnChange = (e: React.MouseEvent<HTMLElement>) => {
+    const handleOnChange = (e: React.ChangeEvent<HTMLElement>) => {
         const target = e.target as HTMLInputElement;
         let value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
@@ -108,7 +108,7 @@ const DrugLogEdit = (props: IProps) => {
                                 ref={textInput as RefObject<any>}
                                 value={drugLogInfo.Notes}
                                 name="Notes"
-                                onChange={(e: any) => handleOnChange(e)}
+                                onChange={(e) => handleOnChange(e)}
                             />
                         </Col>
                     </Form.Group>

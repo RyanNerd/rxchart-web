@@ -74,7 +74,7 @@ const MedicineListGroup = (props: IProps) => {
         return null;
     }
 
-    if (!DrugDropdown) {
+    if (DrugDropdown === null) {
         return null;
     }
 

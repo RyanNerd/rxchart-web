@@ -5,7 +5,15 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
-import PropTypes from 'prop-types';
+import {MedicineRecord} from "../../types/RecordTypes";
+
+interface IProps {
+    show: boolean,
+    otc: boolean,
+    drugInfo: MedicineRecord,
+    onClose: (r: MedicineRecord | null) => void,
+    onHide: () => void
+}
 
 /**
  * Edit Modal for Medicine
@@ -17,14 +25,14 @@ import PropTypes from 'prop-types';
  * @returns {boolean|*}
  * @constructor
  */
-const MedicineEdit = (props) => {
+const MedicineEdit = (props: IProps) => {
     const [ show, setShow ] = useState(props.show);
-    const [ drugInfo, setDrugInfo ] = useState(null);
+    const [ drugInfo, setDrugInfo ] = useState(props.drugInfo);
     const [ canSave, setCanSave ] = useState(false);
     const [ activeResident ] = useGlobal('activeResident');
 
     const otc = props.otc;
-    const textInput = useRef(null);
+    const textInput = useRef<any>(null);
 
     // Observer for show
     useEffect(() => {setShow(props.show)}, [props.show]);
@@ -49,8 +57,8 @@ const MedicineEdit = (props) => {
      *
      * @param {KeyboardEvent} e
      */
-    const handleOnChange = (e) => {
-        const target = e.target;
+    const handleOnChange = (e: React.ChangeEvent<HTMLElement>) => {
+        const target = e.target as HTMLInputElement;
         let value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
         drugInfo[name] = value;
@@ -63,7 +71,7 @@ const MedicineEdit = (props) => {
      * @param {MouseEvent} e
      * @param {boolean} shouldSave
      */
-    const handleHide = (e, shouldSave) => {
+    const handleHide = (e: React.MouseEvent<HTMLElement>, shouldSave: boolean) => {
         e.preventDefault();
         if (shouldSave) {
             props.onClose({...drugInfo});
@@ -92,7 +100,11 @@ const MedicineEdit = (props) => {
             show={show}
             centered
             onHide={() => props.onHide()}
-            onEntered={() => textInput.current.focus()}
+            onEntered={() => {
+                if (textInput && textInput.current) {
+                    textInput.current.focus()
+                }
+            }}
         >
             <Modal.Header closeButton>
                 {modalTitle}
@@ -122,7 +134,7 @@ const MedicineEdit = (props) => {
                         <Col sm="4">
                             <Form.Control
                                 type="text"
-                                value={drugInfo.Strength}
+                                value={drugInfo.Strength ? drugInfo.Strength : ''}
                                 placeholder="e.g. 100 MG TABS"
                                 name="Strength"
                                 onChange={(e) => handleOnChange(e)}
@@ -138,8 +150,8 @@ const MedicineEdit = (props) => {
                         <Col sm="9">
                             <Form.Control
                                 as="textarea"
-                                rows="2"
-                                value={drugInfo.Directions}
+                                rows={2}
+                                value={drugInfo.Directions ? drugInfo.Directions : ''}
                                 placeholder="e.g. Take 1 tablet at bedtime"
                                 name="Directions"
                                 onChange={(e) => handleOnChange(e)}
@@ -156,7 +168,7 @@ const MedicineEdit = (props) => {
                         <Col sm="9">
                             <Form.Control
                                 as="textarea"
-                                rows="3"
+                                rows={3}
                                 value={drugInfo.Notes}
                                 name="Notes"
                                 onChange={(e) => handleOnChange(e)}
@@ -173,7 +185,7 @@ const MedicineEdit = (props) => {
                         <Col sm="9">
                             <Form.Control
                                 type="text"
-                                value={drugInfo.Barcode}
+                                value={drugInfo.Barcode ? drugInfo.Barcode : ''}
                                 name="Barcode"
                                 onChange={(e) => handleOnChange(e)}
                             />
@@ -240,14 +252,6 @@ const MedicineEdit = (props) => {
             </Modal.Footer>
         </Modal>
     );
-}
-
-MedicineEdit.propTypes = {
-    show: PropTypes.bool,
-    otc: PropTypes.bool,
-    drugInfo: PropTypes.object,
-    onClose: PropTypes.func,
-    onHide: PropTypes.func
 }
 
 export default MedicineEdit;
