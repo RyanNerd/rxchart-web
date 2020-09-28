@@ -1,4 +1,6 @@
-const RefreshMedicineLog = (medHistoryProvider, id) => {
+import MedHistoryProvider from "../MedHistoryProvider";
+
+const RefreshMedicineLog = (medHistoryProvider: typeof MedHistoryProvider, id: number | string): Promise<any> => {
     const searchCriteria =
         {
             where: [
@@ -11,7 +13,7 @@ const RefreshMedicineLog = (medHistoryProvider, id) => {
         };
 
     return medHistoryProvider.search(searchCriteria)
-    .then((response) => {
+    .then((response: {success: boolean, data: object | object[], status: number}) => {
         if (response.success) {
             return response.data;
         } else {
@@ -21,7 +23,7 @@ const RefreshMedicineLog = (medHistoryProvider, id) => {
             throw response;
         }
     })
-    .catch(((err) => {
+    .catch(((err: ErrorEvent) => {
         return err;
     }));
 }
