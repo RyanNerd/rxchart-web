@@ -11,7 +11,14 @@ import {initialState} from "../utility/initialState";
 import MedHistoryProvider from "../providers/MedHistoryProvider";
 import Frak from "../providers/Frak";
 import RefreshOtcList from "../providers/helpers/RefreshOtcList";
-import PropTypes from 'prop-types';
+import {ResidentRecord} from "../types/RecordTypes";
+
+interface IProps {
+    activeTabKey: string | null
+    onError: (e:ErrorEvent) => void
+    updateFocusRef: (ref: any) => void,
+    onLogin: (loggedIn: boolean) => void
+}
 
 /**
  * Sign in page
@@ -19,40 +26,47 @@ import PropTypes from 'prop-types';
  * @returns {*}
  * @constructor
  */
-const LoginPage = (props) => {
+const LoginPage = (props: IProps) => {
     const [ userName, setUserName ] = useState('');
     const [ password, setPassword ] = useState('');
     const [ showAlert, setShowAlert ] = useState(false);
 
     const [ apiKey, setApiKey ] = useGlobal('apiKey');
     const [ baseUrl ] = useGlobal('baseUrl');
-    const [ residentList, setResidentList ] = useGlobal('residentList');
+    const [ residentList, setResidentList ] = useGlobal<any>('residentList');
     const [ , setOtcList ] = useGlobal('otcList');
     const [ , setProviders ] = useGlobal('providers');
 
-    const focusRef = useRef(null);
-    const key = props.activeTabKey | null;
-    const onError = props.onError;
+    const focusRef = useRef<any>(null);
+    const {
+        onError,
+        activeTabKey,
+        updateFocusRef,
+        onLogin
+    } = props;
+
+
 
     // Set focus to the user name field when this page is active.
-    useEffect(() => props.updateFocusRef(focusRef), [props, key]);
+    useEffect(() => updateFocusRef(focusRef), [activeTabKey, updateFocusRef]);
 
     /**
      * Fires when the Login Button is clicked
      *
      * @param {MouseEvent} e
      */
-    const login = (e) => {
+    const login = (e: React.KeyboardEvent<HTMLElement> | React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
         const frak = new Frak();
 
         // Send the user name and password to the web service
+        // FIXME: TS response: any
         frak.post(baseUrl + 'authenticate', {username: userName, password: password}, {mode: "cors"})
-        .then((json) => {
+        .then((response: any) => {
             // Success?
-            if (json.success) {
+            if (response.success) {
                 // Set the global API key returned from the web service.
-                const apiKey = json.data.apiKey;
+                const apiKey = response.data.apiKey;
                 setApiKey(apiKey).then(() => {
                     // Use global state for Dependency Injection for providers.
                     const rxFrak = {frak: frak, apiKey: apiKey, baseUrl: baseUrl};
@@ -62,7 +76,7 @@ const LoginPage = (props) => {
                         medHistoryProvider: MedHistoryProvider.init(rxFrak),
                 }
 
-                setProviders(providers);
+                setProviders(providers).then(() => {});
 
                 // Load ALL Resident records up front and save them in the global store.
                 if (residentList === null) {
@@ -74,27 +88,31 @@ const LoginPage = (props) => {
                             ]
                         };
 
+                    // FIXME: TS setResidentList(data) is being stupid
                     providers.residentProvider.search(searchCriteria)
-                        .then((data) => setResidentList(data))
-                        .catch((err) => onError(err));
+                        .then((data: ResidentRecord | ResidentRecord[]) => setResidentList(data))
+                        .catch((err: ErrorEvent) => onError(err));
                 }
 
                 // Load ALL OTC medications
                 RefreshOtcList(providers.medicineProvider)
-                    .then((data) => {setOtcList(data)})
-                    .catch((err) => setOtcList(null));
+                    .then((data) => {setOtcList(data).then(() => {})})
+                    .catch(() => setOtcList(null));
 
                 // Let the parent component know we are logged in successfully
-                props.onLogin(true);
+                onLogin(true);
 
                 // Remove alert (in the case where a previous log in attempt failed).
                 setShowAlert(false);
 
                 // Display the organization name that logged in
-                const organization = json.data.organization || null;
+                const organization = response.data.organization || null;
                 if (organization) {
                     // Since this element lives in index.html we use old fashioned JS and DOM manipulation to update
-                    document.getElementById("organization").innerHTML = json.data.organization;
+                    const organizationElement = document.getElementById("organization");
+                    if (organizationElement) {
+                        organizationElement.innerHTML = response.data.organization;
+                    }
                 }
                 });
             } else {
@@ -112,7 +130,7 @@ const LoginPage = (props) => {
      *
      * @param {MouseEvent} e
      */
-    const logout = (e) => {
+    const logout = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
 
         setGlobal(initialState)
@@ -145,7 +163,7 @@ const LoginPage = (props) => {
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        onKeyUp={(e) => {
+                        onKeyUp={(e: React.KeyboardEvent<HTMLElement>) => {
                             if (e.keyCode === 13) {
                                 login(e);
                             }
@@ -193,12 +211,6 @@ const LoginPage = (props) => {
             {apiKey === null ? (signIn) : (signOut)}
         </Form>
     );
-}
-
-LoginPage.propTypes = {
-    activeTabKey: PropTypes.string,
-    onError: PropTypes.func.isRequired,
-    updateFocusRef: PropTypes.func.isRequired
 }
 
 export default LoginPage;
