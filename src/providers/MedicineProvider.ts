@@ -1,13 +1,12 @@
-import {FrakType} from "../types/FrakTypes";
+import {BaseUrlType, FrakType} from "../types/FrakTypes";
 import {MedicineRecord} from "../types/RecordTypes";
 
 /**
  * MedicineProvider API connector
  */
 const MedicineProvider = {
-    /** @property {Frak} */
-    _frak: null as FrakType | null,
-    _baseUrl: null as string | null,
+    _frak: null as FrakType,
+    _baseUrl: null as BaseUrlType,
     _apiKey: null as string | null,
 
     /**
