@@ -1,13 +1,8 @@
+import {FrakType} from "../types/FrakTypes";
+
 /**
  * MedHistoryProvider API Connector
  */
-
-declare type FrakType = {
-    post: Function
-    get: Function
-    delete_: Function
-}
-
 const MedHistoryProvider = {
     /** @property {Frak} */
     _frak: null as FrakType | null,
@@ -88,15 +83,15 @@ const MedHistoryProvider = {
     post: (drugInfo: object) => {
         const apiKey = MedHistoryProvider._apiKey;
         return MedHistoryProvider._frak?.post(MedHistoryProvider._baseUrl + 'medhistory?api_key=' + apiKey, drugInfo)
-            .then((response: {success: boolean, data: Array<object> | object}) => {
-                if (response.success) {
-                    return response.data;
-                } else {
-                    throw response;
-                }
-            })
-            .catch((err: Error) => {
-                return err;
+        .then((response: {success: boolean, data: Array<object> | object}) => {
+            if (response.success) {
+                return response.data;
+            } else {
+                throw response;
+            }
+        })
+        .catch((err: Error) => {
+            return err;
         });
     },
 
@@ -109,16 +104,17 @@ const MedHistoryProvider = {
         const apiKey = MedHistoryProvider._apiKey;
         const baseUrl = MedHistoryProvider._baseUrl;
         return MedHistoryProvider._frak?.delete_(baseUrl + 'medhistory/' + drugId + '?api_key=' + apiKey)
-            .then((response: {success: boolean}) => {
-                if (response.success) {
-                    return response;
-                } else {
-                    throw response;
-                }
-            })
-            .catch((err: Error) => {
-                console.log(err);
-            });
+        .then((response: {success: boolean}) => {
+            if (response.success) {
+                return response;
+            } else {
+                throw response;
+            }
+        })
+        .catch((err: Error) => {
+            console.log('MedHistoryProvider.delete() error -- see console log', err);
+            return err;
+        });
     }
 }
 

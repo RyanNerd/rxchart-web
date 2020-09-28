@@ -34,6 +34,8 @@ declare module 'reactn/default' {
         otcList: null | [];
         residentList: Array<ResidentRecord>;
         baseUrl: string;
-        apiKey: string;
+        apiKey: string | null;
     }
 }
+
+declare module '*.css';

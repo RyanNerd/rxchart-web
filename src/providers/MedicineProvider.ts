@@ -1,11 +1,14 @@
+import {FrakType} from "../types/FrakTypes";
+import {MedicineRecord} from "../types/RecordTypes";
+
 /**
  * MedicineProvider API connector
  */
 const MedicineProvider = {
     /** @property {Frak} */
-    _frak: null,
-    _baseUrl: null,
-    _apiKey: null,
+    _frak: null as FrakType | null,
+    _baseUrl: null as string | null,
+    _apiKey: null as string | null,
 
     /**
      * MedicineProvider constructor
@@ -13,7 +16,12 @@ const MedicineProvider = {
      * @constructor
      * @param rxFrak
      */
-    init: (rxFrak) => {
+    init: (
+        rxFrak: {
+        frak: FrakType,
+        baseUrl: string,
+        apiKey: string
+    }) => {
         MedicineProvider._frak = rxFrak.frak;
         MedicineProvider._apiKey = rxFrak.apiKey;
         MedicineProvider._baseUrl = rxFrak.baseUrl;
@@ -26,10 +34,10 @@ const MedicineProvider = {
      * @param {object} options
      * @returns {Promise<Response>}
      */
-    search: ( options) => {
+    search: (options: object) => {
         let uri = MedicineProvider._baseUrl + 'medicine/search?api_key=' + MedicineProvider._apiKey;
-        return MedicineProvider._frak.post(uri, options)
-        .then((response) => {
+        return MedicineProvider._frak?.post(uri, options)
+        .then((response: {success: boolean, status: number, data: object | object[]}) => {
             if (response.success) {
                 return response.data;
             } else {
@@ -39,9 +47,9 @@ const MedicineProvider = {
                 throw new Error(response.toString());
             }
         })
-        .catch((err) => {
+        .catch((err: ErrorEvent) => {
             console.error(err);
-            alert('problem -- see console log');
+            alert('MedicineProvider.search() error -- see console log');
         });
     },
 
@@ -51,18 +59,18 @@ const MedicineProvider = {
      * @param {string | number} id
      * @returns {Promise<Response>}
      */
-    read: (id) => {
-        return MedicineProvider._frak.get(MedicineProvider._baseUrl + 'medicine/'+ id + '?api_key=' + MedicineProvider._apiKey)
-        .then((response) => {
+    read: (id: number | string) => {
+        return MedicineProvider._frak?.get(MedicineProvider._baseUrl + 'medicine/'+ id + '?api_key=' + MedicineProvider._apiKey)
+        .then((response: {success: boolean, data: object | object[]}) => {
             if (response.success) {
                 return response.data;
             } else {
                 throw response;
             }
         })
-        .catch((err) => {
+        .catch((err: ErrorEvent) => {
             console.error(err);
-            alert('problem');
+            alert('MedicineProvider.read() error -- see console log');
         });
     },
 
@@ -72,16 +80,16 @@ const MedicineProvider = {
      * @param {object} drugInfo
      * @returns {Promise<Response>}
      */
-    post: (drugInfo) => {
-        return MedicineProvider._frak.post(MedicineProvider._baseUrl + 'medicine?api_key=' + MedicineProvider._apiKey, drugInfo)
-        .then((response) => {
+    post: (drugInfo: MedicineRecord) => {
+        return MedicineProvider._frak?.post(MedicineProvider._baseUrl + 'medicine?api_key=' + MedicineProvider._apiKey, drugInfo)
+        .then((response: {success: boolean, data: object | object[]}) => {
             if (response.success) {
                 return response.data;
             } else {
                 throw response;
             }
         })
-        .catch((err) => {
+        .catch((err: ErrorEvent) => {
            return err;
         });
     },
@@ -92,17 +100,18 @@ const MedicineProvider = {
      * @param {string | number} drugId
      * @returns {Promise<Response>}
      */
-    delete: (drugId) => {
-        return MedicineProvider._frak.delete_(MedicineProvider._baseUrl + 'medicine/' + drugId + '?api_key=' + MedicineProvider._apiKey)
-        .then((response) => {
+    delete: (drugId: string | number) => {
+        return MedicineProvider._frak?.delete_(MedicineProvider._baseUrl + 'medicine/' + drugId + '?api_key=' + MedicineProvider._apiKey)
+        .then((response: {success: boolean}) => {
             if (response.success) {
                 return response;
             } else {
                 throw response;
             }
         })
-        .catch((err) => {
-            console.log(err);
+        .catch((err: ErrorEvent) => {
+            console.log('MedicineProvider.delete() error -- see console log', err);
+            return err;
         });
     }
 }
