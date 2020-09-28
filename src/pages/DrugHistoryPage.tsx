@@ -1,12 +1,20 @@
 import React from 'reactn';
 import Button from 'react-bootstrap/Button';
 import DrugLogGrid from "../components/Grids/DrugLogGrid";
-import PropTypes from 'prop-types';
+import {DrugLogRecord, MedicineRecord} from "../types/RecordTypes";
 
-const DrugHistoryPage = (props) => {
-    const drugLogList = props.drugLogList;
-    const medicineList = props.medicineList;
-    const otcList = props.otcList;
+interface IProps {
+    drugLogList: DrugLogRecord[],
+    medicineList: MedicineRecord[],
+    otcList: MedicineRecord[]
+}
+
+const DrugHistoryPage = (props: IProps) => {
+    const {
+        drugLogList,
+        medicineList,
+        otcList
+    } = props;
 
     return (
         <>
@@ -29,12 +37,6 @@ const DrugHistoryPage = (props) => {
             />
         </>
     );
-}
-
-DrugHistoryPage.propTypes = {
-    drugLogList: PropTypes.arrayOf(PropTypes.object),
-    medicineList: PropTypes.arrayOf(PropTypes.object),
-    otcList: PropTypes.arrayOf(PropTypes.object)
 }
 
 export default DrugHistoryPage;

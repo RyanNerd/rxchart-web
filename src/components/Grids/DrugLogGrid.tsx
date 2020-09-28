@@ -6,9 +6,9 @@ import {DrugLogRecord, MedicineRecord} from "../../types/RecordTypes";
 
 interface IProps {
     drugLog: Array<DrugLogRecord>,
-    onEdit: Function,
-    onDelete: Function,
-    drugId: number,
+    onEdit?: Function,
+    onDelete?: Function,
+    drugId: number | null,
     medicineList: Array<MedicineRecord>,
     otcList: Array<MedicineRecord>,
     condensed?: boolean,
@@ -95,7 +95,10 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
             return null;
         }
 
-        const drugName = drugColumnLookup(drug.MedicineId, 'Drug');
+        let drugName = drugColumnLookup(drug.MedicineId, 'Drug');
+        if (!drugName || drugName.length === 0) {
+            drugName = 'UNKNOWN - Medicine removed!';
+        }
         const drugStrength = drugColumnLookup(drug.MedicineId, 'Strength');
 
         return <tr
