@@ -91,16 +91,16 @@ const ManageDrugPage = (props: IProps) => {
         }
         if (medicineInfo && medicineInfo.Id && activeResident) {
             DeleteMedicine(medProvider, medicineInfo.Id)
-                .then((deleted: object) => {
-                    if (deleted) {
-                        if (activeResident.Id) {
-                            RefreshMedicineList(medicineProvider, activeResident.Id)
-                            .then((data) => {
-                                setMedicineList(data).then(() => {});
-                            });
-                        }
+            .then((deleted: object) => {
+                if (deleted) {
+                    if (activeResident.Id) {
+                        RefreshMedicineList(medicineProvider, activeResident.Id)
+                        .then((data) => {
+                            setMedicineList(data).then(() => {});
+                        });
                     }
-                });
+                }
+            });
             setShowDeleteMedicine(false);
         }
     }

@@ -6,8 +6,13 @@ import ConfirmationDialog from "../components/Modals/ConfirmationDialog";
 import DeleteMedicine from "../providers/helpers/DeleteMedicine";
 import TooltipButton from "../components/Buttons/TooltipButton";
 import RefreshOtcList from "../providers/helpers/RefreshOtcList";
-import PropTypes from 'prop-types';
 import {handleMedicineEditModalClose} from "../utility/handleMedicineEditModalClose";
+import MedicineProvider from "../providers/MedicineProvider";
+import {MedicineRecord} from "../types/RecordTypes";
+
+interface IProps {
+    onError: (e: ErrorEvent) => void
+}
 
 /**
  * ManageOtcPage
@@ -15,15 +20,15 @@ import {handleMedicineEditModalClose} from "../utility/handleMedicineEditModalCl
  *
  * @returns {null|*}
  */
-const ManageOtcPage = (props) => {
+const ManageOtcPage = (props: IProps) => {
     const [ otcList, setOtcList ] = useGlobal('otcList');
-    const [ providers ] = useGlobal('providers');
+    const [ providers ] = useGlobal<any>('providers');
 
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDeleteMedicine, setShowDeleteMedicine ] = useState(false);
-    const [ medicineInfo, setMedicineInfo ] = useState(null);
+    const [ medicineInfo, setMedicineInfo ] = useState<MedicineRecord | null>(null);
 
-    const medicineProvider = providers.medicineProvider;
+    const medicineProvider = providers.medicineProvider as typeof MedicineProvider;
     const onError = props.onError;
 
     /**
@@ -32,7 +37,7 @@ const ManageOtcPage = (props) => {
      * @param {MouseEvent} e
      * @param {object} medicine
      */
-    const onEdit = (e, medicine) => {
+    const onEdit = (e: React.MouseEvent<HTMLElement>, medicine?: MedicineRecord | null) => {
         e.preventDefault();
         let medicineInfo;
         if (!medicine) {
@@ -43,6 +48,7 @@ const ManageOtcPage = (props) => {
                 Drug: "",
                 Strength: "",
                 Directions: "",
+                Notes: "",
                 OTC: true
             };
         } else {
@@ -59,7 +65,7 @@ const ManageOtcPage = (props) => {
      * @param {MouseEvent} e
      * @param {object} medicine
      */
-    const onDelete = (e, medicine) => {
+    const onDelete = (e: React.MouseEvent<HTMLElement>, medicine: MedicineRecord) => {
         e.preventDefault();
         setMedicineInfo({...medicine});
         setShowDeleteMedicine(true);
@@ -75,14 +81,16 @@ const ManageOtcPage = (props) => {
             medProvider = providers.medicineProvider;
         }
 
-        DeleteMedicine(medProvider, medicineInfo.Id)
-            .then((deleted) => {
+        if (medicineInfo && medicineInfo.Id) {
+            DeleteMedicine(medProvider, medicineInfo.Id)
+            .then((deleted: object) => {
                 if (deleted) {
                     RefreshOtcList(providers.medicineProvider)
                     .then((data) => setOtcList(data))
-                    .catch((err) => setOtcList(null));
+                    .catch(() => setOtcList(null));
                 }
             });
+        }
         setShowDeleteMedicine(false);
     }
 
@@ -93,7 +101,7 @@ const ManageOtcPage = (props) => {
                 tooltip="Manually Add New OTC"
                 size="sm"
                 variant="info"
-                onClick={(e) => onEdit(e, null)}
+                onClick={(e: React.MouseEvent<HTMLElement>) => onEdit(e, null)}
             >
                 + OTC
             </TooltipButton>
@@ -107,7 +115,7 @@ const ManageOtcPage = (props) => {
             >
                 <thead>
                 <tr>
-                    <th></th>
+                    <th> </th>
                     <th>
                         Drug
                     </th>
@@ -120,7 +128,7 @@ const ManageOtcPage = (props) => {
                     <th>
                         Barcode
                     </th>
-                    <th></th>
+                    <th> </th>
                 </tr>
                 </thead>
                 <tbody>
@@ -129,7 +137,7 @@ const ManageOtcPage = (props) => {
             </Table>
             }
 
-            {showMedicineEdit &&
+            {showMedicineEdit && medicineInfo &&
             /* MedicineEdit Modal */
             <MedicineEdit
                 otc={true}
@@ -165,10 +173,6 @@ const ManageOtcPage = (props) => {
             }
         </>
     );
-}
-
-ManageOtcPage.propTypes = {
-    onError: PropTypes.func.isRequired
 }
 
 export default ManageOtcPage;

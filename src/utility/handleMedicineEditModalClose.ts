@@ -33,9 +33,9 @@ export const handleMedicineEditModalClose = (
         }
 
         medicineProvider.post(drugData)
-        .then((drugRecord: object) => {
+        .then((drugRecord: MedicineRecord) => {
             refreshList(medicineProvider)
-            .then((data: Array<object>) => {setDrugList(data)})
+            .then((data: MedicineRecord[]) => {setDrugList(data)})
             .catch((err: Error) => {
                 console.log('handleMedicineEditClose error', err)
                 setDrugList(null);
