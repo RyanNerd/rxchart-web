@@ -20,7 +20,7 @@ import PropTypes from 'prop-types';
  */
 const ResidentPage = (props) => {
     const [ show, setShow ] = useState(false);
-    const [ residentInfo, setResidentInfo ] = useState({Id: null});
+    const [ residentInfo, setResidentInfo ] = useState(null);
     const [ showDeleteResident, setShowDeleteResident ] = useState(false);
     const [ residentToDelete, setResidentToDelete ] = useState(null);
 
@@ -72,7 +72,7 @@ const ResidentPage = (props) => {
         e.preventDefault();
 
         setResidentInfo({
-            Id: 0,
+            Id: null,
             FirstName: "",
             LastName: "",
             DOB_YEAR: "",

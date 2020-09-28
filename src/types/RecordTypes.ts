@@ -9,6 +9,7 @@ export type ResidentRecord = {
     Created: null | Date,
     Updated: null | Date,
     deleted_at: null | Date,
+    [key: string]: any
 }
 
 export type DrugLogRecord = {

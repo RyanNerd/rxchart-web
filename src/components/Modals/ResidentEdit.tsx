@@ -5,7 +5,13 @@ import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import {isDayValid, isMonthValid, isYearValid} from "../../utility/common";
-import PropTypes from 'prop-types';
+import {ResidentRecord} from "../../types/RecordTypes";
+
+interface IProps {
+    show: boolean,
+    residentInfo: ResidentRecord,
+    onClose: (r: ResidentRecord | null) => void;
+}
 
 /**
  * Edit Modal for Resident
@@ -17,19 +23,19 @@ import PropTypes from 'prop-types';
  * @returns {boolean|*}
  * @constructor
  */
-const ResidentEdit = (props) => {
+const ResidentEdit = (props: IProps) => {
     // Set up local initial state
-    const [ show, setShow ] = useState(props.show);
-    const [ residentInfo, setResidentInfo ] = useState(props.residentInfo);
-    const focusRef = useRef(null);
+    const [show, setShow] = useState(props.show);
+    const [residentInfo, setResidentInfo] = useState(props.residentInfo);
+    const focusRef = useRef<any>(null);
 
     /**
      * Fires when a text field or checkbox is changing.
      *
      * @param {KeyboardEvent} e
      */
-    const handleOnChange = (e) => {
-        const target = e.target;
+    const handleOnChange = (e: React.ChangeEvent<HTMLElement>) => {
+        const target = e.target as HTMLInputElement;
         let value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
         residentInfo[name] = value;
@@ -42,7 +48,7 @@ const ResidentEdit = (props) => {
      * @param {MouseEvent} e
      * @param {boolean} shouldSave
      */
-    const handleHide = (e, shouldSave) => {
+    const handleHide = (e: React.MouseEvent<HTMLElement>, shouldSave: boolean) => {
         if (shouldSave) {
             props.onClose({...residentInfo});
         } else {
@@ -52,14 +58,20 @@ const ResidentEdit = (props) => {
     }
 
     // Observer for show
-    useEffect(() => {setShow(props.show)}, [props.show]);
+    useEffect(() => {
+        setShow(props.show)
+    }, [props.show]);
 
     // Observer for residentInfo property
-    useEffect(() => {setResidentInfo({...props.residentInfo})}, [props.residentInfo]);
+    useEffect(() => {
+        if (props.residentInfo) {
+            setResidentInfo({...props.residentInfo});
+        }
+    }, [props.residentInfo]);
 
     // Prevent render if there is no data.
     if (!residentInfo) {
-        return false;
+        return null;
     }
 
     const residentTitle = residentInfo.Id ? 'Edit Resident' : 'Add New Resident';
@@ -69,7 +81,7 @@ const ResidentEdit = (props) => {
           centered
           size="lg"
           show={show}
-          onHide={(e, r)=>{handleHide(e, false)}}
+          onHide={(e: React.MouseEvent<HTMLElement>, shouldSave: boolean) => {handleHide(e, false)}}
           onEntered={() => focusRef.current.focus()}
         >
             <Modal.Header closeButton>
@@ -136,7 +148,9 @@ const ResidentEdit = (props) => {
                         </Form.Label>
                         <Col sm={2}>
                             <Form.Control
-                                className={isDayValid(residentInfo.DOB_DAY, residentInfo.DOB_MONTH)}
+                                className={
+                                    isDayValid(residentInfo.DOB_DAY.toString(), residentInfo.DOB_MONTH.toString())
+                                }
                                 type="text"
                                 value={residentInfo.DOB_DAY}
                                 name="DOB_DAY"
@@ -151,7 +165,7 @@ const ResidentEdit = (props) => {
                         </Form.Label>
                         <Col sm={3}>
                             <Form.Control
-                                className={isYearValid(residentInfo.DOB_YEAR, true)}
+                                className={isYearValid(residentInfo.DOB_YEAR.toString(), true)}
                                 type="text"
                                 value={residentInfo.DOB_YEAR}
                                 name="DOB_YEAR"
@@ -173,7 +187,11 @@ const ResidentEdit = (props) => {
                     Cancel
                 </Button>
                 <Button
-                    disabled={isMonthValid(residentInfo.DOB_MONTH) + isDayValid(residentInfo.DOB_DAY, residentInfo.DOB_MONTH) + isYearValid(residentInfo.DOB_YEAR, true) !== ''}
+                    disabled={isMonthValid(residentInfo.DOB_MONTH) +
+                                isDayValid(residentInfo.DOB_DAY.toString(), residentInfo.DOB_MONTH.toString()) +
+                                isYearValid(residentInfo.DOB_YEAR.toString(),
+                                    true) !== ''
+                    }
                     onClick={(e) => handleHide(e, true)}
                     variant="primary"
                 >
@@ -182,12 +200,6 @@ const ResidentEdit = (props) => {
             </Modal.Footer>
         </Modal>
     )
-}
-
-ResidentEdit.propTypes = {
-    show: PropTypes.bool,
-    residentInfo: PropTypes.object,
-    onClose: PropTypes.func,
 }
 
 export default ResidentEdit;
