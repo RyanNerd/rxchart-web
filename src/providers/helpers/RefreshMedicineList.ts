@@ -6,7 +6,7 @@
  * @returns
  * @constructor
  */
-import MedicineProvider from "./MedicineProvider";
+import MedicineProvider from "../MedicineProvider";
 
 const RefreshMedicineList = (medicineProvider: typeof MedicineProvider, residentId: number | string): Promise<any> => {
    const searchCriteria =

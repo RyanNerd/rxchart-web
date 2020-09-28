@@ -8,7 +8,7 @@ import MedicineEdit from "../components/Modals/MedicineEdit";
 import ConfirmationDialog from "../components/Modals/ConfirmationDialog";
 import DrugLogGrid from "../components/Grids/DrugLogGrid";
 import DrugLogEdit from "../components/Modals/DrugLogEdit";
-import RefreshMedicineLog from "../providers/RefreshMedicineLog";
+import RefreshMedicineLog from "../providers/helpers/RefreshMedicineLog";
 import MedicineListGroup from "../components/ListGroups/MedicineListGroup";
 import RefreshOtcList from "../providers/helpers/RefreshOtcList";
 import {calculateLastTaken} from "../utility/common";
