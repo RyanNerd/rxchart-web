@@ -7,7 +7,7 @@ import {ReactNode} from "react";
 import {Placement} from "react-bootstrap/Overlay";
 
 interface IProps {
-    placement: Placement
+    placement?: Placement
     tooltip?: string | ReactNode;
     tooltipId?: string;
     children: JSX.Element[] | JSX.Element | string

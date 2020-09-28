@@ -32,10 +32,10 @@ const DrugLogEdit = (props: IProps) => {
     const textInput = useRef<any>(null);
 
     // Observer for show
-    // useEffect(() => {set_Show(show)}, [show]);
+    useEffect(() => {setShow(props.show)}, [show, props.show]);
 
     // Observer for drugInfo
-    //useEffect(() => {set_DrugLogInfo(drugLogInfo)}, [drugLogInfo]);
+    useEffect(() => {setDrugLogInfo(props.drugLogInfo)}, [drugLogInfo, props.drugLogInfo]);
 
     // Disable the Save button if Notes are empty.
     useEffect(() => {
