@@ -5,7 +5,9 @@
  * @param {array<{Barcode: string, Drug: string}>} drugList
  * @returns {null | string}
  */
-const searchDrugs = (searchText: string, drugList: Array<{Barcode: string, Drug: string}>) => {
+import {MedicineRecord} from "../types/RecordTypes";
+
+const searchDrugs = (searchText: string, drugList: MedicineRecord[]) => {
     const textLen = searchText ? searchText.length : 0;
     if (textLen > 0 && drugList && drugList.length > 0) {
         let drugMatch = null;
@@ -13,7 +15,7 @@ const searchDrugs = (searchText: string, drugList: Array<{Barcode: string, Drug:
         // Is the first character a digit? If so, search the Barcode otherwise search the Drug name
         if (c >= '0' && c <= '9') {
             drugMatch = drugList.filter(drug =>
-                (drug.Barcode.substr(0, textLen).toLowerCase() === searchText.toLowerCase())
+                (drug.Barcode?.substr(0, textLen).toLowerCase() === searchText.toLowerCase())
             );
         } else {
             drugMatch =

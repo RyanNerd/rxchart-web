@@ -55,6 +55,7 @@ const ManageDrugPage = (props: IProps) => {
                 Strength: "",
                 Directions: "",
                 Notes: "",
+                OTC: false,
                 FillDateMonth: month,
                 FillDateDay: day,
                 FillDateYear: year

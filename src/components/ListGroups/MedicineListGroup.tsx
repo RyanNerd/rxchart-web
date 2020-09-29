@@ -10,11 +10,11 @@ import {MedicineRecord} from "../../types/RecordTypes";
 interface IProps {
     medicineList: Array<MedicineRecord>
     activeDrug: MedicineRecord,
-    lastTaken: number | null,
+    lastTaken: number | null | boolean,
     drugChanged: Function,
     addDrugLog: Function,
     canvasId: string,
-    canvasUpdated: Function,
+    canvasUpdated?: Function,
     logDrug: Function
 }
 
@@ -63,8 +63,8 @@ const MedicineListGroup = (props: IProps) => {
      * @param {number | null | boolean} lastTaken
      * @returns {string|null}
      */
-    const tooltipText = (lastTaken: number | null) => {
-        if (lastTaken === null) return null;
+    const tooltipText = (lastTaken: number | null | boolean) => {
+        if (lastTaken === null || !lastTaken) return null;
         if (lastTaken <= 1) {
             return activeDrug.Drug + " taken in the last hour";
         }

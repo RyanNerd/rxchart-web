@@ -77,7 +77,7 @@ const DrugLogEdit = (props: IProps) => {
 
     // Short circuit render if there is no drugLogInfo.
     if (!drugLogInfo) {
-        return false;
+        return null;
     }
 
      return (

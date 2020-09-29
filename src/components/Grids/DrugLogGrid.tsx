@@ -9,8 +9,8 @@ interface IProps {
     onEdit?: Function,
     onDelete?: Function,
     drugId: number | null,
-    medicineList: Array<MedicineRecord>,
-    otcList: Array<MedicineRecord>,
+    medicineList?: Array<MedicineRecord>,
+    otcList?: Array<MedicineRecord>,
     condensed?: boolean,
     showDrugColumn: boolean,
 }

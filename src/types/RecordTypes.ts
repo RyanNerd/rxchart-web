@@ -16,19 +16,23 @@ export type DrugLogRecord = {
     Id: null | number,
     MedicineId: number,
     Notes: string,
-    Created: null | Date,
-    Updated: Date,
+    Created?: Date | null,
+    Updated?: Date | null,
     [key: string]: any
 } | null;
 
 export type MedicineRecord = {
     Id: number | null,
     Barcode: string | null,
-    ResidentId: number | null,
+    ResidentId?: number | null,
     Drug: string,
     Strength: string | null,
     Directions: string | null,
     Notes: string | null,
+    OTC: boolean,
+    FillDateMonth?: string | string[] | number,
+    FillDateDay?: string | string[] | number,
+    FillDateYear?: string | string[] | number
     [key: string]: any
 }
 
@@ -40,4 +44,4 @@ export const newDrugInfo = {
     Strength: "",
     Directions: "",
     Notes: ""
-};
+} as MedicineRecord;

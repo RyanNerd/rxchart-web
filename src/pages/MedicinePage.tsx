@@ -13,12 +13,18 @@ import RefreshMedicineLog from "../providers/helpers/RefreshMedicineLog";
 import MedicineListGroup from "../components/ListGroups/MedicineListGroup";
 import TooltipButton from "../components/Buttons/TooltipButton";
 import {calculateLastTaken} from "../utility/common";
-import {newDrugInfo} from "../types/RecordTypes";
-import PropTypes from 'prop-types';
+import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../types/RecordTypes";
 import LastTakenButton from "../components/Buttons/LastTakenButton";
 import searchDrugs from "../utility/searchDrugs";
 import isSearchValid from "../utility/isSearchValid";
 import logButtonColor from "../utility/logButtonColor";
+import MedHistoryProvider from "../providers/MedHistoryProvider";
+import MedicineProvider from "../providers/MedicineProvider";
+
+interface IProps {
+    activeTabKey: string,
+    onError: (e: ErrorEvent) => void
+}
 
 /**
  * MedicinePage
@@ -26,35 +32,38 @@ import logButtonColor from "../utility/logButtonColor";
  *
  * @returns {*}
  */
-const MedicinePage = (props) => {
+const MedicinePage = (props: IProps) => {
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDrugLog, setShowDrugLog ] = useState(false);
-    const [ drugInfo, setDrugInfo ] = useState(null);
-    const [ drugLogInfo, setDrugLogInfo ] = useState(null);
-    const [ showDeleteDrugLogRecord, setShowDeleteDrugLogRecord ] = useState(false);
-    const [ lastTaken, setLastTaken ] = useState(null);
-    const [ activeDrug, setActiveDrug ] = useState(null);
+    const [ drugInfo, setDrugInfo ] = useState<MedicineRecord | null>(null);
+    const [ drugLogInfo, setDrugLogInfo ] = useState<DrugLogRecord | null>(null);
+    const [ showDeleteDrugLogRecord, setShowDeleteDrugLogRecord ] = useState<any>(false);
+    const [ lastTaken, setLastTaken ] = useState<number | boolean | null>(null);
+    const [ activeDrug, setActiveDrug ] = useState<any>(null);
     const [ searchText, setSearchText ] = useState('');
     const [ searchIsValid, setSearchIsValid ] = useState(false)
-    const focusRef = useRef(null);
+    const focusRef = useRef<any>(null);
 
-    const [ medicineList, setMedicineList ] = useGlobal('medicineList');
-    const [ drugLogList, setDrugLogList ] = useGlobal('drugLogList');
-    const [ activeResident ] = useGlobal('activeResident');
-    const [ providers ] = useGlobal('providers');
+    const [ medicineList, setMedicineList ] = useGlobal<any>('medicineList');
+    const [ drugLogList, setDrugLogList ] = useGlobal<any>('drugLogList');
+    const [ activeResident ] = useGlobal<any>('activeResident');
+    const [ providers ] = useGlobal<any>('providers');
+    const [ residentId, setResidentId ] = useState<number | null>(activeResident?.Id || null);
 
-    const medHistoryProvider = providers.medHistoryProvider;
-    const medicineProvider = providers.medicineProvider;
+    const medHistoryProvider = providers.medHistoryProvider as typeof MedHistoryProvider;
+    const medicineProvider = providers.medicineProvider as typeof MedicineProvider;
     const onError = props.onError;
     const key = props.activeTabKey || null;
 
     // Set the activeDrug when the medicineList changes or the activeResident.
     useEffect(()=> {
         if (medicineList && medicineList.length > 0) {
+            // FIXME: https://github.com/microsoft/TypeScript/issues/26223
             setActiveDrug(medicineList[0]);
         } else {
             setActiveDrug(null);
         }
+        setResidentId(activeResident ? activeResident.Id : null);
     }, [medicineList, activeResident]);
 
     // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
@@ -97,12 +106,12 @@ const MedicinePage = (props) => {
      * @param {MouseEvent} e
      * @param {boolean} isAdd
      */
-    const addEditDrug = (e, isAdd) => {
+    const addEditDrug = (e: React.MouseEvent<HTMLElement>, isAdd: boolean) => {
         e.preventDefault();
         if (isAdd) {
             const drugInfo = {...newDrugInfo};
             drugInfo.OTC = false;
-            drugInfo.ResidentId = activeResident.Id;
+            drugInfo.ResidentId = activeResident?.Id;
             setDrugInfo(drugInfo);
         } else {
             setDrugInfo({...activeDrug});
@@ -115,8 +124,9 @@ const MedicinePage = (props) => {
      *
      * @param {object | null} drugInfo
      */
-    const handleMedicineEditModalClose = (drugInfo) => {
-        if (drugInfo) {
+    const handleMedicineEditModalClose = (drugInfo: MedicineRecord | null) => {
+        const residentId = activeResident?.Id;
+        if (drugInfo && residentId) {
             const drugData = {...drugInfo};
 
             if (!drugData.Id) {
@@ -132,17 +142,17 @@ const MedicinePage = (props) => {
             }
 
             medicineProvider.post(drugData)
-            .then((drugRecord) => {
-                RefreshMedicineList(medicineProvider, drugData.ResidentId)
+            .then((drugRecord: MedicineRecord) => {
+                RefreshMedicineList(medicineProvider, residentId)
                 .then((drugList) => {
-                    setMedicineList(drugList);
+                    setMedicineList(drugList).then(() => {});
                     setDrugInfo(drugRecord);
                     setActiveDrug(drugRecord);
                     setLastTaken(false);
-                    RefreshMedicineLog(medHistoryProvider, activeResident.Id)
+                    RefreshMedicineLog(medHistoryProvider, residentId)
                         .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
                 })
-                .catch((err) => {
+                .catch((err: ErrorEvent) => {
                     onError(err);
                 });
             });
@@ -155,13 +165,14 @@ const MedicinePage = (props) => {
      *
      * @param {object} drugLogInfo
      */
-    const deleteDrugLogRecord = (drugLogInfo) => {
-        medHistoryProvider.delete(drugLogInfo.Id)
-        .then((response) => {
-            RefreshMedicineLog(medHistoryProvider, activeResident.Id).then((data) => setDrugLogList(data));
-        })
-        .catch((err) => onError(err));
-
+    const deleteDrugLogRecord = (drugLogInfo: DrugLogRecord) => {
+        if (drugLogInfo && drugLogInfo.Id && residentId !== null) {
+            medHistoryProvider.delete(drugLogInfo.Id)
+            .then((response: object) => {
+                RefreshMedicineLog(medHistoryProvider, residentId).then((data) => setDrugLogList(data));
+            })
+            .catch((err: ErrorEvent) => onError(err));
+        }
         setShowDeleteDrugLogRecord(false);
     }
 
@@ -171,13 +182,13 @@ const MedicinePage = (props) => {
      * @param {MouseEvent} e
      * @param {object} drugLogInfo
      */
-    const addEditDrugLog = (e, drugLogInfo) => {
+    const addEditDrugLog = (e: React.MouseEvent<HTMLElement>, drugLogInfo?: DrugLogRecord) => {
         e.preventDefault();
         // If drugLogInfo is not populated then this is an add operation.
         if (!drugLogInfo) {
             drugLogInfo = {
                 Id: null,
-                ResidentId: activeResident.Id,
+                ResidentId: residentId,
                 MedicineId: activeDrug.Id,
                 Notes: ""
             }
@@ -192,14 +203,14 @@ const MedicinePage = (props) => {
      *
      * @param {object | null} drugLogInfo
      */
-    const handleDrugLogEditClose = (drugLogInfo) => {
+    const handleDrugLogEditClose = (drugLogInfo: DrugLogRecord) => {
         if (drugLogInfo) {
             medHistoryProvider.post(drugLogInfo)
-            .then((response) => {
+            .then((response: DrugLogRecord) => {
                 RefreshMedicineLog(medHistoryProvider, activeDrug.ResidentId)
                     .then((data) => setDrugLogList(data));
             })
-            .catch((err) => {
+            .catch((err: ErrorEvent) => {
                 onError(err);
             });
         }
@@ -211,11 +222,11 @@ const MedicinePage = (props) => {
      *
      * @param {number} amount
      */
-    const handleLogDrugAmount = (amount) => {
+    const handleLogDrugAmount = (amount: string | number) => {
         const notes = amount.toString();
         const drugLogInfo = {
             Id: null,
-            ResidentId: activeResident.Id,
+            ResidentId: residentId,
             MedicineId: activeDrug.Id,
             Notes: notes
         };
@@ -232,7 +243,7 @@ const MedicinePage = (props) => {
                             tooltip="Manually Add New Medicine"
                             size="sm"
                             variant="info"
-                            onClick={(e) => addEditDrug(e, true)}
+                            onClick={(e: React.MouseEvent<HTMLElement>) => addEditDrug(e, true)}
                         >
                             + Medicine
                         </TooltipButton>
@@ -307,9 +318,9 @@ const MedicinePage = (props) => {
                                 lastTaken={lastTaken}
                                 medicineList={medicineList}
                                 activeDrug={activeDrug}
-                                drugChanged={(drug) => setActiveDrug(drug)}
-                                addDrugLog={(e) => addEditDrugLog(e)}
-                                logDrug={(amount) => handleLogDrugAmount(amount)}
+                                drugChanged={(drug: MedicineRecord) => setActiveDrug(drug)}
+                                addDrugLog={(e: React.MouseEvent<HTMLElement>) => addEditDrugLog(e)}
+                                logDrug={(amount: number) => handleLogDrugAmount(amount)}
                                 canvasId={'med-barcode'}
                             />
                         </Col>
@@ -319,8 +330,8 @@ const MedicinePage = (props) => {
                                 showDrugColumn={false}
                                 drugLog={drugLogList}
                                 drugId={activeDrug && activeDrug.Id}
-                                onEdit={(e, r) => addEditDrugLog(e, r)}
-                                onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
+                                onEdit={(e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) => addEditDrugLog(e, r)}
+                                onDelete={(e: React.MouseEvent<HTMLElement>, r:DrugLogRecord) => setShowDeleteDrugLogRecord(r)}
                             />
                         </Col>
                     </Row>
@@ -329,12 +340,14 @@ const MedicinePage = (props) => {
             </Form>
 
             {/* MedicineEdit Modal*/}
-            <MedicineEdit
-                show={showMedicineEdit}
-                onHide={() => setShowMedicineEdit(!showMedicineEdit)}
-                onClose={(r) => handleMedicineEditModalClose(r)}
-                drugInfo={drugInfo}
-            />
+            {drugInfo &&
+                < MedicineEdit
+                    show={showMedicineEdit}
+                    onHide={() => setShowMedicineEdit(!showMedicineEdit)}
+                    onClose={(r) => handleMedicineEditModalClose(r)}
+                    drugInfo={drugInfo}
+                />
+            }
 
             <DrugLogEdit
                 show={showDrugLog}
@@ -347,13 +360,13 @@ const MedicinePage = (props) => {
                 title="Delete Log Record"
                 body={
                     <>
-                        <p>{showDeleteDrugLogRecord.Updated}</p>
+                        <p>{showDeleteDrugLogRecord && showDeleteDrugLogRecord.Updated}</p>
                         <b style={{color: "red"}}>
                             Are you sure?
                         </b>
                     </>
                 }
-                show={showDeleteDrugLogRecord instanceof Object}
+                show={showDeleteDrugLogRecord}
                 onAnswer={(a) => {
                     if (a) {
                         deleteDrugLogRecord(showDeleteDrugLogRecord);
@@ -366,15 +379,11 @@ const MedicinePage = (props) => {
         </>
     );
 
-    if (activeResident && activeResident.Id) {
+    if (activeResident && residentId) {
         return medicinePage;
     } else {
         return null;
     }
-}
-
-MedicinePage.propTypes = {
-    onError: PropTypes.func.isRequired
 }
 
 export default MedicinePage;

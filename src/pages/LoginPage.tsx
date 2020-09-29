@@ -88,7 +88,6 @@ const LoginPage = (props: IProps) => {
                             ]
                         };
 
-                    // FIXME: TS setResidentList(data) is being stupid
                     providers.residentProvider.search(searchCriteria)
                         .then((data: ResidentRecord | ResidentRecord[]) => setResidentList(data))
                         .catch((err: ErrorEvent) => onError(err));

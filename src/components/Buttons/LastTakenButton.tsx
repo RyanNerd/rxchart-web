@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import {ReactChildren} from "react";
 
 interface IProps {
-    lastTaken?: number | undefined
-    children: ReactChildren
+    lastTaken?: number | undefined | null | boolean
+    children?: ReactChildren
 }
 
 const LastTakenButton = (props: IProps) => {
