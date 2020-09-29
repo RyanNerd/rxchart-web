@@ -5,12 +5,12 @@ import RxTable from "./RxTable";
 import {DrugLogRecord, MedicineRecord} from "../../types/RecordTypes";
 
 interface IProps {
-    drugLog: Array<DrugLogRecord>,
-    onEdit?: Function,
-    onDelete?: Function,
+    drugLog?: DrugLogRecord[] | null,
+    onEdit?: (e: React.MouseEvent<HTMLElement>, r: DrugLogRecord)=>void,
+    onDelete?: (e: React.MouseEvent<HTMLElement>, r: DrugLogRecord)=>void,
     drugId?: number | null,
-    medicineList?: Array<MedicineRecord>,
-    otcList?: Array<MedicineRecord>,
+    medicineList?: MedicineRecord[] | null,
+    otcList?: MedicineRecord[] | null,
     condensed?: boolean,
     showDrugColumn: boolean,
 }

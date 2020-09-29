@@ -185,7 +185,6 @@ const OtcPage = (props: IProps) => {
             })
             .catch((err: ErrorEvent) => onError(err));
         }
-
         setShowDeleteDrugLogRecord(false);
     }
 
@@ -195,7 +194,7 @@ const OtcPage = (props: IProps) => {
      * @param {MouseEvent} e
      * @param {object} drugLogInfo
      */
-    const addEditDrugLog = (e: React.MouseEvent<HTMLInputElement>, drugLogInfo?: DrugLogRecord) => {
+    const addEditDrugLog = (e: React.MouseEvent<HTMLElement>, drugLogInfo?: DrugLogRecord) => {
         e.preventDefault();
 
         // If drugLogInfo is not populated then this is an add operation.
@@ -214,7 +213,7 @@ const OtcPage = (props: IProps) => {
     /**
      * Fires when the drug log edit modal closes
      *
-     * @param {object | null} drugLogInfo
+     * @param {DrugLogRecord | null} drugLogInfo
      */
     const handleDrugLogEditClose = (drugLogInfo: DrugLogRecord | null) => {
         if (drugLogInfo && residentId) {
@@ -344,8 +343,8 @@ const OtcPage = (props: IProps) => {
                                 showDrugColumn={true}
                                 drugLog={otcLogList || []}
                                 otcList={otcList}
-                                onEdit={(e: React.MouseEvent<HTMLInputElement>, r: DrugLogRecord) => addEditDrugLog(e, r)}
-                                onDelete={(e: React.MouseEvent<HTMLInputElement>, r: DrugLogRecord) => setShowDeleteDrugLogRecord(r)}
+                                onEdit={(e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) => addEditDrugLog(e, r)}
+                                onDelete={(e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) => setShowDeleteDrugLogRecord(r)}
                             />
                         </Col>
                     </Row>

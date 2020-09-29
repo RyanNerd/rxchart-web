@@ -12,7 +12,7 @@ import MedicineProvider from "../providers/MedicineProvider";
 import {MedicineRecord} from "../types/RecordTypes";
 
 interface IProps {
-    onError: () => void
+    onError: (e: ErrorEvent) => void
 }
 
 /**

@@ -16,7 +16,7 @@ import {ResidentRecord} from "../types/RecordTypes";
 interface IProps {
     activeTabKey: string | null
     onError: (e:ErrorEvent) => void
-    updateFocusRef: (ref: any) => void,
+    updateFocusRef: (ref: React.RefObject<HTMLInputElement>) => void,
     onLogin: (loggedIn: boolean) => void
 }
 

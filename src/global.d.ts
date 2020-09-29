@@ -1,5 +1,5 @@
 import 'reactn';
-import {MedicineRecord, ResidentRecord} from "./types/RecordTypes";
+import {DrugLogRecord, MedicineRecord, ResidentRecord} from "./types/RecordTypes";
 
 declare module 'reactn/default' {
 
@@ -29,7 +29,7 @@ declare module 'reactn/default' {
         activeResident: ResidentRecord | null;
         development: boolean;
         providers: object;
-        drugLogList: null | [];
+        drugLogList: DrugLogRecord[] | null;
         medicineList: MedicineRecord[] | null;
         otcList: MedicineRecord[] | null;
         residentList: Array<ResidentRecord>;

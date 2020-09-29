@@ -14,8 +14,8 @@ const LandingPage = () => {
     const [ activeResident ] = useGlobal('activeResident');
     const [ development ] = useGlobal('development');
 
-    const [ errorDetails, setErrorDetails ] = useState(null);
-    const [ activeTabKey, setActiveTabKey ] = useState('login');
+    const [ errorDetails, setErrorDetails ] = useState<string | null>(null);
+    const [ activeTabKey, setActiveTabKey ] = useState<string | null>('login');
 
     const [ drugLogList ] = useGlobal('drugLogList');
     const [ medicineList ] = useGlobal('medicineList');
@@ -26,7 +26,7 @@ const LandingPage = () => {
      *
      * @param {React.Ref} ref
      */
-    const setFocus = (ref) => {
+    const setFocus = (ref: React.RefObject<HTMLInputElement>) => {
         if (ref && ref.current) {
             ref.current.focus();
         }
@@ -37,9 +37,9 @@ const LandingPage = () => {
      *
      * @param {ErrorEvent | null} err
      */
-    const errorOccurred = (err) => {
+    const errorOccurred = (err: ErrorEvent) => {
         if (development) {
-            console.error('Error', err);
+            console.log('Error', err);
             if (err) {
                 setErrorDetails(err.toString());
             } else {
@@ -114,7 +114,7 @@ const LandingPage = () => {
                 title="Manage Rx"
             >
                 <ManageDrugPage
-                    onError={(error) => errorOccurred(error)}
+                    onError={(err: ErrorEvent) => errorOccurred(err)}
                 />
             </Tab>
             <Tab
@@ -123,7 +123,7 @@ const LandingPage = () => {
                 title="Manage OTC"
             >
                 <ManageOtcPage
-                    onError={(error) => errorOccurred(error)}
+                    onError={(err) => errorOccurred(err)}
                 />
             </Tab>
             <Tab

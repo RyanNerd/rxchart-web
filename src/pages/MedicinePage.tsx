@@ -22,7 +22,7 @@ import MedHistoryProvider from "../providers/MedHistoryProvider";
 import MedicineProvider from "../providers/MedicineProvider";
 
 interface IProps {
-    activeTabKey: string,
+    activeTabKey: string | null,
     onError: (e: ErrorEvent) => void
 }
 
