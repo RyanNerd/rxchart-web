@@ -10,7 +10,8 @@ import {ResidentRecord} from "../../types/RecordTypes";
 interface IProps {
     show: boolean,
     residentInfo: ResidentRecord,
-    onClose: (r: ResidentRecord | null) => void;
+    onHide: () => void,
+    onClose: (r: ResidentRecord | null) => void
 }
 
 /**
@@ -49,6 +50,7 @@ const ResidentEdit = (props: IProps) => {
      * @param {boolean} shouldSave
      */
     const handleHide = (e: React.MouseEvent<HTMLElement>, shouldSave: boolean) => {
+        e.preventDefault();
         if (shouldSave) {
             props.onClose({...residentInfo});
         } else {
@@ -81,7 +83,7 @@ const ResidentEdit = (props: IProps) => {
           centered
           size="lg"
           show={show}
-          onHide={(e: React.MouseEvent<HTMLElement>, shouldSave: boolean) => {handleHide(e, false)}}
+          onHide={() => props.onHide()}
           onEntered={() => focusRef.current.focus()}
         >
             <Modal.Header closeButton>

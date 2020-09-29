@@ -126,8 +126,8 @@ const OtcPage = (props: IProps) => {
             drugInfo.OTC = true;
             setDrugInfo(drugInfo);
         } else {
-            // @ts-ignore  FIXME: TS
-            setDrugInfo({...activeDrug});
+            const drugRecord = {...activeDrug} as MedicineRecord;
+            setDrugInfo(drugRecord);
         }
         setShowMedicineEdit(true);
     }
@@ -180,7 +180,7 @@ const OtcPage = (props: IProps) => {
     const deleteDrugLogRecord = (drugLogInfo: DrugLogRecord) => {
         if (drugLogInfo && drugLogInfo.Id && residentId) {
             medHistoryProvider.delete(drugLogInfo.Id)
-            .then((response: object) => {
+            .then(() => {
                 RefreshMedicineLog(medHistoryProvider, residentId).then((data) => setDrugLogList(data));
             })
             .catch((err: ErrorEvent) => onError(err));
@@ -218,7 +218,7 @@ const OtcPage = (props: IProps) => {
     const handleDrugLogEditClose = (drugLogInfo: DrugLogRecord | null) => {
         if (drugLogInfo && residentId) {
             medHistoryProvider.post(drugLogInfo)
-            .then((response: MedicineRecord) => {
+            .then(() => {
                 RefreshMedicineLog(medHistoryProvider, residentId)
                 .then((data) => {setDrugLogList(data).then(() => {})})
             })

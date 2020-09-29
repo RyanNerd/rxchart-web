@@ -10,7 +10,7 @@ import {MedicineRecord} from "../types/RecordTypes";
 const searchDrugs = (searchText: string, drugList: MedicineRecord[]) => {
     const textLen = searchText ? searchText.length : 0;
     if (textLen > 0 && drugList && drugList.length > 0) {
-        let drugMatch = null;
+        let drugMatch;
         const c = searchText.substr(0,1);
         // Is the first character a digit? If so, search the Barcode otherwise search the Drug name
         if (c >= '0' && c <= '9') {

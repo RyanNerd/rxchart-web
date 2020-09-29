@@ -60,7 +60,6 @@ const LoginPage = (props: IProps) => {
         const frak = new Frak();
 
         // Send the user name and password to the web service
-        // FIXME: TS response: any
         frak.post(baseUrl + 'authenticate', {username: userName, password: password}, {mode: "cors"})
         .then((response: any) => {
             // Success?

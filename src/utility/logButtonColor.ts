@@ -17,4 +17,3 @@ const logButtonColor = (lastTaken: number | null | boolean) => {
 }
 
 export default logButtonColor;
-

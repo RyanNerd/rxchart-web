@@ -33,7 +33,7 @@ export const handleMedicineEditModalClose = (
         }
 
         medicineProvider.post(drugData)
-        .then((drugRecord: MedicineRecord) => {
+        .then(() => {
             refreshList(medicineProvider)
             .then((data: MedicineRecord[]) => {setDrugList(data)})
             .catch((err: Error) => {

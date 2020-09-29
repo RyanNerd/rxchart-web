@@ -69,7 +69,7 @@ const DrugDropdown = (props: IProps): JSX.Element | null => {
             <Dropdown.Item
                 key={key}
                 active={medicine.Id === drugId}
-                onSelect={(e) =>props.onSelect(e, medicine)}>
+                onSelect={(e) => props.onSelect(e, medicine)}>
                     {drugDetail}
             </Dropdown.Item>
         );

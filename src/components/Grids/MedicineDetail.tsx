@@ -6,15 +6,15 @@ import {MedicineRecord} from "../../types/RecordTypes";
  * MedicineDetail table row
  *
  * @param {object} drug
- * @param {function} onDelete
+ * @param {React.MouseEvent<HTMLElement>} onDelete
  * @param {function} onEdit
  * @param {boolean} includeNotes
  * @return {JSX.Element}
  */
 const MedicineDetail = (
         drug: MedicineRecord,
-        onDelete: Function,
-        onEdit: Function,
+        onDelete: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void,
+        onEdit: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void,
         includeNotes: boolean
     ): JSX.Element => {
     return (

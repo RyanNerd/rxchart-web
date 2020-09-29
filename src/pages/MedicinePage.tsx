@@ -115,8 +115,8 @@ const MedicinePage = (props: IProps) => {
             drugInfo.ResidentId = activeResident?.Id;
             setDrugInfo(drugInfo);
         } else {
-            // @ts-ignore  FIXME: TS
-            setDrugInfo({...activeDrug});
+            const drugRecord = {...activeDrug} as MedicineRecord;
+            setDrugInfo(drugRecord);
         }
         setShowMedicineEdit(true);
     }
@@ -170,7 +170,7 @@ const MedicinePage = (props: IProps) => {
     const deleteDrugLogRecord = (drugLogInfo: DrugLogRecord) => {
         if (drugLogInfo && drugLogInfo.Id && residentId !== null) {
             medHistoryProvider.delete(drugLogInfo.Id)
-            .then((response: object) => {
+            .then(() => {
                 RefreshMedicineLog(medHistoryProvider, residentId).then((data) => setDrugLogList(data));
             })
             .catch((err: ErrorEvent) => onError(err));
@@ -186,9 +186,9 @@ const MedicinePage = (props: IProps) => {
      */
     const addEditDrugLog = (e: React.MouseEvent<HTMLElement>, drugLogInfo?: DrugLogRecord) => {
         e.preventDefault();
-            // If drugLogInfo is not populated then this is an add operation.
-            if (!drugLogInfo) {
-                if (activeDrug && activeDrug.Id) {
+        // If drugLogInfo is not populated then this is an add operation.
+        if (!drugLogInfo) {
+            if (activeDrug && activeDrug.Id) {
                 drugLogInfo = {
                     Id: null,
                     ResidentId: residentId,
@@ -196,8 +196,8 @@ const MedicinePage = (props: IProps) => {
                     Notes: "",
                 }
             }
-            setDrugLogInfo(drugLogInfo || null);
         }
+        setDrugLogInfo(drugLogInfo || null);
         setShowDrugLog(true);
     }
 
@@ -209,7 +209,7 @@ const MedicinePage = (props: IProps) => {
     const handleDrugLogEditClose = (drugLogInfo: DrugLogRecord | null) => {
         if (drugLogInfo) {
             medHistoryProvider.post(drugLogInfo)
-            .then((response: DrugLogRecord) => {
+            .then(() => {
                 if (residentId) {
                     RefreshMedicineLog(medHistoryProvider, residentId)
                         .then((data) => setDrugLogList(data));
