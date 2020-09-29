@@ -48,7 +48,7 @@ const LandingPage = () => {
         } else {
             setErrorDetails('Something went wrong. Please check your internet connection and sign back in.');
         }
-        setApiKey(null);
+        setApiKey(null).then(()=>{});
         setActiveTabKey('error');
     }
 
