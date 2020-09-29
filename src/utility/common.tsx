@@ -7,7 +7,7 @@ import {DrugLogRecord, ResidentRecord} from "../types/RecordTypes";
  * @return {string}
  */
 export const DOB = (resident: ResidentRecord): string => {
-    return DateToString(resident.DOB_MONTH, resident.DOB_DAY, resident.DOB_YEAR);
+    return DateToString(resident.DOB_MONTH.toString(), resident.DOB_DAY.toString(), resident.DOB_YEAR.toString());
 };
 
 /**
@@ -18,7 +18,7 @@ export const DOB = (resident: ResidentRecord): string => {
  * @param {number} year
  * @return {string}
  */
-export const DateToString = (month: number, day: number, year: number): string => {
+export const DateToString = (month: string, day: string, year: string): string => {
     return  month + '/' + day + '/' + year;
 }
 
@@ -38,8 +38,8 @@ export const FullName = (resident: ResidentRecord): string => {
  * @param {number} month
  * @returns {string}
  */
-export const isMonthValid = (month: number): string => {
-    return (month >= 1 && month <= 12) ? '' : 'is-invalid';
+export const isMonthValid = (month: string): string => {
+    return (parseInt(month) >= 1 && parseInt(month) <= 12) ? '' : 'is-invalid';
 };
 
 /**
@@ -53,7 +53,7 @@ export const isDayValid = (day: string, month: string): string => {
     let maxDay = 28;
     const nMonth = parseInt(month);
     const nDay = parseInt(day);
-    if (nMonth ===1
+    if (nMonth === 1
         || nMonth === 3
         || nMonth === 5
         || nMonth === 7
@@ -61,15 +61,13 @@ export const isDayValid = (day: string, month: string): string => {
         || nMonth === 10
         || nMonth === 11
         || nMonth === 12) {
-        maxDay = 31;
+            maxDay = 31;
     }
-
     if (nMonth === 4
         || nMonth === 6
         || nMonth === 9) {
-        maxDay = 30;
+            maxDay = 30;
     }
-
     return (nDay >=1 && nDay <= maxDay) ? '' : 'is-invalid';
 };
 
@@ -85,7 +83,7 @@ export const isYearValid = (year: string, isDOB: boolean): string => {
     if (isDOB) {
         const today = new Date();
         const todayYear = today.getFullYear();
-        return (nYear <= todayYear && nYear >= 1900) ? '' : 'is-invalid';
+        return (nYear <= todayYear && nYear >= todayYear - 125) ? '' : 'is-invalid';
     }
 
     return (nYear >= 1900 && nYear <= 9999) ? '' : 'is-invalid';

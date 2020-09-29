@@ -9,7 +9,12 @@ import RefreshMedicineList from "../providers/helpers/RefreshMedicineList";
 import RefreshMedicineLog from "../providers/helpers/RefreshMedicineLog";
 import ConfirmationDialog from "../components/Modals/ConfirmationDialog";
 import {Form} from "react-bootstrap";
-import PropTypes from 'prop-types';
+import ResidentProvider from "../providers/ResidentProvider";
+import {ResidentRecord} from "../types/RecordTypes";
+
+interface IProps {
+    onError: (e: ErrorEvent) => void
+}
 
 /**
  * Display Resident Grid
@@ -18,19 +23,19 @@ import PropTypes from 'prop-types';
  * @returns {*}
  * @constructor
  */
-const ResidentPage = (props) => {
+const ResidentPage = (props: IProps) => {
     const [ show, setShow ] = useState(false);
-    const [ residentInfo, setResidentInfo ] = useState(null);
+    const [ residentInfo, setResidentInfo ] = useState<ResidentRecord | null>(null);
     const [ showDeleteResident, setShowDeleteResident ] = useState(false);
-    const [ residentToDelete, setResidentToDelete ] = useState(null);
+    const [ residentToDelete, setResidentToDelete ] = useState<ResidentRecord | null>(null);
 
     const [ residentList, setResidentList ] = useGlobal('residentList');
     const [ , setMedicineList ] = useGlobal('medicineList');
     const [ , setDrugLogList ] = useGlobal('drugLogList');
     const [ activeResident, setActiveResident ] = useGlobal('activeResident');
-    const [ providers ] = useGlobal('providers');
+    const [ providers ] = useGlobal<any>('providers');
 
-    const residentProvider = providers.residentProvider;
+    const residentProvider = providers.residentProvider as typeof ResidentProvider;
     const onError = props.onError;
 
     /**
@@ -39,14 +44,14 @@ const ResidentPage = (props) => {
      * @param id
      * @returns {Promise<Response>}
      */
-    const reactivateResident = (id) => {
+    const reactivateResident = (id: number) => {
         return residentProvider.restore({restore_id: id})
-        .then((response) => {
+        .then((response: ResidentRecord) => {
             return response;
         })
-        .catch((error) =>
+        .catch((err: ErrorEvent) =>
         {
-           console.log(error);
+           onError(err);
         });
     }
 
@@ -56,9 +61,8 @@ const ResidentPage = (props) => {
      * @param {MouseEvent} e
      * @param resident
      */
-    const handleOnEdit = (e, resident) => {
+    const handleOnEdit = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
         e.preventDefault();
-
         setResidentInfo({...resident});
         setShow(true);
     }
@@ -68,7 +72,7 @@ const ResidentPage = (props) => {
      *
      * @param {MouseEvent} e
      */
-    const handleAdd = (e) => {
+    const handleAdd = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
 
         setResidentInfo({
@@ -79,7 +83,6 @@ const ResidentPage = (props) => {
             DOB_MONTH: "",
             DOB_DAY: ""
         });
-
         setShow(true);
     }
 
@@ -88,88 +91,84 @@ const ResidentPage = (props) => {
      *
      * @param {object | null} residentInfo
      */
-    const handleModalClose = (residentInfo) => {
+    const handleModalClose = (residentInfo: ResidentRecord | null) => {
         if (residentInfo) {
             const residentData = {...residentInfo};
-
             if (!residentData.Id) {
                 residentData.Id = null;
             }
-
             const searchExisting = {
                 where: [
-                        {column: "FirstName", value: residentData.FirstName},
-                        {column: "LastName", value: residentData.LastName},
-                        {column: "DOB_YEAR", value: residentData.DOB_YEAR},
-                        {column: "DOB_MONTH", value: residentData.DOB_MONTH},
-                        {column: "DOB_DAY", value: residentData.DOB_DAY}
-                        ],
+                    {column: "FirstName", value: residentData.FirstName},
+                    {column: "LastName", value: residentData.LastName},
+                    {column: "DOB_YEAR", value: residentData.DOB_YEAR},
+                    {column: "DOB_MONTH", value: residentData.DOB_MONTH},
+                    {column: "DOB_DAY", value: residentData.DOB_DAY}
+                ],
                 limit: 1,
                 only_trashed: true
             };
 
             // Check if the added resident exists but is trashed.
             residentProvider.search(searchExisting)
-            .then((result) => {
+            .then((result: ResidentRecord[]) => {
                 // Do we have a trashed resident? Reactivate them, otherwise add as a new resident.
-                if (result.length === 1) {
+                if (result.length === 1 && result[0] && result[0].Id) {
                     reactivateResident(result[0].Id)
-                    .then((restoredResident) => {
+                    .then((restoredResident: ResidentRecord) => {
                         setResidentInfo(restoredResident);
-                        residentProvider.search({order_by: [
-                            {column: "LastName", direction: "asc"},
-                            {column: "FirstName", direction: "asc"}
+                        residentProvider.search({
+                            order_by: [
+                                {column: "LastName", direction: "asc"},
+                                {column: "FirstName", direction: "asc"}
                             ]
                         })
-                        .then((residentList) => {
+                        .then((residentList: ResidentRecord[]) => {
                             // Rehydrate the residentList
                             setResidentList(residentList);
                             // Set the reactivated resident as the active resident.
                             setActiveResident(restoredResident);
                             // Rehydrate the MedicineList
-                            RefreshMedicineList(providers.medicineProvider, restoredResident.Id)
-                            .then((hydratedMedicineList) => {
-                                setMedicineList (hydratedMedicineList);
-                                // If there are any medicines for the selected resident then
-                                // select the first one and make it the active drug.
-                                if (hydratedMedicineList && hydratedMedicineList.length > 0) {
-                                    // Refresh the drugLogList for the new active drug.
-                                    RefreshMedicineLog(providers.medHistoryProvider, restoredResident.Id)
-                                    .then((data) => setDrugLogList(data))
-                                    .catch((err) => props.onError(err));
-                                }
-                            });
-                        })
-                        .catch((err) => onError(err));
+                            const restoredId = restoredResident.Id as number;
+                                RefreshMedicineList(providers.medicineProvider, restoredId)
+                                .then((hydratedMedicineList) => {
+                                    setMedicineList (hydratedMedicineList);
+                                    // If there are any medicines for the selected resident then
+                                    // select the first one and make it the active drug.
+                                    if (hydratedMedicineList && hydratedMedicineList.length > 0) {
+                                        // Refresh the drugLogList for the new active drug.
+                                        RefreshMedicineLog(providers.medHistoryProvider, restoredId)
+                                        .then((data) => setDrugLogList(data))
+                                        .catch((err) => props.onError(err));
+                                    }
+                                });
+                            })
+                        .catch((err: ErrorEvent) => onError(err));
                     })
-                    .catch((error) => {
-                        console.log(error);
-                    });
+                    .catch((err: ErrorEvent) => onError(err));
                 } else {
                     // Add the new resident
                     residentProvider.post(residentData)
-                    .then((newResident) => {
+                    .then((newResident: ResidentRecord) => {
                         residentProvider.search({order_by: [
                                 {column: "LastName", direction: "asc"},
                                 {column: "FirstName", direction: "asc"}
                             ]
                         })
-                        .then((residentList) => {
+                        .then((residentList: ResidentRecord[]) => {
                             setResidentList(residentList);
                         })
-                        .catch((err) => onError(err));
+                        .catch((err: ErrorEvent) => onError(err));
                         return newResident;
                     })
-                    .then((newResident) => {
+                    .then((newResident: ResidentRecord) => {
                         setResidentInfo(newResident);
                         handleOnSelected(null, newResident);
                     })
-                    .catch((err) => onError(err));
+                    .catch((err: ErrorEvent) => onError(err));
                 }
             })
-            .catch((error) => {
-                console.log(error);
-            });
+            .catch((err: ErrorEvent) => onError(err));
         }
         setShow(false);
     }
@@ -180,13 +179,14 @@ const ResidentPage = (props) => {
      * @param {MouseEvent|null} e
      * @param {object} resident
      */
-    const handleOnSelected = (e, resident) => {
+    const handleOnSelected = (e: React.MouseEvent<HTMLElement> | null, resident: ResidentRecord) => {
         if (e) {
             e.preventDefault();
         }
 
         setActiveResident(resident);
-        RefreshMedicineList(providers.medicineProvider, resident.Id)
+        const residentId = resident.Id as number;
+        RefreshMedicineList(providers.medicineProvider, residentId)
         .then((data) => {
             // If there are any medicines for the selected resident then
             // select the first one and make it the active drug.
@@ -210,7 +210,7 @@ const ResidentPage = (props) => {
      * @param {MouseEvent} e
      * @param {object} resident
      */
-    const handleOnDelete = (e, resident) =>  {
+    const handleOnDelete = (e: React.MouseEvent, resident: ResidentRecord) =>  {
         e.preventDefault();
         setResidentToDelete(resident);
         setShowDeleteResident(true);
@@ -220,29 +220,30 @@ const ResidentPage = (props) => {
      * Fires when user confirms to delete resident record
      */
     const deleteResident = () => {
-        // Perform the DELETE API call
-        residentProvider.delete(residentToDelete.Id)
-        .then((response) => {
-            if (response.success) {
-                // If the activeResident is the resident that is being deleted then mark it as no longer active.
-                if (activeResident && activeResident.Id === residentToDelete.Id) {
-                    setActiveResident(null);
-                }
-
-                const searchCriteria =
-                    {
+        if (residentToDelete && residentToDelete.Id) {
+            // Perform the DELETE API call
+            residentProvider.delete(residentToDelete.Id)
+            .then((response: {success: boolean}) => {
+                if (response.success) {
+                    // If the activeResident is the resident that is being deleted then mark it as no longer active.
+                    if (activeResident && activeResident.Id === residentToDelete.Id) {
+                        setActiveResident(null);
+                    }
+                    const searchCriteria =  {
                         order_by: [
                             {column: "LastName", direction: "asc"},
                             {column: "FirstName", direction: "asc"}
                         ]
                     };
-                residentProvider.search(searchCriteria)
-                    .then((data) => setResidentList(data))
-                    .catch((err) => onError(err));
-            } else {
-                onError(response);
-            }
-        });
+                    residentProvider.search(searchCriteria)
+                        .then((data: ResidentRecord[]) => setResidentList(data))
+                        .catch((err: ErrorEvent) => onError(err));
+                } else {
+                    throw(response);
+                }
+            })
+            .catch((err: ErrorEvent) => onError(err));
+        }
     }
 
     return (
@@ -270,19 +271,21 @@ const ResidentPage = (props) => {
             <p><span> </span></p>
 
             <ResidentGrid
-                onEdit={(e, resident) => handleOnEdit(e, resident)}
-                onSelected={(e, resident) => handleOnSelected(e, resident)}
-                onDelete={(e, resident) => handleOnDelete(e, resident)}
+                onEdit={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => handleOnEdit(e, resident)}
+                onSelected={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => handleOnSelected(e, resident)}
+                onDelete={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => handleOnDelete(e, resident)}
                 activeResident={activeResident}
                 residentList={residentList}
             />
 
             {/* ResidentEdit Modal */}
-            <ResidentEdit
-                show={show}
-                residentInfo={residentInfo}
-                onClose={(r) => handleModalClose(r)}
-            />
+            {residentInfo &&
+                <ResidentEdit
+                    show={show}
+                    residentInfo={residentInfo}
+                    onClose={(r) => handleModalClose(r)}
+                />
+            }
 
             {residentToDelete &&
             <ConfirmationDialog
@@ -306,11 +309,6 @@ const ResidentPage = (props) => {
             }
         </>
     );
-}
-
-ResidentPage.propTypes = {
-    onError: PropTypes.func.isRequired,
-
 }
 
 export default ResidentPage;

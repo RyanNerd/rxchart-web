@@ -26,7 +26,7 @@ interface IProps {
 const ResidentEdit = (props: IProps) => {
     // Set up local initial state
     const [show, setShow] = useState(props.show);
-    const [residentInfo, setResidentInfo] = useState(props.residentInfo);
+    const [residentInfo, setResidentInfo] = useState<ResidentRecord>(props.residentInfo);
     const focusRef = useRef<any>(null);
 
     /**
@@ -132,7 +132,7 @@ const ResidentEdit = (props: IProps) => {
                         </Form.Label>
                         <Col sm="2">
                             <Form.Control
-                                className= {isMonthValid(residentInfo.DOB_MONTH)}
+                                className= {isMonthValid(residentInfo.DOB_MONTH.toString())}
                                 type="text"
                                 value={residentInfo.DOB_MONTH}
                                 name="DOB_MONTH"
@@ -187,10 +187,11 @@ const ResidentEdit = (props: IProps) => {
                     Cancel
                 </Button>
                 <Button
-                    disabled={isMonthValid(residentInfo.DOB_MONTH) +
-                                isDayValid(residentInfo.DOB_DAY.toString(), residentInfo.DOB_MONTH.toString()) +
-                                isYearValid(residentInfo.DOB_YEAR.toString(),
-                                    true) !== ''
+                    disabled={
+                        isMonthValid(residentInfo.DOB_MONTH.toString()) +
+                        isDayValid(residentInfo.DOB_DAY.toString(), residentInfo.DOB_MONTH.toString()) +
+                        isYearValid(residentInfo.DOB_YEAR.toString()
+                        ,true) !== ''
                     }
                     onClick={(e) => handleHide(e, true)}
                     variant="primary"

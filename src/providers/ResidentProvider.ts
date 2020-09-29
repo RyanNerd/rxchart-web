@@ -58,10 +58,10 @@ const ResidentProvider = {
      * @param {object} record
      * @returns {Promise<Response>}
      */
-    restore: (record: ResidentRecord) => {
+    restore: (record: {restore_id: number }) => {
         let uri = ResidentProvider._baseUrl + 'resident/restore?api_key=' + ResidentProvider._apiKey;
         return ResidentProvider._frak?.post(uri, record)
-        .then((response: {success: boolean, data: object | object[], status: number}) => {
+        .then((response: {success: boolean, data: ResidentRecord | ResidentRecord[], status: number}) => {
             if (response.success) {
                 return response.data;
             } else {

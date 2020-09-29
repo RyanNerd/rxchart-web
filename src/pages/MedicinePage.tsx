@@ -39,7 +39,7 @@ const MedicinePage = (props: IProps) => {
     const [ drugLogInfo, setDrugLogInfo ] = useState<DrugLogRecord | null>(null);
     const [ showDeleteDrugLogRecord, setShowDeleteDrugLogRecord ] = useState<any>(false);
     const [ lastTaken, setLastTaken ] = useState<number | boolean | null>(null);
-    const [ activeDrug, setActiveDrug ] = useState<any>(null);
+    const [ activeDrug, setActiveDrug ] = useState<MedicineRecord | null>(null);
     const [ searchText, setSearchText ] = useState('');
     const [ searchIsValid, setSearchIsValid ] = useState(false)
     const focusRef = useRef<any>(null);
@@ -58,7 +58,6 @@ const MedicinePage = (props: IProps) => {
     // Set the activeDrug when the medicineList changes or the activeResident.
     useEffect(()=> {
         if (medicineList && medicineList.length > 0) {
-            // FIXME: https://github.com/microsoft/TypeScript/issues/26223
             setActiveDrug(medicineList[0]);
         } else {
             setActiveDrug(null);
@@ -97,7 +96,9 @@ const MedicinePage = (props: IProps) => {
 
     // Show or hide the valid search icon
     useEffect(() => {
-        setSearchIsValid(isSearchValid(searchText, activeDrug));
+        if (activeDrug) {
+            setSearchIsValid(isSearchValid(searchText, activeDrug));
+        }
     }, [activeDrug, searchText]);
 
     /**
@@ -114,6 +115,7 @@ const MedicinePage = (props: IProps) => {
             drugInfo.ResidentId = activeResident?.Id;
             setDrugInfo(drugInfo);
         } else {
+            // @ts-ignore  FIXME: TS
             setDrugInfo({...activeDrug});
         }
         setShowMedicineEdit(true);
@@ -184,31 +186,34 @@ const MedicinePage = (props: IProps) => {
      */
     const addEditDrugLog = (e: React.MouseEvent<HTMLElement>, drugLogInfo?: DrugLogRecord) => {
         e.preventDefault();
-        // If drugLogInfo is not populated then this is an add operation.
-        if (!drugLogInfo) {
-            drugLogInfo = {
-                Id: null,
-                ResidentId: residentId,
-                MedicineId: activeDrug.Id,
-                Notes: ""
+            // If drugLogInfo is not populated then this is an add operation.
+            if (!drugLogInfo) {
+                if (activeDrug && activeDrug.Id) {
+                drugLogInfo = {
+                    Id: null,
+                    ResidentId: residentId,
+                    MedicineId: activeDrug.Id,
+                    Notes: "",
+                }
             }
+            setDrugLogInfo(drugLogInfo || null);
         }
-
-        setDrugLogInfo(drugLogInfo);
         setShowDrugLog(true);
     }
 
     /**
      * Fires when the drug log edit modal closes
      *
-     * @param {object | null} drugLogInfo
+     * @param {object | null} drugLogInfo??
      */
-    const handleDrugLogEditClose = (drugLogInfo: DrugLogRecord) => {
+    const handleDrugLogEditClose = (drugLogInfo: DrugLogRecord | null) => {
         if (drugLogInfo) {
             medHistoryProvider.post(drugLogInfo)
             .then((response: DrugLogRecord) => {
-                RefreshMedicineLog(medHistoryProvider, activeDrug.ResidentId)
-                    .then((data) => setDrugLogList(data));
+                if (residentId) {
+                    RefreshMedicineLog(medHistoryProvider, residentId)
+                        .then((data) => setDrugLogList(data));
+                }
             })
             .catch((err: ErrorEvent) => {
                 onError(err);
@@ -224,13 +229,17 @@ const MedicinePage = (props: IProps) => {
      */
     const handleLogDrugAmount = (amount: string | number) => {
         const notes = amount.toString();
-        const drugLogInfo = {
-            Id: null,
-            ResidentId: residentId,
-            MedicineId: activeDrug.Id,
-            Notes: notes
-        };
-        handleDrugLogEditClose(drugLogInfo);
+        const drugId = activeDrug && activeDrug.Id;
+        if (drugId) {
+            const drugLogInfo = {
+                Id: null,
+                ResidentId: residentId,
+                MedicineId: drugId,
+                Notes: notes
+            };
+            handleDrugLogEditClose(drugLogInfo);
+        }
+        handleDrugLogEditClose(null);
     }
 
     const medicinePage = (

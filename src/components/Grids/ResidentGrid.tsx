@@ -9,7 +9,7 @@ interface IProps {
     onSelected?: Function,
     onEdit?: Function,
     onDelete?: Function,
-    activeResident: ResidentRecord
+    activeResident: ResidentRecord | null,
     residentList: Array<ResidentRecord>
 }
 
@@ -57,7 +57,7 @@ const ResidentGrid = (props: IProps): JSX.Element => {
                             type="radio"
                             name="resident-list"
                             variant="outline-info"
-                            checked={isSelected}
+                            checked={isSelected || false}
                             onClick={(e) => onSelected(e, resident)}
                             value={resident.Id}
                         />

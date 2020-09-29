@@ -31,7 +31,7 @@ declare module 'reactn/default' {
         providers: object;
         drugLogList: null | [];
         medicineList: MedicineRecord[] | null;
-        otcList: null | [];
+        otcList: MedicineRecord[] | null;
         residentList: Array<ResidentRecord>;
         baseUrl: string;
         apiKey: string | null;

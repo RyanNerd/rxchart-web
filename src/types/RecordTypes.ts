@@ -1,14 +1,14 @@
 export type ResidentRecord = {
     Id : null | number,
-    UserId: number,
+    UserId?: number,
     LastName: string,
     FirstName: string,
-    DOB_YEAR: number,
-    DOB_MONTH: number,
-    DOB_DAY: number,
-    Created: null | Date,
-    Updated: null | Date,
-    deleted_at: null | Date,
+    DOB_YEAR: number | string,
+    DOB_MONTH: number | string,
+    DOB_DAY: number | string,
+    Created?: null | Date,
+    Updated?: null | Date,
+    deleted_at?: null | Date,
     [key: string]: any
 }
 

@@ -8,7 +8,7 @@ interface IProps {
     drugLog: Array<DrugLogRecord>,
     onEdit?: Function,
     onDelete?: Function,
-    drugId: number | null,
+    drugId?: number | null,
     medicineList?: Array<MedicineRecord>,
     otcList?: Array<MedicineRecord>,
     condensed?: boolean,
