@@ -125,14 +125,14 @@ const ResidentPage = (props: IProps) => {
                         })
                         .then((residentList: ResidentRecord[]) => {
                             // Rehydrate the residentList
-                            setResidentList(residentList);
+                            setResidentList(residentList).then(()=>{});
                             // Set the reactivated resident as the active resident.
-                            setActiveResident(restoredResident);
+                            setActiveResident(restoredResident).then(()=>{});
                             // Rehydrate the MedicineList
                             const restoredId = restoredResident.Id as number;
                                 RefreshMedicineList(providers.medicineProvider, restoredId)
                                 .then((hydratedMedicineList) => {
-                                    setMedicineList (hydratedMedicineList);
+                                    setMedicineList (hydratedMedicineList).then(()=>{});
                                     // If there are any medicines for the selected resident then
                                     // select the first one and make it the active drug.
                                     if (hydratedMedicineList && hydratedMedicineList.length > 0) {
@@ -156,7 +156,7 @@ const ResidentPage = (props: IProps) => {
                             ]
                         })
                         .then((residentList: ResidentRecord[]) => {
-                            setResidentList(residentList);
+                            setResidentList(residentList).then(()=>{});
                         })
                         .catch((err: ErrorEvent) => onError(err));
                         return newResident;
@@ -184,21 +184,21 @@ const ResidentPage = (props: IProps) => {
             e.preventDefault();
         }
 
-        setActiveResident(resident);
+        setActiveResident(resident).then(()=>{});
         const residentId = resident.Id as number;
         RefreshMedicineList(providers.medicineProvider, residentId)
         .then((data) => {
             // If there are any medicines for the selected resident then
             // select the first one and make it the active drug.
             if (data && data.length > 0) {
-                setMedicineList(data);
+                setMedicineList(data).then(()=>{});
                 // Refresh the drugLogList for the new active drug.
                 RefreshMedicineLog(providers.medHistoryProvider, data[0].ResidentId)
                 .then((data) => setDrugLogList(data))
                 .catch((err) => onError(err));
             } else {
-                setMedicineList(null);
-                setDrugLogList(null);
+                setMedicineList(null).then(()=>{});
+                setDrugLogList(null).then(()=>{});
             }
         })
         .catch(() => setMedicineList(null));
@@ -227,7 +227,7 @@ const ResidentPage = (props: IProps) => {
                 if (response.success) {
                     // If the activeResident is the resident that is being deleted then mark it as no longer active.
                     if (activeResident && activeResident.Id === residentToDelete.Id) {
-                        setActiveResident(null);
+                        setActiveResident(null).then(()=>{});
                     }
                     const searchCriteria =  {
                         order_by: [
