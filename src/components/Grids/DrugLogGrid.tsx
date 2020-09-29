@@ -11,7 +11,7 @@ interface IProps {
     drugId?: number | null,
     medicineList?: MedicineRecord[] | null,
     otcList?: MedicineRecord[] | null,
-    condensed?: boolean,
+    condensed?: string,
     showDrugColumn: boolean,
 }
 
@@ -35,7 +35,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
         drugId,
         medicineList,
         otcList,
-        condensed = false,
+        condensed = "false",
         showDrugColumn,
     } = props;
 

@@ -2,7 +2,7 @@ import React from 'reactn';
 import Table from 'react-bootstrap/Table';
 
 interface IProps {
-    condensed: boolean
+    condensed?: string
     children: JSX.Element[] | JSX.Element
     [key: string]: any
 }
@@ -15,7 +15,7 @@ interface IProps {
  */
 const RxTable = (props: IProps): JSX.Element => {
     const {condensed, children} = props;
-    const condensedClass = condensed ? 'w-auto' : '';
+    const condensedClass = (condensed === 'true') ? 'w-auto' : '';
     return (
         <Table {...props} className={condensedClass}>
             {children}

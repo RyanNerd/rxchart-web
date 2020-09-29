@@ -375,7 +375,7 @@ const MedicinePage = (props: IProps) => {
                         </b>
                     </>
                 }
-                show={showDeleteDrugLogRecord}
+                show={showDeleteDrugLogRecord instanceof Object}
                 onAnswer={(a) => {
                     if (a) {
                         deleteDrugLogRecord(showDeleteDrugLogRecord);

@@ -28,7 +28,7 @@ const DrugHistoryPage = (props: IProps) => {
             </Button>
 
             <DrugLogGrid
-                condensed={true}
+                condensed="true"
                 showDrugColumn={true}
                 drugLog={drugLogList}
                 medicineList={medicineList}

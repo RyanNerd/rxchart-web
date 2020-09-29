@@ -15,18 +15,16 @@ interface IProps {
 
 const ConfirmationDialog = (props: IProps): JSX.Element => {
     const {
-        show,
         body = 'Confirm?',
         title = 'Confirmation Dialog',
         onAnswer,
         onHide
     } = props;
 
-
-    const [ shouldShow, setShouldShow ] = useState(show);
+    const [ show, setShow ] = useState(props.show);
 
     // Observer for show
-    useEffect(() => {setShouldShow(show)}, [show]);
+    useEffect(() => {setShow(props.show)}, [show, props.show]);
 
     /**
      * Handle button click event.
@@ -36,13 +34,13 @@ const ConfirmationDialog = (props: IProps): JSX.Element => {
     const handleAnswer = (e: React.MouseEvent<HTMLElement>, answer: boolean) => {
         e.preventDefault();
         onAnswer(answer);
-        setShouldShow(false);
+        setShow(false);
     }
 
     return (
         <Modal
             size="sm"
-            show={shouldShow}
+            show={show}
             backdrop="static"
             centered
             onHide={() => onHide()}
