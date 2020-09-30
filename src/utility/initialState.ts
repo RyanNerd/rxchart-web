@@ -1,3 +1,5 @@
+import {ProvidersType} from "../types/FrakTypes";
+
 export const initialState = {
     development: process.env.REACT_APP_DEVELOPMENT === 'true',
     activeResident: null,
@@ -11,5 +13,5 @@ export const initialState = {
         residentProvider: null,
         medicineProvider: null,
         medHistoryProvider: null
-    }
+    } as ProvidersType
 };

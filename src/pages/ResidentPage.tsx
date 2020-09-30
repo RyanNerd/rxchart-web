@@ -11,6 +11,9 @@ import ConfirmationDialog from "../components/Modals/ConfirmationDialog";
 import {Form} from "react-bootstrap";
 import ResidentProvider from "../providers/ResidentProvider";
 import {ResidentRecord} from "../types/RecordTypes";
+import MedicineProvider from "../providers/MedicineProvider";
+import MedHistoryProvider from "../providers/MedHistoryProvider";
+import {useProviders} from "../utility/useProviders";
 
 interface IProps {
     onError: (e: ErrorEvent) => void
@@ -33,9 +36,11 @@ const ResidentPage = (props: IProps) => {
     const [ , setMedicineList ] = useGlobal('medicineList');
     const [ , setDrugLogList ] = useGlobal('drugLogList');
     const [ activeResident, setActiveResident ] = useGlobal('activeResident');
-    const [ providers ] = useGlobal<any>('providers');
-
+    const providers = useProviders();
     const residentProvider = providers.residentProvider as typeof ResidentProvider;
+    const medicineProvider = providers.medicineProvider as typeof MedicineProvider;
+    const medHistoryProvider = providers.medHistoryProvider as typeof MedHistoryProvider;
+
     const onError = props.onError;
 
     /**
@@ -130,14 +135,14 @@ const ResidentPage = (props: IProps) => {
                             setActiveResident(restoredResident).then(()=>{});
                             // Rehydrate the MedicineList
                             const restoredId = restoredResident.Id as number;
-                                RefreshMedicineList(providers.medicineProvider, restoredId)
+                                RefreshMedicineList(medicineProvider, restoredId)
                                 .then((hydratedMedicineList) => {
                                     setMedicineList (hydratedMedicineList).then(()=>{});
                                     // If there are any medicines for the selected resident then
                                     // select the first one and make it the active drug.
                                     if (hydratedMedicineList && hydratedMedicineList.length > 0) {
                                         // Refresh the drugLogList for the new active drug.
-                                        RefreshMedicineLog(providers.medHistoryProvider, restoredId)
+                                        RefreshMedicineLog(medHistoryProvider, restoredId)
                                         .then((data) => setDrugLogList(data))
                                         .catch((err) => props.onError(err));
                                     }
@@ -186,14 +191,14 @@ const ResidentPage = (props: IProps) => {
 
         setActiveResident(resident).then(()=>{});
         const residentId = resident.Id as number;
-        RefreshMedicineList(providers.medicineProvider, residentId)
+        RefreshMedicineList(medicineProvider, residentId)
         .then((data) => {
             // If there are any medicines for the selected resident then
             // select the first one and make it the active drug.
             if (data && data.length > 0) {
                 setMedicineList(data).then(()=>{});
                 // Refresh the drugLogList for the new active drug.
-                RefreshMedicineLog(providers.medHistoryProvider, data[0].ResidentId)
+                RefreshMedicineLog(medHistoryProvider, data[0].ResidentId)
                 .then((data) => setDrugLogList(data))
                 .catch((err) => onError(err));
             } else {

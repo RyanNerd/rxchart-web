@@ -9,6 +9,7 @@ import RefreshOtcList from "../providers/helpers/RefreshOtcList";
 import {handleMedicineEditModalClose} from "../utility/handleMedicineEditModalClose";
 import MedicineProvider from "../providers/MedicineProvider";
 import {MedicineRecord} from "../types/RecordTypes";
+import {useProviders} from "../utility/useProviders";
 
 interface IProps {
     onError: (e: ErrorEvent) => void
@@ -22,12 +23,12 @@ interface IProps {
  */
 const ManageOtcPage = (props: IProps) => {
     const [ otcList, setOtcList ] = useGlobal('otcList');
-    const [ providers ] = useGlobal<any>('providers');
 
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDeleteMedicine, setShowDeleteMedicine ] = useState(false);
     const [ medicineInfo, setMedicineInfo ] = useState<MedicineRecord | null>(null);
 
+    const providers  = useProviders();
     const medicineProvider = providers.medicineProvider as typeof MedicineProvider;
     const onError = props.onError;
 
@@ -75,17 +76,11 @@ const ManageOtcPage = (props: IProps) => {
      * Fires when user confirms to delete the medicine
      */
     const deleteMedicine = () => {
-        // Work around for a weird bug that manifests itself only in production.
-        let medProvider = medicineProvider;
-        if (medProvider === undefined) {
-            medProvider = providers.medicineProvider;
-        }
-
         if (medicineInfo && medicineInfo.Id) {
-            DeleteMedicine(medProvider, medicineInfo.Id)
+            DeleteMedicine(medicineProvider, medicineInfo.Id)
             .then((deleted: object) => {
                 if (deleted) {
-                    RefreshOtcList(providers.medicineProvider)
+                    RefreshOtcList(medicineProvider)
                     .then((data) => setOtcList(data))
                     .catch(() => setOtcList(null));
                 }

@@ -12,6 +12,7 @@ import MedHistoryProvider from "../providers/MedHistoryProvider";
 import Frak from "../providers/Frak";
 import RefreshOtcList from "../providers/helpers/RefreshOtcList";
 import {ResidentRecord} from "../types/RecordTypes";
+import {ProvidersType} from "../types/FrakTypes";
 
 interface IProps {
     activeTabKey: string | null
@@ -73,45 +74,49 @@ const LoginPage = (props: IProps) => {
                         residentProvider: ResidentProvider.init(rxFrak),
                         medicineProvider: MedicineProvider.init(rxFrak),
                         medHistoryProvider: MedHistoryProvider.init(rxFrak),
-                }
+                    } as ProvidersType;
+                    setProviders(providers).then(() => {});
 
-                setProviders(providers).then(() => {});
+                    // Load ALL Resident records up front and save them in the global store.
+                    if (residentList === null) {
+                        const searchCriteria =
+                            {
+                                order_by: [
+                                    {column: "LastName", direction: "asc"},
+                                    {column: "FirstName", direction: "asc"}
+                                ]
+                            };
 
-                // Load ALL Resident records up front and save them in the global store.
-                if (residentList === null) {
-                    const searchCriteria =
-                        {
-                            order_by: [
-                                {column: "LastName", direction: "asc"},
-                                {column: "FirstName", direction: "asc"}
-                            ]
-                        };
-
-                    providers.residentProvider.search(searchCriteria)
+                        providers.residentProvider?.search(searchCriteria)
                         .then((data: ResidentRecord | ResidentRecord[]) => setResidentList(data))
                         .catch((err: ErrorEvent) => onError(err));
-                }
-
-                // Load ALL OTC medications
-                RefreshOtcList(providers.medicineProvider)
-                    .then((data) => {setOtcList(data).then(() => {})})
-                    .catch(() => setOtcList(null));
-
-                // Let the parent component know we are logged in successfully
-                onLogin(true);
-
-                // Remove alert (in the case where a previous log in attempt failed).
-                setShowAlert(false);
-
-                // Display the organization name that logged in
-                const organization = response.data.organization || null;
-                if (organization) {
-                    // Since this element lives in index.html we use old fashioned JS and DOM manipulation to update
-                    const organizationElement = document.getElementById("organization");
-                    if (organizationElement) {
-                        organizationElement.innerHTML = response.data.organization;
                     }
-                }
+
+                   // Load ALL OTC medications
+                   if (providers.medicineProvider) {
+                        RefreshOtcList(providers.medicineProvider)
+                        .then((data) => {
+                            setOtcList(data).then(() => {
+                            })
+                        })
+                        .catch(() => setOtcList(null));
+                   }
+
+                    // Let the parent component know we are logged in successfully
+                    onLogin(true);
+
+                    // Remove alert (in the case where a previous log in attempt failed).
+                    setShowAlert(false);
+
+                    // Display the organization name that logged in
+                    const organization = response.data.organization || null;
+                    if (organization) {
+                        // Since this element lives in index.html we use old fashioned JS and DOM manipulation to update
+                        const organizationElement = document.getElementById("organization");
+                        if (organizationElement) {
+                            organizationElement.innerHTML = response.data.organization;
+                        }
+                    }
                 });
             } else {
                 // Show invalid credentials alert

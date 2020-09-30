@@ -47,7 +47,7 @@ const OtcPage = (props: IProps) => {
     const [ otcList, setOtcList ] = useGlobal('otcList');
     const [ drugLogList, setDrugLogList ] = useGlobal<any>('drugLogList');
     const [ activeResident ] = useGlobal('activeResident');
-    const [ providers ] = useGlobal<any>('providers');
+    const [ providers ] = useGlobal('providers');
     const [ residentId, setResidentId ] = useState(activeResident && activeResident.Id);
 
     const medHistoryProvider = providers.medHistoryProvider as typeof MedHistoryProvider;

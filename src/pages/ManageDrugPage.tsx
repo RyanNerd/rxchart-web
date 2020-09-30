@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import {handleMedicineEditModalClose} from "../utility/handleMedicineEditModalClose";
 import MedicineProvider from "../providers/MedicineProvider";
 import {MedicineRecord} from "../types/RecordTypes";
+import {useProviders} from "../utility/useProviders";
 
 interface IProps {
     onError: (e: ErrorEvent) => void
@@ -23,13 +24,13 @@ interface IProps {
  */
 const ManageDrugPage = (props: IProps) => {
     const [ medicineList, setMedicineList ] = useGlobal('medicineList');
-    const [ providers ] = useGlobal<any>('providers');
     const [ activeResident ]= useGlobal('activeResident');
 
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDeleteMedicine, setShowDeleteMedicine ] = useState(false);
     const [ medicineInfo, setMedicineInfo ] = useState<MedicineRecord | null>(null);
 
+    const providers = useProviders();
     const medicineProvider = providers.medicineProvider as typeof MedicineProvider;
     const onError = props.onError;
     const today = new Date();
@@ -85,13 +86,8 @@ const ManageDrugPage = (props: IProps) => {
      * Fires when user confirms to delete the medication.
      */
     const deleteMedicine = () => {
-        // Work around for a weird bug that manifests itself only in production.
-        let medProvider = medicineProvider;
-        if (medProvider === undefined) {
-            medProvider = providers.medicineProvider;
-        }
         if (medicineInfo && medicineInfo.Id && activeResident) {
-            DeleteMedicine(medProvider, medicineInfo.Id)
+            DeleteMedicine(medicineProvider, medicineInfo.Id)
             .then((deleted: object) => {
                 if (deleted) {
                     if (activeResident.Id) {
