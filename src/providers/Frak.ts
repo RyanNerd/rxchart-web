@@ -1,16 +1,31 @@
+import {FrakTypes} from "../types/FrakTypes";
+
+interface IDefaultRequestContent {
+    GET: null, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/GET
+    POST: 'application/json', // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
+    PUT: 'application/json', // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PUT
+    PATCH: 'application/json', // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PATCH
+    DELETE: null, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/DELETE (https://tools.ietf.org/html/rfc7231#section-4.3.5)
+    HEAD: null, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/HEAD
+    OPTIONS: null, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/OPTIONS
+    CONNECT: null, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/CONNECT
+    TRACE: null, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/TRACE
+    [key: string]: string | null
+}
+
 const JSON_CONTENT_TYPE = 'application/json';
-const DEFAULT_REQUEST_CONTENT_TYPE =
-    {
-        GET: null, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/GET
-        POST: JSON_CONTENT_TYPE, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
-        PUT:  JSON_CONTENT_TYPE, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PUT
-        PATCH: JSON_CONTENT_TYPE, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PATCH
-        DELETE: null, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/DELETE (https://tools.ietf.org/html/rfc7231#section-4.3.5)
-        HEAD: null, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/HEAD
-        OPTIONS: null, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/OPTIONS
-        CONNECT: null, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/CONNECT
-        TRACE: null // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/TRACE
-    };
+const DEFAULT_REQUEST_CONTENT_TYPE = {
+    GET: null, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/GET
+    POST: JSON_CONTENT_TYPE, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
+    PUT:  JSON_CONTENT_TYPE, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PUT
+    PATCH: JSON_CONTENT_TYPE, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PATCH
+    DELETE: null, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/DELETE (https://tools.ietf.org/html/rfc7231#section-4.3.5)
+    HEAD: null, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/HEAD
+    OPTIONS: null, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/OPTIONS
+    CONNECT: null, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/CONNECT
+    TRACE: null, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/TRACE
+} as IDefaultRequestContent;
+
 
 /*
     eslint-disable
@@ -25,6 +40,9 @@ const DEFAULT_REQUEST_CONTENT_TYPE =
  */
 export default class Frak
 {
+    private readonly _throwErrorOnFailedStatus: boolean;
+    private readonly _verbose: boolean;
+
     /**
      * @protected
      *
@@ -62,7 +80,7 @@ export default class Frak
      * @param {boolean} [resolveJsonResponse] Response should resolve to JSON
      * @returns {Promise<Response>}
      */
-    get(url, request, resolveJsonResponse = true)
+    get(url: string, request: FrakTypes.Request, resolveJsonResponse = true)
     {
         return this._call(url, this._initializeRequest('GET', request), resolveJsonResponse);
     }
@@ -78,7 +96,7 @@ export default class Frak
      * @param {boolean} [resolveJsonResponse] Response should resolve to JSON
      * @returns {Promise<Response>}
      */
-    post(url, body, request, resolveJsonResponse = true)
+    post(url: string, body: FrakTypes.BodyType, request: FrakTypes.Request, resolveJsonResponse = true)
     {
         return this._call(url, this._initializeRequest('POST', request, body), resolveJsonResponse);
     }
@@ -94,7 +112,7 @@ export default class Frak
      * @param {boolean} [resolveJsonResponse] Response should resolve to JSON
      * @returns {Promise<Response>}
      */
-    patch(url, body, request, resolveJsonResponse = true)
+    patch(url:string, body: FrakTypes.BodyType, request: FrakTypes.Request, resolveJsonResponse = true)
     {
         return this._call(url, this._initializeRequest('PATCH', request, body), resolveJsonResponse);
     }
@@ -110,7 +128,7 @@ export default class Frak
      * @param {boolean} [resolveJsonResponse] Response should resolve to JSON
      * @returns {Promise<Response>}
      */
-    put(url, body, request, resolveJsonResponse = true)
+    put(url: string, body: FrakTypes.BodyType, request: FrakTypes.Request, resolveJsonResponse = true)
     {
         return this._call(url, this._initializeRequest('PUT', request, body), resolveJsonResponse);
     }
@@ -126,7 +144,7 @@ export default class Frak
      * @param {boolean} [resolveJsonResponse] Response should resolve to JSON
      * @returns {Promise<Response>}
      */
-    delete_(url, request, resolveJsonResponse = true)
+    delete_(url: string, request: FrakTypes.Request, resolveJsonResponse = true)
     {
         return this._call(url, this._initializeRequest('DELETE', request), resolveJsonResponse);
     }
@@ -140,7 +158,7 @@ export default class Frak
      * @param {object} [request] Request object that overrides the defaults
      * @returns {Promise<Response>}
      */
-    head(url, request)
+    head(url: string, request: FrakTypes.Request)
     {
         return this._call(url, this._initializeRequest('HEAD', request), false);
     }
@@ -155,7 +173,7 @@ export default class Frak
      * @param {boolean} [resolveJsonResponse] Response should resolve to JSON
      * @returns {Promise<Response>}
      */
-    options(url, request, resolveJsonResponse = true)
+    options(url: string, request: FrakTypes.Request, resolveJsonResponse = true)
     {
         return this._call(url, this._initializeRequest('OPTIONS', request), resolveJsonResponse);
     }
@@ -170,7 +188,7 @@ export default class Frak
      * @param {object} [request] Request object that overrides the defaults
      * @returns {Promise<Response>}
      */
-    connect(url, body, request)
+    connect(url: string, body: FrakTypes.BodyType, request: FrakTypes.Request)
     {
         return this._call(url, this._initializeRequest('CONNECT', request), false);
     }
@@ -187,7 +205,7 @@ export default class Frak
      * @param {object} [request] Request object that overrides the defaults
      * @returns {Promise<Response>}
      */
-    trace(url, request)
+    trace(url: string, request: FrakTypes.Request)
     {
         return this._call(url, this._initializeRequest('TRACE', request), false);
     }
@@ -196,27 +214,27 @@ export default class Frak
      * Called prior to the fetch to validate the request object and apply defaults per http method (such as headers).
      *
      * @protected
-     * @param {string} method The web method to invoke
+     * @param {string} method The web method to invoke 
+     *                  method must be one of the specified HTTP verbs per the HTTP spec
+     *                  @see: https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html
      * @param {object} [request] Request object
      * @param {string | object} [body] The body of the request (if any)
      * @returns {object} Request object
      * @see https://developer.mozilla.org/en-US/docs/Web/API/Request
      */
-    _initializeRequest(method, request, body)
+    _initializeRequest(method: FrakTypes.HTTPMethod, request: FrakTypes.Request, body?: FrakTypes.BodyType)
     {
-        // Method must be one of the specified HTTP verbs per the HTTP spec
-        // @see: https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html
-        console.assert(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS', 'CONNECT', 'TRACE'].includes(method), 'Invalid method: ' + method);
-
         if (!request) {
-            request = {mode: 'cors'};
+            request = {
+                mode: 'cors'
+            };
         }
 
         if (!request.headers) {
             request.headers = new Headers();
         }
 
-        let contentType = DEFAULT_REQUEST_CONTENT_TYPE[method];
+        let contentType = DEFAULT_REQUEST_CONTENT_TYPE[method] as string;
         if (contentType !== null) {
             request.headers.append('Content-Type', contentType);
         }
@@ -226,9 +244,8 @@ export default class Frak
             request.body = (typeof body) === 'object' ? JSON.stringify(body) : body;
         }
 
-        // The method cannot be overridden.
+        // Finally set the the request method.
         request.method = method;
-
         return request;
     }
 
@@ -241,7 +258,7 @@ export default class Frak
      * @param {boolean} [resolveJsonResponse] Response should resolve to JSON
      * @returns {Promise<Response>}
      */
-    _call(url, request, resolveJsonResponse = true)
+    _call(url: string, request: FrakTypes.Request, resolveJsonResponse = true)
     {
         // We're not using arrow functions so let's keep a reference to this.
         let self = this;
@@ -254,11 +271,12 @@ export default class Frak
          * @param {object} request Request object
          * @returns {Promise.<Response>}
          */
-        const doFetch  = async (url, request) => {
+        const doFetch  = async (url: string, request: FrakTypes.Request) => {
             let response;
 
             // Asynchronously call fetch() via the await construct.
             try {
+                // @ts-ignore
                 response = await fetch(url, request);
 
                 // Should we throw an error when the response is not successful? ($.AJAX behavior)
@@ -272,12 +290,11 @@ export default class Frak
                     let contentType = response.headers.get('Content-Type');
 
                     // In case the contentType has a backslash we convert it to forward slash
-                    contentType = contentType.replace(/\\/, "/");
+                    contentType = contentType?.replace(/\\/, "/") || null;
                     if (contentType && contentType === JSON_CONTENT_TYPE) {
                         return response.json();
                     }
                 }
-
                 // Frak only natively handles JSON responses if set to do so all others will have standard fetch response.
                 return response;
             } catch (e) {

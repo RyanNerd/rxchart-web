@@ -1,4 +1,5 @@
 import MedHistoryProvider from "../MedHistoryProvider";
+import {MedHistoryTypes} from "../../types/FrakTypes";
 
 const RefreshMedicineLog = (medHistoryProvider: typeof MedHistoryProvider, id: number | string): Promise<any> => {
     const searchCriteria =
@@ -13,7 +14,7 @@ const RefreshMedicineLog = (medHistoryProvider: typeof MedHistoryProvider, id: n
         };
 
     return medHistoryProvider.search(searchCriteria)
-    .then((response: {success: boolean, data: object | object[], status: number}) => {
+    .then((response: MedHistoryTypes.SearchResponse) => {
         if (response.success) {
             return response.data;
         } else {

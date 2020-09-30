@@ -46,8 +46,6 @@ const LoginPage = (props: IProps) => {
         onLogin
     } = props;
 
-
-
     // Set focus to the user name field when this page is active.
     useEffect(() => updateFocusRef(focusRef), [activeTabKey, updateFocusRef]);
 
@@ -79,14 +77,12 @@ const LoginPage = (props: IProps) => {
 
                     // Load ALL Resident records up front and save them in the global store.
                     if (residentList === null) {
-                        const searchCriteria =
-                            {
-                                order_by: [
-                                    {column: "LastName", direction: "asc"},
-                                    {column: "FirstName", direction: "asc"}
-                                ]
-                            };
-
+                        const searchCriteria =  {
+                            order_by: [
+                                {column: "LastName", direction: "asc"},
+                                {column: "FirstName", direction: "asc"}
+                            ]
+                        };
                         providers.residentProvider?.search(searchCriteria)
                         .then((data: ResidentRecord | ResidentRecord[]) => setResidentList(data))
                         .catch((err: ErrorEvent) => onError(err));
