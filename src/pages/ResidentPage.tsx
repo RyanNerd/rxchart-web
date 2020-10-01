@@ -198,11 +198,9 @@ const ResidentPage = (props: IProps) => {
             if (medicineRecords && medicineRecords.length > 0) {
                 setMedicineList(medicineRecords).then(()=>{});
                 // Refresh the drugLogList for the new active drug.
-                if (activeResident && activeResident.Id) {
-                    RefreshMedicineLog(medHistoryProvider, activeResident.Id)
-                        .then((data) => setDrugLogList(data))
-                        .catch((err) => onError(err));
-                }
+                RefreshMedicineLog(medHistoryProvider, residentId)
+                    .then((data) => setDrugLogList(data))
+                    .catch((err) => onError(err));
             } else {
                 setMedicineList(null).then(()=>{});
                 setDrugLogList(null).then(()=>{});
