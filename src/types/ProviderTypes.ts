@@ -28,5 +28,6 @@ export namespace ProviderTypes {
             data: MedicineRecord | MedicineRecord[]
         }
         export type SearchResponse = RecordResponse;
+        export type DeleteResponse = { success: boolean };
     }
 }

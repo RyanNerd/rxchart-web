@@ -35,7 +35,7 @@ const LoginPage = (props: IProps) => {
     const [ apiKey, setApiKey ] = useGlobal('apiKey');
     const [ baseUrl ] = useGlobal('baseUrl');
     const [ residentList, setResidentList ] = useGlobal<any>('residentList');
-    const [ , setOtcList ] = useGlobal('otcList');
+    const [ , setOtcList ] = useGlobal<any>('otcList');
     const [ , setProviders ] = useGlobal('providers');
 
     const focusRef = useRef<any>(null);
@@ -92,8 +92,7 @@ const LoginPage = (props: IProps) => {
                    if (providers.medicineProvider) {
                         RefreshOtcList(providers.medicineProvider)
                         .then((data) => {
-                            setOtcList(data).then(() => {
-                            })
+                            setOtcList(data).then(() => {});
                         })
                         .catch(() => setOtcList(null));
                    }

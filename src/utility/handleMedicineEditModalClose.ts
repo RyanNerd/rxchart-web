@@ -9,13 +9,14 @@
  * @returns {void}
  */
 import {MedicineRecord} from "../types/RecordTypes";
+import MedicineProvider from "../providers/MedicineProvider";
 
 export const handleMedicineEditModalClose = (
         drugInfo: MedicineRecord | null,
-        medicineProvider: {post: Function},
-        refreshList: Function,
-        setDrugList: Function,
-        onError: Function
+        medicineProvider: typeof MedicineProvider,
+        refreshList: Function, // typeof RefreshMedicineList(MedicineProvider) | typeof RefreshOtcList(MedicineProvider, ActiveResident.Id)
+        setDrugList: (r: MedicineRecord[] | null) => void,
+        onError: (e: ErrorEvent) => void
     ): void => {
     if (drugInfo) {
         const drugData = {...drugInfo};
@@ -41,6 +42,6 @@ export const handleMedicineEditModalClose = (
                 setDrugList(null);
             });
         })
-        .catch((err: Error) => onError(err));
+        .catch((err: ErrorEvent) => onError(err));
     }
 }

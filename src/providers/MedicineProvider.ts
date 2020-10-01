@@ -84,7 +84,7 @@ const MedicineProvider = {
         return MedicineProvider._frak.post(MedicineProvider._baseUrl + 'medicine?api_key=' + MedicineProvider._apiKey, drugInfo)
         .then((response: {success: boolean, data: object | object[]}) => {
             if (response.success) {
-                return response.data;
+                return response.data as MedicineRecord;
             } else {
                 throw response;
             }
@@ -102,7 +102,7 @@ const MedicineProvider = {
      */
     delete: (drugId: string | number) => {
         return MedicineProvider._frak.delete(MedicineProvider._baseUrl + 'medicine/' + drugId + '?api_key=' + MedicineProvider._apiKey)
-        .then((response: {success: boolean}) => {
+        .then((response: ProviderTypes.Medicine.DeleteResponse) => {
             if (response.success) {
                 return response;
             } else {

@@ -22,7 +22,7 @@ interface IProps {
  * @returns {null|*}
  */
 const ManageOtcPage = (props: IProps) => {
-    const [ otcList, setOtcList ] = useGlobal('otcList');
+    const [ otcList, setOtcList ] = useGlobal<any>('otcList');
 
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDeleteMedicine, setShowDeleteMedicine ] = useState(false);
@@ -127,7 +127,7 @@ const ManageOtcPage = (props: IProps) => {
                 </tr>
                 </thead>
                 <tbody>
-                {otcList.map((drug) => MedicineDetail(drug, onDelete, onEdit, false))}
+                {otcList.map((drug: MedicineRecord) => MedicineDetail(drug, onDelete, onEdit, false))}
                 </tbody>
             </Table>
             }
@@ -139,7 +139,7 @@ const ManageOtcPage = (props: IProps) => {
                 show={showMedicineEdit}
                 onHide={() => setShowMedicineEdit(!showMedicineEdit)}
                 onClose={(r) => {
-                    handleMedicineEditModalClose(r, medicineProvider, ()=>RefreshOtcList(medicineProvider), setOtcList, onError);
+                    handleMedicineEditModalClose(r, medicineProvider, () => RefreshOtcList(medicineProvider), setOtcList, onError);
                     setShowMedicineEdit(false);
                 }}
                 drugInfo={medicineInfo}

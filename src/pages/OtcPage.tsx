@@ -33,7 +33,7 @@ interface IProps {
  * @returns {*}
  */
 const OtcPage = (props: IProps) => {
-    const [ drugInfo, setDrugInfo ] = useState<MedicineRecord>(newDrugInfo);
+    const [ drugInfo, setDrugInfo ] = useState<MedicineRecord | null>(null);
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDrugLog, setShowDrugLog ] = useState(false);
     const [ drugLogInfo, setDrugLogInfo ] = useState<DrugLogRecord | null>(null);
@@ -44,7 +44,7 @@ const OtcPage = (props: IProps) => {
     const [ activeDrug, setActiveDrug ] = useState<MedicineRecord | null>(null);
     const [ otcLogList, setOtcLogList ] = useState(null);
 
-    const [ otcList, setOtcList ] = useGlobal('otcList');
+    const [ otcList, setOtcList ] = useGlobal<any>('otcList');
     const [ drugLogList, setDrugLogList ] = useGlobal<any>('drugLogList');
     const [ activeResident ] = useGlobal('activeResident');
     const [ providers ] = useGlobal('providers');
@@ -353,13 +353,15 @@ const OtcPage = (props: IProps) => {
             </Form.Group>
 
             {/* MedicineEdit Modal*/}
-            <MedicineEdit
-                show={showMedicineEdit}
-                onHide={() => setShowMedicineEdit(!showMedicineEdit)}
-                onClose={(r) => handleMedicineEditModalClose(r)}
-                drugInfo={drugInfo}
-                otc={true}
-            />
+            {drugInfo &&
+                <MedicineEdit
+                    show={showMedicineEdit}
+                    onHide={() => setShowMedicineEdit(!showMedicineEdit)}
+                    onClose={(r) => handleMedicineEditModalClose(r)}
+                    drugInfo={drugInfo}
+                    otc={true}
+                />
+            }
 
             <DrugLogEdit
                 show={showDrugLog}

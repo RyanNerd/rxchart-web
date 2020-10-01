@@ -3,7 +3,7 @@
  */
 import MedicineProvider from "../MedicineProvider";
 
-const RefreshOtcList = (medicineProvider: typeof MedicineProvider): Promise<any> => {
+const RefreshOtcList = (medicineProvider: typeof MedicineProvider) => {
     const searchCriteria =
         {
             where: [
