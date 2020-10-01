@@ -14,7 +14,7 @@ interface IDefaultRequestContent {
 }
 
 const JSON_CONTENT_TYPE = 'application/json';
-const DEFAULT_REQUEST_CONTENT_TYPE = {
+    const DEFAULT_REQUEST_CONTENT_TYPE = {
     GET: null, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/GET
     POST: JSON_CONTENT_TYPE, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
     PUT:  JSON_CONTENT_TYPE, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PUT
@@ -26,48 +26,30 @@ const DEFAULT_REQUEST_CONTENT_TYPE = {
     TRACE: null, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/TRACE
 } as IDefaultRequestContent;
 
-
-/*
-    eslint-disable
-*/
-
 /**
- * Frak Class
+ * Frak
  * A simple implementation of the Fetch API specifically for JSON based Web Service requests and responses
  * See the README for installation and use.
  *
  * @license MIT License (c) copyright 2019
  */
-export default class Frak
-{
-    private readonly _throwErrorOnFailedStatus: boolean;
-    private readonly _verbose: boolean;
-
+const Frak = {
+    _throwErrorOnFailedStatus: false,
+    _verbose: false,
     /**
-     * @protected
-     *
-     * Default behavior for failed requests
-     * @property {boolean} _throwErrorOnFailedStatus
-     *
-     * Output details to console.
-     * @property {boolean} _verbose
-     */
-
-    /**
-     * Constructor
+     * @Constructor
      *
      * @param {boolean} [throwErrorOnFailedStatus] Set this to true for behavior similar to Jquery's `Ajax.$()`
      * @param {boolean} [verbose] When true errors and warning will be emited to the console
      */
-    constructor(throwErrorOnFailedStatus = false, verbose = false)
-    {
-        this._throwErrorOnFailedStatus = throwErrorOnFailedStatus;
-        this._verbose = verbose;
+    init: (throwErrorOnFailedStatus: boolean = false, verbose = false) =>  {
+        Frak._throwErrorOnFailedStatus = throwErrorOnFailedStatus;
+        Frak._verbose = verbose;
 
         // Prevent default configuration from being changed.
-        Object.freeze(this._throwErrorOnFailedStatus);
-        Object.freeze(this._verbose);
-    }
+        Object.freeze(Frak._throwErrorOnFailedStatus);
+        Object.freeze(Frak._verbose);
+    },
 
     /**
      * GET web method for the given url
@@ -80,10 +62,9 @@ export default class Frak
      * @param {boolean} [resolveJsonResponse] Response should resolve to JSON
      * @returns {Promise<Response>}
      */
-    get(url: string, request: FrakTypes.Request, resolveJsonResponse = true)
-    {
-        return this._call(url, this._initializeRequest('GET', request), resolveJsonResponse);
-    }
+    get: (url: string, request: FrakTypes.Request, resolveJsonResponse = true) => {
+        return Frak._call(url, Frak._initializeRequest('GET', request), resolveJsonResponse);
+    },
 
     /**
      * POST web method for the given url and body
@@ -96,10 +77,9 @@ export default class Frak
      * @param {boolean} [resolveJsonResponse] Response should resolve to JSON
      * @returns {Promise<Response>}
      */
-    post(url: string, body: FrakTypes.BodyType, request: FrakTypes.Request, resolveJsonResponse = true)
-    {
-        return this._call(url, this._initializeRequest('POST', request, body), resolveJsonResponse);
-    }
+    post: (url: string, body: FrakTypes.BodyType, request: FrakTypes.Request, resolveJsonResponse = true) => {
+        return Frak._call(url, Frak._initializeRequest('POST', request, body), resolveJsonResponse);
+    },
 
     /**
      * PATCH web method for the given url and body
@@ -112,10 +92,9 @@ export default class Frak
      * @param {boolean} [resolveJsonResponse] Response should resolve to JSON
      * @returns {Promise<Response>}
      */
-    patch(url:string, body: FrakTypes.BodyType, request: FrakTypes.Request, resolveJsonResponse = true)
-    {
-        return this._call(url, this._initializeRequest('PATCH', request, body), resolveJsonResponse);
-    }
+    patch: (url:string, body: FrakTypes.BodyType, request: FrakTypes.Request, resolveJsonResponse = true) => {
+        return Frak._call(url, Frak._initializeRequest('PATCH', request, body), resolveJsonResponse);
+    },
 
     /**
      * PUT web method for the given url and body
@@ -128,10 +107,9 @@ export default class Frak
      * @param {boolean} [resolveJsonResponse] Response should resolve to JSON
      * @returns {Promise<Response>}
      */
-    put(url: string, body: FrakTypes.BodyType, request: FrakTypes.Request, resolveJsonResponse = true)
-    {
-        return this._call(url, this._initializeRequest('PUT', request, body), resolveJsonResponse);
-    }
+    put: (url: string, body: FrakTypes.BodyType, request: FrakTypes.Request, resolveJsonResponse = true) => {
+        return Frak._call(url, Frak._initializeRequest('PUT', request, body), resolveJsonResponse);
+    },
 
     /**
      * DELETE web method for the given url
@@ -144,10 +122,9 @@ export default class Frak
      * @param {boolean} [resolveJsonResponse] Response should resolve to JSON
      * @returns {Promise<Response>}
      */
-    delete_(url: string, request: FrakTypes.Request, resolveJsonResponse = true)
-    {
-        return this._call(url, this._initializeRequest('DELETE', request), resolveJsonResponse);
-    }
+    delete_: (url: string, request: FrakTypes.Request, resolveJsonResponse = true) => {
+        return Frak._call(url, Frak._initializeRequest('DELETE', request), resolveJsonResponse);
+    },
 
     /**
      * HEAD web method for the given url
@@ -158,10 +135,9 @@ export default class Frak
      * @param {object} [request] Request object that overrides the defaults
      * @returns {Promise<Response>}
      */
-    head(url: string, request: FrakTypes.Request)
-    {
-        return this._call(url, this._initializeRequest('HEAD', request), false);
-    }
+    head: (url: string, request: FrakTypes.Request) => {
+        return Frak._call(url, Frak._initializeRequest('HEAD', request), false);
+    },
 
     /**
      * OPTIONS web method for the given url
@@ -173,10 +149,9 @@ export default class Frak
      * @param {boolean} [resolveJsonResponse] Response should resolve to JSON
      * @returns {Promise<Response>}
      */
-    options(url: string, request: FrakTypes.Request, resolveJsonResponse = true)
-    {
-        return this._call(url, this._initializeRequest('OPTIONS', request), resolveJsonResponse);
-    }
+    options: (url: string, request: FrakTypes.Request, resolveJsonResponse = true) => {
+        return Frak._call(url, Frak._initializeRequest('OPTIONS', request), resolveJsonResponse);
+    },
 
     /**
      * CONNECT web method for the given url and optional body.
@@ -188,10 +163,9 @@ export default class Frak
      * @param {object} [request] Request object that overrides the defaults
      * @returns {Promise<Response>}
      */
-    connect(url: string, body: FrakTypes.BodyType, request: FrakTypes.Request)
-    {
-        return this._call(url, this._initializeRequest('CONNECT', request), false);
-    }
+    connect: (url: string, body: FrakTypes.BodyType, request: FrakTypes.Request) => {
+        return Frak._call(url, Frak._initializeRequest('CONNECT', request), false);
+    },
 
     /**
      * TRACE web method for the given url
@@ -205,10 +179,9 @@ export default class Frak
      * @param {object} [request] Request object that overrides the defaults
      * @returns {Promise<Response>}
      */
-    trace(url: string, request: FrakTypes.Request)
-    {
-        return this._call(url, this._initializeRequest('TRACE', request), false);
-    }
+    trace: (url: string, request: FrakTypes.Request) => {
+        return Frak._call(url, Frak._initializeRequest('TRACE', request), false);
+    },
 
     /**
      * Called prior to the fetch to validate the request object and apply defaults per http method (such as headers).
@@ -222,8 +195,7 @@ export default class Frak
      * @returns {object} Request object
      * @see https://developer.mozilla.org/en-US/docs/Web/API/Request
      */
-    _initializeRequest(method: FrakTypes.HTTPMethod, request: FrakTypes.Request, body?: FrakTypes.BodyType)
-    {
+    _initializeRequest: (method: FrakTypes.HTTPMethod, request: FrakTypes.Request, body?: FrakTypes.BodyType) => {
         if (!request) {
             request = {
                 mode: 'cors'
@@ -247,7 +219,7 @@ export default class Frak
         // Finally set the the request method.
         request.method = method;
         return request;
-    }
+    },
 
     /**
      * Call to the actual fetch() function as an asynchronous call.
@@ -258,11 +230,7 @@ export default class Frak
      * @param {boolean} [resolveJsonResponse] Response should resolve to JSON
      * @returns {Promise<Response>}
      */
-    _call(url: string, request: FrakTypes.Request, resolveJsonResponse = true)
-    {
-        // We're not using arrow functions so let's keep a reference to this.
-        let self = this;
-
+    _call: (url: string, request: FrakTypes.Request, resolveJsonResponse = true) => {
         /**
          * Async call to the Fetch API
          * @see https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
@@ -280,7 +248,7 @@ export default class Frak
                 response = await fetch(url, request);
 
                 // Should we throw an error when the response is not successful? ($.AJAX behavior)
-                if (self._throwErrorOnFailedStatus && !response.ok) {
+                if (Frak._throwErrorOnFailedStatus && !response.ok) {
                     throw new Error(JSON.stringify(response));
                 }
 
@@ -298,7 +266,7 @@ export default class Frak
                 // Frak only natively handles JSON responses if set to do so all others will have standard fetch response.
                 return response;
             } catch (e) {
-                if (self._verbose) {
+                if (Frak._verbose) {
                     console.error(e);
                 }
                 throw e;
@@ -309,3 +277,5 @@ export default class Frak
         return doFetch(url, request);
     }
 }
+
+export default Frak;

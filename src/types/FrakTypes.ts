@@ -3,12 +3,6 @@ import MedicineProvider from "../providers/MedicineProvider";
 import MedHistoryProvider from "../providers/MedHistoryProvider";
 import {DrugLogRecord} from "./RecordTypes";
 
-export type FrakType = {
-    post: Function
-    get: Function
-    delete_: Function
-} | null;
-
 export type BaseUrlType = string | null;
 export type ApiKeyType = string | null;
 
@@ -39,4 +33,15 @@ export namespace FrakTypes {
         method?: HTTPMethod
     }
 
+    export type Methods = {
+        post: Function
+        get: Function
+        delete_: Function
+    } | null;
+
+
+    export interface Functions {
+        post: {url: string, request: FrakTypes.Request, resolveJsonResponse: boolean}
+        get: Function
+    }
 }

@@ -1,11 +1,11 @@
-import {ApiKeyType, BaseUrlType, FrakType, MedHistoryTypes} from "../types/FrakTypes";
+import {ApiKeyType, BaseUrlType, FrakTypes, MedHistoryTypes} from "../types/FrakTypes";
 import {DrugLogRecord} from "../types/RecordTypes";
 
 /**
  * MedHistoryProvider API Connector
  */
 const MedHistoryProvider = {
-    _frak: null as FrakType,
+    _frak: null as FrakTypes.Methods,
     _baseUrl: null as BaseUrlType,
     _apiKey: null as ApiKeyType,
 
@@ -15,7 +15,7 @@ const MedHistoryProvider = {
      */
     init: (
         rxFrak: {
-            frak: FrakType,
+            frak: FrakTypes.Methods,
             baseUrl: string,
             apiKey: string
         }) =>
