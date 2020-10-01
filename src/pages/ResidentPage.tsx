@@ -154,7 +154,7 @@ const ResidentPage = (props: IProps) => {
                 } else {
                     // Add the new resident
                     residentProvider.post(residentData)
-                    .then((newResident: any) => {
+                    .then((newResident) => {
                         residentProvider.search({order_by: [
                                 {column: "LastName", direction: "asc"},
                                 {column: "FirstName", direction: "asc"}
@@ -164,7 +164,7 @@ const ResidentPage = (props: IProps) => {
                             setResidentList(residentList).then(()=>{});
                         })
                         .catch((err: ErrorEvent) => onError(err));
-                        return newResident;
+                        return newResident as ResidentRecord;
                     })
                     .then((newResident: ResidentRecord) => {
                         setResidentInfo(newResident);

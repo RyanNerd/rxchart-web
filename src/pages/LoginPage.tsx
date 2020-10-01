@@ -34,7 +34,7 @@ const LoginPage = (props: IProps) => {
 
     const [ apiKey, setApiKey ] = useGlobal('apiKey');
     const [ baseUrl ] = useGlobal('baseUrl');
-    const [ residentList, setResidentList ] = useGlobal<any>('residentList');
+    const [ residentList, setResidentList ] = useGlobal('residentList');
     const [ , setOtcList ] = useGlobal<any>('otcList');
     const [ , setProviders ] = useGlobal('providers');
 
@@ -84,7 +84,7 @@ const LoginPage = (props: IProps) => {
                             ]
                         };
                         providers.residentProvider?.search(searchCriteria)
-                        .then((data: ResidentRecord | ResidentRecord[]) => setResidentList(data))
+                        .then((data: ResidentRecord[]) => setResidentList(data))
                         .catch((err: ErrorEvent) => onError(err));
                     }
 
