@@ -109,7 +109,7 @@ const MedicineProvider = {
                 throw response;
             }
         })
-        .catch((err: ErrorEvent) => {
+        .catch((err) => {
             console.log('MedicineProvider.delete() error -- see console log', err);
             return err;
         });

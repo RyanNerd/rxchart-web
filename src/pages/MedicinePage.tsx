@@ -371,7 +371,7 @@ const MedicinePage = (props: IProps) => {
                 title="Delete Log Record"
                 body={
                     <>
-                        <p>{showDeleteDrugLogRecord && showDeleteDrugLogRecord.Updated}</p>
+                        <p>{showDeleteDrugLogRecord.Updated}</p>
                         <b style={{color: "red"}}>
                             Are you sure?
                         </b>
