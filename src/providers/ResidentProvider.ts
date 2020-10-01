@@ -1,11 +1,12 @@
-import {ApiKeyType, BaseUrlType, FrakTypes} from "../types/FrakTypes";
+import {ApiKeyType, BaseUrlType} from "../types/FrakTypes";
 import {ResidentRecord} from "../types/RecordTypes";
+import Frak from "./Frak";
 
 /**
  * ResidentProvider API service connector
  */
 const ResidentProvider = {
-    _frak: null as FrakTypes.Methods,
+    _frak: Frak,
     _baseUrl: null as BaseUrlType,
     _apiKey: null as ApiKeyType,
 
@@ -16,9 +17,10 @@ const ResidentProvider = {
      */
     init: (
         rxFrak: {
-           frak: FrakTypes.Methods,
-           baseUrl: string,
-           apiKey: string}
+            frak: typeof Frak,
+            baseUrl: string,
+            apiKey: string
+        }
     ) => {
         ResidentProvider._frak = rxFrak.frak;
         ResidentProvider._baseUrl = rxFrak.baseUrl;
@@ -34,8 +36,8 @@ const ResidentProvider = {
      */
     search: (options: object) => {
         let uri = ResidentProvider._baseUrl + 'resident/search?api_key=' + ResidentProvider._apiKey;
-        return ResidentProvider._frak?.post(uri, options)
-        .then((response: {success: boolean, data: object | object[], status: number}) => {
+        return ResidentProvider._frak.post(uri, options)
+        .then((response: any) => {
             if (response.success) {
                 return response.data;
             } else {
@@ -60,7 +62,7 @@ const ResidentProvider = {
      */
     restore: (record: {restore_id: number }) => {
         let uri = ResidentProvider._baseUrl + 'resident/restore?api_key=' + ResidentProvider._apiKey;
-        return ResidentProvider._frak?.post(uri, record)
+        return ResidentProvider._frak.post(uri, record)
         .then((response: {success: boolean, data: ResidentRecord | ResidentRecord[], status: number}) => {
             if (response.success) {
                 return response.data;
@@ -84,7 +86,7 @@ const ResidentProvider = {
      * @returns {Promise<Response>}
      */
     read: (id: string | number) => {
-        return ResidentProvider._frak?.get(ResidentProvider._baseUrl + 'resident/'+ id + '?api_key=' + ResidentProvider._apiKey)
+        return ResidentProvider._frak.get(ResidentProvider._baseUrl + 'resident/'+ id + '?api_key=' + ResidentProvider._apiKey)
         .then((response: {success: boolean, data: object| object[]}) => {
             if (response.success) {
                 return response.data;
@@ -105,7 +107,7 @@ const ResidentProvider = {
      * @returns {Promise<Response>}
      */
     post: (residentInfo: ResidentRecord) => {
-        return ResidentProvider._frak?.post(ResidentProvider._baseUrl + 'resident?api_key=' + ResidentProvider._apiKey, residentInfo)
+        return ResidentProvider._frak.post(ResidentProvider._baseUrl + 'resident?api_key=' + ResidentProvider._apiKey, residentInfo)
         .then((response: {success: boolean, data: object | object[]}) => {
             if (response.success) {
                 return response.data;
@@ -125,7 +127,7 @@ const ResidentProvider = {
      * @returns {Promise<Response>}
      */
     delete: (residentId: string | number) => {
-        return ResidentProvider._frak?.delete_(ResidentProvider._baseUrl + 'resident/' + residentId + '?api_key=' + ResidentProvider._apiKey)
+        return ResidentProvider._frak.delete(ResidentProvider._baseUrl + 'resident/' + residentId + '?api_key=' + ResidentProvider._apiKey)
         .then((response: {success: boolean}) => {
             if (response.success) {
                 return response;

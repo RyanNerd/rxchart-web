@@ -144,7 +144,7 @@ const MedicinePage = (props: IProps) => {
             }
 
             medicineProvider.post(drugData)
-            .then((drugRecord: MedicineRecord) => {
+            .then((drugRecord: any) => {
                 RefreshMedicineList(medicineProvider, residentId)
                 .then((drugList) => {
                     setMedicineList(drugList).then(() => {});

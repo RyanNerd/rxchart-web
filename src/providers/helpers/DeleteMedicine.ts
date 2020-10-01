@@ -7,7 +7,7 @@ import MedicineProvider from "../MedicineProvider";
 
 const deleteMedicine = (medicineProvider: typeof MedicineProvider, medicineId: string | number) => {
     return medicineProvider.delete(medicineId)
-    .then((response: {success: boolean}) => {
+    .then((response: any) => {
         return (response.success);
     })
     .catch((err: ErrorEvent) => {

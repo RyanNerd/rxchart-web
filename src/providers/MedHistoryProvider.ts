@@ -1,11 +1,12 @@
-import {ApiKeyType, BaseUrlType, FrakTypes, MedHistoryTypes} from "../types/FrakTypes";
+import {ApiKeyType, BaseUrlType, MedHistoryTypes} from "../types/FrakTypes";
 import {DrugLogRecord} from "../types/RecordTypes";
+import Frak from "./Frak";
 
 /**
  * MedHistoryProvider API Connector
  */
 const MedHistoryProvider = {
-    _frak: null as FrakTypes.Methods,
+    _frak: Frak,
     _baseUrl: null as BaseUrlType,
     _apiKey: null as ApiKeyType,
 
@@ -15,7 +16,7 @@ const MedHistoryProvider = {
      */
     init: (
         rxFrak: {
-            frak: FrakTypes.Methods,
+            frak: typeof Frak,
             baseUrl: string,
             apiKey: string
         }) =>
@@ -35,8 +36,8 @@ const MedHistoryProvider = {
     search: (options: object): Promise<MedHistoryTypes.SearchResponse> => {
         const apiKey = MedHistoryProvider._apiKey;
         let uri = MedHistoryProvider._baseUrl + 'medhistory/search?api_key=' + apiKey;
-        return MedHistoryProvider._frak?.post(uri, options)
-        .then((response: MedHistoryTypes.RecordResponse) => {
+        return MedHistoryProvider._frak.post(uri, options)
+        .then((response: any) => {
             if (response.success) {
                 return response.data;
             } else {
@@ -60,8 +61,8 @@ const MedHistoryProvider = {
      */
     read: (id: string | number): Promise<MedHistoryTypes.RecordResponse> => {
         const apiKey = MedHistoryProvider._apiKey;
-        return MedHistoryProvider._frak?.get(MedHistoryProvider._baseUrl + 'medhistory/'+ id + '?api_key=' + apiKey)
-        .then((response: MedHistoryTypes.RecordResponse) => {
+        return MedHistoryProvider._frak.get(MedHistoryProvider._baseUrl + 'medhistory/'+ id + '?api_key=' + apiKey)
+        .then((response: any) => {
             if (response.success) {
                 return response.data;
             } else {
@@ -82,7 +83,7 @@ const MedHistoryProvider = {
      */
     post: (drugInfo: DrugLogRecord) => {
         const apiKey = MedHistoryProvider._apiKey;
-        return MedHistoryProvider._frak?.post(MedHistoryProvider._baseUrl + 'medhistory?api_key=' + apiKey, drugInfo)
+        return MedHistoryProvider._frak.post(MedHistoryProvider._baseUrl + 'medhistory?api_key=' + apiKey, drugInfo)
         .then((response: MedHistoryTypes.RecordResponse) => {
             if (response.success) {
                 return response.data;
@@ -103,7 +104,7 @@ const MedHistoryProvider = {
     delete: (drugId: string | number) => {
         const apiKey = MedHistoryProvider._apiKey;
         const baseUrl = MedHistoryProvider._baseUrl;
-        return MedHistoryProvider._frak?.delete_(baseUrl + 'medhistory/' + drugId + '?api_key=' + apiKey)
+        return MedHistoryProvider._frak.delete(baseUrl + 'medhistory/' + drugId + '?api_key=' + apiKey)
         .then((response: MedHistoryTypes.DeleteResponse) => {
             if (response.success) {
                 return response;

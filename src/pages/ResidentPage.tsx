@@ -51,7 +51,7 @@ const ResidentPage = (props: IProps) => {
      */
     const reactivateResident = (id: number) => {
         return residentProvider.restore({restore_id: id})
-        .then((response: ResidentRecord) => {
+        .then((response: any) => {
             return response;
         })
         .catch((err: ErrorEvent) =>
@@ -154,7 +154,7 @@ const ResidentPage = (props: IProps) => {
                 } else {
                     // Add the new resident
                     residentProvider.post(residentData)
-                    .then((newResident: ResidentRecord) => {
+                    .then((newResident: any) => {
                         residentProvider.search({order_by: [
                                 {column: "LastName", direction: "asc"},
                                 {column: "FirstName", direction: "asc"}
@@ -228,7 +228,7 @@ const ResidentPage = (props: IProps) => {
         if (residentToDelete && residentToDelete.Id) {
             // Perform the DELETE API call
             residentProvider.delete(residentToDelete.Id)
-            .then((response: {success: boolean}) => {
+            .then((response: any) => {
                 if (response.success) {
                     // If the activeResident is the resident that is being deleted then mark it as no longer active.
                     if (activeResident && activeResident.Id === residentToDelete.Id) {

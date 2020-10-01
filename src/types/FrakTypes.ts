@@ -36,7 +36,7 @@ export namespace FrakTypes {
     export type Methods = {
         post: Function
         get: Function
-        delete_: Function
+        delete: Function
     } | null;
 
 

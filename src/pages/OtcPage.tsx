@@ -154,7 +154,7 @@ const OtcPage = (props: IProps) => {
             }
 
             medicineProvider.post(drugData)
-            .then((drugRecord: MedicineRecord) => {
+            .then((drugRecord: any) => {
                 RefreshOtcList(medicineProvider)
                 .then((drugList) => {
                     setOtcList(drugList).then(() => {});

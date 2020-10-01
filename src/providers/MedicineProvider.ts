@@ -1,13 +1,14 @@
-import {BaseUrlType, FrakTypes} from "../types/FrakTypes";
+import {ApiKeyType, BaseUrlType} from "../types/FrakTypes";
 import {MedicineRecord} from "../types/RecordTypes";
+import Frak from "./Frak";
 
 /**
  * MedicineProvider API connector
  */
 const MedicineProvider = {
-    _frak: null as FrakTypes.Methods,
+    _frak: Frak,
     _baseUrl: null as BaseUrlType,
-    _apiKey: null as string | null,
+    _apiKey: null as ApiKeyType,
 
     /**
      * MedicineProvider constructor
@@ -17,7 +18,7 @@ const MedicineProvider = {
      */
     init: (
         rxFrak: {
-        frak: FrakTypes.Methods,
+        frak: typeof Frak,
         baseUrl: string,
         apiKey: string
     }) => {
@@ -35,7 +36,7 @@ const MedicineProvider = {
      */
     search: (options: object) => {
         let uri = MedicineProvider._baseUrl + 'medicine/search?api_key=' + MedicineProvider._apiKey;
-        return MedicineProvider._frak?.post(uri, options)
+        return MedicineProvider._frak.post(uri, options)
         .then((response: {success: boolean, status: number, data: object | object[]}) => {
             if (response.success) {
                 return response.data;
@@ -59,7 +60,7 @@ const MedicineProvider = {
      * @returns {Promise<Response>}
      */
     read: (id: number | string) => {
-        return MedicineProvider._frak?.get(MedicineProvider._baseUrl + 'medicine/'+ id + '?api_key=' + MedicineProvider._apiKey)
+        return MedicineProvider._frak.get(MedicineProvider._baseUrl + 'medicine/'+ id + '?api_key=' + MedicineProvider._apiKey)
         .then((response: {success: boolean, data: object | object[]}) => {
             if (response.success) {
                 return response.data;
@@ -80,7 +81,7 @@ const MedicineProvider = {
      * @returns {Promise<Response>}
      */
     post: (drugInfo: MedicineRecord) => {
-        return MedicineProvider._frak?.post(MedicineProvider._baseUrl + 'medicine?api_key=' + MedicineProvider._apiKey, drugInfo)
+        return MedicineProvider._frak.post(MedicineProvider._baseUrl + 'medicine?api_key=' + MedicineProvider._apiKey, drugInfo)
         .then((response: {success: boolean, data: object | object[]}) => {
             if (response.success) {
                 return response.data;
@@ -100,7 +101,7 @@ const MedicineProvider = {
      * @returns {Promise<Response>}
      */
     delete: (drugId: string | number) => {
-        return MedicineProvider._frak?.delete_(MedicineProvider._baseUrl + 'medicine/' + drugId + '?api_key=' + MedicineProvider._apiKey)
+        return MedicineProvider._frak.delete(MedicineProvider._baseUrl + 'medicine/' + drugId + '?api_key=' + MedicineProvider._apiKey)
         .then((response: {success: boolean}) => {
             if (response.success) {
                 return response;

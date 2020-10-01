@@ -78,7 +78,7 @@ const ManageOtcPage = (props: IProps) => {
     const deleteMedicine = () => {
         if (medicineInfo && medicineInfo.Id) {
             DeleteMedicine(medicineProvider, medicineInfo.Id)
-            .then((deleted: object) => {
+            .then((deleted: any) => {
                 if (deleted) {
                     RefreshOtcList(medicineProvider)
                     .then((data) => setOtcList(data))

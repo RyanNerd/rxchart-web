@@ -57,10 +57,9 @@ const LoginPage = (props: IProps) => {
     const login = (e: React.KeyboardEvent<HTMLElement> | React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
         const frak = Frak;
-        frak.init(false, false);
 
         // Send the user name and password to the web service
-        frak.post(baseUrl + 'authenticate', {username: userName, password: password}, {mode: "cors"})
+        frak.post(baseUrl + 'authenticate', {username: userName, password: password})
         .then((response: any) => {
             // Success?
             if (response.success) {
