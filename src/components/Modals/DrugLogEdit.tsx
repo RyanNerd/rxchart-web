@@ -10,7 +10,7 @@ import {RefObject} from "react";
 interface IProps {
     show: boolean,
     drugLogInfo: DrugLogRecord,
-    onClose: (drugLogInfo: DrugLogRecord) => void,
+    onClose: (drugLogInfo: DrugLogRecord | null) => void,
     onHide: () => void
 }
 

@@ -14,10 +14,8 @@ export namespace ProviderTypes {
         export type RecordResponse = {
             success: boolean,
             status: number,
-            data: DrugLogRecord | DrugLogRecord[]
+            data: DrugLogRecord[]
         }
-        export type SearchResponse = RecordResponse;
-        export type ReadResponse = RecordResponse;
         export type DeleteResponse = { success: boolean };
     }
 
@@ -25,9 +23,8 @@ export namespace ProviderTypes {
         export type RecordResponse = {
             success: boolean,
             status: number,
-            data: MedicineRecord | MedicineRecord[]
+            data: MedicineRecord[]
         }
-        export type SearchResponse = RecordResponse;
         export type DeleteResponse = { success: boolean };
     }
 
@@ -37,5 +34,6 @@ export namespace ProviderTypes {
             status: number,
             data: ResidentRecord[]
         }
+        export type DeleteResponse = { success: boolean };
     }
 }

@@ -19,7 +19,7 @@ export type DrugLogRecord = {
     Created?: Date | null,
     Updated?: Date | null,
     [key: string]: any
-} | null;
+};
 
 export type MedicineRecord = {
     Id: number | null,

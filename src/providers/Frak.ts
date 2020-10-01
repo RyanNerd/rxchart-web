@@ -22,49 +22,49 @@ const DEFAULT_REQUEST_CONTENT_TYPE = {
  * A simple implementation of the Fetch API specifically for JSON based Web Service requests and responses
  */
 const Frak = {
-    get: async (uri: string, request: RequestInit = {}): Promise<any> => {
+    get: async <T>(uri: string, request: RequestInit = {}): Promise<T> => {
         const options = Frak._prepRequest('GET', request);
-        return await Frak._http(new Request(uri, options));
+        return await Frak._http<T>(new Request(uri, options));
     },
 
-    post: async (uri: string, body: any, request: RequestInit = {body: JSON.stringify(body) }): Promise<any> => {
+    post: async <T>(uri: string, body: any, request: RequestInit = {body: JSON.stringify(body) }): Promise<T> => {
         const options = Frak._prepRequest('POST', request);
-        return await Frak._http(new Request(uri, options));
+        return await Frak._http<T>(new Request(uri, options));
     },
 
-    patch: async (uri: string, body: any, request: RequestInit = {body: JSON.stringify(body) }): Promise<any> => {
+    patch: async <T> (uri: string, body: any, request: RequestInit = {body: JSON.stringify(body) }): Promise<T> => {
         const options = Frak._prepRequest('PATCH', request);
-        return await Frak._http(new Request(uri, options));
+        return await Frak._http<T>(new Request(uri, options));
     },
 
-    put: async (uri: string, body: any, request: RequestInit = {body: JSON.stringify(body) }): Promise<any> => {
+    put: async <T> (uri: string, body: any, request: RequestInit = {body: JSON.stringify(body) }): Promise<T> => {
         const options = Frak._prepRequest('PUT', request);
-        return await Frak._http(new Request(uri, options));
+        return await Frak._http<T>(new Request(uri, options));
     },
 
-    delete: async (uri: string, request: RequestInit = {}): Promise<any> => {
+    delete: async <T>(uri: string, request: RequestInit = {}): Promise<T> => {
         const options = Frak._prepRequest('DELETE', request);
-        return await Frak._http(new Request(uri, options));
+        return await Frak._http<T>(new Request(uri, options));
     },
 
-    options: async (uri: string, request: RequestInit = {}): Promise<any> => {
+    options: async <T> (uri: string, request: RequestInit = {}): Promise<T> => {
         const options = Frak._prepRequest('OPTIONS', request);
-        return await Frak._http(new Request(uri, options));
+        return await Frak._http<T>(new Request(uri, options));
     },
 
-    head: async (uri: string, request: RequestInit = {}): Promise<any> => {
+    head: async <T> (uri: string, request: RequestInit = {}): Promise<T> => {
         const options = Frak._prepRequest('HEAD', request);
-        return await Frak._http(new Request(uri, options));
+        return await Frak._http<T>(new Request(uri, options));
     },
 
-    connect: async (uri: string, request: RequestInit = {}): Promise<any> => {
+    connect: async <T> (uri: string, request: RequestInit = {}): Promise<T> => {
         const options = Frak._prepRequest('CONNECT', request);
-        return await Frak._http(new Request(uri, options));
+        return await Frak._http<T>(new Request(uri, options));
     },
 
-    trace: async (uri: string, request: RequestInit = {}): Promise<any> => {
+    trace: async <T> (uri: string, request: RequestInit = {}): Promise<T> => {
         const options = Frak._prepRequest('TRACE', request);
-        return await Frak._http(new Request(uri, options));
+        return await Frak._http<T>(new Request(uri, options));
     },
 
     /**
@@ -100,7 +100,7 @@ const Frak = {
      * @private
      * @param {Request} request
      */
-    _http: async (request: Request): Promise<any> => {
+    _http: async <T>(request: Request): Promise<T> => {
         const response = await fetch(request);
 
         try {
@@ -112,16 +112,18 @@ const Frak = {
                 contentType = contentType?.replace(/\\/, "/") || null;
 
                 // If the content type is JSON then return the parsed JSON
-                if (contentType && contentType === JSON_CONTENT_TYPE) {
-                    return response.json();
+                if (contentType === null || contentType !== JSON_CONTENT_TYPE) {
+                    const responseText = await response.text();
+                    const contentText = contentType || 'unknown';
+                    const err = new Error('Content-Type is not JSON: ('  + contentText + '): ' + responseText);
+                    throw err;
                 }
             }
         } catch (err) {
             throw err;
         }
 
-        // Return the unparsed response
-        return response;
+        return response.json();
     }
 }
 

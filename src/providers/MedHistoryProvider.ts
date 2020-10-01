@@ -33,21 +33,21 @@ const MedHistoryProvider = {
      * @param {object} options
      * @returns {Promise<Response>}
      */
-    search: (options: object): Promise<ProviderTypes.MedHistory.SearchResponse> => {
+    search: (options: object): Promise<DrugLogRecord[]> => {
         const apiKey = MedHistoryProvider._apiKey;
         let uri = MedHistoryProvider._baseUrl + 'medhistory/search?api_key=' + apiKey;
-        return MedHistoryProvider._frak.post(uri, options)
+        return MedHistoryProvider._frak.post<ProviderTypes.MedHistory.RecordResponse>(uri, options)
         .then((response: any) => {
             if (response.success) {
                 return response.data;
             } else {
                 if (response.status === 404) {
-                    return [];
+                    return [] as DrugLogRecord[];
                 }
                 throw new Error(response.toString());
             }
         })
-        .catch((err: Error) => {
+        .catch((err: any) => {
             console.error(err);
             alert('problem -- see console log');
         });
@@ -59,9 +59,9 @@ const MedHistoryProvider = {
      * @param {string | number} id
      * @returns {Promise<Response>}
      */
-    read: (id: string | number): Promise<ProviderTypes.MedHistory.RecordResponse> => {
+    read: (id: string | number): Promise<DrugLogRecord[]> => {
         const apiKey = MedHistoryProvider._apiKey;
-        return MedHistoryProvider._frak.get(MedHistoryProvider._baseUrl + 'medhistory/'+ id + '?api_key=' + apiKey)
+        return MedHistoryProvider._frak.get<ProviderTypes.MedHistory.RecordResponse>(MedHistoryProvider._baseUrl + 'medhistory/'+ id + '?api_key=' + apiKey)
         .then((response: any) => {
             if (response.success) {
                 return response.data;
@@ -81,17 +81,17 @@ const MedHistoryProvider = {
      * @param {object} drugInfo
      * @returns {Promise<Response>}
      */
-    post: (drugInfo: DrugLogRecord) => {
+    post: (drugInfo: DrugLogRecord): Promise<DrugLogRecord> => {
         const apiKey = MedHistoryProvider._apiKey;
-        return MedHistoryProvider._frak.post(MedHistoryProvider._baseUrl + 'medhistory?api_key=' + apiKey, drugInfo)
-        .then((response: ProviderTypes.MedHistory.ReadResponse) => {
+        return MedHistoryProvider._frak.post<ProviderTypes.MedHistory.RecordResponse>(MedHistoryProvider._baseUrl + 'medhistory?api_key=' + apiKey, drugInfo)
+        .then((response) => {
             if (response.success) {
                 return response.data;
             } else {
                 throw response;
             }
         })
-        .catch((err: Error) => {
+        .catch((err: any) => {
             return err;
         });
     },
@@ -101,18 +101,18 @@ const MedHistoryProvider = {
      *
      * @param {string | number} drugId
      */
-    delete: (drugId: string | number) => {
+    delete: (drugId: string | number): Promise<ProviderTypes.MedHistory.DeleteResponse> => {
         const apiKey = MedHistoryProvider._apiKey;
         const baseUrl = MedHistoryProvider._baseUrl;
-        return MedHistoryProvider._frak.delete(baseUrl + 'medhistory/' + drugId + '?api_key=' + apiKey)
-        .then((response: ProviderTypes.MedHistory.DeleteResponse) => {
+        return MedHistoryProvider._frak.delete<ProviderTypes.MedHistory.RecordResponse>(baseUrl + 'medhistory/' + drugId + '?api_key=' + apiKey)
+        .then((response) => {
             if (response.success) {
                 return response;
             } else {
                 throw response;
             }
         })
-        .catch((err: Error) => {
+        .catch((err) => {
             console.log('MedHistoryProvider.delete() error -- see console log', err);
             return err;
         });

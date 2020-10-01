@@ -228,7 +228,7 @@ const ResidentPage = (props: IProps) => {
         if (residentToDelete && residentToDelete.Id) {
             // Perform the DELETE API call
             residentProvider.delete(residentToDelete.Id)
-            .then((response: any) => {
+            .then((response) => {
                 if (response.success) {
                     // If the activeResident is the resident that is being deleted then mark it as no longer active.
                     if (activeResident && activeResident.Id === residentToDelete.Id) {
@@ -241,7 +241,7 @@ const ResidentPage = (props: IProps) => {
                         ]
                     };
                     residentProvider.search(searchCriteria)
-                        .then((data: ResidentRecord[]) => setResidentList(data))
+                        .then((data) => setResidentList(data))
                         .catch((err: ErrorEvent) => onError(err));
                 } else {
                     throw(response);

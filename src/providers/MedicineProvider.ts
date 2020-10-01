@@ -34,20 +34,20 @@ const MedicineProvider = {
      * @param {object} options
      * @returns {Promise<Response>}
      */
-    search: (options: object) => {
+    search: (options: object): Promise<MedicineRecord[]> => {
         let uri = MedicineProvider._baseUrl + 'medicine/search?api_key=' + MedicineProvider._apiKey;
-        return MedicineProvider._frak.post(uri, options)
-        .then((response: ProviderTypes.Medicine.SearchResponse) => {
+        return MedicineProvider._frak.post<{success: boolean, data: any, status: number}>(uri, options)
+        .then((response) => {
             if (response.success) {
-                return response.data as MedicineRecord[];
+                return response.data;
             } else {
                 if (response.status === 404) {
-                    return [];
+                    return [] as MedicineRecord[];
                 }
                 throw new Error(response.toString());
             }
         })
-        .catch((err: ErrorEvent) => {
+        .catch((err) => {
             console.error(err);
             alert('MedicineProvider.search() error -- see console log');
         });
@@ -59,16 +59,16 @@ const MedicineProvider = {
      * @param {string | number} id
      * @returns {Promise<Response>}
      */
-    read: (id: number | string) => {
-        return MedicineProvider._frak.get(MedicineProvider._baseUrl + 'medicine/'+ id + '?api_key=' + MedicineProvider._apiKey)
-        .then((response: {success: boolean, data: object | object[]}) => {
+    read: (id: number | string): Promise<MedicineRecord> => {
+        return MedicineProvider._frak.get<{success: boolean, data: any, status: number}>(MedicineProvider._baseUrl + 'medicine/'+ id + '?api_key=' + MedicineProvider._apiKey)
+        .then((response) => {
             if (response.success) {
                 return response.data;
             } else {
                 throw response;
             }
         })
-        .catch((err: ErrorEvent) => {
+        .catch((err) => {
             console.error(err);
             alert('MedicineProvider.read() error -- see console log');
         });
@@ -80,16 +80,16 @@ const MedicineProvider = {
      * @param {object} drugInfo
      * @returns {Promise<Response>}
      */
-    post: (drugInfo: MedicineRecord) => {
-        return MedicineProvider._frak.post(MedicineProvider._baseUrl + 'medicine?api_key=' + MedicineProvider._apiKey, drugInfo)
-        .then((response: {success: boolean, data: object | object[]}) => {
+    post: (drugInfo: MedicineRecord): Promise<MedicineRecord> => {
+        return MedicineProvider._frak.post<ProviderTypes.Medicine.RecordResponse>(MedicineProvider._baseUrl + 'medicine?api_key=' + MedicineProvider._apiKey, drugInfo)
+        .then((response) => {
             if (response.success) {
-                return response.data as MedicineRecord;
+                return response.data;
             } else {
                 throw response;
             }
         })
-        .catch((err: ErrorEvent) => {
+        .catch((err) => {
            return err;
         });
     },
@@ -101,8 +101,8 @@ const MedicineProvider = {
      * @returns {Promise<Response>}
      */
     delete: (drugId: string | number) => {
-        return MedicineProvider._frak.delete(MedicineProvider._baseUrl + 'medicine/' + drugId + '?api_key=' + MedicineProvider._apiKey)
-        .then((response: ProviderTypes.Medicine.DeleteResponse) => {
+        return MedicineProvider._frak.delete<ProviderTypes.Medicine.DeleteResponse>(MedicineProvider._baseUrl + 'medicine/' + drugId + '?api_key=' + MedicineProvider._apiKey)
+        .then((response) => {
             if (response.success) {
                 return response;
             } else {

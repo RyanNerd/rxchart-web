@@ -358,12 +358,14 @@ const MedicinePage = (props: IProps) => {
                 />
             }
 
+            {drugLogInfo &&
             <DrugLogEdit
-                show={showDrugLog}
-                drugLogInfo={drugLogInfo}
-                onHide={() => setShowDrugLog(!showDrugLog)}
-                onClose={(drugLogRecord) => handleDrugLogEditClose(drugLogRecord)}
-            />
+                    show={showDrugLog}
+                    drugLogInfo={drugLogInfo}
+                    onHide={() => setShowDrugLog(!showDrugLog)}
+                    onClose={(drugLogRecord) => handleDrugLogEditClose(drugLogRecord)}
+                />
+            }
 
             <ConfirmationDialog
                 title="Delete Log Record"

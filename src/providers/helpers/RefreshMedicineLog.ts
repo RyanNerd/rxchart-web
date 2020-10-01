@@ -1,6 +1,4 @@
 import MedHistoryProvider from "../MedHistoryProvider";
-import {ProviderTypes} from "../../types/ProviderTypes";
-import {DrugLogRecord} from "../../types/RecordTypes";
 
 const RefreshMedicineLog = (medHistoryProvider: typeof MedHistoryProvider, id: number | string) => {
     const searchCriteria =
@@ -14,20 +12,7 @@ const RefreshMedicineLog = (medHistoryProvider: typeof MedHistoryProvider, id: n
             ]
         };
 
-    return medHistoryProvider.search(searchCriteria)
-    .then((response: ProviderTypes.MedHistory.SearchResponse) => {
-        if (response.success) {
-            return response.data as DrugLogRecord[];
-        } else {
-            if (response.status === 404) {
-                return null;
-            }
-            throw response;
-        }
-    })
-    .catch(((err: ErrorEvent) => {
-        return err;
-    }));
+    return medHistoryProvider.search(searchCriteria);
 }
 
 export default RefreshMedicineLog;

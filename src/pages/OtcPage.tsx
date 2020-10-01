@@ -363,12 +363,14 @@ const OtcPage = (props: IProps) => {
                 />
             }
 
-            <DrugLogEdit
-                show={showDrugLog}
-                drugLogInfo={drugLogInfo}
-                onHide={() => setShowDrugLog(!showDrugLog)}
-                onClose={(drugLogRecord) => handleDrugLogEditClose(drugLogRecord)}
-            />
+            {drugLogInfo &&
+                <DrugLogEdit
+                    show={showDrugLog}
+                    drugLogInfo={drugLogInfo}
+                    onHide={() => setShowDrugLog(!showDrugLog)}
+                    onClose={(drugLogRecord) => handleDrugLogEditClose(drugLogRecord)}
+                />
+            }
 
             <ConfirmationDialog
                 title="Delete Log Record"
