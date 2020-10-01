@@ -23,7 +23,7 @@ interface IProps {
  * @returns {null|*}
  */
 const ManageDrugPage = (props: IProps) => {
-    const [ medicineList, setMedicineList ] = useGlobal('medicineList');
+    const [ medicineList, setMedicineList ] = useGlobal<MedicineRecord>('medicineList');
     const [ activeResident ]= useGlobal('activeResident');
 
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
@@ -143,7 +143,7 @@ const ManageDrugPage = (props: IProps) => {
                     </tr>
                     </thead>
                     <tbody>
-                    {medicineList.map((drug) => MedicineDetail(drug, onDelete, onEdit, true))}
+                    {medicineList.map((drug: MedicineRecord) => MedicineDetail(drug, onDelete, onEdit, true))}
                     </tbody>
                 </Table>
             }

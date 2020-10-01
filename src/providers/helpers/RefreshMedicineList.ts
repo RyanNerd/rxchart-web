@@ -8,7 +8,7 @@
  */
 import MedicineProvider from "../MedicineProvider";
 
-const RefreshMedicineList = (medicineProvider: typeof MedicineProvider, residentId: number | string): Promise<any> => {
+const RefreshMedicineList = (medicineProvider: typeof MedicineProvider, residentId: number | string) => {
    const searchCriteria =
        {
            where: [

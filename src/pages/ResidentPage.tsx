@@ -10,7 +10,7 @@ import RefreshMedicineLog from "../providers/helpers/RefreshMedicineLog";
 import ConfirmationDialog from "../components/Modals/ConfirmationDialog";
 import {Form} from "react-bootstrap";
 import ResidentProvider from "../providers/ResidentProvider";
-import {ResidentRecord} from "../types/RecordTypes";
+import {MedicineRecord, ResidentRecord} from "../types/RecordTypes";
 import MedicineProvider from "../providers/MedicineProvider";
 import MedHistoryProvider from "../providers/MedHistoryProvider";
 import {useProviders} from "../utility/useProviders";
@@ -33,8 +33,8 @@ const ResidentPage = (props: IProps) => {
     const [ residentToDelete, setResidentToDelete ] = useState<ResidentRecord | null>(null);
 
     const [ residentList, setResidentList ] = useGlobal('residentList');
-    const [ , setMedicineList ] = useGlobal('medicineList');
-    const [ , setDrugLogList ] = useGlobal('drugLogList');
+    const [ , setMedicineList ] = useGlobal<MedicineRecord>('medicineList');
+    const [ , setDrugLogList ] = useGlobal<MedicineRecord>('drugLogList');
     const [ activeResident, setActiveResident ] = useGlobal('activeResident');
     const providers = useProviders();
     const residentProvider = providers.residentProvider as typeof ResidentProvider;
@@ -192,15 +192,17 @@ const ResidentPage = (props: IProps) => {
         setActiveResident(resident).then(()=>{});
         const residentId = resident.Id as number;
         RefreshMedicineList(medicineProvider, residentId)
-        .then((data) => {
+        .then((medicineRecords) => {
             // If there are any medicines for the selected resident then
             // select the first one and make it the active drug.
-            if (data && data.length > 0) {
-                setMedicineList(data).then(()=>{});
+            if (medicineRecords && medicineRecords.length > 0) {
+                setMedicineList(medicineRecords).then(()=>{});
                 // Refresh the drugLogList for the new active drug.
-                RefreshMedicineLog(medHistoryProvider, data[0].ResidentId)
-                .then((data) => setDrugLogList(data))
-                .catch((err) => onError(err));
+                if (activeResident && activeResident.Id) {
+                    RefreshMedicineLog(medHistoryProvider, activeResident.Id)
+                        .then((data) => setDrugLogList(data))
+                        .catch((err) => onError(err));
+                }
             } else {
                 setMedicineList(null).then(()=>{});
                 setDrugLogList(null).then(()=>{});

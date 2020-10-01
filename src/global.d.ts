@@ -31,7 +31,7 @@ declare module 'reactn/default' {
         development: boolean;
         providers: ProviderTypes.Providers;
         drugLogList: DrugLogRecord[] | null;
-        medicineList: MedicineRecord[] | null;
+        medicineList: MedicineRecord | MedicineRecord[] | null;
         otcList: MedicineRecord[] | null;
         residentList: Array<ResidentRecord>;
         baseUrl: string;

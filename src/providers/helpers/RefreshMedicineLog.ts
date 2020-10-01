@@ -1,7 +1,8 @@
 import MedHistoryProvider from "../MedHistoryProvider";
 import {ProviderTypes} from "../../types/ProviderTypes";
+import {DrugLogRecord} from "../../types/RecordTypes";
 
-const RefreshMedicineLog = (medHistoryProvider: typeof MedHistoryProvider, id: number | string): Promise<any> => {
+const RefreshMedicineLog = (medHistoryProvider: typeof MedHistoryProvider, id: number | string) => {
     const searchCriteria =
         {
             where: [
@@ -16,7 +17,7 @@ const RefreshMedicineLog = (medHistoryProvider: typeof MedHistoryProvider, id: n
     return medHistoryProvider.search(searchCriteria)
     .then((response: ProviderTypes.MedHistory.SearchResponse) => {
         if (response.success) {
-            return response.data;
+            return response.data as DrugLogRecord[];
         } else {
             if (response.status === 404) {
                 return null;

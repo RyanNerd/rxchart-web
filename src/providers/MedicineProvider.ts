@@ -1,5 +1,6 @@
 import {MedicineRecord} from "../types/RecordTypes";
 import Frak from "./Frak";
+import {ProviderTypes} from "../types/ProviderTypes";
 
 /**
  * MedicineProvider API connector
@@ -36,9 +37,9 @@ const MedicineProvider = {
     search: (options: object) => {
         let uri = MedicineProvider._baseUrl + 'medicine/search?api_key=' + MedicineProvider._apiKey;
         return MedicineProvider._frak.post(uri, options)
-        .then((response: {success: boolean, status: number, data: object | object[]}) => {
+        .then((response: ProviderTypes.Medicine.SearchResponse) => {
             if (response.success) {
-                return response.data;
+                return response.data as MedicineRecord[];
             } else {
                 if (response.status === 404) {
                     return [];

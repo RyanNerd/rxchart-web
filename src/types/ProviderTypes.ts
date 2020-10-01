@@ -1,7 +1,7 @@
 import ResidentProvider from "../providers/ResidentProvider";
 import MedicineProvider from "../providers/MedicineProvider";
 import MedHistoryProvider from "../providers/MedHistoryProvider";
-import {DrugLogRecord} from "./RecordTypes";
+import {DrugLogRecord, MedicineRecord} from "./RecordTypes";
 
 export namespace ProviderTypes {
     export type Providers = {
@@ -19,5 +19,14 @@ export namespace ProviderTypes {
         export type SearchResponse = RecordResponse;
         export type ReadResponse = RecordResponse;
         export type DeleteResponse = { success: boolean };
+    }
+
+    export namespace Medicine {
+        export type RecordResponse = {
+            success: boolean,
+            status: number,
+            data: MedicineRecord | MedicineRecord[]
+        }
+        export type SearchResponse = RecordResponse;
     }
 }

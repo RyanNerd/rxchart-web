@@ -8,6 +8,7 @@ import DrugHistoryPage from "./DrugHistoryPage";
 import ManageDrugPage from "./ManageDrugPage";
 import OtcPage from "./OtcPage";
 import ManageOtcPage from "./ManageOtcPage";
+import {MedicineRecord} from "../types/RecordTypes";
 
 const LandingPage = () => {
     const [ apiKey, setApiKey ] = useGlobal('apiKey');
@@ -18,7 +19,7 @@ const LandingPage = () => {
     const [ activeTabKey, setActiveTabKey ] = useState<string | null>('login');
 
     const [ drugLogList ] = useGlobal('drugLogList');
-    const [ medicineList ] = useGlobal('medicineList');
+    const [ medicineList ] = useGlobal<MedicineRecord>('medicineList');
     const [ otcList ] = useGlobal('otcList');
 
     /**
