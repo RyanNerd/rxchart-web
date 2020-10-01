@@ -116,7 +116,7 @@ const ResidentPage = (props: IProps) => {
 
             // Check if the added resident exists but is trashed.
             residentProvider.search(searchExisting)
-            .then((result: ResidentRecord[]) => {
+            .then((result) => {
                 // Do we have a trashed resident? Reactivate them, otherwise add as a new resident.
                 if (result.length === 1 && result[0] && result[0].Id) {
                     reactivateResident(result[0].Id)

@@ -11,7 +11,6 @@ import {initialState} from "../utility/initialState";
 import MedHistoryProvider from "../providers/MedHistoryProvider";
 import Frak from "../providers/Frak";
 import RefreshOtcList from "../providers/helpers/RefreshOtcList";
-import {ResidentRecord} from "../types/RecordTypes";
 import {ProviderTypes} from "../types/ProviderTypes";
 
 interface IProps {
@@ -84,8 +83,8 @@ const LoginPage = (props: IProps) => {
                             ]
                         };
                         providers.residentProvider?.search(searchCriteria)
-                        .then((data: ResidentRecord[]) => setResidentList(data))
-                        .catch((err: ErrorEvent) => onError(err));
+                        .then((data) => setResidentList(data))
+                        .catch((err: any) => onError(err));
                     }
 
                    // Load ALL OTC medications

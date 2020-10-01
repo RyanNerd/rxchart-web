@@ -1,5 +1,6 @@
 import {ResidentRecord} from "../types/RecordTypes";
 import Frak from "./Frak";
+import {ProviderTypes} from "../types/ProviderTypes";
 
 /**
  * ResidentProvider API service connector
@@ -33,12 +34,12 @@ const ResidentProvider = {
      * @param {object} options
      * @returns {Promise<Response>}
      */
-    search: (options: object) => {
+    search: (options: object): Promise<ResidentRecord[]> => {
         let uri = ResidentProvider._baseUrl + 'resident/search?api_key=' + ResidentProvider._apiKey;
         return ResidentProvider._frak.post(uri, options)
-        .then((response: any) => {
+        .then((response: ProviderTypes.Resident.RecordResponse) => {
             if (response.success) {
-                return response.data;
+                return response.data as ResidentRecord[];
             } else {
                 if (response.status === 404) {
                     return [];
@@ -46,7 +47,7 @@ const ResidentProvider = {
                 throw new Error(response.toString());
             }
         })
-        .catch((err: ErrorEvent) => {
+        .catch((err) => {
             console.log('ResidentProvider.search()', err);
             alert('ResidentProvider.search() error -- see console log');
             return err;
@@ -86,14 +87,14 @@ const ResidentProvider = {
      */
     read: (id: string | number) => {
         return ResidentProvider._frak.get(ResidentProvider._baseUrl + 'resident/'+ id + '?api_key=' + ResidentProvider._apiKey)
-        .then((response: {success: boolean, data: object| object[]}) => {
+        .then((response: ProviderTypes.Resident.RecordResponse) => {
             if (response.success) {
-                return response.data;
+                return response.data as ResidentRecord[];
             } else {
                 throw new Error(response.toString());
             }
         })
-        .catch((err: ErrorEvent) => {
+        .catch((err: any) => {
             console.log('ResidentProvider.read()', err);
             alert('ResidentProvider.read() error -- see console log');
         });
@@ -107,14 +108,14 @@ const ResidentProvider = {
      */
     post: (residentInfo: ResidentRecord) => {
         return ResidentProvider._frak.post(ResidentProvider._baseUrl + 'resident?api_key=' + ResidentProvider._apiKey, residentInfo)
-        .then((response: {success: boolean, data: object | object[]}) => {
+        .then((response: ProviderTypes.Resident.RecordResponse) => {
             if (response.success) {
-                return response.data;
+                return response.data as ResidentRecord[];
             } else {
                 throw response;
             }
         })
-        .catch((err: ErrorEvent) => {
+        .catch((err: any) => {
             return err;
         })
     },
