@@ -1,4 +1,4 @@
-import {ProvidersType} from "../types/FrakTypes";
+import {ProviderTypes} from "../types/ProviderTypes";
 
 export const initialState = {
     development: process.env.REACT_APP_DEVELOPMENT === 'true',
@@ -13,5 +13,5 @@ export const initialState = {
         residentProvider: null,
         medicineProvider: null,
         medHistoryProvider: null
-    } as ProvidersType
+    } as ProviderTypes.Providers
 };

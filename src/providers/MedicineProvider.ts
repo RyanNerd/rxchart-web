@@ -1,4 +1,3 @@
-import {ApiKeyType, BaseUrlType} from "../types/FrakTypes";
 import {MedicineRecord} from "../types/RecordTypes";
 import Frak from "./Frak";
 
@@ -7,8 +6,8 @@ import Frak from "./Frak";
  */
 const MedicineProvider = {
     _frak: Frak,
-    _baseUrl: null as BaseUrlType,
-    _apiKey: null as ApiKeyType,
+    _baseUrl: null as string | null,
+    _apiKey: null as string | null,
 
     /**
      * MedicineProvider constructor

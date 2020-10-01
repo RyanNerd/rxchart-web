@@ -1,14 +1,14 @@
-import {ApiKeyType, BaseUrlType, MedHistoryTypes} from "../types/FrakTypes";
 import {DrugLogRecord} from "../types/RecordTypes";
 import Frak from "./Frak";
+import {ProviderTypes} from "../types/ProviderTypes";
 
 /**
  * MedHistoryProvider API Connector
  */
 const MedHistoryProvider = {
     _frak: Frak,
-    _baseUrl: null as BaseUrlType,
-    _apiKey: null as ApiKeyType,
+    _baseUrl: null as string | null,
+    _apiKey: null as string | null,
 
     /**
      * @constructor
@@ -33,7 +33,7 @@ const MedHistoryProvider = {
      * @param {object} options
      * @returns {Promise<Response>}
      */
-    search: (options: object): Promise<MedHistoryTypes.SearchResponse> => {
+    search: (options: object): Promise<ProviderTypes.MedHistory.SearchResponse> => {
         const apiKey = MedHistoryProvider._apiKey;
         let uri = MedHistoryProvider._baseUrl + 'medhistory/search?api_key=' + apiKey;
         return MedHistoryProvider._frak.post(uri, options)
@@ -59,7 +59,7 @@ const MedHistoryProvider = {
      * @param {string | number} id
      * @returns {Promise<Response>}
      */
-    read: (id: string | number): Promise<MedHistoryTypes.RecordResponse> => {
+    read: (id: string | number): Promise<ProviderTypes.MedHistory.RecordResponse> => {
         const apiKey = MedHistoryProvider._apiKey;
         return MedHistoryProvider._frak.get(MedHistoryProvider._baseUrl + 'medhistory/'+ id + '?api_key=' + apiKey)
         .then((response: any) => {
@@ -84,7 +84,7 @@ const MedHistoryProvider = {
     post: (drugInfo: DrugLogRecord) => {
         const apiKey = MedHistoryProvider._apiKey;
         return MedHistoryProvider._frak.post(MedHistoryProvider._baseUrl + 'medhistory?api_key=' + apiKey, drugInfo)
-        .then((response: MedHistoryTypes.RecordResponse) => {
+        .then((response: ProviderTypes.MedHistory.ReadResponse) => {
             if (response.success) {
                 return response.data;
             } else {
@@ -105,7 +105,7 @@ const MedHistoryProvider = {
         const apiKey = MedHistoryProvider._apiKey;
         const baseUrl = MedHistoryProvider._baseUrl;
         return MedHistoryProvider._frak.delete(baseUrl + 'medhistory/' + drugId + '?api_key=' + apiKey)
-        .then((response: MedHistoryTypes.DeleteResponse) => {
+        .then((response: ProviderTypes.MedHistory.DeleteResponse) => {
             if (response.success) {
                 return response;
             } else {

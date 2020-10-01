@@ -1,4 +1,3 @@
-import {ApiKeyType, BaseUrlType} from "../types/FrakTypes";
 import {ResidentRecord} from "../types/RecordTypes";
 import Frak from "./Frak";
 
@@ -7,8 +6,8 @@ import Frak from "./Frak";
  */
 const ResidentProvider = {
     _frak: Frak,
-    _baseUrl: null as BaseUrlType,
-    _apiKey: null as ApiKeyType,
+    _baseUrl: null as string | null,
+    _apiKey: null as string | null,
 
     /**
      * ResidentProvider Constructor

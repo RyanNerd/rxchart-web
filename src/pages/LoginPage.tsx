@@ -12,7 +12,7 @@ import MedHistoryProvider from "../providers/MedHistoryProvider";
 import Frak from "../providers/Frak";
 import RefreshOtcList from "../providers/helpers/RefreshOtcList";
 import {ResidentRecord} from "../types/RecordTypes";
-import {ProvidersType} from "../types/FrakTypes";
+import {ProviderTypes} from "../types/ProviderTypes";
 
 interface IProps {
     activeTabKey: string | null
@@ -72,7 +72,7 @@ const LoginPage = (props: IProps) => {
                         residentProvider: ResidentProvider.init(rxFrak),
                         medicineProvider: MedicineProvider.init(rxFrak),
                         medHistoryProvider: MedHistoryProvider.init(rxFrak),
-                    } as ProvidersType;
+                    } as ProviderTypes.Providers;
                     setProviders(providers).then(() => {});
 
                     // Load ALL Resident records up front and save them in the global store.

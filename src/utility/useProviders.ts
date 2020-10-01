@@ -1,7 +1,7 @@
 import {useGlobal, useEffect, useState} from 'reactn'
-import {ProvidersType} from "../types/FrakTypes";
+import {ProviderTypes} from "../types/ProviderTypes";
 
-export const useProviders = (): ProvidersType => {
+export const useProviders = (): ProviderTypes.Providers => {
     const [ restProviders ] = useGlobal('providers');
     const [ providers, setProviders ] = useState(restProviders);
     useEffect(() => {

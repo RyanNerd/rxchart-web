@@ -1,4 +1,4 @@
-import {FrakTypes} from "../types/FrakTypes";
+type HTTPMethods = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD' | 'OPTIONS' | 'CONNECT' | 'TRACE';
 
 interface IDefaultRequestContent {
     [key: string]: string | null
@@ -71,10 +71,10 @@ const Frak = {
      * Initialize the Request options object
      *
      * @private
-     * @param {FrakTypes.HTTPMethod} method
+     * @param {HTTPMethods} method
      * @param {RequestInfo} request
      */
-    _prepRequest: (method: FrakTypes.HTTPMethod, request: RequestInit) => {
+    _prepRequest: (method: HTTPMethods, request: RequestInit) => {
         const options = {...request};
 
         // Override RequestInit properties as needed.
