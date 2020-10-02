@@ -111,7 +111,7 @@ const Frak = {
                 // In case the contentType has a backslash we convert it to forward slash
                 contentType = contentType?.replace(/\\/, "/") || null;
 
-                // If the content type is JSON then return the parsed JSON
+                // If the content type is not JSON then throw an error
                 if (contentType === null || contentType !== JSON_CONTENT_TYPE) {
                     const responseText = await response.text();
                     const contentText = contentType || 'unknown';
@@ -123,6 +123,7 @@ const Frak = {
             throw err;
         }
 
+        // Return the parsed JSON
         return response.json();
     }
 }

@@ -22,8 +22,7 @@ import MedicineProvider from "../providers/MedicineProvider";
 
 interface IProps {
     activeTabKey: string | null,
-    onError: (e: ErrorEvent) => void,
-    updateFocusRef: (ref: React.RefObject<HTMLInputElement>) => void
+    onError: (e: ErrorEvent) => void
 }
 
 /**
@@ -53,10 +52,9 @@ const OtcPage = (props: IProps) => {
     const medHistoryProvider = providers.medHistoryProvider as typeof MedHistoryProvider;
     const medicineProvider = providers.medicineProvider as typeof MedicineProvider;
 
-    const focusRef = useRef(null);
-    const key = props.activeTabKey || null;
+    const focusRef = useRef<HTMLInputElement>(null);
+    const activeTabKey = props.activeTabKey || null;
     const onError = props.onError;
-    const updateFocusRef = props.updateFocusRef;
 
     // We only want to list the OTC drugs on this page that the resident has taken.
     useEffect(() => {
@@ -70,7 +68,11 @@ const OtcPage = (props: IProps) => {
     }, [drugLogList, otcList])
 
     // Set focus to the search input when this page is selected.
-    useEffect(() => updateFocusRef(focusRef), [updateFocusRef, key]);
+    useEffect(() => {
+        if (activeTabKey === 'otc'  && focusRef && focusRef.current) {
+            focusRef.current.focus();
+        }
+    }, [activeTabKey]);
 
     // Set the active drug when the otcList changes.
     useEffect(()=> {

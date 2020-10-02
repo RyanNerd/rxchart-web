@@ -23,17 +23,6 @@ const LandingPage = () => {
     const [ otcList ] = useGlobal('otcList');
 
     /**
-     * Given a ref set focus if it exists and is current.
-     *
-     * @param {React.Ref} ref
-     */
-    const setFocus = (ref: React.RefObject<HTMLInputElement>) => {
-        if (ref && ref.current) {
-            ref.current.focus();
-        }
-    }
-
-    /**
      * Error handler
      *
      * @param {ErrorEvent | null} err
@@ -67,13 +56,12 @@ const LandingPage = () => {
                 <LoginPage
                     onLogin={(loggedIn) => {setActiveTabKey(loggedIn ? 'resident' : 'login')}}
                     onError={(error) => errorOccurred(error)}
-                    updateFocusRef={(ref) => setFocus(ref)}
                     activeTabKey={activeTabKey}
                 />
             </Tab>
             <Tab
                 disabled={apiKey === null || !activeResident}
-                eventKey="log"
+                eventKey="medicine"
                 title="Rx">
                 <MedicinePage
                     activeTabKey={activeTabKey}
@@ -86,7 +74,6 @@ const LandingPage = () => {
                 title="OTC">
                 <OtcPage
                     onError={(error) => errorOccurred(error)}
-                    updateFocusRef={(ref) => setFocus(ref)}
                     activeTabKey={activeTabKey}
                 />
             </Tab>

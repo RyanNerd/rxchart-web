@@ -42,7 +42,7 @@ const MedicinePage = (props: IProps) => {
     const [ activeDrug, setActiveDrug ] = useState<MedicineRecord | null>(null);
     const [ searchText, setSearchText ] = useState('');
     const [ searchIsValid, setSearchIsValid ] = useState(false)
-    const focusRef = useRef<any>(null);
+    const focusRef = useRef<HTMLInputElement>(null);
 
     const [ medicineList, setMedicineList ] = useGlobal<any>('medicineList');
     const [ drugLogList, setDrugLogList ] = useGlobal<any>('drugLogList');
@@ -53,7 +53,7 @@ const MedicinePage = (props: IProps) => {
     const medHistoryProvider = providers.medHistoryProvider as typeof MedHistoryProvider;
     const medicineProvider = providers.medicineProvider as typeof MedicineProvider;
     const onError = props.onError;
-    const key = props.activeTabKey || null;
+    const activeTabKey = props.activeTabKey || null;
 
     // Set the activeDrug when the medicineList changes or the activeResident.
     useEffect(()=> {
@@ -76,10 +76,10 @@ const MedicinePage = (props: IProps) => {
 
     // Set focus to the search input if the page key has changed
     useEffect(() => {
-        if (focusRef && focusRef.current) {
+        if (activeTabKey === 'medicine' && focusRef && focusRef.current) {
             focusRef.current.focus();
         }
-    }, [key]);
+    }, [activeTabKey]);
 
     // Handle if the search text has a match in the medicineList.
     useEffect(() => {

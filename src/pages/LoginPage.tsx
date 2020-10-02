@@ -16,7 +16,6 @@ import {ProviderTypes} from "../types/ProviderTypes";
 interface IProps {
     activeTabKey: string | null
     onError: (e:ErrorEvent) => void
-    updateFocusRef: (ref: React.RefObject<HTMLInputElement>) => void,
     onLogin: (loggedIn: boolean) => void
 }
 
@@ -41,12 +40,15 @@ const LoginPage = (props: IProps) => {
     const {
         onError,
         activeTabKey,
-        updateFocusRef,
         onLogin
     } = props;
 
-    // Set focus to the user name field when this page is active.
-    useEffect(() => updateFocusRef(focusRef), [activeTabKey, updateFocusRef]);
+    // Set focus to the search input when this page is selected.
+    useEffect(() => {
+        if (activeTabKey === 'login' && focusRef && focusRef.current) {
+            focusRef.current.focus();
+        }
+    }, [activeTabKey]);
 
     /**
      * Fires when the Login Button is clicked
