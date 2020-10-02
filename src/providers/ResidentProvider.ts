@@ -73,7 +73,7 @@ const ResidentProvider = {
                 throw new Error(response.toString());
             }
         })
-        .catch((err: ErrorEvent) => {
+        .catch((err: Error) => {
             console.log('ResidentProvider.restore()', err);
             alert('ResidentProvider.restore() error -- see console log');
         });

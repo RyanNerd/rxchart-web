@@ -15,7 +15,7 @@ import {ProviderTypes} from "../types/ProviderTypes";
 
 interface IProps {
     activeTabKey: string | null
-    onError: (e:ErrorEvent) => void
+    onError: (e:Error) => void
     onLogin: (loggedIn: boolean) => void
 }
 

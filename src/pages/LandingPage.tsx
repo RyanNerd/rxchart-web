@@ -9,6 +9,7 @@ import ManageDrugPage from "./ManageDrugPage";
 import OtcPage from "./OtcPage";
 import ManageOtcPage from "./ManageOtcPage";
 import {MedicineRecord} from "../types/RecordTypes";
+import {useEffect} from "react";
 
 const LandingPage = () => {
     const [ apiKey, setApiKey ] = useGlobal('apiKey');
@@ -25,9 +26,9 @@ const LandingPage = () => {
     /**
      * Error handler
      *
-     * @param {ErrorEvent | null} err
+     * @param {Error | null} err
      */
-    const errorOccurred = (err: ErrorEvent) => {
+    const errorOccurred = (err: Error) => {
         if (development) {
             console.log('Error', err);
             if (err) {
@@ -41,6 +42,18 @@ const LandingPage = () => {
         setApiKey(null).then(()=>{});
         setActiveTabKey('error');
     }
+
+    // Completely hide the Diagnostics tab header if it isn't active using some direct DOM manipulation.
+    useEffect(() => {
+        const el = document.getElementById('landing-page-tabs-tab-error');
+        if (el && activeTabKey !== 'error') {
+            el.style.color = 'white';
+        } else {
+            if (el) {
+                el.style.color = '#007BFF';
+            }
+        }
+    }, [activeTabKey]);
 
     return (
         <Tabs
@@ -102,7 +115,7 @@ const LandingPage = () => {
                 title="Manage Rx"
             >
                 <ManageDrugPage
-                    onError={(err: ErrorEvent) => errorOccurred(err)}
+                    onError={(err: Error) => errorOccurred(err)}
                 />
             </Tab>
             <Tab
@@ -118,6 +131,7 @@ const LandingPage = () => {
                 disabled={activeTabKey !== 'error'}
                 eventKey="error"
                 title="Diagnostics"
+                style={{color: activeTabKey !== 'error' ? 'white' : ''}}
             >
                 <p>{errorDetails}</p>
             </Tab>

@@ -22,7 +22,7 @@ import MedicineProvider from "../providers/MedicineProvider";
 
 interface IProps {
     activeTabKey: string | null,
-    onError: (e: ErrorEvent) => void
+    onError: (e: Error) => void
 }
 
 /**
@@ -185,7 +185,7 @@ const OtcPage = (props: IProps) => {
             .then(() => {
                 RefreshMedicineLog(medHistoryProvider, residentId).then((data) => setDrugLogList(data));
             })
-            .catch((err: ErrorEvent) => onError(err));
+            .catch((err: Error) => onError(err));
         }
         setShowDeleteDrugLogRecord(false);
     }
@@ -224,7 +224,7 @@ const OtcPage = (props: IProps) => {
                 RefreshMedicineLog(medHistoryProvider, residentId)
                 .then((data) => {setDrugLogList(data).then(() => {})})
             })
-            .catch((err: ErrorEvent) => {
+            .catch((err: Error) => {
                 onError(err);
             });
         }

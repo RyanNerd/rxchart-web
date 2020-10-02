@@ -23,7 +23,7 @@ import MedicineProvider from "../providers/MedicineProvider";
 
 interface IProps {
     activeTabKey: string | null,
-    onError: (e: ErrorEvent) => void
+    onError: (e: Error) => void
 }
 
 /**
@@ -154,7 +154,7 @@ const MedicinePage = (props: IProps) => {
                     RefreshMedicineLog(medHistoryProvider, residentId)
                         .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
                 })
-                .catch((err: ErrorEvent) => {
+                .catch((err: Error) => {
                     onError(err);
                 });
             });
@@ -173,7 +173,7 @@ const MedicinePage = (props: IProps) => {
             .then(() => {
                 RefreshMedicineLog(medHistoryProvider, residentId).then((data) => setDrugLogList(data));
             })
-            .catch((err: ErrorEvent) => onError(err));
+            .catch((err: Error) => onError(err));
         }
         setShowDeleteDrugLogRecord(false);
     }
@@ -215,7 +215,7 @@ const MedicinePage = (props: IProps) => {
                         .then((data) => setDrugLogList(data));
                 }
             })
-            .catch((err: ErrorEvent) => {
+            .catch((err: Error) => {
                 onError(err);
             });
         }

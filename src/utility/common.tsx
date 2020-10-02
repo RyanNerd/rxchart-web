@@ -114,10 +114,18 @@ export const calculateLastTaken = (drugId: number, drugLogList:Array<DrugLogReco
     const filteredDrugs = drugLogList.filter(drug => drug && drug.MedicineId === drugId);
     const latestDrug = filteredDrugs && filteredDrugs.length > 0 ? filteredDrugs[0] : null;
     if (latestDrug) {
-        // @ts-ignore  FIXME: WTF?
-        const latestDrugDate = Math.round((new Date(latestDrug.Updated)).getTime() / 1000);
+        const date = new Date(latestDrug.Updated || '');
+        const latestDrugDate = Math.round((date).getTime() / 1000);
         const now = Math.round((new Date()).getTime() / 1000);
         diff = Math.round((now - latestDrugDate) / 3600);
     }
     return diff;
 };
+
+export const isToday = (date: Date): boolean => {
+    const now = new Date();
+    const options = {month: '2-digit', day: '2-digit', year: 'numeric'};
+    const nowFull = now.toLocaleString('en-US', options);
+    const dateFull = date.toLocaleString('en-US', options);
+    return nowFull === dateFull;
+}

@@ -16,7 +16,7 @@ export const handleMedicineEditModalClose = (
         medicineProvider: typeof MedicineProvider,
         refreshList: Function, // typeof RefreshMedicineList(MedicineProvider) | typeof RefreshOtcList(MedicineProvider, ActiveResident.Id)
         setDrugList: (r: MedicineRecord[] | null) => void,
-        onError: (e: ErrorEvent) => void
+        onError: (e: Error) => void
     ): void => {
     if (drugInfo) {
         const drugData = {...drugInfo};
@@ -42,6 +42,6 @@ export const handleMedicineEditModalClose = (
                 setDrugList(null);
             });
         })
-        .catch((err: ErrorEvent) => onError(err));
+        .catch((err: Error) => onError(err));
     }
 }

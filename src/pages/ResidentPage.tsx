@@ -16,7 +16,7 @@ import MedHistoryProvider from "../providers/MedHistoryProvider";
 import {useProviders} from "../utility/useProviders";
 
 interface IProps {
-    onError: (e: ErrorEvent) => void
+    onError: (e: Error) => void
 }
 
 /**
@@ -54,7 +54,7 @@ const ResidentPage = (props: IProps) => {
         .then((response: any) => {
             return response;
         })
-        .catch((err: ErrorEvent) =>
+        .catch((err: Error) =>
         {
            onError(err);
         });
@@ -148,9 +148,9 @@ const ResidentPage = (props: IProps) => {
                                     }
                                 });
                             })
-                        .catch((err: ErrorEvent) => onError(err));
+                        .catch((err: Error) => onError(err));
                     })
-                    .catch((err: ErrorEvent) => onError(err));
+                    .catch((err: Error) => onError(err));
                 } else {
                     // Add the new resident
                     residentProvider.post(residentData)
@@ -163,17 +163,17 @@ const ResidentPage = (props: IProps) => {
                         .then((residentList: ResidentRecord[]) => {
                             setResidentList(residentList).then(()=>{});
                         })
-                        .catch((err: ErrorEvent) => onError(err));
+                        .catch((err: Error) => onError(err));
                         return newResident as ResidentRecord;
                     })
                     .then((newResident: ResidentRecord) => {
                         setResidentInfo(newResident);
                         handleOnSelected(null, newResident);
                     })
-                    .catch((err: ErrorEvent) => onError(err));
+                    .catch((err: Error) => onError(err));
                 }
             })
-            .catch((err: ErrorEvent) => onError(err));
+            .catch((err: Error) => onError(err));
         }
         setShow(false);
     }
@@ -242,12 +242,12 @@ const ResidentPage = (props: IProps) => {
                     };
                     residentProvider.search(searchCriteria)
                         .then((data) => setResidentList(data))
-                        .catch((err: ErrorEvent) => onError(err));
+                        .catch((err: Error) => onError(err));
                 } else {
                     throw(response);
                 }
             })
-            .catch((err: ErrorEvent) => onError(err));
+            .catch((err: Error) => onError(err));
         }
     }
 

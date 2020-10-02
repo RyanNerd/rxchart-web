@@ -11,7 +11,7 @@ const deleteMedicine = (medicineProvider: typeof MedicineProvider, medicineId: s
     .then((response: ProviderTypes.Medicine.DeleteResponse) => {
         return (response.success);
     })
-    .catch((err: ErrorEvent) => {
+    .catch((err: Error) => {
         return err;
     });
 }

@@ -13,7 +13,7 @@ import {MedicineRecord} from "../types/RecordTypes";
 import {useProviders} from "../utility/useProviders";
 
 interface IProps {
-    onError: (e: ErrorEvent) => void
+    onError: (e: Error) => void
 }
 
 /**

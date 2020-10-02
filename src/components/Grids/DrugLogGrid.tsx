@@ -3,6 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import RxTable from "./RxTable";
 import {DrugLogRecord, MedicineRecord} from "../../types/RecordTypes";
+import {isToday} from "../../utility/common";
 
 interface IProps {
     drugLog?: DrugLogRecord[] | null,
@@ -83,6 +84,10 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
         return null;
     }
 
+    const getFormattedDate = (date: Date) => {
+        return date.toLocaleString('en-US', {month: '2-digit', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
+    }
+
     /**
      * Child component for the table for each drug that has been logged.
      *
@@ -100,10 +105,14 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
             drugName = 'UNKNOWN - Medicine removed!';
         }
         const drugStrength = drugColumnLookup(drug.MedicineId, 'Strength');
+        const createdDate = new Date(drug.Created || '');
+        const updatedDate = new Date(drug.Updated || '');
+
 
         return <tr
             key={'druglog-grid-row-' + drug.Id}
             id={'druglog-grid-row-' + drug.Id}
+            style={{color: (isToday(updatedDate)) ? 'blue' : ''}}
         >
             {onEdit &&
                 <td style={{textAlign: 'center', verticalAlign: "middle"}}>
@@ -120,8 +129,8 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                     <span><b>{drugName}</b></span> <span>{drugStrength}</span>
                 </td>
             }
-            <td style={{textAlign: 'center', verticalAlign: "middle"}}>{drug.Created}</td>
-            <td style={{textAlign: 'center', verticalAlign: "middle"}}>{drug.Updated}</td>
+            <td style={{textAlign: 'center', verticalAlign: "middle"}}>{getFormattedDate(createdDate)}</td>
+            <td style={{textAlign: 'center', verticalAlign: "middle"}}>{getFormattedDate(updatedDate)}</td>
             <td style={{textAlign: 'center', verticalAlign: "middle"}}>{drug.Notes}</td>
             {onDelete &&
                 <td style={{textAlign: 'center', verticalAlign: "middle"}}>
