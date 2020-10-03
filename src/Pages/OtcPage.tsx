@@ -199,17 +199,13 @@ const OtcPage = (props: IProps) => {
      */
     const addEditDrugLog = (e: React.MouseEvent<HTMLElement>, drugLogInfo?: DrugLogRecord) => {
         e.preventDefault();
-
-        // If drugLogInfo is not populated then this is an add operation.
-        if (!drugLogInfo && activeDrug && activeDrug.Id) {
-            drugLogInfo = {
-                Id: null,
-                ResidentId: residentId,
-                MedicineId: activeDrug.Id,
-                Notes: ""
-            }
-        }
-        setDrugLogInfo(drugLogInfo || null);
+        const drugLogRecord = drugLogInfo ? drugLogInfo : {
+            Id: null,
+            ResidentId: residentId,
+            MedicineId: activeDrug?.Id,
+            Notes: "",
+        } as DrugLogRecord;
+        setDrugLogInfo(drugLogRecord);
         setShowDrugLog(true);
     }
 
