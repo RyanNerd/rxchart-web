@@ -10,8 +10,8 @@ import MedicineProvider from '../providers/MedicineProvider';
 import {initialState} from "../utility/initialState";
 import MedHistoryProvider from "../providers/MedHistoryProvider";
 import Frak from "../providers/Frak";
-import RefreshOtcList from "../providers/helpers/RefreshOtcList";
 import {ProviderTypes} from "../types/ProviderTypes";
+import getOtcList from "./Common/getOtcList";
 
 interface IProps {
     activeTabKey: string | null
@@ -91,7 +91,7 @@ const LoginPage = (props: IProps) => {
 
                    // Load ALL OTC medications
                    if (providers.medicineProvider) {
-                        RefreshOtcList(providers.medicineProvider)
+                        getOtcList(providers.medicineProvider)
                         .then((data) => {
                             setOtcList(data).then(() => {});
                         })

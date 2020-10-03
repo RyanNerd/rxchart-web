@@ -8,9 +8,7 @@ import MedicineEdit from "../components/Modals/MedicineEdit";
 import ConfirmationDialog from "../components/Modals/ConfirmationDialog";
 import DrugLogGrid from "../components/Grids/DrugLogGrid";
 import DrugLogEdit from "../components/Modals/DrugLogEdit";
-import RefreshMedicineLog from "../providers/helpers/RefreshMedicineLog";
 import MedicineListGroup from "../components/ListGroups/MedicineListGroup";
-import RefreshOtcList from "../providers/helpers/RefreshOtcList";
 import {calculateLastTaken} from "../utility/common";
 import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../types/RecordTypes";
 import LastTakenButton from "../components/Buttons/LastTakenButton";
@@ -21,6 +19,8 @@ import MedHistoryProvider from "../providers/MedHistoryProvider";
 import MedicineProvider from "../providers/MedicineProvider";
 import {updateDrugLog} from "./Common/updateDrugLog";
 import {updateMedicine} from "./Common/updateMedicine";
+import getMedicineLog from "./Common/getMedicineLog";
+import getOtcList from "./Common/getOtcList";
 
 interface IProps {
     activeTabKey: string | null,
@@ -145,13 +145,13 @@ const OtcPage = (props: IProps) => {
         if (drugInfo && residentId) {
             updateMedicine(medicineProvider, drugInfo)
             .then((drugRecord) => {
-                RefreshOtcList(medicineProvider)
+                getOtcList(medicineProvider)
                 .then((drugList) => {
                     setOtcList(drugList).then(() => {});
                     setDrugInfo(drugRecord);
                     setActiveDrug(drugRecord);
                     setLastTaken(false);
-                    RefreshMedicineLog(medHistoryProvider, residentId)
+                    getMedicineLog(medHistoryProvider, residentId)
                         .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
                 })
                 .catch((err) => {
@@ -171,7 +171,7 @@ const OtcPage = (props: IProps) => {
         if (drugLogInfo && drugLogInfo.Id && residentId) {
             medHistoryProvider.delete(drugLogInfo.Id)
             .then(() => {
-                RefreshMedicineLog(medHistoryProvider, residentId).then((data) => setDrugLogList(data));
+                getMedicineLog(medHistoryProvider, residentId).then((data) => setDrugLogList(data));
             })
             .catch((err: Error) => onError(err));
         }

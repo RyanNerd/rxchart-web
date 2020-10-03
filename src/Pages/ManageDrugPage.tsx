@@ -3,7 +3,7 @@ import Table from "react-bootstrap/Table";
 import MedicineDetail from "../components/Grids/MedicineDetail";
 import MedicineEdit from "../components/Modals/MedicineEdit";
 import ConfirmationDialog from "../components/Modals/ConfirmationDialog";
-import DeleteMedicine from "../providers/helpers/DeleteMedicine";
+import DeleteMedicine from "./Common/deleteMedicine";
 import TooltipButton from "../components/Buttons/TooltipButton";
 import PropTypes from 'prop-types';
 import MedicineProvider from "../providers/MedicineProvider";

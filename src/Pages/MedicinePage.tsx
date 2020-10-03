@@ -8,7 +8,6 @@ import MedicineEdit from "../components/Modals/MedicineEdit";
 import ConfirmationDialog from "../components/Modals/ConfirmationDialog";
 import DrugLogGrid from "../components/Grids/DrugLogGrid";
 import DrugLogEdit from "../components/Modals/DrugLogEdit";
-import RefreshMedicineLog from "../providers/helpers/RefreshMedicineLog";
 import MedicineListGroup from "../components/ListGroups/MedicineListGroup";
 import TooltipButton from "../components/Buttons/TooltipButton";
 import {calculateLastTaken} from "../utility/common";
@@ -22,6 +21,7 @@ import MedicineProvider from "../providers/MedicineProvider";
 import {updateDrugLog} from "./Common/updateDrugLog";
 import {updateMedicine} from "./Common/updateMedicine";
 import getMedicineList from "./Common/getMedicineList";
+import getMedicineLog from "./Common/getMedicineLog";
 
 interface IProps {
     activeTabKey: string | null,
@@ -139,7 +139,7 @@ const MedicinePage = (props: IProps) => {
                     setDrugInfo(drugRecord);
                     setActiveDrug(drugRecord);
                     setLastTaken(false);
-                    RefreshMedicineLog(medHistoryProvider, residentId)
+                    getMedicineLog(medHistoryProvider, residentId)
                         .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
                 })
                 .catch((err: Error) => {
@@ -159,7 +159,7 @@ const MedicinePage = (props: IProps) => {
         if (drugLogInfo && drugLogInfo.Id && residentId !== null) {
             medHistoryProvider.delete(drugLogInfo.Id)
             .then(() => {
-                RefreshMedicineLog(medHistoryProvider, residentId).then((data) => setDrugLogList(data));
+                getMedicineLog(medHistoryProvider, residentId).then((data) => setDrugLogList(data));
             })
             .catch((err: Error) => onError(err));
         }

@@ -1,5 +1,5 @@
 /**
- * Helper function that fetches the medicineList given the residentId
+ * Fetch the Medications given the residentId
  *
  * @param medicineProvider
  * @param residentId
@@ -9,15 +9,14 @@ import MedicineProvider from "../../providers/MedicineProvider";
 import {MedicineRecord} from "../../types/RecordTypes";
 
 const getMedicineList = (medicineProvider: typeof MedicineProvider, residentId: number): Promise<MedicineRecord[]> => {
-    const searchCriteria =
-        {
-            where: [
-                {column: "ResidentId", value: residentId}
-            ],
-            order_by: [
-                {column: "Drug", direction: "asc"}
-            ]
-        };
+    const searchCriteria = {
+        where: [
+            {column: "ResidentId", value: residentId}
+        ],
+        order_by: [
+            {column: "Drug", direction: "asc"}
+        ]
+    };
     return medicineProvider.search(searchCriteria);
 }
 

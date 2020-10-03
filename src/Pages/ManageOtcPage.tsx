@@ -3,13 +3,13 @@ import Table from "react-bootstrap/Table";
 import MedicineDetail from "../components/Grids/MedicineDetail";
 import MedicineEdit from "../components/Modals/MedicineEdit";
 import ConfirmationDialog from "../components/Modals/ConfirmationDialog";
-import DeleteMedicine from "../providers/helpers/DeleteMedicine";
+import DeleteMedicine from "./Common/deleteMedicine";
 import TooltipButton from "../components/Buttons/TooltipButton";
-import RefreshOtcList from "../providers/helpers/RefreshOtcList";
 import MedicineProvider from "../providers/MedicineProvider";
 import {MedicineRecord, newDrugInfo} from "../types/RecordTypes";
 import {useProviders} from "../utility/useProviders";
 import {updateMedicine} from "./Common/updateMedicine";
+import getOtcList from "./Common/getOtcList";
 
 interface IProps {
     onError: (e: Error) => void
@@ -67,7 +67,7 @@ const ManageOtcPage = (props: IProps) => {
             DeleteMedicine(medicineProvider, medicineInfo.Id)
             .then((deleted: any) => {
                 if (deleted) {
-                    RefreshOtcList(medicineProvider)
+                    getOtcList(medicineProvider)
                     .then((data) => setOtcList(data))
                     .catch(() => setOtcList(null));
                 }
@@ -129,7 +129,7 @@ const ManageOtcPage = (props: IProps) => {
                     if (r) {
                         updateMedicine(medicineProvider, r)
                         .then(() => {
-                            RefreshOtcList(medicineProvider)
+                            getOtcList(medicineProvider)
                                 .then((medicines) => setOtcList(medicines))
                         })
                         .catch((err) => onError(err))

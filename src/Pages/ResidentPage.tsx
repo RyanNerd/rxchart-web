@@ -5,7 +5,6 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import ResidentGrid from '../components/Grids/ResidentGrid';
 import ResidentEdit from '../components/Modals/ResidentEdit';
 import {FullName} from '../utility/common';
-import RefreshMedicineLog from "../providers/helpers/RefreshMedicineLog";
 import ConfirmationDialog from "../components/Modals/ConfirmationDialog";
 import {Form} from "react-bootstrap";
 import ResidentProvider from "../providers/ResidentProvider";
@@ -14,6 +13,7 @@ import MedicineProvider from "../providers/MedicineProvider";
 import MedHistoryProvider from "../providers/MedHistoryProvider";
 import {useProviders} from "../utility/useProviders";
 import getMedicineList from "./Common/getMedicineList";
+import getMedicineLog from "./Common/getMedicineLog";
 
 interface IProps {
     onError: (e: Error) => void
@@ -142,7 +142,7 @@ const ResidentPage = (props: IProps) => {
                                     // select the first one and make it the active drug.
                                     if (hydratedMedicineList && hydratedMedicineList.length > 0) {
                                         // Refresh the drugLogList for the new active drug.
-                                        RefreshMedicineLog(medHistoryProvider, restoredId)
+                                        getMedicineLog(medHistoryProvider, restoredId)
                                         .then((data) => setDrugLogList(data))
                                         .catch((err) => props.onError(err));
                                     }
@@ -198,7 +198,7 @@ const ResidentPage = (props: IProps) => {
             if (medicineRecords && medicineRecords.length > 0) {
                 setMedicineList(medicineRecords).then(()=>{});
                 // Refresh the drugLogList for the new active drug.
-                RefreshMedicineLog(medHistoryProvider, residentId)
+                getMedicineLog(medHistoryProvider, residentId)
                     .then((data) => setDrugLogList(data))
                     .catch((err) => onError(err));
             } else {

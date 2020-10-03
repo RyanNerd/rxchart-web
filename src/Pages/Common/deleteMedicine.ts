@@ -3,7 +3,7 @@
  * @param {typeof MedicineProvider} medicineProvider
  * @param {number | string} medicineId
  */
-import MedicineProvider from "../MedicineProvider";
+import MedicineProvider from "../../providers/MedicineProvider";
 import {ProviderTypes} from "../../types/ProviderTypes";
 
 const deleteMedicine = (medicineProvider: typeof MedicineProvider, medicineId: string | number) => {
