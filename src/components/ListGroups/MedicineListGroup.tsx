@@ -102,12 +102,24 @@ const MedicineListGroup = (props: IProps) => {
                 <Button
                     disabled={lastTaken === 0}
                     variant={"outline-" + logButtonColor(lastTaken)}
+                    className="mr-2"
                     onClick={(e) => {
                         e.preventDefault();
                         logDrug(1);
                     }}
                 >
-                    Log 1 {activeDrug.Drug}
+                    Log 1 {activeDrug.Drug.substr(0, activeDrug.OTC ? 30 : 50)}
+                </Button>
+
+                <Button
+                    disabled={lastTaken === 0}
+                    variant={"outline-" + logButtonColor(lastTaken)}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        logDrug(2);
+                    }}
+                >
+                    Log 2
                 </Button>
             </ListGroup.Item>
 

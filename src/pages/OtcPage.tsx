@@ -237,17 +237,18 @@ const OtcPage = (props: IProps) => {
      * @param {number} amount
      */
     const handleLogDrugAmount = (amount: number) => {
-        if (activeDrug && activeDrug.Id) {
+        const drugId = activeDrug && activeDrug.Id;
+        if (drugId) {
             const notes = amount.toString();
             const drugLogInfo = {
                 Id: null,
                 ResidentId: residentId,
-                MedicineId: activeDrug.Id,
+                MedicineId: drugId,
                 Notes: notes
             };
-            handleDrugLogEditClose(drugLogInfo || null)
-        }
-        handleDrugLogEditClose(drugLogInfo || null);
+            handleDrugLogEditClose(drugLogInfo);
+            }
+            handleDrugLogEditClose(null);
     }
 
     const otcPage = (

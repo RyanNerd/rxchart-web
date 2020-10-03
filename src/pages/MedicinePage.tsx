@@ -207,13 +207,11 @@ const MedicinePage = (props: IProps) => {
      * @param {object | null} drugLogInfo??
      */
     const handleDrugLogEditClose = (drugLogInfo: DrugLogRecord | null) => {
-        if (drugLogInfo) {
+        if (drugLogInfo && residentId) {
             medHistoryProvider.post(drugLogInfo)
             .then(() => {
-                if (residentId) {
-                    RefreshMedicineLog(medHistoryProvider, residentId)
-                        .then((data) => setDrugLogList(data));
-                }
+                RefreshMedicineLog(medHistoryProvider, residentId)
+                    .then((data) => setDrugLogList(data));
             })
             .catch((err: Error) => {
                 onError(err);
@@ -227,10 +225,10 @@ const MedicinePage = (props: IProps) => {
      *
      * @param {number} amount
      */
-    const handleLogDrugAmount = (amount: string | number) => {
-        const notes = amount.toString();
+    const handleLogDrugAmount = (amount: number) => {
         const drugId = activeDrug && activeDrug.Id;
         if (drugId) {
+            const notes = amount.toString();
             const drugLogInfo = {
                 Id: null,
                 ResidentId: residentId,
