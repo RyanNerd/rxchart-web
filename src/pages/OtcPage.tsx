@@ -253,7 +253,7 @@ const OtcPage = (props: IProps) => {
     const otcPage = (
         <Form>
             <Form.Group className={TabContent} as={Row}>
-                <Form.Group as={Col} sm="5">
+                <Form.Group as={Col} sm="4">
                     <Form.Group as={Row}>
                         <Button
                             size="sm"
@@ -296,7 +296,7 @@ const OtcPage = (props: IProps) => {
 
                 {activeDrug && otcList &&
                     <>
-                    <Col sm="7">
+                    <Col sm="8">
                         <span style={{textAlign: "center"}}> <h2>OTC Drug History</h2> </span>
                         <Button
                             disabled={lastTaken === 0}
@@ -328,7 +328,7 @@ const OtcPage = (props: IProps) => {
                     </Col>
 
                     <Row>
-                        <Col sm="5">
+                        <Col sm="4">
                             <MedicineListGroup
                                 lastTaken={lastTaken}
                                 medicineList={otcList}
@@ -340,7 +340,7 @@ const OtcPage = (props: IProps) => {
                             />
                         </Col>
 
-                        <Col sm="7">
+                        <Col sm="8">
                             <DrugLogGrid
                                 showDrugColumn={true}
                                 drugLog={otcLogList || []}
