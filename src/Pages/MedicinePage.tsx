@@ -21,6 +21,7 @@ import logButtonColor from "../utility/logButtonColor";
 import MedHistoryProvider from "../providers/MedHistoryProvider";
 import MedicineProvider from "../providers/MedicineProvider";
 import {updateDrugLog} from "./Common/updateDrugLog";
+import {updateMedicine} from "./Common/updateMedicine";
 
 interface IProps {
     activeTabKey: string | null,
@@ -130,22 +131,8 @@ const MedicinePage = (props: IProps) => {
     const handleMedicineEditModalClose = (drugInfo: MedicineRecord | null) => {
         const residentId = activeResident?.Id;
         if (drugInfo && residentId) {
-            const drugData = {...drugInfo};
-
-            if (!drugData.Id) {
-                drugData.Id = null;
-            }
-
-            if (drugData.Notes === '') {
-                drugData.Notes = null;
-            }
-
-            if (drugData.Directions === '') {
-                drugData.Directions = null;
-            }
-
-            medicineProvider.post(drugData)
-            .then((drugRecord: any) => {
+            updateMedicine(medicineProvider, drugInfo)
+            .then((drugRecord) => {
                 RefreshMedicineList(medicineProvider, residentId)
                 .then((drugList) => {
                     setMedicineList(drugList).then(() => {});

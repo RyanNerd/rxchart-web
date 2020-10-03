@@ -7,10 +7,10 @@ import RefreshMedicineList from "../providers/helpers/RefreshMedicineList";
 import DeleteMedicine from "../providers/helpers/DeleteMedicine";
 import TooltipButton from "../components/Buttons/TooltipButton";
 import PropTypes from 'prop-types';
-import {handleMedicineEditModalClose} from "./Common/handleMedicineEditModalClose";
 import MedicineProvider from "../providers/MedicineProvider";
-import {MedicineRecord} from "../types/RecordTypes";
+import {MedicineRecord, newDrugInfo} from "../types/RecordTypes";
 import {useProviders} from "../utility/useProviders";
+import {updateMedicine} from "./Common/updateMedicine";
 
 interface IProps {
     onError: (e: Error) => void
@@ -33,10 +33,6 @@ const ManageDrugPage = (props: IProps) => {
     const providers = useProviders();
     const medicineProvider = providers.medicineProvider as typeof MedicineProvider;
     const onError = props.onError;
-    const today = new Date();
-    const day = today.getDate();
-    const month = today.getMonth() + 1;
-    const year = today.getFullYear();
 
     /**
      * Fires when the Edit button is clicked
@@ -46,25 +42,18 @@ const ManageDrugPage = (props: IProps) => {
      */
     const onEdit = (e: React.MouseEvent<HTMLElement>, medicine: MedicineRecord | null) => {
         e.preventDefault();
-        let medicineInfo;
-        if (!medicine) {
-            medicineInfo = {
-                Id: null,
-                Barcode: "",
-                ResidentId: activeResident?.Id,
-                Drug: "",
-                Strength: "",
-                Directions: "",
-                Notes: "",
-                OTC: false,
-                FillDateMonth: month,
-                FillDateDay: day,
-                FillDateYear: year
-            } as MedicineRecord;
-        } else {
-            medicineInfo = {...medicine};
-        }
-
+        const today = new Date();
+        const day = today.getDate();
+        const month = today.getMonth() + 1;
+        const year = today.getFullYear();
+        const medicineInfo = (medicine) ? {...medicine} : {
+            ...newDrugInfo,
+            OTC: false,
+            ResidentId: activeResident?.Id,
+            FillDateDay: day,
+            FillDateMonth: month,
+            FillDateYear: year
+        };
         setMedicineInfo(medicineInfo);
         setShowMedicineEdit(true);
     }
@@ -155,9 +144,13 @@ const ManageDrugPage = (props: IProps) => {
                     onHide={() => setShowMedicineEdit(!showMedicineEdit)}
                     onClose={(r) => {
                         const residentId = activeResident && activeResident.Id;
-                        if (residentId) {
-                            handleMedicineEditModalClose(r, medicineProvider, () =>
-                                RefreshMedicineList(medicineProvider, residentId), setMedicineList, onError);
+                        if (residentId && r) {
+                            updateMedicine(medicineProvider, r)
+                            .then(() => {
+                                RefreshMedicineList(medicineProvider, residentId)
+                                .then((medicines) => setMedicineList(medicines))
+                            })
+                            .catch((err) => onError(err))
                         }
                         setShowMedicineEdit(false);
                     }}

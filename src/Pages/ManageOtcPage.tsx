@@ -6,10 +6,10 @@ import ConfirmationDialog from "../components/Modals/ConfirmationDialog";
 import DeleteMedicine from "../providers/helpers/DeleteMedicine";
 import TooltipButton from "../components/Buttons/TooltipButton";
 import RefreshOtcList from "../providers/helpers/RefreshOtcList";
-import {handleMedicineEditModalClose} from "./Common/handleMedicineEditModalClose";
 import MedicineProvider from "../providers/MedicineProvider";
-import {MedicineRecord} from "../types/RecordTypes";
+import {MedicineRecord, newDrugInfo} from "../types/RecordTypes";
 import {useProviders} from "../utility/useProviders";
+import {updateMedicine} from "./Common/updateMedicine";
 
 interface IProps {
     onError: (e: Error) => void
@@ -40,22 +40,9 @@ const ManageOtcPage = (props: IProps) => {
      */
     const onEdit = (e: React.MouseEvent<HTMLElement>, medicine?: MedicineRecord | null) => {
         e.preventDefault();
-        let medicineInfo;
-        if (!medicine) {
-            medicineInfo = {
-                Id: 0,
-                Barcode: "",
-                ResidentId: null,
-                Drug: "",
-                Strength: "",
-                Directions: "",
-                Notes: "",
-                OTC: true
-            };
-        } else {
-            medicineInfo = {...medicine};
-        }
-
+        const medicineInfo = (medicine) ? {...medicine} : {...newDrugInfo, OTC: true};
+        setMedicineInfo(medicineInfo);
+        setShowMedicineEdit(true);
         setMedicineInfo(medicineInfo);
         setShowMedicineEdit(true);
     }
@@ -139,7 +126,14 @@ const ManageOtcPage = (props: IProps) => {
                 show={showMedicineEdit}
                 onHide={() => setShowMedicineEdit(!showMedicineEdit)}
                 onClose={(r) => {
-                    handleMedicineEditModalClose(r, medicineProvider, () => RefreshOtcList(medicineProvider), setOtcList, onError);
+                    if (r) {
+                        updateMedicine(medicineProvider, r)
+                        .then(() => {
+                            RefreshOtcList(medicineProvider)
+                                .then((medicines) => setOtcList(medicines))
+                        })
+                        .catch((err) => onError(err))
+                    }
                     setShowMedicineEdit(false);
                 }}
                 drugInfo={medicineInfo}
