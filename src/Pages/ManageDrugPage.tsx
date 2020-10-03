@@ -7,7 +7,7 @@ import RefreshMedicineList from "../providers/helpers/RefreshMedicineList";
 import DeleteMedicine from "../providers/helpers/DeleteMedicine";
 import TooltipButton from "../components/Buttons/TooltipButton";
 import PropTypes from 'prop-types';
-import {handleMedicineEditModalClose} from "../utility/handleMedicineEditModalClose";
+import {handleMedicineEditModalClose} from "./Common/handleMedicineEditModalClose";
 import MedicineProvider from "../providers/MedicineProvider";
 import {MedicineRecord} from "../types/RecordTypes";
 import {useProviders} from "../utility/useProviders";

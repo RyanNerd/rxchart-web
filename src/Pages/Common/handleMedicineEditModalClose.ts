@@ -8,8 +8,8 @@
  * @param {function} onError
  * @returns {void}
  */
-import {MedicineRecord} from "../types/RecordTypes";
-import MedicineProvider from "../providers/MedicineProvider";
+import {MedicineRecord} from "../../types/RecordTypes";
+import MedicineProvider from "../../providers/MedicineProvider";
 
 export const handleMedicineEditModalClose = (
         drugInfo: MedicineRecord | null,

@@ -6,7 +6,7 @@ import ConfirmationDialog from "../components/Modals/ConfirmationDialog";
 import DeleteMedicine from "../providers/helpers/DeleteMedicine";
 import TooltipButton from "../components/Buttons/TooltipButton";
 import RefreshOtcList from "../providers/helpers/RefreshOtcList";
-import {handleMedicineEditModalClose} from "../utility/handleMedicineEditModalClose";
+import {handleMedicineEditModalClose} from "./Common/handleMedicineEditModalClose";
 import MedicineProvider from "../providers/MedicineProvider";
 import {MedicineRecord} from "../types/RecordTypes";
 import {useProviders} from "../utility/useProviders";
