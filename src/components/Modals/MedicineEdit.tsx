@@ -6,6 +6,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import {MedicineRecord} from "../../types/RecordTypes";
+import {Alert} from "react-bootstrap";
 
 interface IProps {
     show: boolean,
@@ -118,6 +119,18 @@ const MedicineEdit = (props: IProps) => {
 
             <Modal.Body>
                 <Form>
+                    {otc &&
+                    <Form.Group as={Row} controlId="otc-alert">
+                        <Form.Label column sm="2">
+                            OTC Warning
+                        </Form.Label>
+
+                        <Alert variant="danger">
+                            CAUTION: Changes to this OTC medicine will affect all residents!
+                        </Alert>
+                    </Form.Group>
+                    }
+
                     <Form.Group as={Row}>
                         <Form.Label column sm="2">
                             Drug Name
