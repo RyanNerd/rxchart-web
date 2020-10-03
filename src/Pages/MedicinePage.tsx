@@ -20,6 +20,7 @@ import isSearchValid from "../utility/isSearchValid";
 import logButtonColor from "../utility/logButtonColor";
 import MedHistoryProvider from "../providers/MedHistoryProvider";
 import MedicineProvider from "../providers/MedicineProvider";
+import {updateDrugLog} from "./Common/updateDrugLog";
 
 interface IProps {
     activeTabKey: string | null,
@@ -202,32 +203,13 @@ const MedicinePage = (props: IProps) => {
     }
 
     /**
-     * Fires when the drug log edit modal closes
-     *
-     * @param {object | null} drugLogInfo??
-     */
-    const handleDrugLogEditClose = (drugLogInfo: DrugLogRecord | null) => {
-        if (drugLogInfo && residentId) {
-            medHistoryProvider.post(drugLogInfo)
-            .then(() => {
-                RefreshMedicineLog(medHistoryProvider, residentId)
-                    .then((data) => setDrugLogList(data));
-            })
-            .catch((err: Error) => {
-                onError(err);
-            });
-        }
-        setShowDrugLog(false);
-    }
-
-    /**
      * Fires when the Log 1 or Log 2 buttons are clicked.
      *
      * @param {number} amount
      */
     const handleLogDrugAmount = (amount: number) => {
         const drugId = activeDrug && activeDrug.Id;
-        if (drugId) {
+        if (drugId && residentId) {
             const notes = amount.toString();
             const drugLogInfo = {
                 Id: null,
@@ -235,9 +217,10 @@ const MedicinePage = (props: IProps) => {
                 MedicineId: drugId,
                 Notes: notes
             };
-            handleDrugLogEditClose(drugLogInfo);
+            updateDrugLog(medHistoryProvider, drugLogInfo, residentId)
+                .then((drugLogList) => setDrugLogList(drugLogList))
+                .catch((err) => onError(err))
         }
-        handleDrugLogEditClose(null);
     }
 
     const medicinePage = (
@@ -361,7 +344,14 @@ const MedicinePage = (props: IProps) => {
                     show={showDrugLog}
                     drugLogInfo={drugLogInfo}
                     onHide={() => setShowDrugLog(!showDrugLog)}
-                    onClose={(drugLogRecord) => handleDrugLogEditClose(drugLogRecord)}
+                    onClose={(drugLogRecord) => {
+                        if (drugLogRecord && residentId) {
+                            updateDrugLog(medHistoryProvider, drugLogRecord, residentId)
+                                .then((drugLogList) => setDrugLogList(drugLogList))
+                                .catch((err) => onError(err))
+                        }
+                        setShowDrugLog(false);
+                    }}
                 />
             }
 
