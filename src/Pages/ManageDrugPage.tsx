@@ -3,7 +3,6 @@ import Table from "react-bootstrap/Table";
 import MedicineDetail from "../components/Grids/MedicineDetail";
 import MedicineEdit from "../components/Modals/MedicineEdit";
 import ConfirmationDialog from "../components/Modals/ConfirmationDialog";
-import RefreshMedicineList from "../providers/helpers/RefreshMedicineList";
 import DeleteMedicine from "../providers/helpers/DeleteMedicine";
 import TooltipButton from "../components/Buttons/TooltipButton";
 import PropTypes from 'prop-types';
@@ -11,6 +10,7 @@ import MedicineProvider from "../providers/MedicineProvider";
 import {MedicineRecord, newDrugInfo} from "../types/RecordTypes";
 import {useProviders} from "../utility/useProviders";
 import {updateMedicine} from "./Common/updateMedicine";
+import getMedicineList from "./Common/getMedicineList";
 
 interface IProps {
     onError: (e: Error) => void
@@ -80,7 +80,7 @@ const ManageDrugPage = (props: IProps) => {
             .then((deleted: any) => {
                 if (deleted) {
                     if (activeResident.Id) {
-                        RefreshMedicineList(medicineProvider, activeResident.Id)
+                        getMedicineList(medicineProvider, activeResident.Id)
                         .then((data) => {
                             setMedicineList(data).then(() => {});
                         });
@@ -147,7 +147,7 @@ const ManageDrugPage = (props: IProps) => {
                         if (residentId && r) {
                             updateMedicine(medicineProvider, r)
                             .then(() => {
-                                RefreshMedicineList(medicineProvider, residentId)
+                                getMedicineList(medicineProvider, residentId)
                                 .then((medicines) => setMedicineList(medicines))
                             })
                             .catch((err) => onError(err))

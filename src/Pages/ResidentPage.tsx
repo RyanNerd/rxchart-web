@@ -5,7 +5,6 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import ResidentGrid from '../components/Grids/ResidentGrid';
 import ResidentEdit from '../components/Modals/ResidentEdit';
 import {FullName} from '../utility/common';
-import RefreshMedicineList from "../providers/helpers/RefreshMedicineList";
 import RefreshMedicineLog from "../providers/helpers/RefreshMedicineLog";
 import ConfirmationDialog from "../components/Modals/ConfirmationDialog";
 import {Form} from "react-bootstrap";
@@ -14,6 +13,7 @@ import {MedicineRecord, ResidentRecord} from "../types/RecordTypes";
 import MedicineProvider from "../providers/MedicineProvider";
 import MedHistoryProvider from "../providers/MedHistoryProvider";
 import {useProviders} from "../utility/useProviders";
+import getMedicineList from "./Common/getMedicineList";
 
 interface IProps {
     onError: (e: Error) => void
@@ -135,7 +135,7 @@ const ResidentPage = (props: IProps) => {
                             setActiveResident(restoredResident).then(()=>{});
                             // Rehydrate the MedicineList
                             const restoredId = restoredResident.Id as number;
-                                RefreshMedicineList(medicineProvider, restoredId)
+                                getMedicineList(medicineProvider, restoredId)
                                 .then((hydratedMedicineList) => {
                                     setMedicineList (hydratedMedicineList).then(()=>{});
                                     // If there are any medicines for the selected resident then
@@ -191,7 +191,7 @@ const ResidentPage = (props: IProps) => {
 
         setActiveResident(resident).then(()=>{});
         const residentId = resident.Id as number;
-        RefreshMedicineList(medicineProvider, residentId)
+        getMedicineList(medicineProvider, residentId)
         .then((medicineRecords) => {
             // If there are any medicines for the selected resident then
             // select the first one and make it the active drug.

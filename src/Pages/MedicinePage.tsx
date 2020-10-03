@@ -4,7 +4,6 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import TabContent from "../styles/tab_content.css";
-import RefreshMedicineList from "../providers/helpers/RefreshMedicineList";
 import MedicineEdit from "../components/Modals/MedicineEdit";
 import ConfirmationDialog from "../components/Modals/ConfirmationDialog";
 import DrugLogGrid from "../components/Grids/DrugLogGrid";
@@ -22,6 +21,7 @@ import MedHistoryProvider from "../providers/MedHistoryProvider";
 import MedicineProvider from "../providers/MedicineProvider";
 import {updateDrugLog} from "./Common/updateDrugLog";
 import {updateMedicine} from "./Common/updateMedicine";
+import getMedicineList from "./Common/getMedicineList";
 
 interface IProps {
     activeTabKey: string | null,
@@ -133,7 +133,7 @@ const MedicinePage = (props: IProps) => {
         if (drugInfo && residentId) {
             updateMedicine(medicineProvider, drugInfo)
             .then((drugRecord) => {
-                RefreshMedicineList(medicineProvider, residentId)
+                getMedicineList(medicineProvider, residentId)
                 .then((drugList) => {
                     setMedicineList(drugList).then(() => {});
                     setDrugInfo(drugRecord);
