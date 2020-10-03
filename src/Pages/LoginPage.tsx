@@ -12,6 +12,7 @@ import MedHistoryProvider from "../providers/MedHistoryProvider";
 import Frak from "../providers/Frak";
 import {ProviderTypes} from "../types/ProviderTypes";
 import getOtcList from "./Common/getOtcList";
+import {getResidentList} from "./Common/getResidentList";
 
 interface IProps {
     activeTabKey: string | null
@@ -32,7 +33,7 @@ const LoginPage = (props: IProps) => {
 
     const [ apiKey, setApiKey ] = useGlobal('apiKey');
     const [ baseUrl ] = useGlobal('baseUrl');
-    const [ residentList, setResidentList ] = useGlobal('residentList');
+    const [ , setResidentList ] = useGlobal('residentList');
     const [ , setOtcList ] = useGlobal<any>('otcList');
     const [ , setProviders ] = useGlobal('providers');
 
@@ -77,24 +78,16 @@ const LoginPage = (props: IProps) => {
                     setProviders(providers).then(() => {});
 
                     // Load ALL Resident records up front and save them in the global store.
-                    if (residentList === null) {
-                        const searchCriteria =  {
-                            order_by: [
-                                {column: "LastName", direction: "asc"},
-                                {column: "FirstName", direction: "asc"}
-                            ]
-                        };
-                        providers.residentProvider?.search(searchCriteria)
-                        .then((data) => setResidentList(data))
-                        .catch((err: any) => onError(err));
+                    if (providers.residentProvider) {
+                        getResidentList(providers.residentProvider)
+                        .then((residents) => setResidentList(residents))
+                        .catch((err) => onError(err))
                     }
 
                    // Load ALL OTC medications
                    if (providers.medicineProvider) {
                         getOtcList(providers.medicineProvider)
-                        .then((data) => {
-                            setOtcList(data).then(() => {});
-                        })
+                        .then((otcDrugs) => setOtcList(otcDrugs))
                         .catch(() => setOtcList(null));
                    }
 
