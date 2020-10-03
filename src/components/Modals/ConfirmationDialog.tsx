@@ -2,16 +2,11 @@ import React, {useEffect, useState} from 'reactn';
 import Modal from 'react-bootstrap/Modal';
 import Button from "react-bootstrap/Button";
 import {MouseEvent} from "react";
-import ModalBody from "react-bootstrap/ModalBody";
-import {ModalTitle} from "react-bootstrap";
+import {ModalProps} from "react-bootstrap/cjs";
+import {TransitionCallbacks} from "react-bootstrap/helpers";
 
-interface IProps {
-    body: typeof ModalBody | JSX.Element | JSX.Element[] | string,
-    show: boolean,
-    title: typeof ModalTitle | string,
-    size?: 'sm' | 'lg' | 'xl',
+interface IProps extends ModalProps, TransitionCallbacks {
     onAnswer: (a: boolean) => void,
-    onHide: () => void
 }
 
 const ConfirmationDialog = (props: IProps): JSX.Element => {
@@ -19,9 +14,9 @@ const ConfirmationDialog = (props: IProps): JSX.Element => {
         size = 'sm',
         body = 'Confirm?',
         title = 'Confirmation Dialog',
-        onAnswer,
-        onHide
-    } = props;
+        backdrop = 'static',
+        onAnswer
+    } = {...props};
 
     const [ show, setShow ] = useState(props.show);
 
@@ -41,11 +36,10 @@ const ConfirmationDialog = (props: IProps): JSX.Element => {
 
     return (
         <Modal
+            {...props}
             size={size}
-            show={show}
-            backdrop="static"
+            backdrop={backdrop}
             centered
-            onHide={() => onHide()}
         >
             <Modal.Header>
                 <Modal.Title>{title}</Modal.Title>
@@ -70,7 +64,7 @@ const ConfirmationDialog = (props: IProps): JSX.Element => {
                 </Button>
             </Modal.Footer>
         </Modal>
-    );
+    )
 }
 
 export default ConfirmationDialog;
