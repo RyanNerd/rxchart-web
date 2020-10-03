@@ -84,12 +84,12 @@ const LoginPage = (props: IProps) => {
                         .catch((err) => onError(err))
                     }
 
-                   // Load ALL OTC medications
-                   if (providers.medicineProvider) {
+                    // Load ALL OTC medications
+                    if (providers.medicineProvider) {
                         getOtcList(providers.medicineProvider)
                         .then((otcDrugs) => setOtcList(otcDrugs))
                         .catch(() => setOtcList(null));
-                   }
+                    }
 
                     // Let the parent component know we are logged in successfully
                     onLogin(true);
