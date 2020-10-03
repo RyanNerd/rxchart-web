@@ -5,7 +5,9 @@
  * @param {{Barcode: string, Drug: string}} activeDrug
  * @returns {boolean}
  */
-const isSearchValid = (searchText: string, activeDrug: {Barcode: string, Drug: string}): boolean => {
+import {MedicineRecord} from "../types/RecordTypes";
+
+const isSearchValid = (searchText: string, activeDrug: MedicineRecord): boolean => {
     const textLen = searchText ? searchText.length : 0;
     if (activeDrug) {
         let searched;
@@ -16,7 +18,7 @@ const isSearchValid = (searchText: string, activeDrug: {Barcode: string, Drug: s
         } else {
             searched = activeDrug.Drug;
         }
-        return searched.substr(0, textLen).toLowerCase() === searchText.substr(0, textLen).toLowerCase();
+        return searched?.substr(0, textLen).toLowerCase() === searchText.substr(0, textLen).toLowerCase();
     }
     return false;
 }

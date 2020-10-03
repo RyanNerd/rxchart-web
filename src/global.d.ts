@@ -1,5 +1,6 @@
 import 'reactn';
-import {ResidentRecord} from "./types/RecordTypes";
+import {DrugLogRecord, MedicineRecord, ResidentRecord} from "./types/RecordTypes";
+import {ProviderTypes} from "./types/ProviderTypes";
 
 declare module 'reactn/default' {
 
@@ -28,12 +29,14 @@ declare module 'reactn/default' {
         value: string;
         activeResident: ResidentRecord | null;
         development: boolean;
-        providers: object;
-        drugLogList: null | [];
-        medicineList: null | [];
-        otcList: null | [];
-        residentList: any;
+        providers: ProviderTypes.Providers;
+        drugLogList: DrugLogRecord[] | null;
+        medicineList: MedicineRecord | MedicineRecord[] | null;
+        otcList: MedicineRecord[] | null;
+        residentList: Array<ResidentRecord>;
         baseUrl: string;
-        apiKey: string;
+        apiKey: string | null;
     }
 }
+
+declare module '*.css';
