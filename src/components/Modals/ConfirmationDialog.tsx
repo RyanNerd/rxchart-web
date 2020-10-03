@@ -9,12 +9,14 @@ interface IProps {
     body: typeof ModalBody | JSX.Element | JSX.Element[] | string,
     show: boolean,
     title: typeof ModalTitle | string,
+    size?: 'sm' | 'lg' | 'xl',
     onAnswer: (a: boolean) => void,
     onHide: () => void
 }
 
 const ConfirmationDialog = (props: IProps): JSX.Element => {
     const {
+        size = 'sm',
         body = 'Confirm?',
         title = 'Confirmation Dialog',
         onAnswer,
@@ -39,7 +41,7 @@ const ConfirmationDialog = (props: IProps): JSX.Element => {
 
     return (
         <Modal
-            size="sm"
+            size={size}
             show={show}
             backdrop="static"
             centered

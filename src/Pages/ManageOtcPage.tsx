@@ -142,11 +142,15 @@ const ManageOtcPage = (props: IProps) => {
 
             {medicineInfo && showDeleteMedicine &&
             <ConfirmationDialog
+                size="lg"
                 title={"Delete " + medicineInfo.Drug}
                 body={
-                    <b style={{color: "red"}}>
-                        Are you sure?
-                    </b>
+                    <>
+                        <b style={{color: "#fa2224"}}>This will delete this OTC medicine for ALL residents</b>
+                        <p style={{color: "red"}}>
+                            Are you sure?
+                        </p>
+                    </>
                 }
                 show={showDeleteMedicine}
                 onAnswer={(a) =>
