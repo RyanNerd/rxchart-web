@@ -55,6 +55,16 @@ const LandingPage = () => {
         }
     }, [activeTabKey]);
 
+    const signIn = apiKey ? 'Logout' : 'Login';
+    const loginTitle = (activeTabKey === 'login') ? (<b>{signIn}</b>) : (<span>{signIn}</span>);
+    const rxTitle = (activeTabKey === 'medicine') ? (<b>Rx</b>) : (<span>Rx</span>);
+    const otcTitle = (activeTabKey === 'otc') ? (<b>OTC</b>) : (<span>OTC</span>);
+    const residentTitle = (activeTabKey === 'resident') ? (<b>Residents</b>) : (<span>Residents</span>);
+    const drugHistoryTitle = (activeTabKey === 'history') ? (<b>Drug History</b>) : (<span>Drug History</span>);
+    const manageRxTitle = (activeTabKey === 'manage') ? (<b>Manage Rx</b>) : (<span>Manage Rx</span>);
+    const manageOtcTitle = (activeTabKey === 'manage-otc') ? (<b>Manage OTC</b>) : (<span>Manage OTC</span>);
+    const errorTitle = (activeTabKey === 'error') ? (<b>Diagnostics</b>) : (<span>Diagnostics</span>);
+
     return (
         <Tabs
             id="landing-page-tabs"
@@ -64,7 +74,7 @@ const LandingPage = () => {
             <Tab
                 sytle={{marginLeft: "15px"}}
                 eventKey="login"
-                title={apiKey ? "Logout" : "Login"}
+                title={loginTitle}
             >
                 <LoginPage
                     onLogin={(loggedIn) => {setActiveTabKey(loggedIn ? 'resident' : 'login')}}
@@ -75,7 +85,7 @@ const LandingPage = () => {
             <Tab
                 disabled={apiKey === null || !activeResident}
                 eventKey="medicine"
-                title="Rx">
+                title={rxTitle}>
                 <MedicinePage
                     activeTabKey={activeTabKey}
                     onError={(error) => errorOccurred(error)}
@@ -84,7 +94,7 @@ const LandingPage = () => {
             <Tab
                 disabled={apiKey === null || !activeResident}
                 eventKey="otc"
-                title="OTC">
+                title={otcTitle}>
                 <OtcPage
                     onError={(error) => errorOccurred(error)}
                     activeTabKey={activeTabKey}
@@ -93,7 +103,7 @@ const LandingPage = () => {
             <Tab
                 disabled={apiKey === null}
                 eventKey="resident"
-                title="Resident List">
+                title={residentTitle}>
                 <ResidentPage
                     onError={(error) => errorOccurred(error)}
                 />
@@ -101,7 +111,7 @@ const LandingPage = () => {
             <Tab
                 disabled={apiKey === null || !activeResident}
                 eventKey="history"
-                title="Drug History"
+                title={drugHistoryTitle}
             >
                 <DrugHistoryPage
                     drugLogList={drugLogList}
@@ -112,7 +122,7 @@ const LandingPage = () => {
             <Tab
                 disabled={apiKey === null || !activeResident}
                 eventKey="manage"
-                title="Manage Rx"
+                title={manageRxTitle}
             >
                 <ManageDrugPage
                     onError={(err: Error) => errorOccurred(err)}
@@ -121,7 +131,7 @@ const LandingPage = () => {
             <Tab
                 disabled={apiKey === null}
                 eventKey="manage-otc"
-                title="Manage OTC"
+                title={manageOtcTitle}
             >
                 <ManageOtcPage
                     onError={(err) => errorOccurred(err)}
@@ -130,7 +140,7 @@ const LandingPage = () => {
             <Tab
                 disabled={activeTabKey !== 'error'}
                 eventKey="error"
-                title="Diagnostics"
+                title={errorTitle}
                 style={{color: activeTabKey !== 'error' ? 'white' : ''}}
             >
                 <p>{errorDetails}</p>
