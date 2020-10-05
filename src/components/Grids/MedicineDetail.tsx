@@ -2,21 +2,27 @@ import Button from "react-bootstrap/Button";
 import React from "reactn";
 import {MedicineRecord} from "../../types/RecordTypes";
 
+interface IProps {
+    drug: MedicineRecord,
+    columns?: string[],
+    onDelete?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void,
+    onEdit?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
+}
+
 /**
  * MedicineDetail table row
  *
- * @param {MedicineRecord} drug
- * @param {string[]} columns
- * @param {React.MouseEvent<HTMLElement>, MedicineRecord} onDelete
- * @param {React.MouseEvent<HTMLElement>, MedicineRecord} onEdit
+ * @param {IProps} props
  * @return {JSX.Element}
  */
-const MedicineDetail = (
-        drug: MedicineRecord,
-        columns: string[],
-        onDelete?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void,
-        onEdit?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void,
-    ): JSX.Element => {
+const MedicineDetail = (props: IProps): JSX.Element => {
+    const {
+        drug,
+        columns = ['Drug', 'Strength', 'Directions', 'Notes', 'Barcode'],
+        onDelete,
+        onEdit
+    } = props;
+
     return (
         <tr
             key={'medicine-grid-row-' + drug.Id}
