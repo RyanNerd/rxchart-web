@@ -5,8 +5,7 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import ResidentGrid from '../components/Grids/ResidentGrid';
 import ResidentEdit from '../components/Modals/ResidentEdit';
 import {FullName} from '../utility/common';
-import ConfirmationDialog from "../components/Modals/ConfirmationDialog";
-import {Form} from "react-bootstrap";
+import {Alert, Form} from "react-bootstrap";
 import ResidentProvider from "../providers/ResidentProvider";
 import {MedicineRecord, ResidentRecord} from "../types/RecordTypes";
 import MedicineProvider from "../providers/MedicineProvider";
@@ -14,6 +13,7 @@ import MedHistoryProvider from "../providers/MedHistoryProvider";
 import {useProviders} from "../utility/useProviders";
 import getMedicineList from "./Common/getMedicineList";
 import getMedicineLog from "./Common/getMedicineLog";
+import Confirm from "../components/Modals/Confirm";
 
 interface IProps {
     onError: (e: Error) => void
@@ -294,26 +294,26 @@ const ResidentPage = (props: IProps) => {
             }
 
             {residentToDelete &&
-            <ConfirmationDialog
-                title={"Deactivate " + FullName(residentToDelete)}
-                body={
-                    <b style={{color: "red"}}>
-                        Are you sure?
-                    </b>
-                }
-                show={showDeleteResident}
-                onAnswer={(a) => {
-                    if (a) {
-                        deleteResident();
-                    } else {
-                        setResidentToDelete(null);
-                    }
-                    setShowDeleteResident(false);
-                }}
-                onHide={() => setShowDeleteResident(false)}
-            />
+                <Confirm.Modal
+                    show={showDeleteResident}
+                    onAnswer={(a) => {
+                        setShowDeleteResident(false);
+                        if (a) {deleteResident()}
+                    }}
+                >
+                    <Confirm.Header>
+                        <Confirm.Title>
+                            {"Deactivate " + FullName(residentToDelete)}
+                        </Confirm.Title>
+                    </Confirm.Header>
+                    <Confirm.Body>
+                        <Alert variant="danger">
+                            Are you sure?
+                        </Alert>
+                    </Confirm.Body>
+                </Confirm.Modal>
             }
-        </>
+            </>
     );
 }
 

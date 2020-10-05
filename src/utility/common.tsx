@@ -122,10 +122,34 @@ export const calculateLastTaken = (drugId: number, drugLogList:Array<DrugLogReco
     return diff;
 };
 
+/**
+ * Given a date object return true if the date is today.
+ *
+ * @param {Date} date
+ */
 export const isToday = (date: Date): boolean => {
     const now = new Date();
     const options = {month: '2-digit', day: '2-digit', year: 'numeric'};
     const nowFull = now.toLocaleString('en-US', options);
     const dateFull = date.toLocaleString('en-US', options);
     return nowFull === dateFull;
+}
+
+/**
+ * Given a string or Date object return the formatted string of the date: mm/dd/yyyy, hh:mm AM
+ *
+ * @param date
+ */
+export const getFormattedDate = (date: Date | string): string => {
+    if (typeof date === 'string') {
+        date = new Date(date);
+    }
+    return date.toLocaleString('en-US', {
+        month: '2-digit',
+        day: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+    });
 }

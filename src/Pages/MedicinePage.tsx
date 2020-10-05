@@ -5,12 +5,11 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import TabContent from "../styles/tab_content.css";
 import MedicineEdit from "../components/Modals/MedicineEdit";
-import ConfirmationDialog from "../components/Modals/ConfirmationDialog";
 import DrugLogGrid from "../components/Grids/DrugLogGrid";
 import DrugLogEdit from "../components/Modals/DrugLogEdit";
 import MedicineListGroup from "../components/ListGroups/MedicineListGroup";
 import TooltipButton from "../components/Buttons/TooltipButton";
-import {calculateLastTaken} from "../utility/common";
+import {calculateLastTaken, getFormattedDate} from "../utility/common";
 import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../types/RecordTypes";
 import LastTakenButton from "../components/Buttons/LastTakenButton";
 import searchDrugs from "../utility/searchDrugs";
@@ -22,6 +21,8 @@ import {updateDrugLog} from "./Common/updateDrugLog";
 import {updateMedicine} from "./Common/updateMedicine";
 import getMedicineList from "./Common/getMedicineList";
 import getMedicineLog from "./Common/getMedicineLog";
+import Confirm from "../components/Modals/Confirm";
+import {Alert} from "react-bootstrap";
 
 interface IProps {
     activeTabKey: string | null,
@@ -337,26 +338,33 @@ const MedicinePage = (props: IProps) => {
                 />
             }
 
-            <ConfirmationDialog
-                title="Delete Log Record"
-                body={
-                    <>
-                        <p>{showDeleteDrugLogRecord.Updated}</p>
-                        <b style={{color: "red"}}>
-                            Are you sure?
-                        </b>
-                    </>
-                }
-                show={showDeleteDrugLogRecord instanceof Object}
-                onAnswer={(a) => {
-                    if (a) {
-                        deleteDrugLogRecord(showDeleteDrugLogRecord);
-                    } else {
+            {/*Confirm Delete of Drug Log*/}
+            {showDeleteDrugLogRecord &&
+            <Confirm.Modal
+                onAnswer={
+                    (a) => {
                         setShowDeleteDrugLogRecord(false);
+                        const drugLog = {...showDeleteDrugLogRecord};
+                        if (a) {deleteDrugLogRecord(drugLog)}
                     }
-                }}
-                onHide={() => setShowDeleteDrugLogRecord(false)}
-            />
+                }
+                show={showDeleteDrugLogRecord}
+            >
+                <Confirm.Header>
+                    <Confirm.Title>
+                        Delete Log Record
+                    </Confirm.Title>
+                </Confirm.Header>
+                <Confirm.Body>
+                    <Alert variant="secondary">
+                        Date: {getFormattedDate(showDeleteDrugLogRecord.Updated)}
+                    </Alert>
+                    <b style={{color: "red"}}>
+                        Are you sure?
+                    </b>
+                </Confirm.Body>
+            </Confirm.Modal>
+            }
         </>
     );
 
