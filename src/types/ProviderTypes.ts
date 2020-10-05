@@ -10,13 +10,15 @@ export namespace ProviderTypes {
         medHistoryProvider: typeof MedHistoryProvider | null
     }
 
+    export type DeleteResponse = { success: boolean };
+
     export namespace MedHistory {
         export type RecordResponse = {
             success: boolean,
             status: number,
             data: DrugLogRecord[]
         }
-        export type DeleteResponse = { success: boolean };
+        export type DeleteResponse = ProviderTypes.DeleteResponse;
     }
 
     export namespace Medicine {
@@ -25,7 +27,7 @@ export namespace ProviderTypes {
             status: number,
             data: MedicineRecord[]
         }
-        export type DeleteResponse = { success: boolean };
+        export type DeleteResponse = ProviderTypes.DeleteResponse;
     }
 
     export namespace Resident {
@@ -34,6 +36,6 @@ export namespace ProviderTypes {
             status: number,
             data: ResidentRecord[]
         }
-        export type DeleteResponse = { success: boolean };
+        export type DeleteResponse = ProviderTypes.DeleteResponse;
     }
 }

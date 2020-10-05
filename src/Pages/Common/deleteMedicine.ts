@@ -1,5 +1,6 @@
 /**
  * Deletes a medicine record given the Id.
+ *
  * @param {typeof MedicineProvider} medicineProvider
  * @param {number | string} medicineId
  */

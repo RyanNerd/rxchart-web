@@ -21,6 +21,7 @@ import getMedicineLog from "./Common/getMedicineLog";
 import getOtcList from "./Common/getOtcList";
 import Confirm from "../components/Modals/Confirm";
 import {Alert} from "react-bootstrap";
+import deleteDrugLog from "./Common/deleteDrugLog";
 
 interface IProps {
     activeTabKey: string | null,
@@ -62,7 +63,7 @@ const OtcPage = (props: IProps) => {
     useEffect(() => {
         // @link https://stackoverflow.com/questions/31005396/filter-array-of-objects-with-another-array-of-objects
         const otc = (otcList && otcList.length > 0 ) && drugLogList ? drugLogList.filter((drug: DrugLogRecord) => {
-            return otcList.some((f: any) => {
+            return otcList.some((f: DrugLogRecord) => {
                 return f.Id === drug?.MedicineId;
             });
         }) : null;
@@ -117,6 +118,11 @@ const OtcPage = (props: IProps) => {
         setSearchText('');
     }, [activeResident]);
 
+    // If there isn't an activeResident then bail with null
+    if (!residentId) {
+        return null;
+    }
+
     /**
      * Fires when medicine is added or edited.
      *
@@ -142,7 +148,7 @@ const OtcPage = (props: IProps) => {
      * @param {object | null} drugInfo
      */
     const handleMedicineEditModalClose = (drugInfo?: MedicineRecord | null) => {
-        if (drugInfo && residentId) {
+        if (drugInfo) {
             updateMedicine(medicineProvider, drugInfo)
             .then((drugRecord) => {
                 getOtcList(medicineProvider)
@@ -168,14 +174,18 @@ const OtcPage = (props: IProps) => {
      * @param {object} drugLogInfo
      */
     const deleteDrugLogRecord = (drugLogInfo: DrugLogRecord) => {
-        if (drugLogInfo && drugLogInfo.Id && residentId) {
-            medHistoryProvider.delete(drugLogInfo.Id)
-            .then(() => {
-                getMedicineLog(medHistoryProvider, residentId).then((data) => setDrugLogList(data));
+        const drugLogId = drugLogInfo && drugLogInfo.Id;
+        if (drugLogId && residentId) {
+            deleteDrugLog(medHistoryProvider, drugLogId)
+            .then((deleted) => {
+                if (deleted.success) {
+                    getMedicineLog(medHistoryProvider, residentId).then((data) => setDrugLogList(data));
+                } else {
+                    throw new Error('DrugLog Delete failed for Record: ' + drugLogId);
+                }
             })
             .catch((err: Error) => onError(err));
         }
-        setShowDeleteDrugLogRecord(false);
     }
 
     /**
@@ -217,7 +227,7 @@ const OtcPage = (props: IProps) => {
         }
     }
 
-    const otcPage = (
+    return (
         <Form>
             <Form.Group className={TabContent} as={Row}>
                 <Form.Group as={Col} sm="4">
@@ -350,6 +360,7 @@ const OtcPage = (props: IProps) => {
 
             {showDeleteDrugLogRecord &&
             <Confirm.Modal
+                size='lg'
                 show={showDeleteDrugLogRecord}
                 onAnswer={(a) => {
                     setShowDeleteDrugLogRecord(false);
@@ -359,7 +370,8 @@ const OtcPage = (props: IProps) => {
             >
                 <Confirm.Header>
                     <Confirm.Title>
-                        Delete Log Record
+                        {/* FIXME: Look up Drug name */}
+                        Delete {showDeleteDrugLogRecord.Drug} Log Record
                     </Confirm.Title>
                 </Confirm.Header>
                 <Confirm.Body>
@@ -374,12 +386,6 @@ const OtcPage = (props: IProps) => {
             }
         </Form>
     );
-
-    if ((activeResident && residentId)) {
-        return otcPage;
-    } else {
-        return null;
-    }
 }
 
 export default OtcPage;

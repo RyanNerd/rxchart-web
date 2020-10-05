@@ -22,6 +22,7 @@ import getMedicineList from "./Common/getMedicineList";
 import getMedicineLog from "./Common/getMedicineLog";
 import Confirm from "../components/Modals/Confirm";
 import {Alert} from "react-bootstrap";
+import deleteDrugLog from "./Common/deleteDrugLog";
 
 interface IProps {
     activeTabKey: string | null,
@@ -103,6 +104,11 @@ const MedicinePage = (props: IProps) => {
         }
     }, [activeDrug, searchText]);
 
+    // If there isn't an activeResident then bail with null
+    if (!residentId) {
+        return null;
+    }
+
     /**
      * Fires when medicine is added or edited.
      *
@@ -130,7 +136,7 @@ const MedicinePage = (props: IProps) => {
      */
     const handleMedicineEditModalClose = (drugInfo: MedicineRecord | null) => {
         const residentId = activeResident?.Id;
-        if (drugInfo && residentId) {
+        if (drugInfo) {
             updateMedicine(medicineProvider, drugInfo)
             .then((drugRecord) => {
                 getMedicineList(medicineProvider, residentId)
@@ -156,14 +162,18 @@ const MedicinePage = (props: IProps) => {
      * @param {object} drugLogInfo
      */
     const deleteDrugLogRecord = (drugLogInfo: DrugLogRecord) => {
-        if (drugLogInfo && drugLogInfo.Id && residentId !== null) {
-            medHistoryProvider.delete(drugLogInfo.Id)
-            .then(() => {
-                getMedicineLog(medHistoryProvider, residentId).then((data) => setDrugLogList(data));
+        const drugLogId = drugLogInfo && drugLogInfo.Id;
+        if (drugLogId) {
+            deleteDrugLog(medHistoryProvider, drugLogId)
+            .then((deleted)=> {
+                if (deleted.success) {
+                    getMedicineLog(medHistoryProvider, residentId).then((data) => setDrugLogList(data));
+                } else {
+                    throw new Error('DrugLog Delete failed for Record: ' + drugLogId);
+                }
             })
             .catch((err: Error) => onError(err));
         }
-        setShowDeleteDrugLogRecord(false);
     }
 
     /**
@@ -191,7 +201,7 @@ const MedicinePage = (props: IProps) => {
      */
     const handleLogDrugAmount = (amount: number) => {
         const drugId = activeDrug && activeDrug.Id;
-        if (drugId && residentId) {
+        if (drugId) {
             const notes = amount.toString();
             const drugLogInfo = {
                 Id: null,
@@ -205,7 +215,7 @@ const MedicinePage = (props: IProps) => {
         }
     }
 
-    const medicinePage = (
+    return (
         <>
             <Form className={TabContent} as={Row}>
                 <Form.Group as={Col} controlId="medicine-buttons">
@@ -326,7 +336,7 @@ const MedicinePage = (props: IProps) => {
                     drugLogInfo={drugLogInfo}
                     onHide={() => setShowDrugLog(!showDrugLog)}
                     onClose={(drugLogRecord) => {
-                        if (drugLogRecord && residentId) {
+                        if (drugLogRecord) {
                             updateDrugLog(medHistoryProvider, drugLogRecord, residentId)
                                 .then((drugLogList) => setDrugLogList(drugLogList))
                                 .catch((err) => onError(err))
@@ -339,6 +349,7 @@ const MedicinePage = (props: IProps) => {
             {/*Confirm Delete of Drug Log*/}
             {showDeleteDrugLogRecord &&
             <Confirm.Modal
+                size='lg'
                 onAnswer={
                     (a) => {
                         setShowDeleteDrugLogRecord(false);
@@ -350,7 +361,8 @@ const MedicinePage = (props: IProps) => {
             >
                 <Confirm.Header>
                     <Confirm.Title>
-                        Delete Log Record
+                        {/* FIXME: Look up Drug name */}
+                        Delete {showDeleteDrugLogRecord.Drug} Log Record
                     </Confirm.Title>
                 </Confirm.Header>
                 <Confirm.Body>
@@ -365,12 +377,6 @@ const MedicinePage = (props: IProps) => {
             }
         </>
     );
-
-    if (activeResident && residentId) {
-        return medicinePage;
-    } else {
-        return null;
-    }
 }
 
 export default MedicinePage;
