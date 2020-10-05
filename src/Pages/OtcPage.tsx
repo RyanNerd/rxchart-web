@@ -8,12 +8,11 @@ import MedicineEdit from "../components/Modals/MedicineEdit";
 import DrugLogGrid from "../components/Grids/DrugLogGrid";
 import DrugLogEdit from "../components/Modals/DrugLogEdit";
 import MedicineListGroup from "../components/ListGroups/MedicineListGroup";
-import {calculateLastTaken, getFormattedDate} from "../utility/common";
+import {calculateLastTaken, getFormattedDate, getLastTakenVariant} from "../utility/common";
 import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../types/RecordTypes";
 import LastTakenButton from "../components/Buttons/LastTakenButton";
 import searchDrugs from "../utility/searchDrugs";
 import isSearchValid from "../utility/isSearchValid";
-import logButtonColor from "../utility/logButtonColor";
 import MedHistoryProvider from "../providers/MedHistoryProvider";
 import MedicineProvider from "../providers/MedicineProvider";
 import {updateDrugLog} from "./Common/updateDrugLog";
@@ -40,7 +39,7 @@ const OtcPage = (props: IProps) => {
     const [ showDrugLog, setShowDrugLog ] = useState(false);
     const [ drugLogInfo, setDrugLogInfo ] = useState<DrugLogRecord | null>(null);
     const [ showDeleteDrugLogRecord, setShowDeleteDrugLogRecord ] = useState<any>(false);
-    const [ lastTaken, setLastTaken ] = useState<number | null | boolean>(false);
+    const [ lastTaken, setLastTaken ] = useState<number | null>(null);
     const [ searchText, setSearchText ] = useState('');
     const [ searchIsValid, setSearchIsValid ] = useState<boolean | null>(null);
     const [ activeDrug, setActiveDrug ] = useState<MedicineRecord | null>(null);
@@ -151,7 +150,7 @@ const OtcPage = (props: IProps) => {
                     setOtcList(drugList).then(() => {});
                     setDrugInfo(drugRecord);
                     setActiveDrug(drugRecord);
-                    setLastTaken(false);
+                    setLastTaken(null);
                     getMedicineLog(medHistoryProvider, residentId)
                         .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
                 })
@@ -268,7 +267,7 @@ const OtcPage = (props: IProps) => {
                         <span style={{textAlign: "center"}}> <h2>OTC Drug History</h2> </span>
                         <Button
                             disabled={lastTaken === 0}
-                            variant={"outline-" + logButtonColor(lastTaken)}
+                            variant={"outline-" + getLastTakenVariant(lastTaken)}
                             className="mr-2"
                             onClick={(e) => {
                                 e.preventDefault();
@@ -281,7 +280,7 @@ const OtcPage = (props: IProps) => {
                         <Button
                             disabled={lastTaken === 0}
                             className="mr-3"
-                            variant={"outline-" + logButtonColor(lastTaken)}
+                            variant={"outline-" + getLastTakenVariant(lastTaken)}
                             onClick={(e) => {
                                 e.preventDefault();
                                 handleLogDrugAmount(2);

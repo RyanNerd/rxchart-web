@@ -4,13 +4,13 @@ import DrugDropdown from "./DrugDropdown";
 import TooltipButton from "../Buttons/TooltipButton";
 import {drawBarcode} from "../../utility/drawBarcode";
 import Button from "react-bootstrap/Button";
-import logButtonColor from "../../utility/logButtonColor";
 import {MedicineRecord} from "../../types/RecordTypes";
+import {getLastTakenVariant} from "../../utility/common";
 
 interface IProps {
     medicineList: Array<MedicineRecord>
     activeDrug: MedicineRecord,
-    lastTaken: number | null | boolean,
+    lastTaken: number | null,
     drugChanged: Function,
     addDrugLog: Function,
     canvasId: string,
@@ -93,7 +93,7 @@ const MedicineListGroup = (props: IProps) => {
                     tooltip={tooltipText(lastTaken)}
                     placement="top"
                     className="mr-2"
-                    variant={logButtonColor(lastTaken)}
+                    variant={getLastTakenVariant(lastTaken)}
                     onClick={(e: MouseEvent) => addDrugLog(e)}
                 >
                     + Log Drug
@@ -101,7 +101,7 @@ const MedicineListGroup = (props: IProps) => {
 
                 <Button
                     disabled={lastTaken === 0}
-                    variant={"outline-" + logButtonColor(lastTaken)}
+                    variant={"outline-" + getLastTakenVariant(lastTaken)}
                     className="mr-2"
                     onClick={(e) => {
                         e.preventDefault();
@@ -113,7 +113,7 @@ const MedicineListGroup = (props: IProps) => {
 
                 <Button
                     disabled={lastTaken === 0}
-                    variant={"outline-" + logButtonColor(lastTaken)}
+                    variant={"outline-" + getLastTakenVariant(lastTaken)}
                     onClick={(e) => {
                         e.preventDefault();
                         logDrug(2);

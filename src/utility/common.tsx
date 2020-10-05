@@ -123,6 +123,40 @@ export const calculateLastTaken = (drugId: number, drugLogList:Array<DrugLogReco
 };
 
 /**
+ * Determine the variant string given the lastTaken hours value.
+ *
+ * @param {number | null} lastTaken
+ * @return string
+ */
+export const getLastTakenVariant = (lastTaken: number | null): string => {
+    let warningColor: string;
+    switch (lastTaken) {
+        case null: warningColor = 'primary';
+            break;
+        case 0: warningColor = 'danger';
+            break;
+        case 1: warningColor = 'danger';
+            break;
+        case 2: warningColor = 'danger';
+            break;
+        case 3: warningColor = 'warning';
+            break;
+        case 4: warningColor = 'warning';
+            break;
+        case 5: warningColor = 'warning';
+            break;
+        case 6: warningColor = 'info';
+            break;
+        case 7: warningColor = 'info';
+            break;
+        case 8: warningColor = 'info';
+            break;
+        default: warningColor = 'primary';
+    }
+    return warningColor;
+}
+
+/**
  * Given a date object return true if the date is today.
  *
  * @param {Date} date
