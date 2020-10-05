@@ -10,7 +10,6 @@ import {useProviders} from "../utility/useProviders";
 import {updateMedicine} from "./Common/updateMedicine";
 import getOtcList from "./Common/getOtcList";
 import Confirm from "../components/Modals/Confirm";
-import {Alert} from "react-bootstrap";
 
 interface IProps {
     onError: (e: Error) => void
