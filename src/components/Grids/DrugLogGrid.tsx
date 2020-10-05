@@ -12,11 +12,12 @@ interface IProps {
     medicineList?: MedicineRecord[] | null,
     otcList?: MedicineRecord[] | null,
     condensed?: string,
-    showDrugColumn: boolean,
+    columns?: string[]
 }
 
 /**
  * DrugLogGrid
+ *
  * @param {IProps} props
  * @return {JSX.Element}
  * @constructor
@@ -30,7 +31,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
         medicineList,
         otcList,
         condensed = "false",
-        showDrugColumn,
+        columns = ['Created', 'Updated', 'Amount']
     } = props;
 
     if (!drugLog || drugLog.length === 0) {
@@ -113,7 +114,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                     </Button>
                 </td>
             }
-            {showDrugColumn &&
+            {columns.includes('Drug') &&
                 <td style={{verticalAlign: "middle"}}>
                     <span><b>{drugName}</b></span> <span>{drugStrength}</span>
                 </td>
@@ -150,20 +151,26 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                     {onEdit &&
                         <th> </th>
                     }
-                    {showDrugColumn &&
+                    {columns.includes('Drug') &&
                         <th>
                             Drug
                         </th>
                     }
+                    {columns.includes('Created') &&
                     <th style={{textAlign: 'center', verticalAlign: "middle"}}>
                         <span>Created</span>
                     </th>
+                    }
+                    {columns.includes('Updated') &&
                     <th style={{textAlign: 'center', verticalAlign: "middle"}}>
                         <span>Updated</span>
                     </th>
+                    }
+                    {columns.includes('Amount') &&
                     <th style={{textAlign: 'center', verticalAlign: "middle"}}>
                         <span>Amount</span>
                     </th>
+                    }
                     {onDelete &&
                         <th> </th>
                     }

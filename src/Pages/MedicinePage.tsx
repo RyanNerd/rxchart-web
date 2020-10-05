@@ -299,7 +299,6 @@ const MedicinePage = (props: IProps) => {
 
                         <Col sm="7">
                             <DrugLogGrid
-                                showDrugColumn={false}
                                 drugLog={drugLogList}
                                 drugId={activeDrug && activeDrug.Id}
                                 onEdit={(e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) => addEditDrugLog(e, r)}

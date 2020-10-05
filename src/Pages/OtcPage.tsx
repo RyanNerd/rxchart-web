@@ -309,7 +309,7 @@ const OtcPage = (props: IProps) => {
 
                         <Col sm="8">
                             <DrugLogGrid
-                                showDrugColumn={true}
+                                columns={['Drug', 'Created', 'Updated', 'Amount']}
                                 drugLog={otcLogList || []}
                                 otcList={otcList}
                                 onEdit={(e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) => addEditDrugLog(e, r)}
