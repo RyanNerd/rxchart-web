@@ -10,7 +10,7 @@ import {ResidentRecord} from "../../types/RecordTypes";
 interface IProps {
     show: boolean,
     residentInfo: ResidentRecord,
-    onHide: () => void,
+    onHide?: () => void,
     onClose: (r: ResidentRecord | null) => void
 }
 
@@ -26,8 +26,9 @@ interface IProps {
  */
 const ResidentEdit = (props: IProps) => {
     // Set up local initial state
-    const [show, setShow] = useState(props.show);
-    const [residentInfo, setResidentInfo] = useState<ResidentRecord>(props.residentInfo);
+    const [ show, setShow ] = useState(props.show);
+    const [ residentInfo, setResidentInfo ] = useState<ResidentRecord>(props.residentInfo);
+    const onHide = props.onHide || null;
     const focusRef = useRef<any>(null);
 
     /**
@@ -83,8 +84,8 @@ const ResidentEdit = (props: IProps) => {
           centered
           size="lg"
           show={show}
-          onHide={() => props.onHide()}
           onEntered={() => focusRef.current.focus()}
+          onHide={() => {if (onHide) {onHide()}}}
         >
             <Modal.Header closeButton>
                 <Modal.Title>{residentTitle}</Modal.Title>

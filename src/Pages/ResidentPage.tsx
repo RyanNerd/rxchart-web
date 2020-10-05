@@ -267,7 +267,6 @@ const ResidentPage = (props: IProps) => {
                         setShow(false);
                         handleModalClose(r);
                     }}
-                    onHide={() => setShow(!show)}
                 />
             }
 
