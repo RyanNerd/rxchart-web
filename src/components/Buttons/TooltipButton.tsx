@@ -17,7 +17,7 @@ interface IProps {
 /**
  * Button with a tooltip overlay
  *
- * @param {placement = 'top', tooltip, tooltipId = randomString(), children} props
+ * @param {IProps} props
  * @returns {JSX.Element}
  * @constructor
  */

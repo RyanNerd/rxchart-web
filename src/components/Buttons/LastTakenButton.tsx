@@ -8,7 +8,14 @@ interface IProps {
     children?: ReactChildren
 }
 
-const LastTakenButton = (props: IProps) => {
+/**
+ * Colored button that displays Last Taken in hours.
+ *
+ * @param {IProps} props
+ * @return {JSX.Element}
+ * @constructor
+ */
+const LastTakenButton = (props: IProps): JSX.Element => {
     const {
         lastTaken = null,
         children

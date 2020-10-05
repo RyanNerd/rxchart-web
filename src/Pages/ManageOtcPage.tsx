@@ -115,7 +115,19 @@ const ManageOtcPage = (props: IProps) => {
                 </tr>
                 </thead>
                 <tbody>
-                {otcList.map((drug: MedicineRecord) => MedicineDetail(drug, onDelete, onEdit, false))}
+                {otcList.map((drug: MedicineRecord) =>
+                    MedicineDetail(
+                        drug,
+                        [
+                            'Drug',
+                            'Strength',
+                            'Directions',
+                            'Barcode'
+                        ],
+                        onDelete,
+                        onEdit
+                    ))
+                }
                 </tbody>
             </Table>
             }

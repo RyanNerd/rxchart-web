@@ -132,7 +132,19 @@ const ManageDrugPage = (props: IProps) => {
                     </tr>
                     </thead>
                     <tbody>
-                    {medicineList.map((drug: MedicineRecord) => MedicineDetail(drug, onDelete, onEdit, true))}
+                    {medicineList.map((drug: MedicineRecord) =>
+                        MedicineDetail(
+                            drug, [
+                                'Drug',
+                                'Strength',
+                                'Directions',
+                                'Notes',
+                                'Barcode'
+                            ],
+                            onDelete,
+                            onEdit
+                        )
+                    )}
                     </tbody>
                 </Table>
             }

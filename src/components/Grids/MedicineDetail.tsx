@@ -5,25 +5,26 @@ import {MedicineRecord} from "../../types/RecordTypes";
 /**
  * MedicineDetail table row
  *
- * @param {object} drug
- * @param {React.MouseEvent<HTMLElement>} onDelete
- * @param {function} onEdit
- * @param {boolean} includeNotes
+ * @param {MedicineRecord} drug
+ * @param {string[]} columns
+ * @param {React.MouseEvent<HTMLElement>, MedicineRecord} onDelete
+ * @param {React.MouseEvent<HTMLElement>, MedicineRecord} onEdit
  * @return {JSX.Element}
  */
 const MedicineDetail = (
         drug: MedicineRecord,
-        onDelete: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void,
-        onEdit: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void,
-        includeNotes: boolean
+        columns: string[],
+        onDelete?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void,
+        onEdit?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void,
     ): JSX.Element => {
     return (
         <tr
             key={'medicine-grid-row-' + drug.Id}
             id={'medicine-grid-row-' + drug.Id}
         >
+            {onEdit &&
             <td style={{textAlign: 'center', verticalAlign: "middle"}}>
-                <Button
+                < Button
                     size="sm"
                     id={"medicine-edit-btn-" + drug.Id}
                     onClick={(e) => onEdit(e, drug)}
@@ -31,13 +32,23 @@ const MedicineDetail = (
                     Edit
                 </Button>
             </td>
-            <td>{drug.Drug}</td>
+            }
+            {columns.includes('Drug') &&
+                <td>{drug.Drug}</td>
+            }
+            {columns.includes('Strength') &&
             <td>{drug.Strength}</td>
+            }
+            {columns.includes('Directions') &&
             <td>{drug.Directions}</td>
-            {includeNotes &&
+            }
+            {columns.includes('Notes') &&
                 <td>{drug.Notes}</td>
             }
+            {columns.includes('Barcode') &&
             <td>{drug.Barcode}</td>
+            }
+            {onDelete &&
             <td style={{textAlign: 'center', verticalAlign: "middle"}}>
                 <Button
                     size="sm"
@@ -48,6 +59,7 @@ const MedicineDetail = (
                     <span role="img" aria-label="delete">🗑️</span>
                 </Button>
             </td>
+            }
         </tr>
     )
 };
