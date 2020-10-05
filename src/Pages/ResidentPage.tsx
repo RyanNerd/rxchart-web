@@ -14,6 +14,7 @@ import {useProviders} from "../utility/useProviders";
 import getMedicineList from "./Common/getMedicineList";
 import getMedicineLog from "./Common/getMedicineLog";
 import Confirm from "../components/Modals/Confirm";
+import {getResidentList} from "./Common/getResidentList";
 
 interface IProps {
     onError: (e: Error) => void
@@ -33,9 +34,9 @@ const ResidentPage = (props: IProps) => {
     const [ residentToDelete, setResidentToDelete ] = useState<ResidentRecord | null>(null);
 
     const [ residentList, setResidentList ] = useGlobal('residentList');
-    const [ , setMedicineList ] = useGlobal<MedicineRecord>('medicineList');
-    const [ , setDrugLogList ] = useGlobal<MedicineRecord>('drugLogList');
-    const [ activeResident, setActiveResident ] = useGlobal('activeResident');
+    const [ , setMedicineList ] = useGlobal('medicineList');
+    const [ , setDrugLogList ] = useGlobal('drugLogList');
+    const [ activeResident, setActiveResident ] = useGlobal<any>('activeResident');
     const providers = useProviders();
     const residentProvider = providers.residentProvider as typeof ResidentProvider;
     const medicineProvider = providers.medicineProvider as typeof MedicineProvider;
@@ -44,12 +45,46 @@ const ResidentPage = (props: IProps) => {
     const onError = props.onError;
 
     /**
+     * Given a ResidentRecord set it as the activeResident,
+     * rehydrate the ResidentList, Get and set all meds and drug history for the resident
+     *
+     * @param {ResidentRecord} resident
+     * @return Promise<void>
+     */
+    const refreshResident = (resident: ResidentRecord): Promise<void> => {
+        setResidentInfo(resident);
+        return getResidentList(residentProvider)
+        .then((residentList: ResidentRecord[]) => {
+            // Rehydrate the residentList
+            setResidentList(residentList).then(()=>{});
+            // Set the resident as the active resident.
+            setActiveResident(resident).then(()=>{});
+            // Rehydrate the MedicineList
+            const residentId = resident.Id as number;
+            getMedicineList(medicineProvider, residentId)
+            .then((hydratedMedicineList) => {
+                setMedicineList (hydratedMedicineList).then(()=>{});
+                // If there are any medicines for the selected resident then
+                // select the first one and make it the active drug.
+                if (hydratedMedicineList && hydratedMedicineList.length > 0) {
+                    // Refresh the drugLogList for the new active drug.
+                    getMedicineLog(medHistoryProvider, residentId)
+                        .then((data) => setDrugLogList(data))
+                        .catch((err) => props.onError(err));
+                } else {
+                    setDrugLogList(null).then(()=>{});
+                }
+            });
+        })
+    }
+
+    /**
      * Reactivate a trashed resident given the primary key
      *
      * @param id
      * @returns {Promise<Response>}
      */
-    const reactivateResident = (id: number) => {
+    const reactivateResident = (id: number): Promise<ResidentRecord> => {
         return residentProvider.restore({restore_id: id})
         .then((response: any) => {
             return response;
@@ -102,6 +137,7 @@ const ResidentPage = (props: IProps) => {
             if (!residentData.Id) {
                 residentData.Id = null;
             }
+
             const searchExisting = {
                 where: [
                     {column: "FirstName", value: residentData.FirstName},
@@ -121,61 +157,20 @@ const ResidentPage = (props: IProps) => {
                 if (result.length === 1 && result[0] && result[0].Id) {
                     reactivateResident(result[0].Id)
                     .then((restoredResident: ResidentRecord) => {
-                        setResidentInfo(restoredResident);
-                        residentProvider.search({
-                            order_by: [
-                                {column: "LastName", direction: "asc"},
-                                {column: "FirstName", direction: "asc"}
-                            ]
-                        })
-                        .then((residentList: ResidentRecord[]) => {
-                            // Rehydrate the residentList
-                            setResidentList(residentList).then(()=>{});
-                            // Set the reactivated resident as the active resident.
-                            setActiveResident(restoredResident).then(()=>{});
-                            // Rehydrate the MedicineList
-                            const restoredId = restoredResident.Id as number;
-                                getMedicineList(medicineProvider, restoredId)
-                                .then((hydratedMedicineList) => {
-                                    setMedicineList (hydratedMedicineList).then(()=>{});
-                                    // If there are any medicines for the selected resident then
-                                    // select the first one and make it the active drug.
-                                    if (hydratedMedicineList && hydratedMedicineList.length > 0) {
-                                        // Refresh the drugLogList for the new active drug.
-                                        getMedicineLog(medHistoryProvider, restoredId)
-                                        .then((data) => setDrugLogList(data))
-                                        .catch((err) => props.onError(err));
-                                    }
-                                });
-                            })
-                        .catch((err: Error) => onError(err));
+                        refreshResident(restoredResident).then(()=>{})
                     })
                     .catch((err: Error) => onError(err));
                 } else {
-                    // Add the new resident
+                    // Add / update the new resident
                     residentProvider.post(residentData)
                     .then((newResident) => {
-                        residentProvider.search({order_by: [
-                                {column: "LastName", direction: "asc"},
-                                {column: "FirstName", direction: "asc"}
-                            ]
-                        })
-                        .then((residentList: ResidentRecord[]) => {
-                            setResidentList(residentList).then(()=>{});
-                        })
-                        .catch((err: Error) => onError(err));
-                        return newResident as ResidentRecord;
-                    })
-                    .then((newResident: ResidentRecord) => {
-                        setResidentInfo(newResident);
-                        handleOnSelected(null, newResident);
+                        refreshResident(newResident).then(()=>{})
                     })
                     .catch((err: Error) => onError(err));
                 }
             })
             .catch((err: Error) => onError(err));
         }
-        setShow(false);
     }
 
     /**
@@ -184,29 +179,9 @@ const ResidentPage = (props: IProps) => {
      * @param {MouseEvent|null} e
      * @param {object} resident
      */
-    const handleOnSelected = (e: React.MouseEvent<HTMLElement> | null, resident: ResidentRecord) => {
-        if (e) {
-            e.preventDefault();
-        }
-
-        setActiveResident(resident).then(()=>{});
-        const residentId = resident.Id as number;
-        getMedicineList(medicineProvider, residentId)
-        .then((medicineRecords) => {
-            // If there are any medicines for the selected resident then
-            // select the first one and make it the active drug.
-            if (medicineRecords && medicineRecords.length > 0) {
-                setMedicineList(medicineRecords).then(()=>{});
-                // Refresh the drugLogList for the new active drug.
-                getMedicineLog(medHistoryProvider, residentId)
-                    .then((data) => setDrugLogList(data))
-                    .catch((err) => onError(err));
-            } else {
-                setMedicineList(null).then(()=>{});
-                setDrugLogList(null).then(()=>{});
-            }
-        })
-        .catch(() => setMedicineList(null));
+    const handleOnSelected = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
+        e.preventDefault();
+        refreshResident(resident);
     }
 
     /**
@@ -288,7 +263,10 @@ const ResidentPage = (props: IProps) => {
                 <ResidentEdit
                     show={show}
                     residentInfo={residentInfo}
-                    onClose={(r) => handleModalClose(r)}
+                    onClose={(r) => {
+                        setShow(false);
+                        handleModalClose(r);
+                    }}
                     onHide={() => setShow(!show)}
                 />
             }
