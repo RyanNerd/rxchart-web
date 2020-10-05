@@ -2,7 +2,6 @@ import React, {useGlobal, useState} from 'reactn';
 import Table from "react-bootstrap/Table";
 import MedicineDetail from "../components/Grids/MedicineDetail";
 import MedicineEdit from "../components/Modals/MedicineEdit";
-import ConfirmationDialog from "../components/Modals/ConfirmationDialog";
 import DeleteMedicine from "./Common/deleteMedicine";
 import TooltipButton from "../components/Buttons/TooltipButton";
 import MedicineProvider from "../providers/MedicineProvider";
@@ -11,6 +10,7 @@ import {useProviders} from "../utility/useProviders";
 import {updateMedicine} from "./Common/updateMedicine";
 import getOtcList from "./Common/getOtcList";
 import Confirm from "../components/Modals/Confirm";
+import {Alert} from "react-bootstrap";
 
 interface IProps {
     onError: (e: Error) => void

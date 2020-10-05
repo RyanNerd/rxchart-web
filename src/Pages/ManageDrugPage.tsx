@@ -2,15 +2,15 @@ import React, {useGlobal, useState} from 'reactn';
 import Table from "react-bootstrap/Table";
 import MedicineDetail from "../components/Grids/MedicineDetail";
 import MedicineEdit from "../components/Modals/MedicineEdit";
-import ConfirmationDialog from "../components/Modals/ConfirmationDialog";
 import DeleteMedicine from "./Common/deleteMedicine";
 import TooltipButton from "../components/Buttons/TooltipButton";
-import PropTypes from 'prop-types';
 import MedicineProvider from "../providers/MedicineProvider";
 import {MedicineRecord, newDrugInfo} from "../types/RecordTypes";
 import {useProviders} from "../utility/useProviders";
 import {updateMedicine} from "./Common/updateMedicine";
 import getMedicineList from "./Common/getMedicineList";
+import Confirm from "../components/Modals/Confirm";
+import {Alert} from "react-bootstrap";
 
 interface IProps {
     onError: (e: Error) => void
@@ -159,31 +159,30 @@ const ManageDrugPage = (props: IProps) => {
             }
 
             {medicineInfo && showDeleteMedicine &&
-            <ConfirmationDialog
-                title={"Delete " + medicineInfo.Drug}
-                body={
-                    <b style={{color: "red"}}>
-                        Are you sure?
-                    </b>
-                }
-                show={showDeleteMedicine}
-                onAnswer={(a) =>
-                {
-                    if (a) {
-                        deleteMedicine();
-                    } else {
+                <Confirm.Modal
+                    show={showDeleteMedicine}
+                    onAnswer={(a) => {
                         setShowDeleteMedicine(false);
-                    }
-                }}
-                onHide={() => setShowDeleteMedicine(false)}
-            />
+                        if (a) {deleteMedicine()}
+                    }}
+                >
+                    <Confirm.Header>
+                        <Confirm.Title>
+                            {"Delete " + medicineInfo.Drug}
+                        </Confirm.Title>
+                    </Confirm.Header>
+                    <Confirm.Body>
+                        <Alert variant="danger">
+                            Deleting this medicine will remove <b>ALL</b> history of this drug being taken!
+                        </Alert>
+                        <b style={{color: "red"}}>
+                            Are you sure?
+                        </b>
+                    </Confirm.Body>
+                </Confirm.Modal>
             }
         </>
     );
-}
-
-ManageDrugPage.propTypes = {
-    onError: PropTypes.func.isRequired
 }
 
 export default ManageDrugPage;

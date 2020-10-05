@@ -4,7 +4,7 @@ import Button from "react-bootstrap/Button";
 import {MouseEvent, ReactChild, ReactChildren} from "react";
 
 interface IChildren {
-    children: ReactChildren | ReactChild
+    children: ReactChildren | ReactChild | JSX.Element[] | JSX.Element | string
 }
 
 interface IProps extends ModalProps {
