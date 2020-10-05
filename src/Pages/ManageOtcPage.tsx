@@ -10,6 +10,7 @@ import {useProviders} from "../utility/useProviders";
 import {updateMedicine} from "./Common/updateMedicine";
 import getOtcList from "./Common/getOtcList";
 import Confirm from "../components/Modals/Confirm";
+import {Alert} from "react-bootstrap";
 
 interface IProps {
     onError: (e: Error) => void
@@ -155,12 +156,18 @@ const ManageOtcPage = (props: IProps) => {
                         </Confirm.Title>
                     </Confirm.Header>
                     <Confirm.Body>
-                        <>
-                            <b style={{color: "#fa2224"}}>This will delete this OTC medicine for ALL residents</b>
-                            <p style={{color: "red"}}>
-                                Are you sure?
-                            </p>
-                        </>
+                        <Alert
+                            variant="danger"
+                            style={{textAlign: "center"}}
+                        >
+                            <span>
+                                This will delete the OTC medicine <b>{medicineInfo.Drug}</b> for <i>ALL</i> residents
+                            </span>
+                            <span> and <b>ALL</b> history for this drug!</span>
+                        </Alert>
+                        <Alert variant="warning">
+                            Are you sure?
+                        </Alert>
                     </Confirm.Body>
                 </Confirm.Modal>
             }
