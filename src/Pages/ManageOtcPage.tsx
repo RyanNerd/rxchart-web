@@ -10,6 +10,7 @@ import {MedicineRecord, newDrugInfo} from "../types/RecordTypes";
 import {useProviders} from "../utility/useProviders";
 import {updateMedicine} from "./Common/updateMedicine";
 import getOtcList from "./Common/getOtcList";
+import Confirm from "../components/Modals/Confirm";
 
 interface IProps {
     onError: (e: Error) => void
@@ -141,28 +142,28 @@ const ManageOtcPage = (props: IProps) => {
             }
 
             {medicineInfo && showDeleteMedicine &&
-            <ConfirmationDialog
-                size="lg"
-                title={"Delete " + medicineInfo.Drug}
-                body={
-                    <>
-                        <b style={{color: "#fa2224"}}>This will delete this OTC medicine for ALL residents</b>
-                        <p style={{color: "red"}}>
-                            Are you sure?
-                        </p>
-                    </>
-                }
-                show={showDeleteMedicine}
-                onAnswer={(a) =>
-                {
-                    if (a) {
-                        deleteMedicine();
-                    } else {
+                <Confirm.Modal
+                    size="lg"
+                    show={showDeleteMedicine}
+                    onAnswer={(a)=> {
                         setShowDeleteMedicine(false);
-                    }
-                }}
-                onHide={() => setShowDeleteMedicine(false)}
-            />
+                        if (a) {deleteMedicine()}
+                    }}
+                >
+                    <Confirm.Header>
+                        <Confirm.Title>
+                            {"Delete " + medicineInfo.Drug}
+                        </Confirm.Title>
+                    </Confirm.Header>
+                    <Confirm.Body>
+                        <>
+                            <b style={{color: "#fa2224"}}>This will delete this OTC medicine for ALL residents</b>
+                            <p style={{color: "red"}}>
+                                Are you sure?
+                            </p>
+                        </>
+                    </Confirm.Body>
+                </Confirm.Modal>
             }
         </>
     );

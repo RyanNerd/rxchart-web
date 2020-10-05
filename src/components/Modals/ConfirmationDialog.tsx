@@ -3,9 +3,8 @@ import Modal from 'react-bootstrap/Modal';
 import Button from "react-bootstrap/Button";
 import {MouseEvent} from "react";
 import {ModalProps} from "react-bootstrap/cjs";
-import {TransitionCallbacks} from "react-bootstrap/helpers";
 
-interface IProps extends ModalProps, TransitionCallbacks {
+interface IProps extends ModalProps {
     onAnswer: (a: boolean) => void,
 }
 
@@ -40,6 +39,7 @@ const ConfirmationDialog = (props: IProps): JSX.Element => {
             size={size}
             backdrop={backdrop}
             centered
+            show={show}
         >
             <Modal.Header>
                 <Modal.Title>{title}</Modal.Title>
