@@ -7,7 +7,7 @@ import ResidentEdit from '../components/Modals/ResidentEdit';
 import {FullName} from '../utility/common';
 import {Alert, Form} from "react-bootstrap";
 import ResidentProvider from "../providers/ResidentProvider";
-import {MedicineRecord, ResidentRecord} from "../types/RecordTypes";
+import {ResidentRecord} from "../types/RecordTypes";
 import MedicineProvider from "../providers/MedicineProvider";
 import MedHistoryProvider from "../providers/MedHistoryProvider";
 import {useProviders} from "../utility/useProviders";
@@ -181,7 +181,7 @@ const ResidentPage = (props: IProps) => {
      */
     const handleOnSelected = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
         e.preventDefault();
-        refreshResident(resident);
+        refreshResident(resident).then(()=>{});
     }
 
     /**
