@@ -1,7 +1,6 @@
 import React from 'reactn';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
-import RxTable from "./RxTable";
 import {DrugLogRecord, MedicineRecord} from "../../types/RecordTypes";
 import {getFormattedDate, isToday} from "../../utility/common";
 
@@ -138,8 +137,8 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
     };
 
     return (
-        <RxTable
-            condensed={condensed}
+        <Table
+            className={condensed !== 'false' ? 'w-auto' : ''}
             striped
             bordered
             hover
@@ -147,33 +146,33 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
             style={{tableLayout: "fixed", wordWrap: "break-word"}}
         >
             <thead>
-            <tr>
-                {onEdit &&
-                    <th> </th>
-                }
-                {showDrugColumn &&
-                    <th>
-                        Drug
+                <tr>
+                    {onEdit &&
+                        <th> </th>
+                    }
+                    {showDrugColumn &&
+                        <th>
+                            Drug
+                        </th>
+                    }
+                    <th style={{textAlign: 'center', verticalAlign: "middle"}}>
+                        <span>Created</span>
                     </th>
-                }
-                <th style={{textAlign: 'center', verticalAlign: "middle"}}>
-                    <span>Created</span>
-                </th>
-                <th style={{textAlign: 'center', verticalAlign: "middle"}}>
-                    <span>Updated</span>
-                </th>
-                <th style={{textAlign: 'center', verticalAlign: "middle"}}>
-                    <span>Amount</span>
-                </th>
-                {onDelete &&
-                    <th> </th>
-                }
-            </tr>
+                    <th style={{textAlign: 'center', verticalAlign: "middle"}}>
+                        <span>Updated</span>
+                    </th>
+                    <th style={{textAlign: 'center', verticalAlign: "middle"}}>
+                        <span>Amount</span>
+                    </th>
+                    {onDelete &&
+                        <th> </th>
+                    }
+                </tr>
             </thead>
             <tbody>
                 {drugLog && drugLog.length && filteredDrugs.map(DrugRow)}
             </tbody>
-        </RxTable>
+        </Table>
     )
 }
 

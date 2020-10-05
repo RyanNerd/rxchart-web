@@ -16,9 +16,7 @@ interface IProps {
 /**
  * ResidentGrid component
  *
- * @param props {
- *          onEdit: (MouseEvent, object),
- *          onSelected(MouseEvent, object)}
+ * @param {IProps} props
  * @returns {JSX.Element}
  * @constructor
  */
