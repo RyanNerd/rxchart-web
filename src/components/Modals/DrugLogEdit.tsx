@@ -17,10 +17,8 @@ interface IProps {
 /**
  * Edit Modal for DrugLog
  *
- * @param {object} props :
- *          show {boolean} show/hide this modal
- *          drugLogInfo {Id: id, Note: ""}
- * @returns {boolean|*}
+ * @param {IProps} props
+ * @returns {null|*}
  * @constructor
  */
 const DrugLogEdit = (props: IProps) => {
@@ -29,13 +27,13 @@ const DrugLogEdit = (props: IProps) => {
     const [ drugLogInfo, setDrugLogInfo ] = useState(props.drugLogInfo);
     const onHide = props.onHide;
     const [ canSave, setCanSave ] = useState(false);
-    const textInput = useRef<any>(null);
+    const textInput = useRef<HTMLInputElement>(null);
 
     // Observer for show
-    useEffect(() => {setShow(props.show)}, [show, props.show]);
+    useEffect(() => {setShow(props.show)}, [props.show]);
 
     // Observer for drugInfo
-    useEffect(() => {setDrugLogInfo(props.drugLogInfo)}, [drugLogInfo, props.drugLogInfo]);
+    useEffect(() => {setDrugLogInfo(props.drugLogInfo)}, [props.drugLogInfo]);
 
     // Disable the Save button if Notes are empty.
     useEffect(() => {
@@ -46,7 +44,7 @@ const DrugLogEdit = (props: IProps) => {
     /**
      * Fires when a text field or checkbox is changing.
      *
-     * @param {KeyboardEvent} e
+     * @param {React.KeyboardEvent<HTMLElement>} e
      */
     const handleOnChange = (e: React.ChangeEvent<HTMLElement>) => {
         const target = e.target as HTMLInputElement;
@@ -59,9 +57,9 @@ const DrugLogEdit = (props: IProps) => {
     }
 
     /**
-     * Fires when the user clicks on save or cancel
+     * Fires when the user clicks on Save or Cancel
      *
-     * @param {MouseEvent} e
+     * @param {React.MouseEvent<HTMLElement>} e
      * @param {boolean} shouldSave
      */
     const handleHide = (e: React.MouseEvent<HTMLElement>, shouldSave: boolean) => {

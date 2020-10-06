@@ -45,16 +45,13 @@ const OtcPage = (props: IProps) => {
     const [ searchIsValid, setSearchIsValid ] = useState<boolean | null>(null);
     const [ activeDrug, setActiveDrug ] = useState<MedicineRecord | null>(null);
     const [ otcLogList, setOtcLogList ] = useState(null);
-
     const [ otcList, setOtcList ] = useGlobal<any>('otcList');
     const [ drugLogList, setDrugLogList ] = useGlobal<any>('drugLogList');
     const [ activeResident ] = useGlobal('activeResident');
     const [ providers ] = useGlobal('providers');
     const [ residentId, setResidentId ] = useState(activeResident && activeResident.Id);
-
     const medHistoryProvider = providers.medHistoryProvider as typeof MedHistoryProvider;
     const medicineProvider = providers.medicineProvider as typeof MedicineProvider;
-
     const focusRef = useRef<HTMLInputElement>(null);
     const activeTabKey = props.activeTabKey || null;
     const onError = props.onError;
@@ -126,10 +123,10 @@ const OtcPage = (props: IProps) => {
     /**
      * Fires when medicine is added or edited.
      *
-     * @param {MouseEvent} e
+     * @param {React.MouseEvent<HTMLElement>} e
      * @param {boolean} isAdd
      */
-    const addEditDrug = (e: React.MouseEvent<HTMLElement>, isAdd: boolean) => {
+    const addEditDrug = (e: React.MouseEvent<HTMLElement>, isAdd: boolean): void => {
         e.preventDefault();
         if (isAdd) {
             const drugInfo = {...newDrugInfo};
@@ -145,9 +142,9 @@ const OtcPage = (props: IProps) => {
     /**
      * Fires when MedicineEdit closes.
      *
-     * @param {object | null} drugInfo
+     * @param {MedicineRecord | null} drugInfo
      */
-    const handleMedicineEditModalClose = (drugInfo?: MedicineRecord | null) => {
+    const handleMedicineEditModalClose = (drugInfo?: MedicineRecord | null): void => {
         if (drugInfo) {
             updateMedicine(medicineProvider, drugInfo)
             .then((drugRecord) => {
@@ -158,7 +155,7 @@ const OtcPage = (props: IProps) => {
                     setActiveDrug(drugRecord);
                     setLastTaken(null);
                     getMedicineLog(medHistoryProvider, residentId)
-                        .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
+                    .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
                 })
                 .catch((err) => {
                     onError(err);
@@ -171,9 +168,9 @@ const OtcPage = (props: IProps) => {
     /**
      * Fires when the user has confirmed the deletion of a drug log record.
      *
-     * @param {object} drugLogInfo
+     * @param {DrugLogRecord} drugLogInfo
      */
-    const deleteDrugLogRecord = (drugLogInfo: DrugLogRecord) => {
+    const deleteDrugLogRecord = (drugLogInfo: DrugLogRecord): void => {
         const drugLogId = drugLogInfo && drugLogInfo.Id;
         if (drugLogId && residentId) {
             deleteDrugLog(medHistoryProvider, drugLogId)
@@ -191,10 +188,10 @@ const OtcPage = (props: IProps) => {
     /**
      * Fires when user clicks on +Log or the drug log edit button
      *
-     * @param {MouseEvent} e
-     * @param {object} drugLogInfo
+     * @param {React.MouseEvent<HTMLElement>} e
+     * @param {DrugLogRecord} drugLogInfo
      */
-    const addEditDrugLog = (e: React.MouseEvent<HTMLElement>, drugLogInfo?: DrugLogRecord) => {
+    const addEditDrugLog = (e: React.MouseEvent<HTMLElement>, drugLogInfo?: DrugLogRecord): void => {
         e.preventDefault();
         const drugLogRecord = drugLogInfo ? drugLogInfo : {
             Id: null,
@@ -373,6 +370,7 @@ const OtcPage = (props: IProps) => {
             <Confirm.Modal
                 size='lg'
                 show={showDeleteDrugLogRecord}
+                yesButtonVariant="danger"
                 onAnswer={(a) => {
                     setShowDeleteDrugLogRecord(false);
                     const drugLog = {...showDeleteDrugLogRecord};

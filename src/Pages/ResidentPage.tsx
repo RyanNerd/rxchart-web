@@ -24,7 +24,7 @@ interface IProps {
  * Display Resident Grid
  * Allow user to edit and add Residents
  *
- * @returns {*}
+ * @param {IProps} props
  * @constructor
  */
 const ResidentPage = (props: IProps) => {
@@ -32,7 +32,6 @@ const ResidentPage = (props: IProps) => {
     const [ residentInfo, setResidentInfo ] = useState<ResidentRecord | null>(null);
     const [ showDeleteResident, setShowDeleteResident ] = useState(false);
     const [ residentToDelete, setResidentToDelete ] = useState<ResidentRecord | null>(null);
-
     const [ residentList, setResidentList ] = useGlobal('residentList');
     const [ , setMedicineList ] = useGlobal('medicineList');
     const [ , setDrugLogList ] = useGlobal('drugLogList');
@@ -41,7 +40,6 @@ const ResidentPage = (props: IProps) => {
     const residentProvider = providers.residentProvider as typeof ResidentProvider;
     const medicineProvider = providers.medicineProvider as typeof MedicineProvider;
     const medHistoryProvider = providers.medHistoryProvider as typeof MedHistoryProvider;
-
     const onError = props.onError;
 
     /**
@@ -70,7 +68,7 @@ const ResidentPage = (props: IProps) => {
                     // Refresh the drugLogList for the new active drug.
                     getMedicineLog(medHistoryProvider, residentId)
                         .then((data) => setDrugLogList(data))
-                        .catch((err) => props.onError(err));
+                        .catch((err) => onError(err));
                 } else {
                     setDrugLogList(null).then(()=>{});
                 }
@@ -81,25 +79,24 @@ const ResidentPage = (props: IProps) => {
     /**
      * Reactivate a trashed resident given the primary key
      *
-     * @param id
-     * @returns {Promise<Response>}
+     * @param {number} id
+     * @returns {Promise<ResidentRecord>}
      */
     const reactivateResident = (id: number): Promise<ResidentRecord> => {
-        return residentProvider.restore({restore_id: id})
-        .then((response: any) => {
-            return response;
+        return residentProvider.restore(id)
+        .then((reactivatedResident) => {
+            return reactivatedResident;
         })
-        .catch((err: Error) =>
-        {
-           onError(err);
-        });
+        .catch((err) => {
+            return err;
+        })
     }
 
     /**
      * Fires when user clicks the Edit button
      *
-     * @param {MouseEvent} e
-     * @param resident
+     * @param {React.MouseEvent<HTMLElement>} e
+     * @param {ResidentRecord} resident
      */
     const handleOnEdit = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
         e.preventDefault();
@@ -110,11 +107,10 @@ const ResidentPage = (props: IProps) => {
     /**
      * Fires when user clicks the + (add) button
      *
-     * @param {MouseEvent} e
+     * @param {React.MouseEvent<HTMLElement>} e
      */
-    const handleAdd = (e: React.MouseEvent<HTMLElement>) => {
+    const handleAdd = (e: React.MouseEvent<HTMLElement>): void => {
         e.preventDefault();
-
         setResidentInfo({
             Id: null,
             FirstName: "",
@@ -129,15 +125,14 @@ const ResidentPage = (props: IProps) => {
     /**
      * Fires when ResidentEdit closes.
      *
-     * @param {object | null} residentInfo
+     * @param {ResidentRecord | null} residentInfo
      */
-    const handleModalClose = (residentInfo: ResidentRecord | null) => {
+    const handleModalClose = (residentInfo: ResidentRecord | null): void => {
         if (residentInfo) {
             const residentData = {...residentInfo};
             if (!residentData.Id) {
                 residentData.Id = null;
             }
-
             const searchExisting = {
                 where: [
                     {column: "FirstName", value: residentData.FirstName},
@@ -159,27 +154,27 @@ const ResidentPage = (props: IProps) => {
                     .then((restoredResident: ResidentRecord) => {
                         refreshResident(restoredResident).then(()=>{})
                     })
-                    .catch((err: Error) => onError(err));
+                    .catch((err) => onError(err));
                 } else {
                     // Add / update the new resident
                     residentProvider.post(residentData)
                     .then((newResident) => {
                         refreshResident(newResident).then(()=>{})
                     })
-                    .catch((err: Error) => onError(err));
+                    .catch((err) => onError(err));
                 }
             })
-            .catch((err: Error) => onError(err));
+            .catch((err) => onError(err));
         }
     }
 
     /**
      * Fires when the selected column / row is clicked
      *
-     * @param {MouseEvent|null} e
-     * @param {object} resident
+     * @param {React.MouseEvent<HTMLElement>} e
+     * @param {ResidentRecord} resident
      */
-    const handleOnSelected = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
+    const handleOnSelected = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord): void => {
         e.preventDefault();
         refreshResident(resident).then(()=>{});
     }
@@ -187,10 +182,10 @@ const ResidentPage = (props: IProps) => {
     /**
      * Fires when user clicks on resident trash icon
      *
-     * @param {MouseEvent} e
-     * @param {object} resident
+     * @param {React.MouseEvent<HTMLElement>} e
+     * @param {ResidentRecord} resident
      */
-    const handleOnDelete = (e: React.MouseEvent, resident: ResidentRecord) =>  {
+    const handleOnDelete = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord): void =>  {
         e.preventDefault();
         setResidentToDelete(resident);
         setShowDeleteResident(true);
@@ -199,7 +194,7 @@ const ResidentPage = (props: IProps) => {
     /**
      * Fires when user confirms to delete resident record
      */
-    const deleteResident = () => {
+    const deleteResident = (): void => {
         if (residentToDelete && residentToDelete.Id) {
             // Perform the DELETE API call
             residentProvider.delete(residentToDelete.Id)
@@ -222,7 +217,7 @@ const ResidentPage = (props: IProps) => {
                     throw(response);
                 }
             })
-            .catch((err: Error) => onError(err));
+            .catch((err) => onError(err));
         }
     }
 
@@ -290,7 +285,7 @@ const ResidentPage = (props: IProps) => {
                     </Confirm.Body>
                 </Confirm.Modal>
             }
-            </>
+        </>
     );
 }
 

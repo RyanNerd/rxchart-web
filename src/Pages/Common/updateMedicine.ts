@@ -4,11 +4,14 @@ import MedicineProvider from "../../providers/MedicineProvider";
 /**
  * Adds or updates the Medicine table with the given drugInfo record.
  *
- * @param medicineProvider
- * @param drugInfo
+ * @param {MedicineProvider} medicineProvider
+ * @param {MedicineRecord} drugInfo
  * @return {Promise<MedicineRecord}>
  */
-export const updateMedicine = (medicineProvider: typeof MedicineProvider, drugInfo: MedicineRecord) => {
+export const updateMedicine = (
+        medicineProvider: typeof MedicineProvider,
+        drugInfo: MedicineRecord
+    ): Promise<MedicineRecord> => {
     const drugData = {...drugInfo};
     if (!drugData.Id) {
         drugData.Id = null;
@@ -24,5 +27,3 @@ export const updateMedicine = (medicineProvider: typeof MedicineProvider, drugIn
         return drugRecord;
     });
 }
-
-

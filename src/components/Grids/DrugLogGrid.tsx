@@ -79,11 +79,12 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
     /**
      * Child component for the table for each drug that has been logged.
      *
-     * @param {object} drug
-     * @returns {*}
+     * @param {DrugLogRecord} drug
+     * @returns {JSX.Element | null}
      */
     const DrugRow = (drug: DrugLogRecord): JSX.Element | null =>
     {
+        // No drug given then no render
         if (drug === null) {
             return null;
         }

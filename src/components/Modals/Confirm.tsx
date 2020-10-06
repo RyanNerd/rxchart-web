@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'reactn';
 import Modal, {ModalProps} from 'react-bootstrap/Modal';
 import Button from "react-bootstrap/Button";
 import {MouseEvent} from "react";
+import {ButtonVariant} from "react-bootstrap/types";
 
 interface IChildren {
     children: any // ReactChildren | ReactChild | JSX.Element[] | JSX.Element | string
@@ -9,6 +10,7 @@ interface IChildren {
 
 interface IProps extends ModalProps {
     onAnswer: (a: boolean) => void,
+    yesButtonVariant?: ButtonVariant
 }
 
 const Confirm = {
@@ -16,6 +18,7 @@ const Confirm = {
         const {
             size = 'sm',
             backdrop = 'static',
+            yesButtonVariant = 'primary',
             onAnswer
         } = {...props};
         const [show, setShow] = useState(props.show);
@@ -49,7 +52,7 @@ const Confirm = {
                 <Modal.Footer>
                     <Button
                         onClick={(e) => handleAnswer(e, true)}
-                        variant="primary"
+                        variant={yesButtonVariant}
                     >
                         Yes
                     </Button>

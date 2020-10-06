@@ -22,46 +22,105 @@ const DEFAULT_REQUEST_CONTENT_TYPE = {
  * A simple implementation of the Fetch API specifically for JSON based Web Service requests and responses
  */
 const Frak = {
+    /**
+     * GET
+     *
+     * @param {string} uri
+     * @param {RequestInit} request
+     * @return Promise<any>
+     */
     get: async <T>(uri: string, request: RequestInit = {}): Promise<T> => {
         const options = Frak._prepRequest('GET', request);
         return await Frak._http<T>(new Request(uri, options));
     },
 
-    post: async <T>(uri: string, body: any, request: RequestInit = {body: JSON.stringify(body) }): Promise<T> => {
+    /**
+     * POST
+     *
+     * @param {string} uri
+     * @param {any} body
+     * @param {RequestInit} request
+     * @return {Promise<any>}
+     */
+    post: async <T>(uri: string, body: any, request: RequestInit = {body: JSON.stringify(body)}): Promise<T> => {
         const options = Frak._prepRequest('POST', request);
         return await Frak._http<T>(new Request(uri, options));
     },
 
-    patch: async <T> (uri: string, body: any, request: RequestInit = {body: JSON.stringify(body) }): Promise<T> => {
+    /**
+     * PATCH
+     * 
+     * @param {string} uri
+     * @param {any} body
+     * @param {RequestInit} request
+     */
+    patch: async <T> (uri: string, body: any, request: RequestInit = {body: JSON.stringify(body)}): Promise<T> => {
         const options = Frak._prepRequest('PATCH', request);
         return await Frak._http<T>(new Request(uri, options));
     },
 
-    put: async <T> (uri: string, body: any, request: RequestInit = {body: JSON.stringify(body) }): Promise<T> => {
+    /**
+     * PUT
+     * 
+     * @param {string} uri
+     * @param {any} body
+     * @param {RequestInit} request
+     */
+    put: async <T> (uri: string, body: any, request: RequestInit = {body: JSON.stringify(body)}): Promise<T> => {
         const options = Frak._prepRequest('PUT', request);
         return await Frak._http<T>(new Request(uri, options));
     },
 
+    /**
+     * DELETE
+     * 
+     * @param {string} uri
+     * @param {RequestInit} request
+     */
     delete: async <T>(uri: string, request: RequestInit = {}): Promise<T> => {
         const options = Frak._prepRequest('DELETE', request);
         return await Frak._http<T>(new Request(uri, options));
     },
 
+    /**
+     * OPTIONS
+     * 
+     * @param {string} uri
+     * @param {RequestInit} request
+     */
     options: async <T> (uri: string, request: RequestInit = {}): Promise<T> => {
         const options = Frak._prepRequest('OPTIONS', request);
         return await Frak._http<T>(new Request(uri, options));
     },
 
+    /**
+     * HEAD
+     * 
+     * @param {string} uri
+     * @param {RequestInit} request
+     */
     head: async <T> (uri: string, request: RequestInit = {}): Promise<T> => {
         const options = Frak._prepRequest('HEAD', request);
         return await Frak._http<T>(new Request(uri, options));
     },
 
+    /**
+     * CONNECT
+     * 
+     * @param {string} uri
+     * @param {RequestInit} request
+     */
     connect: async <T> (uri: string, request: RequestInit = {}): Promise<T> => {
         const options = Frak._prepRequest('CONNECT', request);
         return await Frak._http<T>(new Request(uri, options));
     },
 
+    /**
+     * TRACE
+     * 
+     * @param {string} uri
+     * @param {RequestInit} request
+     */
     trace: async <T> (uri: string, request: RequestInit = {}): Promise<T> => {
         const options = Frak._prepRequest('TRACE', request);
         return await Frak._http<T>(new Request(uri, options));
@@ -72,7 +131,7 @@ const Frak = {
      *
      * @private
      * @param {HTTPMethods} method
-     * @param {RequestInfo} request
+     * @param {RequestInit} request
      */
     _prepRequest: (method: HTTPMethods, request: RequestInit) => {
         const options = {...request};

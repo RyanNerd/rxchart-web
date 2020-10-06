@@ -19,10 +19,7 @@ interface IProps {
 /**
  * Edit Modal for Medicine
  *
- * @param {object} props :
- *          show {boolean} show/hide this modal
- *          drugInfo {Id: id, Drug: drug_name, etc.}
- *
+ * @param {IProps} props
  * @returns {boolean|*}
  * @constructor
  */
@@ -31,9 +28,8 @@ const MedicineEdit = (props: IProps) => {
     const [ drugInfo, setDrugInfo ] = useState<MedicineRecord>(props.drugInfo);
     const [ canSave, setCanSave ] = useState<boolean>(false);
     const [ activeResident ] = useGlobal('activeResident');
-
     const otc = props.otc;
-    const textInput = useRef<any>(null);
+    const textInput = useRef<HTMLInputElement>(null);
 
     // Observer for show
     useEffect(() => {setShow(props.show)}, [props.show]);
@@ -62,7 +58,7 @@ const MedicineEdit = (props: IProps) => {
     /**
      * Fires when a text field or checkbox is changing.
      *
-     * @param {KeyboardEvent} e
+     * @param {React.ChangeEvent<HTMLElement>} e
      */
     const handleOnChange = (e: React.ChangeEvent<HTMLElement>) => {
         const target = e.target as HTMLInputElement;
@@ -75,10 +71,10 @@ const MedicineEdit = (props: IProps) => {
     /**
      * Fires when the user clicks on save or cancel
      *
-     * @param {MouseEvent} e
+     * @param {React.MouseEvent<HTMLElement>} e
      * @param {boolean} shouldSave
      */
-    const handleHide = (e: React.MouseEvent<HTMLElement>, shouldSave: boolean) => {
+    const handleHide = (e: React.MouseEvent<HTMLElement>, shouldSave: boolean): void => {
         e.preventDefault();
         if (shouldSave) {
             props.onClose({...drugInfo});
@@ -93,7 +89,7 @@ const MedicineEdit = (props: IProps) => {
         return null;
     }
 
-    const drugTitleType = drugInfo.Id ? 'Edit ' : 'Add ';
+    const drugTitleType = drugInfo.Id ? 'Edit ' : 'Add ' as string;
     const drugName = drugInfo.Id ? drugInfo.Drug : 'new drug';
     const fullName = activeResident && FullName(activeResident);
     const modalTitle = otc ?
@@ -119,14 +115,18 @@ const MedicineEdit = (props: IProps) => {
 
             <Modal.Body>
                 <Form>
-                    {otc &&
+                    {otc && drugTitleType === 'Edit ' &&
                     <Form.Group as={Row} controlId="otc-alert">
-                        <Form.Label column sm="2">
-                            OTC Warning
+                        <Form.Label
+                            column sm="2"
+                        >
+                            <span style={{color: "red"}}><b>OTC Warning</b></span>
                         </Form.Label>
 
-                        <Alert variant="danger">
-                            CAUTION: Changes to this OTC medicine will affect all residents!
+                        <Alert
+                            variant="danger"
+                        >
+                            <span style={{color: "red"}}><b>CAUTION:</b></span> Changes to this OTC medicine will affect <b>ALL</b> residents!
                         </Alert>
                     </Form.Group>
                     }
@@ -264,7 +264,7 @@ const MedicineEdit = (props: IProps) => {
                 <Button
                     disabled={!canSave}
                     onClick={(e) => handleHide(e, true)}
-                    variant="primary"
+                    variant={otc && drugTitleType === 'Edit ' ? "danger" : "primary"}
                 >
                     Save changes
                 </Button>

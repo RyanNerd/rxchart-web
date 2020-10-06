@@ -9,6 +9,13 @@ interface IProps {
     otcList: MedicineRecord[] | null
 }
 
+/**
+ * DrugHistoryPage
+ * DrugLogGrid with a Print button
+ *
+ * @param {IProps} props
+ * @constructor
+ */
 const DrugHistoryPage = (props: IProps) => {
     const {
         drugLogList,

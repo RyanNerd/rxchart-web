@@ -11,14 +11,16 @@ import ManageOtcPage from "./ManageOtcPage";
 import {MedicineRecord} from "../types/RecordTypes";
 import {useEffect} from "react";
 
+/**
+ * Landing Page - Tab Page Menu UI
+ * @constructor
+ */
 const LandingPage = () => {
     const [ apiKey, setApiKey ] = useGlobal('apiKey');
     const [ activeResident ] = useGlobal('activeResident');
     const [ development ] = useGlobal('development');
-
     const [ errorDetails, setErrorDetails ] = useState<string | null>(null);
     const [ activeTabKey, setActiveTabKey ] = useState<string | null>('login');
-
     const [ drugLogList ] = useGlobal('drugLogList');
     const [ medicineList ] = useGlobal<MedicineRecord>('medicineList');
     const [ otcList ] = useGlobal('otcList');
@@ -26,7 +28,7 @@ const LandingPage = () => {
     /**
      * Error handler
      *
-     * @param {Error | null} err
+     * @param {Error} err
      */
     const errorOccurred = (err: Error) => {
         if (development) {

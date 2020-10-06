@@ -2,6 +2,9 @@ import {MedicineRecord} from "../types/RecordTypes";
 import Frak from "./Frak";
 import {ProviderTypes} from "../types/ProviderTypes";
 
+type DeleteResponse = ProviderTypes.Medicine.DeleteResponse;
+type RecordResponse = ProviderTypes.Medicine.RecordResponse;
+
 /**
  * MedicineProvider API connector
  */
@@ -14,7 +17,8 @@ const MedicineProvider = {
      * MedicineProvider constructor
      * 
      * @constructor
-     * @param rxFrak
+     * @param {frak: Frak, baseUrl: string, apiKey: string} rxFrak
+     * @return {MedicineProvider}
      */
     init: (
         rxFrak: {
@@ -32,11 +36,11 @@ const MedicineProvider = {
      * Search Interface
      *
      * @param {object} options
-     * @returns {Promise<Response>}
+     * @returns {Promise<MedicineRecord[]>}
      */
     search: (options: object): Promise<MedicineRecord[]> => {
-        let uri = MedicineProvider._baseUrl + 'medicine/search?api_key=' + MedicineProvider._apiKey;
-        return MedicineProvider._frak.post<{success: boolean, data: any, status: number}>(uri, options)
+        const uri = MedicineProvider._baseUrl + 'medicine/search?api_key=' + MedicineProvider._apiKey;
+        return MedicineProvider._frak.post<RecordResponse>(uri, options)
         .then((response) => {
             if (response.success) {
                 return response.data;
@@ -48,8 +52,7 @@ const MedicineProvider = {
             }
         })
         .catch((err) => {
-            console.error(err);
-            alert('MedicineProvider.search() error -- see console log');
+            return err;
         });
     },
 
@@ -57,10 +60,12 @@ const MedicineProvider = {
      * Read interface
      *
      * @param {string | number} id
-     * @returns {Promise<Response>}
+     * @returns {Promise<MedicineRecord>}
      */
     read: (id: number | string): Promise<MedicineRecord> => {
-        return MedicineProvider._frak.get<{success: boolean, data: any, status: number}>(MedicineProvider._baseUrl + 'medicine/'+ id + '?api_key=' + MedicineProvider._apiKey)
+        const apiKey = MedicineProvider._apiKey;
+        const uri =  MedicineProvider._baseUrl + 'medicine/' + id + '?api_key=' + apiKey;
+        return MedicineProvider._frak.get<RecordResponse>(uri)
         .then((response) => {
             if (response.success) {
                 return response.data;
@@ -69,19 +74,20 @@ const MedicineProvider = {
             }
         })
         .catch((err) => {
-            console.error(err);
-            alert('MedicineProvider.read() error -- see console log');
+            return err;
         });
     },
 
     /**
      * Post interface
      *
-     * @param {object} drugInfo
-     * @returns {Promise<Response>}
+     * @param {MedicineRecord} drugInfo
+     * @returns {Promise<MedicineRecord>}
      */
     post: (drugInfo: MedicineRecord): Promise<MedicineRecord> => {
-        return MedicineProvider._frak.post<ProviderTypes.Medicine.RecordResponse>(MedicineProvider._baseUrl + 'medicine?api_key=' + MedicineProvider._apiKey, drugInfo)
+        const apiKey = MedicineProvider._apiKey;
+        const uri = MedicineProvider._baseUrl + 'medicine?api_key=' + apiKey;
+        return MedicineProvider._frak.post<RecordResponse>(uri, drugInfo)
         .then((response) => {
             if (response.success) {
                 return response.data;
@@ -98,10 +104,12 @@ const MedicineProvider = {
      * Delete interface
      *
      * @param {string | number} drugId
-     * @returns {Promise<Response>}
+     * @returns {Promise<DeleteResponse>}
      */
-    delete: (drugId: string | number) => {
-        return MedicineProvider._frak.delete<ProviderTypes.Medicine.DeleteResponse>(MedicineProvider._baseUrl + 'medicine/' + drugId + '?api_key=' + MedicineProvider._apiKey)
+    delete: (drugId: string | number): Promise<DeleteResponse> => {
+        const apiKey = MedicineProvider._apiKey;
+        const uri = MedicineProvider._baseUrl + 'medicine/' + drugId + '?api_key=' + apiKey;
+        return MedicineProvider._frak.delete<RecordResponse>(uri)
         .then((response) => {
             if (response.success) {
                 return response;
@@ -110,7 +118,6 @@ const MedicineProvider = {
             }
         })
         .catch((err) => {
-            console.log('MedicineProvider.delete() error -- see console log', err);
             return err;
         });
     }

@@ -2,7 +2,7 @@ import React, {useGlobal, useState} from 'reactn';
 import Table from "react-bootstrap/Table";
 import MedicineDetail from "../components/Grids/MedicineDetail";
 import MedicineEdit from "../components/Modals/MedicineEdit";
-import DeleteMedicine from "./Common/deleteMedicine";
+import deleteMedicine from "./Common/deleteMedicine";
 import TooltipButton from "../components/Buttons/TooltipButton";
 import MedicineProvider from "../providers/MedicineProvider";
 import {MedicineRecord, newDrugInfo} from "../types/RecordTypes";
@@ -25,11 +25,9 @@ interface IProps {
 const ManageDrugPage = (props: IProps) => {
     const [ medicineList, setMedicineList ] = useGlobal<MedicineRecord>('medicineList');
     const [ activeResident ]= useGlobal('activeResident');
-
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDeleteMedicine, setShowDeleteMedicine ] = useState(false);
     const [ medicineInfo, setMedicineInfo ] = useState<MedicineRecord | null>(null);
-
     const providers = useProviders();
     const medicineProvider = providers.medicineProvider as typeof MedicineProvider;
     const onError = props.onError;
@@ -37,8 +35,8 @@ const ManageDrugPage = (props: IProps) => {
     /**
      * Fires when the Edit button is clicked
      *
-     * @param {MouseEvent} e
-     * @param {object} medicine
+     * @param {React.MouseEvent<HTMLElement>} e
+     * @param {MedicineRecord | null} medicine
      */
     const onEdit = (e: React.MouseEvent<HTMLElement>, medicine: MedicineRecord | null) => {
         e.preventDefault();
@@ -61,9 +59,8 @@ const ManageDrugPage = (props: IProps) => {
     /**
      * Handle the delete click event.
      *
-     * @param {MouseEvent} e
-     * @param {object} medicine
-
+     * @param {React.MouseEvent<HTMLElement>} e
+     * @param {MedicineRecord} medicine
      */
     const onDelete = (e: React.MouseEvent<HTMLElement>, medicine: MedicineRecord) => {
         e.preventDefault();
@@ -74,20 +71,18 @@ const ManageDrugPage = (props: IProps) => {
     /**
      * Fires when user confirms to delete the medication.
      */
-    const deleteMedicine = () => {
+    const deleteDrug = (): void => {
         if (medicineInfo && medicineInfo.Id && activeResident) {
-            DeleteMedicine(medicineProvider, medicineInfo.Id)
-            .then((deleted: any) => {
-                if (deleted) {
-                    if (activeResident.Id) {
-                        getMedicineList(medicineProvider, activeResident.Id)
-                        .then((data) => {
-                            setMedicineList(data).then(() => {});
-                        });
-                    }
+            deleteMedicine(medicineProvider, medicineInfo.Id)
+            .then((deleted) => {
+                if (deleted && activeResident.Id) {
+                    getMedicineList(medicineProvider, activeResident.Id)
+                    .then((drugRecords) => {
+                        setMedicineList(drugRecords).then(() => {});
+                    });
                 }
-            });
-            setShowDeleteMedicine(false);
+            })
+            .catch((err) => onError(err));
         }
     }
 
@@ -166,9 +161,10 @@ const ManageDrugPage = (props: IProps) => {
             {medicineInfo && showDeleteMedicine &&
                 <Confirm.Modal
                     show={showDeleteMedicine}
+                    yesButtonVariant="danger"
                     onAnswer={(a) => {
                         setShowDeleteMedicine(false);
-                        if (a) {deleteMedicine()}
+                        if (a) {deleteDrug()}
                     }}
                 >
                     <Confirm.Header>

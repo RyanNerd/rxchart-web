@@ -23,6 +23,7 @@ interface IProps {
 /**
  * Sign in page
  *
+ * @param {IProps} props
  * @returns {*}
  * @constructor
  */
@@ -30,14 +31,12 @@ const LoginPage = (props: IProps) => {
     const [ userName, setUserName ] = useState('');
     const [ password, setPassword ] = useState('');
     const [ showAlert, setShowAlert ] = useState(false);
-
     const [ apiKey, setApiKey ] = useGlobal('apiKey');
     const [ baseUrl ] = useGlobal('baseUrl');
     const [ , setResidentList ] = useGlobal('residentList');
     const [ , setOtcList ] = useGlobal<any>('otcList');
     const [ , setProviders ] = useGlobal('providers');
-
-    const focusRef = useRef<any>(null);
+    const focusRef = useRef<HTMLInputElement>(null);
     const {
         onError,
         activeTabKey,
@@ -54,7 +53,7 @@ const LoginPage = (props: IProps) => {
     /**
      * Fires when the Login Button is clicked
      *
-     * @param {MouseEvent} e
+     * @param {React.MouseEvent<HTMLElement>} e
      */
     const login = (e: React.KeyboardEvent<HTMLElement> | React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
@@ -112,7 +111,7 @@ const LoginPage = (props: IProps) => {
                 setShowAlert(true);
             }
         })
-        .catch((err) => {
+        .catch((err: Error) => {
             onError(err);
         });
     }
@@ -120,11 +119,10 @@ const LoginPage = (props: IProps) => {
     /**
      * Fires when the Logout Button is clicked
      *
-     * @param {MouseEvent} e
+     * @param {React.MouseEvent<HTMLElement>} e
      */
     const logout = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
-
         setGlobal(initialState)
         .then(()=> console.log('logout successful'))
         .catch((err) => onError(err))

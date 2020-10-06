@@ -2,6 +2,9 @@ import {ResidentRecord} from "../types/RecordTypes";
 import Frak from "./Frak";
 import {ProviderTypes} from "../types/ProviderTypes";
 
+type RecordResponse = ProviderTypes.Resident.RecordResponse;
+type DeleteResponse = ProviderTypes.Resident.DeleteResponse;
+
 /**
  * ResidentProvider API service connector
  */
@@ -13,7 +16,7 @@ const ResidentProvider = {
     /**
      * ResidentProvider Constructor
      *
-     * @param {object} rxFrak
+     * @param {frak: Frak, baseUrl: string, apiKey: string} rxFrak
      */
     init: (
         rxFrak: {
@@ -32,11 +35,11 @@ const ResidentProvider = {
      * Search Interface
      *
      * @param {object} options
-     * @returns {Promise<Response>}
+     * @returns {Promise<ResidentRecord[]>}
      */
     search: (options: object): Promise<ResidentRecord[]> => {
-        let uri = ResidentProvider._baseUrl + 'resident/search?api_key=' + ResidentProvider._apiKey;
-        return ResidentProvider._frak.post<ProviderTypes.Resident.RecordResponse>(uri, options)
+        const uri = ResidentProvider._baseUrl + 'resident/search?api_key=' + ResidentProvider._apiKey;
+        return ResidentProvider._frak.post<RecordResponse>(uri, options)
         .then((response) => {
             if (response.success) {
                 return response.data;
@@ -44,12 +47,10 @@ const ResidentProvider = {
                 if (response.status === 404) {
                     return [];
                 }
-                throw new Error(response.toString());
+                throw response;
             }
         })
         .catch((err) => {
-            console.log('ResidentProvider.search()', err);
-            alert('ResidentProvider.search() error -- see console log');
             return err;
         });
     },
@@ -57,57 +58,33 @@ const ResidentProvider = {
     /**
      * Restore Interface
      *
-     * @param {object} record
-     * @returns {Promise<Response>}
+     * @param {restore_id: number} record
+     * @returns {Promise<ResidentRecord>}
      */
-    restore: (record: {restore_id: number }) => {
-        let uri = ResidentProvider._baseUrl + 'resident/restore?api_key=' + ResidentProvider._apiKey;
-        return ResidentProvider._frak.post<ResidentRecord>(uri, record)
+    restore: (record: number): Promise<ResidentRecord> => {
+        const uri = ResidentProvider._baseUrl + 'resident/restore?api_key=' + ResidentProvider._apiKey;
+        return ResidentProvider._frak.post<RecordResponse>(uri, record)
         .then((response) => {
             if (response.success) {
                 return response.data;
-            } else {
-                if (response.status === 404) {
-                    throw new Error('Record not found to restore.');
-                }
-                throw new Error(response.toString());
             }
+            throw response;
         })
-        .catch((err: Error) => {
-            console.log('ResidentProvider.restore()', err);
-            alert('ResidentProvider.restore() error -- see console log');
+        .catch((err) => {
+            return err;
         });
     },
 
     /**
      * Read Interface
      *
-     * @param {string | number} id
+     * @param {number} id
      * @returns {Promise<Response>}
      */
-    read: (id: string | number) => {
-        return ResidentProvider._frak.get<ResidentRecord>(ResidentProvider._baseUrl + 'resident/'+ id + '?api_key=' + ResidentProvider._apiKey)
-        .then((response) => {
-            if (response.success) {
-                return response.data;
-            } else {
-                throw new Error(response.toString());
-            }
-        })
-        .catch((err: any) => {
-            console.log('ResidentProvider.read()', err);
-            alert('ResidentProvider.read() error -- see console log');
-        });
-    },
-
-    /**
-     * Post interface
-     *
-     * @param {object} residentInfo
-     * @returns {Promise<Response>}
-     */
-    post: (residentInfo: ResidentRecord) => {
-        return ResidentProvider._frak.post<ResidentRecord>(ResidentProvider._baseUrl + 'resident?api_key=' + ResidentProvider._apiKey, residentInfo)
+    read: (id: number): Promise<ResidentRecord> => {
+        const apiKey = ResidentProvider._apiKey;
+        const uri = ResidentProvider._baseUrl + 'resident/'+ id + '?api_key=' + apiKey;
+        return ResidentProvider._frak.get<RecordResponse>(uri)
         .then((response) => {
             if (response.success) {
                 return response.data;
@@ -115,7 +92,29 @@ const ResidentProvider = {
                 throw response;
             }
         })
-        .catch((err: any) => {
+        .catch((err) => {
+            return err;
+        });
+    },
+
+    /**
+     * Post interface
+     *
+     * @param {ResidentRecord} residentInfo
+     * @returns {Promise<ResidentRecord>}
+     */
+    post: (residentInfo: ResidentRecord): Promise<ResidentRecord> => {
+        const apiKey = ResidentProvider._apiKey;
+        const uri = ResidentProvider._baseUrl + 'resident?api_key=' + apiKey;
+        return ResidentProvider._frak.post<RecordResponse>(uri, residentInfo)
+        .then((response) => {
+            if (response.success) {
+                return response.data;
+            } else {
+                throw response;
+            }
+        })
+        .catch((err) => {
             return err;
         })
     },
@@ -123,11 +122,13 @@ const ResidentProvider = {
     /**
      * Delete interface
      *
-     * @param {string | number} residentId
-     * @returns {Promise<Response>}
+     * @param {number} residentId
+     * @returns {Promise<DeleteResponse>}
      */
-    delete: (residentId: string | number) => {
-        return ResidentProvider._frak.delete<{success: boolean}>(ResidentProvider._baseUrl + 'resident/' + residentId + '?api_key=' + ResidentProvider._apiKey)
+    delete: (residentId: number): Promise<DeleteResponse> => {
+        const apiKey = ResidentProvider._apiKey;
+        const uri = ResidentProvider._baseUrl + 'resident/' + residentId + '?api_key=' + apiKey;
+        return ResidentProvider._frak.delete<DeleteResponse>(uri)
         .then((response) => {
             if (response.success) {
                 return response;
@@ -135,9 +136,8 @@ const ResidentProvider = {
                 throw response;
             }
         })
-        .catch((err: any) => {
-            console.log('ResidentProvider.delete()', err);
-            return {success: false};
+        .catch((err) => {
+            return err;
         });
     }
 }

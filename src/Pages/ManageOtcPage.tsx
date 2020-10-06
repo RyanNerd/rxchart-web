@@ -2,7 +2,7 @@ import React, {useGlobal, useState} from 'reactn';
 import Table from "react-bootstrap/Table";
 import MedicineDetail from "../components/Grids/MedicineDetail";
 import MedicineEdit from "../components/Modals/MedicineEdit";
-import DeleteMedicine from "./Common/deleteMedicine";
+import deleteMedicine from "./Common/deleteMedicine";
 import TooltipButton from "../components/Buttons/TooltipButton";
 import MedicineProvider from "../providers/MedicineProvider";
 import {MedicineRecord, newDrugInfo} from "../types/RecordTypes";
@@ -24,11 +24,9 @@ interface IProps {
  */
 const ManageOtcPage = (props: IProps) => {
     const [ otcList, setOtcList ] = useGlobal<any>('otcList');
-
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDeleteMedicine, setShowDeleteMedicine ] = useState(false);
     const [ medicineInfo, setMedicineInfo ] = useState<MedicineRecord | null>(null);
-
     const providers  = useProviders();
     const medicineProvider = providers.medicineProvider as typeof MedicineProvider;
     const onError = props.onError;
@@ -63,18 +61,17 @@ const ManageOtcPage = (props: IProps) => {
     /**
      * Fires when user confirms to delete the medicine
      */
-    const deleteMedicine = () => {
+    const deleteDrug = () => {
         if (medicineInfo && medicineInfo.Id) {
-            DeleteMedicine(medicineProvider, medicineInfo.Id)
-            .then((deleted: any) => {
+            deleteMedicine(medicineProvider, medicineInfo.Id)
+            .then((deleted) => {
                 if (deleted) {
                     getOtcList(medicineProvider)
-                    .then((data) => setOtcList(data))
+                    .then((drugRecords) => setOtcList(drugRecords))
                     .catch(() => setOtcList(null));
                 }
             });
         }
-        setShowDeleteMedicine(false);
     }
 
     return (
@@ -157,9 +154,12 @@ const ManageOtcPage = (props: IProps) => {
                 <Confirm.Modal
                     size="lg"
                     show={showDeleteMedicine}
+                    yesButtonVariant="danger"
                     onAnswer={(a)=> {
                         setShowDeleteMedicine(false);
-                        if (a) {deleteMedicine()}
+                        if (a) {
+                            deleteDrug();
+                        }
                     }}
                 >
                     <Confirm.Header>

@@ -33,7 +33,7 @@ interface IProps {
  * MedicinePage
  * UI for logging prescription medications
  *
- * @returns {*}
+ * @param {IProps} props
  */
 const MedicinePage = (props: IProps) => {
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
@@ -46,13 +46,11 @@ const MedicinePage = (props: IProps) => {
     const [ searchText, setSearchText ] = useState('');
     const [ searchIsValid, setSearchIsValid ] = useState(false)
     const focusRef = useRef<HTMLInputElement>(null);
-
     const [ medicineList, setMedicineList ] = useGlobal<any>('medicineList');
     const [ drugLogList, setDrugLogList ] = useGlobal<any>('drugLogList');
     const [ activeResident ] = useGlobal<any>('activeResident');
     const [ providers ] = useGlobal('providers');
     const [ residentId, setResidentId ] = useState<number | null>(activeResident?.Id || null);
-
     const medHistoryProvider = providers.medHistoryProvider as typeof MedHistoryProvider;
     const medicineProvider = providers.medicineProvider as typeof MedicineProvider;
     const onError = props.onError;
@@ -112,10 +110,10 @@ const MedicinePage = (props: IProps) => {
     /**
      * Fires when medicine is added or edited.
      *
-     * @param {MouseEvent} e
+     * @param {React.MouseEvent<HTMLElement>} e
      * @param {boolean} isAdd
      */
-    const addEditDrug = (e: React.MouseEvent<HTMLElement>, isAdd: boolean) => {
+    const addEditDrug = (e: React.MouseEvent<HTMLElement>, isAdd: boolean): void => {
         e.preventDefault();
         if (isAdd) {
             const drugInfo = {...newDrugInfo};
@@ -132,9 +130,9 @@ const MedicinePage = (props: IProps) => {
     /**
      * Fires when MedicineEdit closes.
      *
-     * @param {object | null} drugInfo
+     * @param {MedicineRecord | null} drugInfo
      */
-    const handleMedicineEditModalClose = (drugInfo: MedicineRecord | null) => {
+    const handleMedicineEditModalClose = (drugInfo: MedicineRecord | null): void => {
         const residentId = activeResident?.Id;
         if (drugInfo) {
             updateMedicine(medicineProvider, drugInfo)
@@ -159,9 +157,9 @@ const MedicinePage = (props: IProps) => {
     /**
      * Fires when the user has confirmed the deletion of a drug log record.
      *
-     * @param {object} drugLogInfo
+     * @param {DrugLogRecord} drugLogInfo
      */
-    const deleteDrugLogRecord = (drugLogInfo: DrugLogRecord) => {
+    const deleteDrugLogRecord = (drugLogInfo: DrugLogRecord): void => {
         const drugLogId = drugLogInfo && drugLogInfo.Id;
         if (drugLogId) {
             deleteDrugLog(medHistoryProvider, drugLogId)
@@ -172,17 +170,17 @@ const MedicinePage = (props: IProps) => {
                     throw new Error('DrugLog Delete failed for Record: ' + drugLogId);
                 }
             })
-            .catch((err: Error) => onError(err));
+            .catch((err) => onError(err));
         }
     }
 
     /**
      * Fires when user clicks on +Log or the drug log edit button
      *
-     * @param {MouseEvent} e
-     * @param {object} drugLogInfo
+     * @param {React.MouseEvent<HTMLElement>} e
+     * @param {DrugLogRecord} drugLogInfo
      */
-    const addEditDrugLog = (e: React.MouseEvent<HTMLElement>, drugLogInfo?: DrugLogRecord) => {
+    const addEditDrugLog = (e: React.MouseEvent<HTMLElement>, drugLogInfo?: DrugLogRecord): void => {
         e.preventDefault();
         const drugLogRecord = drugLogInfo ? drugLogInfo : {
             Id: null,
@@ -199,7 +197,7 @@ const MedicinePage = (props: IProps) => {
      *
      * @param {number} amount
      */
-    const handleLogDrugAmount = (amount: number) => {
+    const handleLogDrugAmount = (amount: number): void => {
         const drugId = activeDrug && activeDrug.Id;
         if (drugId) {
             const notes = amount.toString();
@@ -210,8 +208,8 @@ const MedicinePage = (props: IProps) => {
                 Notes: notes
             };
             updateDrugLog(medHistoryProvider, drugLogInfo, residentId)
-                .then((drugLogList) => setDrugLogList(drugLogList))
-                .catch((err) => onError(err))
+            .then((drugLogList) => setDrugLogList(drugLogList))
+            .catch((err) => onError(err))
         }
     }
 
@@ -369,6 +367,7 @@ const MedicinePage = (props: IProps) => {
                     }
                 }
                 show={showDeleteDrugLogRecord}
+                yesButtonVariant="danger"
             >
                 <Confirm.Header>
                     <Confirm.Title>

@@ -1,18 +1,18 @@
-/**
- * Deletes a medicine record given the Id.
- *
- * @param {typeof MedicineProvider} medicineProvider
- * @param {number | string} medicineId
- */
 import MedicineProvider from "../../providers/MedicineProvider";
 import {ProviderTypes} from "../../types/ProviderTypes";
 
-const deleteMedicine = (medicineProvider: typeof MedicineProvider, medicineId: string | number) => {
+/**
+ * Deletes a medicine record given the Id.
+ *
+ * @param {MedicineProvider} medicineProvider
+ * @param {number | string} medicineId
+ */
+const deleteMedicine = (medicineProvider: typeof MedicineProvider, medicineId: string | number): Promise<boolean> => {
     return medicineProvider.delete(medicineId)
     .then((response: ProviderTypes.Medicine.DeleteResponse) => {
         return (response.success);
     })
-    .catch((err: Error) => {
+    .catch((err) => {
         return err;
     });
 }

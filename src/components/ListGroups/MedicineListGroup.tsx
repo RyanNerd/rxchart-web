@@ -60,10 +60,10 @@ const MedicineListGroup = (props: IProps) => {
     /**
      * Determine the tooltip text given the number of hours the drug was last taken
      *
-     * @param {number | null | boolean} lastTaken
-     * @returns {string|null}
+     * @param {number | null} lastTaken
+     * @returns {string | null}
      */
-    const tooltipText = (lastTaken: number | null | boolean) => {
+    const tooltipText = (lastTaken: number | null) => {
         if (lastTaken === null || !lastTaken) return null;
         if (lastTaken <= 1) {
             return activeDrug.Drug + " taken in the last hour";
@@ -71,10 +71,6 @@ const MedicineListGroup = (props: IProps) => {
         if (lastTaken <=4) {
             return activeDrug.Drug + " recently taken";
         }
-        return null;
-    }
-
-    if (DrugDropdown === null) {
         return null;
     }
 

@@ -17,24 +17,20 @@ interface IProps {
 /**
  * Edit Modal for Resident
  *
- * @param props :
- *          show {boolean} show/hide this modal
- *          residentInfo {Id: id, FirstName: first_name, etc.}
- *
+ * @param {IProps} props
  * @returns {boolean|*}
  * @constructor
  */
 const ResidentEdit = (props: IProps) => {
-    // Set up local initial state
     const [ show, setShow ] = useState(props.show);
     const [ residentInfo, setResidentInfo ] = useState<ResidentRecord>(props.residentInfo);
     const onHide = props.onHide || null;
-    const focusRef = useRef<any>(null);
+    const focusRef = useRef<HTMLInputElement>(null);
 
     /**
      * Fires when a text field or checkbox is changing.
      *
-     * @param {KeyboardEvent} e
+     * @param {React.KeyboardEvent<HTMLElement>} e
      */
     const handleOnChange = (e: React.ChangeEvent<HTMLElement>) => {
         const target = e.target as HTMLInputElement;
@@ -47,10 +43,10 @@ const ResidentEdit = (props: IProps) => {
     /**
      * Fires when the user clicks on save or cancel
      *
-     * @param {MouseEvent} e
+     * @param {React.MouseEvent<HTMLElement>} e
      * @param {boolean} shouldSave
      */
-    const handleHide = (e: React.MouseEvent<HTMLElement>, shouldSave: boolean) => {
+    const handleHide = (e: React.MouseEvent<HTMLElement>, shouldSave: boolean): void => {
         e.preventDefault();
         if (shouldSave) {
             props.onClose({...residentInfo});
@@ -61,9 +57,7 @@ const ResidentEdit = (props: IProps) => {
     }
 
     // Observer for show
-    useEffect(() => {
-        setShow(props.show)
-    }, [props.show]);
+    useEffect(() => {setShow(props.show)}, [props.show]);
 
     // Observer for residentInfo property
     useEffect(() => {
@@ -84,7 +78,7 @@ const ResidentEdit = (props: IProps) => {
           centered
           size="lg"
           show={show}
-          onEntered={() => focusRef.current.focus()}
+          onEntered={() => focusRef?.current?.focus()}
           onHide={() => {if (onHide) {onHide()}}}
         >
             <Modal.Header closeButton>

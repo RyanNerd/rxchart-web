@@ -1,4 +1,5 @@
 import {DrugLogRecord, ResidentRecord} from "../types/RecordTypes";
+import {Variant} from "react-bootstrap/types";
 
 interface IKey {
     [key: string]: any
@@ -17,9 +18,9 @@ export const DOB = (resident: ResidentRecord): string => {
 /**
  * Given the month day and year return the date as a string in the format mm/dd/yyyy
  *
- * @param {number} month
- * @param {number} day
- * @param {number} year
+ * @param {string} month
+ * @param {string} day
+ * @param {string} year
  * @return {string}
  */
 export const DateToString = (month: string, day: string, year: string): string => {
@@ -39,10 +40,10 @@ export const FullName = (resident: ResidentRecord): string => {
 /**
  * Given a month numeric return 'is-invalid' if the number isn't between 1 and 12, otherwise return ''.
  *
- * @param {number} month
- * @returns {string}
+ * @param {string} month
+ * @returns {'' | 'is-invalid'}
  */
-export const isMonthValid = (month: string): string => {
+export const isMonthValid = (month: string): '' | 'is-invalid' => {
     return (parseInt(month) >= 1 && parseInt(month) <= 12) ? '' : 'is-invalid';
 };
 
@@ -51,9 +52,9 @@ export const isMonthValid = (month: string): string => {
  *
  * @param {string} day
  * @param {string} month
- * @return {string}
+ * @return {'' | 'is-invalid'}
  */
-export const isDayValid = (day: string, month: string): string => {
+export const isDayValid = (day: string, month: string): '' | 'is-invalid' => {
     let maxDay = 28;
     const nMonth = parseInt(month);
     const nDay = parseInt(day);
@@ -82,7 +83,7 @@ export const isDayValid = (day: string, month: string): string => {
  * @param {boolean} isDOB
  * @return {string}
  */
-export const isYearValid = (year: string, isDOB: boolean): string => {
+export const isYearValid = (year: string, isDOB: boolean): '' | 'is-invalid' => {
     const nYear = parseInt(year);
     if (isDOB) {
         const today = new Date();
@@ -96,6 +97,7 @@ export const isYearValid = (year: string, isDOB: boolean): string => {
 
 /**
  * Return a random string.
+ *
  * @return {string}
  */
 export const randomString = (): string => {
@@ -105,15 +107,15 @@ export const randomString = (): string => {
 
 /**
  * Return in hours how long it has been since a drug was last taken.
+ *
  * @param {number} drugId
- * @param {array<object>} drugLogList
+ * @param {DrugLogRecord[]} drugLogList
  * @returns {null | number}
  */
-export const calculateLastTaken = (drugId: number, drugLogList:Array<DrugLogRecord>): number | null => {
+export const calculateLastTaken = (drugId: number, drugLogList:DrugLogRecord[]): number | null => {
     if (drugLogList === null) {
         return null;
     }
-
     let diff = null;
     const filteredDrugs = drugLogList.filter(drug => drug && drug.MedicineId === drugId);
     const latestDrug = filteredDrugs && filteredDrugs.length > 0 ? filteredDrugs[0] : null;
@@ -130,10 +132,10 @@ export const calculateLastTaken = (drugId: number, drugLogList:Array<DrugLogReco
  * Determine the variant string given the lastTaken hours value.
  *
  * @param {number | null} lastTaken
- * @return string
+ * @return {Variant}
  */
-export const getLastTakenVariant = (lastTaken: number | null): string => {
-    let warningColor: string;
+export const getLastTakenVariant = (lastTaken: number | null): Variant => {
+    let warningColor = 'primary';
     switch (lastTaken) {
         case null: warningColor = 'primary';
             break;
@@ -176,7 +178,8 @@ export const isToday = (date: Date): boolean => {
 /**
  * Given a string or Date object return the formatted string of the date: mm/dd/yyyy, hh:mm AM
  *
- * @param date
+ * @param {Date | string} date
+ * @return {string}
  */
 export const getFormattedDate = (date: Date | string): string => {
     if (typeof date === 'string') {
@@ -195,7 +198,7 @@ export const getFormattedDate = (date: Date | string): string => {
 /**
  * Return an object in an array that matches the object.propName === searchValue
  *
- * @param {object[]} objectList
+ * @param {IKey} objectList
  * @param {string} propName
  * @param {any} searchValue
  * @return Object

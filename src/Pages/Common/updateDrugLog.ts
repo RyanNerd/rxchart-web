@@ -9,9 +9,13 @@ import getMedicineLog from "./getMedicineLog";
  * @param {MedHistoryProvider} medHistoryProvider
  * @param {DrugLogRecord} drugLogInfo
  * @param {number} residentId
- * @return {}Promise<DrugLogRecord[]>}
+ * @return {Promise<DrugLogRecord[]>}
  */
-export const updateDrugLog = (medHistoryProvider: typeof MedHistoryProvider, drugLogInfo: DrugLogRecord, residentId: number) => {
+export const updateDrugLog = (
+        medHistoryProvider: typeof MedHistoryProvider,
+        drugLogInfo: DrugLogRecord,
+        residentId: number
+    ): Promise<DrugLogRecord[]> => {
     return medHistoryProvider.post(drugLogInfo)
     .then(() => {
         return getMedicineLog(medHistoryProvider, residentId)
