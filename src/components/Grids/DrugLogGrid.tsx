@@ -2,7 +2,7 @@ import React from 'reactn';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import {DrugLogRecord, MedicineRecord} from "../../types/RecordTypes";
-import {getFormattedDate, isToday} from "../../utility/common";
+import {getFormattedDate, getObjectByProperty, isToday} from "../../utility/common";
 
 interface IProps {
     drugLog?: DrugLogRecord[] | null,
@@ -34,6 +34,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
         columns = ['Created', 'Updated', 'Amount']
     } = props;
 
+    // If there are no drugs logged then return a generic table to keep the UI layout consistant
     if (!drugLog || drugLog.length === 0) {
         return <Table
             size="sm"
@@ -58,25 +59,22 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
      * @param {string} columnName
      * @returns {null|*}
      */
-    const drugColumnLookup = (drugId?: number, columnName?: string) => {
-        if (medicineList && drugId && columnName) {
-            const medicine = medicineList.filter(drug => drug.Id === drugId);
-            if (medicine.length === 1) {
-                const drug = medicine[0];
-                return drug[columnName];
+    const drugColumnLookup = (drugId: number, columnName: string) => {
+        if (medicineList && drugId) {
+            const medicine = getObjectByProperty(medicineList, 'Id', drugId) as MedicineRecord;
+            if (medicine) {
+                return medicine[columnName];
             }
         }
 
-        if (otcList && columnName) {
-            const otc = otcList.filter(drug => drug.Id === drugId);
-            if (otc.length === 1) {
-                const otcDrug = otc[0];
-                return otcDrug[columnName];
+        if (otcList && drugId) {
+            const otc = getObjectByProperty(otcList, 'Id', drugId) as MedicineRecord;
+            if (otc) {
+                return otc[columnName];
             }
         }
-
         return null;
-    }
+   }
 
     /**
      * Child component for the table for each drug that has been logged.
