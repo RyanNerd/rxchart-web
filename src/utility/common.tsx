@@ -135,7 +135,7 @@ export const calculateLastTaken = (drugId: number, drugLogList:DrugLogRecord[]):
  * @return {Variant}
  */
 export const getLastTakenVariant = (lastTaken: number | null): Variant => {
-    let warningColor = 'primary';
+    let warningColor;
     switch (lastTaken) {
         case null: warningColor = 'primary';
             break;
