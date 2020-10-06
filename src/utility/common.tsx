@@ -1,5 +1,9 @@
 import {DrugLogRecord, ResidentRecord} from "../types/RecordTypes";
 
+interface IKey {
+    [key: string]: any
+}
+
 /**
  * Given a ResidentRecord return the resident's DOB as a string.
  *
@@ -186,4 +190,16 @@ export const getFormattedDate = (date: Date | string): string => {
         minute: '2-digit',
         hour12: true
     });
+}
+
+/**
+ * Return an object in an array that matches the object.propName === searchValue
+ *
+ * @param {object[]} objectList
+ * @param {string} propName
+ * @param {any} searchValue
+ * @return Object
+ */
+export const getObjectByProperty = (objectList: IKey, propName: string, searchValue: any): object => {
+    return objectList.find((obj: IKey) => (obj[propName] === searchValue));
 }

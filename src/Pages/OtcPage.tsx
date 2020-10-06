@@ -8,7 +8,7 @@ import MedicineEdit from "../components/Modals/MedicineEdit";
 import DrugLogGrid from "../components/Grids/DrugLogGrid";
 import DrugLogEdit from "../components/Modals/DrugLogEdit";
 import MedicineListGroup from "../components/ListGroups/MedicineListGroup";
-import {calculateLastTaken, getFormattedDate, getLastTakenVariant} from "../utility/common";
+import {calculateLastTaken, getFormattedDate, getLastTakenVariant, getObjectByProperty} from "../utility/common";
 import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../types/RecordTypes";
 import LastTakenButton from "../components/Buttons/LastTakenButton";
 import searchDrugs from "../utility/searchDrugs";
@@ -227,6 +227,17 @@ const OtcPage = (props: IProps) => {
         }
     }
 
+    /**
+     * Given the MedicineId return the name of the drug
+     *
+     * @param {number} id
+     * @return {string}
+     */
+    const getDrugName = (id: number): string => {
+        const drug = getObjectByProperty(otcList, 'Id', id) as MedicineRecord;
+        return drug.Drug;
+    }
+
     return (
         <Form>
             <Form.Group className={TabContent} as={Row}>
@@ -370,8 +381,7 @@ const OtcPage = (props: IProps) => {
             >
                 <Confirm.Header>
                     <Confirm.Title>
-                        {/* FIXME: Look up Drug name */}
-                        Delete {showDeleteDrugLogRecord.Drug} Log Record
+                        Delete {getDrugName(showDeleteDrugLogRecord.MedicineId)} Log Record
                     </Confirm.Title>
                 </Confirm.Header>
                 <Confirm.Body>

@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'reactn';
 import Modal, {ModalProps} from 'react-bootstrap/Modal';
 import Button from "react-bootstrap/Button";
-import {MouseEvent, ReactChild, ReactChildren} from "react";
+import {MouseEvent} from "react";
 
 interface IChildren {
-    children: ReactChildren | ReactChild | JSX.Element[] | JSX.Element | string
+    children: any // ReactChildren | ReactChild | JSX.Element[] | JSX.Element | string
 }
 
 interface IProps extends ModalProps {
