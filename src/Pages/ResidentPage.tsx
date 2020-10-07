@@ -46,33 +46,35 @@ const ResidentPage = (props: IProps) => {
      * Given a ResidentRecord set it as the activeResident,
      * rehydrate the ResidentList, Get and set all meds and drug history for the resident
      *
-     * @param {ResidentRecord} resident
      * @return Promise<void>
      */
-    const refreshResident = (resident: ResidentRecord): Promise<void> => {
+    const refreshResidentList = (): Promise<void> => {
         return getResidentList(residentProvider)
         .then((residentList: ResidentRecord[]) => {
-            // Rehydrate the residentList
             setResidentList(residentList).then(()=>{});
-            // Set the resident as the active resident.
-            setActiveResident(resident).then(()=>{});
-            // Rehydrate the MedicineList
-            const residentId = resident.Id as number;
-            getMedicineList(medicineProvider, residentId)
-            .then((hydratedMedicineList) => {
-                setMedicineList (hydratedMedicineList).then(()=>{});
-                // If there are any medicines for the selected resident then
-                // select the first one and make it the active drug.
-                if (hydratedMedicineList && hydratedMedicineList.length > 0) {
-                    // Refresh the drugLogList for the new active drug.
-                    getMedicineLog(medHistoryProvider, residentId)
-                        .then((data) => setDrugLogList(data))
-                        .catch((err) => onError(err));
-                } else {
-                    setDrugLogList(null).then(()=>{});
-                }
-            });
         })
+    }
+
+    /**
+     * Refresh the medicineList and medicineLog for the given residentId
+     *
+     * @param {number} residentId
+     */
+    const refreshLogs = (residentId: number): Promise<void> => {
+        return getMedicineList(medicineProvider, residentId)
+        .then((hydratedMedicineList) => {
+            setMedicineList (hydratedMedicineList).then(()=>{});
+            // If there are any medicines for the selected resident then
+            // select the first one and make it the active drug.
+            if (hydratedMedicineList && hydratedMedicineList.length > 0) {
+                // Refresh the drugLogList for the new active drug.
+                getMedicineLog(medHistoryProvider, residentId)
+                .then((data) => setDrugLogList(data))
+                .catch((err) => onError(err));
+            } else {
+                setDrugLogList(null).then(()=>{});
+            }
+        });
     }
 
     /**
@@ -147,18 +149,31 @@ const ResidentPage = (props: IProps) => {
             // Check if the added resident exists but is trashed.
             residentProvider.search(searchExisting)
             .then((result) => {
+                const trashedResidentId = (result.length === 1) ? result[0].Id : null;
                 // Do we have a trashed resident? Reactivate them, otherwise add as a new resident.
-                if (result.length === 1 && result[0] && result[0].Id) {
-                    reactivateResident(result[0].Id)
+                if (trashedResidentId) {
+                    reactivateResident(trashedResidentId)
                     .then((restoredResident: ResidentRecord) => {
-                        refreshResident(restoredResident).then(()=>{})
+                        refreshResidentList().then(()=>{
+                            // Set the resident as the active resident.
+                            setActiveResident(restoredResident).then(()=>{});
+                            // Refresh the logs for the resident.
+                            const residentId = restoredResident.Id as number;
+                            return refreshLogs(residentId);
+                        })
                     })
                     .catch((err) => onError(err));
                 } else {
                     // Add / update the new resident
                     residentProvider.post(residentData)
                     .then((newResident) => {
-                        refreshResident(newResident).then(()=>{})
+                        refreshResidentList().then(()=>{
+                            // Set the resident as the active resident.
+                            setActiveResident(newResident).then(()=>{});
+                            // Logs will be empty for new residents
+                            setMedicineList ([]).then(()=>{});
+                            setDrugLogList([]).then(()=>{});
+                        })
                     })
                     .catch((err) => onError(err));
                 }
@@ -175,7 +190,11 @@ const ResidentPage = (props: IProps) => {
      */
     const handleOnSelected = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord): void => {
         e.preventDefault();
-        refreshResident(resident).then(()=>{});
+        const residentId = resident.Id as number;
+        // Set the resident as the active resident and refresh the logs
+        setActiveResident(resident).then(()=>{
+            refreshLogs(residentId).then(()=>{});
+        });
     }
 
     /**

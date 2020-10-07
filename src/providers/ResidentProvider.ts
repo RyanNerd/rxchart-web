@@ -58,12 +58,13 @@ const ResidentProvider = {
     /**
      * Restore Interface
      *
-     * @param {restore_id: number} record
+     * @param {restore_id: number} residentId
      * @returns {Promise<ResidentRecord>}
      */
-    restore: (record: number): Promise<ResidentRecord> => {
+    restore: (residentId: number): Promise<ResidentRecord> => {
         const uri = ResidentProvider._baseUrl + 'resident/restore?api_key=' + ResidentProvider._apiKey;
-        return ResidentProvider._frak.post<RecordResponse>(uri, record)
+        const body = {restore_id: residentId};
+        return ResidentProvider._frak.post<RecordResponse>(uri, body)
         .then((response) => {
             if (response.success) {
                 return response.data;
