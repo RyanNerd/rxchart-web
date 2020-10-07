@@ -172,10 +172,13 @@ const Frak = {
 
                 // If the content type is not JSON then throw an error
                 if (contentType === null || contentType !== JSON_CONTENT_TYPE) {
-                    const responseText = await response.text();
-                    const contentText = contentType || 'unknown';
-                    const err = new Error('Content-Type is not JSON: ('  + contentText + '): ' + responseText);
-                    throw err;
+                    // eslint-disable-next-line
+                    throw {
+                        description: 'Content-Type is not JSON',
+                        content_type: contentType,
+                        response: response,
+                        text: await response.text()
+                    };
                 }
             }
         } catch (err) {

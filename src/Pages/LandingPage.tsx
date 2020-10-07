@@ -10,6 +10,7 @@ import OtcPage from "./OtcPage";
 import ManageOtcPage from "./ManageOtcPage";
 import {MedicineRecord} from "../types/RecordTypes";
 import {useEffect} from "react";
+import DiagnosticPage from "./DiagnosticPage";
 
 /**
  * Landing Page - Tab Page Menu UI
@@ -18,32 +19,11 @@ import {useEffect} from "react";
 const LandingPage = () => {
     const [ apiKey, setApiKey ] = useGlobal('apiKey');
     const [ activeResident ] = useGlobal('activeResident');
-    const [ development ] = useGlobal('development');
-    const [ errorDetails, setErrorDetails ] = useState<string | null>(null);
+    const [ errorDetails, setErrorDetails ] = useState<any>(null);
     const [ activeTabKey, setActiveTabKey ] = useState<string | null>('login');
     const [ drugLogList ] = useGlobal('drugLogList');
     const [ medicineList ] = useGlobal<MedicineRecord>('medicineList');
     const [ otcList ] = useGlobal('otcList');
-
-    /**
-     * Error handler
-     *
-     * @param {Error} err
-     */
-    const errorOccurred = (err: Error) => {
-        if (development) {
-            console.log('Error', err);
-            if (err) {
-                setErrorDetails(err.toString());
-            } else {
-                setErrorDetails('Unknown Error');
-            }
-        } else {
-            setErrorDetails('Something went wrong. Please check your internet connection and sign back in.');
-        }
-        setApiKey(null).then(()=>{});
-        setActiveTabKey('error');
-    }
 
     // Completely hide the Diagnostics tab header if it isn't active using some direct DOM manipulation.
     useEffect(() => {
@@ -56,6 +36,17 @@ const LandingPage = () => {
             }
         }
     }, [activeTabKey]);
+
+    /**
+     * Error handler
+     *
+     * @param {any} err
+     */
+    const errorOccurred = (err: any) => {
+        setApiKey(null).then(()=>{});
+        setErrorDetails(err);
+        setActiveTabKey('error');
+    }
 
     const signIn = apiKey ? 'Logout' : 'Login';
     const loginTitle = (activeTabKey === 'login') ? (<b>{signIn}</b>) : (<span>{signIn}</span>);
@@ -140,12 +131,14 @@ const LandingPage = () => {
                 />
             </Tab>
             <Tab
-                disabled={activeTabKey !== 'error'}
+                disabled={errorDetails === null || activeTabKey !== 'error'}
                 eventKey="error"
                 title={errorTitle}
                 style={{color: activeTabKey !== 'error' ? 'white' : ''}}
             >
-                <p>{errorDetails}</p>
+                <DiagnosticPage
+                    error={errorDetails}
+                />
             </Tab>
         </Tabs>
     );

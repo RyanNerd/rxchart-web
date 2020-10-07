@@ -61,7 +61,7 @@ const ResidentProvider = {
      * @param {restore_id: number} residentId
      * @returns {Promise<ResidentRecord>}
      */
-    restore: (residentId: number): Promise<ResidentRecord> => {
+    restore: (residentId: number): Promise<ResidentRecord | any> => {
         const uri = ResidentProvider._baseUrl + 'resident/restore?api_key=' + ResidentProvider._apiKey;
         const body = {restore_id: residentId};
         return ResidentProvider._frak.post<RecordResponse>(uri, body)
@@ -72,7 +72,7 @@ const ResidentProvider = {
             throw response;
         })
         .catch((err) => {
-            return err;
+            throw err;
         });
     },
 

@@ -89,7 +89,7 @@ const ResidentPage = (props: IProps) => {
             return reactivatedResident;
         })
         .catch((err) => {
-            return err;
+            throw err;
         })
     }
 
