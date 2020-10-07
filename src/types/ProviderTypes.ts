@@ -16,7 +16,7 @@ export namespace ProviderTypes {
         export type RecordResponse = {
             success: boolean,
             status: number,
-            data: DrugLogRecord[]
+            data: DrugLogRecord[] | DrugLogRecord
         }
         export type DeleteResponse = ProviderTypes.DeleteResponse;
     }
