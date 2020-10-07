@@ -277,6 +277,7 @@ const MedicinePage = (props: IProps) => {
                     <Col sm="7">
                         <span style={{textAlign: "center"}}> <h2>{activeDrug.Drug} History</h2> </span>
                         <Button
+                            style={lastTaken === 0 ? {cursor: "default"} : {}}
                             disabled={lastTaken === 0}
                             variant={"outline-" + lastTakenVariant}
                             className="mr-2"
@@ -289,6 +290,7 @@ const MedicinePage = (props: IProps) => {
                         </Button>
 
                         <Button
+                            style={lastTaken === 0 ? {cursor: "default"} : {}}
                             disabled={lastTaken === 0}
                             className="mr-3"
                             variant={"outline-" + lastTakenVariant}

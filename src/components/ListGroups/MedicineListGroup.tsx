@@ -98,6 +98,7 @@ const MedicineListGroup = (props: IProps) => {
                 </TooltipButton>
 
                 <Button
+                    style={lastTaken === 0 ? {cursor: "default"} : {}}
                     disabled={lastTaken === 0}
                     variant={"outline-" + lastTakenVariant}
                     className="mr-2"
@@ -110,6 +111,7 @@ const MedicineListGroup = (props: IProps) => {
                 </Button>
 
                 <Button
+                    style={lastTaken === 0 ? {cursor: "default"} : {}}
                     disabled={lastTaken === 0}
                     variant={"outline-" + lastTakenVariant}
                     onClick={(e) => {
