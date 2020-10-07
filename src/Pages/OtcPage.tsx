@@ -240,9 +240,10 @@ const OtcPage = (props: IProps) => {
     return (
         <Form>
             <Form.Group className={TabContent} as={Row}>
-                <Form.Group as={Col} sm="4">
-                    <Form.Group as={Row}>
+                <Form.Group as={Col} controlId="otc-buttons">
+                    <Form.Group as={Row} sm="8">
                         <Button
+                            className="mr-1"
                             size="sm"
                             variant="info"
                             onClick={(e) => addEditDrug(e, true)}
@@ -252,7 +253,6 @@ const OtcPage = (props: IProps) => {
 
                         {activeDrug &&
                             <Button
-                                className="ml-2"
                                 size="sm"
                                 variant="info"
                                 onClick={(e) => addEditDrug(e, false)}

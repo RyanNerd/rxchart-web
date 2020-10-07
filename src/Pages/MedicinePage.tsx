@@ -230,7 +230,7 @@ const MedicinePage = (props: IProps) => {
         <>
             <Form className={TabContent} as={Row}>
                 <Form.Group as={Col} controlId="medicine-buttons">
-                    <Form.Group as={Row} sm="5">
+                    <Form.Group as={Row} sm="8">
                         <TooltipButton
                             className="mr-1"
                             tooltip="Manually Add New Medicine"
@@ -243,7 +243,6 @@ const MedicinePage = (props: IProps) => {
 
                         {activeDrug &&
                             <Button
-                                className="mr-2"
                                 size="sm"
                                 variant="info"
                                 onClick={(e) => addEditDrug(e, false)}
