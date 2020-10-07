@@ -2,7 +2,12 @@ import React from 'reactn';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import {DrugLogRecord, MedicineRecord} from "../../types/RecordTypes";
-import {getFormattedDate, getObjectByProperty, isToday} from "../../utility/common";
+import {
+    calculateLastTaken, getBsColor,
+    getFormattedDate,
+    getLastTakenVariant,
+    getObjectByProperty, isToday
+} from "../../utility/common";
 
 interface IProps {
     drugLog?: DrugLogRecord[] | null,
@@ -85,7 +90,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
     const DrugRow = (drug: DrugLogRecord): JSX.Element | null =>
     {
         // No drug given then no render
-        if (drug === null) {
+        if (drug === null || !drug.Id) {
             return null;
         }
 
@@ -93,15 +98,19 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
         if (!drugName || drugName.length === 0) {
             drugName = 'UNKNOWN - Medicine removed!';
         }
-        const drugStrength = drugColumnLookup(drug.MedicineId, 'Strength');
+        const medicineId = drug.MedicineId;
+        const drugStrength = drugColumnLookup(medicineId, 'Strength');
         const createdDate = new Date(drug.Created || '');
         const updatedDate = new Date(drug.Updated || '');
-
+        const lastTaken = calculateLastTaken(medicineId, [drug]);
+        const variant = getLastTakenVariant(lastTaken);
+        const variantColor = getBsColor(variant);
+        const fontStyle = isToday(updatedDate) ? 'bold' : '';
 
         return <tr
             key={'druglog-grid-row-' + drug.Id}
             id={'druglog-grid-row-' + drug.Id}
-            style={{color: (isToday(updatedDate)) ? 'blue' : ''}}
+            style={{color: variantColor}}
         >
             {onEdit &&
                 <td style={{textAlign: 'center', verticalAlign: "middle"}}>
@@ -114,13 +123,13 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                 </td>
             }
             {columns.includes('Drug') &&
-                <td style={{verticalAlign: "middle"}}>
-                    <span><b>{drugName}</b></span> <span>{drugStrength}</span>
+                <td style={{verticalAlign: "middle", fontStyle: fontStyle}}>
+                    <span>{drugName}</span> <span>{drugStrength}</span>
                 </td>
             }
-            <td style={{textAlign: 'center', verticalAlign: "middle"}}>{getFormattedDate(createdDate)}</td>
-            <td style={{textAlign: 'center', verticalAlign: "middle"}}>{getFormattedDate(updatedDate)}</td>
-            <td style={{textAlign: 'center', verticalAlign: "middle"}}>{drug.Notes}</td>
+            <td style={{textAlign: 'center', verticalAlign: "middle", fontStyle: fontStyle}}>{getFormattedDate(createdDate)}</td>
+            <td style={{textAlign: 'center', verticalAlign: "middle", fontStyle: fontStyle}}>{getFormattedDate(updatedDate)}</td>
+            <td style={{textAlign: 'center', verticalAlign: "middle", fontStyle: fontStyle}}>{drug.Notes}</td>
             {onDelete &&
                 <td style={{textAlign: 'center', verticalAlign: "middle"}}>
                     <Button

@@ -74,6 +74,8 @@ const MedicineListGroup = (props: IProps) => {
         return null;
     }
 
+    const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
+
     return (
         <ListGroup>
             <ListGroup.Item active>
@@ -89,7 +91,7 @@ const MedicineListGroup = (props: IProps) => {
                     tooltip={tooltipText(lastTaken)}
                     placement="top"
                     className="mr-2"
-                    variant={getLastTakenVariant(lastTaken)}
+                    variant={lastTakenVariant}
                     onClick={(e: MouseEvent) => addDrugLog(e)}
                 >
                     + Log Drug
@@ -97,7 +99,7 @@ const MedicineListGroup = (props: IProps) => {
 
                 <Button
                     disabled={lastTaken === 0}
-                    variant={"outline-" + getLastTakenVariant(lastTaken)}
+                    variant={"outline-" + lastTakenVariant}
                     className="mr-2"
                     onClick={(e) => {
                         e.preventDefault();
@@ -109,7 +111,7 @@ const MedicineListGroup = (props: IProps) => {
 
                 <Button
                     disabled={lastTaken === 0}
-                    variant={"outline-" + getLastTakenVariant(lastTaken)}
+                    variant={"outline-" + lastTakenVariant}
                     onClick={(e) => {
                         e.preventDefault();
                         logDrug(2);

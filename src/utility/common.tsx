@@ -112,7 +112,7 @@ export const randomString = (): string => {
  * @param {DrugLogRecord[]} drugLogList
  * @returns {null | number}
  */
-export const calculateLastTaken = (drugId: number, drugLogList:DrugLogRecord[]): number | null => {
+export const calculateLastTaken = (drugId: number, drugLogList: DrugLogRecord[]): number | null => {
     if (drugLogList === null) {
         return null;
     }
@@ -155,11 +155,35 @@ export const getLastTakenVariant = (lastTaken: number | null): Variant => {
             break;
         case 7: warningColor = 'info';
             break;
-        case 8: warningColor = 'info';
-            break;
         default: warningColor = 'primary';
     }
-    return warningColor;
+    return (lastTaken && lastTaken >= 8) ? 'light' : warningColor;
+}
+
+export const getBsColor = (variant: string): string => {
+    const lcVariant = variant.toLowerCase();
+    let hexColor;
+    switch (lcVariant) {
+        case 'primary': hexColor = '#0275D8';
+            break;
+        case 'success': hexColor = '#5CB85C';
+            break;
+        case 'info': hexColor = '#5BC0DE';
+            break;
+        case 'warning': hexColor = '#F0AD4E';
+            break;
+        case 'danger': hexColor = '#D9534F';
+            break;
+        case 'inverse': hexColor = '#292B2C';
+            break;
+        case 'faded': hexColor = '#F7F7F7';
+            break;
+        case 'light': hexColor = '#888888'; // Custom color not a part of BS spec
+            break
+        default:
+            throw new Error('variant ' + variant + ' is invalid.');
+    }
+    return hexColor;
 }
 
 /**

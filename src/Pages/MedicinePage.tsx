@@ -224,6 +224,8 @@ const MedicinePage = (props: IProps) => {
         return drug.Drug;
     }
 
+    const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
+
     return (
         <>
             <Form className={TabContent} as={Row}>
@@ -276,7 +278,7 @@ const MedicinePage = (props: IProps) => {
                         <span style={{textAlign: "center"}}> <h2>{activeDrug.Drug} History</h2> </span>
                         <Button
                             disabled={lastTaken === 0}
-                            variant={"outline-" + getLastTakenVariant(lastTaken)}
+                            variant={"outline-" + lastTakenVariant}
                             className="mr-2"
                             onClick={(e) => {
                                 e.preventDefault();
@@ -289,7 +291,7 @@ const MedicinePage = (props: IProps) => {
                         <Button
                             disabled={lastTaken === 0}
                             className="mr-3"
-                            variant={"outline-" + getLastTakenVariant(lastTaken)}
+                            variant={"outline-" + lastTakenVariant}
                             onClick={(e) => {
                                 e.preventDefault();
                                 handleLogDrugAmount(2);
