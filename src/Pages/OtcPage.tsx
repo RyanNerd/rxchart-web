@@ -193,7 +193,7 @@ const OtcPage = (props: IProps) => {
      */
     const addEditDrugLog = (e: React.MouseEvent<HTMLElement>, drugLogInfo?: DrugLogRecord): void => {
         e.preventDefault();
-        const drugLogRecord = {...drugLogInfo} ? drugLogInfo : {
+        const drugLogRecord = drugLogInfo ? {...drugLogInfo} : {
             Id: null,
             ResidentId: residentId,
             MedicineId: activeDrug?.Id,
