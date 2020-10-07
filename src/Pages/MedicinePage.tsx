@@ -225,6 +225,7 @@ const MedicinePage = (props: IProps) => {
     }
 
     const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
+    const shortenedDrugName = activeDrug?.Drug.substring(0, 31);
 
     return (
         <>
@@ -265,7 +266,7 @@ const MedicinePage = (props: IProps) => {
                             />
 
                             {activeDrug &&
-                                <h3 className="ml-4"><b>{activeDrug.Drug}</b></h3>
+                                <h3 className="ml-4"><b>{shortenedDrugName}</b></h3>
                             }
                         </Form.Group>
                     }
