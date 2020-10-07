@@ -28,7 +28,7 @@ interface IProps {
  * @constructor
  */
 const ResidentPage = (props: IProps) => {
-    const [ show, setShow ] = useState(false);
+    const [ showResidentEdit, setShowResidentEdit ] = useState(false);
     const [ residentInfo, setResidentInfo ] = useState<ResidentRecord | null>(null);
     const [ showDeleteResident, setShowDeleteResident ] = useState(false);
     const [ residentToDelete, setResidentToDelete ] = useState<ResidentRecord | null>(null);
@@ -50,7 +50,6 @@ const ResidentPage = (props: IProps) => {
      * @return Promise<void>
      */
     const refreshResident = (resident: ResidentRecord): Promise<void> => {
-        setResidentInfo(resident);
         return getResidentList(residentProvider)
         .then((residentList: ResidentRecord[]) => {
             // Rehydrate the residentList
@@ -101,7 +100,7 @@ const ResidentPage = (props: IProps) => {
     const handleOnEdit = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
         e.preventDefault();
         setResidentInfo({...resident});
-        setShow(true);
+        setShowResidentEdit(true);
     }
 
     /**
@@ -119,17 +118,17 @@ const ResidentPage = (props: IProps) => {
             DOB_MONTH: "",
             DOB_DAY: ""
         });
-        setShow(true);
+        setShowResidentEdit(true);
     }
 
     /**
      * Fires when ResidentEdit closes.
      *
-     * @param {ResidentRecord | null} residentInfo
+     * @param {ResidentRecord | null} residentRecord
      */
-    const handleModalClose = (residentInfo: ResidentRecord | null): void => {
-        if (residentInfo) {
-            const residentData = {...residentInfo};
+    const handleModalClose = (residentRecord: ResidentRecord | null): void => {
+        if (residentRecord) {
+            const residentData = {...residentRecord};
             if (!residentData.Id) {
                 residentData.Id = null;
             }
@@ -256,10 +255,10 @@ const ResidentPage = (props: IProps) => {
             {/* ResidentEdit Modal */}
             {residentInfo &&
                 <ResidentEdit
-                    show={show}
+                    show={showResidentEdit}
                     residentInfo={residentInfo}
                     onClose={(r) => {
-                        setShow(false);
+                        setShowResidentEdit(false);
                         handleModalClose(r);
                     }}
                 />
