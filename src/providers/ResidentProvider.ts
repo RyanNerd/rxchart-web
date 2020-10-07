@@ -37,10 +37,10 @@ const ResidentProvider = {
      * @param {object} options
      * @returns {Promise<ResidentRecord[]>}
      */
-    search: (options: object): Promise<ResidentRecord[]> => {
+    search: async (options: object): Promise<ResidentRecord[]> => {
         const uri = ResidentProvider._baseUrl + 'resident/search?api_key=' + ResidentProvider._apiKey;
-        return ResidentProvider._frak.post<RecordResponse>(uri, options)
-        .then((response) => {
+        try {
+            const response = await ResidentProvider._frak.post<RecordResponse>(uri, options);
             if (response.success) {
                 return response.data;
             } else {
@@ -49,10 +49,9 @@ const ResidentProvider = {
                 }
                 throw response;
             }
-        })
-        .catch((err) => {
-            return err;
-        });
+        } catch (err) {
+            throw err;
+        }
     },
 
     /**
@@ -61,19 +60,18 @@ const ResidentProvider = {
      * @param {restore_id: number} residentId
      * @returns {Promise<ResidentRecord>}
      */
-    restore: (residentId: number): Promise<ResidentRecord | any> => {
+    restore: async (residentId: number): Promise<ResidentRecord | any> => {
         const uri = ResidentProvider._baseUrl + 'resident/restore?api_key=' + ResidentProvider._apiKey;
         const body = {restore_id: residentId};
-        return ResidentProvider._frak.post<RecordResponse>(uri, body)
-        .then((response) => {
+        try {
+            const response = await ResidentProvider._frak.post<RecordResponse>(uri, body);
             if (response.success) {
                 return response.data;
             }
             throw response;
-        })
-        .catch((err) => {
+        } catch (err) {
             throw err;
-        });
+        }
     },
 
     /**
@@ -82,20 +80,19 @@ const ResidentProvider = {
      * @param {number} id
      * @returns {Promise<Response>}
      */
-    read: (id: number): Promise<ResidentRecord> => {
+    read: async (id: number): Promise<ResidentRecord | any> => {
         const apiKey = ResidentProvider._apiKey;
-        const uri = ResidentProvider._baseUrl + 'resident/'+ id + '?api_key=' + apiKey;
-        return ResidentProvider._frak.get<RecordResponse>(uri)
-        .then((response) => {
+        const uri = ResidentProvider._baseUrl + 'resident/' + id + '?api_key=' + apiKey;
+        try {
+            const response = await ResidentProvider._frak.get<RecordResponse>(uri);
             if (response.success) {
                 return response.data;
             } else {
                 throw response;
             }
-        })
-        .catch((err) => {
-            return err;
-        });
+        } catch (err) {
+            throw err;
+        }
     },
 
     /**
@@ -104,20 +101,19 @@ const ResidentProvider = {
      * @param {ResidentRecord} residentInfo
      * @returns {Promise<ResidentRecord>}
      */
-    post: (residentInfo: ResidentRecord): Promise<ResidentRecord> => {
+    post: async (residentInfo: ResidentRecord): Promise<ResidentRecord | any> => {
         const apiKey = ResidentProvider._apiKey;
         const uri = ResidentProvider._baseUrl + 'resident?api_key=' + apiKey;
-        return ResidentProvider._frak.post<RecordResponse>(uri, residentInfo)
-        .then((response) => {
+        try {
+            const response = await ResidentProvider._frak.post<RecordResponse>(uri, residentInfo);
             if (response.success) {
                 return response.data;
             } else {
                 throw response;
             }
-        })
-        .catch((err) => {
-            return err;
-        })
+        } catch (err) {
+            throw err;
+        }
     },
 
     /**
@@ -126,20 +122,19 @@ const ResidentProvider = {
      * @param {number} residentId
      * @returns {Promise<DeleteResponse>}
      */
-    delete: (residentId: number): Promise<DeleteResponse> => {
+    delete: async (residentId: number): Promise<DeleteResponse> => {
         const apiKey = ResidentProvider._apiKey;
         const uri = ResidentProvider._baseUrl + 'resident/' + residentId + '?api_key=' + apiKey;
-        return ResidentProvider._frak.delete<DeleteResponse>(uri)
-        .then((response) => {
+        try {
+            const response = await ResidentProvider._frak.delete<DeleteResponse>(uri);
             if (response.success) {
                 return response;
             } else {
                 throw response;
             }
-        })
-        .catch((err) => {
-            return err;
-        });
+        } catch (err) {
+            throw err;
+        }
     }
 }
 
