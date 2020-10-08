@@ -25,7 +25,6 @@ const MedicineDetail = (props: IProps): JSX.Element => {
 
     return (
         <tr
-            // key={keyed + '-grid-row-' + drug.Id}
             id={'med-detail-grid-row-' + drug.Id}
         >
             {onEdit &&
