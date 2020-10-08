@@ -147,7 +147,7 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
 
             {barCode &&
                 <ListGroup.Item variant="info">
-                        <canvas id={canvasId}/>
+                    <canvas id={canvasId}/>
                 </ListGroup.Item>
             }
         </ListGroup>

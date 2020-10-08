@@ -127,10 +127,12 @@ const ManageDrugPage = (props: IProps): JSX.Element => {
                     <tbody>
                         {medicineList.map((drug: MedicineRecord) =>
                             <MedicineDetail
-                            drug={drug}
-                            onDelete={onDelete}
-                            onEdit={onEdit}
-                        />)}
+                                drug={drug}
+                                key={'med-' + drug.Id}
+                                onDelete={onDelete}
+                                onEdit={onEdit}
+                            />
+                        )}
                     </tbody>
                 </Table>
             }

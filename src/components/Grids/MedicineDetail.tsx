@@ -25,8 +25,8 @@ const MedicineDetail = (props: IProps): JSX.Element => {
 
     return (
         <tr
-            key={'medicine-grid-row-' + drug.Id}
-            id={'medicine-grid-row-' + drug.Id}
+            // key={keyed + '-grid-row-' + drug.Id}
+            id={'med-detail-grid-row-' + drug.Id}
         >
             {onEdit &&
             <td style={{textAlign: 'center', verticalAlign: "middle"}}>

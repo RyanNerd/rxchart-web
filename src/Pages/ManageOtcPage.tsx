@@ -122,6 +122,7 @@ const ManageOtcPage = (props: IProps): JSX.Element => {
                             'Directions',
                             'Barcode'
                         ]}
+                        key={'otc' + drug.Id}
                         onDelete={onDelete}
                         onEdit={onEdit}
                     />)

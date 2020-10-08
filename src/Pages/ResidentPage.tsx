@@ -63,7 +63,6 @@ const ResidentPage = (props: IProps): JSX.Element => {
     const refreshLogs = (residentId: number): Promise<void> => {
         return getMedicineList(medicineProvider, residentId)
         .then((hydratedMedicineList) => {
-            console.log('hydratedMedicineList', hydratedMedicineList);
             setMedicineList (hydratedMedicineList).then(()=>{});
             // If there are any medicines for the selected resident then
             // select the first one and make it the active drug.
