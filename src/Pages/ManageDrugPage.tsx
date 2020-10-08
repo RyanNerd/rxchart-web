@@ -11,6 +11,7 @@ import {updateMedicine} from "./Common/updateMedicine";
 import getMedicineList from "./Common/getMedicineList";
 import Confirm from "../components/Modals/Confirm";
 import {Alert} from "react-bootstrap";
+import {getMDY} from "../utility/common";
 
 interface IProps {
     onError: (e: Error) => void
@@ -40,17 +41,14 @@ const ManageDrugPage = (props: IProps) => {
      */
     const onEdit = (e: React.MouseEvent<HTMLElement>, medicine: MedicineRecord | null) => {
         e.preventDefault();
-        const today = new Date();
-        const day = today.getDate();
-        const month = today.getMonth() + 1;
-        const year = today.getFullYear();
+        const mdy = getMDY();
         const medicineInfo = (medicine) ? {...medicine} : {
             ...newDrugInfo,
             OTC: false,
             ResidentId: activeResident?.Id,
-            FillDateDay: day,
-            FillDateMonth: month,
-            FillDateYear: year
+            FillDateDay: mdy.day,
+            FillDateMonth: mdy.month,
+            FillDateYear: mdy.year
         };
         setMedicineInfo(medicineInfo);
         setShowMedicineEdit(true);

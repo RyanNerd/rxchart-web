@@ -197,7 +197,7 @@ const OtcPage = (props: IProps) => {
             Id: null,
             ResidentId: residentId,
             MedicineId: activeDrug?.Id,
-            Notes: "",
+            Notes: ""
         } as DrugLogRecord;
         setDrugLogInfo(drugLogRecord);
         setShowDrugLog(true);

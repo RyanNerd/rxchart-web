@@ -9,7 +9,13 @@ import DrugLogGrid from "../components/Grids/DrugLogGrid";
 import DrugLogEdit from "../components/Modals/DrugLogEdit";
 import MedicineListGroup from "../components/ListGroups/MedicineListGroup";
 import TooltipButton from "../components/Buttons/TooltipButton";
-import {calculateLastTaken, getFormattedDate, getLastTakenVariant, getObjectByProperty} from "../utility/common";
+import {
+    calculateLastTaken,
+    getFormattedDate,
+    getLastTakenVariant,
+    getMDY,
+    getObjectByProperty
+} from "../utility/common";
 import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../types/RecordTypes";
 import LastTakenButton from "../components/Buttons/LastTakenButton";
 import searchDrugs from "../utility/searchDrugs";
@@ -116,9 +122,15 @@ const MedicinePage = (props: IProps) => {
     const addEditDrug = (e: React.MouseEvent<HTMLElement>, isAdd: boolean): void => {
         e.preventDefault();
         if (isAdd) {
-            const drugInfo = {...newDrugInfo};
-            drugInfo.OTC = false;
-            drugInfo.ResidentId = activeResident?.Id;
+            const mdy = getMDY();
+            const drugInfo = {
+                ...newDrugInfo,
+                OTC: false,
+                ResidentId: activeResident?.Id,
+                FillDateYear: mdy.year,
+                FillDateMonth: mdy.month,
+                FillDateDay: mdy.day
+            };
             setDrugInfo(drugInfo);
         } else {
             const drugRecord = {...activeDrug} as MedicineRecord;
@@ -186,7 +198,7 @@ const MedicinePage = (props: IProps) => {
             Id: null,
             ResidentId: residentId,
             MedicineId: activeDrug?.Id,
-            Notes: "",
+            Notes: ""
         } as DrugLogRecord;
         setDrugLogInfo(drugLogRecord);
         setShowDrugLog(true);

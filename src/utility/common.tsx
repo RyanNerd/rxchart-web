@@ -200,6 +200,18 @@ export const isToday = (date: Date): boolean => {
 }
 
 /**
+ * Return an object containing the day, month, and year as numbers and a date indicating now
+ * @return {month: number, day: number, year: number, now: Date}
+ */
+export const getMDY = (): {month: number, day: number, year: number, now: Date} => {
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.getMonth() +1;
+    const year = today.getFullYear();
+    return {month: month, day: day, year: year, now: today};
+}
+
+/**
  * Given a string or Date object return the formatted string of the date: mm/dd/yyyy, hh:mm AM
  *
  * @param {Date | string} date

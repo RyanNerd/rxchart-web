@@ -45,8 +45,11 @@ const MedicineListGroup = (props: IProps) => {
     const notes = activeDrug.Notes || null;
     const directions = activeDrug.Directions || null;
     const drugId = activeDrug.Id || null;
-    const fillDate = activeDrug.FillDateMonth ?
+    const fillDateText = activeDrug.FillDateMonth ?
                 activeDrug.FillDateMonth + '/' + activeDrug.FillDateDay +'/' + activeDrug.FillDateYear : null;
+    const fillDateType = (fillDateText) ? new Date(fillDateText) : null;
+    const fillDateOptions = {month: '2-digit', day: '2-digit', year: 'numeric'};
+    const fillDate = (fillDateType) ? fillDateType.toLocaleString('en-US', fillDateOptions) : null;
 
     // Update the barcode image if the barcode has changed
     useEffect(() => {
@@ -140,7 +143,10 @@ const MedicineListGroup = (props: IProps) => {
 
             {fillDate &&
                 <ListGroup.Item>
-                    <span>Fill Date: {fillDate}</span>
+                    <b>
+                        Fill Date:
+                    </b>
+                    <span> {fillDate}</span>
                 </ListGroup.Item>
             }
 
