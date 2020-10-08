@@ -20,9 +20,10 @@ interface IProps {
  * ManageOtcPage
  * Page for Displaying, editing and adding OTC drugs
  *
- * @returns {null|*}
+ * @param {IProps} props
+ * @returns {JSX.Element}
  */
-const ManageOtcPage = (props: IProps) => {
+const ManageOtcPage = (props: IProps): JSX.Element => {
     const [ otcList, setOtcList ] = useGlobal<any>('otcList');
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDeleteMedicine, setShowDeleteMedicine ] = useState(false);
@@ -35,9 +36,9 @@ const ManageOtcPage = (props: IProps) => {
      * Fires when the Edit button is clicked
      *
      * @param {MouseEvent} e
-     * @param {object} medicine
+     * @param {MedicineRecord | null} medicine
      */
-    const onEdit = (e: React.MouseEvent<HTMLElement>, medicine?: MedicineRecord | null) => {
+    const onEdit = (e: React.MouseEvent<HTMLElement>, medicine?: MedicineRecord | null): void => {
         e.preventDefault();
         const medicineInfo = (medicine) ? {...medicine} : {...newDrugInfo, OTC: true};
         setMedicineInfo(medicineInfo);
@@ -49,10 +50,10 @@ const ManageOtcPage = (props: IProps) => {
     /**
      * Handle the click event for delete
      *
-     * @param {MouseEvent} e
-     * @param {object} medicine
+     * @param {React.MouseEvent<HTMLElement>} e
+     * @param {MedicineRecord} medicine
      */
-    const onDelete = (e: React.MouseEvent<HTMLElement>, medicine: MedicineRecord) => {
+    const onDelete = (e: React.MouseEvent<HTMLElement>, medicine: MedicineRecord): void => {
         e.preventDefault();
         setMedicineInfo({...medicine});
         setShowDeleteMedicine(true);
@@ -61,7 +62,7 @@ const ManageOtcPage = (props: IProps) => {
     /**
      * Fires when user confirms to delete the medicine
      */
-    const deleteDrug = () => {
+    const deleteDrug = (): void => {
         if (medicineInfo && medicineInfo.Id) {
             deleteMedicine(medicineProvider, medicineInfo.Id)
             .then((deleted) => {

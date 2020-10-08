@@ -14,8 +14,5 @@ export const getResidentList = (residentProvider: typeof ResidentProvider): Prom
             {column: "FirstName", direction: "asc"}
         ]
     };
-    return residentProvider.search(searchCriteria)
-        .then((residents) => {
-            return residents;
-    })
+    return residentProvider.search(searchCriteria);
 }

@@ -132,8 +132,9 @@ const Frak = {
      * @private
      * @param {HTTPMethods} method
      * @param {RequestInit} request
+     * @return {RequestInit}
      */
-    _prepRequest: (method: HTTPMethods, request: RequestInit) => {
+    _prepRequest: (method: HTTPMethods, request: RequestInit): RequestInit => {
         const options = {...request};
 
         // Override RequestInit properties as needed.
@@ -158,10 +159,10 @@ const Frak = {
      *
      * @private
      * @param {Request} request
+     * @return Promise<T>
      */
     _http: async <T>(request: Request): Promise<T> => {
         const response = await fetch(request);
-
         try {
             if (typeof response.headers !== 'undefined') {
                 // Get the Content-Type of the response
@@ -179,14 +180,22 @@ const Frak = {
                         response: response,
                         text: await response.text()
                     };
+                } else {
+                    // Return the parsed JSON
+                    return response.json();
                 }
             }
+
+            // eslint-disable-next-line
+            throw {
+                description: 'Content-Type is unknown [no response headers]',
+                content_type: null,
+                response: response,
+                text: await response.text()
+            };
         } catch (err) {
             throw err;
         }
-
-        // Return the parsed JSON
-        return response.json();
     }
 }
 

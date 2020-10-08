@@ -42,7 +42,7 @@ const ResidentProvider = {
         try {
             const response = await ResidentProvider._frak.post<RecordResponse>(uri, options);
             if (response.success) {
-                return response.data;
+                return response.data as ResidentRecord[];
             } else {
                 if (response.status === 404) {
                     return [];
@@ -60,13 +60,13 @@ const ResidentProvider = {
      * @param {restore_id: number} residentId
      * @returns {Promise<ResidentRecord>}
      */
-    restore: async (residentId: number): Promise<ResidentRecord | any> => {
+    restore: async (residentId: number): Promise<ResidentRecord> => {
         const uri = ResidentProvider._baseUrl + 'resident/restore?api_key=' + ResidentProvider._apiKey;
         const body = {restore_id: residentId};
         try {
             const response = await ResidentProvider._frak.post<RecordResponse>(uri, body);
             if (response.success) {
-                return response.data;
+                return response.data as ResidentRecord;
             }
             throw response;
         } catch (err) {
@@ -80,13 +80,13 @@ const ResidentProvider = {
      * @param {number} id
      * @returns {Promise<Response>}
      */
-    read: async (id: number): Promise<ResidentRecord | any> => {
+    read: async (id: number): Promise<ResidentRecord> => {
         const apiKey = ResidentProvider._apiKey;
         const uri = ResidentProvider._baseUrl + 'resident/' + id + '?api_key=' + apiKey;
         try {
             const response = await ResidentProvider._frak.get<RecordResponse>(uri);
             if (response.success) {
-                return response.data;
+                return response.data as ResidentRecord;
             } else {
                 throw response;
             }

@@ -18,10 +18,10 @@ interface IProps {
  * Edit Modal for DrugLog
  *
  * @param {IProps} props
- * @returns {null|*}
+ * @returns {JSX.Element | null}
  * @constructor
  */
-const DrugLogEdit = (props: IProps) => {
+const DrugLogEdit = (props: IProps): JSX.Element | null => {
     const onClose = props.onClose;
     const [ show, setShow ] = useState(props.show);
     const [ drugLogInfo, setDrugLogInfo ] = useState(props.drugLogInfo);
@@ -46,7 +46,7 @@ const DrugLogEdit = (props: IProps) => {
      *
      * @param {React.KeyboardEvent<HTMLElement>} e
      */
-    const handleOnChange = (e: React.ChangeEvent<HTMLElement>) => {
+    const handleOnChange = (e: React.ChangeEvent<HTMLElement>): void => {
         const target = e.target as HTMLInputElement;
         let value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
@@ -62,7 +62,7 @@ const DrugLogEdit = (props: IProps) => {
      * @param {React.MouseEvent<HTMLElement>} e
      * @param {boolean} shouldSave
      */
-    const handleHide = (e: React.MouseEvent<HTMLElement>, shouldSave: boolean) => {
+    const handleHide = (e: React.MouseEvent<HTMLElement>, shouldSave: boolean): void => {
         e.preventDefault();
         if (shouldSave) {
             const saveDrugLogInfo = {...drugLogInfo} as DrugLogRecord;

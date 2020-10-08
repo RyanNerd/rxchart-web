@@ -25,5 +25,8 @@ export const updateMedicine = (
     return medicineProvider.post(drugData)
     .then((drugRecord) => {
         return drugRecord;
-    });
+    })
+    .catch((err) => {
+        throw err;
+    })
 }

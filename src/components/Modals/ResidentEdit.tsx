@@ -18,10 +18,10 @@ interface IProps {
  * Edit Modal for Resident
  *
  * @param {IProps} props
- * @returns {boolean|*}
+ * @returns {JSX.Element | null}
  * @constructor
  */
-const ResidentEdit = (props: IProps) => {
+const ResidentEdit = (props: IProps): JSX.Element | null => {
     const [ show, setShow ] = useState(props.show);
     const [ residentInfo, setResidentInfo ] = useState<ResidentRecord>(props.residentInfo);
     const onHide = props.onHide || null;
@@ -32,7 +32,7 @@ const ResidentEdit = (props: IProps) => {
      *
      * @param {React.KeyboardEvent<HTMLElement>} e
      */
-    const handleOnChange = (e: React.ChangeEvent<HTMLElement>) => {
+    const handleOnChange = (e: React.ChangeEvent<HTMLElement>): void => {
         const target = e.target as HTMLInputElement;
         let value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;

@@ -5,7 +5,13 @@ interface IProps {
     error: any
 }
 
-const DiagnosticPage = (props: IProps) => {
+/**
+ * DiagnosticPage
+ *
+ * @param {IProps} props
+ * @return {JSX.Element | null}
+ */
+const DiagnosticPage = (props: IProps): JSX.Element | null => {
     const error = props.error;
     const [ development ] = useGlobal('development');
     const createMarkup = (html: string) => { return {__html: html}};

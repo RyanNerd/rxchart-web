@@ -12,12 +12,8 @@ interface IProps {
 /**
  * Drug Dropdown
  *
- * @param props
- *  - drugId {int} active drug record Id
- *  - medicineList[]
- *  - onSelect (drugKey)=>{cb(drugKey)}
- *
- * @returns {* | boolean}
+ * @param {IProps} props
+ * @returns {JSX.Element | null}
  */
 const DrugDropdown = (props: IProps): JSX.Element | null => {
     const {medicineList, drugId} = props;
@@ -30,10 +26,10 @@ const DrugDropdown = (props: IProps): JSX.Element | null => {
     /**
      * Get the drug object from the medicineList given the drugId
      *
-     * @param {int} drugId
-     * @returns {object | null}
+     * @param {number} drugId
+     * @returns {MedicineRecord | null}
      */
-    const getDrugById = (drugId: number) => {
+    const getDrugById = (drugId: number): MedicineRecord | null => {
         for (const drug of medicineList) {
             if (drug.Id === drugId) {
                 return drug;
@@ -57,10 +53,10 @@ const DrugDropdown = (props: IProps): JSX.Element | null => {
     /**
      * Dropdown Items component
      *
-     * @param {object} medicine
-     * @returns {*}
+     * @param {MedicineRecord} medicine
+     * @returns {JSX.Element}
      */
-    const MedicineDropdownItems = (medicine: MedicineRecord) => {
+    const MedicineDropdownItems = (medicine: MedicineRecord): JSX.Element => {
         const drug = medicine.Drug;
         const strength = medicine.Strength ? medicine.Strength : '';
         const drugDetail = drug + ' ' + strength;

@@ -13,7 +13,17 @@ interface IProps extends ModalProps {
     yesButtonVariant?: ButtonVariant
 }
 
+/**
+ * Confirmation Modal "inheriting" from the Modal component
+ * Uses React's "dot notation"
+ */
 const Confirm = {
+    /**
+     * Confirm.Modal component
+     *
+     * @param {IProps} props
+     * @return Modal
+     */
     Modal: (props: IProps): JSX.Element => {
         const {
             size = 'sm',
@@ -67,6 +77,11 @@ const Confirm = {
         )
     },
 
+    /**
+     * Confirm.Header component
+     *
+     * @param {IChildren} props
+     */
     Header: (props: IChildren) => {
         return (
             <div className="modal-header">
@@ -75,6 +90,11 @@ const Confirm = {
         )
     },
 
+    /**
+     * Confirm.Title component
+     *
+     * @param {IChildren} props
+     */
     Title: (props: IChildren) => {
         return (
         <h5 className="modal-title">
@@ -83,6 +103,11 @@ const Confirm = {
         )
     },
 
+    /**
+     * Confirm.Body component
+     *
+     * @param {IChildren} props
+     */
     Body: (props: IChildren) => {
         return (
             <div className="modal-body">

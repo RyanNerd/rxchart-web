@@ -32,9 +32,9 @@ interface IProps {
  * OtcPage
  * UI for logging OTC medications
  *
- * @returns {*}
+ * @returns {JSX.Element | null}
  */
-const OtcPage = (props: IProps) => {
+const OtcPage = (props: IProps): JSX.Element | null => {
     const [ drugInfo, setDrugInfo ] = useState<MedicineRecord | null>(null);
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDrugLog, setShowDrugLog ] = useState(false);
@@ -181,7 +181,7 @@ const OtcPage = (props: IProps) => {
                     throw new Error('DrugLog Delete failed for Record: ' + drugLogId);
                 }
             })
-            .catch((err: Error) => onError(err));
+            .catch((err) => onError(err));
         }
     }
 
@@ -208,7 +208,7 @@ const OtcPage = (props: IProps) => {
      *
      * @param {number} amount
      */
-    const handleLogDrugAmount = (amount: number) => {
+    const handleLogDrugAmount = (amount: number): void => {
         const drugId = activeDrug && activeDrug.Id;
         if (drugId && residentId) {
             const notes = amount.toString();

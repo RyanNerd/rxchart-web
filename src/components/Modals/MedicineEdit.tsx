@@ -20,10 +20,10 @@ interface IProps {
  * Edit Modal for Medicine
  *
  * @param {IProps} props
- * @returns {boolean|*}
+ * @returns {JSX.Element | null}
  * @constructor
  */
-const MedicineEdit = (props: IProps) => {
+const MedicineEdit = (props: IProps): JSX.Element | null => {
     const [ show, setShow ] = useState(props.show);
     const [ drugInfo, setDrugInfo ] = useState<MedicineRecord>(props.drugInfo);
     const [ canSave, setCanSave ] = useState<boolean>(false);
@@ -60,7 +60,7 @@ const MedicineEdit = (props: IProps) => {
      *
      * @param {React.ChangeEvent<HTMLElement>} e
      */
-    const handleOnChange = (e: React.ChangeEvent<HTMLElement>) => {
+    const handleOnChange = (e: React.ChangeEvent<HTMLElement>): void => {
         const target = e.target as HTMLInputElement;
         let value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;

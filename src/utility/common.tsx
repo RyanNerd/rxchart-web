@@ -81,7 +81,7 @@ export const isDayValid = (day: string, month: string): '' | 'is-invalid' => {
  *
  * @param {string} year
  * @param {boolean} isDOB
- * @return {string}
+ * @return {'' | 'is-invalid'}
  */
 export const isYearValid = (year: string, isDOB: boolean): '' | 'is-invalid' => {
     const nYear = parseInt(year);
@@ -160,7 +160,12 @@ export const getLastTakenVariant = (lastTaken: number | null): Variant => {
     return (lastTaken && lastTaken >= 8) ? 'light' : warningColor;
 }
 
-export const getBsColor = (variant: string): string => {
+/**
+ * Given the variant string return the corresponding hexcolor string
+ *
+ * @param {Variant} variant
+ */
+export const getBsColor = (variant: Variant): string => {
     const lcVariant = variant.toLowerCase();
     let hexColor;
     switch (lcVariant) {
@@ -178,7 +183,7 @@ export const getBsColor = (variant: string): string => {
             break;
         case 'faded': hexColor = '#F7F7F7';
             break;
-        case 'light': hexColor = '#888888'; // Custom color not a part of BS spec
+        case 'light': hexColor = '#888888'; // Custom color
             break
         default:
             throw new Error('variant ' + variant + ' is invalid.');
@@ -190,6 +195,7 @@ export const getBsColor = (variant: string): string => {
  * Given a date object return true if the date is today.
  *
  * @param {Date} date
+ * @return {boolean}
  */
 export const isToday = (date: Date): boolean => {
     const now = new Date();
@@ -201,6 +207,7 @@ export const isToday = (date: Date): boolean => {
 
 /**
  * Return an object containing the day, month, and year as numbers and a date indicating now
+ *
  * @return {month: number, day: number, year: number, now: Date}
  */
 export const getMDY = (): {month: number, day: number, year: number, now: Date} => {
@@ -218,10 +225,8 @@ export const getMDY = (): {month: number, day: number, year: number, now: Date} 
  * @return {string}
  */
 export const getFormattedDate = (date: Date | string): string => {
-    if (typeof date === 'string') {
-        date = new Date(date);
-    }
-    return date.toLocaleString('en-US', {
+    const dt = (typeof date === 'string') ? new Date(date) : date;
+    return dt.toLocaleString('en-US', {
         month: '2-digit',
         day: '2-digit',
         year: 'numeric',
@@ -237,7 +242,7 @@ export const getFormattedDate = (date: Date | string): string => {
  * @param {IKey} objectList
  * @param {string} propName
  * @param {any} searchValue
- * @return Object
+ * @return {Object}
  */
 export const getObjectByProperty = (objectList: IKey, propName: string, searchValue: any): object => {
     return objectList.find((obj: IKey) => (obj[propName] === searchValue));

@@ -21,9 +21,9 @@ interface IProps {
  * ManageDrugPage
  * Page for Displaying, editing and adding Medicine
  *
- * @returns {null|*}
+ * @returns {JSX.Element}
  */
-const ManageDrugPage = (props: IProps) => {
+const ManageDrugPage = (props: IProps): JSX.Element => {
     const [ medicineList, setMedicineList ] = useGlobal<MedicineRecord>('medicineList');
     const [ activeResident ]= useGlobal('activeResident');
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
@@ -39,7 +39,7 @@ const ManageDrugPage = (props: IProps) => {
      * @param {React.MouseEvent<HTMLElement>} e
      * @param {MedicineRecord | null} medicine
      */
-    const onEdit = (e: React.MouseEvent<HTMLElement>, medicine: MedicineRecord | null) => {
+    const onEdit = (e: React.MouseEvent<HTMLElement>, medicine: MedicineRecord | null): void => {
         e.preventDefault();
         const mdy = getMDY();
         const medicineInfo = (medicine) ? {...medicine} : {
@@ -60,7 +60,7 @@ const ManageDrugPage = (props: IProps) => {
      * @param {React.MouseEvent<HTMLElement>} e
      * @param {MedicineRecord} medicine
      */
-    const onDelete = (e: React.MouseEvent<HTMLElement>, medicine: MedicineRecord) => {
+    const onDelete = (e: React.MouseEvent<HTMLElement>, medicine: MedicineRecord): void => {
         e.preventDefault();
         setMedicineInfo({...medicine});
         setShowDeleteMedicine(true);

@@ -24,10 +24,10 @@ interface IProps {
  * Sign in page
  *
  * @param {IProps} props
- * @returns {*}
+ * @returns {JSX.Element}
  * @constructor
  */
-const LoginPage = (props: IProps) => {
+const LoginPage = (props: IProps): JSX.Element => {
     const [ userName, setUserName ] = useState('');
     const [ password, setPassword ] = useState('');
     const [ showAlert, setShowAlert ] = useState(false);
@@ -55,7 +55,7 @@ const LoginPage = (props: IProps) => {
      *
      * @param {React.MouseEvent<HTMLElement>} e
      */
-    const login = (e: React.KeyboardEvent<HTMLElement> | React.MouseEvent<HTMLElement>) => {
+    const login = (e: React.KeyboardEvent<HTMLElement> | React.MouseEvent<HTMLElement>): void => {
         e.preventDefault();
         const frak = Frak;
 
@@ -111,7 +111,7 @@ const LoginPage = (props: IProps) => {
                 setShowAlert(true);
             }
         })
-        .catch((err: Error) => {
+        .catch((err) => {
             onError(err);
         });
     }

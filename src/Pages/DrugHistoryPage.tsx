@@ -14,9 +14,9 @@ interface IProps {
  * DrugLogGrid with a Print button
  *
  * @param {IProps} props
- * @constructor
+ * @return {JSX.Element}
  */
-const DrugHistoryPage = (props: IProps) => {
+const DrugHistoryPage = (props: IProps): JSX.Element => {
     const {
         drugLogList,
         medicineList,

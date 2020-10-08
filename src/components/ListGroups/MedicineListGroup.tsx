@@ -20,16 +20,11 @@ interface IProps {
 
 /**
  * MedicineListGroup
- * @param {object} props
- *  props:
- *      {array<object>} medicineList Available list of meds for the activeResident
- *      {object} activeDrug Currently active drug object.
- *      {function} drugChanged(drug) Callback when the drug changes from the dropdown button
- *      {function} addDrugLog(e) Callback when the + Log Drug button is clicked
  *
- * @return {* || null}
+ * @param {IProps} props
+ * @return {JSX.Element}
  */
-const MedicineListGroup = (props: IProps) => {
+const MedicineListGroup = (props: IProps): JSX.Element => {
     const {
         medicineList,
         activeDrug,
@@ -66,7 +61,7 @@ const MedicineListGroup = (props: IProps) => {
      * @param {number | null} lastTaken
      * @returns {string | null}
      */
-    const tooltipText = (lastTaken: number | null) => {
+    const tooltipText = (lastTaken: number | null): string | null => {
         if (lastTaken === null || !lastTaken) return null;
         if (lastTaken <= 1) {
             return activeDrug.Drug + " taken in the last hour";

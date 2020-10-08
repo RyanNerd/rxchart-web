@@ -6,6 +6,7 @@ import {ProviderTypes} from "../../types/ProviderTypes";
  *
  * @param {MedicineProvider} medicineProvider
  * @param {number | string} medicineId
+ * @return {Promise<boolean>}
  */
 const deleteMedicine = (medicineProvider: typeof MedicineProvider, medicineId: string | number): Promise<boolean> => {
     return medicineProvider.delete(medicineId)
@@ -13,7 +14,7 @@ const deleteMedicine = (medicineProvider: typeof MedicineProvider, medicineId: s
         return (response.success);
     })
     .catch((err) => {
-        return err;
+        throw err;
     });
 }
 

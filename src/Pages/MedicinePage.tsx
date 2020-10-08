@@ -40,8 +40,9 @@ interface IProps {
  * UI for logging prescription medications
  *
  * @param {IProps} props
+ * @return {JSX.Element | null}
  */
-const MedicinePage = (props: IProps) => {
+const MedicinePage = (props: IProps): JSX.Element | null => {
     const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
     const [ showDrugLog, setShowDrugLog ] = useState(false);
     const [ drugInfo, setDrugInfo ] = useState<MedicineRecord | null>(null);
@@ -156,9 +157,9 @@ const MedicinePage = (props: IProps) => {
                     setActiveDrug(drugRecord);
                     setLastTaken(null);
                     getMedicineLog(medHistoryProvider, residentId)
-                        .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
+                    .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
                 })
-                .catch((err: Error) => {
+                .catch((err) => {
                     onError(err);
                 });
             });

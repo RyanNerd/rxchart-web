@@ -62,9 +62,9 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
      *
      * @param {number} drugId
      * @param {string} columnName
-     * @returns {null|*}
+     * @returns {any}
      */
-    const drugColumnLookup = (drugId: number, columnName: string) => {
+    const drugColumnLookup = (drugId: number, columnName: string): any => {
         if (medicineList && drugId) {
             const medicine = getObjectByProperty(medicineList, 'Id', drugId) as MedicineRecord;
             if (medicine) {

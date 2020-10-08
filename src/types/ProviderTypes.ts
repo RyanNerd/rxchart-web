@@ -34,7 +34,7 @@ export namespace ProviderTypes {
         export type RecordResponse = {
             success: boolean,
             status: number,
-            data: ResidentRecord[]
+            data: ResidentRecord[] | ResidentRecord
         }
         export type DeleteResponse = ProviderTypes.DeleteResponse;
     }

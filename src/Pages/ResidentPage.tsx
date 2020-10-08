@@ -25,9 +25,10 @@ interface IProps {
  * Allow user to edit and add Residents
  *
  * @param {IProps} props
+ * @return {JSX.Element}
  * @constructor
  */
-const ResidentPage = (props: IProps) => {
+const ResidentPage = (props: IProps): JSX.Element => {
     const [ showResidentEdit, setShowResidentEdit ] = useState(false);
     const [ residentInfo, setResidentInfo ] = useState<ResidentRecord | null>(null);
     const [ showDeleteResident, setShowDeleteResident ] = useState(false);
@@ -48,21 +49,21 @@ const ResidentPage = (props: IProps) => {
      *
      * @return Promise<void>
      */
-    const refreshResidentList = (): Promise<void> => {
-        return getResidentList(residentProvider)
-        .then((residentList: ResidentRecord[]) => {
-            setResidentList(residentList).then(()=>{});
-        })
+    const refreshResidentList = async (): Promise<void> => {
+        const residentList = await getResidentList(residentProvider);
+        setResidentList(residentList).then(()=>{});
     }
 
     /**
      * Refresh the medicineList and medicineLog for the given residentId
      *
      * @param {number} residentId
+     * @return Promise<void>
      */
     const refreshLogs = (residentId: number): Promise<void> => {
         return getMedicineList(medicineProvider, residentId)
         .then((hydratedMedicineList) => {
+            console.log('hydratedMedicineList', hydratedMedicineList);
             setMedicineList (hydratedMedicineList).then(()=>{});
             // If there are any medicines for the selected resident then
             // select the first one and make it the active drug.
@@ -99,7 +100,7 @@ const ResidentPage = (props: IProps) => {
      * @param {React.MouseEvent<HTMLElement>} e
      * @param {ResidentRecord} resident
      */
-    const handleOnEdit = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
+    const handleOnEdit = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord): void => {
         e.preventDefault();
         setResidentInfo({...resident});
         setShowResidentEdit(true);
@@ -166,13 +167,17 @@ const ResidentPage = (props: IProps) => {
                 } else {
                     // Add / update the new resident
                     residentProvider.post(residentData)
-                    .then((newResident) => {
+                    .then((resident) => {
                         refreshResidentList().then(()=>{
                             // Set the resident as the active resident.
-                            setActiveResident(newResident).then(()=>{});
-                            // Logs will be empty for new residents
-                            setMedicineList ([]).then(()=>{});
-                            setDrugLogList([]).then(()=>{});
+                            setActiveResident(resident).then(()=>{});
+                            if (residentData.Id === null) {
+                                // Logs will be empty for new residents
+                                setMedicineList([]).then(()=>{});
+                                setDrugLogList([]).then(()=>{});
+                            } else {
+                                refreshLogs(resident.Id).then(()=>{});
+                            }
                         })
                     })
                     .catch((err) => onError(err));
