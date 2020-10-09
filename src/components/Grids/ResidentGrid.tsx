@@ -45,7 +45,7 @@ const ResidentGrid = (props: IProps): JSX.Element => {
         const mdy = getMDY();
         const created = resident.Created || mdy.now;
         const updated = resident.Updated || mdy.now;
-        // const fontStyle = isSelected ? 'bold' : 'italic';
+        const fontWeight = isSelected ? 'bold' : undefined;
 
         return (
             <tr
@@ -66,25 +66,11 @@ const ResidentGrid = (props: IProps): JSX.Element => {
                     </td>
                 }
 
-                {isSelected ?
-                    (
-                        <>
-                        <td style={{verticalAlign: "middle"}}><b>{resident.LastName}</b></td>
-                        <td style={{verticalAlign: "middle"}}><b>{resident.FirstName}</b></td>
-                        <td style={{verticalAlign: "middle"}}><b>{dob}</b></td>
-                        <td style={{verticalAlign: "middle"}}><b>{created}</b></td>
-                        <td style={{verticalAlign: "middle"}}><b>{updated}</b></td>
-                        </>
-                    ) : (
-                        <>
-                        <td style={{verticalAlign: "middle"}}>{resident.LastName}</td>
-                        <td style={{verticalAlign: "middle"}}>{resident.FirstName}</td>
-                        <td style={{verticalAlign: "middle"}}>{dob}</td>
-                        <td style={{verticalAlign: "middle"}}>{created}</td>
-                        <td style={{verticalAlign: "middle"}}>{updated}</td>
-                        </>
-                    )
-                }
+                <td style={{verticalAlign: "middle", fontWeight: fontWeight}}>{resident.LastName}</td>
+                <td style={{verticalAlign: "middle", fontWeight: fontWeight}}>{resident.FirstName}</td>
+                <td style={{verticalAlign: "middle", fontWeight: fontWeight}}>{dob}</td>
+                <td style={{verticalAlign: "middle", fontWeight: fontWeight}}>{created}</td>
+                <td style={{verticalAlign: "middle", fontWeight: fontWeight}}>{updated}</td>
 
                 {onEdit &&
                 <td style={{textAlign: 'center', verticalAlign: "middle"}}>

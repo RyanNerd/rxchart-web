@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
-import TabContent from "../styles/tab_content.css";
+import TabContent from "../styles/common.css";
 import MedicineEdit from "../components/Modals/MedicineEdit";
 import DrugLogGrid from "../components/Grids/DrugLogGrid";
 import DrugLogEdit from "../components/Modals/DrugLogEdit";

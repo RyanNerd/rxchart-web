@@ -4,7 +4,7 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
-import TabContent from '../styles/tab_content.css';
+import TabContent from '../styles/common.css';
 import ResidentProvider from '../providers/ResidentProvider';
 import MedicineProvider from '../providers/MedicineProvider';
 import {initialState} from "../utility/initialState";

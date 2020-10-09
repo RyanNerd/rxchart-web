@@ -105,7 +105,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
         const lastTaken = calculateLastTaken(medicineId, [drug]);
         const variant = getLastTakenVariant(lastTaken);
         const variantColor = getBsColor(variant);
-        const today = isToday(updatedDate);
+        const fontWeight = isToday(updatedDate) ? 'bold' : undefined;
 
         return <tr
             key={'druglog-grid-row-' + drug.Id}
@@ -123,59 +123,32 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                 </td>
             }
 
-            {today ? (
-                <>
-                    {columns.includes('Drug') &&
-                    <td style={{verticalAlign: "middle"}}>
-                        <b><span>{drugName}</span> <span>{drugStrength}</span></b>
-                    </td>
-                    }
-                    <td style={{
-                        textAlign: 'center',
-                        verticalAlign: "middle"
-                    }}>
-                        <b>{getFormattedDate(createdDate)}</b>
-                    </td>
-                    <td style={{
-                        textAlign: 'center',
-                        verticalAlign: "middle",
-                    }}>
-                        <b>{getFormattedDate(updatedDate)}</b>
-                    </td>
-                    <td style={{
-                        textAlign: 'center',
-                        verticalAlign: "middle"
-                    }}>
-                        <b>{drug.Notes}</b>
-                    </td>
-                </>
-            ) : (
-                <>
-                    {columns.includes('Drug') &&
-                    <td style={{verticalAlign: "middle"}}>
-                        <span>{drugName}</span> <span>{drugStrength}</span>
-                    </td>
-                    }
-                    <td style={{
-                        textAlign: 'center',
-                        verticalAlign: "middle"
-                    }}>
-                        {getFormattedDate(createdDate)}
-                    </td>
-                    <td style={{
-                        textAlign: 'center',
-                        verticalAlign: "middle"
-                    }}>
-                        {getFormattedDate(updatedDate)}
-                    </td>
-                    <td style={{
-                        textAlign: 'center',
-                        verticalAlign: "middle"
-                    }}>
-                        {drug.Notes}
-                    </td>
-                </>
-            )}
+            {columns.includes('Drug') &&
+            <td style={{verticalAlign: "middle", fontWeight: fontWeight}}>
+                <b><span>{drugName}</span> <span>{drugStrength}</span></b>
+            </td>
+            }
+            <td style={{
+                textAlign: 'center',
+                verticalAlign: "middle",
+                fontWeight: fontWeight
+            }}>
+                <b>{getFormattedDate(createdDate)}</b>
+            </td>
+            <td style={{
+                textAlign: 'center',
+                verticalAlign: "middle",
+                fontWeight: fontWeight
+            }}>
+                {getFormattedDate(updatedDate)}
+            </td>
+            <td style={{
+                textAlign: 'center',
+                verticalAlign: "middle",
+                fontWeight: fontWeight
+            }}>
+                <b>{drug.Notes}</b>
+            </td>
 
             {onDelete &&
                 <td style={{textAlign: 'center', verticalAlign: "middle"}}>
