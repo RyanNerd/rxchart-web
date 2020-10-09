@@ -10,7 +10,7 @@ import { useState, useCallback } from 'react'
  *   forceUpdate(); // force re-render
  * }
  */
-export const useForceUpdate = (): unknown => {
+export const useForceUpdate = (): Function => {
     const [, setTick] = useState(0);
     const update = useCallback(() => {
         setTick(tick => tick + 1);

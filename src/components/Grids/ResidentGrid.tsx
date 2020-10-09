@@ -2,7 +2,7 @@ import React from 'reactn';
 import Button from 'react-bootstrap/Button';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import Table from 'react-bootstrap/Table';
-import {DOB} from "../../utility/common";
+import {DOB, getMDY} from "../../utility/common";
 import {ResidentRecord} from "../../types/RecordTypes";
 
 interface IProps {
@@ -42,6 +42,10 @@ const ResidentGrid = (props: IProps): JSX.Element => {
 
         // Determine if this row is selected [for radio ToggleButtons]
         const isSelected = onSelected && activeResident && resident.Id === activeResident.Id;
+        const mdy = getMDY();
+        const created = resident.Created || mdy.now;
+        const updated = resident.Updated || mdy.now;
+        // const fontStyle = isSelected ? 'bold' : 'italic';
 
         return (
             <tr
@@ -62,9 +66,25 @@ const ResidentGrid = (props: IProps): JSX.Element => {
                     </td>
                 }
 
-                <td style={{verticalAlign: "middle"}}>{resident.LastName}</td>
-                <td style={{verticalAlign: "middle"}}>{resident.FirstName}</td>
-                <td style={{verticalAlign: "middle"}}>{dob}</td>
+                {isSelected ?
+                    (
+                        <>
+                        <td style={{verticalAlign: "middle"}}><b>{resident.LastName}</b></td>
+                        <td style={{verticalAlign: "middle"}}><b>{resident.FirstName}</b></td>
+                        <td style={{verticalAlign: "middle"}}><b>{dob}</b></td>
+                        <td style={{verticalAlign: "middle"}}><b>{created}</b></td>
+                        <td style={{verticalAlign: "middle"}}><b>{updated}</b></td>
+                        </>
+                    ) : (
+                        <>
+                        <td style={{verticalAlign: "middle"}}>{resident.LastName}</td>
+                        <td style={{verticalAlign: "middle"}}>{resident.FirstName}</td>
+                        <td style={{verticalAlign: "middle"}}>{dob}</td>
+                        <td style={{verticalAlign: "middle"}}>{created}</td>
+                        <td style={{verticalAlign: "middle"}}>{updated}</td>
+                        </>
+                    )
+                }
 
                 {onEdit &&
                 <td style={{textAlign: 'center', verticalAlign: "middle"}}>
@@ -109,6 +129,12 @@ const ResidentGrid = (props: IProps): JSX.Element => {
                 </th>
                 <th>
                     <span>DOB</span>
+                </th>
+                <th>
+                    <span>Created</span>
+                </th>
+                <th>
+                    <span>Activated</span>
                 </th>
                 {onEdit &&
                     <th/>
