@@ -13,10 +13,14 @@ interface IProps {
  * @return {JSX.Element}
  * @constructor
  */
-const LastTakenButton = (props: IProps): JSX.Element => {
+const LastTakenButton = (props: IProps): JSX.Element | null => {
     const {
         lastTaken = null
     } = props;
+
+    if (lastTaken === null) {
+        return null;
+    }
 
     return (
         <Button
