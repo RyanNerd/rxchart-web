@@ -116,7 +116,7 @@ export const calculateLastTaken = (drugId: number, drugLogList: DrugLogRecord[])
     if (drugLogList === null) {
         return null;
     }
-    let diff = null;
+    let diff;
     const filteredDrugs = drugLogList.filter(drug => drug && drug.MedicineId === drugId);
     const latestDrug = filteredDrugs && filteredDrugs.length > 0 ? filteredDrugs[0] : null;
     if (latestDrug) {
@@ -124,6 +124,8 @@ export const calculateLastTaken = (drugId: number, drugLogList: DrugLogRecord[])
         const latestDrugDate = Math.round((date).getTime() / 1000);
         const now = Math.round((new Date()).getTime() / 1000);
         diff = Math.round((now - latestDrugDate) / 3600);
+    } else {
+        diff = null;
     }
     return diff;
 };

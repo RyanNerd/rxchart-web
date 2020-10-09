@@ -62,7 +62,7 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
      * @returns {string | null}
      */
     const tooltipText = (lastTaken: number | null): string | null => {
-        if (lastTaken === null || !lastTaken) return null;
+        if (lastTaken === null) return null;
         if (lastTaken <= 1) {
             return activeDrug.Drug + " taken in the last hour";
         }

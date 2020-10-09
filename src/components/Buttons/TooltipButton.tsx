@@ -37,6 +37,8 @@ const TooltipButton = (props: IProps): JSX.Element => {
         </Button>
     )
 
+    console.log('toolTip', tooltip);
+
     // If tooltip isn't given then return a regular Button with no overlay
     if (!tooltip) {
         return button;
