@@ -49,7 +49,7 @@ const Frak = {
 
     /**
      * PATCH
-     * 
+     *
      * @param {string} uri
      * @param {any} body
      * @param {RequestInit} request
@@ -61,7 +61,7 @@ const Frak = {
 
     /**
      * PUT
-     * 
+     *
      * @param {string} uri
      * @param {any} body
      * @param {RequestInit} request
@@ -73,7 +73,7 @@ const Frak = {
 
     /**
      * DELETE
-     * 
+     *
      * @param {string} uri
      * @param {RequestInit} request
      */
@@ -84,7 +84,7 @@ const Frak = {
 
     /**
      * OPTIONS
-     * 
+     *
      * @param {string} uri
      * @param {RequestInit} request
      */
@@ -95,7 +95,7 @@ const Frak = {
 
     /**
      * HEAD
-     * 
+     *
      * @param {string} uri
      * @param {RequestInit} request
      */
@@ -145,7 +145,7 @@ const Frak = {
         if (!options.headers || options.headers ! instanceof Headers) {
             options.headers = new Headers();
         }
-        let contentType = DEFAULT_REQUEST_CONTENT_TYPE[method];
+        const contentType = DEFAULT_REQUEST_CONTENT_TYPE[method];
         if (contentType !== null) {
             if (options.headers instanceof Headers) {
                 options.headers.append('Content-Type', contentType);
@@ -177,7 +177,7 @@ const Frak = {
                     throw {
                         description: 'Content-Type is not JSON',
                         content_type: contentType,
-                        response: response,
+                        response,
                         text: await response.text()
                     };
                 } else {
@@ -190,7 +190,7 @@ const Frak = {
             throw {
                 description: 'Content-Type is unknown [no response headers]',
                 content_type: null,
-                response: response,
+                response,
                 text: await response.text()
             };
         } catch (err) {
