@@ -1,7 +1,4 @@
 import React, {useGlobal, useState} from 'reactn';
-import Button from 'react-bootstrap/Button';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Tooltip from 'react-bootstrap/Tooltip';
 import ResidentGrid from '../components/Grids/ResidentGrid';
 import ResidentEdit from '../components/Modals/ResidentEdit';
 import {FullName} from '../utility/common';
@@ -15,6 +12,7 @@ import getMedicineList from "./Common/getMedicineList";
 import getMedicineLog from "./Common/getMedicineLog";
 import Confirm from "../components/Modals/Confirm";
 import {getResidentList} from "./Common/getResidentList";
+import TooltipButton from "../components/Buttons/TooltipButton";
 
 interface IProps {
     onError: (e: Error) => void
@@ -246,23 +244,13 @@ const ResidentPage = (props: IProps): JSX.Element => {
     return (
         <>
             <Form>
-            <OverlayTrigger
-                key="add"
-                placement="right"
-                overlay={
-                    <Tooltip id="add-resident-tooltip">
-                        Add New Resident
-                    </Tooltip>
-                }
-            >
-                <Button
-                    size="sm"
-                    variant="info"
-                    onClick={(e) => handleAdd(e)}
+                <TooltipButton
+                    placement="top"
+                    tooltip="Add New Resident"
+                    onClick={(e: React.MouseEvent<HTMLElement>) => handleAdd(e)}
                 >
                     + Resident
-                </Button>
-            </OverlayTrigger>
+                </TooltipButton>
             </Form>
 
             <p><span> </span></p>
