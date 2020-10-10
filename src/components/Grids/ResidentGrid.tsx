@@ -101,7 +101,7 @@ const ResidentGrid = (props: IProps): JSX.Element => {
     };
 
     return (
-        <Table striped bordered hover size="sm" className="w-auto">
+        <Table striped bordered hover size="sm">
             <thead>
             <tr>
                 {onSelected &&
