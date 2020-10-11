@@ -5,9 +5,11 @@ import React from "reactn";
 import {randomString} from "../../utility/common";
 import {ReactNode} from "react";
 import {Placement} from "react-bootstrap/Overlay";
+import {Variant} from "react-bootstrap/types";
 
 interface IProps {
     placement?: Placement
+    variant?: Variant
     tooltip?: string | ReactNode;
     tooltipId?: string;
     children: JSX.Element[] | JSX.Element | string

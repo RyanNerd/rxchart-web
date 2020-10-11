@@ -2,7 +2,7 @@ import React, {useGlobal, useState} from 'reactn';
 import ResidentGrid from '../components/Grids/ResidentGrid';
 import ResidentEdit from '../components/Modals/ResidentEdit';
 import {FullName} from '../utility/common';
-import {Alert, Form} from "react-bootstrap";
+import {Alert, Form, Spinner} from "react-bootstrap";
 import ResidentProvider from "../providers/ResidentProvider";
 import {ResidentRecord} from "../types/RecordTypes";
 import MedicineProvider from "../providers/MedicineProvider";
@@ -31,6 +31,7 @@ const ResidentPage = (props: IProps): JSX.Element => {
     const [ residentInfo, setResidentInfo ] = useState<ResidentRecord | null>(null);
     const [ showDeleteResident, setShowDeleteResident ] = useState(false);
     const [ residentToDelete, setResidentToDelete ] = useState<ResidentRecord | null>(null);
+    const [ residentListLoading, setResidentListLoading ] = useState(false);
     const [ residentList, setResidentList ] = useGlobal('residentList');
     const [ , setMedicineList ] = useGlobal('medicineList');
     const [ , setDrugLogList ] = useGlobal('drugLogList');
@@ -48,17 +49,25 @@ const ResidentPage = (props: IProps): JSX.Element => {
      * @return Promise<void>
      */
     const refreshResidentList = async (): Promise<void> => {
+        setResidentListLoading(true);
         const residentList = await getResidentList(residentProvider);
-        setResidentList(residentList).then(()=>{});
+        setResidentList(residentList)
+        .then(() => setResidentListLoading(false));
     }
 
     /**
      * Refresh the medicineList and medicineLog for the given residentId
      *
-     * @param {number} residentId
+     * @param {number | null} residentId The residentId or null if the logs are to be cleared.
      * @return Promise<void>
      */
-    const refreshLogs = (residentId: number): Promise<void> => {
+    const refreshLogs = (residentId: number | null): Promise<void> => {
+        if (residentId ===  null) {
+            // Logs will be empty for new residents
+            return setMedicineList([])
+            .then(() => setDrugLogList([]).then(()=>{}))
+        }
+
         return getMedicineList(medicineProvider, residentId)
         .then((hydratedMedicineList) => {
             setMedicineList (hydratedMedicineList).then(()=>{});
@@ -152,11 +161,12 @@ const ResidentPage = (props: IProps): JSX.Element => {
                 if (trashedResidentId) {
                     reactivateResident(trashedResidentId)
                     .then((restoredResident: ResidentRecord) => {
-                        refreshResidentList().then(()=>{
+                        refreshResidentList()
+                        .then(() => {
                             // Set the resident as the active resident.
                             setActiveResident(restoredResident).then(()=>{});
                             // Refresh the logs for the resident.
-                            const residentId = restoredResident.Id as number;
+                            const residentId = restoredResident.Id;
                             return refreshLogs(residentId);
                         })
                     })
@@ -165,16 +175,13 @@ const ResidentPage = (props: IProps): JSX.Element => {
                     // Add / update the new resident
                     residentProvider.post(residentData)
                     .then((resident) => {
-                        refreshResidentList().then(()=>{
+                        refreshResidentList()
+                        .then(() => {
                             // Set the resident as the active resident.
-                            setActiveResident(resident).then(()=>{});
-                            if (residentData.Id === null) {
-                                // Logs will be empty for new residents
-                                setMedicineList([]).then(()=>{});
-                                setDrugLogList([]).then(()=>{});
-                            } else {
-                                refreshLogs(resident.Id).then(()=>{});
-                            }
+                            setActiveResident(resident).then(() => {
+                                // Note the use of residentData (Id will be null for new residents)
+                                refreshLogs(residentData.Id).then(()=>{});
+                            });
                         })
                     })
                     .catch((err) => onError(err));
@@ -245,11 +252,37 @@ const ResidentPage = (props: IProps): JSX.Element => {
         <>
             <Form>
                 <TooltipButton
+                    className="mr-2"
                     placement="top"
                     tooltip="Add New Resident"
                     onClick={(e: React.MouseEvent<HTMLElement>) => handleAdd(e)}
                 >
                     + Resident
+                </TooltipButton>
+
+                <TooltipButton
+                    disabled={residentListLoading}
+                    variant="light"
+                    className="mr-2"
+                    placement="right"
+                    tooltip="Reload Resident List"
+                    onClick={(e: React.MouseEvent<HTMLElement>) => {
+                        e.preventDefault();
+                        refreshResidentList()
+                        .then(() => setActiveResident(null));
+                    }}
+                >
+                    {residentListLoading ?
+                        (
+                            <>
+                                <Spinner animation="border" size="sm"/> <span>Reloading...</span>
+                            </>
+                        ) : (
+                            <>
+                                <span role="img" aria-label="reload">🔁</span> <span>Reload</span>
+                            </>
+                        )
+                    }
                 </TooltipButton>
             </Form>
 
