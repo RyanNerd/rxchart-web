@@ -6,11 +6,11 @@ import {DOB, getMDY} from "../../utility/common";
 import {ResidentRecord} from "../../types/RecordTypes";
 
 interface IProps {
-    onSelected?: Function,
-    onEdit?: Function,
-    onDelete?: Function,
+    onSelected?: (e: React.MouseEvent<HTMLElement>, r: ResidentRecord) => void,
+    onEdit?: (e: React.MouseEvent<HTMLElement>, r: ResidentRecord) => void,
+    onDelete?: (e: React.MouseEvent<HTMLElement>, r: ResidentRecord) => void,
     activeResident: ResidentRecord | null,
-    residentList: Array<ResidentRecord>
+    residentList: ResidentRecord[]
 }
 
 /**
