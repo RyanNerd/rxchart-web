@@ -14,7 +14,7 @@ interface IProps {
     drugChanged: (d: MedicineRecord) => void,
     addDrugLog: (e: React.MouseEvent<HTMLElement>) =>void,
     canvasId: string,
-    canvasUpdated?: Function,
+    canvasUpdated?: (c: HTMLCanvasElement) => void,
     logDrug: Function
 }
 
@@ -50,7 +50,7 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
     useEffect(() => {
         // Only try to create a barcode canvas IF there is actually a barcode value.
         const canvas = barCode ? drawBarcode(barCode, canvasId) : null;
-        if (canvasUpdated) {
+        if (canvasUpdated && canvas) {
             canvasUpdated(canvas);
         }
     }, [barCode, canvasId, canvasUpdated]);
