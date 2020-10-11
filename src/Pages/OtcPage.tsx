@@ -322,7 +322,7 @@ const OtcPage = (props: IProps): JSX.Element | null => {
                                 medicineList={otcList}
                                 activeDrug={activeDrug}
                                 drugChanged={(drug: MedicineRecord) => setActiveDrug(drug)}
-                                addDrugLog={(e: React.MouseEvent<HTMLInputElement>) => addEditDrugLog(e)}
+                                addDrugLog={(e: React.MouseEvent<HTMLElement>) => addEditDrugLog(e)}
                                 logDrug={(amount: number) => handleLogDrugAmount(amount)}
                                 canvasId={"otc-barcode"}
                             />

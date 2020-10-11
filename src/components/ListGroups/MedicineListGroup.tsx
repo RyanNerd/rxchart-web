@@ -11,8 +11,8 @@ interface IProps {
     medicineList: Array<MedicineRecord>
     activeDrug: MedicineRecord,
     lastTaken: number | null,
-    drugChanged: Function,
-    addDrugLog: Function,
+    drugChanged: (d: MedicineRecord) => void,
+    addDrugLog: (e: React.MouseEvent<HTMLElement>) =>void,
     canvasId: string,
     canvasUpdated?: Function,
     logDrug: Function
@@ -90,7 +90,7 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
                     placement="top"
                     className="mr-2"
                     variant={lastTakenVariant}
-                    onClick={(e: MouseEvent) => addDrugLog(e)}
+                    onClick={(e: React.MouseEvent<HTMLElement>) => addDrugLog(e)}
                 >
                     + Log Drug
                 </TooltipButton>
