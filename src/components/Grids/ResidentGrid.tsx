@@ -105,7 +105,9 @@ const ResidentGrid = (props: IProps): JSX.Element => {
             <thead>
             <tr>
                 {onSelected &&
-                    <th>Selected</th>
+                    <th style={{textAlign: "center"}}>
+                        Selected
+                    </th>
                 }
                 <th>
                     <span>Last Name</span>
