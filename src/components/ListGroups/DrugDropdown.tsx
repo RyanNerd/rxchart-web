@@ -6,7 +6,7 @@ import {MedicineRecord} from "../../types/RecordTypes";
 interface IProps {
     medicineList: Array<MedicineRecord>,
     drugId: number | null,
-    onSelect: Function
+    onSelect: (m: MedicineRecord) => void
 }
 
 /**
@@ -65,7 +65,9 @@ const DrugDropdown = (props: IProps): JSX.Element | null => {
             <Dropdown.Item
                 key={key}
                 active={medicine.Id === drugId}
-                onSelect={(e) => props.onSelect(e, medicine)}>
+                onSelect={(s, e) => {
+                    props.onSelect(medicine);
+                }}>
                     {drugDetail}
             </Dropdown.Item>
         );

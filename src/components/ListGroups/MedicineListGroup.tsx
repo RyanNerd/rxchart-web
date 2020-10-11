@@ -80,7 +80,7 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
                 <DrugDropdown
                     medicineList={medicineList}
                     drugId={drugId}
-                    onSelect={(e: MouseEvent, drug:MedicineRecord) => drugChanged(drug)}
+                    onSelect={(drug: MedicineRecord) => drugChanged(drug)}
                 />
             </ListGroup.Item>
 
