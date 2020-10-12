@@ -1,9 +1,12 @@
 import {DrugLogRecord, MedicineRecord, ResidentRecord} from "../types/RecordTypes";
 import {Variant} from "react-bootstrap/types";
+import DateTimeFormatOptions = Intl.DateTimeFormatOptions;
 
 interface IKey {
     [key: string]: any
 }
+
+type ReturnValidation = '' | 'is-invalid' | string;
 
 /**
  * Given a ResidentRecord return the resident's DOB as a string.
@@ -43,7 +46,7 @@ export const FullName = (resident: ResidentRecord): string => {
  * @param {string} month
  * @returns {'' | 'is-invalid'}
  */
-export const isMonthValid = (month: string): '' | 'is-invalid' => {
+export const isMonthValid = (month: string): ReturnValidation => {
     return (parseInt(month) >= 1 && parseInt(month) <= 12) ? '' : 'is-invalid';
 };
 
@@ -54,7 +57,7 @@ export const isMonthValid = (month: string): '' | 'is-invalid' => {
  * @param {string} month
  * @return {'' | 'is-invalid'}
  */
-export const isDayValid = (day: string, month: string): '' | 'is-invalid' => {
+export const isDayValid = (day: string, month: string): ReturnValidation => {
     let maxDay = 28;
     const nMonth = parseInt(month);
     const nDay = parseInt(day);
@@ -83,14 +86,13 @@ export const isDayValid = (day: string, month: string): '' | 'is-invalid' => {
  * @param {boolean} isDOB
  * @return {'' | 'is-invalid'}
  */
-export const isYearValid = (year: string, isDOB: boolean): '' | 'is-invalid' => {
+export const isYearValid = (year: string, isDOB: boolean): ReturnValidation => {
     const nYear = parseInt(year);
     if (isDOB) {
         const today = new Date();
         const todayYear = today.getFullYear();
         return (nYear <= todayYear && nYear >= todayYear - 125) ? '' : 'is-invalid';
     }
-
     return (nYear >= 1900 && nYear <= 9999) ? '' : 'is-invalid';
 };
 // VALIDATION Functions END
@@ -137,29 +139,29 @@ export const calculateLastTaken = (drugId: number, drugLogList: DrugLogRecord[])
  * @return {Variant}
  */
 export const getLastTakenVariant = (lastTaken: number | null): Variant => {
-    let warningColor;
+    let variant;
     switch (lastTaken) {
-        case null: warningColor = 'primary';
+        case null: variant = 'primary';
             break;
-        case 0: warningColor = 'danger';
+        case 0: variant = 'danger';
             break;
-        case 1: warningColor = 'danger';
+        case 1: variant = 'danger';
             break;
-        case 2: warningColor = 'danger';
+        case 2: variant = 'danger';
             break;
-        case 3: warningColor = 'warning';
+        case 3: variant = 'warning';
             break;
-        case 4: warningColor = 'warning';
+        case 4: variant = 'warning';
             break;
-        case 5: warningColor = 'warning';
+        case 5: variant = 'warning';
             break;
-        case 6: warningColor = 'info';
+        case 6: variant = 'info';
             break;
-        case 7: warningColor = 'info';
+        case 7: variant = 'info';
             break;
-        default: warningColor = 'primary';
+        default: variant = 'primary';
     }
-    return (lastTaken && lastTaken >= 8) ? 'light' : warningColor;
+    return (lastTaken && lastTaken >= 8) ? 'light' : variant;
 }
 
 /**
@@ -201,7 +203,11 @@ export const getBsColor = (variant: Variant): string => {
  */
 export const isToday = (date: Date): boolean => {
     const now = new Date();
-    const options = {month: '2-digit', day: '2-digit', year: 'numeric'};
+    const options = {
+        month: '2-digit',
+        day: '2-digit',
+        year: 'numeric'
+    } as DateTimeFormatOptions;
     const nowFull = now.toLocaleString('en-US', options);
     const dateFull = date.toLocaleString('en-US', options);
     return nowFull === dateFull;
