@@ -15,7 +15,7 @@ interface IProps {
     addDrugLog: (e: React.MouseEvent<HTMLElement>) =>void,
     canvasId: string,
     canvasUpdated?: (c: HTMLCanvasElement) => void,
-    logDrug: Function
+    logDrug: (n: number) => void
 }
 
 /**
