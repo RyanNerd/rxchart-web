@@ -8,11 +8,16 @@ import MedicineEdit from "../components/Modals/MedicineEdit";
 import DrugLogGrid from "../components/Grids/DrugLogGrid";
 import DrugLogEdit from "../components/Modals/DrugLogEdit";
 import MedicineListGroup from "../components/ListGroups/MedicineListGroup";
-import {calculateLastTaken, getFormattedDate, getLastTakenVariant, getObjectByProperty} from "../utility/common";
+import {
+    calculateLastTaken,
+    getFormattedDate,
+    getLastTakenVariant,
+    getObjectByProperty,
+    isSearchValid
+} from "../utility/common";
 import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../types/RecordTypes";
 import LastTakenButton from "../components/Buttons/LastTakenButton";
 import searchDrugs from "../utility/searchDrugs";
-import isSearchValid from "../utility/isSearchValid";
 import MedHistoryProvider from "../providers/MedHistoryProvider";
 import MedicineProvider from "../providers/MedicineProvider";
 import {updateDrugLog} from "./Common/updateDrugLog";

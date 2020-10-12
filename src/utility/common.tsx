@@ -1,4 +1,4 @@
-import {DrugLogRecord, ResidentRecord} from "../types/RecordTypes";
+import {DrugLogRecord, MedicineRecord, ResidentRecord} from "../types/RecordTypes";
 import {Variant} from "react-bootstrap/types";
 
 interface IKey {
@@ -248,4 +248,27 @@ export const getFormattedDate = (date: Date | string): string => {
  */
 export const getObjectByProperty = (objectList: IKey, propName: string, searchValue: any): object => {
     return objectList.find((obj: IKey) => (obj[propName] === searchValue));
+}
+
+/**
+ * Given the searchText and activeDrug determine if the search is valid and return true if so, otherwise false.
+ *
+ * @param {string} searchText
+ * @param {MedicineRecord} drug
+ * @returns {boolean}
+ */
+export const isSearchValid = (searchText: string, drug: MedicineRecord): boolean => {
+    const textLen = searchText ? searchText.length : 0;
+    if (drug) {
+        let searched;
+        const c = searchText.substr(0,1);
+        // Is the first character a digit? If so, search the Barcode otherwise search the Drug name
+        if (c >= '0' && c <= '9') {
+            searched = drug.Barcode;
+        } else {
+            searched = drug.Drug;
+        }
+        return searched?.substr(0, textLen).toLowerCase() === searchText.substr(0, textLen).toLowerCase();
+    }
+    return false;
 }

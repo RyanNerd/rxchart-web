@@ -14,12 +14,11 @@ import {
     getFormattedDate,
     getLastTakenVariant,
     getMDY,
-    getObjectByProperty
+    getObjectByProperty, isSearchValid
 } from "../utility/common";
 import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../types/RecordTypes";
 import LastTakenButton from "../components/Buttons/LastTakenButton";
 import searchDrugs from "../utility/searchDrugs";
-import isSearchValid from "../utility/isSearchValid";
 import MedHistoryProvider from "../providers/MedHistoryProvider";
 import MedicineProvider from "../providers/MedicineProvider";
 import {updateDrugLog} from "./Common/updateDrugLog";
