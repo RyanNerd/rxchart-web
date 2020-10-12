@@ -259,16 +259,13 @@ export const getObjectByProperty = (objectList: IKey, propName: string, searchVa
  */
 export const isSearchValid = (searchText: string, drug: MedicineRecord): boolean => {
     const textLen = searchText ? searchText.length : 0;
-    if (drug) {
-        let searched;
-        const c = searchText.substr(0,1);
-        // Is the first character a digit? If so, search the Barcode otherwise search the Drug name
-        if (c >= '0' && c <= '9') {
-            searched = drug.Barcode;
-        } else {
-            searched = drug.Drug;
-        }
-        return searched?.substr(0, textLen).toLowerCase() === searchText.substr(0, textLen).toLowerCase();
+    let searched;
+    const c = searchText.substr(0,1);
+    // Is the first character a digit? If so, search the Barcode otherwise search the Drug name
+    if (c >= '0' && c <= '9') {
+        searched = drug.Barcode;
+    } else {
+        searched = drug.Drug;
     }
-    return false;
+    return searched?.substr(0, textLen).toLowerCase() === searchText.substr(0, textLen).toLowerCase();
 }
