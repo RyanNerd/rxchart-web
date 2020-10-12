@@ -73,15 +73,15 @@ const ResidentGrid = (props: IProps): JSX.Element => {
                 <td style={{verticalAlign: "middle", fontWeight: fontWeight}}>{updated}</td>
 
                 {onEdit &&
-                <td style={{textAlign: 'center', verticalAlign: "middle"}}>
-                    <Button
-                        size="sm"
-                        id={"resident-grid-edit-btn-" + resident.Id}
-                        onClick={(e) => onEdit(e, resident)}
-                    >
-                        Edit
-                    </Button>
-                </td>
+                    <td style={{textAlign: 'center', verticalAlign: "middle"}}>
+                        <Button
+                            size="sm"
+                            id={"resident-grid-edit-btn-" + resident.Id}
+                            onClick={(e) => onEdit(e, resident)}
+                        >
+                            Edit
+                        </Button>
+                    </td>
                 }
 
                 {onDelete && !resident.deleted_at &&
