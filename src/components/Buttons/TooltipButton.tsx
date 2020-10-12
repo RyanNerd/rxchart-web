@@ -1,13 +1,13 @@
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
-import Button from "react-bootstrap/Button";
+import Button, {ButtonProps} from "react-bootstrap/Button";
 import React from "reactn";
 import {randomString} from "../../utility/common";
 import {ReactNode} from "react";
 import {Placement} from "react-bootstrap/Overlay";
 import {Variant} from "react-bootstrap/types";
 
-interface IProps {
+interface IProps extends ButtonProps {
     placement?: Placement
     variant?: Variant
     tooltip?: string | ReactNode;
