@@ -1,9 +1,24 @@
 import {DrugLogRecord, MedicineRecord, ResidentRecord} from "../types/RecordTypes";
 import {Variant} from "react-bootstrap/types";
-import DateTimeFormatOptions = Intl.DateTimeFormatOptions;
 
 interface IKey {
     [key: string]: any
+}
+
+interface DateTimeFormatOptions {
+    localeMatcher?: string;
+    weekday?: string;
+    era?: string;
+    year?: string;
+    month?: string;
+    day?: string;
+    hour?: string;
+    minute?: string;
+    second?: string;
+    timeZoneName?: string;
+    formatMatcher?: string;
+    hour12?: boolean;
+    timeZone?: string;
 }
 
 type ReturnValidation = '' | 'is-invalid' | string;
@@ -274,4 +289,34 @@ export const isSearchValid = (searchText: string, drug: MedicineRecord): boolean
         searched = drug.Drug;
     }
     return searched?.substr(0, textLen).toLowerCase() === searchText.substr(0, textLen).toLowerCase();
+}
+
+/**
+ * Returns a string of a drug that soft matches in the given drugList if found, otherwise returns a null;
+ *
+ * @param {string} searchText
+ * @param {array<{Barcode: string, Drug: string}>} drugList
+ * @returns {null | string}
+ */
+export const searchDrugs = (searchText: string, drugList: MedicineRecord[]) => {
+    const textLen = searchText ? searchText.length : 0;
+    if (textLen > 0 && drugList && drugList.length > 0) {
+        let drugMatch;
+        const c = searchText.substr(0,1);
+        // Is the first character a digit? If so, search the Barcode otherwise search the Drug name
+        if (c >= '0' && c <= '9') {
+            drugMatch = drugList.filter(drug =>
+                (drug.Barcode?.substr(0, textLen).toLowerCase() === searchText.toLowerCase())
+            );
+        } else {
+            drugMatch =
+                drugList.filter(drug =>
+                    (drug.Drug.substr(0, textLen).toLowerCase() === searchText.toLowerCase())
+                );
+        }
+        if (drugMatch && drugMatch.length > 0) {
+            return drugMatch[0];
+        }
+    }
+    return null;
 }
