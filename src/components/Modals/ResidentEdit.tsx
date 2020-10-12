@@ -34,7 +34,7 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
      */
     const handleOnChange = (e: React.ChangeEvent<HTMLElement>): void => {
         const target = e.target as HTMLInputElement;
-        let value = target.type === 'checkbox' ? target.checked : target.value;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
         residentInfo[name] = value;
         setResidentInfo({...residentInfo});

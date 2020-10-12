@@ -4,7 +4,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import {MedicineRecord} from "../../types/RecordTypes";
 
 interface IProps {
-    medicineList: Array<MedicineRecord>,
+    medicineList: MedicineRecord[],
     drugId: number | null,
     onSelect: (m: MedicineRecord) => void
 }
@@ -66,6 +66,7 @@ const DrugDropdown = (props: IProps): JSX.Element | null => {
                 key={key}
                 active={medicine.Id === drugId}
                 onSelect={(s, e) => {
+                    e.preventDefault();
                     props.onSelect(medicine);
                 }}>
                     {drugDetail}

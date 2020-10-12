@@ -62,6 +62,7 @@ export const FullName = (resident: ResidentRecord): string => {
  * @returns {'' | 'is-invalid'}
  */
 export const isMonthValid = (month: string): ReturnValidation => {
+    // tslint:disable-next-line:radix
     return (parseInt(month) >= 1 && parseInt(month) <= 12) ? '' : 'is-invalid';
 };
 
@@ -234,11 +235,11 @@ export const isToday = (date: Date): boolean => {
  * @return {month: number, day: number, year: number, now: Date}
  */
 export const getMDY = (): {month: number, day: number, year: number, now: Date} => {
-    const today = new Date();
-    const day = today.getDate();
-    const month = today.getMonth() +1;
-    const year = today.getFullYear();
-    return {month: month, day: day, year: year, now: today};
+    const now = new Date();
+    const day = now.getDate();
+    const month = now.getMonth() +1;
+    const year = now.getFullYear();
+    return {month, day, year, now};
 }
 
 /**

@@ -8,7 +8,7 @@ import {MedicineRecord} from "../../types/RecordTypes";
 import {getLastTakenVariant} from "../../utility/common";
 
 interface IProps {
-    medicineList: Array<MedicineRecord>
+    medicineList: MedicineRecord[]
     activeDrug: MedicineRecord,
     lastTaken: number | null,
     drugChanged: (d: MedicineRecord) => void,

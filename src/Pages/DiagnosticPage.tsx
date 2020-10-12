@@ -18,6 +18,7 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
 
     let content;
     if (error && development) {
+        // tsliint-ignore
         console.log('Error', error);
         if (error instanceof Object && error.text) {
             const contentType = error.hasOwnProperty('content_type') ? error.content_type.toLowerCase() : '';

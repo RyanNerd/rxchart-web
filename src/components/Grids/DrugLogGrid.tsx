@@ -108,28 +108,28 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
             }
 
             {columns.includes('Drug') &&
-            <td style={{verticalAlign: "middle", fontWeight: fontWeight}}>
+            <td style={{verticalAlign: "middle", fontWeight}}>
                 <span>{drugName}</span> <span>{drugStrength}</span>
             </td>
             }
             <td style={{
                 textAlign: 'center',
                 verticalAlign: "middle",
-                fontWeight: fontWeight
+                fontWeight
             }}>
                 {getFormattedDate(createdDate)}
             </td>
             <td style={{
                 textAlign: 'center',
                 verticalAlign: "middle",
-                fontWeight: fontWeight
+                fontWeight
             }}>
                 {getFormattedDate(updatedDate)}
             </td>
             <td style={{
                 textAlign: 'center',
                 verticalAlign: "middle",
-                fontWeight: fontWeight
+                fontWeight
             }}>
                 <b>{drug.Notes}</b>
             </td>

@@ -66,11 +66,11 @@ const ResidentGrid = (props: IProps): JSX.Element => {
                     </td>
                 }
 
-                <td style={{verticalAlign: "middle", fontWeight: fontWeight}}>{resident.LastName}</td>
-                <td style={{verticalAlign: "middle", fontWeight: fontWeight}}>{resident.FirstName}</td>
-                <td style={{verticalAlign: "middle", fontWeight: fontWeight}}>{dob}</td>
-                <td style={{verticalAlign: "middle", fontWeight: fontWeight}}>{created}</td>
-                <td style={{verticalAlign: "middle", fontWeight: fontWeight}}>{updated}</td>
+                <td style={{verticalAlign: "middle", fontWeight}}>{resident.LastName}</td>
+                <td style={{verticalAlign: "middle", fontWeight}}>{resident.FirstName}</td>
+                <td style={{verticalAlign: "middle", fontWeight}}>{dob}</td>
+                <td style={{verticalAlign: "middle", fontWeight}}>{created}</td>
+                <td style={{verticalAlign: "middle", fontWeight}}>{updated}</td>
 
                 {onEdit &&
                     <td style={{textAlign: 'center', verticalAlign: "middle"}}>

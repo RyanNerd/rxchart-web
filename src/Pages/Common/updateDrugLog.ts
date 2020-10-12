@@ -1,6 +1,6 @@
-import {DrugLogRecord} from "../../types/RecordTypes";
-import MedHistoryProvider from "../../providers/MedHistoryProvider";
-import getMedicineLog from "./getMedicineLog";
+import { DrugLogRecord } from '../../types/RecordTypes';
+import MedHistoryProvider from '../../providers/MedHistoryProvider';
+import getMedicineLog from './getMedicineLog';
 
 /**
  * Adds or updates the MedicineHistory table with the given drugLogInfo record
@@ -12,18 +12,25 @@ import getMedicineLog from "./getMedicineLog";
  * @return {Promise<DrugLogRecord[]>}
  */
 export const updateDrugLog = (
-        medHistoryProvider: typeof MedHistoryProvider,
-        drugLogInfo: DrugLogRecord,
-        residentId: number
-    ): Promise<DrugLogRecord[]> => {
-    return medHistoryProvider.post(drugLogInfo)
+  medHistoryProvider: typeof MedHistoryProvider,
+  drugLogInfo: DrugLogRecord,
+  residentId: number,
+): Promise<DrugLogRecord[]> => {
+  return medHistoryProvider
+    .post(drugLogInfo)
     .then(() => {
-        return getMedicineLog(medHistoryProvider, residentId)
+      return getMedicineLog(medHistoryProvider, residentId)
         .then((drugLogList) => {
-            return drugLogList;
+          return drugLogList;
         })
-        .catch((err) => {throw err});
+        .catch((err) => {
+          throw err;
+        });
     })
-    .then((drugLogList) => {return drugLogList})
-    .catch((err) => {throw err});
-}
+    .then((drugLogList) => {
+      return drugLogList;
+    })
+    .catch((err) => {
+      throw err;
+    });
+};
