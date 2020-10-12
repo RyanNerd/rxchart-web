@@ -39,22 +39,6 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
         columns = ['Created', 'Updated', 'Amount']
     } = props;
 
-    // If there are no drugs logged then return a generic table to keep the UI layout consistant
-    if (!drugLog || drugLog.length === 0) {
-        return <Table
-            size="sm"
-            style={{tableLayout: "fixed"}}
-        >
-            <thead>
-            <tr>
-                <th style={{textAlign: "center"}}>
-                    <span>No Medications Logged</span>
-                </th>
-            </tr>
-            </thead>
-        </Table>;
-    }
-
     const filteredDrugs = drugId && drugLog ? drugLog.filter(drug => drug && drug.MedicineId === drugId) : drugLog;
 
     /**
@@ -205,7 +189,13 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                 </tr>
             </thead>
             <tbody>
-                {drugLog && drugLog.length && filteredDrugs.map(DrugRow)}
+                {(drugLog && drugLog.length && filteredDrugs) ?
+                    (
+                        filteredDrugs.map(DrugRow)
+                    ) : (
+                        <></>
+                    )
+                }
             </tbody>
         </Table>
     )
