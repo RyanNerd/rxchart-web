@@ -12,18 +12,25 @@ const MedicineProvider = {
     _baseUrl: null as string | null,
     _apiKey: null as string | null,
 
-    /**
-     * MedicineProvider constructor
-     *
-     * @constructor
-     * @param {string} baseUrl
-     * @param {string} apiKey
-     * @return {MedicineProvider}
-     */
-    init: (baseUrl: string, apiKey: string) => {
+    setBaseUrl: (url: string): void => {
+        if (url.length === 0) {
+            throw new Error('baseUrl cannot be empty');
+        }
+        MedicineProvider._baseUrl = url;
+    },
+
+    setApiKey: (apiKey: string): void => {
+        if (apiKey.length === 0) {
+            throw new Error('apiKey cannot be empty');
+        }
         MedicineProvider._apiKey = apiKey;
-        MedicineProvider._baseUrl = baseUrl;
-        return MedicineProvider;
+    },
+
+    /**
+     * Set the apiKey to null
+     */
+    reset: (): void => {
+        MedicineProvider._apiKey = null;
     },
 
     /**

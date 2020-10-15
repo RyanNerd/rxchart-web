@@ -13,15 +13,34 @@ const MedHistoryProvider = {
     _apiKey: null as string | null,
 
     /**
-     * @constructor
-     * @param {string} baseUrl
-     * @param {string} apiKey
-     * @return {MedHistoryProvider}
+     * Set the baseUrl
+     *
+     * @param {string} url
      */
-    init: (baseUrl: string, apiKey: string) => {
-        MedHistoryProvider._baseUrl = baseUrl;
+    setBaseUrl: (url: string): void => {
+        if (url.length === 0) {
+            throw new Error('baseUrl cannot be empty');
+        }
+        MedHistoryProvider._baseUrl = url;
+    },
+
+    /**
+     * Set the apiKey
+     *
+     * @param {string} apiKey
+     */
+    setApiKey: (apiKey: string): void => {
+        if (apiKey.length === 0) {
+            throw new Error('apiKey cannot be empty');
+        }
         MedHistoryProvider._apiKey = apiKey;
-        return MedHistoryProvider;
+    },
+
+    /**
+     * Set the apiKey to null
+     */
+    reset: (): void => {
+        MedHistoryProvider._apiKey = null;
     },
 
     /**

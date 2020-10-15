@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom';
 import React, {setGlobal} from "reactn";
 import App from './App';
-import {initialState} from "./utility/initialState";
+import getInitialState from "./utility/getInitialState";
 
 const InitError = () => {
     return (
@@ -16,7 +16,7 @@ const InitError = () => {
     )
 }
 
-setGlobal(initialState)
+setGlobal(getInitialState())
     .then((initialState) => {
         if (initialState.development) {
             console.log('RxChart Started', initialState);

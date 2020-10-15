@@ -3,11 +3,7 @@ import ResidentGrid from '../components/Grids/ResidentGrid';
 import ResidentEdit from '../components/Modals/ResidentEdit';
 import {FullName} from '../utility/common';
 import {Alert, Form, Spinner} from "react-bootstrap";
-import ResidentProvider from "../providers/ResidentProvider";
 import {ResidentRecord} from "../types/RecordTypes";
-import MedicineProvider from "../providers/MedicineProvider";
-import MedHistoryProvider from "../providers/MedHistoryProvider";
-import {useProviders} from "../utility/useProviders";
 import getMedicineList from "./Common/getMedicineList";
 import getMedicineLog from "./Common/getMedicineLog";
 import Confirm from "../components/Modals/Confirm";
@@ -36,10 +32,10 @@ const ResidentPage = (props: IProps): JSX.Element => {
     const [, setMedicineList] = useGlobal('medicineList');
     const [, setDrugLogList] = useGlobal('drugLogList');
     const [activeResident, setActiveResident] = useGlobal('activeResident');
-    const providers = useProviders();
-    const residentProvider = providers.residentProvider as typeof ResidentProvider;
-    const medicineProvider = providers.medicineProvider as typeof MedicineProvider;
-    const medHistoryProvider = providers.medHistoryProvider as typeof MedHistoryProvider;
+    const [providers] = useGlobal('providers');
+    const residentProvider = providers.residentProvider;
+    const medicineProvider = providers.medicineProvider;
+    const medHistoryProvider = providers.medHistoryProvider;
     const onError = props.onError;
 
     /**

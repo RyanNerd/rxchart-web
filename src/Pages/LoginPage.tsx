@@ -5,14 +5,10 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import TabContent from '../styles/common.css';
-import ResidentProvider from '../providers/ResidentProvider';
-import MedicineProvider from '../providers/MedicineProvider';
-import {initialState} from "../utility/initialState";
-import MedHistoryProvider from "../providers/MedHistoryProvider";
-import {ProviderTypes} from "../types/ProviderTypes";
 import getOtcList from "./Common/getOtcList";
 import {getResidentList} from "./Common/getResidentList";
 import Frak from "frak/lib/components/Frak";
+import getInitialState from "../utility/getInitialState";
 
 interface IProps {
     activeTabKey: string | null
@@ -29,9 +25,9 @@ interface IProps {
  */
 const LoginPage = (props: IProps): JSX.Element => {
     const [, setOtcList] = useGlobal('otcList');
-    const [, setProviders] = useGlobal('providers');
     const [, setResidentList] = useGlobal('residentList');
     const [apiKey, setApiKey] = useGlobal('apiKey');
+    const [providers] = useGlobal('providers');
     const [baseUrl] = useGlobal('baseUrl');
     const [password, setPassword] = useState('');
     const [showAlert, setShowAlert] = useState(false);
@@ -66,27 +62,19 @@ const LoginPage = (props: IProps): JSX.Element => {
                     // Set the global API key returned from the web service.
                     const apiKey = response.data.apiKey;
                     setApiKey(apiKey).then(() => {
-                        // Use global state for Dependency Injection for providers.
-                        const providers = {
-                            residentProvider: ResidentProvider.init(baseUrl, apiKey),
-                            medicineProvider: MedicineProvider.init(baseUrl, apiKey),
-                            medHistoryProvider: MedHistoryProvider.init(baseUrl, apiKey)
-                        } as ProviderTypes.Providers;
-                        setProviders(providers).then(() => {});
+                        providers.residentProvider.setApiKey(apiKey);
+                        providers.medHistoryProvider.setApiKey(apiKey);
+                        providers.medicineProvider.setApiKey(apiKey);
 
                         // Load ALL Resident records up front and save them in the global store.
-                        if (providers.residentProvider) {
-                            getResidentList(providers.residentProvider)
-                                .then((residents) => setResidentList(residents))
-                                .catch((err) => onError(err))
-                        }
+                        getResidentList(providers.residentProvider)
+                            .then((residents) => setResidentList(residents))
+                            .catch((err) => onError(err))
 
                         // Load ALL OTC medications
-                        if (providers.medicineProvider) {
-                            getOtcList(providers.medicineProvider)
-                                .then((otcDrugs) => setOtcList(otcDrugs))
-                                .catch(() => setOtcList([]));
-                        }
+                        getOtcList(providers.medicineProvider)
+                            .then((otcDrugs) => setOtcList(otcDrugs))
+                            .catch(() => setOtcList([]));
 
                         // Let the parent component know we are logged in successfully
                         onLogin(true);
@@ -121,7 +109,7 @@ const LoginPage = (props: IProps): JSX.Element => {
      */
     const logout = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
-        setGlobal(initialState)
+        setGlobal(getInitialState())
             .then(() => console.log('logout successful'))
             .catch((err) => onError(err))
     }

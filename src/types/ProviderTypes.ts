@@ -5,9 +5,9 @@ import {DrugLogRecord, MedicineRecord, ResidentRecord} from './RecordTypes';
 
 export namespace ProviderTypes {
     export type Providers = {
-        residentProvider: typeof ResidentProvider | null;
-        medicineProvider: typeof MedicineProvider | null;
-        medHistoryProvider: typeof MedHistoryProvider | null;
+        residentProvider: typeof ResidentProvider;
+        medicineProvider: typeof MedicineProvider;
+        medHistoryProvider: typeof MedHistoryProvider;
     };
 
     export type DeleteResponse = { success: boolean };

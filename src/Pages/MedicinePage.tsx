@@ -20,8 +20,6 @@ import {
 } from "../utility/common";
 import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../types/RecordTypes";
 import LastTakenButton from "../components/Buttons/LastTakenButton";
-import MedHistoryProvider from "../providers/MedHistoryProvider";
-import MedicineProvider from "../providers/MedicineProvider";
 import {updateDrugLog} from "./Common/updateDrugLog";
 import {updateMedicine} from "./Common/updateMedicine";
 import getMedicineList from "./Common/getMedicineList";
@@ -58,8 +56,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [providers] = useGlobal('providers');
     const [residentId, setResidentId] = useState<number | null>(activeResident?.Id || null);
     const focusRef = useRef<HTMLInputElement>(null);
-    const medHistoryProvider = providers.medHistoryProvider as typeof MedHistoryProvider;
-    const medicineProvider = providers.medicineProvider as typeof MedicineProvider;
+    const medHistoryProvider = providers.medHistoryProvider;
+    const medicineProvider = providers.medicineProvider;
     const onError = props.onError;
     const activeTabKey = props.activeTabKey;
 

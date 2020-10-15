@@ -13,15 +13,34 @@ const ResidentProvider = {
     _apiKey: null as string | null,
 
     /**
-     * ResidentProvider Constructor
+     * Set the baseUrl
      *
-     * @param {string} baseUrl
-     * @param {string} apiKey
+     * @param {string} url
      */
-    init: (baseUrl: string, apiKey: string) => {
-        ResidentProvider._baseUrl = baseUrl;
+    setBaseUrl: (url: string): void => {
+        if (url.length === 0) {
+            throw new Error('baseUrl cannot be empty');
+        }
+        ResidentProvider._baseUrl = url;
+    },
+
+    /**
+     * Set the apiKey
+     *
+     * @param apiKey
+     */
+    setApiKey: (apiKey: string): void => {
+        if (apiKey.length === 0) {
+            throw new Error('apiKey cannot be empty');
+        }
         ResidentProvider._apiKey = apiKey;
-        return ResidentProvider;
+    },
+
+    /**
+     * Set the apiKey to null
+     */
+    reset: (): void => {
+        ResidentProvider._apiKey = null;
     },
 
     /**

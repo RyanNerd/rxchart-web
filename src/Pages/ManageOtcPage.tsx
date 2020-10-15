@@ -4,9 +4,7 @@ import MedicineDetail from "../components/Grids/MedicineDetail";
 import MedicineEdit from "../components/Modals/MedicineEdit";
 import deleteMedicine from "./Common/deleteMedicine";
 import TooltipButton from "../components/Buttons/TooltipButton";
-import MedicineProvider from "../providers/MedicineProvider";
 import {MedicineRecord, newDrugInfo} from "../types/RecordTypes";
-import {useProviders} from "../utility/useProviders";
 import {updateMedicine} from "./Common/updateMedicine";
 import getOtcList from "./Common/getOtcList";
 import Confirm from "../components/Modals/Confirm";
@@ -25,11 +23,11 @@ interface IProps {
  */
 const ManageOtcPage = (props: IProps): JSX.Element => {
     const [otcList, setOtcList] = useGlobal('otcList');
+    const [providers] = useGlobal('providers');
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
-    const providers = useProviders();
-    const medicineProvider = providers.medicineProvider as typeof MedicineProvider;
+    const medicineProvider = providers.medicineProvider;
     const onError = props.onError;
 
     /**
