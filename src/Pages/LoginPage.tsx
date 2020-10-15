@@ -1,4 +1,4 @@
-import React, {setGlobal, useGlobal, useState, useRef, useEffect} from 'reactn';
+import React, {setGlobal, useEffect, useGlobal, useRef, useState} from 'reactn';
 import Alert from 'react-bootstrap/Alert';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
@@ -16,7 +16,7 @@ import Frak from "frak/lib/components/Frak";
 
 interface IProps {
     activeTabKey: string | null
-    onError: (e:Error) => void
+    onError: (e: Error) => void
     onLogin: (loggedIn: boolean) => void
 }
 
@@ -28,14 +28,14 @@ interface IProps {
  * @constructor
  */
 const LoginPage = (props: IProps): JSX.Element => {
-    const [ userName, setUserName ] = useState('');
-    const [ password, setPassword ] = useState('');
-    const [ showAlert, setShowAlert ] = useState(false);
-    const [ apiKey, setApiKey ] = useGlobal('apiKey');
-    const [ baseUrl ] = useGlobal('baseUrl');
-    const [ , setResidentList ] = useGlobal('residentList');
-    const [ , setOtcList ] = useGlobal<any>('otcList');
-    const [ , setProviders ] = useGlobal('providers');
+    const [userName, setUserName] = useState('');
+    const [password, setPassword] = useState('');
+    const [showAlert, setShowAlert] = useState(false);
+    const [apiKey, setApiKey] = useGlobal('apiKey');
+    const [baseUrl] = useGlobal('baseUrl');
+    const [, setResidentList] = useGlobal('residentList');
+    const [, setOtcList] = useGlobal('otcList');
+    const [, setProviders] = useGlobal('providers');
     const focusRef = useRef<HTMLInputElement>(null);
     const {
         onError,
@@ -60,58 +60,58 @@ const LoginPage = (props: IProps): JSX.Element => {
 
         // Send the user name and password to the web service
         Frak.post(baseUrl + 'authenticate', {username: userName, password})
-        .then((response: any) => {
-            // Success?
-            if (response.success) {
-                // Set the global API key returned from the web service.
-                const apiKey = response.data.apiKey;
-                setApiKey(apiKey).then(() => {
-                    // Use global state for Dependency Injection for providers.
-                    const providers = {
-                        residentProvider: ResidentProvider.init(baseUrl, apiKey),
-                        medicineProvider: MedicineProvider.init(baseUrl, apiKey),
-                        medHistoryProvider: MedHistoryProvider.init(baseUrl, apiKey)
-                    } as ProviderTypes.Providers;
-                    setProviders(providers).then(() => {});
+            .then((response: any) => {
+                // Success?
+                if (response.success) {
+                    // Set the global API key returned from the web service.
+                    const apiKey = response.data.apiKey;
+                    setApiKey(apiKey).then(() => {
+                        // Use global state for Dependency Injection for providers.
+                        const providers = {
+                            residentProvider: ResidentProvider.init(baseUrl, apiKey),
+                            medicineProvider: MedicineProvider.init(baseUrl, apiKey),
+                            medHistoryProvider: MedHistoryProvider.init(baseUrl, apiKey)
+                        } as ProviderTypes.Providers;
+                        setProviders(providers).then(() => {});
 
-                    // Load ALL Resident records up front and save them in the global store.
-                    if (providers.residentProvider) {
-                        getResidentList(providers.residentProvider)
-                        .then((residents) => setResidentList(residents))
-                        .catch((err) => onError(err))
-                    }
-
-                    // Load ALL OTC medications
-                    if (providers.medicineProvider) {
-                        getOtcList(providers.medicineProvider)
-                        .then((otcDrugs) => setOtcList(otcDrugs))
-                        .catch(() => setOtcList(null));
-                    }
-
-                    // Let the parent component know we are logged in successfully
-                    onLogin(true);
-
-                    // Remove alert (in the case where a previous log in attempt failed).
-                    setShowAlert(false);
-
-                    // Display the organization name that logged in
-                    const organization = response.data.organization || null;
-                    if (organization) {
-                        // Since this element lives in index.html we use old fashioned JS and DOM manipulation to update
-                        const organizationElement = document.getElementById("organization");
-                        if (organizationElement) {
-                            organizationElement.innerHTML = response.data.organization;
+                        // Load ALL Resident records up front and save them in the global store.
+                        if (providers.residentProvider) {
+                            getResidentList(providers.residentProvider)
+                                .then((residents) => setResidentList(residents))
+                                .catch((err) => onError(err))
                         }
-                    }
-                });
-            } else {
-                // Show invalid credentials alert
-                setShowAlert(true);
-            }
-        })
-        .catch((err) => {
-            onError(err);
-        });
+
+                        // Load ALL OTC medications
+                        if (providers.medicineProvider) {
+                            getOtcList(providers.medicineProvider)
+                                .then((otcDrugs) => setOtcList(otcDrugs))
+                                .catch(() => setOtcList([]));
+                        }
+
+                        // Let the parent component know we are logged in successfully
+                        onLogin(true);
+
+                        // Remove alert (in the case where a previous log in attempt failed).
+                        setShowAlert(false);
+
+                        // Display the organization name that logged in
+                        const organization = response.data.organization || null;
+                        if (organization) {
+                            // This element lives in index.html we use old fashioned JS and DOM manipulation to update
+                            const organizationElement = document.getElementById("organization");
+                            if (organizationElement) {
+                                organizationElement.innerHTML = response.data.organization;
+                            }
+                        }
+                    });
+                } else {
+                    // Show invalid credentials alert
+                    setShowAlert(true);
+                }
+            })
+            .catch((err) => {
+                onError(err);
+            });
     }
 
     /**
@@ -122,8 +122,8 @@ const LoginPage = (props: IProps): JSX.Element => {
     const logout = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
         setGlobal(initialState)
-        .then(()=> console.log('logout successful'))
-        .catch((err) => onError(err))
+            .then(() => console.log('logout successful'))
+            .catch((err) => onError(err))
     }
 
     const signIn = (
@@ -133,12 +133,12 @@ const LoginPage = (props: IProps): JSX.Element => {
                     <Form.Label>User Name</Form.Label>
                 </Col>
                 <Col sm={3}>
-                <Form.Control
-                    type="text"
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
-                    ref={focusRef}
-                />
+                    <Form.Control
+                        type="text"
+                        value={userName}
+                        onChange={(e) => setUserName(e.target.value)}
+                        ref={focusRef}
+                    />
                 </Col>
             </Form.Group>
 
@@ -164,7 +164,9 @@ const LoginPage = (props: IProps): JSX.Element => {
 
             <Form.Group as={Row}>
                 <Col sm={1}>
-                    <Button onClick={(e) => {login(e)}}>
+                    <Button onClick={(e) => {
+                        login(e)
+                    }}>
                         Login
                     </Button>
                 </Col>
@@ -189,7 +191,9 @@ const LoginPage = (props: IProps): JSX.Element => {
     );
 
     const signOut = (
-        <Button onClick={(e) => {logout(e)}}>
+        <Button onClick={(e) => {
+            logout(e)
+        }}>
             Log Out
         </Button>
     );
