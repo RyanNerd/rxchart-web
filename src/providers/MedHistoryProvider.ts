@@ -1,5 +1,5 @@
 import { DrugLogRecord } from '../types/RecordTypes';
-import Frak from './Frak';
+import Frak from "frak/lib/components/Frak";
 import { ProviderTypes } from '../types/ProviderTypes';
 
 type DeleteResponse = ProviderTypes.MedHistory.DeleteResponse;

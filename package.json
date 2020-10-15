@@ -9,6 +9,7 @@
     "@types/react-dom": "^16.9.6",
     "bootstrap": "^4.3.1",
     "bwip-js": "^2.0.10",
+    "frak": "^3.0.1",
     "lodash": ">=4.17.13",
     "lodash.template": ">=4.5.0",
     "react": "^16.14.0",

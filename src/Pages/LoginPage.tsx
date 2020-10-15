@@ -9,10 +9,10 @@ import ResidentProvider from '../providers/ResidentProvider';
 import MedicineProvider from '../providers/MedicineProvider';
 import {initialState} from "../utility/initialState";
 import MedHistoryProvider from "../providers/MedHistoryProvider";
-import Frak from "../providers/Frak";
 import {ProviderTypes} from "../types/ProviderTypes";
 import getOtcList from "./Common/getOtcList";
 import {getResidentList} from "./Common/getResidentList";
+import Frak from "frak/lib/components/Frak";
 
 interface IProps {
     activeTabKey: string | null
