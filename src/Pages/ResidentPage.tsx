@@ -79,7 +79,7 @@ const ResidentPage = (props: IProps): JSX.Element => {
                 .then((data) => setDrugLogList(data))
                 .catch((err) => onError(err));
             } else {
-                setDrugLogList(null).then(()=>{});
+                setDrugLogList([]).then(()=>{});
             }
         });
     }

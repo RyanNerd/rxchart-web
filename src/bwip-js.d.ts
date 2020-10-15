@@ -1,75 +1,76 @@
 declare module 'bwip-js' {
-  declare module BwipJs {
-    export function loadFont(fontName: string, sizeMulti: number, fontFile: string): void;
-    export function toBuffer(opts: ToBufferOptions, callback: (err: string | Error, png: Buffer) => void): void;
-    export function toCanvas(canvas: string | HTMLCanvasElement, opts: ToBufferOptions): HTMLCanvasElement;
-    interface ToBufferOptions {
-      bcid: string;
-      text: string;
+    declare namespace BwipJs {
+        export function loadFont(fontName: string, sizeMulti: number, fontFile: string): void;
+        export function toBuffer(opts: ToBufferOptions, callback: (err: string | Error, png: Buffer) => void): void;
+        export function toCanvas(canvas: string | HTMLCanvasElement, opts: ToBufferOptions): HTMLCanvasElement;
 
-      parse?: boolean;
-      parsefunc?: boolean;
+        interface ToBufferOptions {
+            bcid: string;
+            text: string;
 
-      height?: number;
-      width?: number;
+            parse?: boolean;
+            parsefunc?: boolean;
 
-      scaleX?: number;
-      scaleY?: number;
-      scale?: number;
+            height?: number;
+            width?: number;
 
-      rotate?: 'N' | 'R' | 'L' | 'I';
+            scaleX?: number;
+            scaleY?: number;
+            scale?: number;
 
-      paddingwidth?: number;
-      paddingheight?: number;
+            rotate?: 'N' | 'R' | 'L' | 'I';
 
-      monochrome?: boolean;
-      alttext?: boolean;
+            paddingwidth?: number;
+            paddingheight?: number;
 
-      includetext?: boolean;
-      textfont?: string;
-      textsize?: number;
-      textgaps?: number;
+            monochrome?: boolean;
+            alttext?: boolean;
 
-      textxalign?: 'offleft' | 'left' | 'center' | 'right' | 'offright' | 'justify';
-      textyalign?: 'below' | 'center' | 'above';
-      textxoffset?: number;
-      textyoffset?: number;
+            includetext?: boolean;
+            textfont?: string;
+            textsize?: number;
+            textgaps?: number;
 
-      showborder?: boolean;
-      borderwidth?: number;
-      borderleft?: number;
-      borderright?: number;
-      bordertop?: number;
-      boraderbottom?: number;
+            textxalign?: 'offleft' | 'left' | 'center' | 'right' | 'offright' | 'justify';
+            textyalign?: 'below' | 'center' | 'above';
+            textxoffset?: number;
+            textyoffset?: number;
 
-      barcolor?: string;
-      backgroundcolor?: string;
-      bordercolor?: string;
-      textcolor?: string;
+            showborder?: boolean;
+            borderwidth?: number;
+            borderleft?: number;
+            borderright?: number;
+            bordertop?: number;
+            boraderbottom?: number;
 
-      addontextxoffset?: number;
-      addontextyoffset?: number;
-      addontextfont?: string;
-      addontextsize?: number;
+            barcolor?: string;
+            backgroundcolor?: string;
+            bordercolor?: string;
+            textcolor?: string;
 
-      guardwhitespace?: boolean;
-      guardwidth?: number;
-      guardheight?: number;
-      guardleftpos?: number;
-      guardrightpos?: number;
-      guardleftypos?: number;
-      guardrightypos?: number;
+            addontextxoffset?: number;
+            addontextyoffset?: number;
+            addontextfont?: string;
+            addontextsize?: number;
 
-      sizelimit?: number;
+            guardwhitespace?: boolean;
+            guardwidth?: number;
+            guardheight?: number;
+            guardleftpos?: number;
+            guardrightpos?: number;
+            guardleftypos?: number;
+            guardrightypos?: number;
 
-      includecheck?: boolean;
-      includecheckintext?: boolean;
+            sizelimit?: number;
 
-      inkspread?: number;
-      inkspreadh?: number;
-      inkspreadv?: number;
+            includecheck?: boolean;
+            includecheckintext?: boolean;
+
+            inkspread?: number;
+            inkspreadh?: number;
+            inkspreadv?: number;
+        }
     }
-  }
 
-  export = BwipJs;
+    export = BwipJs;
 }
