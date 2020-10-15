@@ -16,12 +16,13 @@ const MedicineProvider = {
    * MedicineProvider constructor
    *
    * @constructor
-   * @param {frak: Frak, baseUrl: string, apiKey: string} rxFrak
+   * @param {string} baseUrl
+   * @param {string} apiKey
    * @return {MedicineProvider}
    */
-  init: (rxFrak: {baseUrl: string; apiKey: string }) => {
-    MedicineProvider._apiKey = rxFrak.apiKey;
-    MedicineProvider._baseUrl = rxFrak.baseUrl;
+  init: (baseUrl: string, apiKey: string) => {
+    MedicineProvider._apiKey = apiKey;
+    MedicineProvider._baseUrl = baseUrl;
     return MedicineProvider;
   },
 

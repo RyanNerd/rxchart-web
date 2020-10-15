@@ -15,11 +15,12 @@ const ResidentProvider = {
   /**
    * ResidentProvider Constructor
    *
-   * @param {frak: Frak, baseUrl: string, apiKey: string} rxFrak
+   * @param {string} baseUrl
+   * @param {string} apiKey
    */
-  init: (rxFrak: {baseUrl: string; apiKey: string }) => {
-    ResidentProvider._baseUrl = rxFrak.baseUrl;
-    ResidentProvider._apiKey = rxFrak.apiKey;
+  init: (baseUrl: string, apiKey: string) => {
+    ResidentProvider._baseUrl = baseUrl;
+    ResidentProvider._apiKey = apiKey;
     return ResidentProvider;
   },
 

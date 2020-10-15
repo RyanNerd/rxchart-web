@@ -14,12 +14,13 @@ const MedHistoryProvider = {
 
   /**
    * @constructor
-   * @param {frak: Frak, baseUrl: string, apiKey: string} rxFrak
+   * @param {string} baseUrl
+   * @param {string} apiKey
    * @return {MedHistoryProvider}
    */
-  init: (rxFrak: { baseUrl: string; apiKey: string }) => {
-    MedHistoryProvider._baseUrl = rxFrak.baseUrl;
-    MedHistoryProvider._apiKey = rxFrak.apiKey;
+  init: (baseUrl: string, apiKey: string) => {
+    MedHistoryProvider._baseUrl = baseUrl;
+    MedHistoryProvider._apiKey = apiKey;
     return MedHistoryProvider;
   },
 

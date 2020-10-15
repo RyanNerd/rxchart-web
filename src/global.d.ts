@@ -20,7 +20,7 @@ declare module 'reactn/default' {
     drugLogList: DrugLogRecord[] | null;
     medicineList: MedicineRecord | MedicineRecord[] | null;
     otcList: MedicineRecord[] | null;
-    residentList: Array<ResidentRecord>;
+    residentList: ResidentRecord[];
     baseUrl: string;
     apiKey: string | null;
   }

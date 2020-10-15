@@ -67,11 +67,10 @@ const LoginPage = (props: IProps): JSX.Element => {
                 const apiKey = response.data.apiKey;
                 setApiKey(apiKey).then(() => {
                     // Use global state for Dependency Injection for providers.
-                    const rxFrak = {apiKey, baseUrl};
                     const providers = {
-                        residentProvider: ResidentProvider.init(rxFrak),
-                        medicineProvider: MedicineProvider.init(rxFrak),
-                        medHistoryProvider: MedHistoryProvider.init(rxFrak),
+                        residentProvider: ResidentProvider.init(baseUrl, apiKey),
+                        medicineProvider: MedicineProvider.init(baseUrl, apiKey),
+                        medHistoryProvider: MedHistoryProvider.init(baseUrl, apiKey)
                     } as ProviderTypes.Providers;
                     setProviders(providers).then(() => {});
 
