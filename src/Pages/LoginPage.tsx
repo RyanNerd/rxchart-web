@@ -57,10 +57,9 @@ const LoginPage = (props: IProps): JSX.Element => {
      */
     const login = (e: React.KeyboardEvent<HTMLElement> | React.MouseEvent<HTMLElement>): void => {
         e.preventDefault();
-        const frak = Frak;
 
         // Send the user name and password to the web service
-        frak.post(baseUrl + 'authenticate', {username: userName, password})
+        Frak.post(baseUrl + 'authenticate', {username: userName, password})
         .then((response: any) => {
             // Success?
             if (response.success) {
@@ -68,7 +67,7 @@ const LoginPage = (props: IProps): JSX.Element => {
                 const apiKey = response.data.apiKey;
                 setApiKey(apiKey).then(() => {
                     // Use global state for Dependency Injection for providers.
-                    const rxFrak = {frak, apiKey, baseUrl};
+                    const rxFrak = {apiKey, baseUrl};
                     const providers = {
                         residentProvider: ResidentProvider.init(rxFrak),
                         medicineProvider: MedicineProvider.init(rxFrak),

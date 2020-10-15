@@ -9,7 +9,6 @@ type RecordResponse = ProviderTypes.Medicine.RecordResponse;
  * MedicineProvider API connector
  */
 const MedicineProvider = {
-  _frak: Frak,
   _baseUrl: null as string | null,
   _apiKey: null as string | null,
 
@@ -20,8 +19,7 @@ const MedicineProvider = {
    * @param {frak: Frak, baseUrl: string, apiKey: string} rxFrak
    * @return {MedicineProvider}
    */
-  init: (rxFrak: { frak: typeof Frak; baseUrl: string; apiKey: string }) => {
-    MedicineProvider._frak = rxFrak.frak;
+  init: (rxFrak: {baseUrl: string; apiKey: string }) => {
     MedicineProvider._apiKey = rxFrak.apiKey;
     MedicineProvider._baseUrl = rxFrak.baseUrl;
     return MedicineProvider;
@@ -36,7 +34,7 @@ const MedicineProvider = {
   search: async (options: object): Promise<MedicineRecord[]> => {
     const uri = MedicineProvider._baseUrl + 'medicine/search?api_key=' + MedicineProvider._apiKey;
     try {
-      const response = await MedicineProvider._frak.post<RecordResponse>(uri, options);
+      const response = await Frak.post<RecordResponse>(uri, options);
       if (response.success) {
         return response.data as MedicineRecord[];
       } else {
@@ -60,7 +58,7 @@ const MedicineProvider = {
     const apiKey = MedicineProvider._apiKey;
     const uri = MedicineProvider._baseUrl + 'medicine/' + id + '?api_key=' + apiKey;
     try {
-      const response = await MedicineProvider._frak.get<RecordResponse>(uri);
+      const response = await Frak.get<RecordResponse>(uri);
       if (response.success) {
         return response.data as MedicineRecord;
       } else {
@@ -81,7 +79,7 @@ const MedicineProvider = {
     const apiKey = MedicineProvider._apiKey;
     const uri = MedicineProvider._baseUrl + 'medicine?api_key=' + apiKey;
     try {
-      const response = await MedicineProvider._frak.post<RecordResponse>(uri, drugInfo);
+      const response = await Frak.post<RecordResponse>(uri, drugInfo);
       if (response.success) {
         return response.data as MedicineRecord;
       } else {
@@ -102,7 +100,7 @@ const MedicineProvider = {
     const apiKey = MedicineProvider._apiKey;
     const uri = MedicineProvider._baseUrl + 'medicine/' + drugId + '?api_key=' + apiKey;
     try {
-      const response = await MedicineProvider._frak.delete<RecordResponse>(uri);
+      const response = await Frak.delete<RecordResponse>(uri);
       if (response.success) {
         return response;
       } else {

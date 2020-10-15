@@ -9,7 +9,6 @@ type DeleteResponse = ProviderTypes.Resident.DeleteResponse;
  * ResidentProvider API service connector
  */
 const ResidentProvider = {
-  _frak: Frak,
   _baseUrl: null as string | null,
   _apiKey: null as string | null,
 
@@ -18,8 +17,7 @@ const ResidentProvider = {
    *
    * @param {frak: Frak, baseUrl: string, apiKey: string} rxFrak
    */
-  init: (rxFrak: { frak: typeof Frak; baseUrl: string; apiKey: string }) => {
-    ResidentProvider._frak = rxFrak.frak;
+  init: (rxFrak: {baseUrl: string; apiKey: string }) => {
     ResidentProvider._baseUrl = rxFrak.baseUrl;
     ResidentProvider._apiKey = rxFrak.apiKey;
     return ResidentProvider;
@@ -34,7 +32,7 @@ const ResidentProvider = {
   search: async (options: object): Promise<ResidentRecord[]> => {
     const uri = ResidentProvider._baseUrl + 'resident/search?api_key=' + ResidentProvider._apiKey;
     try {
-      const response = await ResidentProvider._frak.post<RecordResponse>(uri, options);
+      const response = await Frak.post<RecordResponse>(uri, options);
       if (response.success) {
         return response.data as ResidentRecord[];
       } else {
@@ -58,7 +56,7 @@ const ResidentProvider = {
     const uri = ResidentProvider._baseUrl + 'resident/restore?api_key=' + ResidentProvider._apiKey;
     const body = { restore_id: residentId };
     try {
-      const response = await ResidentProvider._frak.post<RecordResponse>(uri, body);
+      const response = await Frak.post<RecordResponse>(uri, body);
       if (response.success) {
         return response.data as ResidentRecord;
       }
@@ -78,7 +76,7 @@ const ResidentProvider = {
     const apiKey = ResidentProvider._apiKey;
     const uri = ResidentProvider._baseUrl + 'resident/' + id + '?api_key=' + apiKey;
     try {
-      const response = await ResidentProvider._frak.get<RecordResponse>(uri);
+      const response = await Frak.get<RecordResponse>(uri);
       if (response.success) {
         return response.data as ResidentRecord;
       } else {
@@ -99,7 +97,7 @@ const ResidentProvider = {
     const apiKey = ResidentProvider._apiKey;
     const uri = ResidentProvider._baseUrl + 'resident?api_key=' + apiKey;
     try {
-      const response = await ResidentProvider._frak.post<RecordResponse>(uri, residentInfo);
+      const response = await Frak.post<RecordResponse>(uri, residentInfo);
       if (response.success) {
         return response.data;
       } else {
@@ -120,7 +118,7 @@ const ResidentProvider = {
     const apiKey = ResidentProvider._apiKey;
     const uri = ResidentProvider._baseUrl + 'resident/' + residentId + '?api_key=' + apiKey;
     try {
-      const response = await ResidentProvider._frak.delete<DeleteResponse>(uri);
+      const response = await Frak.delete<DeleteResponse>(uri);
       if (response.success) {
         return response;
       } else {

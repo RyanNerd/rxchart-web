@@ -9,7 +9,6 @@ type RecordResponse = ProviderTypes.MedHistory.RecordResponse;
  * MedHistoryProvider API Connector
  */
 const MedHistoryProvider = {
-  _frak: Frak,
   _baseUrl: null as string | null,
   _apiKey: null as string | null,
 
@@ -18,8 +17,7 @@ const MedHistoryProvider = {
    * @param {frak: Frak, baseUrl: string, apiKey: string} rxFrak
    * @return {MedHistoryProvider}
    */
-  init: (rxFrak: { frak: typeof Frak; baseUrl: string; apiKey: string }) => {
-    MedHistoryProvider._frak = rxFrak.frak;
+  init: (rxFrak: { baseUrl: string; apiKey: string }) => {
     MedHistoryProvider._baseUrl = rxFrak.baseUrl;
     MedHistoryProvider._apiKey = rxFrak.apiKey;
     return MedHistoryProvider;
@@ -36,7 +34,7 @@ const MedHistoryProvider = {
     const apiKey = MedHistoryProvider._apiKey;
     const uri = MedHistoryProvider._baseUrl + 'medhistory/search?api_key=' + apiKey;
     try {
-      const response = await MedHistoryProvider._frak.post<RecordResponse>(uri, options);
+      const response = await Frak.post<RecordResponse>(uri, options);
       if (response.success) {
         return response.data as DrugLogRecord[];
       } else {
@@ -60,7 +58,7 @@ const MedHistoryProvider = {
     const apiKey = MedHistoryProvider._apiKey;
     const uri = MedHistoryProvider._baseUrl + 'medhistory/' + id + '?api_key=' + apiKey;
     try {
-      const response = await MedHistoryProvider._frak.get<RecordResponse>(uri);
+      const response = await Frak.get<RecordResponse>(uri);
       if (response.success) {
         return response.data as DrugLogRecord;
       } else {
@@ -81,7 +79,7 @@ const MedHistoryProvider = {
     const apiKey = MedHistoryProvider._apiKey;
     const uri = MedHistoryProvider._baseUrl + 'medhistory?api_key=' + apiKey;
     try {
-      const response = await MedHistoryProvider._frak.post<RecordResponse>(uri, drugInfo);
+      const response = await Frak.post<RecordResponse>(uri, drugInfo);
       if (response.success) {
         return response.data as DrugLogRecord;
       } else {
@@ -102,7 +100,7 @@ const MedHistoryProvider = {
     const apiKey = MedHistoryProvider._apiKey;
     const uri = MedHistoryProvider._baseUrl + 'medhistory/' + drugId + '?api_key=' + apiKey;
     try {
-      const response = await MedHistoryProvider._frak.delete<RecordResponse>(uri);
+      const response = await Frak.delete<RecordResponse>(uri);
       if (response.success) {
         return response;
       } else {
