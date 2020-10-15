@@ -13,8 +13,10 @@ interface IProps {
  */
 const DiagnosticPage = (props: IProps): JSX.Element | null => {
     const error = props.error;
-    const [ development ] = useGlobal('development');
-    const createMarkup = (html: string) => { return {__html: html}};
+    const [development] = useGlobal('development');
+    const createMarkup = (html: string) => {
+        return {__html: html}
+    };
 
     let content;
     if (error && development) {
@@ -23,7 +25,7 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
         if (error instanceof Object && error.text) {
             const contentType = error.hasOwnProperty('content_type') ? error.content_type.toLowerCase() : '';
             if (contentType.includes('html')) {
-                content = (<div dangerouslySetInnerHTML={createMarkup(error.text)} />);
+                content = (<div dangerouslySetInnerHTML={createMarkup(error.text)}/>);
             } else {
                 content = (<p>{error.text}</p>)
             }
