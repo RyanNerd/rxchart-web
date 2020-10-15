@@ -161,8 +161,8 @@ const ManageDrugPage = (props: IProps): JSX.Element => {
             {medicineInfo && showDeleteMedicine &&
                 <Confirm.Modal
                     show={showDeleteMedicine}
-                    yesButtonVariant="danger"
-                    onAnswer={(a) => {
+                    buttonvariant="danger"
+                    onSelect={(a) => {
                         setShowDeleteMedicine(false);
                         if (a) {deleteDrug()}
                     }}

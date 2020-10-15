@@ -9,8 +9,8 @@ interface IChildren {
 }
 
 interface IProps extends ModalProps {
-    onAnswer: (a: boolean) => void,
-    yesButtonVariant?: ButtonVariant
+    onSelect: (a: boolean) => void,
+    buttonvariant?: ButtonVariant
 }
 
 /**
@@ -28,8 +28,8 @@ const Confirm = {
         const {
             size = 'sm',
             backdrop = 'static',
-            yesButtonVariant = 'primary',
-            onAnswer
+            buttonvariant = 'primary',
+            onSelect
         } = {...props};
         const [show, setShow] = useState(props.show);
 
@@ -43,11 +43,11 @@ const Confirm = {
          * @param {MouseEvent} e
          * @param answer
          */
-        const handleAnswer = (e: React.MouseEvent<HTMLElement>, answer: boolean) => {
+        const onAnswer = (e: React.MouseEvent<HTMLElement>, answer: boolean) => {
             e.preventDefault();
             setShow(false);
             if (props.onHide) {props.onHide()}
-            onAnswer(answer);
+            onSelect(answer);
         }
 
         return (
@@ -61,13 +61,13 @@ const Confirm = {
                 {props.children}
                 <Modal.Footer>
                     <Button
-                        onClick={(e) => handleAnswer(e, true)}
-                        variant={yesButtonVariant}
+                        onClick={(e) => onAnswer(e, true)}
+                        variant={buttonvariant}
                     >
                         Yes
                     </Button>
                     <Button
-                        onClick={(e) => handleAnswer(e, false)}
+                        onClick={(e) => onAnswer(e, false)}
                         variant="secondary"
                     >
                         No

@@ -378,7 +378,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             {showDeleteDrugLogRecord &&
             <Confirm.Modal
                 size='lg'
-                onAnswer={
+                onSelect={
                     (a) => {
                         setShowDeleteDrugLogRecord(false);
                         const drugLog = {...showDeleteDrugLogRecord};
@@ -386,7 +386,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     }
                 }
                 show={showDeleteDrugLogRecord}
-                yesButtonVariant="danger"
+                buttonvariant="danger"
             >
                 <Confirm.Header>
                     <Confirm.Title>

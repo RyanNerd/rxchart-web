@@ -380,8 +380,8 @@ const OtcPage = (props: IProps): JSX.Element | null => {
             <Confirm.Modal
                 size='lg'
                 show={showDeleteDrugLogRecord}
-                yesButtonVariant="danger"
-                onAnswer={(a) => {
+                buttonvariant="danger"
+                onSelect={(a) => {
                     setShowDeleteDrugLogRecord(false);
                     const drugLog = {...showDeleteDrugLogRecord};
                     if (a) {deleteDrugLogRecord(drugLog)}
