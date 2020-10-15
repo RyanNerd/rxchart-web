@@ -13,14 +13,14 @@ declare module 'reactn/default' {
         count: number;
         value: string;
         activeResident: ResidentRecord | null;
+        apiKey: string | null;
+        baseUrl: string;
         development: boolean;
-        providers: ProviderTypes.Providers;
         drugLogList: DrugLogRecord[];
         medicineList: MedicineRecord[];
+        providers: ProviderTypes.Providers;
         otcList: MedicineRecord[];
         residentList: ResidentRecord[];
-        baseUrl: string;
-        apiKey: string | null;
     }
 }
 
