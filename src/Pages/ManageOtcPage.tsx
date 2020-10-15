@@ -24,11 +24,11 @@ interface IProps {
  * @returns {JSX.Element}
  */
 const ManageOtcPage = (props: IProps): JSX.Element => {
-    const [ otcList, setOtcList ] = useGlobal<any>('otcList');
-    const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
-    const [ showDeleteMedicine, setShowDeleteMedicine ] = useState(false);
-    const [ medicineInfo, setMedicineInfo ] = useState<MedicineRecord | null>(null);
-    const providers  = useProviders();
+    const [otcList, setOtcList] = useGlobal('otcList');
+    const [showMedicineEdit, setShowMedicineEdit] = useState(false);
+    const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
+    const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
+    const providers = useProviders();
     const medicineProvider = providers.medicineProvider as typeof MedicineProvider;
     const onError = props.onError;
 
@@ -65,13 +65,13 @@ const ManageOtcPage = (props: IProps): JSX.Element => {
     const deleteDrug = (): void => {
         if (medicineInfo && medicineInfo.Id) {
             deleteMedicine(medicineProvider, medicineInfo.Id)
-            .then((deleted) => {
-                if (deleted) {
-                    getOtcList(medicineProvider)
-                    .then((drugRecords) => setOtcList(drugRecords))
-                    .catch(() => setOtcList(null));
-                }
-            });
+                .then((deleted) => {
+                    if (deleted) {
+                        getOtcList(medicineProvider)
+                            .then((drugRecords) => setOtcList(drugRecords))
+                            .catch(() => setOtcList([]));
+                    }
+                });
         }
     }
 
@@ -87,7 +87,6 @@ const ManageOtcPage = (props: IProps): JSX.Element => {
                 + OTC
             </TooltipButton>
 
-            {otcList &&
             <Table
                 striped
                 bordered
@@ -129,27 +128,26 @@ const ManageOtcPage = (props: IProps): JSX.Element => {
                 }
                 </tbody>
             </Table>
-            }
 
             {showMedicineEdit && medicineInfo &&
-            /* MedicineEdit Modal */
-            <MedicineEdit
-                otc={true}
-                show={showMedicineEdit}
-                onHide={() => setShowMedicineEdit(!showMedicineEdit)}
-                onClose={(r) => {
-                    if (r) {
-                        updateMedicine(medicineProvider, r)
-                        .then(() => {
-                            getOtcList(medicineProvider)
-                                .then((medicines) => setOtcList(medicines))
-                        })
-                        .catch((err) => onError(err))
-                    }
-                    setShowMedicineEdit(false);
-                }}
-                drugInfo={medicineInfo}
-            />
+                /* MedicineEdit Modal */
+                <MedicineEdit
+                    otc={true}
+                    show={showMedicineEdit}
+                    onHide={() => setShowMedicineEdit(!showMedicineEdit)}
+                    onClose={(r) => {
+                        if (r) {
+                            updateMedicine(medicineProvider, r)
+                                .then(() => {
+                                    getOtcList(medicineProvider)
+                                        .then((medicines) => setOtcList(medicines))
+                                })
+                                .catch((err) => onError(err))
+                        }
+                        setShowMedicineEdit(false);
+                    }}
+                    drugInfo={medicineInfo}
+                />
             }
 
             {medicineInfo && showDeleteMedicine &&
@@ -157,7 +155,7 @@ const ManageOtcPage = (props: IProps): JSX.Element => {
                     size="lg"
                     show={showDeleteMedicine}
                     buttonvariant="danger"
-                    onSelect={(a)=> {
+                    onSelect={(a) => {
                         setShowDeleteMedicine(false);
                         if (a) {
                             deleteDrug();
