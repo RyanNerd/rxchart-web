@@ -7,7 +7,6 @@ import Row from 'react-bootstrap/Row';
 import TabContent from '../styles/common.css';
 import getOtcList from "./Common/getOtcList";
 import {getResidentList} from "./Common/getResidentList";
-import Frak from "frak/lib/components/Frak";
 import getInitialState from "../utility/getInitialState";
 
 interface IProps {
@@ -28,7 +27,6 @@ const LoginPage = (props: IProps): JSX.Element => {
     const [, setResidentList] = useGlobal('residentList');
     const [apiKey, setApiKey] = useGlobal('apiKey');
     const [providers] = useGlobal('providers');
-    const [baseUrl] = useGlobal('baseUrl');
     const [password, setPassword] = useState('');
     const [showAlert, setShowAlert] = useState(false);
     const [userName, setUserName] = useState('');
@@ -38,6 +36,8 @@ const LoginPage = (props: IProps): JSX.Element => {
         activeTabKey,
         onLogin
     } = props;
+
+    const authenticationProvider = providers.authenticationProvider;
 
     // Set focus to the search input when this page is selected.
     useEffect(() => {
@@ -55,12 +55,10 @@ const LoginPage = (props: IProps): JSX.Element => {
         e.preventDefault();
 
         // Send the user name and password to the web service
-        Frak.post(baseUrl + 'authenticate', {username: userName, password})
-            .then((response: any) => {
-                // Success?
+        authenticationProvider.post({username: userName, password})
+            .then((response) => {
                 if (response.success) {
-                    // Set the global API key returned from the web service.
-                    const apiKey = response.data.apiKey;
+                    const apiKey = response.apiKey;
                     setApiKey(apiKey).then(() => {
                         providers.residentProvider.setApiKey(apiKey);
                         providers.medHistoryProvider.setApiKey(apiKey);
@@ -83,13 +81,10 @@ const LoginPage = (props: IProps): JSX.Element => {
                         setShowAlert(false);
 
                         // Display the organization name that logged in
-                        const organization = response.data.organization || null;
-                        if (organization) {
-                            // This element lives in index.html we use old fashioned JS and DOM manipulation to update
-                            const organizationElement = document.getElementById("organization");
-                            if (organizationElement) {
-                                organizationElement.innerHTML = response.data.organization;
-                            }
+                        // This element lives in index.html so we use old fashioned JS and DOM manipulation to update
+                        const organizationElement = document.getElementById("organization");
+                        if (organizationElement) {
+                            organizationElement.innerHTML = response.organization;
                         }
                     });
                 } else {

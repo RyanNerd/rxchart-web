@@ -2,9 +2,11 @@ import ResidentProvider from '../providers/ResidentProvider';
 import MedicineProvider from '../providers/MedicineProvider';
 import MedHistoryProvider from '../providers/MedHistoryProvider';
 import {DrugLogRecord, MedicineRecord, ResidentRecord} from './RecordTypes';
+import AuthenticationProvider from "../providers/AuthenticationProvider";
 
 export namespace ProviderTypes {
     export type Providers = {
+        authenticationProvider: typeof AuthenticationProvider;
         residentProvider: typeof ResidentProvider;
         medicineProvider: typeof MedicineProvider;
         medHistoryProvider: typeof MedHistoryProvider;
