@@ -12,15 +12,20 @@ interface IProps {
  * @return {JSX.Element | null}
  */
 const DiagnosticPage = (props: IProps): JSX.Element | null => {
-    const error = props.error;
     const [development] = useGlobal('development');
-    const createMarkup = (html: string) => {
+    const error = props.error;
+
+    /**
+     * Function to create the unsafe HTML object
+     * @param {string} html
+     * @return {object}
+     */
+    const createMarkup = (html: string): {__html: string} => {
         return {__html: html}
     };
 
     let content;
     if (error && development) {
-        // tsliint-ignore
         console.log('Error', error);
         if (error instanceof Object && error.text) {
             const contentType = error.hasOwnProperty('content_type') ? error.content_type.toLowerCase() : '';
