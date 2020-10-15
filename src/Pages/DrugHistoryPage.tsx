@@ -4,9 +4,9 @@ import DrugLogGrid from "../components/Grids/DrugLogGrid";
 import {DrugLogRecord, MedicineRecord} from "../types/RecordTypes";
 
 interface IProps {
-    drugLogList: DrugLogRecord[] | null,
-    medicineList: MedicineRecord[] | null,
-    otcList: MedicineRecord[] | null
+    drugLogList: DrugLogRecord[],
+    medicineList: MedicineRecord[],
+    otcList: MedicineRecord[]
 }
 
 /**
@@ -18,9 +18,9 @@ interface IProps {
  */
 const DrugHistoryPage = (props: IProps): JSX.Element => {
     const {
-        drugLogList,
-        medicineList,
-        otcList
+        drugLogList = [],
+        medicineList = [],
+        otcList = []
     } = props;
 
     return (

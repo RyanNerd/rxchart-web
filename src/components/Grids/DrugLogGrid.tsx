@@ -10,12 +10,12 @@ import {
 } from "../../utility/common";
 
 interface IProps {
-    drugLog?: DrugLogRecord[] | null,
+    drugLog?: DrugLogRecord[],
     onEdit?: (e: React.MouseEvent<HTMLElement>, r: DrugLogRecord)=>void,
     onDelete?: (e: React.MouseEvent<HTMLElement>, r: DrugLogRecord)=>void,
     drugId?: number | null,
-    medicineList?: MedicineRecord[] | null,
-    otcList?: MedicineRecord[] | null,
+    medicineList?: MedicineRecord[],
+    otcList?: MedicineRecord[],
     condensed?: string,
     columns?: string[]
 }
@@ -29,12 +29,12 @@ interface IProps {
  */
 const DrugLogGrid = (props: IProps): JSX.Element => {
     const {
-        drugLog,
+        drugLog = [],
         onEdit,
         onDelete,
         drugId,
-        medicineList,
-        otcList,
+        medicineList = [],
+        otcList = [],
         condensed = "false",
         columns = ['Created', 'Updated', 'Amount']
     } = props;
@@ -49,14 +49,14 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
      * @returns {any}
      */
     const drugColumnLookup = (drugId: number, columnName: string): any => {
-        if (medicineList && drugId) {
+        if (drugId) {
             const medicine = getObjectByProperty(medicineList, 'Id', drugId) as MedicineRecord;
             if (medicine) {
                 return medicine[columnName];
             }
         }
 
-        if (otcList && drugId) {
+        if (drugId) {
             const otc = getObjectByProperty(otcList, 'Id', drugId) as MedicineRecord;
             if (otc) {
                 return otc[columnName];
