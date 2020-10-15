@@ -24,11 +24,11 @@ interface IProps {
  * @returns {JSX.Element}
  */
 const ManageDrugPage = (props: IProps): JSX.Element => {
-    const [ medicineList, setMedicineList ] = useGlobal<MedicineRecord>('medicineList');
-    const [ activeResident ]= useGlobal('activeResident');
-    const [ showMedicineEdit, setShowMedicineEdit ] = useState(false);
-    const [ showDeleteMedicine, setShowDeleteMedicine ] = useState(false);
-    const [ medicineInfo, setMedicineInfo ] = useState<MedicineRecord | null>(null);
+    const [medicineList, setMedicineList] = useGlobal('medicineList');
+    const [activeResident] = useGlobal('activeResident');
+    const [showMedicineEdit, setShowMedicineEdit] = useState(false);
+    const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
+    const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const providers = useProviders();
     const medicineProvider = providers.medicineProvider as typeof MedicineProvider;
     const onError = props.onError;
@@ -72,15 +72,16 @@ const ManageDrugPage = (props: IProps): JSX.Element => {
     const deleteDrug = (): void => {
         if (medicineInfo && medicineInfo.Id && activeResident) {
             deleteMedicine(medicineProvider, medicineInfo.Id)
-            .then((deleted) => {
-                if (deleted && activeResident.Id) {
-                    getMedicineList(medicineProvider, activeResident.Id)
-                    .then((drugRecords) => {
-                        setMedicineList(drugRecords).then(() => {});
-                    });
-                }
-            })
-            .catch((err) => onError(err));
+                .then((deleted) => {
+                    if (deleted && activeResident.Id) {
+                        getMedicineList(medicineProvider, activeResident.Id)
+                        .then((drugRecords) => {
+                            setMedicineList(drugRecords).then(() => {
+                            });
+                        });
+                    }
+                })
+                .catch((err) => onError(err));
         }
     }
 
@@ -97,90 +98,92 @@ const ManageDrugPage = (props: IProps): JSX.Element => {
             </TooltipButton>
 
             {medicineList &&
-                <Table
-                  striped
-                  bordered
-                  hover
-                  size="sm"
-                >
-                    <thead>
-                    <tr>
-                        <th> </th>
-                        <th>
-                            Drug
-                        </th>
-                        <th>
-                            Strength
-                        </th>
-                        <th>
-                            Directions
-                        </th>
-                        <th>
-                            Notes
-                        </th>
-                        <th>
-                            Barcode
-                        </th>
-                        <th> </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        {medicineList.map((drug: MedicineRecord) =>
-                            <MedicineDetail
-                                drug={drug}
-                                key={'med-' + drug.Id}
-                                onDelete={onDelete}
-                                onEdit={onEdit}
-                            />
-                        )}
-                    </tbody>
-                </Table>
+            <Table
+                striped
+                bordered
+                hover
+                size="sm"
+            >
+                <thead>
+                <tr>
+                    <th> </th>
+                    <th>
+                        Drug
+                    </th>
+                    <th>
+                        Strength
+                    </th>
+                    <th>
+                        Directions
+                    </th>
+                    <th>
+                        Notes
+                    </th>
+                    <th>
+                        Barcode
+                    </th>
+                    <th> </th>
+                </tr>
+                </thead>
+                <tbody>
+                {medicineList.map((drug: MedicineRecord) =>
+                    <MedicineDetail
+                        drug={drug}
+                        key={'med-' + drug.Id}
+                        onDelete={onDelete}
+                        onEdit={onEdit}
+                    />
+                )}
+                </tbody>
+            </Table>
             }
 
             {showMedicineEdit && medicineInfo &&
-                /* MedicineEdit Modal */
-                <MedicineEdit
-                    show={showMedicineEdit}
-                    onHide={() => setShowMedicineEdit(!showMedicineEdit)}
-                    onClose={(r) => {
-                        const residentId = activeResident && activeResident.Id;
-                        if (residentId && r) {
-                            updateMedicine(medicineProvider, r)
+            /* MedicineEdit Modal */
+            <MedicineEdit
+                show={showMedicineEdit}
+                onHide={() => setShowMedicineEdit(!showMedicineEdit)}
+                onClose={(r) => {
+                    const residentId = activeResident && activeResident.Id;
+                    if (residentId && r) {
+                        updateMedicine(medicineProvider, r)
                             .then(() => {
                                 getMedicineList(medicineProvider, residentId)
-                                .then((medicines) => setMedicineList(medicines))
+                                    .then((medicines) => setMedicineList(medicines))
                             })
                             .catch((err) => onError(err))
-                        }
-                        setShowMedicineEdit(false);
-                    }}
-                    drugInfo={medicineInfo}
-                />
+                    }
+                    setShowMedicineEdit(false);
+                }}
+                drugInfo={medicineInfo}
+            />
             }
 
             {medicineInfo && showDeleteMedicine &&
-                <Confirm.Modal
-                    show={showDeleteMedicine}
-                    buttonvariant="danger"
-                    onSelect={(a) => {
-                        setShowDeleteMedicine(false);
-                        if (a) {deleteDrug()}
-                    }}
-                >
-                    <Confirm.Header>
-                        <Confirm.Title>
-                            {"Delete " + medicineInfo.Drug}
-                        </Confirm.Title>
-                    </Confirm.Header>
-                    <Confirm.Body>
-                        <Alert variant="danger">
-                            Deleting this medicine will remove <b>ALL</b> history of this drug being taken!
-                        </Alert>
-                        <b style={{color: "red"}}>
-                            Are you sure?
-                        </b>
-                    </Confirm.Body>
-                </Confirm.Modal>
+            <Confirm.Modal
+                show={showDeleteMedicine}
+                buttonvariant="danger"
+                onSelect={(a) => {
+                    setShowDeleteMedicine(false);
+                    if (a) {
+                        deleteDrug()
+                    }
+                }}
+            >
+                <Confirm.Header>
+                    <Confirm.Title>
+                        {"Delete " + medicineInfo.Drug}
+                    </Confirm.Title>
+                </Confirm.Header>
+                <Confirm.Body>
+                    <Alert variant="danger">
+                        Deleting this medicine will remove <b>ALL</b> history of this drug being taken!
+                    </Alert>
+                    <b style={{color: "red"}}>
+                        Are you sure?
+                    </b>
+                </Confirm.Body>
+            </Confirm.Modal>
             }
         </>
     );
