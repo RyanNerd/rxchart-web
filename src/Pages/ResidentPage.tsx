@@ -27,15 +27,15 @@ interface IProps {
  * @constructor
  */
 const ResidentPage = (props: IProps): JSX.Element => {
-    const [ showResidentEdit, setShowResidentEdit ] = useState(false);
-    const [ residentInfo, setResidentInfo ] = useState<ResidentRecord | null>(null);
-    const [ showDeleteResident, setShowDeleteResident ] = useState(false);
-    const [ residentToDelete, setResidentToDelete ] = useState<ResidentRecord | null>(null);
-    const [ residentListLoading, setResidentListLoading ] = useState(false);
-    const [ residentList, setResidentList ] = useGlobal('residentList');
-    const [ , setMedicineList ] = useGlobal('medicineList');
-    const [ , setDrugLogList ] = useGlobal('drugLogList');
-    const [ activeResident, setActiveResident ] = useGlobal<any>('activeResident');
+    const [showResidentEdit, setShowResidentEdit] = useState(false);
+    const [residentInfo, setResidentInfo] = useState<ResidentRecord | null>(null);
+    const [showDeleteResident, setShowDeleteResident] = useState(false);
+    const [residentToDelete, setResidentToDelete] = useState<ResidentRecord | null>(null);
+    const [residentListLoading, setResidentListLoading] = useState(false);
+    const [residentList, setResidentList] = useGlobal('residentList');
+    const [, setMedicineList] = useGlobal('medicineList');
+    const [, setDrugLogList] = useGlobal('drugLogList');
+    const [activeResident, setActiveResident] = useGlobal('activeResident');
     const providers = useProviders();
     const residentProvider = providers.residentProvider as typeof ResidentProvider;
     const medicineProvider = providers.medicineProvider as typeof MedicineProvider;
@@ -52,7 +52,7 @@ const ResidentPage = (props: IProps): JSX.Element => {
         setResidentListLoading(true);
         const residentList = await getResidentList(residentProvider);
         setResidentList(residentList)
-        .then(() => setResidentListLoading(false));
+            .then(() => setResidentListLoading(false));
     }
 
     /**
@@ -62,26 +62,26 @@ const ResidentPage = (props: IProps): JSX.Element => {
      * @return Promise<void>
      */
     const refreshLogs = (residentId: number | null): Promise<void> => {
-        if (residentId ===  null) {
+        if (residentId === null) {
             // Logs will be empty for new residents
             return setMedicineList([])
-            .then(() => setDrugLogList([]).then(()=>{}))
+                .then(() => setDrugLogList([]).then(() => {}))
         }
 
         return getMedicineList(medicineProvider, residentId)
-        .then((hydratedMedicineList) => {
-            setMedicineList (hydratedMedicineList).then(()=>{});
-            // If there are any medicines for the selected resident then
-            // select the first one and make it the active drug.
-            if (hydratedMedicineList && hydratedMedicineList.length > 0) {
-                // Refresh the drugLogList for the new active drug.
-                getMedicineLog(medHistoryProvider, residentId)
-                .then((data) => setDrugLogList(data))
-                .catch((err) => onError(err));
-            } else {
-                setDrugLogList([]).then(()=>{});
-            }
-        });
+            .then((hydratedMedicineList) => {
+                setMedicineList(hydratedMedicineList).then(() => {});
+                // If there are any medicines for the selected resident then
+                // select the first one and make it the active drug.
+                if (hydratedMedicineList && hydratedMedicineList.length > 0) {
+                    // Refresh the drugLogList for the new active drug.
+                    getMedicineLog(medHistoryProvider, residentId)
+                        .then((data) => setDrugLogList(data))
+                        .catch((err) => onError(err));
+                } else {
+                    setDrugLogList([]).then(() => {});
+                }
+            });
     }
 
     /**
@@ -92,12 +92,12 @@ const ResidentPage = (props: IProps): JSX.Element => {
      */
     const reactivateResident = (id: number): Promise<ResidentRecord> => {
         return residentProvider.restore(id)
-        .then((reactivatedResident) => {
-            return reactivatedResident;
-        })
-        .catch((err) => {
-            throw err;
-        })
+            .then((reactivatedResident) => {
+                return reactivatedResident;
+            })
+            .catch((err) => {
+                throw err;
+            })
     }
 
     /**
@@ -155,39 +155,41 @@ const ResidentPage = (props: IProps): JSX.Element => {
 
             // Check if the added resident exists but is trashed.
             residentProvider.search(searchExisting)
-            .then((result) => {
-                const trashedResidentId = (result.length === 1) ? result[0].Id : null;
-                // Do we have a trashed resident? Reactivate them, otherwise add as a new resident.
-                if (trashedResidentId) {
-                    reactivateResident(trashedResidentId)
-                    .then((restoredResident: ResidentRecord) => {
-                        refreshResidentList()
-                        .then(() => {
-                            // Set the resident as the active resident.
-                            setActiveResident(restoredResident).then(()=>{});
-                            // Refresh the logs for the resident.
-                            const residentId = restoredResident.Id;
-                            return refreshLogs(residentId);
-                        })
-                    })
-                    .catch((err) => onError(err));
-                } else {
-                    // Add / update the new resident
-                    residentProvider.post(residentData)
-                    .then((resident) => {
-                        refreshResidentList()
-                        .then(() => {
-                            // Set the resident as the active resident.
-                            setActiveResident(resident).then(() => {
-                                // Note the use of residentData (Id will be null for new residents)
-                                refreshLogs(residentData.Id).then(()=>{});
-                            });
-                        })
-                    })
-                    .catch((err) => onError(err));
-                }
-            })
-            .catch((err) => onError(err));
+                .then((result) => {
+                    const trashedResidentId = (result.length === 1) ? result[0].Id : null;
+                    // Do we have a trashed resident? Reactivate them, otherwise add as a new resident.
+                    if (trashedResidentId) {
+                        reactivateResident(trashedResidentId)
+                            .then((restoredResident: ResidentRecord) => {
+                                refreshResidentList()
+                                    .then(() => {
+                                        // Set the resident as the active resident.
+                                        setActiveResident(restoredResident).then(() => {
+                                        });
+                                        // Refresh the logs for the resident.
+                                        const residentId = restoredResident.Id;
+                                        return refreshLogs(residentId);
+                                    })
+                            })
+                            .catch((err) => onError(err));
+                    } else {
+                        // Add / update the new resident
+                        residentProvider.post(residentData)
+                            .then((resident) => {
+                                refreshResidentList()
+                                    .then(() => {
+                                        // Set the resident as the active resident.
+                                        setActiveResident(resident).then(() => {
+                                            // Note the use of residentData (Id will be null for new residents)
+                                            refreshLogs(residentData.Id).then(() => {
+                                            });
+                                        });
+                                    })
+                            })
+                            .catch((err) => onError(err));
+                    }
+                })
+                .catch((err) => onError(err));
         }
     }
 
@@ -201,8 +203,9 @@ const ResidentPage = (props: IProps): JSX.Element => {
         e.preventDefault();
         const residentId = resident.Id as number;
         // Set the resident as the active resident and refresh the logs
-        setActiveResident(resident).then(()=>{
-            refreshLogs(residentId).then(()=>{});
+        setActiveResident(resident).then(() => {
+            refreshLogs(residentId).then(() => {
+            });
         });
     }
 
@@ -212,7 +215,7 @@ const ResidentPage = (props: IProps): JSX.Element => {
      * @param {React.MouseEvent<HTMLElement>} e
      * @param {ResidentRecord} resident
      */
-    const handleOnDelete = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord): void =>  {
+    const handleOnDelete = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord): void => {
         e.preventDefault();
         setResidentToDelete(resident);
         setShowDeleteResident(true);
@@ -225,26 +228,27 @@ const ResidentPage = (props: IProps): JSX.Element => {
         if (residentToDelete && residentToDelete.Id) {
             // Perform the DELETE API call
             residentProvider.delete(residentToDelete.Id)
-            .then((response) => {
-                if (response.success) {
-                    // If the activeResident is the resident that is being deleted then mark it as no longer active.
-                    if (activeResident && activeResident.Id === residentToDelete.Id) {
-                        setActiveResident(null).then(()=>{});
+                .then((response) => {
+                    if (response.success) {
+                        // If the activeResident is the resident that is being deleted then mark it as no longer active.
+                        if (activeResident && activeResident.Id === residentToDelete.Id) {
+                            setActiveResident(null).then(() => {
+                            });
+                        }
+                        const searchCriteria = {
+                            order_by: [
+                                {column: "LastName", direction: "asc"},
+                                {column: "FirstName", direction: "asc"}
+                            ]
+                        };
+                        residentProvider.search(searchCriteria)
+                            .then((data) => setResidentList(data))
+                            .catch((err: Error) => onError(err));
+                    } else {
+                        throw(response);
                     }
-                    const searchCriteria =  {
-                        order_by: [
-                            {column: "LastName", direction: "asc"},
-                            {column: "FirstName", direction: "asc"}
-                        ]
-                    };
-                    residentProvider.search(searchCriteria)
-                        .then((data) => setResidentList(data))
-                        .catch((err: Error) => onError(err));
-                } else {
-                    throw(response);
-                }
-            })
-            .catch((err) => onError(err));
+                })
+                .catch((err) => onError(err));
         }
     }
 
@@ -269,7 +273,7 @@ const ResidentPage = (props: IProps): JSX.Element => {
                     onClick={(e: React.MouseEvent<HTMLElement>) => {
                         e.preventDefault();
                         refreshResidentList()
-                        .then(() => setActiveResident(null));
+                            .then(() => setActiveResident(null));
                     }}
                 >
                     {residentListLoading ?
@@ -300,35 +304,37 @@ const ResidentPage = (props: IProps): JSX.Element => {
 
             {/* ResidentEdit Modal */}
             {residentInfo &&
-                <ResidentEdit
-                    show={showResidentEdit}
-                    residentInfo={residentInfo}
-                    onClose={(r) => {
-                        setShowResidentEdit(false);
-                        handleModalClose(r);
-                    }}
-                />
+            <ResidentEdit
+                show={showResidentEdit}
+                residentInfo={residentInfo}
+                onClose={(r) => {
+                    setShowResidentEdit(false);
+                    handleModalClose(r);
+                }}
+            />
             }
 
             {residentToDelete &&
-                <Confirm.Modal
-                    show={showDeleteResident}
-                    onSelect={(a) => {
-                        setShowDeleteResident(false);
-                        if (a) {deleteResident()}
-                    }}
-                >
-                    <Confirm.Header>
-                        <Confirm.Title>
-                            {"Deactivate " + FullName(residentToDelete)}
-                        </Confirm.Title>
-                    </Confirm.Header>
-                    <Confirm.Body>
-                        <Alert variant="danger">
-                            Are you sure?
-                        </Alert>
-                    </Confirm.Body>
-                </Confirm.Modal>
+            <Confirm.Modal
+                show={showDeleteResident}
+                onSelect={(a) => {
+                    setShowDeleteResident(false);
+                    if (a) {
+                        deleteResident()
+                    }
+                }}
+            >
+                <Confirm.Header>
+                    <Confirm.Title>
+                        {"Deactivate " + FullName(residentToDelete)}
+                    </Confirm.Title>
+                </Confirm.Header>
+                <Confirm.Body>
+                    <Alert variant="danger">
+                        Are you sure?
+                    </Alert>
+                </Confirm.Body>
+            </Confirm.Modal>
             }
         </>
     );
