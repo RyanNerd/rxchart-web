@@ -39,7 +39,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
         columns = ['Created', 'Updated', 'Amount']
     } = props;
 
-    const filteredDrugs = drugId && drugLog ? drugLog.filter(drug => drug && drug.MedicineId === drugId) : drugLog;
+    const filteredDrugs = drugId ? drugLog.filter(drug => drug && drug.MedicineId === drugId) : drugLog;
 
     /**
      * Returns the value of the drug column for the given drugId

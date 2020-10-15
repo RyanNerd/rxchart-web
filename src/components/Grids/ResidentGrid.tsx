@@ -133,7 +133,7 @@ const ResidentGrid = (props: IProps): JSX.Element => {
             </tr>
             </thead>
             <tbody>
-                {residentList && residentList.length > 0 && residentList.map(ResidentRow)}
+                {residentList.length > 0 && residentList.map(ResidentRow)}
             </tbody>
         </Table>
     );
