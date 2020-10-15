@@ -17,20 +17,20 @@ export const updateDrugLog = (
     residentId: number,
 ): Promise<DrugLogRecord[]> => {
     return medHistoryProvider
-    .post(drugLogInfo)
-    .then(() => {
-        return getMedicineLog(medHistoryProvider, residentId)
-            .then((drugLogList) => {
-                return drugLogList;
-            })
-            .catch((err) => {
-                throw err;
-            });
-    })
-    .then((drugLogList) => {
-        return drugLogList;
-    })
-    .catch((err) => {
-        throw err;
-    });
+        .post(drugLogInfo)
+        .then(() => {
+            return getMedicineLog(medHistoryProvider, residentId)
+                .then((drugLogList) => {
+                    return drugLogList;
+                })
+                .catch((err) => {
+                    throw err;
+                });
+        })
+        .then((drugLogList) => {
+            return drugLogList;
+        })
+        .catch((err) => {
+            throw err;
+        });
 };

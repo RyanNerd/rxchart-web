@@ -13,13 +13,13 @@ const deleteDrugLog = (
     drugLogId: number,
 ): Promise<ProviderTypes.DeleteResponse> => {
     return medHistoryProvider
-    .delete(drugLogId)
-    .then((deleted) => {
-        return deleted;
-    })
-    .catch((err) => {
-        throw err;
-    });
+        .delete(drugLogId)
+        .then((deleted) => {
+            return deleted;
+        })
+        .catch((err) => {
+            throw err;
+        });
 };
 
 export default deleteDrugLog;

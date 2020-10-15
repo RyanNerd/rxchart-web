@@ -10,13 +10,13 @@ import {ProviderTypes} from '../../types/ProviderTypes';
  */
 const deleteMedicine = (medicineProvider: typeof MedicineProvider, medicineId: string | number): Promise<boolean> => {
     return medicineProvider
-    .delete(medicineId)
-    .then((response: ProviderTypes.Medicine.DeleteResponse) => {
-        return response.success;
-    })
-    .catch((err) => {
-        throw err;
-    });
+        .delete(medicineId)
+        .then((response: ProviderTypes.Medicine.DeleteResponse) => {
+            return response.success;
+        })
+        .catch((err) => {
+            throw err;
+        });
 };
 
 export default deleteMedicine;

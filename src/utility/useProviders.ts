@@ -1,4 +1,4 @@
-import {useGlobal, useEffect, useState} from 'reactn';
+import {useEffect, useGlobal, useState} from 'reactn';
 import {ProviderTypes} from '../types/ProviderTypes';
 
 export const useProviders = (): ProviderTypes.Providers => {
