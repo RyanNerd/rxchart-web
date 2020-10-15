@@ -379,7 +379,7 @@ const OtcPage = (props: IProps): JSX.Element | null => {
             {showDeleteDrugLogRecord &&
             <Confirm.Modal
                 size='lg'
-                show={showDeleteDrugLogRecord}
+                show={typeof showDeleteDrugLogRecord === 'object'}
                 buttonvariant="danger"
                 onSelect={(a) => {
                     setShowDeleteDrugLogRecord(false);

@@ -385,7 +385,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         if (a) {deleteDrugLogRecord(drugLog)}
                     }
                 }
-                show={showDeleteDrugLogRecord}
+                show={typeof showDeleteDrugLogRecord === 'object'}
                 buttonvariant="danger"
             >
                 <Confirm.Header>
