@@ -1,5 +1,5 @@
 import MedHistoryProvider from '../../providers/MedHistoryProvider';
-import { ProviderTypes } from '../../types/ProviderTypes';
+import {ProviderTypes} from '../../types/ProviderTypes';
 
 /**
  * Deletes a MedHistory record given the primary key
@@ -9,16 +9,16 @@ import { ProviderTypes } from '../../types/ProviderTypes';
  * @return Promise<ProviderTypes.DeleteResponse>
  */
 const deleteDrugLog = (
-  medHistoryProvider: typeof MedHistoryProvider,
-  drugLogId: number,
+    medHistoryProvider: typeof MedHistoryProvider,
+    drugLogId: number,
 ): Promise<ProviderTypes.DeleteResponse> => {
-  return medHistoryProvider
+    return medHistoryProvider
     .delete(drugLogId)
     .then((deleted) => {
-      return deleted;
+        return deleted;
     })
     .catch((err) => {
-      throw err;
+        throw err;
     });
 };
 

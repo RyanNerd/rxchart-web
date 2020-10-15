@@ -1,4 +1,4 @@
-import { MedicineRecord } from '../../types/RecordTypes';
+import {MedicineRecord} from '../../types/RecordTypes';
 import MedicineProvider from '../../providers/MedicineProvider';
 
 /**
@@ -9,25 +9,25 @@ import MedicineProvider from '../../providers/MedicineProvider';
  * @return {Promise<MedicineRecord}>
  */
 export const updateMedicine = (
-  medicineProvider: typeof MedicineProvider,
-  drugInfo: MedicineRecord,
+    medicineProvider: typeof MedicineProvider,
+    drugInfo: MedicineRecord,
 ): Promise<MedicineRecord> => {
-  const drugData = { ...drugInfo };
-  if (!drugData.Id) {
-    drugData.Id = null;
-  }
-  if (drugData.Notes === '') {
-    drugData.Notes = null;
-  }
-  if (drugInfo.Directions === '') {
-    drugData.Directions = null;
-  }
-  return medicineProvider
-    .post(drugData)
-    .then((drugRecord) => {
-      return drugRecord;
-    })
-    .catch((err) => {
-      throw err;
+    const drugData = {...drugInfo};
+    if (!drugData.Id) {
+        drugData.Id = null;
+    }
+    if (drugData.Notes === '') {
+        drugData.Notes = null;
+    }
+    if (drugInfo.Directions === '') {
+        drugData.Directions = null;
+    }
+    return medicineProvider
+        .post(drugData)
+        .then((drugRecord) => {
+            return drugRecord;
+        })
+        .catch((err) => {
+            throw err;
     });
 };
