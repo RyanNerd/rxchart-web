@@ -28,14 +28,14 @@ interface IProps {
  * @constructor
  */
 const LoginPage = (props: IProps): JSX.Element => {
-    const [userName, setUserName] = useState('');
-    const [password, setPassword] = useState('');
-    const [showAlert, setShowAlert] = useState(false);
-    const [apiKey, setApiKey] = useGlobal('apiKey');
-    const [baseUrl] = useGlobal('baseUrl');
-    const [, setResidentList] = useGlobal('residentList');
     const [, setOtcList] = useGlobal('otcList');
     const [, setProviders] = useGlobal('providers');
+    const [, setResidentList] = useGlobal('residentList');
+    const [apiKey, setApiKey] = useGlobal('apiKey');
+    const [baseUrl] = useGlobal('baseUrl');
+    const [password, setPassword] = useState('');
+    const [showAlert, setShowAlert] = useState(false);
+    const [userName, setUserName] = useState('');
     const focusRef = useRef<HTMLInputElement>(null);
     const {
         onError,
