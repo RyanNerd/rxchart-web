@@ -8,7 +8,6 @@ import DrugHistoryPage from "./DrugHistoryPage";
 import ManageDrugPage from "./ManageDrugPage";
 import OtcPage from "./OtcPage";
 import ManageOtcPage from "./ManageOtcPage";
-import {MedicineRecord} from "../types/RecordTypes";
 import {useEffect} from "react";
 import DiagnosticPage from "./DiagnosticPage";
 
@@ -17,13 +16,13 @@ import DiagnosticPage from "./DiagnosticPage";
  * @constructor
  */
 const LandingPage = () => {
-    const [ apiKey, setApiKey ] = useGlobal('apiKey');
-    const [ activeResident ] = useGlobal('activeResident');
-    const [ errorDetails, setErrorDetails ] = useState<any>(null);
-    const [ activeTabKey, setActiveTabKey ] = useState<string | null>('login');
-    const [ drugLogList ] = useGlobal('drugLogList');
-    const [ medicineList ] = useGlobal<MedicineRecord>('medicineList');
-    const [ otcList ] = useGlobal('otcList');
+    const [apiKey, setApiKey] = useGlobal('apiKey');
+    const [activeResident] = useGlobal('activeResident');
+    const [errorDetails, setErrorDetails] = useState<any>(null);
+    const [activeTabKey, setActiveTabKey] = useState<string | null>('login');
+    const [drugLogList] = useGlobal('drugLogList');
+    const [medicineList] = useGlobal('medicineList');
+    const [otcList] = useGlobal('otcList');
 
     // Completely hide the Diagnostics tab header if it isn't active using some direct DOM manipulation.
     useEffect(() => {
@@ -43,7 +42,7 @@ const LandingPage = () => {
      * @param {any} err
      */
     const errorOccurred = (err: any) => {
-        setApiKey(null).then(()=>{});
+        setApiKey(null).then(() => {});
         setErrorDetails(err);
         setActiveTabKey('error');
     }
@@ -70,7 +69,9 @@ const LandingPage = () => {
                 title={loginTitle}
             >
                 <LoginPage
-                    onLogin={(loggedIn) => {setActiveTabKey(loggedIn ? 'resident' : 'login')}}
+                    onLogin={(loggedIn) => {
+                        setActiveTabKey(loggedIn ? 'resident' : 'login')
+                    }}
                     onError={(error) => errorOccurred(error)}
                     activeTabKey={activeTabKey}
                 />
