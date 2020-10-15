@@ -10,7 +10,7 @@ const DEFAULT_REQUEST_CONTENT_TYPE = {
   POST: JSON_CONTENT_TYPE, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
   PUT: JSON_CONTENT_TYPE, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PUT
   PATCH: JSON_CONTENT_TYPE, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PATCH
-  DELETE: null, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/DELETE (https://tools.ietf.org/html/rfc7231#section-4.3.5)
+  DELETE: null, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/DELETE
   HEAD: null, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/HEAD
   OPTIONS: null, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/OPTIONS
   CONNECT: null, // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/CONNECT

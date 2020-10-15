@@ -9,17 +9,17 @@ import {FullName} from "./utility/common";
  * @constructor
  */
 const App = () => {
-    const [ activeResident ] = useGlobal('activeResident');
+    const [ resident ] = useGlobal('activeResident');
     const [ development ] = useGlobal('development');
     const residentColor = development ? 'blue' : "#edf11e";
     const residentForegroundColor = development ? "#fffff0" : "black";
 
     return (
         <>
-            {activeResident ?
+            {resident ?
                 <h4 style={{textAlign: "center"}}>
                     <span style={{background: residentColor, color: residentForegroundColor}}>
-                        {FullName(activeResident)} {activeResident.DOB_MONTH}/{activeResident.DOB_DAY}/{activeResident.DOB_YEAR}
+                        {FullName(resident)} {resident.DOB_MONTH}/{resident.DOB_DAY}/{resident.DOB_YEAR}
                     </span>
                 </h4> : null
             }

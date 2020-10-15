@@ -93,9 +93,16 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
     const drugName = drugInfo.Id ? drugInfo.Drug : 'new drug';
     const fullName = activeResident && FullName(activeResident);
     const modalTitle = otc ?
-        (<Modal.Title>{drugTitleType} OTC <b style={{color: "blue"}}><i>{drugName}</i></b></Modal.Title>)
-        :
-        (<Modal.Title>{drugTitleType} <b style={{color: "blue"}}><i>{drugName}</i></b><span> for </span><b style={{backgroundColor: "yellow"}}>{fullName}</b></Modal.Title>);
+        (
+            <Modal.Title>
+                {drugTitleType} OTC <b style={{color: "blue"}}><i>{drugName}</i></b>
+            </Modal.Title>
+        ) : (
+            <Modal.Title>
+                {drugTitleType} <b style={{color: "blue"}}><i>{drugName}</i></b>
+                    <span> for </span><b style={{backgroundColor: "yellow"}}>{fullName}</b>
+            </Modal.Title>
+        );
 
     return (
         <Modal
@@ -126,7 +133,9 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                         <Alert
                             variant="danger"
                         >
-                            <span style={{color: "red"}}><b>CAUTION:</b></span> Changes to this OTC medicine will affect <b>ALL</b> residents!
+                            <span style={{color: "red"}}>
+                                <b>CAUTION:</b>
+                            </span> Changes to this OTC medicine will affect <b>ALL</b> residents!
                         </Alert>
                     </Form.Group>
                     }

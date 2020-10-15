@@ -339,7 +339,9 @@ const OtcPage = (props: IProps): JSX.Element | null => {
                                 drugLog={otcLogList || []}
                                 otcList={otcList}
                                 onEdit={(e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) => addEditDrugLog(e, r)}
-                                onDelete={(e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) => setShowDeleteDrugLogRecord(r)}
+                                onDelete={(e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) =>
+                                    setShowDeleteDrugLogRecord(r)
+                                }
                             />
                         </Col>
                     </Row>

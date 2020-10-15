@@ -290,7 +290,9 @@ const ResidentPage = (props: IProps): JSX.Element => {
 
             <ResidentGrid
                 onEdit={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => handleOnEdit(e, resident)}
-                onSelected={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => handleOnSelected(e, resident)}
+                onSelected={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) =>
+                    handleOnSelected(e, resident)
+                }
                 onDelete={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => handleOnDelete(e, resident)}
                 activeResident={activeResident}
                 residentList={residentList}
