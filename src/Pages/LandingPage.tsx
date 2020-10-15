@@ -16,13 +16,22 @@ import DiagnosticPage from "./DiagnosticPage";
  * @constructor
  */
 const LandingPage = () => {
-    const [apiKey, setApiKey] = useGlobal('apiKey');
     const [activeResident] = useGlobal('activeResident');
-    const [errorDetails, setErrorDetails] = useState<any>(null);
-    const [activeTabKey, setActiveTabKey] = useState<string | null>('login');
+    const [apiKey, setApiKey] = useGlobal('apiKey');
     const [drugLogList] = useGlobal('drugLogList');
     const [medicineList] = useGlobal('medicineList');
     const [otcList] = useGlobal('otcList');
+    const [activeTabKey, setActiveTabKey] = useState<string | null>('login');
+    const [errorDetails, setErrorDetails] = useState<any>(null);
+    const drugHistoryTitle = (activeTabKey === 'history') ? (<b>Drug History</b>) : (<span>Drug History</span>);
+    const errorTitle = (activeTabKey === 'error') ? (<b>Diagnostics</b>) : (<span>Diagnostics</span>);
+    const login = apiKey ? 'Logout' : 'Login';
+    const loginTitle = (activeTabKey === 'login') ? (<b>{login}</b>) : (<span>{login}</span>);
+    const manageOtcTitle = (activeTabKey === 'manage-otc') ? (<b>Manage OTC</b>) : (<span>Manage OTC</span>);
+    const manageRxTitle = (activeTabKey === 'manage') ? (<b>Manage Rx</b>) : (<span>Manage Rx</span>);
+    const otcTitle = (activeTabKey === 'otc') ? (<b>OTC</b>) : (<span>OTC</span>);
+    const residentTitle = (activeTabKey === 'resident') ? (<b>Residents</b>) : (<span>Residents</span>);
+    const rxTitle = (activeTabKey === 'medicine') ? (<b>Rx</b>) : (<span>Rx</span>);
 
     // Completely hide the Diagnostics tab header if it isn't active using some direct DOM manipulation.
     useEffect(() => {
@@ -46,16 +55,6 @@ const LandingPage = () => {
         setErrorDetails(err);
         setActiveTabKey('error');
     }
-
-    const signIn = apiKey ? 'Logout' : 'Login';
-    const loginTitle = (activeTabKey === 'login') ? (<b>{signIn}</b>) : (<span>{signIn}</span>);
-    const rxTitle = (activeTabKey === 'medicine') ? (<b>Rx</b>) : (<span>Rx</span>);
-    const otcTitle = (activeTabKey === 'otc') ? (<b>OTC</b>) : (<span>OTC</span>);
-    const residentTitle = (activeTabKey === 'resident') ? (<b>Residents</b>) : (<span>Residents</span>);
-    const drugHistoryTitle = (activeTabKey === 'history') ? (<b>Drug History</b>) : (<span>Drug History</span>);
-    const manageRxTitle = (activeTabKey === 'manage') ? (<b>Manage Rx</b>) : (<span>Manage Rx</span>);
-    const manageOtcTitle = (activeTabKey === 'manage-otc') ? (<b>Manage OTC</b>) : (<span>Manage OTC</span>);
-    const errorTitle = (activeTabKey === 'error') ? (<b>Diagnostics</b>) : (<span>Diagnostics</span>);
 
     return (
         <Tabs
