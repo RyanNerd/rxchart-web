@@ -97,7 +97,6 @@ const ManageDrugPage = (props: IProps): JSX.Element => {
                 + Medicine
             </TooltipButton>
 
-            {medicineList &&
             <Table
                 striped
                 bordered
@@ -136,54 +135,53 @@ const ManageDrugPage = (props: IProps): JSX.Element => {
                 )}
                 </tbody>
             </Table>
-            }
 
             {showMedicineEdit && medicineInfo &&
-            /* MedicineEdit Modal */
-            <MedicineEdit
-                show={showMedicineEdit}
-                onHide={() => setShowMedicineEdit(!showMedicineEdit)}
-                onClose={(r) => {
-                    const residentId = activeResident && activeResident.Id;
-                    if (residentId && r) {
-                        updateMedicine(medicineProvider, r)
-                            .then(() => {
-                                getMedicineList(medicineProvider, residentId)
-                                    .then((medicines) => setMedicineList(medicines))
-                            })
-                            .catch((err) => onError(err))
-                    }
-                    setShowMedicineEdit(false);
-                }}
-                drugInfo={medicineInfo}
-            />
+                /* MedicineEdit Modal */
+                <MedicineEdit
+                    show={showMedicineEdit}
+                    onHide={() => setShowMedicineEdit(!showMedicineEdit)}
+                    onClose={(r) => {
+                        const residentId = activeResident && activeResident.Id;
+                        if (residentId && r) {
+                            updateMedicine(medicineProvider, r)
+                                .then(() => {
+                                    getMedicineList(medicineProvider, residentId)
+                                        .then((medicines) => setMedicineList(medicines))
+                                })
+                                .catch((err) => onError(err))
+                        }
+                        setShowMedicineEdit(false);
+                    }}
+                    drugInfo={medicineInfo}
+                />
             }
 
             {medicineInfo && showDeleteMedicine &&
-            <Confirm.Modal
-                show={showDeleteMedicine}
-                buttonvariant="danger"
-                onSelect={(a) => {
-                    setShowDeleteMedicine(false);
-                    if (a) {
-                        deleteDrug()
-                    }
-                }}
-            >
-                <Confirm.Header>
-                    <Confirm.Title>
-                        {"Delete " + medicineInfo.Drug}
-                    </Confirm.Title>
-                </Confirm.Header>
-                <Confirm.Body>
-                    <Alert variant="danger">
-                        Deleting this medicine will remove <b>ALL</b> history of this drug being taken!
-                    </Alert>
-                    <b style={{color: "red"}}>
-                        Are you sure?
-                    </b>
-                </Confirm.Body>
-            </Confirm.Modal>
+                <Confirm.Modal
+                    show={showDeleteMedicine}
+                    buttonvariant="danger"
+                    onSelect={(a) => {
+                        setShowDeleteMedicine(false);
+                        if (a) {
+                            deleteDrug()
+                        }
+                    }}
+                >
+                    <Confirm.Header>
+                        <Confirm.Title>
+                            {"Delete " + medicineInfo.Drug}
+                        </Confirm.Title>
+                    </Confirm.Header>
+                    <Confirm.Body>
+                        <Alert variant="danger">
+                            Deleting this medicine will remove <b>ALL</b> history of this drug being taken!
+                        </Alert>
+                        <b style={{color: "red"}}>
+                            Are you sure?
+                        </b>
+                    </Confirm.Body>
+                </Confirm.Modal>
             }
         </>
     );
