@@ -3,8 +3,8 @@ import React from "reactn";
 import {MedicineRecord} from "../../types/RecordTypes";
 
 interface IProps {
-    drug: MedicineRecord,
     columns?: string[],
+    drug: MedicineRecord,
     onDelete?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void,
     onEdit?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
 }
@@ -17,8 +17,8 @@ interface IProps {
  */
 const MedicineDetail = (props: IProps): JSX.Element => {
     const {
-        drug,
         columns = ['Drug', 'Strength', 'Directions', 'Notes', 'Barcode'],
+        drug,
         onDelete,
         onEdit
     } = props;
