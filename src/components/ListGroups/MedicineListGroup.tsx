@@ -8,14 +8,14 @@ import {MedicineRecord} from "../../types/RecordTypes";
 import {getLastTakenVariant} from "../../utility/common";
 
 interface IProps {
-    medicineList: MedicineRecord[]
     activeDrug: MedicineRecord,
-    lastTaken: number | null,
-    drugChanged: (d: MedicineRecord) => void,
     addDrugLog: (e: React.MouseEvent<HTMLElement>) =>void,
     canvasId: string,
     canvasUpdated?: (c: HTMLCanvasElement) => void,
+    drugChanged: (d: MedicineRecord) => void,
+    lastTaken: number | null,
     logDrug: (n: number) => void
+    medicineList: MedicineRecord[]
 }
 
 /**
@@ -26,14 +26,14 @@ interface IProps {
  */
 const MedicineListGroup = (props: IProps): JSX.Element => {
     const {
-        medicineList,
         activeDrug,
-        lastTaken,
-        drugChanged,
         addDrugLog,
         canvasId,
         canvasUpdated,
-        logDrug
+        drugChanged,
+        lastTaken,
+        logDrug,
+        medicineList
     } = props;
 
     const barCode = activeDrug.Barcode || null;
