@@ -1,18 +1,18 @@
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Tooltip from "react-bootstrap/Tooltip";
-import Button, {ButtonProps} from "react-bootstrap/Button";
 import React from "reactn";
-import {randomString} from "../../utility/common";
 import {ReactNode} from "react";
+import Button, {ButtonProps} from "react-bootstrap/Button";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import {Placement} from "react-bootstrap/Overlay";
 import {Variant} from "react-bootstrap/types";
+import Tooltip from "react-bootstrap/Tooltip";
+import {randomString} from "../../utility/common";
 
 interface IProps extends ButtonProps {
+    children: JSX.Element[] | JSX.Element | string
     placement?: Placement
-    variant?: Variant
     tooltip?: string | ReactNode;
     tooltipId?: string;
-    children: JSX.Element[] | JSX.Element | string
+    variant?: Variant
     [key: string]: any
 }
 
