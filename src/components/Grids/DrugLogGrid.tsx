@@ -3,21 +3,23 @@ import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import {DrugLogRecord, MedicineRecord} from "../../types/RecordTypes";
 import {
-    calculateLastTaken, getBsColor,
+    calculateLastTaken,
+    getBsColor,
     getFormattedDate,
     getLastTakenVariant,
-    getObjectByProperty, isToday
+    getObjectByProperty,
+    isToday
 } from "../../utility/common";
 
 interface IProps {
-    drugLog?: DrugLogRecord[],
-    onEdit?: (e: React.MouseEvent<HTMLElement>, r: DrugLogRecord)=>void,
-    onDelete?: (e: React.MouseEvent<HTMLElement>, r: DrugLogRecord)=>void,
-    drugId?: number | null,
-    medicineList?: MedicineRecord[],
-    otcList?: MedicineRecord[],
-    condensed?: string,
     columns?: string[]
+    condensed?: string,
+    drugId?: number | null,
+    drugLog?: DrugLogRecord[],
+    medicineList?: MedicineRecord[],
+    onDelete?: (e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) => void,
+    onEdit?: (e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) => void,
+    otcList?: MedicineRecord[],
 }
 
 /**
@@ -29,14 +31,14 @@ interface IProps {
  */
 const DrugLogGrid = (props: IProps): JSX.Element => {
     const {
-        drugLog = [],
-        onEdit,
-        onDelete,
-        drugId,
-        medicineList = [],
-        otcList = [],
+        columns = ['Created', 'Updated', 'Amount'],
         condensed = "false",
-        columns = ['Created', 'Updated', 'Amount']
+        drugId,
+        drugLog = [],
+        medicineList = [],
+        onDelete,
+        onEdit,
+        otcList = [],
     } = props;
 
     const filteredDrugs = drugId ? drugLog.filter(drug => drug && drug.MedicineId === drugId) : drugLog;
