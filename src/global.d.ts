@@ -4,24 +4,22 @@ import {ProviderTypes} from './types/ProviderTypes';
 
 declare module 'reactn/default' {
     export interface Reducers {
-        append: (global: State, dispatch: Dispatch, ...strings: any[]) => Pick<State, 'value'>;
-        increment: (global: State, dispatch: Dispatch, i: number) => Pick<State, 'count'>;
-        doNothing: (global: State, dispatch: Dispatch) => null;
+        append: (global: State, dispatch: Dispatch, ...strings: any[]) => Pick<State, 'value'>
+        doNothing: (global: State, dispatch: Dispatch) => null
+        increment: (global: State, dispatch: Dispatch, i: number) => Pick<State, 'count'>
     }
 
     export interface State {
-        count: number;
-        value: string;
-        activeResident: ResidentRecord | null;
-        apiKey: string | null;
-        baseUrl: string;
-        development: boolean;
-        drugLogList: DrugLogRecord[];
-        medicineList: MedicineRecord[];
-        providers: ProviderTypes.Providers;
-        otcList: MedicineRecord[];
-        residentList: ResidentRecord[];
+        activeResident: ResidentRecord | null
+        apiKey: string | null
+        baseUrl: string
+        count: number
+        development: boolean
+        drugLogList: DrugLogRecord[]
+        medicineList: MedicineRecord[]
+        otcList: MedicineRecord[]
+        providers: ProviderTypes.Providers
+        residentList: ResidentRecord[]
+        value: string
     }
 }
-
-declare module '*.css';

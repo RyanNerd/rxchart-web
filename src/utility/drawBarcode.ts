@@ -10,12 +10,12 @@ import BwipJs from 'bwip-js';
 export const drawBarcode = (barCode: string, canvasId: string): HTMLCanvasElement | void => {
     try {
         return BwipJs.toCanvas(canvasId || 'barcodeCanvas', {
-            bcid: 'code128', // Barcode type
-            text: barCode, // Text to encode
-            scale: 2, // 2x scaling factor
-            height: 4, // Bar height, in millimeters
-            includetext: true, // Show human-readable text
-            textxalign: 'center', // Always good to set this
+            bcid: 'code128',     // Barcode type
+            height: 4,           // Bar height, in millimeters
+            includetext: true,   // Show human-readable text
+            scale: 2,            // 2x scaling factor
+            text: barCode,       // Text to encode
+            textxalign: 'center' // Always good to set this
         });
     } catch (e) {
         // This is a non critical error so we just log it to the console.

@@ -3,9 +3,9 @@ import React from "reactn";
 import {MedicineRecord} from "../../types/RecordTypes";
 
 interface IProps {
-    columns?: string[],
-    drug: MedicineRecord,
-    onDelete?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void,
+    columns?: string[]
+    drug: MedicineRecord
+    onDelete?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
     onEdit?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
 }
 

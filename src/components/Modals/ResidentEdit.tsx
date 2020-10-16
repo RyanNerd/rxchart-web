@@ -8,10 +8,10 @@ import {isDayValid, isMonthValid, isYearValid} from "../../utility/common";
 import {ResidentRecord} from "../../types/RecordTypes";
 
 interface IProps {
-    show: boolean,
-    residentInfo: ResidentRecord,
-    onHide?: () => void,
     onClose: (r: ResidentRecord | null) => void
+    onHide?: () => void
+    residentInfo: ResidentRecord
+    show: boolean
 }
 
 /**

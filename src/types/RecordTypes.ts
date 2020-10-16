@@ -1,47 +1,47 @@
 export type ResidentRecord = {
-    Id: null | number;
-    UserId?: number;
-    LastName: string;
-    FirstName: string;
-    DOB_YEAR: number | string;
-    DOB_MONTH: number | string;
-    DOB_DAY: number | string;
-    Created?: null | Date;
-    Updated?: null | Date;
-    deleted_at?: null | Date;
-    [key: string]: any;
+    Created?: null | Date
+    DOB_DAY: number | string
+    DOB_MONTH: number | string
+    DOB_YEAR: number | string
+    FirstName: string
+    Id: null | number
+    LastName: string
+    Updated?: null | Date
+    UserId?: number
+    deleted_at?: null | Date
+    [key: string]: any
 };
 
 export type DrugLogRecord = {
-    Id: null | number;
-    MedicineId: number;
-    Notes: string;
-    Created?: string | null;
-    Updated?: string | null;
-    [key: string]: any;
+    Created?: string | null
+    Id: null | number
+    MedicineId: number
+    Notes: string
+    Updated?: string | null
+    [key: string]: any
 };
 
 export type MedicineRecord = {
-    Id: number | null;
-    Barcode: string | null;
-    ResidentId?: number | null;
-    Drug: string;
-    Strength: string | null;
-    Directions: string | null;
-    Notes: string | null;
-    OTC: boolean;
-    FillDateMonth?: string | string[] | number;
-    FillDateDay?: string | string[] | number;
-    FillDateYear?: string | string[] | number;
-    [key: string]: any;
+    Barcode: string | null
+    Directions: string | null
+    Drug: string
+    FillDateDay?: string | string[] | number
+    FillDateMonth?: string | string[] | number
+    FillDateYear?: string | string[] | number
+    [key: string]: any
+    Id: number | null
+    Notes: string | null
+    OTC: boolean
+    ResidentId?: number | null
+    Strength: string | null
 };
 
 export const newDrugInfo = {
-    Id: null,
     Barcode: '',
-    ResidentId: null,
-    Drug: '',
-    Strength: '',
     Directions: '',
+    Drug: '',
+    Id: null,
     Notes: '',
+    ResidentId: null,
+    Strength: ''
 } as MedicineRecord;

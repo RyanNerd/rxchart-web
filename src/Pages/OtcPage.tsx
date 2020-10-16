@@ -27,7 +27,7 @@ import {Alert} from "react-bootstrap";
 import deleteDrugLog from "./Common/deleteDrugLog";
 
 interface IProps {
-    activeTabKey: string | null,
+    activeTabKey: string | null
     onError: (e: Error) => void
 }
 

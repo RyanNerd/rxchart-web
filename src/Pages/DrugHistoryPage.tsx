@@ -4,8 +4,8 @@ import DrugLogGrid from "../components/Grids/DrugLogGrid";
 import {DrugLogRecord, MedicineRecord} from "../types/RecordTypes";
 
 interface IProps {
-    drugLogList: DrugLogRecord[],
-    medicineList: MedicineRecord[],
+    drugLogList: DrugLogRecord[]
+    medicineList: MedicineRecord[]
     otcList: MedicineRecord[]
 }
 

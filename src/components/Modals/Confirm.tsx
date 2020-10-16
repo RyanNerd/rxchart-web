@@ -9,8 +9,8 @@ interface IChildren {
 }
 
 interface IProps extends ModalProps {
-    onSelect: (a: boolean) => void,
     buttonvariant?: ButtonVariant
+    onSelect: (a: boolean) => void
 }
 
 /**
@@ -26,10 +26,10 @@ const Confirm = {
      */
     Modal: (props: IProps): JSX.Element => {
         const {
-            size = 'sm',
             backdrop = 'static',
             buttonvariant = 'primary',
-            onSelect
+            onSelect,
+            size = 'sm'
         } = {...props};
         const [show, setShow] = useState(props.show);
 

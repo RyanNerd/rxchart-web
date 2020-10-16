@@ -6,19 +6,19 @@ interface IKey {
 }
 
 interface DateTimeFormatOptions {
-    localeMatcher?: string;
-    weekday?: string;
-    era?: string;
-    year?: string;
-    month?: string;
     day?: string;
-    hour?: string;
-    minute?: string;
-    second?: string;
-    timeZoneName?: string;
+    era?: string;
     formatMatcher?: string;
     hour12?: boolean;
+    hour?: string;
+    localeMatcher?: string;
+    minute?: string;
+    month?: string;
+    second?: string;
     timeZone?: string;
+    timeZoneName?: string;
+    weekday?: string;
+    year?: string;
 }
 
 type ReturnValidation = '' | 'is-invalid' | string;
@@ -220,8 +220,8 @@ export const getBsColor = (variant: Variant): string => {
 export const isToday = (date: Date): boolean => {
     const now = new Date();
     const options = {
-        month: '2-digit',
         day: '2-digit',
+        month: '2-digit',
         year: 'numeric'
     } as DateTimeFormatOptions;
     const nowFull = now.toLocaleString('en-US', options);

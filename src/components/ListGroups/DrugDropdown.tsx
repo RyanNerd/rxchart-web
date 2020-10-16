@@ -4,8 +4,8 @@ import Dropdown from "react-bootstrap/Dropdown";
 import {MedicineRecord} from "../../types/RecordTypes";
 
 interface IProps {
-    medicineList: MedicineRecord[],
-    drugId: number | null,
+    drugId: number | null
+    medicineList: MedicineRecord[]
     onSelect: (m: MedicineRecord) => void
 }
 

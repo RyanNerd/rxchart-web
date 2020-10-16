@@ -16,27 +16,27 @@ export namespace ProviderTypes {
 
     export namespace MedHistory {
         export type RecordResponse = {
-            success: boolean;
-            status: number;
             data: DrugLogRecord[] | DrugLogRecord;
+            status: number;
+            success: boolean;
         };
         export type DeleteResponse = ProviderTypes.DeleteResponse;
     }
 
     export namespace Medicine {
         export type RecordResponse = {
-            success: boolean;
-            status: number;
             data: MedicineRecord[] | MedicineRecord;
+            status: number;
+            success: boolean;
         };
         export type DeleteResponse = ProviderTypes.DeleteResponse;
     }
 
     export namespace Resident {
         export type RecordResponse = {
-            success: boolean;
-            status: number;
             data: ResidentRecord[] | ResidentRecord;
+            status: number;
+            success: boolean;
         };
         export type DeleteResponse = ProviderTypes.DeleteResponse;
     }

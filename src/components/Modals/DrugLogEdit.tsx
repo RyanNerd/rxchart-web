@@ -8,10 +8,10 @@ import {DrugLogRecord} from "../../types/RecordTypes";
 import {RefObject} from "react";
 
 interface IProps {
-    show: boolean,
-    drugLogInfo: DrugLogRecord,
-    onClose: (drugLogInfo: DrugLogRecord | null) => void,
+    drugLogInfo: DrugLogRecord
+    onClose: (drugLogInfo: DrugLogRecord | null) => void
     onHide: () => void
+    show: boolean
 }
 
 /**

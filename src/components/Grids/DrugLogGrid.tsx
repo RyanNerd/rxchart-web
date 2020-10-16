@@ -13,13 +13,13 @@ import {
 
 interface IProps {
     columns?: string[]
-    condensed?: string,
-    drugId?: number | null,
-    drugLog?: DrugLogRecord[],
-    medicineList?: MedicineRecord[],
-    onDelete?: (e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) => void,
-    onEdit?: (e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) => void,
-    otcList?: MedicineRecord[],
+    condensed?: string
+    drugId?: number | null
+    drugLog?: DrugLogRecord[]
+    medicineList?: MedicineRecord[]
+    onDelete?: (e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) => void
+    onEdit?: (e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) => void
+    otcList?: MedicineRecord[]
 }
 
 /**

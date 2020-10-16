@@ -1,5 +1,5 @@
-import ReactDOM from 'react-dom';
 import React, {setGlobal} from "reactn";
+import ReactDOM from 'react-dom';
 import App from './App';
 import getInitialState from "./utility/getInitialState";
 

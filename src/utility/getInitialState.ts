@@ -29,9 +29,9 @@ const getInitialState = () => {
         otcList: [] as MedicineRecord[],
         providers: {
             authenticationProvider,
-            residentProvider,
+            medHistoryProvider,
             medicineProvider,
-            medHistoryProvider
+            residentProvider
         },
         residentList: [] as ResidentRecord[]
     } as State;

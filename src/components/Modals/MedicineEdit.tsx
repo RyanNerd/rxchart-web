@@ -9,11 +9,11 @@ import {MedicineRecord} from "../../types/RecordTypes";
 import {Alert} from "react-bootstrap";
 
 interface IProps {
-    show: boolean,
-    otc?: boolean,
-    drugInfo: MedicineRecord,
-    onClose: (r: MedicineRecord | null) => void,
+    drugInfo: MedicineRecord
+    onClose: (r: MedicineRecord | null) => void
     onHide: () => void
+    otc?: boolean
+    show: boolean
 }
 
 /**

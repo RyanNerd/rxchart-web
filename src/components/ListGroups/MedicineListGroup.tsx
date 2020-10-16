@@ -8,12 +8,12 @@ import {MedicineRecord} from "../../types/RecordTypes";
 import {getLastTakenVariant} from "../../utility/common";
 
 interface IProps {
-    activeDrug: MedicineRecord,
-    addDrugLog: (e: React.MouseEvent<HTMLElement>) =>void,
-    canvasId: string,
-    canvasUpdated?: (c: HTMLCanvasElement) => void,
-    drugChanged: (d: MedicineRecord) => void,
-    lastTaken: number | null,
+    activeDrug: MedicineRecord
+    addDrugLog: (e: React.MouseEvent<HTMLElement>) =>void
+    canvasId: string
+    canvasUpdated?: (c: HTMLCanvasElement) => void
+    drugChanged: (d: MedicineRecord) => void
+    lastTaken: number | null
     logDrug: (n: number) => void
     medicineList: MedicineRecord[]
 }

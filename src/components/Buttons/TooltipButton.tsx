@@ -10,8 +10,8 @@ import {randomString} from "../../utility/common";
 interface IProps extends ButtonProps {
     children: JSX.Element[] | JSX.Element | string
     placement?: Placement
-    tooltip?: string | ReactNode;
-    tooltipId?: string;
+    tooltip?: string | ReactNode
+    tooltipId?: string
     variant?: Variant
     [key: string]: any
 }

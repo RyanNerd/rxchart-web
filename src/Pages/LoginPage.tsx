@@ -32,8 +32,8 @@ const LoginPage = (props: IProps): JSX.Element => {
     const [userName, setUserName] = useState('');
     const focusRef = useRef<HTMLInputElement>(null);
     const {
-        onError,
         activeTabKey,
+        onError,
         onLogin
     } = props;
 
