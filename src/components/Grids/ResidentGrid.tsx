@@ -6,10 +6,10 @@ import {DOB, getMDY} from "../../utility/common";
 import {ResidentRecord} from "../../types/RecordTypes";
 
 interface IProps {
-    onSelected?: (e: React.MouseEvent<HTMLElement>, r: ResidentRecord) => void,
-    onEdit?: (e: React.MouseEvent<HTMLElement>, r: ResidentRecord) => void,
-    onDelete?: (e: React.MouseEvent<HTMLElement>, r: ResidentRecord) => void,
     activeResident: ResidentRecord | null,
+    onDelete?: (e: React.MouseEvent<HTMLElement>, r: ResidentRecord) => void,
+    onEdit?: (e: React.MouseEvent<HTMLElement>, r: ResidentRecord) => void,
+    onSelected?: (e: React.MouseEvent<HTMLElement>, r: ResidentRecord) => void,
     residentList: ResidentRecord[]
 }
 
@@ -22,10 +22,10 @@ interface IProps {
  */
 const ResidentGrid = (props: IProps): JSX.Element => {
     const {
-        onSelected,
-        onEdit,
-        onDelete,
         activeResident,
+        onDelete,
+        onEdit,
+        onSelected,
         residentList
     } = props;
 
