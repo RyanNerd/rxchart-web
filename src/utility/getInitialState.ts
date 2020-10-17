@@ -4,20 +4,26 @@ import ResidentProvider from "../providers/ResidentProvider";
 import MedicineProvider from "../providers/MedicineProvider";
 import MedHistoryProvider from "../providers/MedHistoryProvider";
 import AuthenticationProvider from "../providers/AuthenticationProvider";
+import ResidentManager from "./ResidentManager";
 
 const getInitialState = () => {
     const baseUrl = process.env.REACT_APP_BASEURL || '';
-    const residentProvider = ResidentProvider;
+    const residentProvider = ResidentProvider(baseUrl);
     const medicineProvider = MedicineProvider;
     const medHistoryProvider = MedHistoryProvider;
-    const authenticationProvider = AuthenticationProvider;
-    authenticationProvider.setBaseUrl(baseUrl);
-    residentProvider.reset();
-    residentProvider.setBaseUrl(baseUrl);
+    const authenticationProvider = AuthenticationProvider(baseUrl);
+
     medicineProvider.reset();
     medicineProvider.setBaseUrl(baseUrl);
     medHistoryProvider.reset();
     medHistoryProvider.setBaseUrl(baseUrl);
+
+    const providers = {
+        authenticationProvider,
+        medHistoryProvider,
+        medicineProvider,
+        residentProvider
+    };
 
     return {
         activeResident: null,
@@ -27,13 +33,9 @@ const getInitialState = () => {
         drugLogList: [] as DrugLogRecord[],
         medicineList: [] as MedicineRecord[],
         otcList: [] as MedicineRecord[],
-        providers: {
-            authenticationProvider,
-            medHistoryProvider,
-            medicineProvider,
-            residentProvider
-        },
-        residentList: [] as ResidentRecord[]
+        providers,
+        residentList: [] as ResidentRecord[],
+        residentManager: ResidentManager(providers)
     } as State;
 }
 

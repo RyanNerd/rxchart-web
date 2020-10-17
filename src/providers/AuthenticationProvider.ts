@@ -1,5 +1,9 @@
 import Frak from "frak/lib/components/Frak";
 
+export interface IAuthenticationProvider {
+    post: (credentials: AuthCredentials) => Promise<Authenticated>
+}
+
 type AuthResponse = {
     success: boolean,
     data: {
@@ -19,30 +23,28 @@ type AuthCredentials = {
     password: string
 }
 
-const AuthenticationProvider = {
-    _baseUrl: null as string | null,
+const AuthenticationProvider = (url: string): IAuthenticationProvider => {
+    const baseUrl = url;
 
-    setBaseUrl: (url: string): void => {
-        AuthenticationProvider._baseUrl = url;
-    },
-
-    /**
-     * Post interface for authentication
-     *
-     * @param {AuthCredentials} credentials
-     * @returns {Promise<Authenticated>}
-     */
-    post: async (credentials: AuthCredentials): Promise<Authenticated> => {
-        const uri = AuthenticationProvider._baseUrl + 'authenticate';
-        try {
-            const response = await Frak.post<AuthResponse>(uri, credentials);
-            const success = response.success;
-            const data = response.data ? response.data : undefined;
-            const apiKey = (success && data?.apiKey) ? data.apiKey : '';
-            const organization = (success && data?.organization) ? data.organization : '';
-            return {success, organization, apiKey};
-        } catch (err) {
-            throw err;
+    return {
+        /**
+         * Post interface for authentication
+         *
+         * @param {AuthCredentials} credentials
+         * @returns {Promise<Authenticated>}
+         */
+        post: async (credentials: AuthCredentials): Promise<Authenticated> => {
+            const uri = baseUrl + 'authenticate';
+            try {
+                const response = await Frak.post<AuthResponse>(uri, credentials);
+                const success = response.success;
+                const data = response.data ? response.data : undefined;
+                const apiKey = (success && data?.apiKey) ? data.apiKey : '';
+                const organization = (success && data?.organization) ? data.organization : '';
+                return {success, organization, apiKey};
+            } catch (err) {
+                throw err;
+            }
         }
     }
 }

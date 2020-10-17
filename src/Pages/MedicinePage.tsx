@@ -150,7 +150,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 .then((drugRecord) => {
                     getMedicineList(medicineProvider, residentId)
                         .then((drugList) => {
-                            setMedicineList(drugList).then(() => {});
+                            setMedicineList(drugList);
                             setDrugInfo(drugRecord);
                             setActiveDrug(drugRecord);
                             setLastTaken(null);

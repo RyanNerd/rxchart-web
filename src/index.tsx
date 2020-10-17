@@ -32,5 +32,3 @@ setGlobal(getInitialState())
         ReactDOM.render(<InitError/>, document.getElementById('root'));
     }
 );
-
-
