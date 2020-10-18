@@ -1,11 +1,11 @@
-import {ResidentRecord} from "../types/RecordTypes";
-import {ProviderTypes} from "../types/ProviderTypes";
+import Callback from "reactn/types/callback";
 import getMedicineList from "../Pages/Common/getMedicineList";
 import getMedicineLog from "../Pages/Common/getMedicineLog";
+import {ProviderTypes} from "../types/ProviderTypes";
+import {ResidentRecord} from "../types/RecordTypes";
 import {State} from "reactn/default";
-import Callback from "reactn/types/callback";
 
-export interface IResidentManagerReturn {
+export interface IResidentManager {
     deleteResident: (resident: ResidentRecord) => void
     setErrorHandler: (e: (e: any) => void) => void
     setGlobals: (g: IGlobals) => void
@@ -19,7 +19,7 @@ type TSetMedicineList = (newValue: State["medicineList"], callback?: Callback<St
 type TSetDrugLogList = (newValue: State["drugLogList"], callback?: Callback<State>) => Promise<State>
 type TSetActiveResident = (newValue: State["activeResident"], callback?: Callback<State>) => Promise<State>
 
-export interface IGlobals {
+interface IGlobals {
     setResidentList: TSetResidentList
     setMedicineList: TSetMedicineList
     setDrugLogList: TSetDrugLogList
@@ -31,7 +31,7 @@ export interface IGlobals {
  * @param {ProviderTypes.Providers} providers
  * @constructor
  */
-const ResidentManager = (providers: ProviderTypes.Providers): IResidentManagerReturn => {
+const ResidentManager = (providers: ProviderTypes.Providers): IResidentManager => {
     /**
      * @private
      * @property

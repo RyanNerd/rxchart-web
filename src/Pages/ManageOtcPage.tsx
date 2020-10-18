@@ -132,8 +132,8 @@ const ManageOtcPage = (props: IProps): JSX.Element => {
                 <MedicineEdit
                     otc={true}
                     show={showMedicineEdit}
-                    onHide={() => setShowMedicineEdit(!showMedicineEdit)}
                     onClose={(r) => {
+                        setShowMedicineEdit(false);
                         if (r) {
                             updateMedicine(medicineProvider, r)
                                 .then(() => {
@@ -142,7 +142,6 @@ const ManageOtcPage = (props: IProps): JSX.Element => {
                                 })
                                 .catch((err) => onError(err))
                         }
-                        setShowMedicineEdit(false);
                     }}
                     drugInfo={medicineInfo}
                 />

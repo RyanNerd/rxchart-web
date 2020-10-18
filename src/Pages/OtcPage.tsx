@@ -147,25 +147,22 @@ const OtcPage = (props: IProps): JSX.Element | null => {
      *
      * @param {MedicineRecord | null} drugInfo
      */
-    const handleMedicineEditModalClose = (drugInfo?: MedicineRecord | null): void => {
-        if (drugInfo) {
-            updateMedicine(medicineProvider, drugInfo)
-                .then((drugRecord) => {
-                    getOtcList(medicineProvider)
-                        .then((drugList) => {
-                            setOtcList(drugList);
-                            setDrugInfo(drugRecord);
-                            setActiveDrug(drugRecord);
-                            setLastTaken(null);
-                            getMedicineLog(medHistoryProvider, residentId)
-                                .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
-                        })
-                        .catch((err) => {
-                            onError(err);
-                        });
-                });
-        }
-        setShowMedicineEdit(false);
+    const handleMedicineEditModalClose = (drugInfo: MedicineRecord): void => {
+        updateMedicine(medicineProvider, drugInfo)
+            .then((drugRecord) => {
+                getOtcList(medicineProvider)
+                    .then((drugList) => {
+                        setOtcList(drugList);
+                        setDrugInfo(drugRecord);
+                        setActiveDrug(drugRecord);
+                        setLastTaken(null);
+                        getMedicineLog(medHistoryProvider, residentId)
+                            .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
+                    })
+                    .catch((err) => {
+                        onError(err);
+                    });
+            });
     }
 
     /**
@@ -353,8 +350,12 @@ const OtcPage = (props: IProps): JSX.Element | null => {
             {drugInfo &&
                 <MedicineEdit
                     show={showMedicineEdit}
-                    onHide={() => setShowMedicineEdit(!showMedicineEdit)}
-                    onClose={(r) => handleMedicineEditModalClose(r)}
+                    onClose={(r) => {
+                        setShowMedicineEdit(false);
+                        if (r) {
+                            handleMedicineEditModalClose(r);
+                        }
+                    }}
                     drugInfo={drugInfo}
                     otc={true}
                 />

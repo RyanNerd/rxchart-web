@@ -137,8 +137,8 @@ const ManageDrugPage = (props: IProps): JSX.Element => {
                 /* MedicineEdit Modal */
                 <MedicineEdit
                     show={showMedicineEdit}
-                    onHide={() => setShowMedicineEdit(!showMedicineEdit)}
                     onClose={(r) => {
+                        setShowMedicineEdit(false);
                         const residentId = activeResident && activeResident.Id;
                         if (residentId && r) {
                             updateMedicine(medicineProvider, r)
@@ -148,7 +148,6 @@ const ManageDrugPage = (props: IProps): JSX.Element => {
                                 })
                                 .catch((err) => onError(err))
                         }
-                        setShowMedicineEdit(false);
                     }}
                     drugInfo={medicineInfo}
                 />
