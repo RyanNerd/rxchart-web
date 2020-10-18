@@ -44,7 +44,7 @@ const ResidentManager = (providers: ProviderTypes.Providers): IResidentManagerRe
      * @param {any} e
      */
     let _onError = (e: any) => {
-        return e
+        return e;
     };
 
     const residentProvider = providers.residentProvider;

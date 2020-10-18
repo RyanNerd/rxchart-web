@@ -32,7 +32,6 @@ const LandingPage = () => {
     const otcTitle = (activeTabKey === 'otc') ? (<b>OTC</b>) : (<span>OTC</span>);
     const residentTitle = (activeTabKey === 'resident') ? (<b>Residents</b>) : (<span>Residents</span>);
     const rxTitle = (activeTabKey === 'medicine') ? (<b>Rx</b>) : (<span>Rx</span>);
-    // @ts-ignore
     const [residentManager] = useGlobal('residentManager');
 
     // Completely hide the Diagnostics tab header if it isn't active using some direct DOM manipulation.

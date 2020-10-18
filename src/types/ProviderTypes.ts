@@ -1,15 +1,15 @@
-import {IResidentProvider} from '../providers/ResidentProvider';
-import MedicineProvider from '../providers/MedicineProvider';
-import MedHistoryProvider from '../providers/MedHistoryProvider';
 import {DrugLogRecord, MedicineRecord, ResidentRecord} from './RecordTypes';
 import {IAuthenticationProvider} from "../providers/AuthenticationProvider";
+import {IMedHistoryProvider} from '../providers/MedHistoryProvider';
+import {IMedicineProvider} from '../providers/MedicineProvider';
+import {IResidentProvider} from '../providers/ResidentProvider';
 
 export namespace ProviderTypes {
     export type Providers = {
         authenticationProvider: IAuthenticationProvider;
         residentProvider: IResidentProvider;
-        medicineProvider: typeof MedicineProvider;
-        medHistoryProvider: typeof MedHistoryProvider;
+        medicineProvider: IMedicineProvider;
+        medHistoryProvider: IMedHistoryProvider;
     };
 
     export type DeleteResponse = { success: boolean };

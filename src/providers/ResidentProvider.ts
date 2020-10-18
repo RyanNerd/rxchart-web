@@ -4,7 +4,6 @@ import {ProviderTypes} from '../types/ProviderTypes';
 
 export interface IResidentProvider {
     setApiKey: (apiKey: string) => void
-    reset: () => void
     search: (options: object) => Promise<ResidentRecord[]>
     restore: (residentId: number) => Promise<ResidentRecord>
     read: (id: number) => Promise<ResidentRecord>
@@ -34,13 +33,6 @@ const ResidentProvider = (url: string): IResidentProvider => {
                 throw new Error('apiKey cannot be empty');
             }
             _apiKey = apiKey;
-        },
-
-        /**
-         * Set the apiKey to null
-         */
-        reset: (): void => {
-            _apiKey = null;
         },
 
         /**

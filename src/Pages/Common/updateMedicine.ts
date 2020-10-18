@@ -1,5 +1,5 @@
 import {MedicineRecord} from '../../types/RecordTypes';
-import MedicineProvider from '../../providers/MedicineProvider';
+import {IMedicineProvider} from '../../providers/MedicineProvider';
 
 /**
  * Adds or updates the Medicine table with the given drugInfo record.
@@ -9,7 +9,7 @@ import MedicineProvider from '../../providers/MedicineProvider';
  * @return {Promise<MedicineRecord}>
  */
 export const updateMedicine = (
-    medicineProvider: typeof MedicineProvider,
+    medicineProvider: IMedicineProvider,
     drugInfo: MedicineRecord,
 ): Promise<MedicineRecord> => {
     const drugData = {...drugInfo};

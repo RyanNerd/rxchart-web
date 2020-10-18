@@ -34,7 +34,7 @@ const ResidentPage = (props: IProps): JSX.Element => {
      * @param {React.MouseEvent<HTMLElement>} e
      * @param {ResidentRecord} resident
      */
-    const handleOnEdit = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord): void => {
+    const handleOnEdit = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
         e.preventDefault();
         setResidentInfo({...resident});
         setShowResidentEdit(true);
@@ -45,7 +45,7 @@ const ResidentPage = (props: IProps): JSX.Element => {
      *
      * @param {React.MouseEvent<HTMLElement>} e
      */
-    const handleAdd = (e: React.MouseEvent<HTMLElement>): void => {
+    const handleAdd = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
         setResidentInfo({
             Id: null,
@@ -63,7 +63,7 @@ const ResidentPage = (props: IProps): JSX.Element => {
      *
      * @param {ResidentRecord | null} residentRecord
      */
-    const handleModalClose = (residentRecord: ResidentRecord): void => {
+    const handleModalClose = (residentRecord: ResidentRecord) => {
         rm.addOrUpdateResident(residentRecord)
             .catch((err) => props.onError(err));
     }
@@ -74,7 +74,7 @@ const ResidentPage = (props: IProps): JSX.Element => {
      * @param {React.MouseEvent<HTMLElement>} e
      * @param {ResidentRecord} resident
      */
-    const handleOnSelected = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord): void => {
+    const handleOnSelected = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
         e.preventDefault();
         rm.setResident(resident);
     }
@@ -85,7 +85,7 @@ const ResidentPage = (props: IProps): JSX.Element => {
      * @param {React.MouseEvent<HTMLElement>} e
      * @param {ResidentRecord} resident
      */
-    const handleOnDelete = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord): void => {
+    const handleOnDelete = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
         e.preventDefault();
         setResidentToDelete(resident);
         setShowDeleteResident(true);

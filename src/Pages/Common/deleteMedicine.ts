@@ -1,4 +1,4 @@
-import MedicineProvider from '../../providers/MedicineProvider';
+import {IMedicineProvider} from '../../providers/MedicineProvider';
 import {ProviderTypes} from '../../types/ProviderTypes';
 
 /**
@@ -8,7 +8,7 @@ import {ProviderTypes} from '../../types/ProviderTypes';
  * @param {number | string} medicineId
  * @return {Promise<boolean>}
  */
-const deleteMedicine = (medicineProvider: typeof MedicineProvider, medicineId: string | number): Promise<boolean> => {
+const deleteMedicine = (medicineProvider: IMedicineProvider, medicineId: string | number): Promise<boolean> => {
     return medicineProvider
         .delete(medicineId)
         .then((response: ProviderTypes.Medicine.DeleteResponse) => {
