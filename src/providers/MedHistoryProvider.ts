@@ -2,134 +2,121 @@ import {DrugLogRecord} from '../types/RecordTypes';
 import Frak from "frak/lib/components/Frak";
 import {ProviderTypes} from '../types/ProviderTypes';
 
+export interface IMedHistoryProvider {
+    delete: (drugId: string | number) => Promise<DeleteResponse>
+    post: (drugInfo: DrugLogRecord) => Promise<DrugLogRecord>
+    read: (id: string | number) => Promise<DrugLogRecord>
+    search: (options: object) => Promise<DrugLogRecord[]>
+    setApiKey: (apiKey: string) => void
+}
+
 type DeleteResponse = ProviderTypes.MedHistory.DeleteResponse;
 type RecordResponse = ProviderTypes.MedHistory.RecordResponse;
 
 /**
  * MedHistoryProvider API Connector
  */
-const MedHistoryProvider = {
-    _baseUrl: null as string | null,
-    _apiKey: null as string | null,
+const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
+    const _baseUrl = baseurl;
+    let _apiKey = null as string | null
 
-    /**
-     * Set the baseUrl
-     *
-     * @param {string} url
-     */
-    setBaseUrl: (url: string): void => {
-        if (url.length === 0) {
-            throw new Error('baseUrl cannot be empty');
-        }
-        MedHistoryProvider._baseUrl = url;
-    },
+    return {
+        /**
+         * Set the apiKey
+         *
+         * @param {string} apiKey
+         */
+        setApiKey: (apiKey: string): void => {
+            if (apiKey.length === 0) {
+                throw new Error('apiKey cannot be empty');
+            }
+            _apiKey = apiKey;
+        },
 
-    /**
-     * Set the apiKey
-     *
-     * @param {string} apiKey
-     */
-    setApiKey: (apiKey: string): void => {
-        if (apiKey.length === 0) {
-            throw new Error('apiKey cannot be empty');
-        }
-        MedHistoryProvider._apiKey = apiKey;
-    },
-
-    /**
-     * Set the apiKey to null
-     */
-    reset: (): void => {
-        MedHistoryProvider._apiKey = null;
-    },
-
-    /**
-     * Search Interface
-     *
-     * @see https://www.notion.so/Willow-Framework-Users-Guide-bf56317580884ccd95ed8d3889f83c72
-     * @param {object} options
-     * @returns {Promise<DrugLogRecord[]>}
-     */
-    search: async (options: object): Promise<DrugLogRecord[]> => {
-        const apiKey = MedHistoryProvider._apiKey;
-        const uri = MedHistoryProvider._baseUrl + 'medhistory/search?api_key=' + apiKey;
-        try {
-            const response = await Frak.post<RecordResponse>(uri, options);
-            if (response.success) {
-                return response.data as DrugLogRecord[];
-            } else {
-                if (response.status === 404) {
-                    return [] as DrugLogRecord[];
+        /**
+         * Search Interface
+         *
+         * @see https://www.notion.so/Willow-Framework-Users-Guide-bf56317580884ccd95ed8d3889f83c72
+         * @param {object} options
+         * @returns {Promise<DrugLogRecord[]>}
+         */
+        search: async (options: object): Promise<DrugLogRecord[]> => {
+            const uri = _baseUrl + 'medhistory/search?api_key=' + _apiKey;
+            try {
+                const response = await Frak.post<RecordResponse>(uri, options);
+                if (response.success) {
+                    return response.data as DrugLogRecord[];
+                } else {
+                    if (response.status === 404) {
+                        return [] as DrugLogRecord[];
+                    }
+                    throw new Error(response.toString());
                 }
-                throw new Error(response.toString());
+            } catch (err) {
+                throw err;
             }
-        } catch (err) {
-            throw err;
-        }
-    },
+        },
 
-    /**
-     * Read interface
-     *
-     * @param {string | number} id
-     * @returns {Promise<DrugLogRecord[]>}
-     */
-    read: async (id: string | number): Promise<DrugLogRecord> => {
-        const apiKey = MedHistoryProvider._apiKey;
-        const uri = MedHistoryProvider._baseUrl + 'medhistory/' + id + '?api_key=' + apiKey;
-        try {
-            const response = await Frak.get<RecordResponse>(uri);
-            if (response.success) {
-                return response.data as DrugLogRecord;
-            } else {
-                throw response;
+        /**
+         * Read interface
+         *
+         * @param {string | number} id
+         * @returns {Promise<DrugLogRecord[]>}
+         */
+        read: async (id: string | number): Promise<DrugLogRecord> => {
+            const uri = _baseUrl + 'medhistory/' + id + '?api_key=' + _apiKey;
+            try {
+                const response = await Frak.get<RecordResponse>(uri);
+                if (response.success) {
+                    return response.data as DrugLogRecord;
+                } else {
+                    throw response;
+                }
+            } catch (err) {
+                throw err;
             }
-        } catch (err) {
-            throw err;
-        }
-    },
+        },
 
-    /**
-     * Post interface
-     *
-     * @param {DrugLogRecord} drugInfo
-     * @returns {Promise<DrugLogRecord>}
-     */
-    post: async (drugInfo: DrugLogRecord): Promise<DrugLogRecord> => {
-        const apiKey = MedHistoryProvider._apiKey;
-        const uri = MedHistoryProvider._baseUrl + 'medhistory?api_key=' + apiKey;
-        try {
-            const response = await Frak.post<RecordResponse>(uri, drugInfo);
-            if (response.success) {
-                return response.data as DrugLogRecord;
-            } else {
-                throw response;
+        /**
+         * Post interface
+         *
+         * @param {DrugLogRecord} drugInfo
+         * @returns {Promise<DrugLogRecord>}
+         */
+        post: async (drugInfo: DrugLogRecord): Promise<DrugLogRecord> => {
+            const uri =_baseUrl + 'medhistory?api_key=' + _apiKey;
+            try {
+                const response = await Frak.post<RecordResponse>(uri, drugInfo);
+                if (response.success) {
+                    return response.data as DrugLogRecord;
+                } else {
+                    throw response;
+                }
+            } catch (err) {
+                throw err;
             }
-        } catch (err) {
-            throw err;
-        }
-    },
+        },
 
-    /**
-     * Delete interface
-     *
-     * @param {string | number} drugId
-     * @return {Promise<DeleteResponse>}
-     */
-    delete: async (drugId: string | number): Promise<DeleteResponse> => {
-        const apiKey = MedHistoryProvider._apiKey;
-        const uri = MedHistoryProvider._baseUrl + 'medhistory/' + drugId + '?api_key=' + apiKey;
-        try {
-            const response = await Frak.delete<RecordResponse>(uri);
-            if (response.success) {
-                return response;
-            } else {
-                throw response;
+        /**
+         * Delete interface
+         *
+         * @param {string | number} drugId
+         * @return {Promise<DeleteResponse>}
+         */
+        delete: async (drugId: string | number): Promise<DeleteResponse> => {
+            const uri = _baseUrl + 'medhistory/' + drugId + '?api_key=' + _apiKey;
+            try {
+                const response = await Frak.delete<RecordResponse>(uri);
+                if (response.success) {
+                    return response;
+                } else {
+                    throw response;
+                }
+            } catch (err) {
+                return err;
             }
-        } catch (err) {
-            return err;
         }
-    },
-};
+    }
+}
 
 export default MedHistoryProvider;

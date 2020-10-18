@@ -1,4 +1,4 @@
-import MedHistoryProvider from '../../providers/MedHistoryProvider';
+import {IMedHistoryProvider} from '../../providers/MedHistoryProvider';
 import {DrugLogRecord} from '../../types/RecordTypes';
 
 /**
@@ -9,7 +9,7 @@ import {DrugLogRecord} from '../../types/RecordTypes';
  * @return {Promise<DrugLogRecord[]>}
  */
 const getMedicineLog = (
-    medHistoryProvider: typeof MedHistoryProvider,
+    medHistoryProvider: IMedHistoryProvider,
     residentId: number,
 ): Promise<DrugLogRecord[]> => {
     const searchCriteria = {

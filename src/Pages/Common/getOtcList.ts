@@ -1,4 +1,4 @@
-import MedicineProvider from '../../providers/MedicineProvider';
+import {IMedicineProvider} from '../../providers/MedicineProvider';
 import {MedicineRecord} from '../../types/RecordTypes';
 
 /**
@@ -7,7 +7,7 @@ import {MedicineRecord} from '../../types/RecordTypes';
  * @param {MedicineProvider} medicineProvider
  * @return {Promise<MedicineRecord[]>}
  */
-const getOtcList = (medicineProvider: typeof MedicineProvider): Promise<MedicineRecord[]> => {
+const getOtcList = (medicineProvider: IMedicineProvider): Promise<MedicineRecord[]> => {
     const searchCriteria = {
         where: [{column: 'OTC', value: true}],
         order_by: [{column: 'Drug', direction: 'asc'}],

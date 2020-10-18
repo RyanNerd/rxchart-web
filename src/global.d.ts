@@ -1,6 +1,7 @@
 import 'reactn';
 import {DrugLogRecord, MedicineRecord, ResidentRecord} from './types/RecordTypes';
 import {ProviderTypes} from './types/ProviderTypes';
+import {IResidentManagerReturn} from "./utility/ResidentManager";
 
 declare module 'reactn/default' {
     export interface Reducers {
@@ -12,7 +13,6 @@ declare module 'reactn/default' {
     export interface State {
         activeResident: ResidentRecord | null
         apiKey: string | null
-        baseUrl: string
         count: number
         development: boolean
         drugLogList: DrugLogRecord[]
@@ -20,6 +20,7 @@ declare module 'reactn/default' {
         otcList: MedicineRecord[]
         providers: ProviderTypes.Providers
         residentList: ResidentRecord[]
+        residentManager: IResidentManagerReturn
         value: string
     }
 }

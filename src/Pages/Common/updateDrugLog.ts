@@ -1,5 +1,5 @@
 import {DrugLogRecord} from '../../types/RecordTypes';
-import MedHistoryProvider from '../../providers/MedHistoryProvider';
+import {IMedHistoryProvider} from '../../providers/MedHistoryProvider';
 import getMedicineLog from './getMedicineLog';
 
 /**
@@ -12,7 +12,7 @@ import getMedicineLog from './getMedicineLog';
  * @return {Promise<DrugLogRecord[]>}
  */
 export const updateDrugLog = (
-    medHistoryProvider: typeof MedHistoryProvider,
+    medHistoryProvider: IMedHistoryProvider,
     drugLogInfo: DrugLogRecord,
     residentId: number,
 ): Promise<DrugLogRecord[]> => {

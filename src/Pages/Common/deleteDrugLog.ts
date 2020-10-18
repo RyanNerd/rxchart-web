@@ -1,4 +1,4 @@
-import MedHistoryProvider from '../../providers/MedHistoryProvider';
+import {IMedHistoryProvider} from '../../providers/MedHistoryProvider';
 import {ProviderTypes} from '../../types/ProviderTypes';
 
 /**
@@ -9,7 +9,7 @@ import {ProviderTypes} from '../../types/ProviderTypes';
  * @return Promise<ProviderTypes.DeleteResponse>
  */
 const deleteDrugLog = (
-    medHistoryProvider: typeof MedHistoryProvider,
+    medHistoryProvider: IMedHistoryProvider,
     drugLogId: number,
 ): Promise<ProviderTypes.DeleteResponse> => {
     return medHistoryProvider

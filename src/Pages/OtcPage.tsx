@@ -153,7 +153,7 @@ const OtcPage = (props: IProps): JSX.Element | null => {
                 .then((drugRecord) => {
                     getOtcList(medicineProvider)
                         .then((drugList) => {
-                            setOtcList(drugList).then(() => {});
+                            setOtcList(drugList);
                             setDrugInfo(drugRecord);
                             setActiveDrug(drugRecord);
                             setLastTaken(null);

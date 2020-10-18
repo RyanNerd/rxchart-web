@@ -74,8 +74,7 @@ const ManageDrugPage = (props: IProps): JSX.Element => {
                     if (deleted && activeResident.Id) {
                         getMedicineList(medicineProvider, activeResident.Id)
                         .then((drugRecords) => {
-                            setMedicineList(drugRecords).then(() => {
-                            });
+                            setMedicineList(drugRecords);
                         });
                     }
                 })
