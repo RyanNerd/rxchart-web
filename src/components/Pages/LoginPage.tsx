@@ -2,10 +2,10 @@ import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
-import getInitialState from "../utility/getInitialState";
+import getInitialState from "../../utility/getInitialState";
 import React, {setGlobal, useEffect, useGlobal, useRef, useState} from 'reactn';
 import Row from 'react-bootstrap/Row';
-import TabContent from '../styles/common.css';
+import TabContent from '../../styles/common.css';
 
 interface IProps {
     activeTabKey: string | null

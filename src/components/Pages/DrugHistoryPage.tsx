@@ -1,7 +1,7 @@
 import React from 'reactn';
 import Button from 'react-bootstrap/Button';
-import DrugLogGrid from "../components/Grids/DrugLogGrid";
-import {DrugLogRecord, MedicineRecord} from "../types/RecordTypes";
+import DrugLogGrid from "../Grids/DrugLogGrid";
+import {DrugLogRecord, MedicineRecord} from "../../types/RecordTypes";
 
 interface IProps {
     drugLogList: DrugLogRecord[]

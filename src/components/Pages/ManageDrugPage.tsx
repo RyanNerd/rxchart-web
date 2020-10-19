@@ -1,27 +1,28 @@
-import Confirm from "../components/Modals/Confirm";
-import MedicineDetail from "../components/Grids/MedicineDetail";
-import MedicineEdit from "../components/Modals/MedicineEdit";
+import Confirm from "../Modals/Confirm";
+import MedicineDetail from "../Grids/MedicineDetail";
+import MedicineEdit from "../Modals/MedicineEdit";
 import React, {useGlobal, useState} from 'reactn';
 import Table from "react-bootstrap/Table";
-import TooltipButton from "../components/Buttons/TooltipButton";
+import TooltipButton from "../Buttons/TooltipButton";
 import {Alert} from "react-bootstrap";
-import {MedicineRecord, newDrugInfo} from "../types/RecordTypes";
+import {getMDY} from "../../utility/common";
+import {MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
 
 interface IProps {
     onError: (e: Error) => void
 }
 
 /**
- * ManageOtcPage
- * Page for Displaying, editing and adding OTC drugs
+ * ManageDrugPage
+ * Page for Displaying, editing and adding Medicine
  *
- * @param {IProps} props
  * @returns {JSX.Element}
  */
-const ManageOtcPage = (props: IProps): JSX.Element => {
+const ManageDrugPage = (props: IProps): JSX.Element => {
+    const [activeResident] = useGlobal('activeResident');
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
+    const [medicineList, setMedicineList] = useGlobal('medicineList');
     const [mm] = useGlobal('medicineManager');
-    const [otcList, setOtcList] = useGlobal('otcList');
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const onError = props.onError;
@@ -29,20 +30,26 @@ const ManageOtcPage = (props: IProps): JSX.Element => {
     /**
      * Fires when the Edit button is clicked
      *
-     * @param {MouseEvent} e
+     * @param {React.MouseEvent<HTMLElement>} e
      * @param {MedicineRecord | null} medicine
      */
-    const onEdit = (e: React.MouseEvent<HTMLElement>, medicine?: MedicineRecord | null): void => {
+    const onEdit = (e: React.MouseEvent<HTMLElement>, medicine: MedicineRecord | null): void => {
         e.preventDefault();
-        const medicineInfo = (medicine) ? {...medicine} : {...newDrugInfo, OTC: true};
-        setMedicineInfo(medicineInfo);
-        setShowMedicineEdit(true);
+        const mdy = getMDY();
+        const medicineInfo = (medicine) ? {...medicine} : {
+            ...newDrugInfo,
+            OTC: false,
+            ResidentId: activeResident?.Id,
+            FillDateDay: mdy.day,
+            FillDateMonth: mdy.month,
+            FillDateYear: mdy.year
+        };
         setMedicineInfo(medicineInfo);
         setShowMedicineEdit(true);
     }
 
     /**
-     * Handle the click event for delete
+     * Handle the delete click event.
      *
      * @param {React.MouseEvent<HTMLElement>} e
      * @param {MedicineRecord} medicine
@@ -54,29 +61,32 @@ const ManageOtcPage = (props: IProps): JSX.Element => {
     }
 
     /**
-     * Fires when user confirms to delete the medicine
+     * Fires when user confirms to delete the medication.
      */
-    const deleteDrug = (): void => {
+    const deleteDrug = () => {
             mm.deleteMedicine(medicineInfo?.Id as number)
                 .then((deleted) => {
                     if (deleted) {
-                       mm.loadOtcList()
-                            .then((drugs) => setOtcList(drugs))
-                            .catch(() => setOtcList([]));
+                        mm.loadMedicineList(activeResident?.Id as number)
+                        .then((medicineRecords) => {
+                            setMedicineList(medicineRecords);
+                        })
+                            .catch((err) => onError(err));
                     }
-                });
+                })
+                .catch((err) => onError(err));
     }
 
     return (
         <>
             <TooltipButton
                 className="mb-2"
-                tooltip="Manually Add New OTC"
+                tooltip="Manually Add New Medicine"
                 size="sm"
                 variant="info"
                 onClick={(e: React.MouseEvent<HTMLElement>) => onEdit(e, null)}
             >
-                + OTC
+                + Medicine
             </TooltipButton>
 
             <Table
@@ -98,41 +108,37 @@ const ManageOtcPage = (props: IProps): JSX.Element => {
                         Directions
                     </th>
                     <th>
+                        Notes
+                    </th>
+                    <th>
                         Barcode
                     </th>
                     <th> </th>
                 </tr>
                 </thead>
                 <tbody>
-                {otcList.map((drug: MedicineRecord) =>
+                {medicineList.map((drug: MedicineRecord) =>
                     <MedicineDetail
                         drug={drug}
-                        columns={[
-                            'Drug',
-                            'Strength',
-                            'Directions',
-                            'Barcode'
-                        ]}
-                        key={'otc' + drug.Id}
+                        key={'med-' + drug.Id}
                         onDelete={onDelete}
                         onEdit={onEdit}
-                    />)
-                }
+                    />
+                )}
                 </tbody>
             </Table>
 
             {showMedicineEdit && medicineInfo &&
                 /* MedicineEdit Modal */
                 <MedicineEdit
-                    otc={true}
                     show={showMedicineEdit}
                     onClose={(r) => {
                         setShowMedicineEdit(false);
                         if (r) {
                             mm.updateMedicine(r)
                                 .then(() => {
-                                    mm.loadOtcList()
-                                        .then((otcDrugs) => setOtcList(otcDrugs))
+                                    mm.loadMedicineList(activeResident?.Id as number)
+                                        .then((medicines) => setMedicineList(medicines))
                                 })
                                 .catch((err) => onError(err))
                         }
@@ -143,13 +149,12 @@ const ManageOtcPage = (props: IProps): JSX.Element => {
 
             {medicineInfo && showDeleteMedicine &&
                 <Confirm.Modal
-                    size="lg"
                     show={showDeleteMedicine}
                     buttonvariant="danger"
                     onSelect={(a) => {
                         setShowDeleteMedicine(false);
                         if (a) {
-                            deleteDrug();
+                            deleteDrug()
                         }
                     }}
                 >
@@ -159,18 +164,12 @@ const ManageOtcPage = (props: IProps): JSX.Element => {
                         </Confirm.Title>
                     </Confirm.Header>
                     <Confirm.Body>
-                        <Alert
-                            variant="danger"
-                            style={{textAlign: "center"}}
-                        >
-                            <span>
-                                This will delete the OTC medicine <b>{medicineInfo.Drug}</b> for <i>ALL</i> residents
-                            </span>
-                            <span> and <b>ALL</b> history for this drug!</span>
+                        <Alert variant="danger">
+                            Deleting this medicine will remove <b>ALL</b> history of this drug being taken!
                         </Alert>
-                        <Alert variant="warning">
+                        <b style={{color: "red"}}>
                             Are you sure?
-                        </Alert>
+                        </b>
                     </Confirm.Body>
                 </Confirm.Modal>
             }
@@ -178,4 +177,4 @@ const ManageOtcPage = (props: IProps): JSX.Element => {
     );
 }
 
-export default ManageOtcPage;
+export default ManageDrugPage;

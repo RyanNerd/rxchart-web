@@ -1,18 +1,18 @@
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
-import Confirm from "../components/Modals/Confirm";
-import DrugLogEdit from "../components/Modals/DrugLogEdit";
-import DrugLogGrid from "../components/Grids/DrugLogGrid";
+import Confirm from "../Modals/Confirm";
+import DrugLogEdit from "../Modals/DrugLogEdit";
+import DrugLogGrid from "../Grids/DrugLogGrid";
 import Form from 'react-bootstrap/Form';
-import LastTakenButton from "../components/Buttons/LastTakenButton";
-import MedicineEdit from "../components/Modals/MedicineEdit";
-import MedicineListGroup from "../components/ListGroups/MedicineListGroup";
+import LastTakenButton from "../Buttons/LastTakenButton";
+import MedicineEdit from "../Modals/MedicineEdit";
+import MedicineListGroup from "../ListGroups/MedicineListGroup";
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import Row from 'react-bootstrap/Row';
-import TabContent from "../styles/common.css";
-import TooltipButton from "../components/Buttons/TooltipButton";
+import TabContent from "../../styles/common.css";
+import TooltipButton from "../Buttons/TooltipButton";
 import {Alert} from "react-bootstrap";
-import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../types/RecordTypes";
+import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
 import {
     calculateLastTaken,
     getFormattedDate,
@@ -21,7 +21,7 @@ import {
     getObjectByProperty,
     isSearchValid,
     searchDrugs
-} from "../utility/common";
+} from "../../utility/common";
 
 
 interface IProps {

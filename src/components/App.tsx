@@ -1,6 +1,6 @@
 import LandingPage from "./Pages/LandingPage";
 import React, {useGlobal} from 'reactn';
-import {FullName} from "./utility/common";
+import {FullName} from "../utility/common";
 
 /**
  * Main Entry Component

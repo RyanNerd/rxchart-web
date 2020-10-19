@@ -1,6 +1,6 @@
 import React, {setGlobal} from "reactn";
 import ReactDOM from 'react-dom';
-import App from './App';
+import App from './components/App';
 import getInitialState from "./utility/getInitialState";
 
 const InitError = () => {

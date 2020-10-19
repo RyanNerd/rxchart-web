@@ -1,11 +1,11 @@
-import Confirm from "../components/Modals/Confirm";
+import Confirm from "../Modals/Confirm";
 import React, {useGlobal, useState} from 'reactn';
-import ResidentEdit from '../components/Modals/ResidentEdit';
-import ResidentGrid from '../components/Grids/ResidentGrid';
-import TooltipButton from "../components/Buttons/TooltipButton";
+import ResidentEdit from '../Modals/ResidentEdit';
+import ResidentGrid from '../Grids/ResidentGrid';
+import TooltipButton from "../Buttons/TooltipButton";
 import {Alert, Form} from "react-bootstrap";
-import {FullName} from '../utility/common';
-import {ResidentRecord} from "../types/RecordTypes";
+import {FullName} from '../../utility/common';
+import {ResidentRecord} from "../../types/RecordTypes";
 import {useEffect} from "react";
 
 interface IProps {
