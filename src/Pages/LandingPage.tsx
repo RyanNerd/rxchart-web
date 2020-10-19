@@ -1,15 +1,15 @@
-import React, {useGlobal, useState} from 'reactn';
-import Tabs from 'react-bootstrap/Tabs';
-import Tab from 'react-bootstrap/Tab';
-import LoginPage from './LoginPage';
-import ResidentPage from "./ResidentPage";
-import MedicinePage from "./MedicinePage";
-import DrugHistoryPage from "./DrugHistoryPage";
-import ManageDrugPage from "./ManageDrugPage";
-import OtcPage from "./OtcPage";
-import ManageOtcPage from "./ManageOtcPage";
-import {useEffect} from "react";
 import DiagnosticPage from "./DiagnosticPage";
+import DrugHistoryPage from "./DrugHistoryPage";
+import LoginPage from './LoginPage';
+import ManageDrugPage from "./ManageDrugPage";
+import ManageOtcPage from "./ManageOtcPage";
+import MedicinePage from "./MedicinePage";
+import OtcPage from "./OtcPage";
+import React, {useGlobal, useState} from 'reactn';
+import ResidentPage from "./ResidentPage";
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
+import {useEffect} from "react";
 
 /**
  * Landing Page - Tab Page Menu UI
@@ -26,13 +26,12 @@ const LandingPage = () => {
     const drugHistoryTitle = (activeTabKey === 'history') ? (<b>Drug History</b>) : (<span>Drug History</span>);
     const errorTitle = (activeTabKey === 'error') ? (<b>Diagnostics</b>) : (<span>Diagnostics</span>);
     const login = apiKey ? 'Logout' : 'Login';
-    const loginTitle = (activeTabKey === 'login') ? (<b>{login}</b>) : (<span>{login}</span>);
+    const loginTitle = <span style={{fontWeight: (activeTabKey === 'login') ? 'bold' : 'normal'}}>{login}</span>;
     const manageOtcTitle = (activeTabKey === 'manage-otc') ? (<b>Manage OTC</b>) : (<span>Manage OTC</span>);
     const manageRxTitle = (activeTabKey === 'manage') ? (<b>Manage Rx</b>) : (<span>Manage Rx</span>);
     const otcTitle = (activeTabKey === 'otc') ? (<b>OTC</b>) : (<span>OTC</span>);
     const residentTitle = (activeTabKey === 'resident') ? (<b>Residents</b>) : (<span>Residents</span>);
     const rxTitle = (activeTabKey === 'medicine') ? (<b>Rx</b>) : (<span>Rx</span>);
-    const [residentManager] = useGlobal('residentManager');
 
     // Completely hide the Diagnostics tab header if it isn't active using some direct DOM manipulation.
     useEffect(() => {
@@ -56,8 +55,6 @@ const LandingPage = () => {
         setErrorDetails(err);
         setActiveTabKey('error');
     }
-
-    residentManager.setErrorHandler(errorOccurred);
 
     return (
         <Tabs

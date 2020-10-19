@@ -1,14 +1,18 @@
-import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import Button from 'react-bootstrap/Button';
-import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import TabContent from "../styles/common.css";
-import MedicineEdit from "../components/Modals/MedicineEdit";
-import DrugLogGrid from "../components/Grids/DrugLogGrid";
+import Confirm from "../components/Modals/Confirm";
 import DrugLogEdit from "../components/Modals/DrugLogEdit";
+import DrugLogGrid from "../components/Grids/DrugLogGrid";
+import Form from 'react-bootstrap/Form';
+import LastTakenButton from "../components/Buttons/LastTakenButton";
+import MedicineEdit from "../components/Modals/MedicineEdit";
 import MedicineListGroup from "../components/ListGroups/MedicineListGroup";
+import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
+import Row from 'react-bootstrap/Row';
+import TabContent from "../styles/common.css";
 import TooltipButton from "../components/Buttons/TooltipButton";
+import {Alert} from "react-bootstrap";
+import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../types/RecordTypes";
 import {
     calculateLastTaken,
     getFormattedDate,
@@ -18,10 +22,7 @@ import {
     isSearchValid,
     searchDrugs
 } from "../utility/common";
-import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../types/RecordTypes";
-import LastTakenButton from "../components/Buttons/LastTakenButton";
-import Confirm from "../components/Modals/Confirm";
-import {Alert} from "react-bootstrap";
+
 
 interface IProps {
     activeTabKey: string | null
@@ -145,8 +146,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     .then((meds) => {
                         setMedicineList(meds);
                         setActiveDrug(drugRecord);
-                        mm.loadDrugLog(residentId)
-                            .then((drugs) => setDrugLogList(drugs));
                     })
                     .catch((err) => {
                         onError(err);
@@ -365,7 +364,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                                 .then((drugLogList) => setDrugLogList(drugLogList))
                                 .catch((err) => onError(err))
                         }
-
                     }}
                 />
             }

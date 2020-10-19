@@ -1,12 +1,12 @@
-import React, {useGlobal, useState} from 'reactn';
-import Table from "react-bootstrap/Table";
+import Confirm from "../components/Modals/Confirm";
 import MedicineDetail from "../components/Grids/MedicineDetail";
 import MedicineEdit from "../components/Modals/MedicineEdit";
+import React, {useGlobal, useState} from 'reactn';
+import Table from "react-bootstrap/Table";
 import TooltipButton from "../components/Buttons/TooltipButton";
-import {MedicineRecord, newDrugInfo} from "../types/RecordTypes";
-import Confirm from "../components/Modals/Confirm";
 import {Alert} from "react-bootstrap";
 import {getMDY} from "../utility/common";
+import {MedicineRecord, newDrugInfo} from "../types/RecordTypes";
 
 interface IProps {
     onError: (e: Error) => void
@@ -20,9 +20,9 @@ interface IProps {
  */
 const ManageDrugPage = (props: IProps): JSX.Element => {
     const [activeResident] = useGlobal('activeResident');
+    const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [medicineList, setMedicineList] = useGlobal('medicineList');
     const [mm] = useGlobal('medicineManager');
-    const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const onError = props.onError;
@@ -70,7 +70,8 @@ const ManageDrugPage = (props: IProps): JSX.Element => {
                         mm.loadMedicineList(activeResident?.Id as number)
                         .then((medicineRecords) => {
                             setMedicineList(medicineRecords);
-                        });
+                        })
+                            .catch((err) => onError(err));
                     }
                 })
                 .catch((err) => onError(err));

@@ -1,11 +1,11 @@
-import React, {useGlobal, useState} from 'reactn';
-import Table from "react-bootstrap/Table";
+import Confirm from "../components/Modals/Confirm";
 import MedicineDetail from "../components/Grids/MedicineDetail";
 import MedicineEdit from "../components/Modals/MedicineEdit";
+import React, {useGlobal, useState} from 'reactn';
+import Table from "react-bootstrap/Table";
 import TooltipButton from "../components/Buttons/TooltipButton";
-import {MedicineRecord, newDrugInfo} from "../types/RecordTypes";
-import Confirm from "../components/Modals/Confirm";
 import {Alert} from "react-bootstrap";
+import {MedicineRecord, newDrugInfo} from "../types/RecordTypes";
 
 interface IProps {
     onError: (e: Error) => void
@@ -19,11 +19,11 @@ interface IProps {
  * @returns {JSX.Element}
  */
 const ManageOtcPage = (props: IProps): JSX.Element => {
-    const [otcList, setOtcList] = useGlobal('otcList');
-    const [mm] = useGlobal('medicineManager');
-    const [showMedicineEdit, setShowMedicineEdit] = useState(false);
-    const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
+    const [mm] = useGlobal('medicineManager');
+    const [otcList, setOtcList] = useGlobal('otcList');
+    const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
+    const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const onError = props.onError;
 
     /**

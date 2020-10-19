@@ -1,11 +1,11 @@
 import AuthenticationProvider from "../providers/AuthenticationProvider";
 import MedHistoryProvider from "../providers/MedHistoryProvider";
+import MedicineMananger from "../managers/MedicineManager";
 import MedicineProvider from "../providers/MedicineProvider";
 import ResidentManager from "../managers/ResidentManager";
 import ResidentProvider from "../providers/ResidentProvider";
 import {DrugLogRecord, MedicineRecord, ResidentRecord} from "../types/RecordTypes";
 import {State} from "reactn/default";
-import MedicineMananger from "../managers/MedicineManager";
 
 const getInitialState = () => {
     const baseUrl = process.env.REACT_APP_BASEURL || '';
@@ -28,7 +28,7 @@ const getInitialState = () => {
         otcList: [] as MedicineRecord[],
         providers,
         residentList: [] as ResidentRecord[],
-        residentManager: ResidentManager(providers.residentProvider, medicineManager)
+        residentManager: ResidentManager(providers.residentProvider)
     } as State;
 }
 
