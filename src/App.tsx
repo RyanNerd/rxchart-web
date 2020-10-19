@@ -9,16 +9,10 @@ import {FullName} from "./utility/common";
  * @constructor
  */
 const App = () => {
-    const [ resident ] = useGlobal('activeResident');
-    const [ development ] = useGlobal('development');
+    const [development] = useGlobal('development');
+    const [resident] = useGlobal('activeResident');
     const residentColor = development ? 'blue' : "#edf11e";
     const residentForegroundColor = development ? "#fffff0" : "black";
-    const [rm] = useGlobal('residentManager');
-    const [, setResidentList] = useGlobal('residentList');
-    const [, setMedicineList] = useGlobal('medicineList');
-    const [, setDrugLogList] = useGlobal('drugLogList');
-    const [, setActiveResident] = useGlobal('activeResident');
-    rm.setGlobals({setActiveResident, setResidentList, setMedicineList, setDrugLogList});
 
     return (
         <>

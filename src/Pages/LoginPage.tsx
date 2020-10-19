@@ -1,11 +1,11 @@
-import React, {setGlobal, useEffect, useGlobal, useRef, useState} from 'reactn';
 import Alert from 'react-bootstrap/Alert';
+import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
+import getInitialState from "../utility/getInitialState";
+import React, {setGlobal, useEffect, useGlobal, useRef, useState} from 'reactn';
 import Row from 'react-bootstrap/Row';
 import TabContent from '../styles/common.css';
-import getInitialState from "../utility/getInitialState";
 
 interface IProps {
     activeTabKey: string | null
@@ -22,21 +22,21 @@ interface IProps {
  */
 const LoginPage = (props: IProps): JSX.Element => {
     const [, setOtcList] = useGlobal('otcList');
+    const [, setResidentList] = useGlobal('residentList');
     const [apiKey, setApiKey] = useGlobal('apiKey');
-    const [providers] = useGlobal('providers');
-    const [residentManager] = useGlobal('residentManager');
     const [mm] = useGlobal('medicineManager');
     const [password, setPassword] = useState('');
+    const [providers] = useGlobal('providers');
+    const [residentManager] = useGlobal('residentManager');
     const [showAlert, setShowAlert] = useState(false);
     const [userName, setUserName] = useState('');
+    const authenticationProvider = providers.authenticationProvider;
     const focusRef = useRef<HTMLInputElement>(null);
     const {
         activeTabKey,
         onError,
         onLogin
     } = props;
-
-    const authenticationProvider = providers.authenticationProvider;
 
     // Set focus to the search input when this page is selected.
     useEffect(() => {
@@ -64,7 +64,7 @@ const LoginPage = (props: IProps): JSX.Element => {
                         providers.medicineProvider.setApiKey(apiKey);
 
                         // Load ALL Resident records up front and save them in the global store.
-                        residentManager.loadResidentList();
+                        residentManager.loadResidentList().then((residents) => setResidentList(residents));
 
                         // Load ALL OTC medications
                         mm.loadOtcList()

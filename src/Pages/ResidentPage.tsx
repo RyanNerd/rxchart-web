@@ -1,11 +1,12 @@
-import React, {useGlobal, useState} from 'reactn';
-import ResidentGrid from '../components/Grids/ResidentGrid';
-import ResidentEdit from '../components/Modals/ResidentEdit';
-import {FullName} from '../utility/common';
-import {Alert, Form} from "react-bootstrap";
-import {ResidentRecord} from "../types/RecordTypes";
 import Confirm from "../components/Modals/Confirm";
+import React, {useGlobal, useState} from 'reactn';
+import ResidentEdit from '../components/Modals/ResidentEdit';
+import ResidentGrid from '../components/Grids/ResidentGrid';
 import TooltipButton from "../components/Buttons/TooltipButton";
+import {Alert, Form} from "react-bootstrap";
+import {FullName} from '../utility/common';
+import {ResidentRecord} from "../types/RecordTypes";
+import {useEffect} from "react";
 
 interface IProps {
     onError: (e: Error) => void
@@ -20,13 +21,33 @@ interface IProps {
  * @constructor
  */
 const ResidentPage = (props: IProps): JSX.Element => {
-    const [showResidentEdit, setShowResidentEdit] = useState(false);
+    const [, setDrugLogList] = useGlobal('drugLogList');
+    const [, setMedicineList] = useGlobal('medicineList');
+    const [activeResident, setActiveResident] = useGlobal('activeResident');
+    const [mm] = useGlobal('medicineManager');
     const [residentInfo, setResidentInfo] = useState<ResidentRecord | null>(null);
-    const [showDeleteResident, setShowDeleteResident] = useState(false);
+    const [residentList, setResidentList] = useGlobal('residentList');
     const [residentToDelete, setResidentToDelete] = useState<ResidentRecord | null>(null);
-    const [residentList] = useGlobal('residentList');
-    const [activeResident] = useGlobal('activeResident');
     const [rm] = useGlobal('residentManager');
+    const [showDeleteResident, setShowDeleteResident] = useState(false);
+    const [showResidentEdit, setShowResidentEdit] = useState(false);
+    const onError = props.onError;
+
+    useEffect(() => {
+        const residentId = activeResident?.Id;
+        if (residentId) {
+            mm.loadMedicineList(residentId)
+                .then((meds) => {
+                    setMedicineList(meds);
+                    mm.loadDrugLog(residentId)
+                        .then((drugs) => setDrugLogList(drugs))
+                        .catch((err) => onError(err))
+                })
+        } else {
+            setMedicineList([]);
+            setDrugLogList([]);
+        }
+    },[activeResident, mm, setMedicineList, setDrugLogList, onError])
 
     /**
      * Fires when user clicks the Edit button
@@ -64,8 +85,13 @@ const ResidentPage = (props: IProps): JSX.Element => {
      * @param {ResidentRecord | null} residentRecord
      */
     const handleModalClose = (residentRecord: ResidentRecord) => {
-        rm.addOrUpdateResident(residentRecord)
-            .catch((err) => props.onError(err));
+        rm.updateResident(residentRecord).then((resident)=> {
+            rm.loadResidentList().then((residents) => {
+                setResidentList(residents);
+                setActiveResident(resident);
+            })
+        })
+            .catch((err) => onError(err));
     }
 
     /**
@@ -76,7 +102,7 @@ const ResidentPage = (props: IProps): JSX.Element => {
      */
     const handleOnSelected = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
         e.preventDefault();
-        rm.setResident(resident);
+        setActiveResident((resident));
     }
 
     /**
@@ -134,8 +160,17 @@ const ResidentPage = (props: IProps): JSX.Element => {
                 show={showDeleteResident}
                 onSelect={(a) => {
                     setShowDeleteResident(false);
-                    if (a) {
-                        rm.deleteResident(residentToDelete);
+                    if (a && residentToDelete) {
+                        rm.deleteResident(residentToDelete?.Id as number).then((deleted) => {
+                            if (deleted) {
+                                if (activeResident?.Id === residentToDelete.Id) {
+                                    setActiveResident(null);
+                                }
+                                rm.loadResidentList().then((residents) => setResidentList(residents));
+                            } else {
+                                onError(new Error('Unable to delete resident.Id ' + residentToDelete.Id));
+                            }
+                        }).catch((err) => onError(err));
                     }
                 }}
             >
