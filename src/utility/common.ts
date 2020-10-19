@@ -268,7 +268,7 @@ export const getFormattedDate = (date: Date | string): string => {
  * @param {any} searchValue
  * @return {Object}
  */
-export const getObjectByProperty = (objectList: IKey, propName: string, searchValue: any): object => {
+export const getObjectByProperty = (objectList: IKey, propName: string, searchValue: any): object | undefined => {
     return objectList.find((obj: IKey) => (obj[propName] === searchValue));
 }
 

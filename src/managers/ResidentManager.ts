@@ -1,11 +1,10 @@
-import {ResidentRecord} from "../types/RecordTypes";
-import {ProviderTypes} from "../types/ProviderTypes";
-import getMedicineList from "../Pages/Common/getMedicineList";
-import getMedicineLog from "../Pages/Common/getMedicineLog";
-import {State} from "reactn/default";
 import Callback from "reactn/types/callback";
+import {ResidentRecord} from "../types/RecordTypes";
+import {State} from "reactn/default";
+import {IMedicineManager} from "./MedicineManager";
+import {IResidentProvider} from "../providers/ResidentProvider";
 
-export interface IResidentManagerReturn {
+export interface IResidentManager {
     deleteResident: (resident: ResidentRecord) => void
     setErrorHandler: (e: (e: any) => void) => void
     setGlobals: (g: IGlobals) => void
@@ -19,7 +18,7 @@ type TSetMedicineList = (newValue: State["medicineList"], callback?: Callback<St
 type TSetDrugLogList = (newValue: State["drugLogList"], callback?: Callback<State>) => Promise<State>
 type TSetActiveResident = (newValue: State["activeResident"], callback?: Callback<State>) => Promise<State>
 
-export interface IGlobals {
+interface IGlobals {
     setResidentList: TSetResidentList
     setMedicineList: TSetMedicineList
     setDrugLogList: TSetDrugLogList
@@ -28,10 +27,11 @@ export interface IGlobals {
 
 /**
  * ResidentManager handles business logic primarily for the ResidentPage
- * @param {ProviderTypes.Providers} providers
+ * @param {IResidentProvider} residentProvider
+ * @param {IMedicineManager} mm
  * @constructor
  */
-const ResidentManager = (providers: ProviderTypes.Providers): IResidentManagerReturn => {
+const ResidentManager = (residentProvider: IResidentProvider, mm: IMedicineManager): IResidentManager => {
     /**
      * @private
      * @property
@@ -46,10 +46,6 @@ const ResidentManager = (providers: ProviderTypes.Providers): IResidentManagerRe
     let _onError = (e: any) => {
         return e;
     };
-
-    const residentProvider = providers.residentProvider;
-    const medicineProvider = providers.medicineProvider;
-    const medHistoryProvider = providers.medHistoryProvider;
 
     /**
      * Inserts or updates a Resident record.
@@ -197,12 +193,12 @@ const ResidentManager = (providers: ProviderTypes.Providers): IResidentManagerRe
         const setMedicineList = _setMedicineList as TSetMedicineList;
 
         if (residentId) {
-            return await getMedicineList(medicineProvider, residentId)
+            return mm.loadMedicineList(residentId)
                 .then((hydratedMedicineList) => {
                     setMedicineList(hydratedMedicineList);
                     if (hydratedMedicineList && hydratedMedicineList.length > 0) {
-                        getMedicineLog(medHistoryProvider, residentId)
-                            .then((data) => setDrugLogList(data))
+                        mm.loadDrugLog(residentId)
+                            .then((drugs) => setDrugLogList(drugs))
                     } else {
                         setDrugLogList([]);
                     }

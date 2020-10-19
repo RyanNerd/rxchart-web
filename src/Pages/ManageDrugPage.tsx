@@ -2,11 +2,8 @@ import React, {useGlobal, useState} from 'reactn';
 import Table from "react-bootstrap/Table";
 import MedicineDetail from "../components/Grids/MedicineDetail";
 import MedicineEdit from "../components/Modals/MedicineEdit";
-import deleteMedicine from "./Common/deleteMedicine";
 import TooltipButton from "../components/Buttons/TooltipButton";
 import {MedicineRecord, newDrugInfo} from "../types/RecordTypes";
-import {updateMedicine} from "./Common/updateMedicine";
-import getMedicineList from "./Common/getMedicineList";
 import Confirm from "../components/Modals/Confirm";
 import {Alert} from "react-bootstrap";
 import {getMDY} from "../utility/common";
@@ -24,11 +21,10 @@ interface IProps {
 const ManageDrugPage = (props: IProps): JSX.Element => {
     const [activeResident] = useGlobal('activeResident');
     const [medicineList, setMedicineList] = useGlobal('medicineList');
-    const [providers] = useGlobal('providers');
+    const [mm] = useGlobal('medicineManager');
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
-    const medicineProvider = providers.medicineProvider;
     const onError = props.onError;
 
     /**
@@ -67,19 +63,17 @@ const ManageDrugPage = (props: IProps): JSX.Element => {
     /**
      * Fires when user confirms to delete the medication.
      */
-    const deleteDrug = (): void => {
-        if (medicineInfo && medicineInfo.Id && activeResident) {
-            deleteMedicine(medicineProvider, medicineInfo.Id)
+    const deleteDrug = () => {
+            mm.deleteMedicine(medicineInfo?.Id as number)
                 .then((deleted) => {
-                    if (deleted && activeResident.Id) {
-                        getMedicineList(medicineProvider, activeResident.Id)
-                        .then((drugRecords) => {
-                            setMedicineList(drugRecords);
+                    if (deleted) {
+                        mm.loadMedicineList(activeResident?.Id as number)
+                        .then((medicineRecords) => {
+                            setMedicineList(medicineRecords);
                         });
                     }
                 })
                 .catch((err) => onError(err));
-        }
     }
 
     return (
@@ -137,18 +131,16 @@ const ManageDrugPage = (props: IProps): JSX.Element => {
                 /* MedicineEdit Modal */
                 <MedicineEdit
                     show={showMedicineEdit}
-                    onHide={() => setShowMedicineEdit(!showMedicineEdit)}
                     onClose={(r) => {
-                        const residentId = activeResident && activeResident.Id;
-                        if (residentId && r) {
-                            updateMedicine(medicineProvider, r)
+                        setShowMedicineEdit(false);
+                        if (r) {
+                            mm.updateMedicine(r)
                                 .then(() => {
-                                    getMedicineList(medicineProvider, residentId)
+                                    mm.loadMedicineList(activeResident?.Id as number)
                                         .then((medicines) => setMedicineList(medicines))
                                 })
                                 .catch((err) => onError(err))
                         }
-                        setShowMedicineEdit(false);
                     }}
                     drugInfo={medicineInfo}
                 />

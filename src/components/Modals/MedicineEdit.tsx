@@ -11,7 +11,6 @@ import {Alert} from "react-bootstrap";
 interface IProps {
     drugInfo: MedicineRecord
     onClose: (r: MedicineRecord | null) => void
-    onHide: () => void
     otc?: boolean
     show: boolean
 }
@@ -109,7 +108,6 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
             size="lg"
             show={show}
             centered
-            onHide={() => props.onHide()}
             onEntered={() => {
                 if (textInput && textInput.current) {
                     textInput.current.focus()

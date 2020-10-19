@@ -34,7 +34,7 @@ const ResidentPage = (props: IProps): JSX.Element => {
      * @param {React.MouseEvent<HTMLElement>} e
      * @param {ResidentRecord} resident
      */
-    const handleOnEdit = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
+    const handleEditResident = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
         e.preventDefault();
         setResidentInfo({...resident});
         setShowResidentEdit(true);
@@ -45,7 +45,7 @@ const ResidentPage = (props: IProps): JSX.Element => {
      *
      * @param {React.MouseEvent<HTMLElement>} e
      */
-    const handleAdd = (e: React.MouseEvent<HTMLElement>) => {
+    const handleAddResident = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
         setResidentInfo({
             Id: null,
@@ -97,7 +97,7 @@ const ResidentPage = (props: IProps): JSX.Element => {
                 <TooltipButton
                     placement="top"
                     tooltip="Add New Resident"
-                    onClick={(e: React.MouseEvent<HTMLElement>) => handleAdd(e)}
+                    onClick={(e: React.MouseEvent<HTMLElement>) => handleAddResident(e)}
                 >
                     + Resident
                 </TooltipButton>
@@ -106,7 +106,7 @@ const ResidentPage = (props: IProps): JSX.Element => {
             <p><span> </span></p>
 
             <ResidentGrid
-                onEdit={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => handleOnEdit(e, resident)}
+                onEdit={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => handleEditResident(e, resident)}
                 onSelected={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) =>
                     handleOnSelected(e, resident)
                 }
