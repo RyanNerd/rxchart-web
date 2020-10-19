@@ -73,8 +73,11 @@ const ResidentPage = (props: IProps): JSX.Element => {
                 rm.loadResidentList()
                 .then((residents) => {
                     setResidentList(residents);
-                    refreshDrugs(resident.Id as number);
-                    setActiveResident(resident);
+                    if (!residentRecord.Id) {
+                        setMedicineList([]);
+                        setDrugLogList([]);
+                        setActiveResident(resident);
+                    }
                 })
                 .catch((err) => onError(err))
             })
@@ -89,7 +92,16 @@ const ResidentPage = (props: IProps): JSX.Element => {
      */
     const handleOnSelected = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
         e.preventDefault();
-        setActiveResident(resident).then(() => refreshDrugs(resident.Id as number));
+        const residentId = resident.Id as number;
+        mm.loadMedicineList(residentId)
+            .then((meds) => {
+                setMedicineList(meds);
+                setActiveResident(resident);
+                mm.loadDrugLog(residentId)
+                    .then((drugs) => setDrugLogList(drugs))
+                    .catch((err) => onError(err))
+            })
+            .catch((err) => onError(err))
     }
 
     /**
@@ -102,20 +114,6 @@ const ResidentPage = (props: IProps): JSX.Element => {
         e.preventDefault();
         setResidentToDelete(resident);
         setShowDeleteResident(true);
-    }
-
-    /**
-     * Load the medicineList and drugLogList given the residentId
-     */
-    const refreshDrugs = (residentId: number) => {
-        mm.loadMedicineList(residentId)
-            .then((meds) => {
-                setMedicineList(meds);
-                mm.loadDrugLog(residentId)
-                    .then((drugs) => setDrugLogList(drugs))
-                    .catch((err) => onError(err))
-            })
-            .catch((err) => onError(err))
     }
 
     return (
