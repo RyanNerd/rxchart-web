@@ -6,7 +6,6 @@ import TooltipButton from "../Buttons/TooltipButton";
 import {Alert, Form} from "react-bootstrap";
 import {FullName} from '../../utility/common';
 import {ResidentRecord} from "../../types/RecordTypes";
-import {useEffect} from "react";
 
 interface IProps {
     onError: (e: Error) => void
@@ -32,22 +31,6 @@ const ResidentPage = (props: IProps): JSX.Element => {
     const [showDeleteResident, setShowDeleteResident] = useState(false);
     const [showResidentEdit, setShowResidentEdit] = useState(false);
     const onError = props.onError;
-
-    useEffect(() => {
-        const residentId = activeResident?.Id;
-        if (residentId) {
-            mm.loadMedicineList(residentId)
-                .then((meds) => {
-                    setMedicineList(meds);
-                    mm.loadDrugLog(residentId)
-                        .then((drugs) => setDrugLogList(drugs))
-                        .catch((err) => onError(err))
-                })
-        } else {
-            setMedicineList([]);
-            setDrugLogList([]);
-        }
-    },[activeResident, mm, setMedicineList, setDrugLogList, onError])
 
     /**
      * Fires when user clicks the Edit button
@@ -85,12 +68,16 @@ const ResidentPage = (props: IProps): JSX.Element => {
      * @param {ResidentRecord | null} residentRecord
      */
     const handleModalClose = (residentRecord: ResidentRecord) => {
-        rm.updateResident(residentRecord).then((resident)=> {
-            rm.loadResidentList().then((residents) => {
-                setResidentList(residents);
-                setActiveResident(resident);
+        rm.updateResident(residentRecord)
+            .then((resident) => {
+                rm.loadResidentList()
+                .then((residents) => {
+                    setResidentList(residents);
+                    refreshDrugs(resident.Id as number);
+                    setActiveResident(resident);
+                })
+                .catch((err) => onError(err))
             })
-        })
             .catch((err) => onError(err));
     }
 
@@ -102,7 +89,7 @@ const ResidentPage = (props: IProps): JSX.Element => {
      */
     const handleOnSelected = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
         e.preventDefault();
-        setActiveResident((resident));
+        setActiveResident(resident).then(() => refreshDrugs(resident.Id as number));
     }
 
     /**
@@ -115,6 +102,20 @@ const ResidentPage = (props: IProps): JSX.Element => {
         e.preventDefault();
         setResidentToDelete(resident);
         setShowDeleteResident(true);
+    }
+
+    /**
+     * Load the medicineList and drugLogList given the residentId
+     */
+    const refreshDrugs = (residentId: number) => {
+        mm.loadMedicineList(residentId)
+            .then((meds) => {
+                setMedicineList(meds);
+                mm.loadDrugLog(residentId)
+                    .then((drugs) => setDrugLogList(drugs))
+                    .catch((err) => onError(err))
+            })
+            .catch((err) => onError(err))
     }
 
     return (
@@ -165,8 +166,12 @@ const ResidentPage = (props: IProps): JSX.Element => {
                             if (deleted) {
                                 if (activeResident?.Id === residentToDelete.Id) {
                                     setActiveResident(null);
+                                    setMedicineList([]);
+                                    setDrugLogList([]);
+                                } else {
+                                    rm.loadResidentList()
+                                        .then((residents) => setResidentList(residents))
                                 }
-                                rm.loadResidentList().then((residents) => setResidentList(residents));
                             } else {
                                 onError(new Error('Unable to delete resident.Id ' + residentToDelete.Id));
                             }
