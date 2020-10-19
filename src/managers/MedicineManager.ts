@@ -2,51 +2,18 @@ import {ProviderTypes} from "../types/ProviderTypes";
 import {DrugLogRecord, MedicineRecord} from "../types/RecordTypes";
 
 export interface IMedicineManager {
-    loadMedicineList: (residentId: number) => Promise<MedicineRecord[]>
+    deleteDrugLog: (drugLogId: number) => Promise<ProviderTypes.MedHistory.DeleteResponse>
+    deleteMedicine: (medicineId: number) => Promise<boolean>
     loadDrugLog: (residentId: number) => Promise<DrugLogRecord[]>
-    updateMedicine: (medicine: MedicineRecord) => Promise<MedicineRecord>
-    deleteDrugLog: (drugLogId: number) => Promise<ProviderTypes.Medicine.DeleteResponse>
+    loadMedicineList: (residentId: number) => Promise<MedicineRecord[]>
+    loadOtcList: () => Promise<MedicineRecord[]>
     updateDrugLog: (drugLogRecord: DrugLogRecord, residentId: number) => Promise<DrugLogRecord[]>
+    updateMedicine: (medicine: MedicineRecord) => Promise<MedicineRecord>
 }
 
 const MedicineMananger = (providers: ProviderTypes.Providers): IMedicineManager => {
     const medicineProvider = providers.medicineProvider;
     const medHistoryProvider = providers.medHistoryProvider;
-
-    const _loadMedicineList = async (residentId: number) => {
-        const searchCriteria = {
-            where: [{column: 'ResidentId', value: residentId}],
-            order_by: [{column: 'Drug', direction: 'asc'}],
-        };
-        return medicineProvider.search(searchCriteria);
-    }
-
-    const _updateMedicine = async (drugInfo: MedicineRecord): Promise<MedicineRecord> => {
-        const drugData = {...drugInfo};
-        if (!drugData.Id) {
-            drugData.Id = null;
-        }
-        if (drugData.Notes === '') {
-            drugData.Notes = null;
-        }
-        if (drugInfo.Directions === '') {
-            drugData.Directions = null;
-        }
-        try {
-            return await medicineProvider
-                .post(drugData);
-        } catch (err) {
-            throw err;
-        }
-    }
-
-    const _loadDrugLog = async (residentId: number): Promise<DrugLogRecord[]> => {
-        const searchCriteria = {
-            where: [{column: 'ResidentId', comparison: '=', value: residentId}],
-            order_by: [{column: 'Updated', direction: 'desc'}],
-        };
-        return medHistoryProvider.search(searchCriteria);
-    };
 
     const _deleteDrugLog = async (drugLogId: number): Promise<ProviderTypes.DeleteResponse> => {
         return medHistoryProvider
@@ -57,6 +24,41 @@ const MedicineMananger = (providers: ProviderTypes.Providers): IMedicineManager 
             .catch((err) => {
                 throw err;
             });
+    };
+
+    const _deleteMedicine = async (medicineId: number): Promise<boolean> => {
+        return medicineProvider
+            .delete(medicineId)
+            .then((response: ProviderTypes.Medicine.DeleteResponse) => {
+                return response.success;
+            })
+            .catch((err) => {
+                throw err;
+            });
+    };
+
+    const _loadDrugLog = async (residentId: number): Promise<DrugLogRecord[]> => {
+        const searchCriteria = {
+            where: [{column: 'ResidentId', comparison: '=', value: residentId}],
+            order_by: [{column: 'Updated', direction: 'desc'}],
+        };
+        return medHistoryProvider.search(searchCriteria);
+    };
+
+    const _loadMedicineList = async (residentId: number) => {
+        const searchCriteria = {
+            where: [{column: 'ResidentId', value: residentId}],
+            order_by: [{column: 'Drug', direction: 'asc'}],
+        };
+        return medicineProvider.search(searchCriteria);
+    }
+
+    const _loadOtcList = async (): Promise<MedicineRecord[]> => {
+        const searchCriteria = {
+            where: [{column: 'OTC', value: true}],
+            order_by: [{column: 'Drug', direction: 'asc'}],
+        };
+        return medicineProvider.search(searchCriteria);
     };
 
     const _updateDrugLog = async (drugLogInfo: DrugLogRecord, residentId: number): Promise<DrugLogRecord[]> => {
@@ -79,25 +81,52 @@ const MedicineMananger = (providers: ProviderTypes.Providers): IMedicineManager 
             });
     };
 
+    const _updateMedicine = async (drugInfo: MedicineRecord): Promise<MedicineRecord> => {
+        const drugData = {...drugInfo};
+        if (!drugData.Id) {
+            drugData.Id = null;
+        }
+        if (drugData.Notes === '') {
+            drugData.Notes = null;
+        }
+        if (drugInfo.Directions === '') {
+            drugData.Directions = null;
+        }
+        try {
+            return await medicineProvider
+                .post(drugData);
+        } catch (err) {
+            throw err;
+        }
+    }
+
     return {
         deleteDrugLog: async  (drugLogId: number) => {
             return await _deleteDrugLog(drugLogId);
         },
 
-        loadMedicineList: async (residentId: number) => {
-            return await _loadMedicineList(residentId);
-        },
-
-        updateMedicine: async (medicine: MedicineRecord) => {
-            return await _updateMedicine(medicine);
+        deleteMedicine: async (medicineId: number) => {
+            return await _deleteMedicine(medicineId);
         },
 
         loadDrugLog: async (residentId: number) => {
             return await _loadDrugLog(residentId);
         },
 
+        loadMedicineList: async (residentId: number) => {
+            return await _loadMedicineList(residentId);
+        },
+
+        loadOtcList: async () => {
+            return await _loadOtcList();
+        },
+
         updateDrugLog: async (drugLogRecord: DrugLogRecord, residentId: number) => {
             return await  _updateDrugLog(drugLogRecord, residentId);
+        },
+
+        updateMedicine: async (medicine: MedicineRecord) => {
+            return await _updateMedicine(medicine);
         }
     }
 }

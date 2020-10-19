@@ -17,17 +17,18 @@ const getInitialState = () => {
         residentProvider: ResidentProvider(baseUrl)
     };
 
+    const medicineManager = MedicineMananger(providers);
     return {
         activeResident: null,
         apiKey: null,
         development: process.env.REACT_APP_DEVELOPMENT === 'true',
         drugLogList: [] as DrugLogRecord[],
         medicineList: [] as MedicineRecord[],
-        medicineManager: MedicineMananger(providers),
+        medicineManager,
         otcList: [] as MedicineRecord[],
         providers,
         residentList: [] as ResidentRecord[],
-        residentManager: ResidentManager(providers)
+        residentManager: ResidentManager(providers.residentProvider, medicineManager)
     } as State;
 }
 

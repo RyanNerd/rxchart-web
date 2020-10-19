@@ -5,7 +5,6 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import TabContent from '../styles/common.css';
-import getOtcList from "./Common/getOtcList";
 import getInitialState from "../utility/getInitialState";
 
 interface IProps {
@@ -26,6 +25,7 @@ const LoginPage = (props: IProps): JSX.Element => {
     const [apiKey, setApiKey] = useGlobal('apiKey');
     const [providers] = useGlobal('providers');
     const [residentManager] = useGlobal('residentManager');
+    const [mm] = useGlobal('medicineManager');
     const [password, setPassword] = useState('');
     const [showAlert, setShowAlert] = useState(false);
     const [userName, setUserName] = useState('');
@@ -67,7 +67,7 @@ const LoginPage = (props: IProps): JSX.Element => {
                         residentManager.loadResidentList();
 
                         // Load ALL OTC medications
-                        getOtcList(providers.medicineProvider)
+                        mm.loadOtcList()
                             .then((otcDrugs) => setOtcList(otcDrugs))
                             .catch(() => setOtcList([]));
 

@@ -18,13 +18,8 @@ import {
 } from "../utility/common";
 import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../types/RecordTypes";
 import LastTakenButton from "../components/Buttons/LastTakenButton";
-import {updateDrugLog} from "./Common/updateDrugLog";
-import {updateMedicine} from "./Common/updateMedicine";
-import getMedicineLog from "./Common/getMedicineLog";
-import getOtcList from "./Common/getOtcList";
 import Confirm from "../components/Modals/Confirm";
 import {Alert} from "react-bootstrap";
-import deleteDrugLog from "./Common/deleteDrugLog";
 
 interface IProps {
     activeTabKey: string | null
@@ -51,10 +46,8 @@ const OtcPage = (props: IProps): JSX.Element | null => {
     const [otcList, setOtcList] = useGlobal('otcList');
     const [drugLogList, setDrugLogList] = useGlobal('drugLogList');
     const [activeResident] = useGlobal('activeResident');
-    const [providers] = useGlobal('providers');
+    const [mm] = useGlobal('medicineManager');
     const [residentId, setResidentId] = useState(activeResident && activeResident.Id);
-    const medHistoryProvider = providers.medHistoryProvider;
-    const medicineProvider = providers.medicineProvider;
     const focusRef = useRef<HTMLInputElement>(null);
     const activeTabKey = props.activeTabKey;
     const onError = props.onError;
@@ -124,40 +117,38 @@ const OtcPage = (props: IProps): JSX.Element | null => {
     }
 
     /**
-     * Fires when medicine is added or edited.
-     *
+     * Fires when the user clicks on the + Medicine button
      * @param {React.MouseEvent<HTMLElement>} e
-     * @param {boolean} isAdd
      */
-    const addEditDrug = (e: React.MouseEvent<HTMLElement>, isAdd: boolean): void => {
+    const handleAddMedicine = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
-        if (isAdd) {
-            const drugInfo = {...newDrugInfo};
-            drugInfo.OTC = true;
-            setDrugInfo(drugInfo);
-        } else {
-            const drugRecord = {...activeDrug} as MedicineRecord;
-            setDrugInfo(drugRecord);
-        }
+        setDrugInfo({...newDrugInfo, OTC: true});
+        setShowMedicineEdit(true);
+    }
+
+    /**
+     * Fires when medicine edited.
+     * @param {React.MouseEvent<HTMLElement>} e
+     */
+    const handleEditMedicine = (e: React.MouseEvent<HTMLElement>) => {
+        e.preventDefault();
+        setDrugInfo({...activeDrug} as MedicineRecord);
         setShowMedicineEdit(true);
     }
 
     /**
      * Fires when MedicineEdit closes.
-     *
      * @param {MedicineRecord | null} drugInfo
      */
-    const handleMedicineEditModalClose = (drugInfo: MedicineRecord): void => {
-        updateMedicine(medicineProvider, drugInfo)
+    const updateMedicine = (drugInfo: MedicineRecord)=> {
+        mm.updateMedicine(drugInfo)
             .then((drugRecord) => {
-                getOtcList(medicineProvider)
+                mm.loadOtcList()
                     .then((drugList) => {
                         setOtcList(drugList);
-                        setDrugInfo(drugRecord);
                         setActiveDrug(drugRecord);
-                        setLastTaken(null);
-                        getMedicineLog(medHistoryProvider, residentId)
-                            .then((updatedDrugLog) => setDrugLogList(updatedDrugLog));
+                        mm.loadDrugLog(residentId)
+                            .then((drugs) => setDrugLogList(drugs));
                     })
                     .catch((err) => {
                         onError(err);
@@ -167,22 +158,19 @@ const OtcPage = (props: IProps): JSX.Element | null => {
 
     /**
      * Fires when the user has confirmed the deletion of a drug log record.
-     *
-     * @param {DrugLogRecord} drugLogInfo
+     * @param {number} drugLogId
      */
-    const deleteDrugLogRecord = (drugLogInfo: DrugLogRecord): void => {
-        const drugLogId = drugLogInfo && drugLogInfo.Id;
-        if (drugLogId && residentId) {
-            deleteDrugLog(medHistoryProvider, drugLogId)
+    const deleteDrugLogRecord = (drugLogId: number) => {
+            mm.deleteDrugLog(drugLogId)
                 .then((deleted) => {
                     if (deleted.success) {
-                        getMedicineLog(medHistoryProvider, residentId).then((data) => setDrugLogList(data));
+                        mm.loadDrugLog(residentId).then((drugs) => setDrugLogList(drugs))
+                            .catch((err) => onError(err));
                     } else {
                         throw new Error('DrugLog Delete failed for Record: ' + drugLogId);
                     }
                 })
                 .catch((err) => onError(err));
-        }
     }
 
     /**
@@ -209,8 +197,8 @@ const OtcPage = (props: IProps): JSX.Element | null => {
      * @param {number} amount
      */
     const handleLogDrugAmount = (amount: number): void => {
-        const drugId = activeDrug && activeDrug.Id;
-        if (drugId && residentId) {
+        const drugId = activeDrug?.Id as number;
+        if (drugId) {
             const notes = amount.toString();
             const drugLogInfo = {
                 Id: null,
@@ -218,8 +206,8 @@ const OtcPage = (props: IProps): JSX.Element | null => {
                 MedicineId: drugId,
                 Notes: notes
             };
-            updateDrugLog(medHistoryProvider, drugLogInfo, residentId)
-                .then((drugLogList) => setDrugLogList(drugLogList))
+            mm.updateDrugLog(drugLogInfo, residentId)
+                .then((drugs) => setDrugLogList(drugs))
                 .catch((err) => onError(err))
         }
     }
@@ -247,7 +235,7 @@ const OtcPage = (props: IProps): JSX.Element | null => {
                             className="mr-1"
                             size="sm"
                             variant="info"
-                            onClick={(e) => addEditDrug(e, true)}
+                            onClick={(e) => handleAddMedicine(e)}
                         >
                             + OTC
                         </Button>
@@ -256,7 +244,7 @@ const OtcPage = (props: IProps): JSX.Element | null => {
                             <Button
                                 size="sm"
                                 variant="info"
-                                onClick={(e) => addEditDrug(e, false)}
+                                onClick={(e) => handleEditMedicine(e)}
                             >
                                 Edit <b>{activeDrug.Drug}</b>
                             </Button>
@@ -353,7 +341,7 @@ const OtcPage = (props: IProps): JSX.Element | null => {
                     onClose={(r) => {
                         setShowMedicineEdit(false);
                         if (r) {
-                            handleMedicineEditModalClose(r);
+                            updateMedicine(r);
                         }
                     }}
                     drugInfo={drugInfo}
@@ -367,8 +355,8 @@ const OtcPage = (props: IProps): JSX.Element | null => {
                     drugLogInfo={drugLogInfo}
                     onHide={() => setShowDrugLog(!showDrugLog)}
                     onClose={(drugLogRecord) => {
-                        if (drugLogRecord && residentId) {
-                            updateDrugLog(medHistoryProvider, drugLogRecord, residentId)
+                        if (drugLogRecord) {
+                            mm.updateDrugLog(drugLogRecord, residentId)
                                 .then((drugLogList) => setDrugLogList(drugLogList))
                                 .catch((err) => onError(err))
                         }
@@ -384,9 +372,8 @@ const OtcPage = (props: IProps): JSX.Element | null => {
                     buttonvariant="danger"
                     onSelect={(a) => {
                         setShowDeleteDrugLogRecord(false);
-                        const drugLog = {...showDeleteDrugLogRecord};
                         if (a) {
-                            deleteDrugLogRecord(drugLog)
+                            deleteDrugLogRecord(showDeleteDrugLogRecord.Id)
                         }
                     }}
                 >

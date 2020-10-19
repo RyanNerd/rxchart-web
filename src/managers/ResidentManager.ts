@@ -1,9 +1,8 @@
 import Callback from "reactn/types/callback";
-import getMedicineList from "../Pages/Common/getMedicineList";
-import getMedicineLog from "../Pages/Common/getMedicineLog";
-import {ProviderTypes} from "../types/ProviderTypes";
 import {ResidentRecord} from "../types/RecordTypes";
 import {State} from "reactn/default";
+import {IMedicineManager} from "./MedicineManager";
+import {IResidentProvider} from "../providers/ResidentProvider";
 
 export interface IResidentManager {
     deleteResident: (resident: ResidentRecord) => void
@@ -28,10 +27,11 @@ interface IGlobals {
 
 /**
  * ResidentManager handles business logic primarily for the ResidentPage
- * @param {ProviderTypes.Providers} providers
+ * @param {IResidentProvider} residentProvider
+ * @param {IMedicineManager} mm
  * @constructor
  */
-const ResidentManager = (providers: ProviderTypes.Providers): IResidentManager => {
+const ResidentManager = (residentProvider: IResidentProvider, mm: IMedicineManager): IResidentManager => {
     /**
      * @private
      * @property
@@ -46,10 +46,6 @@ const ResidentManager = (providers: ProviderTypes.Providers): IResidentManager =
     let _onError = (e: any) => {
         return e;
     };
-
-    const residentProvider = providers.residentProvider;
-    const medicineProvider = providers.medicineProvider;
-    const medHistoryProvider = providers.medHistoryProvider;
 
     /**
      * Inserts or updates a Resident record.
@@ -197,12 +193,12 @@ const ResidentManager = (providers: ProviderTypes.Providers): IResidentManager =
         const setMedicineList = _setMedicineList as TSetMedicineList;
 
         if (residentId) {
-            return await getMedicineList(medicineProvider, residentId)
+            return mm.loadMedicineList(residentId)
                 .then((hydratedMedicineList) => {
                     setMedicineList(hydratedMedicineList);
                     if (hydratedMedicineList && hydratedMedicineList.length > 0) {
-                        getMedicineLog(medHistoryProvider, residentId)
-                            .then((data) => setDrugLogList(data))
+                        mm.loadDrugLog(residentId)
+                            .then((drugs) => setDrugLogList(drugs))
                     } else {
                         setDrugLogList([]);
                     }

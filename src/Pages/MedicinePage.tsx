@@ -107,20 +107,19 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
     /**
      * Fires when the user clicks on the + Medicine button
-     * @param e
+     * @param {React.MouseEvent<HTMLElement>} e
      */
     const handleAddMedicine = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
         const mdy = getMDY();
-        const drugInfo = {
+        setMedicineInfo({
             ...newDrugInfo,
             OTC: false,
             ResidentId: activeResident?.Id,
             FillDateYear: mdy.year,
             FillDateMonth: mdy.month,
             FillDateDay: mdy.day
-        };
-        setMedicineInfo(drugInfo);
+        });
         setShowMedicineEdit(true);
     }
 
@@ -130,14 +129,13 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      */
     const handleEditMedicine = (e: React.MouseEvent<HTMLElement>): void => {
         e.preventDefault();
-        const drugRecord = {...activeDrug} as MedicineRecord;
-        setMedicineInfo(drugRecord);
+        setMedicineInfo({...activeDrug} as MedicineRecord);
         setShowMedicineEdit(true);
     }
 
     /**
      * Fires when MedicineEdit closes and there's an update (add/edit) for a Medicine record
-     * @param {MedicineRecord | null} drugInfo
+     * @param {MedicineRecord} drugInfo
      */
     const updateMedicine = (drugInfo: MedicineRecord) => {
         const residentId = activeResident?.Id as number;
@@ -165,7 +163,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         mm.deleteDrugLog(drugLogId)
             .then((deleted) => {
                 if (deleted.success) {
-                    mm.loadDrugLog(residentId).then((drugLog) => setDrugLogList(drugLog))
+                    mm.loadDrugLog(residentId).then((drugs) => setDrugLogList(drugs))
                         .catch((err) => onError(err))
                 } else {
                     throw new Error('DrugLog Delete failed for MedHistory.Id: ' + drugLogId);
@@ -198,7 +196,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      * @param {number} amount
      */
     const handleLogDrugAmount = (amount: number): void => {
-        const drugId = activeDrug && activeDrug.Id;
+        const drugId = activeDrug?.Id as number;
         if (drugId) {
             const notes = amount.toString();
             const drugLogInfo = {

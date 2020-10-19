@@ -2,11 +2,8 @@ import React, {useGlobal, useState} from 'reactn';
 import Table from "react-bootstrap/Table";
 import MedicineDetail from "../components/Grids/MedicineDetail";
 import MedicineEdit from "../components/Modals/MedicineEdit";
-import deleteMedicine from "./Common/deleteMedicine";
 import TooltipButton from "../components/Buttons/TooltipButton";
 import {MedicineRecord, newDrugInfo} from "../types/RecordTypes";
-import {updateMedicine} from "./Common/updateMedicine";
-import getOtcList from "./Common/getOtcList";
 import Confirm from "../components/Modals/Confirm";
 import {Alert} from "react-bootstrap";
 
@@ -23,11 +20,10 @@ interface IProps {
  */
 const ManageOtcPage = (props: IProps): JSX.Element => {
     const [otcList, setOtcList] = useGlobal('otcList');
-    const [providers] = useGlobal('providers');
+    const [mm] = useGlobal('medicineManager');
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
-    const medicineProvider = providers.medicineProvider;
     const onError = props.onError;
 
     /**
@@ -61,16 +57,14 @@ const ManageOtcPage = (props: IProps): JSX.Element => {
      * Fires when user confirms to delete the medicine
      */
     const deleteDrug = (): void => {
-        if (medicineInfo && medicineInfo.Id) {
-            deleteMedicine(medicineProvider, medicineInfo.Id)
+            mm.deleteMedicine(medicineInfo?.Id as number)
                 .then((deleted) => {
                     if (deleted) {
-                        getOtcList(medicineProvider)
-                            .then((drugRecords) => setOtcList(drugRecords))
+                       mm.loadOtcList()
+                            .then((drugs) => setOtcList(drugs))
                             .catch(() => setOtcList([]));
                     }
                 });
-        }
     }
 
     return (
@@ -135,10 +129,10 @@ const ManageOtcPage = (props: IProps): JSX.Element => {
                     onClose={(r) => {
                         setShowMedicineEdit(false);
                         if (r) {
-                            updateMedicine(medicineProvider, r)
+                            mm.updateMedicine(r)
                                 .then(() => {
-                                    getOtcList(medicineProvider)
-                                        .then((medicines) => setOtcList(medicines))
+                                    mm.loadOtcList()
+                                        .then((otcDrugs) => setOtcList(otcDrugs))
                                 })
                                 .catch((err) => onError(err))
                         }
