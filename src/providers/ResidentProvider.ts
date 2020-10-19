@@ -1,6 +1,5 @@
 import {ResidentRecord} from '../types/RecordTypes';
 import Frak from "frak/lib/components/Frak";
-import {ProviderTypes} from '../types/ProviderTypes';
 
 export interface IResidentProvider {
     setApiKey: (apiKey: string) => void
@@ -11,8 +10,14 @@ export interface IResidentProvider {
     delete: (residentId: number) => Promise<DeleteResponse>
 }
 
-type RecordResponse = ProviderTypes.Resident.RecordResponse;
-type DeleteResponse = ProviderTypes.Resident.DeleteResponse;
+type DeleteResponse = { success: boolean };
+type RecordResponse = {
+    data: ResidentRecord[] | ResidentRecord;
+    status: number;
+    success: boolean;
+};
+
+
 
 /**
  * ResidentProvider API service connector

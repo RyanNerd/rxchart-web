@@ -1,6 +1,5 @@
 import {MedicineRecord} from '../types/RecordTypes';
 import Frak from "frak/lib/components/Frak";
-import {ProviderTypes} from '../types/ProviderTypes';
 
 export interface IMedicineProvider {
     setApiKey: (apiKey: string) => void
@@ -10,8 +9,12 @@ export interface IMedicineProvider {
     delete: (drugId: string | number) => Promise<DeleteResponse>
 }
 
-type DeleteResponse = ProviderTypes.Medicine.DeleteResponse;
-type RecordResponse = ProviderTypes.Medicine.RecordResponse;
+type DeleteResponse = { success: boolean };
+type RecordResponse = {
+    data: MedicineRecord[] | MedicineRecord;
+    status: number;
+    success: boolean;
+};
 
 /**
  * MedicineProvider API connector

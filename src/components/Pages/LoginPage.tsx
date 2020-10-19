@@ -24,13 +24,13 @@ const LoginPage = (props: IProps): JSX.Element => {
     const [, setOtcList] = useGlobal('otcList');
     const [, setResidentList] = useGlobal('residentList');
     const [apiKey, setApiKey] = useGlobal('apiKey');
+    const [am] = useGlobal('authManager');
     const [mm] = useGlobal('medicineManager');
     const [password, setPassword] = useState('');
     const [providers] = useGlobal('providers');
     const [residentManager] = useGlobal('residentManager');
     const [showAlert, setShowAlert] = useState(false);
-    const [userName, setUserName] = useState('');
-    const authenticationProvider = providers.authenticationProvider;
+    const [username, setUsername] = useState('');
     const focusRef = useRef<HTMLInputElement>(null);
     const {
         activeTabKey,
@@ -54,14 +54,12 @@ const LoginPage = (props: IProps): JSX.Element => {
         e.preventDefault();
 
         // Send the user name and password to the web service
-        authenticationProvider.post({username: userName, password})
+        am.authenticate(username, password)
             .then((response) => {
                 if (response.success) {
                     const apiKey = response.apiKey;
                     setApiKey(apiKey).then(() => {
-                        providers.residentProvider.setApiKey(apiKey);
-                        providers.medHistoryProvider.setApiKey(apiKey);
-                        providers.medicineProvider.setApiKey(apiKey);
+                        providers.setApi(apiKey);
 
                         // Load ALL Resident records up front and save them in the global store.
                         residentManager.loadResidentList().then((residents) => setResidentList(residents));
@@ -115,8 +113,8 @@ const LoginPage = (props: IProps): JSX.Element => {
                 <Col sm={3}>
                     <Form.Control
                         type="text"
-                        value={userName}
-                        onChange={(e) => setUserName(e.target.value)}
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
                         ref={focusRef}
                     />
                 </Col>

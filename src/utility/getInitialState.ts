@@ -1,11 +1,20 @@
-import AuthenticationProvider from "../providers/AuthenticationProvider";
-import MedHistoryProvider from "../providers/MedHistoryProvider";
+import AuthenticationProvider, {IAuthenticationProvider} from "../providers/AuthenticationProvider";
+import MedHistoryProvider, {IMedHistoryProvider} from "../providers/MedHistoryProvider";
 import MedicineMananger from "../managers/MedicineManager";
-import MedicineProvider from "../providers/MedicineProvider";
+import MedicineProvider, {IMedicineProvider} from "../providers/MedicineProvider";
 import ResidentManager from "../managers/ResidentManager";
-import ResidentProvider from "../providers/ResidentProvider";
+import ResidentProvider, {IResidentProvider} from "../providers/ResidentProvider";
 import {DrugLogRecord, MedicineRecord, ResidentRecord} from "../types/RecordTypes";
 import {State} from "reactn/default";
+import AuthManager from "../managers/AuthManager";
+
+export interface IProviders {
+    authenticationProvider: IAuthenticationProvider
+    residentProvider: IResidentProvider
+    medicineProvider: IMedicineProvider
+    medHistoryProvider: IMedHistoryProvider
+    setApi: (apiKey: string) => void
+}
 
 const getInitialState = () => {
     const baseUrl = process.env.REACT_APP_BASEURL || '';
@@ -14,17 +23,22 @@ const getInitialState = () => {
         authenticationProvider: AuthenticationProvider(baseUrl),
         medHistoryProvider: MedHistoryProvider(baseUrl),
         medicineProvider: MedicineProvider(baseUrl),
-        residentProvider: ResidentProvider(baseUrl)
-    };
+        residentProvider: ResidentProvider(baseUrl),
+        setApi: (apiKey: string) => {
+            providers.medHistoryProvider.setApiKey(apiKey);
+            providers.medicineProvider.setApiKey(apiKey);
+            providers.residentProvider.setApiKey(apiKey)
+        }
+    } as IProviders;
 
-    const medicineManager = MedicineMananger(providers);
     return {
         activeResident: null,
         apiKey: null,
+        authManager: AuthManager(providers.authenticationProvider),
         development: process.env.REACT_APP_DEVELOPMENT === 'true',
         drugLogList: [] as DrugLogRecord[],
         medicineList: [] as MedicineRecord[],
-        medicineManager,
+        medicineManager: MedicineMananger(providers.medicineProvider, providers.medHistoryProvider),
         otcList: [] as MedicineRecord[],
         providers,
         residentList: [] as ResidentRecord[],

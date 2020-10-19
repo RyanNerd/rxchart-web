@@ -12,7 +12,7 @@ type AuthResponse = {
     } | null
 }
 
-type Authenticated = {
+export type Authenticated = {
     success: boolean,
     apiKey: string,
     organization: string
