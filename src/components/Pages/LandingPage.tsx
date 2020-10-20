@@ -11,6 +11,10 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import {useEffect} from "react";
 
+interface ITitle {
+    [key: string]: string
+}
+
 /**
  * Landing Page - Tab Page Menu UI
  * @constructor
@@ -23,15 +27,27 @@ const LandingPage = () => {
     const [otcList] = useGlobal('otcList');
     const [activeTabKey, setActiveTabKey] = useState<string | null>('login');
     const [errorDetails, setErrorDetails] = useState<any>(null);
-    const drugHistoryTitle = (activeTabKey === 'history') ? (<b>Drug History</b>) : (<span>Drug History</span>);
-    const errorTitle = (activeTabKey === 'error') ? (<b>Diagnostics</b>) : (<span>Diagnostics</span>);
-    const login = apiKey ? 'Logout' : 'Login';
-    const loginTitle = <span style={{fontWeight: (activeTabKey === 'login') ? 'bold' : 'normal'}}>{login}</span>;
-    const manageOtcTitle = (activeTabKey === 'manage-otc') ? (<b>Manage OTC</b>) : (<span>Manage OTC</span>);
-    const manageRxTitle = (activeTabKey === 'manage') ? (<b>Manage Rx</b>) : (<span>Manage Rx</span>);
-    const otcTitle = (activeTabKey === 'otc') ? (<b>OTC</b>) : (<span>OTC</span>);
-    const residentTitle = (activeTabKey === 'resident') ? (<b>Residents</b>) : (<span>Residents</span>);
-    const rxTitle = (activeTabKey === 'medicine') ? (<b>Rx</b>) : (<span>Rx</span>);
+
+    /**
+     * Determine the table title component based on eventKey and bold the title if it is the current tab
+     * @param eventKey
+     */
+    const getTitle = (eventKey: string): JSX.Element => {
+        const Title = {
+            login: apiKey ? 'Logout' : 'Login',
+            "manage-otc": 'Manage OTC',
+            manage: 'Manage Rx',
+            otc: 'OTC',
+            resident: 'Residents',
+            history: 'Drug History',
+            medicine: 'Rx'
+        } as ITitle
+        if (eventKey === activeTabKey) {
+            return (<b>{Title[eventKey]}</b>)
+        } else {
+            return (<>{Title[eventKey]}</>)
+        }
+    }
 
     // Completely hide the Diagnostics tab header if it isn't active using some direct DOM manipulation.
     useEffect(() => {
@@ -65,7 +81,7 @@ const LandingPage = () => {
             <Tab
                 sytle={{marginLeft: "15px"}}
                 eventKey="login"
-                title={loginTitle}
+                title={getTitle('login')}
             >
                 <LoginPage
                     onLogin={(loggedIn) => {
@@ -78,7 +94,7 @@ const LandingPage = () => {
             <Tab
                 disabled={apiKey === null || !activeResident}
                 eventKey="medicine"
-                title={rxTitle}>
+                title={getTitle('medicine')}>
                 <MedicinePage
                     activeTabKey={activeTabKey}
                     onError={(error) => errorOccurred(error)}
@@ -87,7 +103,7 @@ const LandingPage = () => {
             <Tab
                 disabled={apiKey === null || !activeResident}
                 eventKey="otc"
-                title={otcTitle}>
+                title={getTitle('otc')}>
                 <OtcPage
                     onError={(error) => errorOccurred(error)}
                     activeTabKey={activeTabKey}
@@ -96,7 +112,7 @@ const LandingPage = () => {
             <Tab
                 disabled={apiKey === null}
                 eventKey="resident"
-                title={residentTitle}>
+                title={getTitle('resident')}>
                 <ResidentPage
                     onError={(error) => errorOccurred(error)}
                 />
@@ -104,7 +120,7 @@ const LandingPage = () => {
             <Tab
                 disabled={apiKey === null || !activeResident}
                 eventKey="history"
-                title={drugHistoryTitle}
+                title={getTitle('history')}
             >
                 <DrugHistoryPage
                     drugLogList={drugLogList}
@@ -115,7 +131,7 @@ const LandingPage = () => {
             <Tab
                 disabled={apiKey === null || !activeResident}
                 eventKey="manage"
-                title={manageRxTitle}
+                title={getTitle('manage')}
             >
                 <ManageDrugPage
                     onError={(err: Error) => errorOccurred(err)}
@@ -124,7 +140,7 @@ const LandingPage = () => {
             <Tab
                 disabled={apiKey === null}
                 eventKey="manage-otc"
-                title={manageOtcTitle}
+                title={getTitle('manage-otc')}
             >
                 <ManageOtcPage
                     onError={(err) => errorOccurred(err)}
@@ -133,7 +149,7 @@ const LandingPage = () => {
             <Tab
                 disabled={errorDetails === null || activeTabKey !== 'error'}
                 eventKey="error"
-                title={errorTitle}
+                title={getTitle('error')}
                 style={{color: activeTabKey !== 'error' ? 'white' : ''}}
             >
                 <DiagnosticPage
