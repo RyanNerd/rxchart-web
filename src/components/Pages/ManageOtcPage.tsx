@@ -7,24 +7,18 @@ import TooltipButton from "../Buttons/TooltipButton";
 import {Alert} from "react-bootstrap";
 import {MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
 
-interface IProps {
-    onError: (e: Error) => void
-}
-
 /**
  * ManageOtcPage
  * Page for Displaying, editing and adding OTC drugs
- *
- * @param {IProps} props
  * @returns {JSX.Element}
  */
-const ManageOtcPage = (props: IProps): JSX.Element => {
+const ManageOtcPage = (): JSX.Element => {
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [mm] = useGlobal('medicineManager');
     const [otcList, setOtcList] = useGlobal('otcList');
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
-    const onError = props.onError;
+    const [, setErrorDetails] = useGlobal('errorDetails');
 
     /**
      * Fires when the Edit button is clicked
@@ -134,7 +128,7 @@ const ManageOtcPage = (props: IProps): JSX.Element => {
                                     mm.loadOtcList()
                                         .then((otcDrugs) => setOtcList(otcDrugs))
                                 })
-                                .catch((err) => onError(err))
+                                .catch((err) => setErrorDetails(err))
                         }
                     }}
                     drugInfo={medicineInfo}

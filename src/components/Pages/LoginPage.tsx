@@ -9,7 +9,6 @@ import TabContent from '../../styles/common.css';
 
 interface IProps {
     activeTabKey: string | null
-    onError: (e: Error) => void
     onLogin: (loggedIn: boolean) => void
 }
 
@@ -24,6 +23,7 @@ const LoginPage = (props: IProps): JSX.Element => {
     const [, setOtcList] = useGlobal('otcList');
     const [, setResidentList] = useGlobal('residentList');
     const [apiKey, setApiKey] = useGlobal('apiKey');
+    const [, setErrorDetails] = useGlobal('errorDetails');
     const [am] = useGlobal('authManager');
     const [mm] = useGlobal('medicineManager');
     const [password, setPassword] = useState('');
@@ -34,7 +34,6 @@ const LoginPage = (props: IProps): JSX.Element => {
     const focusRef = useRef<HTMLInputElement>(null);
     const {
         activeTabKey,
-        onError,
         onLogin
     } = props;
 
@@ -67,7 +66,7 @@ const LoginPage = (props: IProps): JSX.Element => {
                         // Load ALL OTC medications
                         mm.loadOtcList()
                             .then((otcDrugs) => setOtcList(otcDrugs))
-                            .catch(() => setOtcList([]));
+                            .catch((err) => setErrorDetails(err));
 
                         // Let the parent component know we are logged in successfully
                         onLogin(true);
@@ -88,7 +87,7 @@ const LoginPage = (props: IProps): JSX.Element => {
                 }
             })
             .catch((err) => {
-                onError(err);
+                setErrorDetails(err);
             });
     }
 
@@ -98,10 +97,16 @@ const LoginPage = (props: IProps): JSX.Element => {
      * @param {React.MouseEvent<HTMLElement>} e
      */
     const logout = (e: React.MouseEvent<HTMLElement>) => {
-        e.preventDefault();
+        e.persist();
         setGlobal(getInitialState())
             .then(() => console.log('logout successful'))
-            .catch((err) => onError(err))
+            .then(() => {
+                if (e.ctrlKey) {
+                    console.log('Error handler testing');
+                    throw new Error('Testing the error handler.');
+                }
+            })
+            .catch((err) => setErrorDetails(err))
     }
 
     const signIn = (

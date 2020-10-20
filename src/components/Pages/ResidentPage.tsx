@@ -7,20 +7,16 @@ import {Alert, Form} from "react-bootstrap";
 import {FullName} from '../../utility/common';
 import {ResidentRecord} from "../../types/RecordTypes";
 
-interface IProps {
-    onError: (e: Error) => void
-}
 
 /**
  * Display Resident Grid
  * Allow user to edit and add Residents
- *
- * @param {IProps} props
  * @return {JSX.Element}
  * @constructor
  */
-const ResidentPage = (props: IProps): JSX.Element => {
+const ResidentPage = (): JSX.Element => {
     const [, setDrugLogList] = useGlobal('drugLogList');
+    const [, setErrorDetails] = useGlobal('errorDetails');
     const [, setMedicineList] = useGlobal('medicineList');
     const [activeResident, setActiveResident] = useGlobal('activeResident');
     const [mm] = useGlobal('medicineManager');
@@ -30,7 +26,6 @@ const ResidentPage = (props: IProps): JSX.Element => {
     const [rm] = useGlobal('residentManager');
     const [showDeleteResident, setShowDeleteResident] = useState(false);
     const [showResidentEdit, setShowResidentEdit] = useState(false);
-    const onError = props.onError;
 
     /**
      * Fires when user clicks the Edit button
@@ -79,9 +74,9 @@ const ResidentPage = (props: IProps): JSX.Element => {
                         setActiveResident(resident);
                     }
                 })
-                .catch((err) => onError(err))
+                .catch((err) => setErrorDetails(err))
             })
-            .catch((err) => onError(err));
+            .catch((err) => setErrorDetails(err));
     }
 
     /**
@@ -99,9 +94,9 @@ const ResidentPage = (props: IProps): JSX.Element => {
                 setActiveResident(resident);
                 mm.loadDrugLog(residentId)
                     .then((drugs) => setDrugLogList(drugs))
-                    .catch((err) => onError(err))
+                    .catch((err) => setErrorDetails(err))
             })
-            .catch((err) => onError(err))
+            .catch((err) => setErrorDetails(err))
     }
 
     /**
@@ -171,9 +166,9 @@ const ResidentPage = (props: IProps): JSX.Element => {
                                         .then((residents) => setResidentList(residents))
                                 }
                             } else {
-                                onError(new Error('Unable to delete resident.Id ' + residentToDelete.Id));
+                                setErrorDetails(new Error('Unable to delete resident.Id ' + residentToDelete.Id));
                             }
-                        }).catch((err) => onError(err));
+                        }).catch((err) => setErrorDetails(err));
                     }
                 }}
             >

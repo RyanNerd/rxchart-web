@@ -1,5 +1,6 @@
 import React, {useGlobal} from 'reactn';
 import {Alert} from "react-bootstrap";
+import {useEffect} from "react";
 
 interface IProps {
     error: any
@@ -15,6 +16,24 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
     const [development] = useGlobal('development');
     const error = props.error;
 
+    useEffect(() => {
+        const el = document.getElementById('landing-page-tabs-tab-error');
+        if (error) {
+            if (el) {
+                el.style.color = '#007BFF';
+            }
+        } else {
+            if (el) {
+                el.style.color = 'white';
+            }
+        }
+    }, [error])
+
+    // No error then don't render.
+    if (!error) {
+        return null;
+    }
+
     /**
      * Function to create the unsafe HTML object
      * @param {string} html
@@ -24,7 +43,18 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
         return {__html: html}
     };
 
-    let content;
+    const alert = (message: string) => {
+        return (
+            <Alert variant="danger">
+                <Alert.Heading>
+                    Error
+                </Alert.Heading>
+                {message}
+            </Alert>
+        )
+    }
+
+    let content: {} | null | undefined;
     if (error && development) {
         console.log('Error', error);
         if (error instanceof Object && error.text) {
@@ -32,27 +62,21 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
             if (contentType.includes('html')) {
                 content = (<div dangerouslySetInnerHTML={createMarkup(error.text)}/>);
             } else {
-                content = (<p>{error.text}</p>)
+                if (error instanceof String && error.toLowerCase().includes('html')) {
+                    content = (<div dangerouslySetInnerHTML={createMarkup(error as string)}/>);
+                } else {
+                    content = alert(error?.text || 'unknown error - see console log. Error type: ' + typeof error);
+                }
             }
         } else {
-            content = (
-                <Alert variant='danger'>
-                    <Alert.Heading>
-                        Unknown Error
-                    </Alert.Heading>
-                    Check the console log for details.
-                </Alert>
-            );
+            if (error instanceof String && error.toLowerCase().includes('html')) {
+                content = (<div dangerouslySetInnerHTML={createMarkup(error as string)}/>);
+            } else {
+                content = alert(error?.text || 'unknown error - see console log. Error type: ' + typeof error);
+            }
         }
     } else {
-        content = (
-            <Alert variant="danger">
-                <Alert.Heading>
-                    Error
-                </Alert.Heading>
-                Something went wrong. Check your internet connection and try again.
-            </Alert>
-        );
+        content = alert('Something went wrong. Check your internet connection and try again.');
     }
     return <>{content}</>;
 }

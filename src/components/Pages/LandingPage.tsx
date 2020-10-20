@@ -21,12 +21,12 @@ interface ITitle {
  */
 const LandingPage = () => {
     const [activeResident] = useGlobal('activeResident');
+    const [activeTabKey, setActiveTabKey] = useState<string | null>('login');
     const [apiKey, setApiKey] = useGlobal('apiKey');
     const [drugLogList] = useGlobal('drugLogList');
+    const [errorDetails] = useGlobal('errorDetails');
     const [medicineList] = useGlobal('medicineList');
     const [otcList] = useGlobal('otcList');
-    const [activeTabKey, setActiveTabKey] = useState<string | null>('login');
-    const [errorDetails, setErrorDetails] = useState<any>(null);
 
     /**
      * Determine the table title component based on eventKey and bold the title if it is the current tab
@@ -40,7 +40,8 @@ const LandingPage = () => {
             otc: 'OTC',
             resident: 'Residents',
             history: 'Drug History',
-            medicine: 'Rx'
+            medicine: 'Rx',
+            error: 'Diagnostics'
         } as ITitle
         if (eventKey === activeTabKey) {
             return (<b>{Title[eventKey]}</b>)
@@ -49,28 +50,13 @@ const LandingPage = () => {
         }
     }
 
-    // Completely hide the Diagnostics tab header if it isn't active using some direct DOM manipulation.
+    // Observer for anytime there is an error set on the errorDetails global
     useEffect(() => {
-        const el = document.getElementById('landing-page-tabs-tab-error');
-        if (el && activeTabKey !== 'error') {
-            el.style.color = 'white';
-        } else {
-            if (el) {
-                el.style.color = '#007BFF';
-            }
+        if (errorDetails) {
+            setApiKey(null);
+            setActiveTabKey('error');
         }
-    }, [activeTabKey]);
-
-    /**
-     * Error handler
-     *
-     * @param {any} err
-     */
-    const errorOccurred = (err: any) => {
-        setApiKey(null);
-        setErrorDetails(err);
-        setActiveTabKey('error');
-    }
+    }, [errorDetails, setApiKey, activeTabKey])
 
     return (
         <Tabs
@@ -87,7 +73,6 @@ const LandingPage = () => {
                     onLogin={(loggedIn) => {
                         setActiveTabKey(loggedIn ? 'resident' : 'login')
                     }}
-                    onError={(error) => errorOccurred(error)}
                     activeTabKey={activeTabKey}
                 />
             </Tab>
@@ -97,7 +82,6 @@ const LandingPage = () => {
                 title={getTitle('medicine')}>
                 <MedicinePage
                     activeTabKey={activeTabKey}
-                    onError={(error) => errorOccurred(error)}
                 />
             </Tab>
             <Tab
@@ -105,7 +89,6 @@ const LandingPage = () => {
                 eventKey="otc"
                 title={getTitle('otc')}>
                 <OtcPage
-                    onError={(error) => errorOccurred(error)}
                     activeTabKey={activeTabKey}
                 />
             </Tab>
@@ -113,9 +96,7 @@ const LandingPage = () => {
                 disabled={apiKey === null}
                 eventKey="resident"
                 title={getTitle('resident')}>
-                <ResidentPage
-                    onError={(error) => errorOccurred(error)}
-                />
+                <ResidentPage/>
             </Tab>
             <Tab
                 disabled={apiKey === null || !activeResident}
@@ -133,24 +114,19 @@ const LandingPage = () => {
                 eventKey="manage"
                 title={getTitle('manage')}
             >
-                <ManageDrugPage
-                    onError={(err: Error) => errorOccurred(err)}
-                />
+                <ManageDrugPage/>
             </Tab>
             <Tab
                 disabled={apiKey === null}
                 eventKey="manage-otc"
                 title={getTitle('manage-otc')}
             >
-                <ManageOtcPage
-                    onError={(err) => errorOccurred(err)}
-                />
+                <ManageOtcPage/>
             </Tab>
             <Tab
-                disabled={errorDetails === null || activeTabKey !== 'error'}
+                disabled={!errorDetails}
                 eventKey="error"
                 title={getTitle('error')}
-                style={{color: activeTabKey !== 'error' ? 'white' : ''}}
             >
                 <DiagnosticPage
                     error={errorDetails}
