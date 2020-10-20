@@ -23,7 +23,6 @@ import {
 
 interface IProps {
     activeTabKey: string | null
-    onError: (e: Error) => void
 }
 
 /**
@@ -33,24 +32,24 @@ interface IProps {
  * @returns {JSX.Element | null}
  */
 const OtcPage = (props: IProps): JSX.Element | null => {
-    const [drugInfo, setDrugInfo] = useState<MedicineRecord | null>(null);
-    const [showMedicineEdit, setShowMedicineEdit] = useState(false);
-    const [showDrugLog, setShowDrugLog] = useState(false);
-    const [drugLogInfo, setDrugLogInfo] = useState<DrugLogRecord | null>(null);
-    const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<any>(false);
-    const [lastTaken, setLastTaken] = useState<number | null>(null);
-    const [searchText, setSearchText] = useState('');
-    const [searchIsValid, setSearchIsValid] = useState<boolean | null>(null);
+    const [, setErrorDetails] = useGlobal('errorDetails');
     const [activeDrug, setActiveDrug] = useState<MedicineRecord | null>(null);
-    const [otcLogList, setOtcLogList] = useState<DrugLogRecord[]>([]);
-    const [otcList, setOtcList] = useGlobal('otcList');
-    const [drugLogList, setDrugLogList] = useGlobal('drugLogList');
     const [activeResident] = useGlobal('activeResident');
+    const [drugInfo, setDrugInfo] = useState<MedicineRecord | null>(null);
+    const [drugLogInfo, setDrugLogInfo] = useState<DrugLogRecord | null>(null);
+    const [drugLogList, setDrugLogList] = useGlobal('drugLogList');
+    const [lastTaken, setLastTaken] = useState<number | null>(null);
     const [mm] = useGlobal('medicineManager');
+    const [otcList, setOtcList] = useGlobal('otcList');
+    const [otcLogList, setOtcLogList] = useState<DrugLogRecord[]>([]);
     const [residentId, setResidentId] = useState(activeResident && activeResident.Id);
-    const focusRef = useRef<HTMLInputElement>(null);
+    const [searchIsValid, setSearchIsValid] = useState<boolean | null>(null);
+    const [searchText, setSearchText] = useState('');
+    const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<any>(false);
+    const [showDrugLog, setShowDrugLog] = useState(false);
+    const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const activeTabKey = props.activeTabKey;
-    const onError = props.onError;
+    const focusRef = useRef<HTMLInputElement>(null);
 
     // We only want to list the OTC drugs on this page that the resident has taken.
     useEffect(() => {
@@ -149,7 +148,7 @@ const OtcPage = (props: IProps): JSX.Element | null => {
                         setActiveDrug(drugRecord);
                     })
                     .catch((err) => {
-                        onError(err);
+                        setErrorDetails(err);
                     });
             });
     }
@@ -163,12 +162,12 @@ const OtcPage = (props: IProps): JSX.Element | null => {
                 .then((deleted) => {
                     if (deleted.success) {
                         mm.loadDrugLog(residentId).then((drugs) => setDrugLogList(drugs))
-                            .catch((err) => onError(err));
+                            .catch((err) =>setErrorDetails(err));
                     } else {
                         throw new Error('DrugLog Delete failed for Record: ' + drugLogId);
                     }
                 })
-                .catch((err) => onError(err));
+                .catch((err) => setErrorDetails(err));
     }
 
     /**
@@ -206,7 +205,7 @@ const OtcPage = (props: IProps): JSX.Element | null => {
             };
             mm.updateDrugLog(drugLogInfo, residentId)
                 .then((drugs) => setDrugLogList(drugs))
-                .catch((err) => onError(err))
+                .catch((err) => setErrorDetails(err))
         }
     }
 
@@ -356,7 +355,7 @@ const OtcPage = (props: IProps): JSX.Element | null => {
                         if (drugLogRecord) {
                             mm.updateDrugLog(drugLogRecord, residentId)
                                 .then((drugLogList) => setDrugLogList(drugLogList))
-                                .catch((err) => onError(err))
+                                .catch((err) => setErrorDetails(err))
                         }
                         setShowDrugLog(false);
                     }}

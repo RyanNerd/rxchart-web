@@ -8,24 +8,20 @@ import {Alert} from "react-bootstrap";
 import {getMDY} from "../../utility/common";
 import {MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
 
-interface IProps {
-    onError: (e: Error) => void
-}
 
 /**
  * ManageDrugPage
  * Page for Displaying, editing and adding Medicine
- *
  * @returns {JSX.Element}
  */
-const ManageDrugPage = (props: IProps): JSX.Element => {
+const ManageDrugPage = (): JSX.Element => {
+    const [, setErrorDetails] = useGlobal('errorDetails');
     const [activeResident] = useGlobal('activeResident');
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [medicineList, setMedicineList] = useGlobal('medicineList');
     const [mm] = useGlobal('medicineManager');
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
-    const onError = props.onError;
 
     /**
      * Fires when the Edit button is clicked
@@ -71,10 +67,10 @@ const ManageDrugPage = (props: IProps): JSX.Element => {
                         .then((medicineRecords) => {
                             setMedicineList(medicineRecords);
                         })
-                            .catch((err) => onError(err));
+                            .catch((err) => setErrorDetails(err));
                     }
                 })
-                .catch((err) => onError(err));
+                .catch((err) => setErrorDetails(err));
     }
 
     return (
@@ -140,7 +136,7 @@ const ManageDrugPage = (props: IProps): JSX.Element => {
                                     mm.loadMedicineList(activeResident?.Id as number)
                                         .then((medicines) => setMedicineList(medicines))
                                 })
-                                .catch((err) => onError(err))
+                                .catch((err) => setErrorDetails(err))
                         }
                     }}
                     drugInfo={medicineInfo}

@@ -19,6 +19,7 @@ declare module 'reactn/default' {
         count: number
         development: boolean
         drugLogList: DrugLogRecord[]
+        errorDetails: any
         medicineList: MedicineRecord[]
         medicineManager: IMedicineManager
         otcList: MedicineRecord[]

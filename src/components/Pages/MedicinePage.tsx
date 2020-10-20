@@ -26,7 +26,6 @@ import {
 
 interface IProps {
     activeTabKey: string | null
-    onError: (e: Error) => void
 }
 
 /**
@@ -37,23 +36,23 @@ interface IProps {
  * @return {JSX.Element | null}
  */
 const MedicinePage = (props: IProps): JSX.Element | null => {
-    const [showMedicineEdit, setShowMedicineEdit] = useState(false);
-    const [showDrugLog, setShowDrugLog] = useState(false);
-    const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
-    const [drugLogInfo, setDrugLogInfo] = useState<DrugLogRecord | null>(null);
-    const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<any>(false);
-    const [lastTaken, setLastTaken] = useState<number | null>(null);
+    const [, setErrorDetails] = useGlobal('errorDetails');
     const [activeDrug, setActiveDrug] = useState<MedicineRecord | null>(null);
-    const [searchText, setSearchText] = useState('');
-    const [searchIsValid, setSearchIsValid] = useState(false)
-    const [medicineList, setMedicineList] = useGlobal('medicineList');
-    const [drugLogList, setDrugLogList] = useGlobal('drugLogList');
     const [activeResident] = useGlobal('activeResident');
+    const [drugLogInfo, setDrugLogInfo] = useState<DrugLogRecord | null>(null);
+    const [drugLogList, setDrugLogList] = useGlobal('drugLogList');
+    const [lastTaken, setLastTaken] = useState<number | null>(null);
+    const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
+    const [medicineList, setMedicineList] = useGlobal('medicineList');
     const [mm] = useGlobal('medicineManager');
     const [residentId, setResidentId] = useState<number | null>(activeResident?.Id || null);
-    const focusRef = useRef<HTMLInputElement>(null);
-    const onError = props.onError;
+    const [searchIsValid, setSearchIsValid] = useState(false)
+    const [searchText, setSearchText] = useState('');
+    const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<any>(false);
+    const [showDrugLog, setShowDrugLog] = useState(false);
+    const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const activeTabKey = props.activeTabKey;
+    const focusRef = useRef<HTMLInputElement>(null);
 
     // Set the activeDrug when the medicineList changes or the activeResident.
     useEffect(() => {
@@ -147,11 +146,9 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         setMedicineList(meds);
                         setActiveDrug(drugRecord);
                     })
-                    .catch((err) => {
-                        onError(err);
-                    });
+                    .catch((err) => setErrorDetails(err));
             })
-            .catch((err) => onError(err));
+            .catch((err) => setErrorDetails(err));
     }
 
     /**
@@ -163,12 +160,12 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             .then((deleted) => {
                 if (deleted.success) {
                     mm.loadDrugLog(residentId).then((drugs) => setDrugLogList(drugs))
-                        .catch((err) => onError(err))
+                        .catch((err) => setErrorDetails(err))
                 } else {
                     throw new Error('DrugLog Delete failed for MedHistory.Id: ' + drugLogId);
                 }
             })
-            .catch((err) => onError(err));
+            .catch((err) => setErrorDetails(err));
     }
 
     /**
@@ -206,7 +203,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             };
             mm.updateDrugLog(drugLogInfo, residentId)
                 .then((drugLogList) => setDrugLogList(drugLogList))
-                .catch((err) => onError(err))
+                .catch((err) => setErrorDetails(err))
         }
     }
 
@@ -362,7 +359,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         if (drugLogRecord) {
                             mm.updateDrugLog(drugLogRecord, residentId)
                                 .then((drugLogList) => setDrugLogList(drugLogList))
-                                .catch((err) => onError(err))
+                                .catch((err) => setErrorDetails(err))
                         }
                     }}
                 />
