@@ -1,6 +1,12 @@
 import {DrugLogRecord} from '../types/RecordTypes';
 import Frak from "frak/lib/components/Frak";
-import {ProviderTypes} from '../types/ProviderTypes';
+
+type DeleteResponse = { success: boolean };
+type RecordResponse = {
+    data: DrugLogRecord[] | DrugLogRecord;
+    status: number;
+    success: boolean;
+};
 
 export interface IMedHistoryProvider {
     delete: (drugId: string | number) => Promise<DeleteResponse>
@@ -9,9 +15,6 @@ export interface IMedHistoryProvider {
     search: (options: object) => Promise<DrugLogRecord[]>
     setApiKey: (apiKey: string) => void
 }
-
-type DeleteResponse = ProviderTypes.MedHistory.DeleteResponse;
-type RecordResponse = ProviderTypes.MedHistory.RecordResponse;
 
 /**
  * MedHistoryProvider API Connector
