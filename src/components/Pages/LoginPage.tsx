@@ -102,11 +102,10 @@ const LoginPage = (props: IProps): JSX.Element => {
             .then(() => console.log('logout successful'))
             .then(() => {
                 if (e.ctrlKey) {
-                    console.log('Error handler testing');
-                    throw new Error('Testing the error handler.');
+                    console.log('Testing Diagnostics');
+                    throw new Error('Standard Error -- just a test');
                 }
-            })
-            .catch((err) => setErrorDetails(err))
+            }).catch((err) => setErrorDetails(err))
     }
 
     const signIn = (
@@ -171,7 +170,7 @@ const LoginPage = (props: IProps): JSX.Element => {
                 </Col>
             </Form.Group>
         </>
-    );
+    )
 
     const signOut = (
         <Button onClick={(e) => {
@@ -179,13 +178,13 @@ const LoginPage = (props: IProps): JSX.Element => {
         }}>
             Log Out
         </Button>
-    );
+    )
 
     return (
         <Form className={TabContent}>
             {apiKey === null ? (signIn) : (signOut)}
         </Form>
-    );
+    )
 }
 
 export default LoginPage;

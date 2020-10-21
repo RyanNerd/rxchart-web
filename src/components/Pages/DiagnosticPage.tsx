@@ -1,6 +1,6 @@
 import React, {useGlobal} from 'reactn';
 import {Alert} from "react-bootstrap";
-import {useEffect} from "react";
+import {ReactNode, useEffect, useMemo, useState} from "react";
 
 interface IProps {
     error: any
@@ -15,6 +15,32 @@ interface IProps {
 const DiagnosticPage = (props: IProps): JSX.Element | null => {
     const [development] = useGlobal('development');
     const error = props.error;
+    const [content, setContent] = useState<JSX.Element | null>(null);
+    let finalContent: JSX.Element | null;
+
+    /**
+     * Function to create the unsafe HTML object
+     * @param {string} html
+     * @return {object}
+     */
+    const createMarkup = (html: string): {__html: string} => {
+        return {__html: html}
+    };
+
+    const _alert = (heading: ReactNode, body: ReactNode) => {
+        return (
+            <Alert variant="danger">
+                <Alert.Heading>
+                    {heading}
+                </Alert.Heading>
+                {body}
+            </Alert>
+        )
+    }
+
+    const getText = async (response: Response) => {
+        return await response.text();
+    }
 
     useEffect(() => {
         const el = document.getElementById('landing-page-tabs-tab-error');
@@ -29,56 +55,80 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
         }
     }, [error])
 
-    // No error then don't render.
-    if (!error) {
-        return null;
-    }
+    finalContent = useMemo( () => {
+        const handleNativeError = (err: Error) => {
+            const message = err.message;
+            const name = err.name;
+            const stack = err?.stack;
+            const body = (
+                <>
+                    <p>{message}</p>
+                    {stack &&
+                    <>
+                        <p> </p>
+                        <p>{stack}</p>
+                    </>
+                    }
+                </>
+            )
+            setContent(_alert('Error (' + name + ')', body));
+        }
 
-    /**
-     * Function to create the unsafe HTML object
-     * @param {string} html
-     * @return {object}
-     */
-    const createMarkup = (html: string): {__html: string} => {
-        return {__html: html}
-    };
+        const handleHtmlError = (html: string) => {
+            setContent(<div dangerouslySetInnerHTML={createMarkup(html)}/>);
+        }
 
-    const alert = (message: string) => {
-        return (
-            <Alert variant="danger">
-                <Alert.Heading>
-                    Error
-                </Alert.Heading>
-                {message}
-            </Alert>
-        )
-    }
-
-    let content: {} | null | undefined;
-    if (error && development) {
-        console.log('Error', error);
-        if (error instanceof Object && error.text) {
-            const contentType = error.hasOwnProperty('content_type') ? error.content_type.toLowerCase() : '';
-            if (contentType.includes('html')) {
-                content = (<div dangerouslySetInnerHTML={createMarkup(error.text)}/>);
-            } else {
-                if (error instanceof String && error.toLowerCase().includes('html')) {
-                    content = (<div dangerouslySetInnerHTML={createMarkup(error as string)}/>);
+        const handleResponseError = async (err: Response) => {
+            console.log('handleResponseError', err);
+            return await getText(err).then((text) => {
+                if (text.toLowerCase().includes('html')) {
+                    handleHtmlError(text);
                 } else {
-                    content = alert(error?.text || 'unknown error - see console log. Error type: ' + typeof error);
+                    setContent(_alert('Fetch Error',
+                        <>
+                            <p>Status: {error.status}</p>
+                            <p>Stats Text: {error.statusText}</p>
+                            <p>Text: {text}</p>
+                        </>));
+                }
+            });
+        }
+
+        if (!error) {
+            return null;
+        }
+
+        if (development) {
+            console.log('Error:', error);
+            console.log('typeof error', typeof error);
+
+            if (content) {
+                return content;
+            }
+
+            /**
+             * 🦆 typing to figure out what type error is
+             */
+            if (error instanceof Response) {
+                handleResponseError(error);
+            }
+            if (error instanceof Error) {
+                handleNativeError(error);
+            }
+            if (typeof error === 'string') {
+                if (error.toLowerCase().includes('html')) {
+                    return handleHtmlError(error);
+                } else {
+                    return handleNativeError(new Error(error));
                 }
             }
+            return(_alert(<b>Unknown Error</b>, 'Check console log.'));
         } else {
-            if (error instanceof String && error.toLowerCase().includes('html')) {
-                content = (<div dangerouslySetInnerHTML={createMarkup(error as string)}/>);
-            } else {
-                content = alert(error?.text || 'unknown error - see console log. Error type: ' + typeof error);
-            }
+            return (_alert(<b>'Error'</b>, 'Something went wrong. Check your internet connection and try again.'));
         }
-    } else {
-        content = alert('Something went wrong. Check your internet connection and try again.');
-    }
-    return <>{content}</>;
+    }, [error, development, content]) || null;
+
+    return <>{finalContent}</>
 }
 
 export default DiagnosticPage;
