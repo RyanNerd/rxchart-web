@@ -96,7 +96,9 @@ const LandingPage = () => {
                 disabled={apiKey === null}
                 eventKey="resident"
                 title={getTitle('resident')}>
-                <ResidentPage/>
+                <ResidentPage
+                    residentSelected={() => setActiveTabKey('medicine')}
+                />
             </Tab>
             <Tab
                 disabled={apiKey === null || !activeResident}

@@ -7,6 +7,9 @@ import {Alert, Form} from "react-bootstrap";
 import {FullName} from '../../utility/common';
 import {ResidentRecord} from "../../types/RecordTypes";
 
+interface IProps {
+    residentSelected: () => void
+}
 
 /**
  * Display Resident Grid
@@ -14,7 +17,7 @@ import {ResidentRecord} from "../../types/RecordTypes";
  * @return {JSX.Element}
  * @constructor
  */
-const ResidentPage = (): JSX.Element => {
+const ResidentPage = (props: IProps): JSX.Element => {
     const [, setDrugLogList] = useGlobal('drugLogList');
     const [, setErrorDetails] = useGlobal('errorDetails');
     const [, setMedicineList] = useGlobal('medicineList');
@@ -26,6 +29,7 @@ const ResidentPage = (): JSX.Element => {
     const [rm] = useGlobal('residentManager');
     const [showDeleteResident, setShowDeleteResident] = useState(false);
     const [showResidentEdit, setShowResidentEdit] = useState(false);
+    const onSelected = props.residentSelected;
 
     /**
      * Fires when user clicks the Edit button
@@ -95,7 +99,7 @@ const ResidentPage = (): JSX.Element => {
                 mm.loadDrugLog(residentId)
                     .then((drugs) => setDrugLogList(drugs))
                     .catch((err) => setErrorDetails(err))
-            })
+            }).then(() => onSelected())
             .catch((err) => setErrorDetails(err))
     }
 
