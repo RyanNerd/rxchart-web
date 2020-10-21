@@ -8,7 +8,6 @@ interface IProps {
 
 /**
  * DiagnosticPage
- *
  * @param {IProps} props
  * @return {JSX.Element | null}
  */
@@ -27,6 +26,11 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
         return {__html: html}
     };
 
+    /**
+     * Alert compostion component
+     * @param {ReactNode} heading
+     * @param {ReactNode} body
+     */
     const _alert = (heading: ReactNode, body: ReactNode) => {
         return (
             <Alert variant="danger">
@@ -38,10 +42,15 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
         )
     }
 
+    /**
+     * Get the text from a Response object.
+     * @param {Response} response
+     */
     const getText = async (response: Response) => {
         return await response.text();
     }
 
+    // Observer to show / hide the Diagnostics tab title
     useEffect(() => {
         const el = document.getElementById('landing-page-tabs-tab-error');
         if (error) {
@@ -55,7 +64,14 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
         }
     }, [error])
 
+    /**
+     * Use memoization so we don't have 3000 rerenders when an error occurs.
+     */
     finalContent = useMemo( () => {
+        /**
+         * Handler for when error is an instance of Error
+         * @param {Error} err
+         */
         const handleNativeError = (err: Error) => {
             const message = err.message;
             const name = err.name;
@@ -74,14 +90,24 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
             setContent(_alert('Error (' + name + ')', body));
         }
 
+        /**
+         * Handler for when the error contains HTML that needs to be rendered.
+         * @param {string} html
+         */
         const handleHtmlError = (html: string) => {
             setContent(<div dangerouslySetInnerHTML={createMarkup(html)}/>);
         }
 
+        /**
+         * Handler for when the error is an instance of Response
+         * @param {Response} err
+         */
         const handleResponseError = async (err: Response) => {
             console.log('handleResponseError', err);
             return await getText(err).then((text) => {
-                if (text.toLowerCase().includes('html')) {
+                const headers = err.headers;
+                const contentType = (headers.has('content_type')) ? headers.get('content_type') : '';
+                if (text.toLowerCase().includes('html') || contentType?.toLowerCase().includes('html')) {
                     handleHtmlError(text);
                 } else {
                     setContent(_alert('Fetch Error',
