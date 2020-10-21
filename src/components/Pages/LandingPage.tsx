@@ -24,7 +24,7 @@ const LandingPage = () => {
     const [activeTabKey, setActiveTabKey] = useState<string | null>('login');
     const [apiKey, setApiKey] = useGlobal('apiKey');
     const [drugLogList] = useGlobal('drugLogList');
-    const [errorDetails] = useGlobal('errorDetails');
+    const [errorDetails, setErrorDetails] = useGlobal('errorDetails');
     const [medicineList] = useGlobal('medicineList');
     const [otcList] = useGlobal('otcList');
 
@@ -130,6 +130,10 @@ const LandingPage = () => {
             >
                 <DiagnosticPage
                     error={errorDetails}
+                    dismissErrorAlert={() => {
+                        setErrorDetails(undefined);
+                        setActiveTabKey('login');
+                    }}
                 />
             </Tab>
         </Tabs>

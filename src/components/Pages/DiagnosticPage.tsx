@@ -4,6 +4,7 @@ import {ReactNode, useEffect, useMemo, useState} from "react";
 
 interface IProps {
     error: any
+    dismissErrorAlert: () => void
 }
 
 /**
@@ -12,9 +13,10 @@ interface IProps {
  * @return {JSX.Element | null}
  */
 const DiagnosticPage = (props: IProps): JSX.Element | null => {
-    const [development] = useGlobal('development');
-    const error = props.error;
     const [content, setContent] = useState<JSX.Element | null>(null);
+    const [development] = useGlobal('development');
+    const dismissErrorAlert = props.dismissErrorAlert;
+    const error = props.error;
     let finalContent: JSX.Element | null;
 
     /**
@@ -25,22 +27,6 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
     const createMarkup = (html: string): {__html: string} => {
         return {__html: html}
     };
-
-    /**
-     * Alert compostion component
-     * @param {ReactNode} heading
-     * @param {ReactNode} body
-     */
-    const _alert = (heading: ReactNode, body: ReactNode) => {
-        return (
-            <Alert variant="danger">
-                <Alert.Heading>
-                    {heading}
-                </Alert.Heading>
-                {body}
-            </Alert>
-        )
-    }
 
     /**
      * Get the text from a Response object.
@@ -65,9 +51,29 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
     }, [error])
 
     /**
-     * Use memoization so we don't have 3000 rerenders when an error occurs.
+     * Use memoization so we don't have 3000 re-renders when an error occurs.
      */
     finalContent = useMemo( () => {
+        /**
+         * Alert composition component
+         * @param {ReactNode} heading
+         * @param {ReactNode} body
+         */
+        const _alert = (heading: ReactNode, body: ReactNode) => {
+            return (
+                <Alert
+                    variant="danger"
+                    dismissible
+                    onClose={() => dismissErrorAlert()}
+                >
+                    <Alert.Heading>
+                        {heading}
+                    </Alert.Heading>
+                    {body}
+                </Alert>
+            )
+        }
+
         /**
          * Handler for when error is an instance of Error
          * @param {Error} err
@@ -152,7 +158,7 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
         } else {
             return (_alert(<b>'Error'</b>, 'Something went wrong. Check your internet connection and try again.'));
         }
-    }, [error, development, content]) || null;
+    }, [error, development, content, dismissErrorAlert]) || null;
 
     return <>{finalContent}</>
 }
