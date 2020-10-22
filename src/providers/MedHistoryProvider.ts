@@ -22,14 +22,12 @@ export interface IMedHistoryProvider {
 const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
     const _baseUrl = baseurl;
     let _apiKey = null as string | null
-
     return {
         /**
          * Set the apiKey
-         *
          * @param {string} apiKey
          */
-        setApiKey: (apiKey: string): void => {
+        setApiKey: (apiKey: string) => {
             if (apiKey.length === 0) {
                 throw new Error('apiKey cannot be empty');
             }
@@ -38,7 +36,6 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
 
         /**
          * Search Interface
-         *
          * @see https://www.notion.so/Willow-Framework-Users-Guide-bf56317580884ccd95ed8d3889f83c72
          * @param {object} options
          * @returns {Promise<DrugLogRecord[]>}
@@ -52,8 +49,9 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
                 } else {
                     if (response.status === 404) {
                         return [] as DrugLogRecord[];
+                    } else {
+                        throw response;
                     }
-                    throw new Error(response.toString());
                 }
             } catch (err) {
                 throw err;
@@ -62,7 +60,6 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
 
         /**
          * Read interface
-         *
          * @param {string | number} id
          * @returns {Promise<DrugLogRecord[]>}
          */
@@ -82,7 +79,6 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
 
         /**
          * Post interface
-         *
          * @param {DrugLogRecord} drugInfo
          * @returns {Promise<DrugLogRecord>}
          */
@@ -102,7 +98,6 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
 
         /**
          * Delete interface
-         *
          * @param {string | number} drugId
          * @return {Promise<DeleteResponse>}
          */
@@ -116,7 +111,7 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
                     throw response;
                 }
             } catch (err) {
-                return err;
+                throw err;
             }
         }
     }

@@ -58,7 +58,8 @@ const ManageOtcPage = (): JSX.Element => {
                             .then((drugs) => setOtcList(drugs))
                             .catch(() => setOtcList([]));
                     }
-                });
+                })
+                .catch((err) => setErrorDetails(err))
     }
 
     return (

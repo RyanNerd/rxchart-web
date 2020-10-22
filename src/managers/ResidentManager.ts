@@ -40,14 +40,19 @@ const ResidentManager = (residentProvider: IResidentProvider): IResidentManager 
                     const trashedResidentId = (trashedResidents.length === 1) ? trashedResidents[0].Id : null;
                     // Do we have a trashed resident?
                     if (trashedResidentId) {
-                        return residentProvider.restore(trashedResidentId); // Reactivate trashed Resident
+                        // Reactivate trashed Resident
+                        return residentProvider.restore(trashedResidentId)
+                            .catch((err) => {throw err})
                     } else {
-                        return residentProvider.post(residentData); // Add new Resident
+                        // Add new Resident
+                        return residentProvider.post(residentData)
+                            .catch((err) => {throw err})
                     }
                 })
         } else {
             // Update the existing resident
-            return residentProvider.post(residentData);
+            return residentProvider.post(residentData)
+                .catch((err) => {throw err})
         }
     }
 
@@ -56,8 +61,9 @@ const ResidentManager = (residentProvider: IResidentProvider): IResidentManager 
      * @param {number} residentId
      */
     const _deleteResident = async (residentId: number) => {
-        const response = await residentProvider.delete(residentId);
-        return response.success;
+        return await residentProvider.delete(residentId)
+            .then((response) => {return response.success})
+            .catch((err) => {throw err})
     }
 
     /**
@@ -74,6 +80,7 @@ const ResidentManager = (residentProvider: IResidentProvider): IResidentManager 
             .then((residents) => {
                 return residents;
             })
+            .catch((err) => {throw err})
     }
 
     return {

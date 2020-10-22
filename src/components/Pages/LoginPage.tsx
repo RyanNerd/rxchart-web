@@ -61,7 +61,9 @@ const LoginPage = (props: IProps): JSX.Element => {
                         providers.setApi(apiKey);
 
                         // Load ALL Resident records up front and save them in the global store.
-                        residentManager.loadResidentList().then((residents) => setResidentList(residents));
+                        residentManager.loadResidentList()
+                            .then((residents) => setResidentList(residents))
+                            .catch((err) => setErrorDetails(err));
 
                         // Load ALL OTC medications
                         mm.loadOtcList()

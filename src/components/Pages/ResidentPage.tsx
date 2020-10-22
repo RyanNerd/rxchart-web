@@ -99,7 +99,8 @@ const ResidentPage = (props: IProps): JSX.Element => {
                 mm.loadDrugLog(residentId)
                     .then((drugs) => setDrugLogList(drugs))
                     .catch((err) => setErrorDetails(err))
-            }).then(() => onSelected())
+            })
+            .then(() => onSelected())
             .catch((err) => setErrorDetails(err))
     }
 
@@ -159,20 +160,23 @@ const ResidentPage = (props: IProps): JSX.Element => {
                 onSelect={(a) => {
                     setShowDeleteResident(false);
                     if (a && residentToDelete) {
-                        rm.deleteResident(residentToDelete?.Id as number).then((deleted) => {
-                            if (deleted) {
-                                if (activeResident?.Id === residentToDelete.Id) {
-                                    setActiveResident(null);
-                                    setMedicineList([]);
-                                    setDrugLogList([]);
-                                } else {
-                                    rm.loadResidentList()
+                        rm.deleteResident(residentToDelete?.Id as number)
+                            .then((deleted) => {
+                                if (deleted) {
+                                    if (activeResident?.Id === residentToDelete.Id) {
+                                        setActiveResident(null);
+                                        setMedicineList([]);
+                                        setDrugLogList([]);
+                                    } else {
+                                        rm.loadResidentList()
                                         .then((residents) => setResidentList(residents))
+                                        .catch((err) => setErrorDetails(err))
                                 }
                             } else {
                                 setErrorDetails(new Error('Unable to delete resident.Id ' + residentToDelete.Id));
                             }
-                        }).catch((err) => setErrorDetails(err));
+                        })
+                        .catch((err) => setErrorDetails(err));
                     }
                 }}
             >

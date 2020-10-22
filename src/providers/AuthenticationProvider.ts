@@ -25,7 +25,6 @@ type AuthCredentials = {
 
 const AuthenticationProvider = (url: string): IAuthenticationProvider => {
     const baseUrl = url;
-
     return {
         /**
          * Post interface for authentication

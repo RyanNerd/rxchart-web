@@ -22,10 +22,8 @@ type RecordResponse = {
 const MedicineProvider = (baseUrl: string) => {
     const _baseUrl = baseUrl;
     let _apiKey = null as string | null;
-
     return {
-
-        setApiKey: (apiKey: string): void => {
+        setApiKey: (apiKey: string) => {
             if (apiKey.length === 0) {
                 throw new Error('apiKey cannot be empty');
             }

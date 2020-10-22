@@ -10,6 +10,7 @@ const AuthManager = (authenticationProvider: IAuthenticationProvider): IAuthMana
             .then((response) => {
                 return response;
             })
+            .catch((err) => {throw err})
     }
 
     return {

@@ -1,5 +1,5 @@
 import React, {useGlobal} from 'reactn';
-import {Alert} from "react-bootstrap";
+import {Alert, Button, Card} from "react-bootstrap";
 import {ReactNode, useEffect, useMemo, useState} from "react";
 
 interface IProps {
@@ -15,7 +15,7 @@ interface IProps {
 const DiagnosticPage = (props: IProps): JSX.Element | null => {
     const [content, setContent] = useState<JSX.Element | null>(null);
     const [development] = useGlobal('development');
-    const dismissErrorAlert = props.dismissErrorAlert;
+    const dismissError = props.dismissErrorAlert;
     const error = props.error;
     let finalContent: JSX.Element | null;
 
@@ -24,7 +24,7 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
      * @param {string} html
      * @return {object}
      */
-    const createMarkup = (html: string): {__html: string} => {
+    const createMarkup = (html: string): { __html: string } => {
         return {__html: html}
     };
 
@@ -53,7 +53,7 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
     /**
      * Use memoization so we don't have 3000 re-renders when an error occurs.
      */
-    finalContent = useMemo( () => {
+    finalContent = useMemo(() => {
         /**
          * Alert composition component
          * @param {ReactNode} heading
@@ -64,7 +64,7 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
                 <Alert
                     variant="danger"
                     dismissible
-                    onClose={() => dismissErrorAlert()}
+                    onClose={() => dismissError()}
                 >
                     <Alert.Heading>
                         {heading}
@@ -87,7 +87,7 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
                     <p>{message}</p>
                     {stack &&
                     <>
-                        <p> </p>
+                        <p></p>
                         <p>{stack}</p>
                     </>
                     }
@@ -101,7 +101,22 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
          * @param {string} html
          */
         const handleHtmlError = (html: string) => {
-            setContent(<div dangerouslySetInnerHTML={createMarkup(html)}/>);
+            const card = (
+                <Card>
+                    <Card.Body>
+                        <div dangerouslySetInnerHTML={createMarkup(html)}/>
+                    </Card.Body>
+                    <Card.Footer>
+                        <Button
+                            variant="primary"
+                            onClick={() => dismissError()}
+                        >
+                            Close error and sign back in
+                        </Button>
+                    </Card.Footer>
+                </Card>
+            )
+            setContent(card);
         }
 
         /**
@@ -130,35 +145,48 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
             return null;
         }
 
-        if (development) {
-            console.log('Error:', error);
-            console.log('typeof error', typeof error);
+        try {
+            if (development) {
+                console.log('Error:', error);
+                console.log('typeof error', typeof error);
 
-            if (content) {
-                return content;
-            }
-
-            /**
-             * 🦆 typing to figure out what type error is
-             */
-            if (error instanceof Response) {
-                handleResponseError(error);
-            }
-            if (error instanceof Error) {
-                handleNativeError(error);
-            }
-            if (typeof error === 'string') {
-                if (error.toLowerCase().includes('html')) {
-                    return handleHtmlError(error);
-                } else {
-                    return handleNativeError(new Error(error));
+                if (content) {
+                    return content;
                 }
+
+                /**
+                 * 🦆 typing to figure out what type error is
+                 */
+                if (error instanceof Response) {
+                    handleResponseError(error);
+                }
+                if (error instanceof Error) {
+                    handleNativeError(error);
+                }
+                // Willow/Slim fetch error
+                if (typeof error === 'object' &&
+                        error.hasOwnProperty('content_type') &&
+                        error.hasOwnProperty('text')) {
+                    if (error.content_type.toLowerCase().includes('html')
+                        && error.text.toLowerCase().includes('html')) {
+                            handleHtmlError(error.text);
+                    }
+                }
+                if (typeof error === 'string') {
+                    if (error.toLowerCase().includes('html')) {
+                        return handleHtmlError(error);
+                    } else {
+                        return handleNativeError(new Error(error));
+                    }
+                }
+                return (_alert(<b>Unknown Error</b>, 'Check console log.'));
+            } else {
+                return (_alert(<b>'Error'</b>, 'Something went wrong. Check your internet connection and try again.'));
             }
-            return(_alert(<b>Unknown Error</b>, 'Check console log.'));
-        } else {
-            return (_alert(<b>'Error'</b>, 'Something went wrong. Check your internet connection and try again.'));
+        } catch (e) {
+            return (<><p>Error in DiagnosticsPage</p></>);
         }
-    }, [error, development, content, dismissErrorAlert]) || null;
+    }, [error, development, content, dismissError]) || null;
 
     return <>{finalContent}</>
 }
