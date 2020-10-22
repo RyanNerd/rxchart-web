@@ -25,7 +25,6 @@ type ReturnValidation = '' | 'is-invalid' | string;
 
 /**
  * Given a ResidentRecord return the resident's DOB as a string.
- *
  * @param {ResidentRecord} resident
  * @return {string}
  */
@@ -35,7 +34,6 @@ export const DOB = (resident: ResidentRecord): string => {
 
 /**
  * Given the month day and year return the date as a string in the format mm/dd/yyyy
- *
  * @param {string} month
  * @param {string} day
  * @param {string} year
@@ -47,7 +45,6 @@ export const DateToString = (month: string, day: string, year: string): string =
 
 /**
  * Given a ResidentRecord return the first and last name of the resident in the format: first last
- *
  * @param {ResidentRecord} resident
  */
 export const FullName = (resident: ResidentRecord): string => {
@@ -57,7 +54,6 @@ export const FullName = (resident: ResidentRecord): string => {
 // VALIDATION Functions START
 /**
  * Given a month numeric return 'is-invalid' if the number isn't between 1 and 12, otherwise return ''.
- *
  * @param {string} month
  * @returns {'' | 'is-invalid'}
  */
@@ -68,7 +64,6 @@ export const isMonthValid = (month: string): ReturnValidation => {
 
 /**
  * Given the day and month returns 'is-invalid' if the month and day pair isn't a valid date, otherwise return ''.
- *
  * @param {string} day
  * @param {string} month
  * @return {'' | 'is-invalid'}
@@ -97,7 +92,6 @@ export const isDayValid = (day: string, month: string): ReturnValidation => {
 
 /**
  * Returns 'is-invalid' if the year is not valid using the isDOB flag to determine the valid range.
- *
  * @param {string} year
  * @param {boolean} isDOB
  * @return {'' | 'is-invalid'}
@@ -115,7 +109,6 @@ export const isYearValid = (year: string, isDOB: boolean): ReturnValidation => {
 
 /**
  * Return a random string.
- *
  * @return {string}
  */
 export const randomString = (): string => {
@@ -125,7 +118,6 @@ export const randomString = (): string => {
 
 /**
  * Return in hours how long it has been since a drug was last taken.
- *
  * @param {number} drugId
  * @param {DrugLogRecord[]} drugLogList
  * @returns {null | number}
@@ -150,7 +142,6 @@ export const calculateLastTaken = (drugId: number, drugLogList: DrugLogRecord[])
 
 /**
  * Determine the variant string given the lastTaken hours value.
- *
  * @param {number | null} lastTaken
  * @return {Variant}
  */
@@ -182,7 +173,6 @@ export const getLastTakenVariant = (lastTaken: number | null): Variant => {
 
 /**
  * Given the variant string return the corresponding hexcolor string
- *
  * @param {Variant} variant
  */
 export const getBsColor = (variant: Variant): string => {
@@ -213,7 +203,6 @@ export const getBsColor = (variant: Variant): string => {
 
 /**
  * Given a date object return true if the date is today.
- *
  * @param {Date} date
  * @return {boolean}
  */
@@ -231,7 +220,6 @@ export const isToday = (date: Date): boolean => {
 
 /**
  * Return an object containing the day, month, and year as numbers and a date indicating now
- *
  * @return {month: number, day: number, year: number, now: Date}
  */
 export const getMDY = (): {month: number, day: number, year: number, now: Date} => {
@@ -244,7 +232,6 @@ export const getMDY = (): {month: number, day: number, year: number, now: Date} 
 
 /**
  * Given a string or Date object return the formatted string of the date: mm/dd/yyyy, hh:mm AM
- *
  * @param {Date | string} date
  * @return {string}
  */
@@ -262,11 +249,10 @@ export const getFormattedDate = (date: Date | string): string => {
 
 /**
  * Return an object in an array that matches the object.propName === searchValue
- *
  * @param {IKey} objectList
  * @param {string} propName
  * @param {any} searchValue
- * @return {Object}
+ * @return {Object | undefined}
  */
 export const getObjectByProperty = (objectList: IKey, propName: string, searchValue: any): object | undefined => {
     return objectList.find((obj: IKey) => (obj[propName] === searchValue));
@@ -274,7 +260,6 @@ export const getObjectByProperty = (objectList: IKey, propName: string, searchVa
 
 /**
  * Given the searchText and activeDrug determine if the search is valid and return true if so, otherwise false.
- *
  * @param {string} searchText
  * @param {MedicineRecord} drug
  * @returns {boolean}
@@ -294,7 +279,6 @@ export const isSearchValid = (searchText: string, drug: MedicineRecord): boolean
 
 /**
  * Returns a string of a drug that soft matches in the given drugList if found, otherwise returns a null;
- *
  * @param {string} searchText
  * @param {array<{Barcode: string, Drug: string}>} drugList
  * @returns {null | string}

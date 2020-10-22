@@ -2,7 +2,6 @@ import BwipJs from 'bwip-js';
 
 /**
  * Given a barcode and an DOM element Id this will draw a barcode on the canvasId
- *
  * @param {string} barCode
  * @param {string} canvasId
  * @return {HTMLCanvasElement}

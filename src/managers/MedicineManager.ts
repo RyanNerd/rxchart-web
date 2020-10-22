@@ -44,6 +44,7 @@ const MedicineMananger =
             .then((response) => {
                 return response.success;
             })
+            .catch((err) => {throw err})
     };
 
     /**
@@ -55,7 +56,8 @@ const MedicineMananger =
             where: [{column: 'ResidentId', comparison: '=', value: residentId}],
             order_by: [{column: 'Updated', direction: 'desc'}],
         };
-        return medHistoryProvider.search(searchCriteria);
+        return medHistoryProvider.search(searchCriteria)
+            .catch((err) => {throw err});
     };
 
     /**
@@ -67,7 +69,8 @@ const MedicineMananger =
             where: [{column: 'ResidentId', value: residentId}],
             order_by: [{column: 'Drug', direction: 'asc'}],
         };
-        return medicineProvider.search(searchCriteria);
+        return medicineProvider.search(searchCriteria)
+            .catch((err) => {throw err})
     }
 
     /**
@@ -78,7 +81,8 @@ const MedicineMananger =
             where: [{column: 'OTC', value: true}],
             order_by: [{column: 'Drug', direction: 'asc'}],
         };
-        return medicineProvider.search(searchCriteria);
+        return medicineProvider.search(searchCriteria)
+            .catch((err) => {throw err})
     };
 
     /**
@@ -94,10 +98,12 @@ const MedicineMananger =
                     .then((drugLogList) => {
                         return drugLogList;
                     })
+                    .catch((err) => {throw err})
             })
             .then((drugLogList) => {
                 return drugLogList;
             })
+            .catch((err) => {throw err})
     };
 
     /**

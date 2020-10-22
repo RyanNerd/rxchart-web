@@ -17,23 +17,19 @@ type RecordResponse = {
     success: boolean;
 };
 
-
-
 /**
  * ResidentProvider API service connector
  */
 const ResidentProvider = (url: string): IResidentProvider => {
     const _baseUrl = url;
     let _apiKey = null as string | null;
-
     return {
-
         /**
          * Set the apiKey
          *
          * @param apiKey
          */
-        setApiKey: (apiKey: string): void => {
+        setApiKey: (apiKey: string) => {
             if (apiKey.length === 0) {
                 throw new Error('apiKey cannot be empty');
             }
@@ -42,7 +38,6 @@ const ResidentProvider = (url: string): IResidentProvider => {
 
         /**
          * Search Interface
-         *
          * @param {object} options
          * @returns {Promise<ResidentRecord[]>}
          */
@@ -55,8 +50,9 @@ const ResidentProvider = (url: string): IResidentProvider => {
                 } else {
                     if (response.status === 404) {
                         return [];
+                    } else {
+                        throw response;
                     }
-                    throw response;
                 }
             } catch (err) {
                 throw err;
@@ -65,7 +61,6 @@ const ResidentProvider = (url: string): IResidentProvider => {
 
         /**
          * Restore Interface
-         *
          * @param {restore_id: number} residentId
          * @returns {Promise<ResidentRecord>}
          */
@@ -76,8 +71,9 @@ const ResidentProvider = (url: string): IResidentProvider => {
                 const response = await Frak.post<RecordResponse>(uri, body);
                 if (response.success) {
                     return response.data as ResidentRecord;
+                } else {
+                    throw response;
                 }
-                throw response;
             } catch (err) {
                 throw err;
             }
@@ -85,7 +81,6 @@ const ResidentProvider = (url: string): IResidentProvider => {
 
         /**
          * Read Interface
-         *
          * @param {number} id
          * @returns {Promise<Response>}
          */
@@ -105,7 +100,6 @@ const ResidentProvider = (url: string): IResidentProvider => {
 
         /**
          * Post interface
-         *
          * @param {ResidentRecord} residentInfo
          * @returns {Promise<ResidentRecord>}
          */
@@ -125,7 +119,6 @@ const ResidentProvider = (url: string): IResidentProvider => {
 
         /**
          * Delete interface
-         *
          * @param {number} residentId
          * @returns {Promise<DeleteResponse>}
          */

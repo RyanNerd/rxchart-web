@@ -67,7 +67,7 @@ const ManageDrugPage = (): JSX.Element => {
                         .then((medicineRecords) => {
                             setMedicineList(medicineRecords);
                         })
-                            .catch((err) => setErrorDetails(err));
+                        .catch((err) => setErrorDetails(err));
                     }
                 })
                 .catch((err) => setErrorDetails(err));
@@ -135,6 +135,7 @@ const ManageDrugPage = (): JSX.Element => {
                                 .then(() => {
                                     mm.loadMedicineList(activeResident?.Id as number)
                                         .then((medicines) => setMedicineList(medicines))
+                                        .catch((err) => setErrorDetails(err))
                                 })
                                 .catch((err) => setErrorDetails(err))
                         }
