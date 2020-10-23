@@ -24,7 +24,8 @@ type AuthCredentials = {
 }
 
 const AuthenticationProvider = (url: string): IAuthenticationProvider => {
-    const baseUrl = url;
+    const _baseUrl = url;
+    const _frak = Frak();
     return {
         /**
          * Post interface for authentication
@@ -33,9 +34,9 @@ const AuthenticationProvider = (url: string): IAuthenticationProvider => {
          * @returns {Promise<Authenticated>}
          */
         post: async (credentials: AuthCredentials): Promise<Authenticated> => {
-            const uri = baseUrl + 'authenticate';
+            const uri = _baseUrl + 'authenticate';
             try {
-                const response = await Frak.post<AuthResponse>(uri, credentials);
+                const response = await _frak.post<AuthResponse>(uri, credentials);
                 const success = response.success;
                 const data = response.data ? response.data : undefined;
                 const apiKey = (success && data?.apiKey) ? data.apiKey : '';

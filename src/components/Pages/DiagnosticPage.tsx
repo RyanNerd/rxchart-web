@@ -121,24 +121,27 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
 
         /**
          * Handler for when the error is an instance of Response
-         * @param {Response} err
+         * @param {Response} response
          */
-        const handleResponseError = async (err: Response) => {
-            console.log('handleResponseError', err);
-            return await getText(err).then((text) => {
-                const headers = err.headers;
-                const contentType = (headers.has('content_type')) ? headers.get('content_type') : '';
-                if (text.toLowerCase().includes('html') || contentType?.toLowerCase().includes('html')) {
-                    handleHtmlError(text);
-                } else {
-                    setContent(_alert('Fetch Error',
-                        <>
-                            <p>Status: {error.status}</p>
-                            <p>Stats Text: {error.statusText}</p>
-                            <p>Text: {text}</p>
-                        </>));
-                }
-            });
+        const handleResponseError = async (response: Response) => {
+            if (!response.bodyUsed) {
+                return await getText(response)
+                .then((text) => {
+                    const headers = response.headers;
+                    const contentType = headers.get('content_type');
+                    if (contentType?.toLowerCase().includes('html') || text.toLowerCase().includes('html')) {
+                        handleHtmlError(text);
+                    } else {
+                        setContent(_alert('Fetch Response Error',
+                            <>
+                                <p>Status: {response.status}</p>
+                                <p>Stats Text: {response.statusText}</p>
+                                <p>Text: {text}</p>
+                            </>)
+                        );
+                    }
+                })
+            }
         }
 
         if (!error) {
@@ -155,22 +158,13 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
                 }
 
                 /**
-                 * 🦆 typing to figure out what type error is
+                 * Duck 🦆 typing to figure out what type error is
                  */
                 if (error instanceof Response) {
                     handleResponseError(error);
                 }
                 if (error instanceof Error) {
                     handleNativeError(error);
-                }
-                // Willow/Slim fetch error
-                if (typeof error === 'object' &&
-                        error.hasOwnProperty('content_type') &&
-                        error.hasOwnProperty('text')) {
-                    if (error.content_type.toLowerCase().includes('html')
-                        && error.text.toLowerCase().includes('html')) {
-                            handleHtmlError(error.text);
-                    }
                 }
                 if (typeof error === 'string') {
                     if (error.toLowerCase().includes('html')) {
