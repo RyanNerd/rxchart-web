@@ -21,6 +21,7 @@ export interface IMedHistoryProvider {
  */
 const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
     const _baseUrl = baseurl;
+    const _frak = Frak();
     let _apiKey = null as string | null
     return {
         /**
@@ -43,7 +44,7 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
         search: async (options: object): Promise<DrugLogRecord[]> => {
             const uri = _baseUrl + 'medhistory/search?api_key=' + _apiKey;
             try {
-                const response = await Frak.post<RecordResponse>(uri, options);
+                const response = await _frak.post<RecordResponse>(uri, options);
                 if (response.success) {
                     return response.data as DrugLogRecord[];
                 } else {
@@ -66,7 +67,7 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
         read: async (id: string | number): Promise<DrugLogRecord> => {
             const uri = _baseUrl + 'medhistory/' + id + '?api_key=' + _apiKey;
             try {
-                const response = await Frak.get<RecordResponse>(uri);
+                const response = await _frak.get<RecordResponse>(uri);
                 if (response.success) {
                     return response.data as DrugLogRecord;
                 } else {
@@ -85,7 +86,7 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
         post: async (drugInfo: DrugLogRecord): Promise<DrugLogRecord> => {
             const uri =_baseUrl + 'medhistory?api_key=' + _apiKey;
             try {
-                const response = await Frak.post<RecordResponse>(uri, drugInfo);
+                const response = await _frak.post<RecordResponse>(uri, drugInfo);
                 if (response.success) {
                     return response.data as DrugLogRecord;
                 } else {
@@ -104,7 +105,7 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
         delete: async (drugId: string | number): Promise<DeleteResponse> => {
             const uri = _baseUrl + 'medhistory/' + drugId + '?api_key=' + _apiKey;
             try {
-                const response = await Frak.delete<RecordResponse>(uri);
+                const response = await _frak.delete<RecordResponse>(uri);
                 if (response.success) {
                     return response;
                 } else {

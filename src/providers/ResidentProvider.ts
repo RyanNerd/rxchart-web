@@ -22,6 +22,7 @@ type RecordResponse = {
  */
 const ResidentProvider = (url: string): IResidentProvider => {
     const _baseUrl = url;
+    const _frak = Frak();
     let _apiKey = null as string | null;
     return {
         /**
@@ -44,7 +45,7 @@ const ResidentProvider = (url: string): IResidentProvider => {
         search: async (options: object): Promise<ResidentRecord[]> => {
             const uri = _baseUrl + 'resident/search?api_key=' + _apiKey;
             try {
-                const response = await Frak.post<RecordResponse>(uri, options);
+                const response = await _frak.post<RecordResponse>(uri, options);
                 if (response.success) {
                     return response.data as ResidentRecord[];
                 } else {
@@ -68,7 +69,7 @@ const ResidentProvider = (url: string): IResidentProvider => {
             const uri = _baseUrl + 'resident/restore?api_key=' + _apiKey;
             const body = {restore_id: residentId};
             try {
-                const response = await Frak.post<RecordResponse>(uri, body);
+                const response = await _frak.post<RecordResponse>(uri, body);
                 if (response.success) {
                     return response.data as ResidentRecord;
                 } else {
@@ -87,7 +88,7 @@ const ResidentProvider = (url: string): IResidentProvider => {
         read: async (id: number): Promise<ResidentRecord> => {
             const uri = _baseUrl + 'resident/' + id + '?api_key=' + _apiKey;
             try {
-                const response = await Frak.get<RecordResponse>(uri);
+                const response = await _frak.get<RecordResponse>(uri);
                 if (response.success) {
                     return response.data as ResidentRecord;
                 } else {
@@ -106,7 +107,7 @@ const ResidentProvider = (url: string): IResidentProvider => {
         post: async (residentInfo: ResidentRecord): Promise<ResidentRecord> => {
             const uri = _baseUrl + 'resident?api_key=' + _apiKey;
             try {
-                const response = await Frak.post<RecordResponse>(uri, residentInfo);
+                const response = await _frak.post<RecordResponse>(uri, residentInfo);
                 if (response.success) {
                     return response.data as ResidentRecord;
                 } else {
@@ -125,7 +126,7 @@ const ResidentProvider = (url: string): IResidentProvider => {
         delete: async (residentId: number): Promise<DeleteResponse> => {
             const uri = _baseUrl + 'resident/' + residentId + '?api_key=' + _apiKey;
             try {
-                const response = await Frak.delete<DeleteResponse>(uri);
+                const response = await _frak.delete<DeleteResponse>(uri);
                 if (response.success) {
                     return response;
                 } else {
