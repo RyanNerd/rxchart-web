@@ -58,6 +58,9 @@ const LoginPage = (props: IProps): JSX.Element => {
                 if (response.success) {
                     const apiKey = response.apiKey;
                     setApiKey(apiKey).then(() => {
+                        if (apiKey.length === 0) {
+                            setErrorDetails(new Error('Invalid API Key'));
+                        }
                         providers.setApi(apiKey);
 
                         // Load ALL Resident records up front and save them in the global store.

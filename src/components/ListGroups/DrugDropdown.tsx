@@ -18,6 +18,7 @@ interface IProps {
 const DrugDropdown = (props: IProps): JSX.Element | null => {
     const {medicineList, drugId} = props;
 
+    console.log('medicineList', medicineList);
     // Do not render unless we have the required props.
     if (!medicineList || medicineList.length === 0 || !drugId) {
         return null;
