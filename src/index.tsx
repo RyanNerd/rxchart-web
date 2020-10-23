@@ -1,7 +1,8 @@
-import React, {setGlobal} from "reactn";
-import ReactDOM from 'react-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import App from './components/App';
 import getInitialState from "./utility/getInitialState";
+import React, {setGlobal} from "reactn";
+import ReactDOM from 'react-dom';
 
 const InitError = () => {
     return (
