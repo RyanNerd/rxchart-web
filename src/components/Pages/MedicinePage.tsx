@@ -14,11 +14,10 @@ import TooltipButton from "../Buttons/TooltipButton";
 import {Alert} from "react-bootstrap";
 import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
 import {
-    calculateLastTaken,
+    calculateLastTaken, getDrugName,
     getFormattedDate,
     getLastTakenVariant,
     getMDY,
-    getObjectByProperty,
     isSearchValid,
     searchDrugs
 } from "../../utility/common";
@@ -204,16 +203,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         }
     }
 
-    /**
-     * Given the MedicineId return the name of the drug
-     * @param {number} id
-     * @return {string}
-     */
-    const getDrugName = (id: number): string => {
-        const drug = getObjectByProperty(medicineList, 'Id', id) as MedicineRecord | undefined;
-        return (drug) ?  drug.Drug : '[not found]';
-    }
-
     const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
     const shortenedDrugName = activeDrug?.Drug.substring(0, 31);
 
@@ -378,7 +367,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 >
                     <Confirm.Header>
                         <Confirm.Title>
-                            Delete {getDrugName(showDeleteDrugLogRecord.MedicineId)} Log Record
+                            Delete {getDrugName(showDeleteDrugLogRecord.MedicineId, medicineList)} Log Record
                         </Confirm.Title>
                     </Confirm.Header>
                     <Confirm.Body>

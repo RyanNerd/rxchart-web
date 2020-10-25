@@ -254,8 +254,19 @@ export const getFormattedDate = (date: Date | string): string => {
  * @param {any} searchValue
  * @return {Object | undefined}
  */
-export const getObjectByProperty = (objectList: IKey, propName: string, searchValue: any): object | undefined => {
+export const getObjectByProperty = <T>(objectList: IKey, propName: string, searchValue: any): T | undefined => {
     return objectList.find((obj: IKey) => (obj[propName] === searchValue));
+}
+
+/**
+ * Given the MedicineId return the name of the drug
+ * @param {number} id
+ * @param {MedicineRecord[]} list
+ * @return {string}
+ */
+export const getDrugName = (id: number, list: MedicineRecord[]): string => {
+    const drug = getObjectByProperty<MedicineRecord>(list, 'Id', id);
+    return drug ? drug.Drug : '[not found]';
 }
 
 /**
