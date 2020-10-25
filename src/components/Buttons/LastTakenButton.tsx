@@ -8,7 +8,6 @@ interface IProps {
 
 /**
  * Colored button that displays Last Taken in hours.
- *
  * @param {IProps} props
  * @return {JSX.Element}
  * @constructor

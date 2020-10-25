@@ -67,7 +67,7 @@ const ResidentManager = (residentProvider: IResidentProvider): IResidentManager 
     }
 
     /**
-     * Gets all the residents from the Resident table and sets the residentList global
+     * Gets ALL the residents from the Resident table
      */
     const _loadResidentList = async () => {
         const searchCriteria = {

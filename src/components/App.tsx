@@ -4,8 +4,7 @@ import {FullName} from "../utility/common";
 
 /**
  * Main Entry Component
- *
- * @returns {*}
+ * @returns {JSX.Element}
  * @constructor
  */
 const App = () => {

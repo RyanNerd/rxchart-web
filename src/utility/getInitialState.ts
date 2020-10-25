@@ -16,14 +16,20 @@ export interface IProviders {
     setApi: (apiKey: string) => void
 }
 
+/**
+ * Determines and returns the initial global state when the app starts or when a user logs out
+ */
 const getInitialState = () => {
     const baseUrl = process.env.REACT_APP_BASEURL || '';
-
     const providers = {
         authenticationProvider: AuthenticationProvider(baseUrl),
         medHistoryProvider: MedHistoryProvider(baseUrl),
         medicineProvider: MedicineProvider(baseUrl),
         residentProvider: ResidentProvider(baseUrl),
+        /**
+         * Helper function that sets the API key for ALL providers
+         * @param {string} apiKey
+         */
         setApi: (apiKey: string) => {
             providers.medHistoryProvider.setApiKey(apiKey);
             providers.medicineProvider.setApiKey(apiKey);

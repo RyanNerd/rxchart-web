@@ -11,7 +11,6 @@ interface IProps {
 
 /**
  * Drug Dropdown
- *
  * @param {IProps} props
  * @returns {JSX.Element | null}
  */
@@ -25,7 +24,6 @@ const DrugDropdown = (props: IProps): JSX.Element | null => {
 
     /**
      * Get the drug object from the medicineList given the drugId
-     *
      * @param {number} drugId
      * @returns {MedicineRecord | null}
      */

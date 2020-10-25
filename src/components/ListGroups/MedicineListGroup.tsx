@@ -20,7 +20,6 @@ interface IProps {
 
 /**
  * MedicineListGroup
- *
  * @param {IProps} props
  * @return {JSX.Element}
  */
@@ -57,7 +56,6 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
 
     /**
      * Determine the tooltip text given the number of hours the drug was last taken
-     *
      * @param {number | null} lastTaken
      * @returns {string | null}
      */

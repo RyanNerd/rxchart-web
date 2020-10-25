@@ -4,6 +4,9 @@ import getInitialState from "./utility/getInitialState";
 import React, {setGlobal} from "reactn";
 import ReactDOM from 'react-dom';
 
+/**
+ * This gets called if something went really, really wrong at the launch of the app
+ */
 const InitError = () => {
     return (
         <>

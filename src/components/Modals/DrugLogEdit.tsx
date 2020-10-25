@@ -16,7 +16,6 @@ interface IProps {
 
 /**
  * Edit Modal for DrugLog
- *
  * @param {IProps} props
  * @returns {JSX.Element | null}
  * @constructor
@@ -43,10 +42,9 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
 
     /**
      * Fires when a text field or checkbox is changing.
-     *
      * @param {React.KeyboardEvent<HTMLElement>} e
      */
-    const handleOnChange = (e: React.ChangeEvent<HTMLElement>): void => {
+    const handleOnChange = (e: React.ChangeEvent<HTMLElement>) => {
         const target = e.target as HTMLInputElement;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
@@ -58,11 +56,10 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
 
     /**
      * Fires when the user clicks on Save or Cancel
-     *
      * @param {React.MouseEvent<HTMLElement>} e
      * @param {boolean} shouldSave
      */
-    const handleHide = (e: React.MouseEvent<HTMLElement>, shouldSave: boolean): void => {
+    const handleHide = (e: React.MouseEvent<HTMLElement>, shouldSave: boolean) => {
         e.preventDefault();
         if (shouldSave) {
             const saveDrugLogInfo = {...drugLogInfo} as DrugLogRecord;

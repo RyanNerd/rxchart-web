@@ -18,7 +18,6 @@ interface IProps extends ButtonProps {
 
 /**
  * Button with a tooltip overlay
- *
  * @param {IProps} props
  * @returns {JSX.Element}
  * @constructor

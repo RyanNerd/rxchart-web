@@ -14,7 +14,6 @@ interface IProps {
 
 /**
  * Sign in page
- *
  * @param {IProps} props
  * @returns {JSX.Element}
  * @constructor
@@ -46,10 +45,9 @@ const LoginPage = (props: IProps): JSX.Element => {
 
     /**
      * Fires when the Login Button is clicked
-     *
      * @param {React.MouseEvent<HTMLElement>} e
      */
-    const login = (e: React.KeyboardEvent<HTMLElement> | React.MouseEvent<HTMLElement>): void => {
+    const login = (e: React.KeyboardEvent<HTMLElement> | React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
 
         // Send the user name and password to the web service
@@ -98,7 +96,6 @@ const LoginPage = (props: IProps): JSX.Element => {
 
     /**
      * Fires when the Logout Button is clicked
-     *
      * @param {React.MouseEvent<HTMLElement>} e
      */
     const logout = (e: React.MouseEvent<HTMLElement>) => {

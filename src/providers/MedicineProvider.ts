@@ -24,13 +24,16 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
     const _frak = Frak();
     let _apiKey = null as string | null;
     return {
+        /**
+         * Set the apiKey
+         * @param {string} apiKey
+         */
         setApiKey: (apiKey: string) => {
             _apiKey = apiKey;
         },
 
         /**
          * Search Interface
-         *
          * @param {object} options
          * @returns {Promise<MedicineRecord[]>}
          */
@@ -53,7 +56,6 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
 
         /**
          * Read interface
-         *
          * @param {string | number} id
          * @returns {Promise<MedicineRecord>}
          */
@@ -73,7 +75,6 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
 
         /**
          * Post interface
-         *
          * @param {MedicineRecord} drugInfo
          * @returns {Promise<MedicineRecord>}
          */
@@ -93,7 +94,6 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
 
         /**
          * Delete interface
-         *
          * @param {string | number} drugId
          * @returns {Promise<DeleteResponse>}
          */

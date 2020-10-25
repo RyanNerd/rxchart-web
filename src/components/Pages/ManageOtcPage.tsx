@@ -22,11 +22,10 @@ const ManageOtcPage = (): JSX.Element => {
 
     /**
      * Fires when the Edit button is clicked
-     *
      * @param {MouseEvent} e
      * @param {MedicineRecord | null} medicine
      */
-    const onEdit = (e: React.MouseEvent<HTMLElement>, medicine?: MedicineRecord | null): void => {
+    const onEdit = (e: React.MouseEvent<HTMLElement>, medicine?: MedicineRecord | null) => {
         e.preventDefault();
         const medicineInfo = (medicine) ? {...medicine} : {...newDrugInfo, OTC: true};
         setMedicineInfo(medicineInfo);
@@ -37,11 +36,10 @@ const ManageOtcPage = (): JSX.Element => {
 
     /**
      * Handle the click event for delete
-     *
      * @param {React.MouseEvent<HTMLElement>} e
      * @param {MedicineRecord} medicine
      */
-    const onDelete = (e: React.MouseEvent<HTMLElement>, medicine: MedicineRecord): void => {
+    const onDelete = (e: React.MouseEvent<HTMLElement>, medicine: MedicineRecord) => {
         e.preventDefault();
         setMedicineInfo({...medicine});
         setShowDeleteMedicine(true);
@@ -50,7 +48,7 @@ const ManageOtcPage = (): JSX.Element => {
     /**
      * Fires when user confirms to delete the medicine
      */
-    const deleteDrug = (): void => {
+    const deleteDrug = () => {
             mm.deleteMedicine(medicineInfo?.Id as number)
                 .then((deleted) => {
                     if (deleted) {

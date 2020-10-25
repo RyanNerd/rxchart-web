@@ -20,7 +20,6 @@ interface IProps extends ModalProps {
 const Confirm = {
     /**
      * Confirm.Modal component
-     *
      * @param {IProps} props
      * @return Modal
      */
@@ -79,7 +78,6 @@ const Confirm = {
 
     /**
      * Confirm.Header component
-     *
      * @param {IChildren} props
      */
     Header: (props: IChildren) => {
@@ -92,7 +90,6 @@ const Confirm = {
 
     /**
      * Confirm.Title component
-     *
      * @param {IChildren} props
      */
     Title: (props: IChildren) => {
@@ -105,7 +102,6 @@ const Confirm = {
 
     /**
      * Confirm.Body component
-     *
      * @param {IChildren} props
      */
     Body: (props: IChildren) => {

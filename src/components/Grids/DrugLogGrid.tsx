@@ -24,7 +24,6 @@ interface IProps {
 
 /**
  * DrugLogGrid
- *
  * @param {IProps} props
  * @return {JSX.Element}
  * @constructor
@@ -45,7 +44,6 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
 
     /**
      * Returns the value of the drug column for the given drugId
-     *
      * @param {number} drugId
      * @param {string} columnName
      * @returns {any}
@@ -69,7 +67,6 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
 
     /**
      * Child component for the table for each drug that has been logged.
-     *
      * @param {DrugLogRecord} drug
      * @returns {JSX.Element | null}
      */

@@ -23,13 +23,17 @@ type AuthCredentials = {
     password: string
 }
 
+/**
+ * Authentication Provider API Connector
+ * @param {string} url
+ * @constructor
+ */
 const AuthenticationProvider = (url: string): IAuthenticationProvider => {
     const _baseUrl = url;
     const _frak = Frak();
     return {
         /**
          * Post interface for authentication
-         *
          * @param {AuthCredentials} credentials
          * @returns {Promise<Authenticated>}
          */

@@ -27,8 +27,7 @@ const ResidentProvider = (url: string): IResidentProvider => {
     return {
         /**
          * Set the apiKey
-         *
-         * @param apiKey
+         * @param {string} apiKey
          */
         setApiKey: (apiKey: string) => {
             _apiKey = apiKey;

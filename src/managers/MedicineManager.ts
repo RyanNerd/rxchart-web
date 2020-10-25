@@ -14,6 +14,12 @@ export interface IMedicineManager {
 
 type DeleteResponse = {success: boolean}
 
+/**
+ * Medicine Manager
+ * @param {IMedicineProvider} medicineProvider
+ * @param {IMedHistoryProvider} medHistoryProvider
+ * @constructor
+ */
 const MedicineMananger = (
         medicineProvider: IMedicineProvider,
         medHistoryProvider: IMedHistoryProvider

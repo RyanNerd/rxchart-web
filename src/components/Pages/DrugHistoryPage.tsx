@@ -12,7 +12,6 @@ interface IProps {
 /**
  * DrugHistoryPage
  * DrugLogGrid with a Print button
- *
  * @param {IProps} props
  * @return {JSX.Element}
  */

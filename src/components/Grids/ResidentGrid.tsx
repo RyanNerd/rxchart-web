@@ -15,7 +15,6 @@ interface IProps {
 
 /**
  * ResidentGrid component
- *
  * @param {IProps} props
  * @returns {JSX.Element}
  * @constructor

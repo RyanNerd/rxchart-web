@@ -33,7 +33,6 @@ const ResidentPage = (props: IProps): JSX.Element => {
 
     /**
      * Fires when user clicks the Edit button
-     *
      * @param {React.MouseEvent<HTMLElement>} e
      * @param {ResidentRecord} resident
      */
@@ -45,7 +44,6 @@ const ResidentPage = (props: IProps): JSX.Element => {
 
     /**
      * Fires when user clicks the + (add) button
-     *
      * @param {React.MouseEvent<HTMLElement>} e
      */
     const handleAddResident = (e: React.MouseEvent<HTMLElement>) => {
@@ -63,7 +61,6 @@ const ResidentPage = (props: IProps): JSX.Element => {
 
     /**
      * Fires when ResidentEdit closes.
-     *
      * @param {ResidentRecord | null} residentRecord
      */
     const handleModalClose = (residentRecord: ResidentRecord) => {
@@ -86,7 +83,6 @@ const ResidentPage = (props: IProps): JSX.Element => {
 
     /**
      * Fires when the selected column / row is clicked
-     *
      * @param {React.MouseEvent<HTMLElement>} e
      * @param {ResidentRecord} resident
      */
@@ -107,7 +103,6 @@ const ResidentPage = (props: IProps): JSX.Element => {
 
     /**
      * Fires when user clicks on resident trash icon
-     *
      * @param {React.MouseEvent<HTMLElement>} e
      * @param {ResidentRecord} resident
      */

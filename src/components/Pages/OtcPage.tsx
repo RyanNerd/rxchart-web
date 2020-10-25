@@ -28,7 +28,6 @@ interface IProps {
 /**
  * OtcPage
  * UI for logging OTC medications
- *
  * @returns {JSX.Element | null}
  */
 const OtcPage = (props: IProps): JSX.Element | null => {
@@ -172,11 +171,10 @@ const OtcPage = (props: IProps): JSX.Element | null => {
 
     /**
      * Fires when user clicks on +Log or the drug log edit button
-     *
      * @param {React.MouseEvent<HTMLElement>} e
      * @param {DrugLogRecord} drugLogInfo
      */
-    const addEditDrugLog = (e: React.MouseEvent<HTMLElement>, drugLogInfo?: DrugLogRecord): void => {
+    const addEditDrugLog = (e: React.MouseEvent<HTMLElement>, drugLogInfo?: DrugLogRecord) => {
         e.preventDefault();
         const drugLogRecord = drugLogInfo ? {...drugLogInfo} : {
             Id: null,
@@ -190,10 +188,9 @@ const OtcPage = (props: IProps): JSX.Element | null => {
 
     /**
      * Fires when the Log 1 or Log 2 buttons are clicked.
-     *
      * @param {number} amount
      */
-    const handleLogDrugAmount = (amount: number): void => {
+    const handleLogDrugAmount = (amount: number) => {
         const drugId = activeDrug?.Id as number;
         if (drugId) {
             const notes = amount.toString();
@@ -211,7 +208,6 @@ const OtcPage = (props: IProps): JSX.Element | null => {
 
     /**
      * Given the MedicineId return the name of the drug
-     *
      * @param {number} id
      * @return {string}
      */
