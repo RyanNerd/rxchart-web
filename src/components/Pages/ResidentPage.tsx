@@ -76,6 +76,7 @@ const ResidentPage = (props: IProps): JSX.Element => {
                         setMedicineList([]);
                         setDrugLogList([]);
                         setActiveResident(resident);
+                        onSelected();
                     }
                 })
                 .catch((err) => setErrorDetails(err))
