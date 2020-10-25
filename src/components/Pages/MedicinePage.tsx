@@ -22,7 +22,6 @@ import {
     searchDrugs
 } from "../../utility/common";
 
-
 interface IProps {
     activeTabKey: string | null
 }
