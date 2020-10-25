@@ -29,9 +29,6 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
          * @param {string} apiKey
          */
         setApiKey: (apiKey: string) => {
-            if (apiKey.length === 0) {
-                throw new Error('apiKey cannot be empty');
-            }
             _apiKey = apiKey;
         },
 

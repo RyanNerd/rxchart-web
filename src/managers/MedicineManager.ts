@@ -53,7 +53,7 @@ const MedicineMananger = (
     const _loadDrugLog = async (residentId: number) => {
         const searchCriteria = {
             where: [{column: 'ResidentId', comparison: '=', value: residentId}],
-            order_by: [{column: 'Updated', direction: 'desc'}],
+            order_by: [{column: 'Created', direction: 'desc'}],
         };
         return medHistoryProvider.search(searchCriteria)
             .catch((err) => {throw err});

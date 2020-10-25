@@ -25,9 +25,6 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
     let _apiKey = null as string | null;
     return {
         setApiKey: (apiKey: string) => {
-            if (apiKey.length === 0) {
-                throw new Error('apiKey cannot be empty');
-            }
             _apiKey = apiKey;
         },
 
