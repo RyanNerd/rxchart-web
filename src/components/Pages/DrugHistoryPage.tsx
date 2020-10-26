@@ -1,13 +1,9 @@
-import React from 'reactn';
+import React, {useGlobal} from 'reactn';
 import Button from 'react-bootstrap/Button';
 import DrugLogGrid from "../Grids/DrugLogGrid";
-import {DrugLogRecord, MedicineRecord} from "../../types/RecordTypes";
 
 interface IProps {
     activeTabKey: string | null
-    drugLogList: DrugLogRecord[]
-    medicineList: MedicineRecord[]
-    otcList: MedicineRecord[]
 }
 
 /**
@@ -17,12 +13,10 @@ interface IProps {
  * @return {JSX.Element}
  */
 const DrugHistoryPage = (props: IProps): JSX.Element | null => {
-    const {
-        activeTabKey,
-        drugLogList = [],
-        medicineList = [],
-        otcList = []
-    } = props;
+    const [drugLogList] = useGlobal('drugLogList');
+    const [medicineList] = useGlobal('medicineList');
+    const [otcList] = useGlobal('otcList');
+    const activeTabKey = props.activeTabKey;
 
     // If this tab isn't active then don't render
     if (activeTabKey !== 'history') {

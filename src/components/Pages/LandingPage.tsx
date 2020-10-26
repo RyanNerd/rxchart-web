@@ -19,10 +19,7 @@ const LandingPage = () => {
     const [activeResident] = useGlobal('activeResident');
     const [activeTabKey, setActiveTabKey] = useState<string | null>('login');
     const [apiKey, setApiKey] = useGlobal('apiKey');
-    const [drugLogList] = useGlobal('drugLogList');
     const [errorDetails, setErrorDetails] = useGlobal('errorDetails');
-    const [medicineList] = useGlobal('medicineList');
-    const [otcList] = useGlobal('otcList');
 
     // Observer for anytime there is an error set on the errorDetails global
     useEffect(() => {
@@ -81,9 +78,6 @@ const LandingPage = () => {
             >
                 <DrugHistoryPage
                     activeTabKey={activeTabKey}
-                    drugLogList={drugLogList}
-                    medicineList={medicineList}
-                    otcList={otcList}
                 />
             </Tab>
             <Tab
