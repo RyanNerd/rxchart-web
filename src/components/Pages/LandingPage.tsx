@@ -97,6 +97,7 @@ const LandingPage = () => {
                 eventKey="resident"
                 title={getTitle('resident')}>
                 <ResidentPage
+                    activeTabKey={activeTabKey}
                     residentSelected={() => setActiveTabKey('medicine')}
                 />
             </Tab>
@@ -106,6 +107,7 @@ const LandingPage = () => {
                 title={getTitle('history')}
             >
                 <DrugHistoryPage
+                    activeTabKey={activeTabKey}
                     drugLogList={drugLogList}
                     medicineList={medicineList}
                     otcList={otcList}
@@ -116,14 +118,18 @@ const LandingPage = () => {
                 eventKey="manage"
                 title={getTitle('manage')}
             >
-                <ManageDrugPage/>
+                <ManageDrugPage
+                    activeTabKey={activeTabKey}
+                />
             </Tab>
             <Tab
                 disabled={apiKey === null}
                 eventKey="manage-otc"
                 title={getTitle('manage-otc')}
             >
-                <ManageOtcPage/>
+                <ManageOtcPage
+                    activeTabKey={activeTabKey}
+                />
             </Tab>
             <Tab
                 disabled={!errorDetails}
@@ -131,6 +137,7 @@ const LandingPage = () => {
                 title={getTitle('error')}
             >
                 <DiagnosticPage
+                    activeTabKey={activeTabKey}
                     error={errorDetails}
                     dismissErrorAlert={() => {
                         setErrorDetails(undefined);

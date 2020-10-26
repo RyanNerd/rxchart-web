@@ -8,6 +8,7 @@ import {FullName} from '../../utility/common';
 import {ResidentRecord} from "../../types/RecordTypes";
 
 interface IProps {
+    activeTabKey: string | null
     residentSelected: () => void
 }
 
@@ -17,7 +18,7 @@ interface IProps {
  * @return {JSX.Element}
  * @constructor
  */
-const ResidentPage = (props: IProps): JSX.Element => {
+const ResidentPage = (props: IProps): JSX.Element | null => {
     const [, setDrugLogList] = useGlobal('drugLogList');
     const [, setErrorDetails] = useGlobal('errorDetails');
     const [, setMedicineList] = useGlobal('medicineList');
@@ -30,6 +31,11 @@ const ResidentPage = (props: IProps): JSX.Element => {
     const [showDeleteResident, setShowDeleteResident] = useState(false);
     const [showResidentEdit, setShowResidentEdit] = useState(false);
     const onSelected = props.residentSelected;
+    const activeTabKey = props.activeTabKey;
+
+    if (activeTabKey !== 'resident') {
+        return null;
+    }
 
     /**
      * Fires when user clicks the Edit button

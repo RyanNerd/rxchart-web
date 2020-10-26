@@ -3,6 +3,7 @@ import {Alert, Button, Card} from "react-bootstrap";
 import {ReactNode, useEffect, useMemo, useState} from "react";
 
 interface IProps {
+    activeTabKey: string | null
     error: any
     dismissErrorAlert: () => void
 }
@@ -17,6 +18,7 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
     const [development] = useGlobal('development');
     const dismissError = props.dismissErrorAlert;
     const error = props.error;
+    const activeTabKey = props.activeTabKey;
     let finalContent: JSX.Element | null;
 
     /**
@@ -181,6 +183,11 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
             return (<><p>Error in DiagnosticsPage</p></>);
         }
     }, [error, development, content, dismissError]) || null;
+
+    // If this tab isn't active then don't render
+    if (activeTabKey !== 'error') {
+        return null;
+    }
 
     return <>{finalContent}</>
 }

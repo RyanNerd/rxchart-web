@@ -4,6 +4,7 @@ import DrugLogGrid from "../Grids/DrugLogGrid";
 import {DrugLogRecord, MedicineRecord} from "../../types/RecordTypes";
 
 interface IProps {
+    activeTabKey: string | null
     drugLogList: DrugLogRecord[]
     medicineList: MedicineRecord[]
     otcList: MedicineRecord[]
@@ -15,12 +16,18 @@ interface IProps {
  * @param {IProps} props
  * @return {JSX.Element}
  */
-const DrugHistoryPage = (props: IProps): JSX.Element => {
+const DrugHistoryPage = (props: IProps): JSX.Element | null => {
     const {
+        activeTabKey,
         drugLogList = [],
         medicineList = [],
         otcList = []
     } = props;
+
+    // If this tab isn't active then don't render
+    if (activeTabKey !== 'history') {
+        return null;
+    }
 
     return (
         <>
