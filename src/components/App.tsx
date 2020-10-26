@@ -22,7 +22,12 @@ const App = () => {
                     </span>
                 </h4> : null
             }
-            <LandingPage/>
+
+            <div className="vl"></div>
+
+            <div style={{marginLeft: "15px"}}>
+                <LandingPage/>
+            </div>
         </>
     );
 }

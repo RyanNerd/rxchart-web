@@ -3,3 +3,12 @@
     margin-left: 45px;
     margin-right: 10%;
 }
+
+.vl {
+    border-left: 1px solid lightgrey;
+    height: 3000px;
+    margin-left: 15px;
+    margin-top: 83px;
+    position: absolute;
+    top: 0;
+}

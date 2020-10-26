@@ -30,7 +30,7 @@ const LandingPage = () => {
 
     /**
      * Determine the table title component based on eventKey and bold the title if it is the current tab
-     * @param eventKey
+     * @param {string} eventKey
      */
     const getTitle = (eventKey: string): JSX.Element => {
         const Title = {
