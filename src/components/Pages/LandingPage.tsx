@@ -11,10 +11,6 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import {useEffect} from "react";
 
-interface ITitle {
-    [key: string]: string
-}
-
 /**
  * Landing Page - Tab Page Menu UI
  * @constructor
@@ -27,28 +23,6 @@ const LandingPage = () => {
     const [errorDetails, setErrorDetails] = useGlobal('errorDetails');
     const [medicineList] = useGlobal('medicineList');
     const [otcList] = useGlobal('otcList');
-
-    /**
-     * Determine the table title component based on eventKey and bold the title if it is the current tab
-     * @param {string} eventKey
-     */
-    const getTitle = (eventKey: string): JSX.Element => {
-        const Title = {
-            login: apiKey ? 'Logout' : 'Login',
-            "manage-otc": 'Manage OTC',
-            manage: 'Manage Rx',
-            otc: 'OTC',
-            resident: 'Residents',
-            history: 'Drug History',
-            medicine: 'Rx',
-            error: 'Diagnostics'
-        } as ITitle
-        if (eventKey === activeTabKey) {
-            return (<b>{Title[eventKey]}</b>)
-        } else {
-            return (<>{Title[eventKey]}</>)
-        }
-    }
 
     // Observer for anytime there is an error set on the errorDetails global
     useEffect(() => {
@@ -65,9 +39,8 @@ const LandingPage = () => {
             onSelect={(key) => setActiveTabKey(key)}
         >
             <Tab
-                sytle={{marginLeft: "15px"}}
                 eventKey="login"
-                title={getTitle('login')}
+                title={<span className={activeTabKey === 'login' ? 'bld' : ''}>{apiKey ? 'Logout' : 'Login'}</span>}
             >
                 <LoginPage
                     onLogin={(loggedIn) => {
@@ -79,7 +52,7 @@ const LandingPage = () => {
             <Tab
                 disabled={apiKey === null || !activeResident}
                 eventKey="medicine"
-                title={getTitle('medicine')}>
+                title={<span className={activeTabKey === 'medicine' ? 'bld' : ''}>Medicine</span>}>
                 <MedicinePage
                     activeTabKey={activeTabKey}
                 />
@@ -87,7 +60,7 @@ const LandingPage = () => {
             <Tab
                 disabled={apiKey === null || !activeResident}
                 eventKey="otc"
-                title={getTitle('otc')}>
+                title={<span className={activeTabKey === 'otc' ? 'bld' : ''}>OTC</span>}>
                 <OtcPage
                     activeTabKey={activeTabKey}
                 />
@@ -95,7 +68,7 @@ const LandingPage = () => {
             <Tab
                 disabled={apiKey === null}
                 eventKey="resident"
-                title={getTitle('resident')}>
+                title={<span className={activeTabKey === 'resident' ? 'bld' : ''}>Resident</span>}>
                 <ResidentPage
                     activeTabKey={activeTabKey}
                     residentSelected={() => setActiveTabKey('medicine')}
@@ -104,7 +77,7 @@ const LandingPage = () => {
             <Tab
                 disabled={apiKey === null || !activeResident}
                 eventKey="history"
-                title={getTitle('history')}
+                title={<span className={activeTabKey === 'history' ? 'bld' : ''}>Drug History</span>}
             >
                 <DrugHistoryPage
                     activeTabKey={activeTabKey}
@@ -116,7 +89,7 @@ const LandingPage = () => {
             <Tab
                 disabled={apiKey === null || !activeResident}
                 eventKey="manage"
-                title={getTitle('manage')}
+                title={<span className={activeTabKey === 'manage' ? 'bld' : ''}>Manage Rx</span>}
             >
                 <ManageDrugPage
                     activeTabKey={activeTabKey}
@@ -125,7 +98,7 @@ const LandingPage = () => {
             <Tab
                 disabled={apiKey === null}
                 eventKey="manage-otc"
-                title={getTitle('manage-otc')}
+                title={<span className={activeTabKey === 'manage-otc' ? 'bld' : ''}>Manage OTC</span>}
             >
                 <ManageOtcPage
                     activeTabKey={activeTabKey}
@@ -134,7 +107,7 @@ const LandingPage = () => {
             <Tab
                 disabled={!errorDetails}
                 eventKey="error"
-                title={getTitle('error')}
+                title={<span className={activeTabKey === 'error' ? 'bld' : ''}>Diagnostics</span>}
             >
                 <DiagnosticPage
                     activeTabKey={activeTabKey}
