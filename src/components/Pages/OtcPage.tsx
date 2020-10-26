@@ -108,8 +108,8 @@ const OtcPage = (props: IProps): JSX.Element | null => {
         setSearchText('');
     }, [activeResident]);
 
-    // If there isn't an activeResident then bail with null
-    if (!residentId) {
+    // If there isn't an activeResident or this tab isn't active then don't render
+    if (!residentId || activeTabKey !== 'otc') {
         return null;
     }
 

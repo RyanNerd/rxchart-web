@@ -72,7 +72,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
     // Set focus to the search input if the page key has changed
     useEffect(() => {
-        if (activeTabKey === 'medicine' && focusRef && focusRef.current) {
+        if (focusRef && focusRef.current) {
             focusRef.current.focus();
         }
     }, [activeTabKey]);
@@ -97,8 +97,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         }
     }, [activeDrug, searchText]);
 
-    // If there isn't an activeResident then bail with null
-    if (!residentId) {
+    // If there isn't an activeResident or this isn't the active tab then do not render
+    if (!residentId || activeTabKey !== 'medicine') {
         return null;
     }
 
@@ -234,6 +234,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     {medicineList.length > 0 &&
                         <Form.Group as={Row}>
                             <Form.Control
+                                id="medicine-page-search-text"
                                 style={{width: "220px"}}
                                 isValid={searchIsValid}
                                 type="search"

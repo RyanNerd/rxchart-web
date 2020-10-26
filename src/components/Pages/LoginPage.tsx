@@ -18,7 +18,7 @@ interface IProps {
  * @returns {JSX.Element}
  * @constructor
  */
-const LoginPage = (props: IProps): JSX.Element => {
+const LoginPage = (props: IProps): JSX.Element | null => {
     const [, setOtcList] = useGlobal('otcList');
     const [, setResidentList] = useGlobal('residentList');
     const [apiKey, setApiKey] = useGlobal('apiKey');
@@ -42,6 +42,11 @@ const LoginPage = (props: IProps): JSX.Element => {
             focusRef.current.focus();
         }
     }, [activeTabKey]);
+
+    // Prevent render if this tab isn't active
+    if (activeTabKey !== 'login') {
+        return null;
+    }
 
     /**
      * Fires when the Login Button is clicked
