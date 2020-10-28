@@ -120,7 +120,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
 
     return (
         <>
-            <Form>
+            <Form className="tab-content">
                 <TooltipButton
                     placement="top"
                     tooltip="Add New Resident"
