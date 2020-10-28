@@ -156,99 +156,97 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     }
 
     return (
-        <>
-            <Form className="tab-content">
-                <Row>
-                    <TooltipButton
-                        className="mr-2"
-                        placement="top"
-                        tooltip="Add New Resident"
-                        onClick={(e: React.MouseEvent<HTMLElement>) => handleAddResident(e)}
-                    >
-                        + Resident
-                    </TooltipButton>
+        <Form className="tab-content">
+            <Row>
+                <TooltipButton
+                    className="mr-2"
+                    placement="top"
+                    tooltip="Add New Resident"
+                    onClick={(e: React.MouseEvent<HTMLElement>) => handleAddResident(e)}
+                >
+                    + Resident
+                </TooltipButton>
 
-                    <Form.Control
-                        id="medicine-page-search-text"
-                        style={{width: "220px"}}
-                        isValid={searchIsValid}
-                        type="search"
-                        value={searchText}
-                        onChange={(e) => setSearchText(e.target.value)}
-                        placeholder="Search resident"
-                        ref={focusRef}
-                    />
-                </Row>
+                <Form.Control
+                    id="medicine-page-search-text"
+                    style={{width: "220px"}}
+                    isValid={searchIsValid}
+                    type="search"
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    placeholder="Search resident"
+                    ref={focusRef}
+                />
+            </Row>
 
-                <Row className="mt-3">
-                    <ResidentGrid
-                        onEdit={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) =>
-                            handleEditResident(e, resident)
-                        }
-                        onSelected={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) =>
-                            handleOnSelected(e, resident)
-                        }
-                        onDelete={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) =>
-                            handleOnDelete(e, resident)
-                        }
-                        activeResident={activeResident}
-                        residentList={filteredResidents}
-                    />
-                </Row>
-            </Form>
-            {/* ResidentEdit Modal */}
-            {residentInfo &&
-            <ResidentEdit
-                show={showResidentEdit}
-                residentInfo={residentInfo}
-                onClose={(r) => {
-                    setShowResidentEdit(false);
-                    if (r) {
-                        handleModalClose(r);
+            <Row className="mt-3">
+                <ResidentGrid
+                    onEdit={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) =>
+                        handleEditResident(e, resident)
                     }
-                }}
-            />
+                    onSelected={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) =>
+                        handleOnSelected(e, resident)
+                    }
+                    onDelete={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) =>
+                        handleOnDelete(e, resident)
+                    }
+                    activeResident={activeResident}
+                    residentList={filteredResidents}
+                />
+            </Row>
+
+            {residentInfo &&
+                <ResidentEdit
+                    show={showResidentEdit}
+                    residentInfo={residentInfo}
+                    onClose={(r) => {
+                        setShowResidentEdit(false);
+                        if (r) {
+                            handleModalClose(r);
+                        }
+                    }}
+                />
             }
 
             {residentToDelete &&
-            <Confirm.Modal
-                show={showDeleteResident}
-                onSelect={(a) => {
-                    setShowDeleteResident(false);
-                    if (a && residentToDelete) {
-                        rm.deleteResident(residentToDelete?.Id as number)
-                        .then((deleted) => {
-                            if (deleted) {
-                                if (activeResident?.Id === residentToDelete.Id) {
-                                    setActiveResident(null);
-                                    setMedicineList([]);
-                                    setDrugLogList([]);
+                <Confirm.Modal
+                    show={showDeleteResident}
+                    onSelect={(a) => {
+                        setShowDeleteResident(false);
+                        if (a && residentToDelete) {
+                            rm.deleteResident(residentToDelete?.Id as number)
+                            .then((deleted) => {
+                                if (deleted) {
+                                    if (activeResident?.Id === residentToDelete.Id) {
+                                        setActiveResident(null);
+                                        setMedicineList([]);
+                                        setDrugLogList([]);
+                                    } else {
+                                        rm.loadResidentList()
+                                        .then((residents) => setResidentList(residents))
+                                        .catch((err) => setErrorDetails(err))
+                                    }
                                 } else {
-                                    rm.loadResidentList()
-                                    .then((residents) => setResidentList(residents))
-                                    .catch((err) => setErrorDetails(err))
+                                    setErrorDetails(new Error('Unable to delete resident.Id ' + residentToDelete.Id));
                                 }
-                            } else {
-                                setErrorDetails(new Error('Unable to delete resident.Id ' + residentToDelete.Id));
-                            }
-                        })
-                        .catch((err) => setErrorDetails(err));
-                    }
-                }}
-            >
-                <Confirm.Header>
-                    <Confirm.Title>
-                        {"Deactivate " + FullName(residentToDelete)}
-                    </Confirm.Title>
-                </Confirm.Header>
-                <Confirm.Body>
-                    <Alert variant="danger">
-                        Are you sure?
-                    </Alert>
-                </Confirm.Body>
-            </Confirm.Modal>
+                            })
+                            .catch((err) => setErrorDetails(err));
+                        }
+                    }}
+                >
+                    <Confirm.Header>
+                        <Confirm.Title>
+                            {"Deactivate " + FullName(residentToDelete)}
+                        </Confirm.Title>
+                    </Confirm.Header>
+                    <Confirm.Body>
+                        <Alert variant="danger">
+                            Are you sure?
+                        </Alert>
+                    </Confirm.Body>
+                </Confirm.Modal>
             }
-        </>
+        </Form>
     )
 }
 
