@@ -1,8 +1,8 @@
-import React from 'reactn';
 import Button from 'react-bootstrap/Button';
-import ToggleButton from 'react-bootstrap/ToggleButton';
+import React from 'reactn';
 import Table from 'react-bootstrap/Table';
-import {DOB, getMDY} from "../../utility/common";
+import ToggleButton from 'react-bootstrap/ToggleButton';
+import {DOB, getFormattedDate, getMDY} from "../../utility/common";
 import {ResidentRecord} from "../../types/RecordTypes";
 
 interface IProps {
@@ -42,8 +42,8 @@ const ResidentGrid = (props: IProps): JSX.Element => {
         // Determine if this row is selected [for radio ToggleButtons]
         const isSelected = onSelected && activeResident && resident.Id === activeResident.Id;
         const mdy = getMDY();
-        const created = resident.Created || mdy.now;
-        const updated = resident.Updated || mdy.now;
+        const created = getFormattedDate(resident.Created || mdy.now);
+        const updated = getFormattedDate(resident.Updated || mdy.now);
         const fontWeight = isSelected ? 'bold' : undefined;
 
         return (
