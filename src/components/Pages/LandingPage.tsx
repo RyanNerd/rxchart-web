@@ -49,7 +49,7 @@ const LandingPage = () => {
             <Tab
                 disabled={apiKey === null || !activeResident}
                 eventKey="medicine"
-                title={<span className={activeTabKey === 'medicine' ? 'bld' : ''}>Medicine</span>}>
+                title={<span className={activeTabKey === 'medicine' ? 'bld' : ''}>Rx</span>}>
                 <MedicinePage
                     activeTabKey={activeTabKey}
                 />
