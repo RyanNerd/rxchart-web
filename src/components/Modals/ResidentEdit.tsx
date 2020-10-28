@@ -9,7 +9,6 @@ import {ResidentRecord} from "../../types/RecordTypes";
 
 interface IProps {
     onClose: (r: ResidentRecord | null) => void
-    onHide?: () => void
     residentInfo: ResidentRecord
     show: boolean
 }
@@ -23,7 +22,6 @@ interface IProps {
 const ResidentEdit = (props: IProps): JSX.Element | null => {
     const [ show, setShow ] = useState(props.show);
     const [ residentInfo, setResidentInfo ] = useState<ResidentRecord>(props.residentInfo);
-    const onHide = props.onHide || null;
     const focusRef = useRef<HTMLInputElement>(null);
 
     /**
@@ -72,11 +70,11 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
 
     return (
         <Modal
-          centered
-          size="lg"
-          show={show}
-          onEntered={() => focusRef?.current?.focus()}
-          onHide={() => {if (onHide) {onHide()}}}
+            backdrop="static"
+            centered
+            onEntered={() => focusRef?.current?.focus()}
+            show={show}
+            size="lg"
         >
             <Modal.Header closeButton>
                 <Modal.Title>{residentTitle}</Modal.Title>
@@ -90,7 +88,7 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                         </Form.Label>
                         <Col sm="7">
                             <Form.Control
-                                className= {residentInfo.FirstName !== '' ? '' : 'is-invalid'}
+                                className={residentInfo.FirstName !== '' ? '' : 'is-invalid'}
                                 type="text"
                                 value={residentInfo.FirstName}
                                 name="FirstName"
@@ -108,7 +106,7 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                         </Form.Label>
                         <Col sm="7">
                             <Form.Control
-                                className= {residentInfo.LastName !== '' ? '' : 'is-invalid'}
+                                className={residentInfo.LastName !== '' ? '' : 'is-invalid'}
                                 type="text"
                                 value={residentInfo.LastName}
                                 name="LastName"
@@ -126,7 +124,7 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                         </Form.Label>
                         <Col sm="2">
                             <Form.Control
-                                className= {isMonthValid(residentInfo.DOB_MONTH.toString())}
+                                className={isMonthValid(residentInfo.DOB_MONTH.toString())}
                                 type="text"
                                 value={residentInfo.DOB_MONTH}
                                 name="DOB_MONTH"
@@ -185,7 +183,7 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                         isMonthValid(residentInfo.DOB_MONTH.toString()) +
                         isDayValid(residentInfo.DOB_DAY.toString(), residentInfo.DOB_MONTH.toString()) +
                         isYearValid(residentInfo.DOB_YEAR.toString()
-                        ,true) !== ''
+                            , true) !== ''
                     }
                     onClick={(e) => handleHide(e, true)}
                     variant="primary"

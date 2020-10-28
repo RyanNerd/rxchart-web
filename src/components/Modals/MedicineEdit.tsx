@@ -102,14 +102,15 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
 
     return (
         <Modal
-            size="lg"
-            show={show}
+            backdrop="static"
             centered
             onEntered={() => {
                 if (textInput && textInput.current) {
                     textInput.current.focus()
                 }
             }}
+            show={show}
+            size="lg"
         >
             <Modal.Header closeButton>
                 {modalTitle}

@@ -22,6 +22,7 @@ interface IProps {
  * MedicineListGroup
  * @param {IProps} props
  * @return {JSX.Element}
+ * @constructor
  */
 const MedicineListGroup = (props: IProps): JSX.Element => {
     const {

@@ -77,7 +77,7 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
 
      return (
         <Modal
-            show={show}
+            backdrop="static"
             centered
             onHide={() => onHide()}
             onEntered={() => {
@@ -85,6 +85,7 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
                     textInput.current.focus();
                 }
             }}
+            show={show}
         >
             <Modal.Header closeButton>
                 <Modal.Title>Drug Log</Modal.Title>

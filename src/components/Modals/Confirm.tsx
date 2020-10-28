@@ -22,6 +22,7 @@ const Confirm = {
      * Confirm.Modal component
      * @param {IProps} props
      * @return Modal
+     * @constructor
      */
     Modal: (props: IProps): JSX.Element => {
         const {

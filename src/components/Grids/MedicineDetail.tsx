@@ -13,6 +13,7 @@ interface IProps {
  * MedicineDetail table row
  * @param {IProps} props
  * @return {JSX.Element}
+ * @constructor
  */
 const MedicineDetail = (props: IProps): JSX.Element => {
     const {
