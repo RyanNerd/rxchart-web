@@ -181,30 +181,30 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
 
             <Row className="mt-3">
                 <ResidentGrid
+                    activeResident={activeResident}
+                    onDelete={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) =>
+                        handleOnDelete(e, resident)
+                    }
                     onEdit={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) =>
                         handleEditResident(e, resident)
                     }
                     onSelected={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) =>
                         handleOnSelected(e, resident)
                     }
-                    onDelete={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) =>
-                        handleOnDelete(e, resident)
-                    }
-                    activeResident={activeResident}
                     residentList={filteredResidents}
                 />
             </Row>
 
             {residentInfo &&
                 <ResidentEdit
-                    show={showResidentEdit}
-                    residentInfo={residentInfo}
                     onClose={(r) => {
                         setShowResidentEdit(false);
                         if (r) {
                             handleModalClose(r);
                         }
                     }}
+                    residentInfo={residentInfo}
+                    show={showResidentEdit}
                 />
             }
 
