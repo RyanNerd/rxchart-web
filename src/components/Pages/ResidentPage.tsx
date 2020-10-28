@@ -3,9 +3,10 @@ import React, {useGlobal, useState} from 'reactn';
 import ResidentEdit from '../Modals/ResidentEdit';
 import ResidentGrid from '../Grids/ResidentGrid';
 import TooltipButton from "../Buttons/TooltipButton";
-import {Alert, Form} from "react-bootstrap";
+import {Alert, Form, Row} from "react-bootstrap";
 import {FullName} from '../../utility/common';
 import {ResidentRecord} from "../../types/RecordTypes";
+import {useEffect, useRef} from "react";
 
 interface IProps {
     activeTabKey: string | null
@@ -26,13 +27,48 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     const [mm] = useGlobal('medicineManager');
     const [residentInfo, setResidentInfo] = useState<ResidentRecord | null>(null);
     const [residentList, setResidentList] = useGlobal('residentList');
+    const [filteredResidents, setFilteredResidents] = useState<ResidentRecord[]>(residentList);
     const [residentToDelete, setResidentToDelete] = useState<ResidentRecord | null>(null);
     const [rm] = useGlobal('residentManager');
+    const [searchIsValid, setSearchIsValid] = useState(false);
+    const [searchText, setSearchText] = useState('');
     const [showDeleteResident, setShowDeleteResident] = useState(false);
     const [showResidentEdit, setShowResidentEdit] = useState(false);
-    const onSelected = props.residentSelected;
     const activeTabKey = props.activeTabKey;
+    const focusRef = useRef<HTMLInputElement>(null);
+    const onSelected = props.residentSelected;
 
+    // Set focus to the search textbox when this tab is active
+    useEffect(() => {
+        if (activeTabKey === 'resident') {
+            focusRef?.current?.focus();
+        }
+    }, [activeTabKey, focusRef])
+
+    // Filter the resident list by the search textbox value
+    useEffect(() => {
+        if (searchText.length > 0) {
+            const filter = residentList.filter((residentRecord) => {
+                const lastName = residentRecord.LastName.toLowerCase();
+                const firstName = residentRecord.FirstName.toLowerCase();
+                const search = searchText.toLowerCase();
+                return lastName.includes(search) || firstName.includes(search);
+            })
+
+            if (filter && filter.length > 0) {
+                setSearchIsValid(true);
+                setFilteredResidents(filter);
+            } else {
+                setSearchIsValid(false);
+                setFilteredResidents([]);
+            }
+        } else {
+            setSearchIsValid(false);
+            setFilteredResidents(residentList);
+        }
+    }, [residentList, searchText])
+
+    // Don't render if this tab isn't active.
     if (activeTabKey !== 'resident') {
         return null;
     }
@@ -79,6 +115,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                         setMedicineList([]);
                         setDrugLogList([]);
                         setActiveResident(resident);
+                        setSearchText('');
                         onSelected();
                     }
                 })
@@ -121,27 +158,44 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     return (
         <>
             <Form className="tab-content">
-                <TooltipButton
-                    placement="top"
-                    tooltip="Add New Resident"
-                    onClick={(e: React.MouseEvent<HTMLElement>) => handleAddResident(e)}
-                >
-                    + Resident
-                </TooltipButton>
+                <Row>
+                    <TooltipButton
+                        className="mr-2"
+                        placement="top"
+                        tooltip="Add New Resident"
+                        onClick={(e: React.MouseEvent<HTMLElement>) => handleAddResident(e)}
+                    >
+                        + Resident
+                    </TooltipButton>
+
+                    <Form.Control
+                        id="medicine-page-search-text"
+                        style={{width: "220px"}}
+                        isValid={searchIsValid}
+                        type="search"
+                        value={searchText}
+                        onChange={(e) => setSearchText(e.target.value)}
+                        placeholder="Search resident"
+                        ref={focusRef}
+                    />
+                </Row>
+
+                <Row className="mt-3">
+                    <ResidentGrid
+                        onEdit={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) =>
+                            handleEditResident(e, resident)
+                        }
+                        onSelected={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) =>
+                            handleOnSelected(e, resident)
+                        }
+                        onDelete={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) =>
+                            handleOnDelete(e, resident)
+                        }
+                        activeResident={activeResident}
+                        residentList={filteredResidents}
+                    />
+                </Row>
             </Form>
-
-            <p><span> </span></p>
-
-            <ResidentGrid
-                onEdit={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => handleEditResident(e, resident)}
-                onSelected={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) =>
-                    handleOnSelected(e, resident)
-                }
-                onDelete={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => handleOnDelete(e, resident)}
-                activeResident={activeResident}
-                residentList={residentList}
-            />
-
             {/* ResidentEdit Modal */}
             {residentInfo &&
             <ResidentEdit
@@ -163,16 +217,16 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                     setShowDeleteResident(false);
                     if (a && residentToDelete) {
                         rm.deleteResident(residentToDelete?.Id as number)
-                            .then((deleted) => {
-                                if (deleted) {
-                                    if (activeResident?.Id === residentToDelete.Id) {
-                                        setActiveResident(null);
-                                        setMedicineList([]);
-                                        setDrugLogList([]);
-                                    } else {
-                                        rm.loadResidentList()
-                                        .then((residents) => setResidentList(residents))
-                                        .catch((err) => setErrorDetails(err))
+                        .then((deleted) => {
+                            if (deleted) {
+                                if (activeResident?.Id === residentToDelete.Id) {
+                                    setActiveResident(null);
+                                    setMedicineList([]);
+                                    setDrugLogList([]);
+                                } else {
+                                    rm.loadResidentList()
+                                    .then((residents) => setResidentList(residents))
+                                    .catch((err) => setErrorDetails(err))
                                 }
                             } else {
                                 setErrorDetails(new Error('Unable to delete resident.Id ' + residentToDelete.Id));
@@ -195,7 +249,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
             </Confirm.Modal>
             }
         </>
-    );
+    )
 }
 
 export default ResidentPage;
