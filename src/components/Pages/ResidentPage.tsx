@@ -140,8 +140,9 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                     .then((drugs) => setDrugLogList(drugs))
                     .catch((err) => setErrorDetails(err))
             })
-            .then(() => onSelected())
-            .catch((err) => setErrorDetails(err))
+        .then(() => setSearchText(''))
+        .then(() => onSelected())
+        .catch((err) => setErrorDetails(err))
     }
 
     /**
