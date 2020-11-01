@@ -17,7 +17,7 @@ import {useEffect} from "react";
  */
 const LandingPage = () => {
     const [activeResident] = useGlobal('activeResident');
-    const [activeTabKey, setActiveTabKey] = useState<string | null>('login');
+    const [activeTabKey, setActiveTabKey] = useState('login');
     const [apiKey, setApiKey] = useGlobal('apiKey');
     const [errorDetails, setErrorDetails] = useGlobal('errorDetails');
 
@@ -33,7 +33,7 @@ const LandingPage = () => {
         <Tabs
             id="landing-page-tabs"
             activeKey={activeTabKey}
-            onSelect={(key) => setActiveTabKey(key)}
+            onSelect={(key) => setActiveTabKey(key || 'login')}
         >
             <Tab
                 eventKey="login"
