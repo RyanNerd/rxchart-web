@@ -271,20 +271,46 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                                     handleLogDrugAmount(1);
                                 }}
                             >
-                                Log 1 {activeDrug.Drug}
+                                Log 1 {activeDrug.Drug.substr(0,25)}
                             </Button>
 
                             <Button
                                 style={lastTaken === 0 ? {cursor: "default"} : {}}
                                 disabled={lastTaken === 0}
-                                className="mr-3"
+                                className="mr-2"
                                 variant={"outline-" + lastTakenVariant}
                                 onClick={(e) => {
                                     e.preventDefault();
                                     handleLogDrugAmount(2);
                                 }}
                             >
-                                Log 2 {activeDrug.Drug}
+                                Log 2
+                            </Button>
+
+                            <Button
+                                style={lastTaken === 0 ? {cursor: "default"} : {}}
+                                disabled={lastTaken === 0}
+                                className="mr-2"
+                                variant={"outline-" + lastTakenVariant}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleLogDrugAmount(3);
+                                }}
+                            >
+                                Log 3
+                            </Button>
+
+                            <Button
+                                style={lastTaken === 0 ? {cursor: "default"} : {}}
+                                disabled={lastTaken === 0}
+                                className="mr-2"
+                                variant={"outline-" + lastTakenVariant}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleLogDrugAmount(4);
+                                }}
+                            >
+                                Log 4
                             </Button>
 
                             <LastTakenButton

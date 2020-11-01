@@ -111,6 +111,8 @@ const OtcPage = (props: IProps): JSX.Element | null => {
     // If there isn't an activeResident or this tab isn't active then don't render
     if (!residentId || activeTabKey !== 'otc') {
         return null;
+    } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     /**
@@ -148,7 +150,8 @@ const OtcPage = (props: IProps): JSX.Element | null => {
                     .catch((err) => {
                         setErrorDetails(err);
                     });
-            });
+            })
+            .catch((err) => setErrorDetails(err));
     }
 
     /**
@@ -265,19 +268,43 @@ const OtcPage = (props: IProps): JSX.Element | null => {
                                     handleLogDrugAmount(1);
                                 }}
                             >
-                                Log 1 {activeDrug.Drug}
+                                Log 1 {activeDrug.Drug.substr(0,25)}
                             </Button>
 
                             <Button
                                 disabled={lastTaken === 0}
-                                className="mr-3"
+                                className="mr-2"
                                 variant={"outline-" + lastTakenVariant}
                                 onClick={(e) => {
                                     e.preventDefault();
                                     handleLogDrugAmount(2);
                                 }}
                             >
-                                Log 2 {activeDrug.Drug}
+                                Log 2
+                            </Button>
+
+                            <Button
+                                disabled={lastTaken === 0}
+                                className="mr-2"
+                                variant={"outline-" + lastTakenVariant}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleLogDrugAmount(3);
+                                }}
+                            >
+                                Log 3
+                            </Button>
+
+                            <Button
+                                disabled={lastTaken === 0}
+                                className="mr-2"
+                                variant={"outline-" + lastTakenVariant}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleLogDrugAmount(4);
+                                }}
+                            >
+                                Log 4
                             </Button>
 
                             <LastTakenButton

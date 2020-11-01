@@ -21,6 +21,8 @@ const DrugHistoryPage = (props: IProps): JSX.Element | null => {
     // If this tab isn't active then don't render
     if (activeTabKey !== 'history') {
         return null;
+    } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     return (

@@ -28,6 +28,8 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
     // If this tab isn't active then don't render
     if (activeTabKey !== 'manage-otc') {
         return null;
+    } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     /**

@@ -46,6 +46,8 @@ const LoginPage = (props: IProps): JSX.Element | null => {
     // Prevent render if this tab isn't active
     if (activeTabKey !== 'login') {
         return null;
+    } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     /**
@@ -112,7 +114,8 @@ const LoginPage = (props: IProps): JSX.Element | null => {
                     console.log('Testing Diagnostics');
                     throw new Error('Standard Error -- just a test');
                 }
-            }).catch((err) => setErrorDetails(err))
+            })
+            .catch((err) => setErrorDetails(err))
     }
 
     const signIn = (

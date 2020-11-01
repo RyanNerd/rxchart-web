@@ -73,6 +73,15 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
 
     const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
 
+    const shortenedDrugName = () => {
+        const lenCutOff = activeDrug.OTC ? 10 : 35;
+        if (activeDrug.Drug.length > lenCutOff) {
+            return activeDrug.Drug.substr(0, lenCutOff) + '...';
+        } else {
+            return activeDrug.Drug.substr(0, lenCutOff);
+        }
+    }
+
     return (
         <ListGroup>
             <ListGroup.Item active>
@@ -104,10 +113,11 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
                         logDrug(1);
                     }}
                 >
-                    Log 1 {activeDrug.Drug.substr(0, activeDrug.OTC ? 30 : 50)}
+                    Log 1 {shortenedDrugName()}
                 </Button>
 
                 <Button
+                    className="mr-2"
                     style={lastTaken === 0 ? {cursor: "default"} : {}}
                     disabled={lastTaken === 0}
                     variant={"outline-" + lastTakenVariant}
@@ -117,6 +127,31 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
                     }}
                 >
                     Log 2
+                </Button>
+
+                <Button
+                    className="mr-2"
+                    style={lastTaken === 0 ? {cursor: "default"} : {}}
+                    disabled={lastTaken === 0}
+                    variant={"outline-" + lastTakenVariant}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        logDrug(3);
+                    }}
+                >
+                    Log 3
+                </Button>
+
+                <Button
+                    style={lastTaken === 0 ? {cursor: "default"} : {}}
+                    disabled={lastTaken === 0}
+                    variant={"outline-" + lastTakenVariant}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        logDrug(4);
+                    }}
+                >
+                    Log 4
                 </Button>
             </ListGroup.Item>
 

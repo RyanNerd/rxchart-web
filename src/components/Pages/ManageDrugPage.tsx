@@ -30,6 +30,8 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
     // If this tab isn't active then don't render
     if (activeTabKey !== 'manage') {
         return null;
+    } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     /**
