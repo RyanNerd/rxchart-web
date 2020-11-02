@@ -36,6 +36,7 @@ const LandingPage = () => {
             onSelect={(key) => setActiveTabKey(key || 'login')}
         >
             <Tab
+                disabled={errorDetails}
                 eventKey="login"
                 title={<span className={activeTabKey === 'login' ? 'bld' : ''}>{apiKey ? 'Logout' : 'Login'}</span>}
             >
