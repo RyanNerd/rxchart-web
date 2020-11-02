@@ -109,13 +109,11 @@ const LoginPage = (props: IProps): JSX.Element | null => {
         e.persist();
         setGlobal(getInitialState())
             .then(() => console.log('logout successful'))
-            .then(() => {
-                if (e.ctrlKey) {
-                    console.log('Testing Diagnostics');
-                    throw new Error('Standard Error -- just a test');
-                }
-            })
             .catch((err) => setErrorDetails(err))
+        if (e.ctrlKey) {
+            console.log('Testing Diagnostics');
+            setErrorDetails(new Error('Testing error handler'));
+        }
     }
 
     const signIn = (
