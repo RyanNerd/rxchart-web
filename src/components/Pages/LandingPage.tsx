@@ -5,11 +5,11 @@ import ManageDrugPage from "./ManageDrugPage";
 import ManageOtcPage from "./ManageOtcPage";
 import MedicinePage from "./MedicinePage";
 import OtcPage from "./OtcPage";
-import React, {useGlobal, useState} from 'reactn';
+import React, {useEffect, useGlobal, useState, setGlobal} from 'reactn';
 import ResidentPage from "./ResidentPage";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import {useEffect} from "react";
+import getInitialState from "../../utility/getInitialState";
 
 /**
  * Landing Page - Tab Page Menu UI
@@ -19,7 +19,7 @@ const LandingPage = () => {
     const [activeResident] = useGlobal('activeResident');
     const [activeTabKey, setActiveTabKey] = useState('login');
     const [apiKey, setApiKey] = useGlobal('apiKey');
-    const [errorDetails, setErrorDetails] = useGlobal('errorDetails');
+    const [errorDetails] = useGlobal('errorDetails');
 
     // Observer for anytime there is an error set on the errorDetails global
     useEffect(() => {
@@ -36,6 +36,7 @@ const LandingPage = () => {
             onSelect={(key) => setActiveTabKey(key || 'login')}
         >
             <Tab
+                disabled={errorDetails}
                 eventKey="login"
                 title={<span className={activeTabKey === 'login' ? 'bld' : ''}>{apiKey ? 'Logout' : 'Login'}</span>}
             >
@@ -107,7 +108,7 @@ const LandingPage = () => {
                     activeTabKey={activeTabKey}
                     error={errorDetails}
                     dismissErrorAlert={() => {
-                        setErrorDetails(undefined);
+                        setGlobal(getInitialState());
                         setActiveTabKey('login');
                     }}
                 />

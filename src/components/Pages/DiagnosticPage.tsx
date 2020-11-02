@@ -66,7 +66,10 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
                 <Alert
                     variant="danger"
                     dismissible
-                    onClose={() => dismissError()}
+                    onClose={() => {
+                        setContent(null);
+                        dismissError();
+                    }}
                 >
                     <Alert.Heading>
                         {heading}
@@ -111,7 +114,10 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
                     <Card.Footer>
                         <Button
                             variant="primary"
-                            onClick={() => dismissError()}
+                            onClick={() => {
+                                setContent(null);
+                                dismissError();
+                            }}
                         >
                             Close error and sign back in
                         </Button>
