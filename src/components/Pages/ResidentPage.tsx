@@ -1,12 +1,11 @@
 import Confirm from "../Modals/Confirm";
-import React, {useGlobal, useState} from 'reactn';
+import React, {useGlobal, useState, useEffect, useRef} from 'reactn';
 import ResidentEdit from '../Modals/ResidentEdit';
 import ResidentGrid from '../Grids/ResidentGrid';
 import TooltipButton from "../Buttons/TooltipButton";
 import {Alert, Form, Row} from "react-bootstrap";
 import {FullName} from '../../utility/common';
 import {ResidentRecord} from "../../types/RecordTypes";
-import {useEffect, useRef} from "react";
 
 interface IProps {
     activeTabKey: string | null

@@ -1,6 +1,6 @@
-import React, {useGlobal} from 'reactn';
+import React, {useGlobal, useEffect, useMemo, useState} from 'reactn';
+import {ReactNode} from "react";
 import {Alert, Button, Card} from "react-bootstrap";
-import {ReactNode, useEffect, useMemo, useState} from "react";
 
 interface IProps {
     activeTabKey: string | null
