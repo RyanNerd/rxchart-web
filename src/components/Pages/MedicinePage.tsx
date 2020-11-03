@@ -249,7 +249,13 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             {activeDrug &&
                                 <h3 className="ml-4">
                                     <b>
-                                        {shortenedDrugName}
+                                        <a
+                                            className="hover-underline-animation"
+                                            href={"https://goodrx.com/" + shortenedDrugName}
+                                            rel="noopener noreferrer"
+                                            target="_blank">
+                                            {shortenedDrugName}
+                                        </a>
                                     </b>
                                 </h3>
                             }
