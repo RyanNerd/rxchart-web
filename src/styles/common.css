@@ -41,3 +41,8 @@
     transform: scaleX(1);
     transform-origin: bottom left;
 }
+
+a.hover-underline-animation:hover, a.hover-underline-animation:visited, a.hover-underline-animation:link, a.hover-underline-animation:active
+{
+    text-decoration: none;
+}
