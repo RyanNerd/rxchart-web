@@ -1,11 +1,26 @@
 import React, {useGlobal, useEffect, useMemo, useState} from 'reactn';
+import {Alert, Button, ButtonProps, Card} from "react-bootstrap";
+import {randomString} from "../../utility/common";
 import {ReactNode} from "react";
-import {Alert, Button, Card} from "react-bootstrap";
+
+interface IKey {
+    [key: string]: string
+}
 
 interface IProps {
     activeTabKey: string | null
     error: any
     dismissErrorAlert: () => void
+}
+
+interface IWillow {
+    authenticated: boolean
+    message: string | null
+    missing?: {invalid?: IKey}
+    status: number
+    timestamp: number
+    success: boolean
+    data?: null | any[]
 }
 
 /**
@@ -20,6 +35,25 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
     const error = props.error;
     const activeTabKey = props.activeTabKey;
     let finalContent: JSX.Element | null;
+
+    /**
+     * Button that closes the error and lets users sign back in
+     * @param {ButtonProps} props
+     * @constructor
+     */
+    const CloseErrorButton = (props: ButtonProps) => {
+        return (
+        <Button
+            variant="primary"
+            onClick={() => {
+                setContent(null);
+                dismissError();
+            }}
+            {...props}
+        >
+            Close error and sign back in
+        </Button>)
+    }
 
     /**
      * Function to create the unsafe HTML object
@@ -108,19 +142,15 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
         const handleHtmlError = (html: string) => {
             const card = (
                 <Card>
+                    <Card.Header>
+                        <span className="mr-1">Error Details</span>
+                        <CloseErrorButton className="float-right"/>
+                    </Card.Header>
                     <Card.Body>
                         <div dangerouslySetInnerHTML={createMarkup(html)}/>
                     </Card.Body>
                     <Card.Footer>
-                        <Button
-                            variant="primary"
-                            onClick={() => {
-                                setContent(null);
-                                dismissError();
-                            }}
-                        >
-                            Close error and sign back in
-                        </Button>
+                        <CloseErrorButton/>
                     </Card.Footer>
                 </Card>
             )
@@ -152,6 +182,78 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
             }
         }
 
+        /**
+         * Handler for when the error is a Willow API error
+         * @param {IWillow} error
+         */
+        const handleWillowError = (error: IWillow) => {
+            const invalid = error.missing && error.missing.invalid ? error.missing.invalid : false;
+            const invalidMessages = [];
+            if (invalid) {
+                for (const key in invalid) {
+                    if (invalid.hasOwnProperty(key)) {
+                        const value = invalid[key];
+                        invalidMessages.push({'key': key, 'value': value});
+                    }
+                }
+            }
+            const card = (
+                <Card>
+                    <Card.Header>
+                        <span className="mr-1">
+                            API Error
+                        </span>
+                        <CloseErrorButton className="float-right"/>
+                    </Card.Header>
+                    <Card.Body>
+                        <p>
+                            <b>{error.message}</b>
+                        </p>
+
+                        <ul key={randomString()}>
+                            {invalidMessages.map((message: {key: string, value: any}) => {
+                                const uniqueId = randomString();
+                                return (
+                                    <React.Fragment key={'dp-invalid-' + uniqueId}>
+                                        <li>
+                                            Field: {message.key}
+                                        </li>
+                                        <li>
+                                            Details: {message.value}
+                                        </li>
+                                    </React.Fragment>
+                                )
+                            })}
+                        </ul>
+
+                        <hr/>
+
+                        <ul>
+                            <li>
+                                authenticated: {error.authenticated ? 'yes' : 'no'}
+                            </li>
+                            <li>
+                                status: {error.status}
+                            </li>
+                            <li>
+                                success: {error.success ? 'true' : 'false'}
+                            </li>
+                            <li>
+                                timestamp: {error.timestamp}
+                            </li>
+                            <li>
+                                data: {error.data ? error.data : 'None'}
+                            </li>
+                        </ul>
+                    </Card.Body>
+                    <Card.Footer>
+                        <CloseErrorButton/>
+                    </Card.Footer>
+                </Card>
+            )
+            setContent(card);
+        }
+
         if (!error) {
             return null;
         }  else {
@@ -170,6 +272,14 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
                 /**
                  * Duck 🦆 typing to figure out what type error is
                  */
+                if (error instanceof Object) {
+                    if (error.hasOwnProperty('message') &&
+                        error.hasOwnProperty('status') &&
+                        error.hasOwnProperty('timestamp') &&
+                        error.hasOwnProperty('success')) {
+                        handleWillowError(error);
+                    }
+                }
                 if (error instanceof Response) {
                     handleResponseError(error);
                 }
