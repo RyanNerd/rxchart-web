@@ -73,8 +73,13 @@ const DrugDropdown = (props: IProps): JSX.Element | null => {
         );
     };
 
+    /**
+     * Work-around so React 17 can be used
+     * @link https://github.com/react-bootstrap/react-bootstrap/issues/5409#issuecomment-718699584
+     */
     return (
         <DropdownButton
+            onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
             size="lg"
             title={title}
             variant="primary"
