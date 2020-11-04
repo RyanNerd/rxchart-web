@@ -6,6 +6,7 @@ import {drawBarcode} from "../../utility/drawBarcode";
 import Button from "react-bootstrap/Button";
 import {MedicineRecord} from "../../types/RecordTypes";
 import {getLastTakenVariant} from "../../utility/common";
+import ShadowBox from "../Buttons/ShadowBox";
 
 interface IProps {
     activeDrug: MedicineRecord
@@ -157,10 +158,12 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
 
             {directions && directions.length > 0 &&
                 <ListGroup.Item>
-                    <b>
-                        Directions:
-                    </b>
-                    <span> {activeDrug.Directions}</span>
+                    <ShadowBox>
+                        <b>
+                            Directions:
+                        </b>
+                        <span> {activeDrug.Directions}</span>
+                    </ShadowBox>
                 </ListGroup.Item>
             }
 
