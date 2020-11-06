@@ -22,7 +22,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     const [, setDrugLogList] = useGlobal('drugLogList');
     const [, setErrorDetails] = useGlobal('errorDetails');
     const [, setMedicineList] = useGlobal('medicineList');
-    const [, setRefreshClients] = useGlobal('refreshClients');
+    const [, setUpdateClient] = useGlobal('updateClient');
     const [activeResident, setActiveResident] = useGlobal('activeResident');
     const [mm] = useGlobal('medicineManager');
     const [residentInfo, setResidentInfo] = useState<ResidentRecord | null>(null);
@@ -108,32 +108,18 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
      * @param {ResidentRecord | null} residentRecord
      */
     const handleModalClose = (residentRecord: ResidentRecord) => {
-        rm.updateResident(residentRecord)
-            .then((resident) => {
-                //
-                setRefreshClients(true);
-                if (!residentRecord.Id) {
-                    setMedicineList([]);
-                    setDrugLogList([]);
-                    setActiveResident(resident);
-                    setSearchText('');
-                    onSelected();
-                }
-
-                // rm.loadResidentList()
-                // .then((residents) => {
-                //     setResidentList(residents);
-                //     if (!residentRecord.Id) {
-                //         setMedicineList([]);
-                //         setDrugLogList([]);
-                //         setActiveResident(resident);
-                //         setSearchText('');
-                //         onSelected();
-                //     }
-                // })
-                // .catch((err) => setErrorDetails(err))
-            })
-            .catch((err) => setErrorDetails(err));
+        setUpdateClient(residentRecord)
+        .then((state) => {
+            console.log('state-setUpdateClient', state);
+            // todo: Can this be made declaritive?
+            if (!residentRecord.Id) {
+                setMedicineList([]);
+                setDrugLogList([]);
+                setActiveResident(residentRecord);
+                setSearchText('');
+                onSelected();
+            }
+        })
     }
 
     /**
