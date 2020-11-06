@@ -48,9 +48,10 @@ const getInitialState = () => {
         medicineManager: MedicineMananger(providers.medicineProvider, providers.medHistoryProvider),
         otcList: [] as MedicineRecord[],
         providers,
+        refreshClients: false,
         residentList: [] as ResidentRecord[],
         residentManager: ResidentManager(providers.residentProvider),
-        refreshClients: false
+        updateClient: null
     } as State;
 }
 

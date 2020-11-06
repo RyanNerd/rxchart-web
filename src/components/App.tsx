@@ -12,6 +12,7 @@ const App = () => {
     const [resident] = useGlobal('activeResident');
     const [rm] = useGlobal('residentManager');
     const [refreshClients, setRefreshClients] = useGlobal('refreshClients');
+    const [updateClient, setUpdateClient] = useGlobal('updateClient');
     const residentColor = development ? 'blue' : "#edf11e";
     const residentForegroundColor = development ? "#fffff0" : "black";
     const [, setResidentList] = useGlobal('residentList');
@@ -29,6 +30,19 @@ const App = () => {
             setRefreshClients(false);
         }
     }, [refreshClients, setRefreshClients, setResidentList, setErrorDetails, rm, development]);
+
+    // Observer for when a client is updated or added
+    useEffect(() => {
+        if (development) {
+            console.log('updateClient', updateClient);
+        }
+        if (updateClient) {
+            rm.updateResident(updateClient).then((client) => {
+                setRefreshClients(true);
+                setUpdateClient(null);
+            })
+        }
+    }, [updateClient, setUpdateClient, rm, setRefreshClients, development])
 
     return (
         <>

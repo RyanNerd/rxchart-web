@@ -24,9 +24,10 @@ declare module 'reactn/default' {
         medicineManager: IMedicineManager
         otcList: MedicineRecord[]
         providers: IProviders
+        refreshClients: boolean
         residentList: ResidentRecord[]
         residentManager: IResidentManager
+        updateClient: ResidentRecord | null
         value: string
-        refreshClients: boolean
     }
 }
