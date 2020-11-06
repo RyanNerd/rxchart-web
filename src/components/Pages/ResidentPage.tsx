@@ -23,13 +23,13 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     const [, setErrorDetails] = useGlobal('errorDetails');
     const [, setMedicineList] = useGlobal('medicineList');
     const [, setUpdateClient] = useGlobal('updateClient');
+    const [, setDeleteClient] = useGlobal('deleteClient');
     const [activeResident, setActiveResident] = useGlobal('activeResident');
     const [mm] = useGlobal('medicineManager');
     const [residentInfo, setResidentInfo] = useState<ResidentRecord | null>(null);
-    const [residentList, setResidentList] = useGlobal('residentList');
+    const [residentList] = useGlobal('residentList');
     const [filteredResidents, setFilteredResidents] = useState<ResidentRecord[]>(residentList);
     const [residentToDelete, setResidentToDelete] = useState<ResidentRecord | null>(null);
-    const [rm] = useGlobal('residentManager');
     const [searchIsValid, setSearchIsValid] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [showDeleteResident, setShowDeleteResident] = useState(false);
@@ -110,12 +110,11 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     const handleModalClose = (residentRecord: ResidentRecord) => {
         setUpdateClient(residentRecord)
         .then((state) => {
-            console.log('state-setUpdateClient', state);
-            // todo: Can this be made declaritive?
+            // todo: Make this declaritive
             if (!residentRecord.Id) {
                 setMedicineList([]);
                 setDrugLogList([]);
-                setActiveResident(residentRecord);
+                setActiveResident({...residentRecord});
                 setSearchText('');
                 onSelected();
             }
@@ -213,23 +212,15 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                     onSelect={(a) => {
                         setShowDeleteResident(false);
                         if (a && residentToDelete) {
-                            rm.deleteResident(residentToDelete?.Id as number)
-                            .then((deleted) => {
-                                if (deleted) {
-                                    if (activeResident?.Id === residentToDelete.Id) {
-                                        setActiveResident(null);
-                                        setMedicineList([]);
-                                        setDrugLogList([]);
-                                    } else {
-                                        rm.loadResidentList()
-                                        .then((residents) => setResidentList(residents))
-                                        .catch((err) => setErrorDetails(err))
-                                    }
-                                } else {
-                                    setErrorDetails(new Error('Unable to delete resident.Id ' + residentToDelete.Id));
+                            setDeleteClient(residentToDelete?.Id as number)
+                            .then((state) => {
+                                if (activeResident?.Id === residentToDelete.Id) {
+                                    // todo: Make this declaritive?
+                                    setActiveResident(null);
+                                    setMedicineList([]);
+                                    setDrugLogList([]);
                                 }
                             })
-                            .catch((err) => setErrorDetails(err));
                         }
                     }}
                 >
