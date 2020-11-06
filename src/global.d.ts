@@ -17,6 +17,7 @@ declare module 'reactn/default' {
         apiKey: string | null
         authManager: IAuthManager
         count: number
+        deleteClient: number | null
         development: boolean
         drugLogList: DrugLogRecord[]
         errorDetails: any

@@ -11,6 +11,7 @@ const App = () => {
     const [development] = useGlobal('development');
     const [resident] = useGlobal('activeResident');
     const [rm] = useGlobal('residentManager');
+    const [deleteClient, setDeleteClient] = useGlobal('deleteClient');
     const [refreshClients, setRefreshClients] = useGlobal('refreshClients');
     const [updateClient, setUpdateClient] = useGlobal('updateClient');
     const residentColor = development ? 'blue' : "#edf11e";
@@ -42,7 +43,26 @@ const App = () => {
                 setUpdateClient(null);
             })
         }
-    }, [updateClient, setUpdateClient, rm, setRefreshClients, development])
+    }, [updateClient, setUpdateClient, rm, setRefreshClients, development]);
+
+    // Observer for when a client is to be deleted
+    useEffect(() => {
+        if (development) {
+            console.log('deleteClient', deleteClient);
+        }
+        if (deleteClient) {
+            rm.deleteResident(deleteClient)
+            .then((deleted) => {
+                if (deleted) {
+                    setRefreshClients(true);
+                } else {
+                    setErrorDetails(new Error('Unable to delete client. Id: ' + deleteClient));
+                }
+            })
+            .then(() => setDeleteClient(null))
+            .catch((err) => setErrorDetails(err));
+        }
+    }, [deleteClient, setDeleteClient, rm, setErrorDetails, setRefreshClients, development]);
 
     return (
         <>

@@ -41,6 +41,7 @@ const getInitialState = () => {
         activeResident: null,
         apiKey: null,
         authManager: AuthManager(providers.authenticationProvider),
+        deleteClient: null,
         development: process.env.REACT_APP_DEVELOPMENT === 'true',
         drugLogList: [] as DrugLogRecord[],
         errorDetails: undefined,
