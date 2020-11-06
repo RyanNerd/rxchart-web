@@ -27,5 +27,6 @@ declare module 'reactn/default' {
         residentList: ResidentRecord[]
         residentManager: IResidentManager
         value: string
+        refreshClients: boolean
     }
 }

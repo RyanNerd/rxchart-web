@@ -49,7 +49,8 @@ const getInitialState = () => {
         otcList: [] as MedicineRecord[],
         providers,
         residentList: [] as ResidentRecord[],
-        residentManager: ResidentManager(providers.residentProvider)
+        residentManager: ResidentManager(providers.residentProvider),
+        refreshClients: false
     } as State;
 }
 

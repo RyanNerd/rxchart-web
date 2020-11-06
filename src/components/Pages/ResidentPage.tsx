@@ -22,6 +22,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     const [, setDrugLogList] = useGlobal('drugLogList');
     const [, setErrorDetails] = useGlobal('errorDetails');
     const [, setMedicineList] = useGlobal('medicineList');
+    const [, setRefreshClients] = useGlobal('refreshClients');
     const [activeResident, setActiveResident] = useGlobal('activeResident');
     const [mm] = useGlobal('medicineManager');
     const [residentInfo, setResidentInfo] = useState<ResidentRecord | null>(null);
@@ -109,18 +110,28 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     const handleModalClose = (residentRecord: ResidentRecord) => {
         rm.updateResident(residentRecord)
             .then((resident) => {
-                rm.loadResidentList()
-                .then((residents) => {
-                    setResidentList(residents);
-                    if (!residentRecord.Id) {
-                        setMedicineList([]);
-                        setDrugLogList([]);
-                        setActiveResident(resident);
-                        setSearchText('');
-                        onSelected();
-                    }
-                })
-                .catch((err) => setErrorDetails(err))
+                //
+                setRefreshClients(true);
+                if (!residentRecord.Id) {
+                    setMedicineList([]);
+                    setDrugLogList([]);
+                    setActiveResident(resident);
+                    setSearchText('');
+                    onSelected();
+                }
+
+                // rm.loadResidentList()
+                // .then((residents) => {
+                //     setResidentList(residents);
+                //     if (!residentRecord.Id) {
+                //         setMedicineList([]);
+                //         setDrugLogList([]);
+                //         setActiveResident(resident);
+                //         setSearchText('');
+                //         onSelected();
+                //     }
+                // })
+                // .catch((err) => setErrorDetails(err))
             })
             .catch((err) => setErrorDetails(err));
     }

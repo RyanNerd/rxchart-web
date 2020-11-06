@@ -20,14 +20,13 @@ interface IProps {
  */
 const LoginPage = (props: IProps): JSX.Element | null => {
     const [, setOtcList] = useGlobal('otcList');
-    const [, setResidentList] = useGlobal('residentList');
     const [apiKey, setApiKey] = useGlobal('apiKey');
     const [, setErrorDetails] = useGlobal('errorDetails');
+    const [, setRefreshClients] = useGlobal('refreshClients')
     const [am] = useGlobal('authManager');
     const [mm] = useGlobal('medicineManager');
     const [password, setPassword] = useState('');
     const [providers] = useGlobal('providers');
-    const [residentManager] = useGlobal('residentManager');
     const [showAlert, setShowAlert] = useState(false);
     const [username, setUsername] = useState('');
     const focusRef = useRef<HTMLInputElement>(null);
@@ -69,9 +68,7 @@ const LoginPage = (props: IProps): JSX.Element | null => {
                         providers.setApi(apiKey);
 
                         // Load ALL Resident records up front and save them in the global store.
-                        residentManager.loadResidentList()
-                            .then((residents) => setResidentList(residents))
-                            .catch((err) => setErrorDetails(err));
+                        setRefreshClients(true);
 
                         // Load ALL OTC medications
                         mm.loadOtcList()
