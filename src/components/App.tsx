@@ -1,5 +1,5 @@
 import LandingPage from "./Pages/LandingPage";
-import React, {useGlobal, useEffect} from 'reactn';
+import React, {useGlobal, useEffect, useRef} from 'reactn';
 import {FullName} from "../utility/common";
 
 /**
@@ -8,16 +8,50 @@ import {FullName} from "../utility/common";
  * @constructor
  */
 const App = () => {
-    const [development] = useGlobal('development');
-    const [resident] = useGlobal('activeResident');
-    const [rm] = useGlobal('residentManager');
+    const [, setErrorDetails] = useGlobal('errorDetails');
+    const [, setResidentList] = useGlobal('residentList');
+    const [, setMedicineList] = useGlobal('medicineList');
+    const [, setDrugLogList] = useGlobal('drugLogList');
     const [deleteClient, setDeleteClient] = useGlobal('deleteClient');
+    const [development] = useGlobal('development');
     const [refreshClients, setRefreshClients] = useGlobal('refreshClients');
+    const [resident] = useGlobal('activeResident');
+    const [mm] = useGlobal('medicineManager');
+    const [rm] = useGlobal('residentManager');
     const [updateClient, setUpdateClient] = useGlobal('updateClient');
+    const [activeResident] = useGlobal('activeResident');
     const residentColor = development ? 'blue' : "#edf11e";
     const residentForegroundColor = development ? "#fffff0" : "black";
-    const [, setResidentList] = useGlobal('residentList');
-    const [, setErrorDetails] = useGlobal('errorDetails');
+
+    // Observer for activeResident changes
+    let prevActiveResident = useRef(activeResident).current;
+    useEffect(() => {
+        if (prevActiveResident !== activeResident) {
+            if (development) {
+                console.log('activeResident', activeResident);
+                console.log('prevActiveResident', prevActiveResident);
+            }
+            // Is activeResident actually a resident record? Rehydrate the medicine and log, set them to [] otherwise
+            if (activeResident && activeResident.Id) {
+                const residentId = activeResident.Id;
+                mm.loadMedicineList(residentId)
+                .then((meds) => {
+                    setMedicineList(meds);
+                    mm.loadDrugLog(residentId)
+                    .then((drugs) => setDrugLogList(drugs))
+                    .catch((err) => setErrorDetails(err))
+                })
+                .catch((err) => setErrorDetails(err));
+            } else {
+                setMedicineList([]);
+                setDrugLogList([]);
+            }
+        }
+        return () => {
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            prevActiveResident = activeResident;
+        }
+    }, [activeResident]);
 
     // Observer for when the client list should be refreshed
     useEffect(() => {

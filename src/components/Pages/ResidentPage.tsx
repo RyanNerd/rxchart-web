@@ -19,16 +19,15 @@ interface IProps {
  * @constructor
  */
 const ResidentPage = (props: IProps): JSX.Element | null => {
+    const [, setDeleteClient] = useGlobal('deleteClient');
     const [, setDrugLogList] = useGlobal('drugLogList');
     const [, setErrorDetails] = useGlobal('errorDetails');
     const [, setMedicineList] = useGlobal('medicineList');
     const [, setUpdateClient] = useGlobal('updateClient');
-    const [, setDeleteClient] = useGlobal('deleteClient');
     const [activeResident, setActiveResident] = useGlobal('activeResident');
-    const [mm] = useGlobal('medicineManager');
-    const [residentInfo, setResidentInfo] = useState<ResidentRecord | null>(null);
     const [residentList] = useGlobal('residentList');
     const [filteredResidents, setFilteredResidents] = useState<ResidentRecord[]>(residentList);
+    const [residentInfo, setResidentInfo] = useState<ResidentRecord | null>(null);
     const [residentToDelete, setResidentToDelete] = useState<ResidentRecord | null>(null);
     const [searchIsValid, setSearchIsValid] = useState(false);
     const [searchText, setSearchText] = useState('');
@@ -128,15 +127,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
      */
     const handleOnSelected = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
         e.preventDefault();
-        const residentId = resident.Id as number;
-        mm.loadMedicineList(residentId)
-            .then((meds) => {
-                setMedicineList(meds);
-                setActiveResident(resident);
-                mm.loadDrugLog(residentId)
-                    .then((drugs) => setDrugLogList(drugs))
-                    .catch((err) => setErrorDetails(err))
-            })
+        setActiveResident(resident)
         .then(() => setSearchText(''))
         .then(() => onSelected())
         .catch((err) => setErrorDetails(err))
