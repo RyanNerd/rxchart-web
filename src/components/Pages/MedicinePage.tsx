@@ -34,13 +34,14 @@ interface IProps {
  */
 const MedicinePage = (props: IProps): JSX.Element | null => {
     const [, setErrorDetails] = useGlobal('errorDetails');
+    const [, setUpdateMedicine] = useGlobal('updateMedicine');
     const [activeDrug, setActiveDrug] = useState<MedicineRecord | null>(null);
     const [activeResident] = useGlobal('activeResident');
     const [drugLogInfo, setDrugLogInfo] = useState<DrugLogRecord | null>(null);
     const [drugLogList, setDrugLogList] = useGlobal('drugLogList');
     const [lastTaken, setLastTaken] = useState<number | null>(null);
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
-    const [medicineList, setMedicineList] = useGlobal('medicineList');
+    const [medicineList] = useGlobal('medicineList');
     const [mm] = useGlobal('medicineManager');
     const [residentId, setResidentId] = useState<number | null>(activeResident?.Id || null);
     const [searchIsValid, setSearchIsValid] = useState(false)
@@ -51,15 +52,16 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const activeTabKey = props.activeTabKey;
     const focusRef = useRef<HTMLInputElement>(null);
 
-    // Set the activeDrug when the medicineList changes or the activeResident.
+    // Set the activeDrug when the medicineList changes
     useEffect(() => {
         if (medicineList.length > 0) {
-            setActiveDrug(medicineList[0]);
+            if (!activeDrug) {
+                setActiveDrug(medicineList[0]);
+            }
         } else {
-            setActiveDrug(null);
+            // setActiveDrug(null);
         }
-        setResidentId(activeResident ? activeResident.Id : null);
-    }, [medicineList, activeResident]);
+    }, [medicineList, activeDrug]);
 
     // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
     useEffect(() => {
@@ -88,6 +90,9 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     // Reset the search text input when the activeResident changes
     useEffect(() => {
         setSearchText('');
+        // todo: get rid of the monitoring of residentId
+        const clientId = activeResident?.Id ? activeResident.Id : null;
+        setResidentId(clientId);
     }, [activeResident]);
 
     // Show or hide the valid search icon
@@ -136,19 +141,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      * Fires when MedicineEdit closes and there's an update (add/edit) for a Medicine record
      * @param {MedicineRecord} drugInfo
      */
-    const updateMedicine = (drugInfo: MedicineRecord) => {
-        const residentId = activeResident?.Id as number;
-        mm.updateMedicine(drugInfo)
-            .then((drugRecord) => {
-                mm.loadMedicineList(residentId)
-                    .then((meds) => {
-                        setMedicineList(meds);
-                        setActiveDrug(drugRecord);
-                    })
-                    .catch((err) => setErrorDetails(err));
-            })
-            .catch((err) => setErrorDetails(err));
-    }
+    const updateMedicine = (drugInfo: MedicineRecord) => setUpdateMedicine(drugInfo);
 
     /**
      * Fires when the user has confirmed the deletion of a drug log record.

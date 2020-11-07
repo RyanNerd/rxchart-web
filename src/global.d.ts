@@ -30,6 +30,7 @@ declare module 'reactn/default' {
         residentList: ResidentRecord[]
         residentManager: IResidentManager
         updateClient: ResidentRecord | null
+        updateMedicine: MedicineRecord | null
         value: string
     }
 }

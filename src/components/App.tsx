@@ -20,6 +20,7 @@ const App = () => {
     const [mm] = useGlobal('medicineManager');
     const [rm] = useGlobal('residentManager');
     const [updateClient, setUpdateClient] = useGlobal('updateClient');
+    const [updateMedicine, setUpdateMedicine] = useGlobal('updateMedicine');
     const [activeResident] = useGlobal('activeResident');
     const residentColor = development ? 'blue' : "#edf11e";
     const residentForegroundColor = development ? "#fffff0" : "black";
@@ -50,9 +51,11 @@ const App = () => {
         if (refeshMedicine) {
             mm.loadMedicineList(refeshMedicine)
             .then((meds) => {
-                setMedicineList(meds);
-                mm.loadDrugLog(refeshMedicine)
-                .then((drugs) => setDrugLogList(drugs))
+                setMedicineList(meds).then((state) => {
+                    mm.loadDrugLog(refeshMedicine)
+                    .then((drugs) => setDrugLogList(drugs))
+                    .catch((err) => setErrorDetails(err))
+                })
                 .catch((err) => setErrorDetails(err))
             })
             .catch((err) => setErrorDetails(err));
@@ -107,6 +110,22 @@ const App = () => {
             .catch((err) => setErrorDetails(err));
         }
     }, [deleteClient, setDeleteClient, rm, setErrorDetails, setRefreshClients, development]);
+
+    // Observer for when a Medicine record is added or updated
+    useEffect(() => {
+        if (development) {
+            console.log('updateMedicine', updateMedicine);
+        }
+        if (updateMedicine) {
+            mm.updateMedicine(updateMedicine)
+            .then((drugRecord) => {
+                const clientId = drugRecord && drugRecord.ResidentId ? drugRecord.ResidentId : null;
+                setRefreshMedicine(clientId);
+            })
+            .then(() => setUpdateMedicine(null))
+            .catch((err) => setErrorDetails(err));
+        }
+    }, [updateMedicine, setUpdateMedicine, mm, setErrorDetails, setRefreshMedicine, development])
 
     return (
         <>
