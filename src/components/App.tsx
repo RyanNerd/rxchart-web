@@ -15,6 +15,7 @@ const App = () => {
     const [deleteClient, setDeleteClient] = useGlobal('deleteClient');
     const [development] = useGlobal('development');
     const [refreshClients, setRefreshClients] = useGlobal('refreshClients');
+    const [refeshMedicine, setRefreshMedicine] = useGlobal('refreshMedicine');
     const [resident] = useGlobal('activeResident');
     const [mm] = useGlobal('medicineManager');
     const [rm] = useGlobal('residentManager');
@@ -31,27 +32,36 @@ const App = () => {
                 console.log('activeResident', activeResident);
                 console.log('prevActiveResident', prevActiveResident);
             }
-            // Is activeResident actually a resident record? Rehydrate the medicine and log, set them to [] otherwise
-            if (activeResident && activeResident.Id) {
-                const residentId = activeResident.Id;
-                mm.loadMedicineList(residentId)
-                .then((meds) => {
-                    setMedicineList(meds);
-                    mm.loadDrugLog(residentId)
-                    .then((drugs) => setDrugLogList(drugs))
-                    .catch((err) => setErrorDetails(err))
-                })
-                .catch((err) => setErrorDetails(err));
-            } else {
-                setMedicineList([]);
-                setDrugLogList([]);
-            }
+            // Trigger the refresh of medicineList and drugLogList
+            const clientId = activeResident && activeResident.Id ? activeResident.Id : null;
+            setRefreshMedicine(clientId);
         }
         return () => {
             // eslint-disable-next-line react-hooks/exhaustive-deps
             prevActiveResident = activeResident;
         }
     }, [activeResident]);
+
+    // Observer for when the medicineList and drugLogList should be refreshed.
+    useEffect(() => {
+        if (development) {
+            console.log('refreshMedicine', refeshMedicine);
+        }
+        if (refeshMedicine) {
+            mm.loadMedicineList(refeshMedicine)
+            .then((meds) => {
+                setMedicineList(meds);
+                mm.loadDrugLog(refeshMedicine)
+                .then((drugs) => setDrugLogList(drugs))
+                .catch((err) => setErrorDetails(err))
+            })
+            .catch((err) => setErrorDetails(err));
+        } else {
+            setMedicineList([]);
+            setDrugLogList([]);
+        }
+        setRefreshMedicine(null);
+    }, [refeshMedicine, setRefreshMedicine, setMedicineList, setDrugLogList, mm, setErrorDetails, development]);
 
     // Observer for when the client list should be refreshed
     useEffect(() => {
@@ -77,7 +87,7 @@ const App = () => {
                 setUpdateClient(null);
             })
         }
-    }, [updateClient, setUpdateClient, rm, setRefreshClients, development]);
+    }, [updateClient, setUpdateClient, rm, setRefreshClients, setRefreshMedicine, development]);
 
     // Observer for when a client is to be deleted
     useEffect(() => {

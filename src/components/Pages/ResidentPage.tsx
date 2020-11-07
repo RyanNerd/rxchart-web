@@ -20,9 +20,7 @@ interface IProps {
  */
 const ResidentPage = (props: IProps): JSX.Element | null => {
     const [, setDeleteClient] = useGlobal('deleteClient');
-    const [, setDrugLogList] = useGlobal('drugLogList');
     const [, setErrorDetails] = useGlobal('errorDetails');
-    const [, setMedicineList] = useGlobal('medicineList');
     const [, setUpdateClient] = useGlobal('updateClient');
     const [activeResident, setActiveResident] = useGlobal('activeResident');
     const [residentList] = useGlobal('residentList');
@@ -107,15 +105,10 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
      * @param {ResidentRecord | null} residentRecord
      */
     const handleModalClose = (residentRecord: ResidentRecord) => {
-        setUpdateClient(residentRecord)
-        .then((state) => {
-            // todo: Make this declaritive
+        setUpdateClient({...residentRecord}).then(() => {
+            // Is the client new? If so force the user to select the newly added client.
             if (!residentRecord.Id) {
-                setMedicineList([]);
-                setDrugLogList([]);
-                setActiveResident({...residentRecord});
-                setSearchText('');
-                onSelected();
+                setActiveResident(null);
             }
         })
     }
@@ -206,11 +199,9 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                             setDeleteClient(residentToDelete?.Id as number)
                             .then((state) => {
                                 if (activeResident?.Id === residentToDelete.Id) {
-                                    // todo: Make this declaritive?
                                     setActiveResident(null);
-                                    setMedicineList([]);
-                                    setDrugLogList([]);
                                 }
+                                setSearchText('');
                             })
                         }
                     }}
