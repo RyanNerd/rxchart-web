@@ -4,28 +4,31 @@ import {FullName} from "../utility/common";
 
 /**
  * Main Entry Component
+ * Also the single source of truth for database updates and global state management
  * @returns {JSX.Element}
  * @constructor
  */
 const App = () => {
-    const [, setErrorDetails] = useGlobal('errorDetails');
-    const [, setResidentList] = useGlobal('residentList');
-    const [, setMedicineList] = useGlobal('medicineList');
     const [, setDrugLogList] = useGlobal('drugLogList');
+    const [, setErrorDetails] = useGlobal('errorDetails');
+    const [, setMedicineList] = useGlobal('medicineList');
+    const [, setResidentList] = useGlobal('residentList');
+    const [activeResident] = useGlobal('activeResident');
     const [deleteClient, setDeleteClient] = useGlobal('deleteClient');
     const [development] = useGlobal('development');
-    const [refreshClients, setRefreshClients] = useGlobal('refreshClients');
-    const [refeshMedicine, setRefreshMedicine] = useGlobal('refreshMedicine');
-    const [resident] = useGlobal('activeResident');
     const [mm] = useGlobal('medicineManager');
+    const [refeshMedicine, setRefreshMedicine] = useGlobal('refreshMedicine');
+    const [refreshClients, setRefreshClients] = useGlobal('refreshClients');
+    const [resident] = useGlobal('activeResident');
     const [rm] = useGlobal('residentManager');
     const [updateClient, setUpdateClient] = useGlobal('updateClient');
     const [updateMedicine, setUpdateMedicine] = useGlobal('updateMedicine');
-    const [activeResident] = useGlobal('activeResident');
     const residentColor = development ? 'blue' : "#edf11e";
     const residentForegroundColor = development ? "#fffff0" : "black";
 
-    // Observer for activeResident changes
+    /**
+     * activeResident: ResidentRecord|null - set to ResidentRecord when user selects from the ResidentPage
+     */
     let prevActiveResident = useRef(activeResident).current;
     useEffect(() => {
         if (prevActiveResident !== activeResident) {
@@ -43,7 +46,9 @@ const App = () => {
         }
     }, [activeResident]);
 
-    // Observer for when the medicineList and drugLogList should be refreshed.
+    /**
+     * refreshMedicine: number|null -- set to resident Id when Medicine and MedHistory need a refresh
+     */
     useEffect(() => {
         if (development) {
             console.log('refreshMedicine', refeshMedicine);
@@ -66,20 +71,24 @@ const App = () => {
         setRefreshMedicine(null);
     }, [refeshMedicine, setRefreshMedicine, setMedicineList, setDrugLogList, mm, setErrorDetails, development]);
 
-    // Observer for when the client list should be refreshed
+    /**
+     * refreshClients: bool - Set to true when the client list needs to be refreshed
+     */
     useEffect(() => {
         if (development) {
             console.log('refreshClients', refreshClients)
         }
         if (refreshClients) {
             rm.loadResidentList()
-            .then((clients) => setResidentList(clients))
-            .catch((err) => setErrorDetails(err));
-            setRefreshClients(false);
+            .then((clients) => {setResidentList(clients)})
+            .then(() => {setRefreshClients(false)})
+            .catch((err) => setErrorDetails(err))
         }
     }, [refreshClients, setRefreshClients, setResidentList, setErrorDetails, rm, development]);
 
-    // Observer for when a client is updated or added
+    /**
+     * updateClient: ResidentRecord|null - Set to ResidentRecord when a client is being added or updated
+     */
     useEffect(() => {
         if (development) {
             console.log('updateClient', updateClient);
@@ -87,12 +96,15 @@ const App = () => {
         if (updateClient) {
             rm.updateResident(updateClient).then((client) => {
                 setRefreshClients(true);
-                setUpdateClient(null);
             })
+            .then(() => setUpdateClient(null))
+            .catch((err) => setErrorDetails(err))
         }
-    }, [updateClient, setUpdateClient, rm, setRefreshClients, setRefreshMedicine, development]);
+    }, [updateClient, setUpdateClient, rm, setRefreshClients, setRefreshMedicine, setErrorDetails, development]);
 
-    // Observer for when a client is to be deleted
+    /**
+     * deleteClient: number|null - Set to the resident Id of the record to delete
+     */
     useEffect(() => {
         if (development) {
             console.log('deleteClient', deleteClient);
@@ -106,12 +118,14 @@ const App = () => {
                     setErrorDetails(new Error('Unable to delete client. Id: ' + deleteClient));
                 }
             })
-            .then(() => setDeleteClient(null))
+            .then(() => {setDeleteClient(null)})
             .catch((err) => setErrorDetails(err));
         }
     }, [deleteClient, setDeleteClient, rm, setErrorDetails, setRefreshClients, development]);
 
-    // Observer for when a Medicine record is added or updated
+    /**
+     * updateMedicine: MedicineRecord|null - Set to MedicineRecord when a Medicine record is added or updated
+     */
     useEffect(() => {
         if (development) {
             console.log('updateMedicine', updateMedicine);
@@ -122,7 +136,7 @@ const App = () => {
                 const clientId = drugRecord && drugRecord.ResidentId ? drugRecord.ResidentId : null;
                 setRefreshMedicine(clientId);
             })
-            .then(() => setUpdateMedicine(null))
+            .then(() => {setUpdateMedicine(null)})
             .catch((err) => setErrorDetails(err));
         }
     }, [updateMedicine, setUpdateMedicine, mm, setErrorDetails, setRefreshMedicine, development])

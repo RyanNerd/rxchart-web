@@ -31,6 +31,7 @@ interface IProps {
  * UI for logging prescription medications
  * @param {IProps} props
  * @return {JSX.Element | null}
+ * @fixme When resident changes the dropDown list of medications is unavailable.
  */
 const MedicinePage = (props: IProps): JSX.Element | null => {
     const [, setErrorDetails] = useGlobal('errorDetails');
