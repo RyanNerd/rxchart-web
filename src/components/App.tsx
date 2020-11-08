@@ -32,10 +32,6 @@ const App = () => {
     let prevActiveResident = useRef(activeResident).current;
     useEffect(() => {
         if (prevActiveResident !== activeResident) {
-            if (development) {
-                console.log('activeResident', activeResident);
-                console.log('prevActiveResident', prevActiveResident);
-            }
             // Trigger the refresh of medicineList and drugLogList
             const clientId = activeResident && activeResident.Id ? activeResident.Id : null;
             setRefreshMedicine(clientId);
@@ -50,49 +46,35 @@ const App = () => {
      * refreshMedicine: number|null -- set to resident Id when Medicine and MedHistory need a refresh
      */
     useEffect(() => {
-        if (development) {
-            console.log('refreshMedicine', refeshMedicine);
-        }
         if (refeshMedicine) {
             mm.loadMedicineList(refeshMedicine)
-            .then((meds) => {
-                setMedicineList(meds).then((state) => {
-                    mm.loadDrugLog(refeshMedicine)
-                    .then((drugs) => setDrugLogList(drugs))
-                    .catch((err) => setErrorDetails(err))
-                })
+            .then((meds) => {setMedicineList(meds)})
+            .then(() => {
+                mm.loadDrugLog(refeshMedicine)
+                .then((drugs) => {setDrugLogList(drugs)})
                 .catch((err) => setErrorDetails(err))
             })
+            .then(() => {setRefreshMedicine(null)})
             .catch((err) => setErrorDetails(err));
-        } else {
-            setMedicineList([]);
-            setDrugLogList([]);
         }
-        setRefreshMedicine(null);
-    }, [refeshMedicine, setRefreshMedicine, setMedicineList, setDrugLogList, mm, setErrorDetails, development]);
+    }, [refeshMedicine, setRefreshMedicine, setMedicineList, setDrugLogList, setErrorDetails, mm]);
 
     /**
      * refreshClients: bool - Set to true when the client list needs to be refreshed
      */
     useEffect(() => {
-        if (development) {
-            console.log('refreshClients', refreshClients)
-        }
         if (refreshClients) {
             rm.loadResidentList()
             .then((clients) => {setResidentList(clients)})
             .then(() => {setRefreshClients(false)})
             .catch((err) => setErrorDetails(err))
         }
-    }, [refreshClients, setRefreshClients, setResidentList, setErrorDetails, rm, development]);
+    }, [refreshClients, setRefreshClients, setResidentList, setErrorDetails, rm]);
 
     /**
      * updateClient: ResidentRecord|null - Set to ResidentRecord when a client is being added or updated
      */
     useEffect(() => {
-        if (development) {
-            console.log('updateClient', updateClient);
-        }
         if (updateClient) {
             rm.updateResident(updateClient).then((client) => {
                 setRefreshClients(true);
@@ -100,15 +82,12 @@ const App = () => {
             .then(() => setUpdateClient(null))
             .catch((err) => setErrorDetails(err))
         }
-    }, [updateClient, setUpdateClient, rm, setRefreshClients, setRefreshMedicine, setErrorDetails, development]);
+    }, [updateClient, setUpdateClient, rm, setRefreshClients, setRefreshMedicine, setErrorDetails]);
 
     /**
      * deleteClient: number|null - Set to the resident Id of the record to delete
      */
     useEffect(() => {
-        if (development) {
-            console.log('deleteClient', deleteClient);
-        }
         if (deleteClient) {
             rm.deleteResident(deleteClient)
             .then((deleted) => {
@@ -121,15 +100,12 @@ const App = () => {
             .then(() => {setDeleteClient(null)})
             .catch((err) => setErrorDetails(err));
         }
-    }, [deleteClient, setDeleteClient, rm, setErrorDetails, setRefreshClients, development]);
+    }, [deleteClient, setDeleteClient, rm, setErrorDetails, setRefreshClients]);
 
     /**
      * updateMedicine: MedicineRecord|null - Set to MedicineRecord when a Medicine record is added or updated
      */
     useEffect(() => {
-        if (development) {
-            console.log('updateMedicine', updateMedicine);
-        }
         if (updateMedicine) {
             mm.updateMedicine(updateMedicine)
             .then((drugRecord) => {
@@ -139,7 +115,7 @@ const App = () => {
             .then(() => {setUpdateMedicine(null)})
             .catch((err) => setErrorDetails(err));
         }
-    }, [updateMedicine, setUpdateMedicine, mm, setErrorDetails, setRefreshMedicine, development])
+    }, [updateMedicine, setUpdateMedicine, mm, setErrorDetails, setRefreshMedicine])
 
     return (
         <>
