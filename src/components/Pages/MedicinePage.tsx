@@ -56,11 +56,9 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     // Set the activeDrug when the medicineList changes
     useEffect(() => {
         if (medicineList.length > 0) {
-            if (!activeDrug) {
-                setActiveDrug(medicineList[0]);
-            }
+            setActiveDrug(medicineList[0]);
         } else {
-            // setActiveDrug(null);
+            setActiveDrug(null);
         }
     }, [medicineList, activeDrug]);
 
