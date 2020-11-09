@@ -23,6 +23,7 @@ const App = () => {
     const [resident] = useGlobal('activeResident');
     const [rm] = useGlobal('residentManager');
     const [updateClient, setUpdateClient] = useGlobal('updateClient');
+    const [updateDrugLog, setUpdateDrugLog] = useGlobal('updateDrugLog');
     const [updateMedicine, setUpdateMedicine] = useGlobal('updateMedicine');
     const residentColor = development ? 'blue' : "#edf11e";
     const residentForegroundColor = development ? "#fffff0" : "black";
@@ -58,15 +59,23 @@ const App = () => {
     }, [mm, refreshMedicine, setErrorDetails, setMedicineList, setRefreshDrugLog, setRefreshMedicine]);
 
     /**
-     * refreshMedicine: number|null -- set to residentId when Medicine and MedHistory need a refresh
+     * refreshDrugLog: number|null -- set to residentId when Medicine and MedHistory need a refresh
      */
     useEffect(() => {
-        console.log('refreshDrugLog', refreshDrugLog)
+        console.log('refreshDrugLog', refreshDrugLog);
         if (refreshDrugLog) {
-            mm.loadDrugLog(refreshDrugLog)
-            .then((drugs) => {setDrugLogList(drugs)})
-            .then(() => {setRefreshDrugLog(null)})
-            .catch((err) => setErrorDetails(err))
+            if (Array.isArray(refreshDrugLog)) {
+                setDrugLogList(refreshDrugLog).then((state) => {setRefreshDrugLog(null)})
+            } else {
+                mm.loadDrugLog(refreshDrugLog)
+                .then((drugs) => {
+                    setDrugLogList(drugs)
+                })
+                .then(() => {
+                    setRefreshDrugLog(null)
+                })
+                .catch((err) => setErrorDetails(err))
+            }
         }
     }, [mm, refreshDrugLog, setDrugLogList, setErrorDetails, setRefreshDrugLog]);
 
@@ -127,6 +136,15 @@ const App = () => {
             .catch((err) => setErrorDetails(err));
         }
     }, [updateMedicine, setUpdateMedicine, mm, setErrorDetails, setRefreshMedicine])
+
+    useEffect(() => {
+        if (updateDrugLog) {
+            mm.updateDrugLog(updateDrugLog, updateDrugLog.ResidentId)
+            .then((drugLogs) => {setRefreshDrugLog(drugLogs)})
+            .then(() => {setUpdateDrugLog(null)})
+            .catch((err) => setErrorDetails(err))
+        }
+    }, [mm, setErrorDetails,setRefreshDrugLog, setUpdateDrugLog, updateDrugLog])
 
     return (
         <>

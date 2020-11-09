@@ -55,6 +55,7 @@ const getInitialState = () => {
         residentList: [] as ResidentRecord[],
         residentManager: ResidentManager(providers.residentProvider),
         updateClient: null,
+        updateDrugLog: null,
         updateMedicine: null
     } as State;
 }

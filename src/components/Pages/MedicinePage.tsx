@@ -49,6 +49,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<any>(false);
     const [showDrugLog, setShowDrugLog] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
+    const [, setUpdateDrugLog] = useGlobal('updateDrugLog');
     const activeTabKey = props.activeTabKey;
     const focusRef = useRef<HTMLInputElement>(null);
 
@@ -174,18 +175,15 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      * @param {number} amount
      */
     const handleLogDrugAmount = (amount: number) => {
-        const drugId = activeDrug?.Id as number;
-        if (drugId) {
+        if (activeDrug?.Id) {
             const notes = amount.toString();
             const drugLogInfo = {
                 Id: null,
                 ResidentId: residentId,
-                MedicineId: drugId,
+                MedicineId: activeDrug.Id,
                 Notes: notes
             };
-            mm.updateDrugLog(drugLogInfo, residentId)
-                .then((drugLogList) => setDrugLogList(drugLogList))
-                .catch((err) => setErrorDetails(err))
+            setUpdateDrugLog(drugLogInfo);
         }
     }
 
@@ -361,9 +359,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     onClose={(drugLogRecord) => {
                         setShowDrugLog(false);
                         if (drugLogRecord) {
-                            mm.updateDrugLog(drugLogRecord, residentId)
-                                .then((drugLogList) => setDrugLogList(drugLogList))
-                                .catch((err) => setErrorDetails(err))
+                            setUpdateDrugLog(drugLogRecord);
                         }
                     }}
                 />
