@@ -14,6 +14,7 @@ declare module 'reactn/default' {
 
     export interface State {
         activeResident: ResidentRecord | null
+        activeTabKey: string
         apiKey: string | null
         authManager: IAuthManager
         count: number
@@ -23,6 +24,8 @@ declare module 'reactn/default' {
         development: boolean
         drugLogList: DrugLogRecord[]
         errorDetails: any
+        login: {username: string, password: string} | null
+        loginFailed: boolean
         medicineList: MedicineRecord[]
         medicineManager: IMedicineManager
         otcList: MedicineRecord[]

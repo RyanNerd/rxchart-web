@@ -9,7 +9,6 @@ import TabContent from '../../styles/common.css';
 
 interface IProps {
     activeTabKey: string | null
-    onLogin: (loggedIn: boolean) => void
 }
 
 /**
@@ -19,27 +18,21 @@ interface IProps {
  * @constructor
  */
 const LoginPage = (props: IProps): JSX.Element | null => {
-    const [, setRefreshOtc] = useGlobal('refreshOtc');
-    const [apiKey, setApiKey] = useGlobal('apiKey');
     const [, setErrorDetails] = useGlobal('errorDetails');
-    const [, setRefreshClients] = useGlobal('refreshClients')
-    const [am] = useGlobal('authManager');
+    const [, setLogin] = useGlobal('login');
+    const [apiKey] = useGlobal('apiKey');
+    const [activeTabKey] = useGlobal('activeTabKey');
     const [password, setPassword] = useState('');
-    const [providers] = useGlobal('providers');
-    const [showAlert, setShowAlert] = useState(false);
+    const [showAlert, setShowAlert] = useGlobal('loginFailed');
     const [username, setUsername] = useState('');
     const focusRef = useRef<HTMLInputElement>(null);
-    const {
-        activeTabKey,
-        onLogin
-    } = props;
 
     // Set focus to the search input when this page is selected.
     useEffect(() => {
         if (activeTabKey === 'login' && focusRef && focusRef.current) {
             focusRef.current.focus();
         }
-    }, [activeTabKey]);
+    }, [activeTabKey, focusRef]);
 
     // Prevent render if this tab isn't active
     if (activeTabKey !== 'login') {
@@ -51,53 +44,17 @@ const LoginPage = (props: IProps): JSX.Element | null => {
     /**
      * Fires when the Login Button is clicked
      * @param {React.MouseEvent<HTMLElement>} e
+     * todo: refactor / simplify
      */
     const login = (e: React.KeyboardEvent<HTMLElement> | React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
-
-        // Send the user name and password to the web service
-        am.authenticate(username, password)
-            .then((response) => {
-                if (response.success) {
-                    const apiKey = response.apiKey;
-                    setApiKey(apiKey).then(() => {
-                        if (apiKey.length === 0) {
-                            setErrorDetails(new Error('Invalid API Key'));
-                        }
-                        providers.setApi(apiKey);
-
-                        // Load ALL Resident records up front and save them in the global store.
-                        setRefreshClients(true);
-
-                        // Load ALL OTC medications once we're logged in.
-                        setRefreshOtc(true);
-
-                        // Let the parent component know we are logged in successfully
-                        onLogin(true);
-
-                        // Remove alert (in the case where a previous log in attempt failed).
-                        setShowAlert(false);
-
-                        // Display the organization name that logged in
-                        // This element lives in index.html so we use old fashioned JS and DOM manipulation to update
-                        const organizationElement = document.getElementById("organization");
-                        if (organizationElement) {
-                            organizationElement.innerHTML = response.organization;
-                        }
-                    });
-                } else {
-                    // Show invalid credentials alert
-                    setShowAlert(true);
-                }
-            })
-            .catch((err) => {
-                setErrorDetails(err);
-            });
+        setLogin({username, password});
     }
 
     /**
      * Fires when the Logout Button is clicked
      * @param {React.MouseEvent<HTMLElement>} e
+     * todo: move to App.tsx
      */
     const logout = (e: React.MouseEvent<HTMLElement>) => {
         e.persist();

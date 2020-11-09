@@ -40,6 +40,7 @@ const getInitialState = () => {
     return {
         activeResident: null,
         apiKey: null,
+        activeTabKey: 'login',
         authManager: AuthManager(providers.authenticationProvider),
         deleteClient: null,
         deleteDrugLog: null,
@@ -47,6 +48,8 @@ const getInitialState = () => {
         development: process.env.REACT_APP_DEVELOPMENT === 'true',
         drugLogList: [] as DrugLogRecord[],
         errorDetails: undefined,
+        login: null,
+        loginFailed: false,
         medicineList: [] as MedicineRecord[],
         medicineManager: MedicineMananger(providers.medicineProvider, providers.medHistoryProvider),
         otcList: [] as MedicineRecord[],

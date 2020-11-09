@@ -5,7 +5,7 @@ import ManageDrugPage from "./ManageDrugPage";
 import ManageOtcPage from "./ManageOtcPage";
 import MedicinePage from "./MedicinePage";
 import OtcPage from "./OtcPage";
-import React, {useEffect, useGlobal, useState, setGlobal} from 'reactn';
+import React, {useEffect, useGlobal, setGlobal} from 'reactn';
 import ResidentPage from "./ResidentPage";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
@@ -17,17 +17,18 @@ import getInitialState from "../../utility/getInitialState";
  */
 const LandingPage = () => {
     const [activeResident] = useGlobal('activeResident');
-    const [activeTabKey, setActiveTabKey] = useState('login');
+    const [activeTabKey, setActiveTabKey] = useGlobal('activeTabKey');
     const [apiKey, setApiKey] = useGlobal('apiKey');
     const [errorDetails] = useGlobal('errorDetails');
 
     // Observer for anytime there is an error set on the errorDetails global
+    // todo: move this to App.tsx
     useEffect(() => {
         if (errorDetails) {
             setApiKey(null);
             setActiveTabKey('error');
         }
-    }, [errorDetails, setApiKey, activeTabKey])
+    }, [errorDetails, setApiKey, activeTabKey, setActiveTabKey])
 
     return (
         <Tabs
@@ -41,9 +42,6 @@ const LandingPage = () => {
                 title={<span className={activeTabKey === 'login' ? 'bld' : ''}>{apiKey ? 'Logout' : 'Login'}</span>}
             >
                 <LoginPage
-                    onLogin={(loggedIn) => {
-                        setActiveTabKey(loggedIn ? 'resident' : 'login')
-                    }}
                     activeTabKey={activeTabKey}
                 />
             </Tab>

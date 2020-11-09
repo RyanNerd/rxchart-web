@@ -9,17 +9,23 @@ import {FullName} from "../utility/common";
  * @constructor
  */
 const App = () => {
+    const [apiKey, setApiKey] = useGlobal('apiKey');
+    const [, setActiveTabKey] = useGlobal('activeTabKey');
     const [, setDrugLogList] = useGlobal('drugLogList');
     const [, setErrorDetails] = useGlobal('errorDetails');
+    const [, setLoginFailed] = useGlobal('loginFailed');
     const [, setMedicineList] = useGlobal('medicineList');
     const [, setOtcList] = useGlobal('otcList');
     const [, setResidentList] = useGlobal('residentList');
     const [activeResident] = useGlobal('activeResident');
+    const [am] = useGlobal('authManager');
     const [deleteClient, setDeleteClient] = useGlobal('deleteClient');
     const [deleteDrugLog, setDeleteDrugLog] = useGlobal('deleteDrugLog');
     const [deleteMedicine, setDeleteMedicine] = useGlobal('deleteMedicine');
     const [development] = useGlobal('development');
+    const [login, setLogin] = useGlobal('login');
     const [mm] = useGlobal('medicineManager');
+    const [providers] = useGlobal('providers');
     const [refreshClients, setRefreshClients] = useGlobal('refreshClients');
     const [refreshDrugLog, setRefreshDrugLog] = useGlobal('refreshDrugLog');
     const [refreshMedicine, setRefreshMedicine] = useGlobal('refreshMedicine');
@@ -36,6 +42,33 @@ const App = () => {
                 activeResident.DOB_DAY + '/' +
                 activeResident.DOB_YEAR
             : null;
+
+    // *** ApiKey
+    let prevApiKey = useRef(apiKey).current;
+    useEffect(() => {
+        if (prevApiKey !== apiKey) {
+            // Are we logging in (prevApiKey will be falsy and apiKey will have a value)?
+            if (prevApiKey === null && apiKey) {
+                setLoginFailed(false);
+                providers.setApi(apiKey);
+
+                // Load ALL Resident records up front and save them in the global store.
+                setRefreshClients(true);
+
+                // Load ALL OTC medications once we're logged in.
+                setRefreshOtc(true);
+
+                // Activate the Resident tab
+                setActiveTabKey('resident');
+            } else {
+                // todo: handle Logout
+            }
+            return () => {
+                // eslint-disable-next-line react-hooks/exhaustive-deps
+                prevApiKey = apiKey;
+            }
+        }
+    }, [apiKey])
 
     // *** Client ***
     /**
@@ -201,7 +234,33 @@ const App = () => {
             .then(() => {setRefreshOtc(false)})
             .catch((err) => {setErrorDetails(err)})
         }
-    }, [mm, refreshOtc, setErrorDetails, setOtcList])
+    }, [mm, refreshOtc, setErrorDetails, setOtcList, setRefreshOtc])
+
+    // *** Login
+    useEffect(() => {
+        console.log('login', login);
+        if (login) {
+            // Send the user name and password to the web service
+            am.authenticate(login.username, login.password)
+            .then((response) => {
+                console.log('auth response', response);
+                if (response.success) {
+                    setApiKey(response.apiKey);
+
+                    // Display the organization name that logged in
+                    // This element lives in index.html so we use old fashioned JS and DOM manipulation to update
+                    const organizationElement = document.getElementById("organization");
+                    if (organizationElement) {
+                        organizationElement.innerHTML = response.organization;
+                    }
+                } else {
+                    setLoginFailed(true);
+                }
+            })
+            .then(() => {setLogin(null)})
+            .catch((err) => {setErrorDetails(err)})
+        }
+    }, [login, am, setApiKey, setErrorDetails, setLogin, setLoginFailed])
 
     return (
         <>
