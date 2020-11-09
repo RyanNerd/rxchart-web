@@ -36,25 +36,6 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
     let finalContent: JSX.Element | null;
 
     /**
-     * Button that closes the error and lets users sign back in
-     * @param {ButtonProps} props
-     * @constructor
-     */
-    const CloseErrorButton = (props: ButtonProps) => {
-        return (
-        <Button
-            variant="primary"
-            onClick={() => {
-                setContent(null);
-                dismissError();
-            }}
-            {...props}
-        >
-            Close error and sign back in
-        </Button>)
-    }
-
-    /**
      * Function to create the unsafe HTML object
      * @param {string} html
      * @return {object}
@@ -89,6 +70,25 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
      * Use memoization so we don't have 3000 re-renders when an error occurs.
      */
     finalContent = useMemo(() => {
+        /**
+         * Button that closes the error and lets users sign back in
+         * @param {ButtonProps} props
+         * @constructor
+         */
+        const CloseErrorButton = (props: ButtonProps) => {
+            return (
+                <Button
+                    variant="primary"
+                    onClick={() => {
+                        setContent(null);
+                        dismissError();
+                    }}
+                    {...props}
+                >
+                    Close error and sign back in
+                </Button>)
+        }
+
         /**
          * Alert composition component
          * @param {React.ReactNode} heading

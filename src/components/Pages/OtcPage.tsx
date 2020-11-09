@@ -161,7 +161,7 @@ const OtcPage = (props: IProps): JSX.Element | null => {
     const deleteDrugLogRecord = (drugLogId: number) => {
             mm.deleteDrugLog(drugLogId)
                 .then((deleted) => {
-                    if (deleted.success) {
+                    if (deleted) {
                         mm.loadDrugLog(residentId).then((drugs) => setDrugLogList(drugs))
                             .catch((err) =>setErrorDetails(err));
                     } else {

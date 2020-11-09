@@ -33,16 +33,15 @@ interface IProps {
  * @return {JSX.Element | null}
  */
 const MedicinePage = (props: IProps): JSX.Element | null => {
-    const [, setErrorDetails] = useGlobal('errorDetails');
     const [, setUpdateMedicine] = useGlobal('updateMedicine');
+    const [, setDeleteDrugLog] = useGlobal('deleteDrugLog');
     const [activeDrug, setActiveDrug] = useState<MedicineRecord | null>(null);
     const [activeResident] = useGlobal('activeResident');
     const [drugLogInfo, setDrugLogInfo] = useState<DrugLogRecord | null>(null);
-    const [drugLogList, setDrugLogList] = useGlobal('drugLogList');
+    const [drugLogList] = useGlobal('drugLogList');
     const [lastTaken, setLastTaken] = useState<number | null>(null);
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [medicineList] = useGlobal('medicineList');
-    const [mm] = useGlobal('medicineManager');
     const [residentId, setResidentId] = useState<number | null>(activeResident?.Id || null);
     const [searchIsValid, setSearchIsValid] = useState(false)
     const [searchText, setSearchText] = useState('');
@@ -134,23 +133,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         e.preventDefault();
         setMedicineInfo({...activeDrug} as MedicineRecord);
         setShowMedicineEdit(true);
-    }
-
-    /**
-     * Fires when the user has confirmed the deletion of a drug log record.
-     * @param {number} drugLogId
-     */
-    const deleteDrugLogRecord = (drugLogId: number) => {
-        mm.deleteDrugLog(drugLogId)
-            .then((deleted) => {
-                if (deleted.success) {
-                    mm.loadDrugLog(residentId).then((drugs) => setDrugLogList(drugs))
-                        .catch((err) => setErrorDetails(err))
-                } else {
-                    throw new Error('DrugLog Delete failed for MedHistory.Id: ' + drugLogId);
-                }
-            })
-            .catch((err) => setErrorDetails(err));
     }
 
     /**
@@ -373,7 +355,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         (a) => {
                             setShowDeleteDrugLogRecord(false);
                             if (a) {
-                                deleteDrugLogRecord(showDeleteDrugLogRecord.Id);
+                                setDeleteDrugLog(showDeleteDrugLogRecord.Id);
                             }
                         }
                     }

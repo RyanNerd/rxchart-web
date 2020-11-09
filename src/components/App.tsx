@@ -15,6 +15,7 @@ const App = () => {
     const [, setResidentList] = useGlobal('residentList');
     const [activeResident] = useGlobal('activeResident');
     const [deleteClient, setDeleteClient] = useGlobal('deleteClient');
+    const [deleteDrugLog, setDeleteDrugLog] = useGlobal('deleteDrugLog');
     const [development] = useGlobal('development');
     const [mm] = useGlobal('medicineManager');
     const [refreshMedicine, setRefreshMedicine] = useGlobal('refreshMedicine');
@@ -48,7 +49,6 @@ const App = () => {
      * refreshMedicine: number|null -- set to residentId when Medicine and MedHistory need a refresh
      */
     useEffect(() => {
-        console.log('refreshMedicine', refreshMedicine)
         if (refreshMedicine) {
             mm.loadMedicineList(refreshMedicine)
             .then((meds) => {setMedicineList(meds)})
@@ -59,10 +59,9 @@ const App = () => {
     }, [mm, refreshMedicine, setErrorDetails, setMedicineList, setRefreshDrugLog, setRefreshMedicine]);
 
     /**
-     * refreshDrugLog: number|null -- set to residentId when Medicine and MedHistory need a refresh
+     * refreshDrugLog: number|DrugLogRecord[], null -- set to residentId when Medicine and MedHistory need a refresh
      */
     useEffect(() => {
-        console.log('refreshDrugLog', refreshDrugLog);
         if (refreshDrugLog) {
             if (Array.isArray(refreshDrugLog)) {
                 setDrugLogList(refreshDrugLog).then((state) => {setRefreshDrugLog(null)})
@@ -123,6 +122,25 @@ const App = () => {
     }, [deleteClient, setDeleteClient, rm, setErrorDetails, setRefreshClients]);
 
     /**
+     * deleteDrugLog: number|null - set to the id of of the DrugLogRecord to delete.
+     */
+    useEffect(() => {
+        const clientId = activeResident?.Id;
+        if (deleteDrugLog && clientId) {
+            mm.deleteDrugLog(deleteDrugLog)
+            .then((deleted) => {
+                if (deleted) {
+                    setRefreshDrugLog(clientId);
+                } else {
+                    setErrorDetails(new Error('unable to delete drugLogRecord. Id: ' + deleteDrugLog));
+                }
+            })
+            .then(() => {setDeleteDrugLog(null)})
+            .catch((err) => setErrorDetails(err))
+        }
+    }, [activeResident, deleteDrugLog, mm, setDeleteDrugLog, setErrorDetails, setRefreshDrugLog])
+
+    /**
      * updateMedicine: MedicineRecord|null - Set to MedicineRecord when a Medicine record is added or updated
      */
     useEffect(() => {
@@ -137,6 +155,9 @@ const App = () => {
         }
     }, [updateMedicine, setUpdateMedicine, mm, setErrorDetails, setRefreshMedicine])
 
+    /**
+     * updateDrugLog: drugLogRecord|null -- Set to a drugLogRecord when a MedHistory record is added or updated
+     */
     useEffect(() => {
         if (updateDrugLog) {
             mm.updateDrugLog(updateDrugLog, updateDrugLog.ResidentId)

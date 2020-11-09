@@ -3,7 +3,7 @@ import {IMedicineProvider} from "../providers/MedicineProvider";
 import {IMedHistoryProvider} from "../providers/MedHistoryProvider";
 
 export interface IMedicineManager {
-    deleteDrugLog: (drugLogId: number) => Promise<DeleteResponse>
+    deleteDrugLog: (drugLogId: number) => Promise<boolean>
     deleteMedicine: (medicineId: number) => Promise<boolean>
     loadDrugLog: (residentId: number) => Promise<DrugLogRecord[]>
     loadMedicineList: (residentId: number) => Promise<MedicineRecord[]>
@@ -11,8 +11,6 @@ export interface IMedicineManager {
     updateDrugLog: (drugLogRecord: DrugLogRecord, residentId: number) => Promise<DrugLogRecord[]>
     updateMedicine: (medicine: MedicineRecord) => Promise<MedicineRecord>
 }
-
-type DeleteResponse = {success: boolean}
 
 /**
  * Medicine Manager
@@ -31,12 +29,8 @@ const MedicineMananger = (
     const _deleteDrugLog = async (drugLogId: number) => {
         return medHistoryProvider
             .delete(drugLogId)
-            .then((deleted) => {
-                return deleted;
-            })
-            .catch((err) => {
-                throw err;
-            });
+            .then((deleteResponse) => {return deleteResponse.success})
+            .catch((err) => {throw err})
     };
 
     /**
@@ -45,11 +39,9 @@ const MedicineMananger = (
      */
     const _deleteMedicine = async (medicineId: number) => {
         return medicineProvider
-            .delete(medicineId)
-            .then((response) => {
-                return response.success;
-            })
-            .catch((err) => {throw err})
+        .delete(medicineId)
+        .then((deleteResponse) => {return deleteResponse.success})
+        .catch((err) => {throw err})
     };
 
     /**
@@ -135,7 +127,7 @@ const MedicineMananger = (
     }
 
     return {
-        deleteDrugLog: async  (drugLogId: number): Promise<DeleteResponse> => {
+        deleteDrugLog: async  (drugLogId: number): Promise<boolean> => {
             return await _deleteDrugLog(drugLogId);
         },
         deleteMedicine: async (medicineId: number): Promise<boolean> => {
