@@ -31,7 +31,6 @@ interface IProps {
  * UI for logging prescription medications
  * @param {IProps} props
  * @return {JSX.Element | null}
- * @fixme When the medicine dropdown changes the drugLogList filter seems to fire then goes back
  */
 const MedicinePage = (props: IProps): JSX.Element | null => {
     const [, setErrorDetails] = useGlobal('errorDetails');
@@ -60,7 +59,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         } else {
             setActiveDrug(null);
         }
-    }, [medicineList, activeDrug]);
+    }, [medicineList]);
 
     // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
     useEffect(() => {
@@ -135,12 +134,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         setMedicineInfo({...activeDrug} as MedicineRecord);
         setShowMedicineEdit(true);
     }
-
-    /**
-     * Fires when MedicineEdit closes and there's an update (add/edit) for a Medicine record
-     * @param {MedicineRecord} drugInfo
-     */
-    const updateMedicine = (drugInfo: MedicineRecord) => setUpdateMedicine(drugInfo);
 
     /**
      * Fires when the user has confirmed the deletion of a drug log record.
@@ -353,7 +346,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     onClose={(r) => {
                         setShowMedicineEdit(false);
                         if (r) {
-                            updateMedicine(r);
+                            setUpdateMedicine(r);
                         }
                     }}
                     drugInfo={medicineInfo}
