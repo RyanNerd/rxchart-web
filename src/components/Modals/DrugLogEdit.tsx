@@ -5,7 +5,6 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import {DrugLogRecord} from "../../types/RecordTypes";
-import {RefObject} from "react";
 
 interface IProps {
     drugLogInfo: DrugLogRecord
@@ -101,7 +100,7 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
                         <Col md="8">
                             <Form.Control
                                 as="textarea"
-                                ref={textInput as RefObject<any>}
+                                ref={textInput as React.RefObject<any>}
                                 value={drugLogInfo.Notes}
                                 name="Notes"
                                 onChange={(e) => handleOnChange(e)}
