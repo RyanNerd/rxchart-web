@@ -19,6 +19,7 @@ const App = () => {
     const [mm] = useGlobal('medicineManager');
     const [refreshMedicine, setRefreshMedicine] = useGlobal('refreshMedicine');
     const [refreshClients, setRefreshClients] = useGlobal('refreshClients');
+    const [refreshDrugLog, setRefreshDrugLog] = useGlobal('refreshDrugLog');
     const [resident] = useGlobal('activeResident');
     const [rm] = useGlobal('residentManager');
     const [updateClient, setUpdateClient] = useGlobal('updateClient');
@@ -50,15 +51,24 @@ const App = () => {
         if (refreshMedicine) {
             mm.loadMedicineList(refreshMedicine)
             .then((meds) => {setMedicineList(meds)})
-            .then(() => {
-                mm.loadDrugLog(refreshMedicine)
-                .then((drugs) => {setDrugLogList(drugs)})
-                .catch((err) => setErrorDetails(err))
-            })
+            .then(() => {setRefreshDrugLog(refreshMedicine)})
             .then(() => {setRefreshMedicine(null)})
             .catch((err) => setErrorDetails(err));
         }
-    }, [refreshMedicine, setRefreshMedicine, setMedicineList, setDrugLogList, setErrorDetails, mm]);
+    }, [mm, refreshMedicine, setErrorDetails, setMedicineList, setRefreshDrugLog, setRefreshMedicine]);
+
+    /**
+     * refreshMedicine: number|null -- set to residentId when Medicine and MedHistory need a refresh
+     */
+    useEffect(() => {
+        console.log('refreshDrugLog', refreshDrugLog)
+        if (refreshDrugLog) {
+            mm.loadDrugLog(refreshDrugLog)
+            .then((drugs) => {setDrugLogList(drugs)})
+            .then(() => {setRefreshDrugLog(null)})
+            .catch((err) => setErrorDetails(err))
+        }
+    }, [mm, refreshDrugLog, setDrugLogList, setErrorDetails, setRefreshDrugLog]);
 
     /**
      * refreshClients: bool - Set to true when the client list needs to be refreshed
