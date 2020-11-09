@@ -30,6 +30,7 @@ declare module 'reactn/default' {
         refreshClients: boolean
         refreshMedicine: number | null
         refreshDrugLog: number | DrugLogRecord[] |null
+        refreshOtc: boolean
         residentList: ResidentRecord[]
         residentManager: IResidentManager
         updateClient: ResidentRecord | null

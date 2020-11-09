@@ -19,12 +19,11 @@ interface IProps {
  * @constructor
  */
 const LoginPage = (props: IProps): JSX.Element | null => {
-    const [, setOtcList] = useGlobal('otcList');
+    const [, setRefreshOtc] = useGlobal('refreshOtc');
     const [apiKey, setApiKey] = useGlobal('apiKey');
     const [, setErrorDetails] = useGlobal('errorDetails');
     const [, setRefreshClients] = useGlobal('refreshClients')
     const [am] = useGlobal('authManager');
-    const [mm] = useGlobal('medicineManager');
     const [password, setPassword] = useState('');
     const [providers] = useGlobal('providers');
     const [showAlert, setShowAlert] = useState(false);
@@ -70,10 +69,8 @@ const LoginPage = (props: IProps): JSX.Element | null => {
                         // Load ALL Resident records up front and save them in the global store.
                         setRefreshClients(true);
 
-                        // Load ALL OTC medications
-                        mm.loadOtcList()
-                            .then((otcDrugs) => setOtcList(otcDrugs))
-                            .catch((err) => setErrorDetails(err));
+                        // Load ALL OTC medications once we're logged in.
+                        setRefreshOtc(true);
 
                         // Let the parent component know we are logged in successfully
                         onLogin(true);

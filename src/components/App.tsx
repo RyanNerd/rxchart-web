@@ -12,16 +12,18 @@ const App = () => {
     const [, setDrugLogList] = useGlobal('drugLogList');
     const [, setErrorDetails] = useGlobal('errorDetails');
     const [, setMedicineList] = useGlobal('medicineList');
+    const [, setOtcList] = useGlobal('otcList');
     const [, setResidentList] = useGlobal('residentList');
-    const [deleteMedicine, setDeleteMedicine] = useGlobal('deleteMedicine');
     const [activeResident] = useGlobal('activeResident');
     const [deleteClient, setDeleteClient] = useGlobal('deleteClient');
     const [deleteDrugLog, setDeleteDrugLog] = useGlobal('deleteDrugLog');
+    const [deleteMedicine, setDeleteMedicine] = useGlobal('deleteMedicine');
     const [development] = useGlobal('development');
     const [mm] = useGlobal('medicineManager');
     const [refreshClients, setRefreshClients] = useGlobal('refreshClients');
     const [refreshDrugLog, setRefreshDrugLog] = useGlobal('refreshDrugLog');
     const [refreshMedicine, setRefreshMedicine] = useGlobal('refreshMedicine');
+    const [refreshOtc, setRefreshOtc] = useGlobal('refreshOtc');
     const [rm] = useGlobal('residentManager');
     const [updateClient, setUpdateClient] = useGlobal('updateClient');
     const [updateDrugLog, setUpdateDrugLog] = useGlobal('updateDrugLog');
@@ -124,7 +126,9 @@ const App = () => {
         }
     }, [updateMedicine, setUpdateMedicine, mm, setErrorDetails, setRefreshMedicine])
 
-
+    /**
+     * deleteMedicne: number|null set to Id of the the MedicineRecord to be deleted
+     */
     useEffect(() => {
         if(deleteMedicine && activeResident) {
             mm.deleteMedicine(deleteMedicine)
@@ -189,6 +193,15 @@ const App = () => {
             .catch((err) => setErrorDetails(err))
         }
     }, [mm, setErrorDetails,setRefreshDrugLog, setUpdateDrugLog, updateDrugLog])
+
+    useEffect(() => {
+        if (refreshOtc) {
+            mm.loadOtcList()
+            .then((otcList) => {setOtcList(otcList)})
+            .then(() => {setRefreshOtc(false)})
+            .catch((err) => {setErrorDetails(err)})
+        }
+    }, [mm, refreshOtc, setErrorDetails, setOtcList])
 
     return (
         <>
