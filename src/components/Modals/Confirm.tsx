@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'reactn';
 import Modal, {ModalProps} from 'react-bootstrap/Modal';
 import Button from "react-bootstrap/Button";
-import {MouseEvent} from "react";
 import {ButtonVariant} from "react-bootstrap/types";
 
 interface IChildren {
@@ -40,7 +39,7 @@ const Confirm = {
 
         /**
          * Handle button click event.
-         * @param {MouseEvent} e
+         * @param {React.MouseEvent} e
          * @param answer
          */
         const onAnswer = (e: React.MouseEvent<HTMLElement>, answer: boolean) => {

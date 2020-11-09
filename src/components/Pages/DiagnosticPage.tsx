@@ -1,7 +1,6 @@
 import React, {useGlobal, useEffect, useMemo, useState} from 'reactn';
 import {Alert, Button, ButtonProps, Card} from "react-bootstrap";
 import {randomString} from "../../utility/common";
-import {ReactNode} from "react";
 
 interface IKey {
     [key: string]: string
@@ -92,10 +91,10 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
     finalContent = useMemo(() => {
         /**
          * Alert composition component
-         * @param {ReactNode} heading
-         * @param {ReactNode} body
+         * @param {React.ReactNode} heading
+         * @param {React.ReactNode} body
          */
-        const _alert = (heading: ReactNode, body: ReactNode) => {
+        const _alert = (heading: React.ReactNode, body: React.ReactNode) => {
             return (
                 <Alert
                     variant="danger"

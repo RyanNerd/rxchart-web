@@ -17,7 +17,7 @@ const App = () => {
     const [deleteClient, setDeleteClient] = useGlobal('deleteClient');
     const [development] = useGlobal('development');
     const [mm] = useGlobal('medicineManager');
-    const [refeshMedicine, setRefreshMedicine] = useGlobal('refreshMedicine');
+    const [refreshMedicine, setRefreshMedicine] = useGlobal('refreshMedicine');
     const [refreshClients, setRefreshClients] = useGlobal('refreshClients');
     const [resident] = useGlobal('activeResident');
     const [rm] = useGlobal('residentManager');
@@ -43,21 +43,22 @@ const App = () => {
     }, [activeResident]);
 
     /**
-     * refreshMedicine: number|null -- set to resident Id when Medicine and MedHistory need a refresh
+     * refreshMedicine: number|null -- set to residentId when Medicine and MedHistory need a refresh
      */
     useEffect(() => {
-        if (refeshMedicine) {
-            mm.loadMedicineList(refeshMedicine)
+        console.log('refreshMedicine', refreshMedicine)
+        if (refreshMedicine) {
+            mm.loadMedicineList(refreshMedicine)
             .then((meds) => {setMedicineList(meds)})
             .then(() => {
-                mm.loadDrugLog(refeshMedicine)
+                mm.loadDrugLog(refreshMedicine)
                 .then((drugs) => {setDrugLogList(drugs)})
                 .catch((err) => setErrorDetails(err))
             })
             .then(() => {setRefreshMedicine(null)})
             .catch((err) => setErrorDetails(err));
         }
-    }, [refeshMedicine, setRefreshMedicine, setMedicineList, setDrugLogList, setErrorDetails, mm]);
+    }, [refreshMedicine, setRefreshMedicine, setMedicineList, setDrugLogList, setErrorDetails, mm]);
 
     /**
      * refreshClients: bool - Set to true when the client list needs to be refreshed
@@ -82,7 +83,7 @@ const App = () => {
             .then(() => setUpdateClient(null))
             .catch((err) => setErrorDetails(err))
         }
-    }, [updateClient, setUpdateClient, rm, setRefreshClients, setRefreshMedicine, setErrorDetails]);
+    }, [updateClient, setUpdateClient, rm, setRefreshClients, setErrorDetails]);
 
     /**
      * deleteClient: number|null - Set to the resident Id of the record to delete
