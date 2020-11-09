@@ -18,11 +18,11 @@ interface IProps {
  * @returns {JSX.Element}
  */
 const ManageDrugPage = (props: IProps): JSX.Element | null => {
-    const [, setErrorDetails] = useGlobal('errorDetails');
+    const [, setUpdateMedicine] = useGlobal('updateMedicine');
+    const [, setDeleteMedicine] = useGlobal('deleteMedicine');
     const [activeResident] = useGlobal('activeResident');
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
-    const [medicineList, setMedicineList] = useGlobal('medicineList');
-    const [mm] = useGlobal('medicineManager');
+    const [medicineList] = useGlobal('medicineList');
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const activeTabKey = props.activeTabKey;
@@ -63,23 +63,6 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
         e.preventDefault();
         setMedicineInfo({...medicine});
         setShowDeleteMedicine(true);
-    }
-
-    /**
-     * Fires when user confirms to delete the medication.
-     */
-    const deleteDrug = () => {
-            mm.deleteMedicine(medicineInfo?.Id as number)
-                .then((deleted) => {
-                    if (deleted) {
-                        mm.loadMedicineList(activeResident?.Id as number)
-                        .then((medicineRecords) => {
-                            setMedicineList(medicineRecords);
-                        })
-                        .catch((err) => setErrorDetails(err));
-                    }
-                })
-                .catch((err) => setErrorDetails(err));
     }
 
     return (
@@ -139,15 +122,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                     show={showMedicineEdit}
                     onClose={(r) => {
                         setShowMedicineEdit(false);
-                        if (r) {
-                            mm.updateMedicine(r)
-                                .then(() => {
-                                    mm.loadMedicineList(activeResident?.Id as number)
-                                        .then((medicines) => setMedicineList(medicines))
-                                        .catch((err) => setErrorDetails(err))
-                                })
-                                .catch((err) => setErrorDetails(err))
-                        }
+                        setUpdateMedicine(r || null);
                     }}
                     drugInfo={medicineInfo}
                 />
@@ -158,11 +133,10 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                     show={showDeleteMedicine}
                     buttonvariant="danger"
                     onSelect={(a) => {
-                        setShowDeleteMedicine(false);
-                        if (a) {
-                            deleteDrug()
+                            setShowDeleteMedicine(false);
+                            setDeleteMedicine(a ? medicineInfo?.Id : null);
                         }
-                    }}
+                    }
                 >
                     <Confirm.Header>
                         <Confirm.Title>

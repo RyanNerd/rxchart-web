@@ -19,6 +19,7 @@ declare module 'reactn/default' {
         count: number
         deleteClient: number | null
         deleteDrugLog: number | null
+        deleteMedicine: number | null
         development: boolean
         drugLogList: DrugLogRecord[]
         errorDetails: any

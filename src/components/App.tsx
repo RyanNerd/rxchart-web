@@ -13,22 +13,29 @@ const App = () => {
     const [, setErrorDetails] = useGlobal('errorDetails');
     const [, setMedicineList] = useGlobal('medicineList');
     const [, setResidentList] = useGlobal('residentList');
+    const [deleteMedicine, setDeleteMedicine] = useGlobal('deleteMedicine');
     const [activeResident] = useGlobal('activeResident');
     const [deleteClient, setDeleteClient] = useGlobal('deleteClient');
     const [deleteDrugLog, setDeleteDrugLog] = useGlobal('deleteDrugLog');
     const [development] = useGlobal('development');
     const [mm] = useGlobal('medicineManager');
-    const [refreshMedicine, setRefreshMedicine] = useGlobal('refreshMedicine');
     const [refreshClients, setRefreshClients] = useGlobal('refreshClients');
     const [refreshDrugLog, setRefreshDrugLog] = useGlobal('refreshDrugLog');
-    const [resident] = useGlobal('activeResident');
+    const [refreshMedicine, setRefreshMedicine] = useGlobal('refreshMedicine');
     const [rm] = useGlobal('residentManager');
     const [updateClient, setUpdateClient] = useGlobal('updateClient');
     const [updateDrugLog, setUpdateDrugLog] = useGlobal('updateDrugLog');
     const [updateMedicine, setUpdateMedicine] = useGlobal('updateMedicine');
     const residentColor = development ? 'blue' : "#edf11e";
     const residentForegroundColor = development ? "#fffff0" : "black";
+    const residentTitle = activeResident ?
+            FullName(activeResident) + ' ' +
+                activeResident.DOB_MONTH + '/' +
+                activeResident.DOB_DAY + '/' +
+                activeResident.DOB_YEAR
+            : null;
 
+    // *** Client ***
     /**
      * activeResident: ResidentRecord|null - set to ResidentRecord when user selects from the ResidentPage
      */
@@ -44,39 +51,6 @@ const App = () => {
             prevActiveResident = activeResident;
         }
     }, [activeResident]);
-
-    /**
-     * refreshMedicine: number|null -- set to residentId when Medicine and MedHistory need a refresh
-     */
-    useEffect(() => {
-        if (refreshMedicine) {
-            mm.loadMedicineList(refreshMedicine)
-            .then((meds) => {setMedicineList(meds)})
-            .then(() => {setRefreshDrugLog(refreshMedicine)})
-            .then(() => {setRefreshMedicine(null)})
-            .catch((err) => setErrorDetails(err));
-        }
-    }, [mm, refreshMedicine, setErrorDetails, setMedicineList, setRefreshDrugLog, setRefreshMedicine]);
-
-    /**
-     * refreshDrugLog: number|DrugLogRecord[], null -- set to residentId when Medicine and MedHistory need a refresh
-     */
-    useEffect(() => {
-        if (refreshDrugLog) {
-            if (Array.isArray(refreshDrugLog)) {
-                setDrugLogList(refreshDrugLog).then((state) => {setRefreshDrugLog(null)})
-            } else {
-                mm.loadDrugLog(refreshDrugLog)
-                .then((drugs) => {
-                    setDrugLogList(drugs)
-                })
-                .then(() => {
-                    setRefreshDrugLog(null)
-                })
-                .catch((err) => setErrorDetails(err))
-            }
-        }
-    }, [mm, refreshDrugLog, setDrugLogList, setErrorDetails, setRefreshDrugLog]);
 
     /**
      * refreshClients: bool - Set to true when the client list needs to be refreshed
@@ -121,6 +95,70 @@ const App = () => {
         }
     }, [deleteClient, setDeleteClient, rm, setErrorDetails, setRefreshClients]);
 
+    // *** Medicine ***
+    /**
+     * refreshMedicine: number|null -- set to residentId when Medicine and MedHistory need a refresh
+     */
+    useEffect(() => {
+        if (refreshMedicine) {
+            mm.loadMedicineList(refreshMedicine)
+            .then((meds) => {setMedicineList(meds)})
+            .then(() => {setRefreshDrugLog(refreshMedicine)})
+            .then(() => {setRefreshMedicine(null)})
+            .catch((err) => setErrorDetails(err));
+        }
+    }, [mm, refreshMedicine, setErrorDetails, setMedicineList, setRefreshDrugLog, setRefreshMedicine]);
+
+    /**
+     * updateMedicine: MedicineRecord|null - Set to MedicineRecord when a Medicine record is added or updated
+     */
+    useEffect(() => {
+        if (updateMedicine) {
+            mm.updateMedicine(updateMedicine)
+            .then((drugRecord) => {
+                const clientId = drugRecord && drugRecord.ResidentId ? drugRecord.ResidentId : null;
+                setRefreshMedicine(clientId);
+            })
+            .then(() => {setUpdateMedicine(null)})
+            .catch((err) => setErrorDetails(err));
+        }
+    }, [updateMedicine, setUpdateMedicine, mm, setErrorDetails, setRefreshMedicine])
+
+
+    useEffect(() => {
+        if(deleteMedicine && activeResident) {
+            mm.deleteMedicine(deleteMedicine)
+            .then((deleted) => {
+                if (deleted) {
+                    setRefreshMedicine(activeResident?.Id);
+                }
+            })
+            .then(() => {setDeleteMedicine(null)})
+            .catch((err) => setErrorDetails(err));
+        }
+    }, [activeResident, deleteMedicine, mm, setDeleteMedicine, setErrorDetails, setRefreshMedicine])
+
+    // *** DrugLog ***
+    /**
+     * refreshDrugLog: number|DrugLogRecord[], null -- set to residentId when Medicine and MedHistory need a refresh
+     */
+    useEffect(() => {
+        if (refreshDrugLog) {
+            if (Array.isArray(refreshDrugLog)) {
+                setDrugLogList(refreshDrugLog).then((state) => {setRefreshDrugLog(null)})
+            } else {
+                mm.loadDrugLog(refreshDrugLog)
+                .then((drugs) => {
+                    setDrugLogList(drugs)
+                })
+                .then(() => {
+                    setRefreshDrugLog(null)
+                })
+                .catch((err) => setErrorDetails(err))
+            }
+        }
+    }, [mm, refreshDrugLog, setDrugLogList, setErrorDetails, setRefreshDrugLog]);
+
     /**
      * deleteDrugLog: number|null - set to the id of of the DrugLogRecord to delete.
      */
@@ -141,21 +179,6 @@ const App = () => {
     }, [activeResident, deleteDrugLog, mm, setDeleteDrugLog, setErrorDetails, setRefreshDrugLog])
 
     /**
-     * updateMedicine: MedicineRecord|null - Set to MedicineRecord when a Medicine record is added or updated
-     */
-    useEffect(() => {
-        if (updateMedicine) {
-            mm.updateMedicine(updateMedicine)
-            .then((drugRecord) => {
-                const clientId = drugRecord && drugRecord.ResidentId ? drugRecord.ResidentId : null;
-                setRefreshMedicine(clientId);
-            })
-            .then(() => {setUpdateMedicine(null)})
-            .catch((err) => setErrorDetails(err));
-        }
-    }, [updateMedicine, setUpdateMedicine, mm, setErrorDetails, setRefreshMedicine])
-
-    /**
      * updateDrugLog: drugLogRecord|null -- Set to a drugLogRecord when a MedHistory record is added or updated
      */
     useEffect(() => {
@@ -169,12 +192,12 @@ const App = () => {
 
     return (
         <>
-            {resident ?
+            {residentTitle &&
                 <h4 style={{textAlign: "center"}}>
                     <span style={{background: residentColor, color: residentForegroundColor}}>
-                        {FullName(resident)} {resident.DOB_MONTH}/{resident.DOB_DAY}/{resident.DOB_YEAR}
+                        {residentTitle}
                     </span>
-                </h4> : null
+                </h4>
             }
 
             <div className="vl"></div>
