@@ -106,9 +106,8 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
      */
     const handleModalClose = (residentRecord: ResidentRecord) => {
         setUpdateClient({...residentRecord}).then(() => {
-            // Is the client new? If so force the user to select the newly added client.
-            if (!residentRecord.Id) {
-                setActiveResident(null);
+            if (residentRecord.Id === activeResident?.Id) {
+                setActiveResident(residentRecord.Id ? residentRecord : null);
             }
         })
     }
