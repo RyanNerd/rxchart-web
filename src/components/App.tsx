@@ -10,9 +10,9 @@ import {FullName} from "../utility/common";
  */
 const App = () => {
     const [apiKey, setApiKey] = useGlobal('apiKey');
-    const [, setActiveTabKey] = useGlobal('activeTabKey');
+    const [activeTabKey, setActiveTabKey] = useGlobal('activeTabKey');
     const [, setDrugLogList] = useGlobal('drugLogList');
-    const [, setErrorDetails] = useGlobal('errorDetails');
+    const [errorDetails, setErrorDetails] = useGlobal('errorDetails');
     const [, setLoginFailed] = useGlobal('loginFailed');
     const [, setMedicineList] = useGlobal('medicineList');
     const [, setOtcList] = useGlobal('otcList');
@@ -60,8 +60,6 @@ const App = () => {
 
                 // Activate the Resident tab
                 setActiveTabKey('resident');
-            } else {
-                // todo: handle Logout
             }
             return () => {
                 // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -69,6 +67,15 @@ const App = () => {
             }
         }
     }, [apiKey])
+
+    // *** Error
+    // Observer for anytime there is an error set on the errorDetails global
+    useEffect(() => {
+        if (errorDetails) {
+            setApiKey(null);
+            setActiveTabKey('error');
+        }
+    }, [errorDetails, setApiKey, activeTabKey, setActiveTabKey])
 
     // *** Client ***
     /**

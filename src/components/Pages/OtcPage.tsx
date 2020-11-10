@@ -20,19 +20,16 @@ import {
     searchDrugs
 } from "../../utility/common";
 
-interface IProps {
-    activeTabKey: string | null
-}
-
 /**
  * OtcPage
  * UI for logging OTC medications
  * @returns {JSX.Element | null}
  */
-const OtcPage = (props: IProps): JSX.Element | null => {
+const OtcPage = (): JSX.Element | null => {
     const [, setErrorDetails] = useGlobal('errorDetails');
     const [activeDrug, setActiveDrug] = useState<MedicineRecord | null>(null);
     const [activeResident] = useGlobal('activeResident');
+    const [activeTabKey] = useGlobal('activeTabKey');
     const [drugInfo, setDrugInfo] = useState<MedicineRecord | null>(null);
     const [drugLogInfo, setDrugLogInfo] = useState<DrugLogRecord | null>(null);
     const [drugLogList, setDrugLogList] = useGlobal('drugLogList');
@@ -46,7 +43,6 @@ const OtcPage = (props: IProps): JSX.Element | null => {
     const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<any>(false);
     const [showDrugLog, setShowDrugLog] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
-    const activeTabKey = props.activeTabKey;
     const focusRef = useRef<HTMLInputElement>(null);
 
     // We only want to list the OTC drugs on this page that the resident has taken.

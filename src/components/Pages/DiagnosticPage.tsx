@@ -7,7 +7,6 @@ interface IKey {
 }
 
 interface IProps {
-    activeTabKey: string | null
     error: any
     dismissErrorAlert: () => void
 }
@@ -28,11 +27,11 @@ interface IWillow {
  * @return {JSX.Element | null}
  */
 const DiagnosticPage = (props: IProps): JSX.Element | null => {
+    const [activeTabKey] = useGlobal('activeTabKey');
     const [content, setContent] = useState<JSX.Element | null>(null);
     const [development] = useGlobal('development');
     const dismissError = props.dismissErrorAlert;
     const error = props.error;
-    const activeTabKey = props.activeTabKey;
     let finalContent: JSX.Element | null;
 
     /**

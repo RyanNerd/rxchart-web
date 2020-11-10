@@ -8,24 +8,20 @@ import {Alert} from "react-bootstrap";
 import {getMDY} from "../../utility/common";
 import {MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
 
-interface IProps {
-    activeTabKey: string | null
-}
-
 /**
  * ManageDrugPage
  * Page for Displaying, editing and adding Medicine
  * @returns {JSX.Element}
  */
-const ManageDrugPage = (props: IProps): JSX.Element | null => {
-    const [, setUpdateMedicine] = useGlobal('updateMedicine');
+const ManageDrugPage = (): JSX.Element | null => {
     const [, setDeleteMedicine] = useGlobal('deleteMedicine');
+    const [, setUpdateMedicine] = useGlobal('updateMedicine');
     const [activeResident] = useGlobal('activeResident');
+    const [activeTabKey] = useGlobal('activeTabKey');
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [medicineList] = useGlobal('medicineList');
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
-    const activeTabKey = props.activeTabKey;
 
     // If this tab isn't active then don't render
     if (activeTabKey !== 'manage') {

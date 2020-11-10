@@ -7,23 +7,19 @@ import TooltipButton from "../Buttons/TooltipButton";
 import {Alert} from "react-bootstrap";
 import {MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
 
-interface IProps {
-    activeTabKey: string | null
-}
-
 /**
  * ManageOtcPage
  * Page for Displaying, editing and adding OTC drugs
  * @returns {JSX.Element}
  */
-const ManageOtcPage = (props: IProps): JSX.Element | null => {
+const ManageOtcPage = (): JSX.Element | null => {
+    const [, setErrorDetails] = useGlobal('errorDetails');
+    const [activeTabKey] = useGlobal('activeTabKey');
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [mm] = useGlobal('medicineManager');
     const [otcList, setOtcList] = useGlobal('otcList');
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
-    const [, setErrorDetails] = useGlobal('errorDetails');
-    const activeTabKey = props.activeTabKey;
 
     // If this tab isn't active then don't render
     if (activeTabKey !== 'manage-otc') {

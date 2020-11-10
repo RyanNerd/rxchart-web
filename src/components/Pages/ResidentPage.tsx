@@ -8,7 +8,6 @@ import {FullName} from '../../utility/common';
 import {ResidentRecord} from "../../types/RecordTypes";
 
 interface IProps {
-    activeTabKey: string | null
     residentSelected: () => void
 }
 
@@ -23,15 +22,15 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     const [, setErrorDetails] = useGlobal('errorDetails');
     const [, setUpdateClient] = useGlobal('updateClient');
     const [activeResident, setActiveResident] = useGlobal('activeResident');
+    const [activeTabKey] = useGlobal('activeTabKey');
+    const [residentInfo, setResidentInfo] = useState<ResidentRecord | null>(null);
     const [residentList] = useGlobal('residentList');
     const [filteredResidents, setFilteredResidents] = useState<ResidentRecord[]>(residentList);
-    const [residentInfo, setResidentInfo] = useState<ResidentRecord | null>(null);
     const [residentToDelete, setResidentToDelete] = useState<ResidentRecord | null>(null);
     const [searchIsValid, setSearchIsValid] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [showDeleteResident, setShowDeleteResident] = useState(false);
     const [showResidentEdit, setShowResidentEdit] = useState(false);
-    const activeTabKey = props.activeTabKey;
     const focusRef = useRef<HTMLInputElement>(null);
     const onSelected = props.residentSelected;
 

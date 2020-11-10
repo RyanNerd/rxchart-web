@@ -7,17 +7,12 @@ import React, {setGlobal, useEffect, useGlobal, useRef, useState} from 'reactn';
 import Row from 'react-bootstrap/Row';
 import TabContent from '../../styles/common.css';
 
-interface IProps {
-    activeTabKey: string | null
-}
-
 /**
  * Sign in page
- * @param {IProps} props
  * @returns {JSX.Element}
  * @constructor
  */
-const LoginPage = (props: IProps): JSX.Element | null => {
+const LoginPage = (): JSX.Element | null => {
     const [, setErrorDetails] = useGlobal('errorDetails');
     const [, setLogin] = useGlobal('login');
     const [apiKey] = useGlobal('apiKey');
@@ -42,19 +37,8 @@ const LoginPage = (props: IProps): JSX.Element | null => {
     }
 
     /**
-     * Fires when the Login Button is clicked
-     * @param {React.MouseEvent<HTMLElement>} e
-     * todo: refactor / simplify
-     */
-    const login = (e: React.KeyboardEvent<HTMLElement> | React.MouseEvent<HTMLElement>) => {
-        e.preventDefault();
-        setLogin({username, password});
-    }
-
-    /**
      * Fires when the Logout Button is clicked
      * @param {React.MouseEvent<HTMLElement>} e
-     * todo: move to App.tsx
      */
     const logout = (e: React.MouseEvent<HTMLElement>) => {
         e.persist();
@@ -94,7 +78,8 @@ const LoginPage = (props: IProps): JSX.Element | null => {
                         onChange={(e) => setPassword(e.target.value)}
                         onKeyUp={(e: React.KeyboardEvent<HTMLElement>) => {
                             if (e.key === 'Enter') {
-                                login(e);
+                                e.preventDefault();
+                                setLogin({username, password});
                             }
                         }}
                     />
@@ -106,7 +91,8 @@ const LoginPage = (props: IProps): JSX.Element | null => {
             <Form.Group as={Row}>
                 <Col sm={1}>
                     <Button onClick={(e) => {
-                        login(e)
+                        e.preventDefault();
+                        setLogin({username, password});
                     }}>
                         Login
                     </Button>

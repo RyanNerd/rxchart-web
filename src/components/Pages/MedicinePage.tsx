@@ -22,21 +22,18 @@ import {
     searchDrugs
 } from "../../utility/common";
 
-interface IProps {
-    activeTabKey: string | null
-}
-
 /**
  * MedicinePage
  * UI for logging prescription medications
- * @param {IProps} props
  * @return {JSX.Element | null}
  */
-const MedicinePage = (props: IProps): JSX.Element | null => {
-    const [, setUpdateMedicine] = useGlobal('updateMedicine');
+const MedicinePage = (): JSX.Element | null => {
     const [, setDeleteDrugLog] = useGlobal('deleteDrugLog');
+    const [, setUpdateDrugLog] = useGlobal('updateDrugLog');
+    const [, setUpdateMedicine] = useGlobal('updateMedicine');
     const [activeDrug, setActiveDrug] = useState<MedicineRecord | null>(null);
     const [activeResident] = useGlobal('activeResident');
+    const [activeTabKey] = useGlobal('activeTabKey');
     const [drugLogInfo, setDrugLogInfo] = useState<DrugLogRecord | null>(null);
     const [drugLogList] = useGlobal('drugLogList');
     const [lastTaken, setLastTaken] = useState<number | null>(null);
@@ -48,8 +45,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<any>(false);
     const [showDrugLog, setShowDrugLog] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
-    const [, setUpdateDrugLog] = useGlobal('updateDrugLog');
-    const activeTabKey = props.activeTabKey;
     const focusRef = useRef<HTMLInputElement>(null);
 
     // Set the activeDrug when the medicineList changes
