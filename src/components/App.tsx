@@ -1,6 +1,6 @@
 import LandingPage from "./Pages/LandingPage";
 import React, {useGlobal, useEffect, useRef} from 'reactn';
-import {FullName} from "../utility/common";
+import {FullName, DOB} from "../utility/common";
 
 /**
  * Main Entry Component
@@ -38,12 +38,6 @@ const App = () => {
     const [updateOtcMedicine, setUpdateOtcMedicine] = useGlobal('updateOtcMedicine');
     const residentColor = development ? 'blue' : "#edf11e";
     const residentForegroundColor = development ? "#fffff0" : "black";
-    const residentTitle = activeResident ?
-            FullName(activeResident) + ' ' +
-                activeResident.DOB_MONTH + '/' +
-                activeResident.DOB_DAY + '/' +
-                activeResident.DOB_YEAR
-            : null;
 
     /**
      * Observer of the apiKey changes for when a user successfully logs in
@@ -322,10 +316,10 @@ const App = () => {
 
     return (
         <>
-            {residentTitle &&
+            {activeResident &&
                 <h4 style={{textAlign: "center"}}>
                     <span style={{background: residentColor, color: residentForegroundColor}}>
-                        {residentTitle}
+                        {FullName(activeResident) + ' ' + DOB(activeResident)}
                     </span>
                 </h4>
             }
