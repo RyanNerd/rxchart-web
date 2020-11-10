@@ -9,20 +9,20 @@ import {FullName} from "../utility/common";
  * @constructor
  */
 const App = () => {
-    const [apiKey, setApiKey] = useGlobal('apiKey');
-    const [activeTabKey, setActiveTabKey] = useGlobal('activeTabKey');
     const [, setDrugLogList] = useGlobal('drugLogList');
-    const [errorDetails, setErrorDetails] = useGlobal('errorDetails');
     const [, setLoginFailed] = useGlobal('loginFailed');
     const [, setMedicineList] = useGlobal('medicineList');
     const [, setOtcList] = useGlobal('otcList');
     const [, setResidentList] = useGlobal('residentList');
     const [activeResident] = useGlobal('activeResident');
+    const [activeTabKey, setActiveTabKey] = useGlobal('activeTabKey');
     const [am] = useGlobal('authManager');
+    const [apiKey, setApiKey] = useGlobal('apiKey');
     const [deleteClient, setDeleteClient] = useGlobal('deleteClient');
     const [deleteDrugLog, setDeleteDrugLog] = useGlobal('deleteDrugLog');
     const [deleteMedicine, setDeleteMedicine] = useGlobal('deleteMedicine');
     const [development] = useGlobal('development');
+    const [errorDetails, setErrorDetails] = useGlobal('errorDetails');
     const [login, setLogin] = useGlobal('login');
     const [mm] = useGlobal('medicineManager');
     const [providers] = useGlobal('providers');
@@ -43,7 +43,10 @@ const App = () => {
                 activeResident.DOB_YEAR
             : null;
 
-    // *** ApiKey
+    /**
+     * Observer of the apiKey changes for when a user successfully logs in
+     * @var apiKey {string | null}
+     */
     let prevApiKey = useRef(apiKey).current;
     useEffect(() => {
         if (prevApiKey !== apiKey) {
@@ -68,8 +71,10 @@ const App = () => {
         }
     }, [apiKey])
 
-    // *** Error
-    // Observer for anytime there is an error set on the errorDetails global
+    /**
+     * Observer for anytime there is an error set on the errorDetails global
+     * @var errorDetails {any}
+     */
     useEffect(() => {
         if (errorDetails) {
             setApiKey(null);
@@ -77,9 +82,9 @@ const App = () => {
         }
     }, [errorDetails, setApiKey, activeTabKey, setActiveTabKey])
 
-    // *** Client ***
     /**
-     * activeResident: ResidentRecord|null - set to ResidentRecord when user selects from the ResidentPage
+     * Observer for activeResident that fires when a user selects a resident to be active
+     * @var activeResident {ResidentRecord | null}
      */
     let prevActiveResident = useRef(activeResident).current;
     useEffect(() => {
@@ -95,7 +100,8 @@ const App = () => {
     }, [activeResident]);
 
     /**
-     * refreshClients: bool - Set to true when the client list needs to be refreshed
+     * Set to true when the client list needs to be refreshed
+     * @var refreshClients {bool}
      */
     useEffect(() => {
         if (refreshClients) {
@@ -107,7 +113,8 @@ const App = () => {
     }, [refreshClients, setRefreshClients, setResidentList, setErrorDetails, rm]);
 
     /**
-     * updateClient: ResidentRecord|null - Set to ResidentRecord when a client is being added or updated
+     * Set to a ResidentRecord when a client is being added or updated
+     * @var updateClient {ResidentRecord|null}
      */
     useEffect(() => {
         if (updateClient) {
@@ -120,7 +127,8 @@ const App = () => {
     }, [updateClient, setUpdateClient, rm, setRefreshClients, setErrorDetails]);
 
     /**
-     * deleteClient: number|null - Set to the resident Id of the record to delete
+     * Set to the Resident.Id of the record to delete
+     * @var deleteClient {}number|null}
      */
     useEffect(() => {
         if (deleteClient) {
@@ -137,9 +145,9 @@ const App = () => {
         }
     }, [deleteClient, setDeleteClient, rm, setErrorDetails, setRefreshClients]);
 
-    // *** Medicine ***
     /**
-     * refreshMedicine: number|null -- set to residentId when Medicine and MedHistory need a refresh
+     * Set to Resident.Id when the medicineList needs a refresh
+     * @var refreshMedicine {number|null}
      */
     useEffect(() => {
         if (refreshMedicine) {
@@ -152,7 +160,8 @@ const App = () => {
     }, [mm, refreshMedicine, setErrorDetails, setMedicineList, setRefreshDrugLog, setRefreshMedicine]);
 
     /**
-     * updateMedicine: MedicineRecord|null - Set to MedicineRecord when a Medicine record is added or updated
+     * Set to a MedicineRecord when a Medicine record is added or updated
+     * @var updateMedicine {MedicineRecord|null}
      */
     useEffect(() => {
         if (updateMedicine) {
@@ -167,7 +176,8 @@ const App = () => {
     }, [updateMedicine, setUpdateMedicine, mm, setErrorDetails, setRefreshMedicine])
 
     /**
-     * deleteMedicne: number|null set to Id of the the MedicineRecord to be deleted
+     * Set to Id of the the MedicineRecord to be deleted
+     * @var deleteMedicne {number|null}
      */
     useEffect(() => {
         if(deleteMedicine && activeResident) {
@@ -182,9 +192,9 @@ const App = () => {
         }
     }, [activeResident, deleteMedicine, mm, setDeleteMedicine, setErrorDetails, setRefreshMedicine])
 
-    // *** DrugLog ***
     /**
-     * refreshDrugLog: number|DrugLogRecord[], null -- set to residentId when Medicine and MedHistory need a refresh
+     * Set to residentId or DrugLogRercord[] when drugLogList needs a refresh
+     * @var refreshDrugLog {number|DrugLogRecord[]|null}
      */
     useEffect(() => {
         if (refreshDrugLog) {
@@ -204,7 +214,8 @@ const App = () => {
     }, [mm, refreshDrugLog, setDrugLogList, setErrorDetails, setRefreshDrugLog]);
 
     /**
-     * deleteDrugLog: number|null - set to the id of of the DrugLogRecord to delete.
+     * Set to the MedHistoy.Id for the DrugLogRecord to delete.
+     * @var deleteDrugLog {number|null}
      */
     useEffect(() => {
         const clientId = activeResident?.Id;
@@ -223,7 +234,8 @@ const App = () => {
     }, [activeResident, deleteDrugLog, mm, setDeleteDrugLog, setErrorDetails, setRefreshDrugLog])
 
     /**
-     * updateDrugLog: drugLogRecord|null -- Set to a drugLogRecord when a MedHistory record is added or updated
+     * Set to a drugLogRecord when a MedHistory record is added or updated
+     * @var updateDrugLog {drugLogRecord|null}
      */
     useEffect(() => {
         if (updateDrugLog) {
@@ -234,6 +246,10 @@ const App = () => {
         }
     }, [mm, setErrorDetails,setRefreshDrugLog, setUpdateDrugLog, updateDrugLog])
 
+    /**
+     * Set to true when the the otcList needs to be rehydrated.
+     * @var refreshOtc {boolean}
+     */
     useEffect(() => {
         if (refreshOtc) {
             mm.loadOtcList()
@@ -243,14 +259,15 @@ const App = () => {
         }
     }, [mm, refreshOtc, setErrorDetails, setOtcList, setRefreshOtc])
 
-    // *** Login
+    /**
+     * Set to {username, password} when a user is attempting to log in.
+     * @var login {{username: string, password: string}|null}
+     */
     useEffect(() => {
-        console.log('login', login);
         if (login) {
             // Send the user name and password to the web service
             am.authenticate(login.username, login.password)
             .then((response) => {
-                console.log('auth response', response);
                 if (response.success) {
                     setApiKey(response.apiKey);
 
@@ -278,8 +295,6 @@ const App = () => {
                     </span>
                 </h4>
             }
-
-            <div className="vl"></div>
 
             <div style={{marginLeft: "15px"}}>
                 <LandingPage/>
