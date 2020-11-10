@@ -45,6 +45,7 @@ const getInitialState = () => {
         deleteClient: null,
         deleteDrugLog: null,
         deleteMedicine: null,
+        deleteOtcMedicine: null,
         development: process.env.REACT_APP_DEVELOPMENT === 'true',
         drugLogList: [] as DrugLogRecord[],
         errorDetails: undefined,
@@ -62,7 +63,8 @@ const getInitialState = () => {
         residentManager: ResidentManager(providers.residentProvider),
         updateClient: null,
         updateDrugLog: null,
-        updateMedicine: null
+        updateMedicine: null,
+        updateOtcMedicine: null
     } as State;
 }
 

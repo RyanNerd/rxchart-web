@@ -13,11 +13,11 @@ import {MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
  * @returns {JSX.Element}
  */
 const ManageOtcPage = (): JSX.Element | null => {
-    const [, setErrorDetails] = useGlobal('errorDetails');
+    const [, setDeleteOtcMedicine] = useGlobal('deleteOtcMedicine');
+    const [, setUpdateOtcMedicine] = useGlobal('updateOtcMedicine');
     const [activeTabKey] = useGlobal('activeTabKey');
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
-    const [mm] = useGlobal('medicineManager');
-    const [otcList, setOtcList] = useGlobal('otcList');
+    const [otcList] = useGlobal('otcList');
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
 
@@ -51,21 +51,6 @@ const ManageOtcPage = (): JSX.Element | null => {
         e.preventDefault();
         setMedicineInfo({...medicine});
         setShowDeleteMedicine(true);
-    }
-
-    /**
-     * Fires when user confirms to delete the medicine
-     */
-    const deleteDrug = () => {
-            mm.deleteMedicine(medicineInfo?.Id as number)
-                .then((deleted) => {
-                    if (deleted) {
-                       mm.loadOtcList()
-                            .then((drugs) => setOtcList(drugs))
-                            .catch(() => setOtcList([]));
-                    }
-                })
-                .catch((err) => setErrorDetails(err))
     }
 
     return (
@@ -129,14 +114,7 @@ const ManageOtcPage = (): JSX.Element | null => {
                     show={showMedicineEdit}
                     onClose={(r) => {
                         setShowMedicineEdit(false);
-                        if (r) {
-                            mm.updateMedicine(r)
-                                .then(() => {
-                                    mm.loadOtcList()
-                                        .then((otcDrugs) => setOtcList(otcDrugs))
-                                })
-                                .catch((err) => setErrorDetails(err))
-                        }
+                        setUpdateOtcMedicine(r || null);
                     }}
                     drugInfo={medicineInfo}
                 />
@@ -149,9 +127,7 @@ const ManageOtcPage = (): JSX.Element | null => {
                     buttonvariant="danger"
                     onSelect={(a) => {
                         setShowDeleteMedicine(false);
-                        if (a) {
-                            deleteDrug();
-                        }
+                        setDeleteOtcMedicine(a ? medicineInfo?.Id : null);
                     }}
                 >
                     <Confirm.Header>

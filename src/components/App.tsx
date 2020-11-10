@@ -21,6 +21,7 @@ const App = () => {
     const [deleteClient, setDeleteClient] = useGlobal('deleteClient');
     const [deleteDrugLog, setDeleteDrugLog] = useGlobal('deleteDrugLog');
     const [deleteMedicine, setDeleteMedicine] = useGlobal('deleteMedicine');
+    const [deleteOtcMedicine, setDeleteOtcMedicine] = useGlobal('deleteOtcMedicine');
     const [development] = useGlobal('development');
     const [errorDetails, setErrorDetails] = useGlobal('errorDetails');
     const [login, setLogin] = useGlobal('login');
@@ -34,6 +35,7 @@ const App = () => {
     const [updateClient, setUpdateClient] = useGlobal('updateClient');
     const [updateDrugLog, setUpdateDrugLog] = useGlobal('updateDrugLog');
     const [updateMedicine, setUpdateMedicine] = useGlobal('updateMedicine');
+    const [updateOtcMedicine, setUpdateOtcMedicine] = useGlobal('updateOtcMedicine');
     const residentColor = development ? 'blue' : "#edf11e";
     const residentForegroundColor = development ? "#fffff0" : "black";
     const residentTitle = activeResident ?
@@ -176,6 +178,21 @@ const App = () => {
     }, [updateMedicine, setUpdateMedicine, mm, setErrorDetails, setRefreshMedicine])
 
     /**
+     * Set to a MedicineRecord when an OTC record is added or updated
+     * @var updateOtcMedicine {MedicineRecord|null}
+     */
+    useEffect(() => {
+        if (updateOtcMedicine) {
+            mm.updateMedicine(updateOtcMedicine)
+            .then((drugRecord) => {
+                setRefreshOtc(true);
+            })
+            .then(() => {setUpdateOtcMedicine(null)})
+            .catch((err) => setErrorDetails(err));
+        }
+    }, [mm, setErrorDetails, setRefreshOtc, setUpdateOtcMedicine, updateOtcMedicine])
+
+    /**
      * Set to Id of the the MedicineRecord to be deleted
      * @var deleteMedicne {number|null}
      */
@@ -191,6 +208,23 @@ const App = () => {
             .catch((err) => setErrorDetails(err));
         }
     }, [activeResident, deleteMedicine, mm, setDeleteMedicine, setErrorDetails, setRefreshMedicine])
+
+    /**
+     * Set to Id of the the OTC MedicineRecord to be deleted
+     * @var deleteOtcMedicne {number|null}
+     */
+    useEffect(() => {
+        if(deleteOtcMedicine) {
+            mm.deleteMedicine(deleteOtcMedicine)
+            .then((deleted) => {
+                if (deleted) {
+                    setRefreshOtc(true);
+                }
+            })
+            .then(() => {setDeleteOtcMedicine(null)})
+            .catch((err) => setErrorDetails(err));
+        }
+    }, [deleteOtcMedicine, mm, setDeleteOtcMedicine, setErrorDetails, setRefreshOtc])
 
     /**
      * Set to residentId or DrugLogRercord[] when drugLogList needs a refresh

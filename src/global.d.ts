@@ -21,6 +21,7 @@ declare module 'reactn/default' {
         deleteClient: number | null
         deleteDrugLog: number | null
         deleteMedicine: number | null
+        deleteOtcMedicine: number | null
         development: boolean
         drugLogList: DrugLogRecord[]
         errorDetails: any
@@ -31,14 +32,15 @@ declare module 'reactn/default' {
         otcList: MedicineRecord[]
         providers: IProviders
         refreshClients: boolean
-        refreshMedicine: number | null
         refreshDrugLog: number | DrugLogRecord[] |null
+        refreshMedicine: number | null
         refreshOtc: boolean
         residentList: ResidentRecord[]
         residentManager: IResidentManager
         updateClient: ResidentRecord | null
         updateDrugLog: DrugLogRecord | null
         updateMedicine: MedicineRecord | null
+        updateOtcMedicine: MedicineRecord | null
         value: string
     }
 }
