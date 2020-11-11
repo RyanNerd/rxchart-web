@@ -22,44 +22,39 @@ import {
     searchDrugs
 } from "../../utility/common";
 
-interface IProps {
-    activeTabKey: string | null
-}
-
 /**
  * MedicinePage
  * UI for logging prescription medications
- * @param {IProps} props
  * @return {JSX.Element | null}
  */
-const MedicinePage = (props: IProps): JSX.Element | null => {
-    const [, setErrorDetails] = useGlobal('errorDetails');
+const MedicinePage = (): JSX.Element | null => {
+    const [, setDeleteDrugLog] = useGlobal('deleteDrugLog');
+    const [, setUpdateDrugLog] = useGlobal('updateDrugLog');
+    const [, setUpdateMedicine] = useGlobal('updateMedicine');
     const [activeDrug, setActiveDrug] = useState<MedicineRecord | null>(null);
     const [activeResident] = useGlobal('activeResident');
+    const [activeTabKey] = useGlobal('activeTabKey');
     const [drugLogInfo, setDrugLogInfo] = useState<DrugLogRecord | null>(null);
-    const [drugLogList, setDrugLogList] = useGlobal('drugLogList');
+    const [drugLogList] = useGlobal('drugLogList');
     const [lastTaken, setLastTaken] = useState<number | null>(null);
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
-    const [medicineList, setMedicineList] = useGlobal('medicineList');
-    const [mm] = useGlobal('medicineManager');
+    const [medicineList] = useGlobal('medicineList');
     const [residentId, setResidentId] = useState<number | null>(activeResident?.Id || null);
     const [searchIsValid, setSearchIsValid] = useState(false)
     const [searchText, setSearchText] = useState('');
     const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<any>(false);
     const [showDrugLog, setShowDrugLog] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
-    const activeTabKey = props.activeTabKey;
     const focusRef = useRef<HTMLInputElement>(null);
 
-    // Set the activeDrug when the medicineList changes or the activeResident.
+    // Set the activeDrug when the medicineList changes
     useEffect(() => {
         if (medicineList.length > 0) {
             setActiveDrug(medicineList[0]);
         } else {
             setActiveDrug(null);
         }
-        setResidentId(activeResident ? activeResident.Id : null);
-    }, [medicineList, activeResident]);
+    }, [medicineList]);
 
     // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
     useEffect(() => {
@@ -88,6 +83,9 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     // Reset the search text input when the activeResident changes
     useEffect(() => {
         setSearchText('');
+        // todo: get rid of the monitoring of residentId
+        const clientId = activeResident?.Id ? activeResident.Id : null;
+        setResidentId(clientId);
     }, [activeResident]);
 
     // Show or hide the valid search icon
@@ -102,69 +100,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         return null;
     } else {
         window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    /**
-     * Fires when the user clicks on the + Medicine button
-     * @param {React.MouseEvent<HTMLElement>} e
-     */
-    const handleAddMedicine = (e: React.MouseEvent<HTMLElement>) => {
-        e.preventDefault();
-        const mdy = getMDY();
-        setMedicineInfo({
-            ...newDrugInfo,
-            OTC: false,
-            ResidentId: activeResident?.Id,
-            FillDateYear: mdy.year,
-            FillDateMonth: mdy.month,
-            FillDateDay: mdy.day
-        });
-        setShowMedicineEdit(true);
-    }
-
-    /**
-     * Fires when the user clicks on the Edit {medicine} button
-     * @param {React.MouseEvent<HTMLElement>} e
-     */
-    const handleEditMedicine = (e: React.MouseEvent<HTMLElement>) => {
-        e.preventDefault();
-        setMedicineInfo({...activeDrug} as MedicineRecord);
-        setShowMedicineEdit(true);
-    }
-
-    /**
-     * Fires when MedicineEdit closes and there's an update (add/edit) for a Medicine record
-     * @param {MedicineRecord} drugInfo
-     */
-    const updateMedicine = (drugInfo: MedicineRecord) => {
-        const residentId = activeResident?.Id as number;
-        mm.updateMedicine(drugInfo)
-            .then((drugRecord) => {
-                mm.loadMedicineList(residentId)
-                    .then((meds) => {
-                        setMedicineList(meds);
-                        setActiveDrug(drugRecord);
-                    })
-                    .catch((err) => setErrorDetails(err));
-            })
-            .catch((err) => setErrorDetails(err));
-    }
-
-    /**
-     * Fires when the user has confirmed the deletion of a drug log record.
-     * @param {number} drugLogId
-     */
-    const deleteDrugLogRecord = (drugLogId: number) => {
-        mm.deleteDrugLog(drugLogId)
-            .then((deleted) => {
-                if (deleted.success) {
-                    mm.loadDrugLog(residentId).then((drugs) => setDrugLogList(drugs))
-                        .catch((err) => setErrorDetails(err))
-                } else {
-                    throw new Error('DrugLog Delete failed for MedHistory.Id: ' + drugLogId);
-                }
-            })
-            .catch((err) => setErrorDetails(err));
     }
 
     /**
@@ -189,18 +124,15 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      * @param {number} amount
      */
     const handleLogDrugAmount = (amount: number) => {
-        const drugId = activeDrug?.Id as number;
-        if (drugId) {
+        if (activeDrug?.Id) {
             const notes = amount.toString();
             const drugLogInfo = {
                 Id: null,
                 ResidentId: residentId,
-                MedicineId: drugId,
+                MedicineId: activeDrug.Id,
                 Notes: notes
             };
-            mm.updateDrugLog(drugLogInfo, residentId)
-                .then((drugLogList) => setDrugLogList(drugLogList))
-                .catch((err) => setErrorDetails(err))
+            setUpdateDrugLog(drugLogInfo);
         }
     }
 
@@ -217,7 +149,19 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             tooltip="Manually Add New Medicine"
                             size="sm"
                             variant="info"
-                            onClick={(e: React.MouseEvent<HTMLElement>) => handleAddMedicine(e)}
+                            onClick={(e: React.MouseEvent<HTMLElement>) => {
+                                e.preventDefault();
+                                const mdy = getMDY();
+                                setMedicineInfo({
+                                    ...newDrugInfo,
+                                    OTC: false,
+                                    ResidentId: activeResident?.Id,
+                                    FillDateYear: mdy.year,
+                                    FillDateMonth: mdy.month,
+                                    FillDateDay: mdy.day
+                                });
+                                setShowMedicineEdit(true);
+                            }}
                         >
                             + Medicine
                         </TooltipButton>
@@ -226,7 +170,11 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         <Button
                             size="sm"
                             variant="info"
-                            onClick={(e) => handleEditMedicine(e)}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                setMedicineInfo({...activeDrug} as MedicineRecord);
+                                setShowMedicineEdit(true);
+                            }}
                         >
                             Edit <b>{activeDrug.Drug}</b>
                         </Button>
@@ -341,12 +289,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                                 <DrugLogGrid
                                     drugLog={drugLogList}
                                     drugId={activeDrug && activeDrug.Id}
-                                    onEdit={(e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) =>
-                                        addEditDrugLog(e, r)
-                                    }
-                                    onDelete={(e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) =>
-                                        setShowDeleteDrugLogRecord(r)
-                                    }
+                                    onEdit={(e, r) => addEditDrugLog(e, r)}
+                                    onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
                                 />
                             </Col>
                         </Row>
@@ -360,9 +304,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     show={showMedicineEdit}
                     onClose={(r) => {
                         setShowMedicineEdit(false);
-                        if (r) {
-                            updateMedicine(r);
-                        }
+                        setUpdateMedicine(r);
                     }}
                     drugInfo={medicineInfo}
                 />
@@ -375,11 +317,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     onHide={() => setShowDrugLog(!showDrugLog)}
                     onClose={(drugLogRecord) => {
                         setShowDrugLog(false);
-                        if (drugLogRecord) {
-                            mm.updateDrugLog(drugLogRecord, residentId)
-                                .then((drugLogList) => setDrugLogList(drugLogList))
-                                .catch((err) => setErrorDetails(err))
-                        }
+                        setUpdateDrugLog(drugLogRecord);
                     }}
                 />
             }
@@ -388,14 +326,10 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             {showDeleteDrugLogRecord &&
                 <Confirm.Modal
                     size='lg'
-                    onSelect={
-                        (a) => {
-                            setShowDeleteDrugLogRecord(false);
-                            if (a) {
-                                deleteDrugLogRecord(showDeleteDrugLogRecord.Id);
-                            }
-                        }
-                    }
+                    onSelect={(a) => {
+                        setShowDeleteDrugLogRecord(false);
+                        setDeleteDrugLog(a ? showDeleteDrugLogRecord.Id : null);
+                    }}
                     show={typeof showDeleteDrugLogRecord === 'object'}
                     buttonvariant="danger"
                 >

@@ -8,24 +8,20 @@ import {Alert} from "react-bootstrap";
 import {getMDY} from "../../utility/common";
 import {MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
 
-interface IProps {
-    activeTabKey: string | null
-}
-
 /**
  * ManageDrugPage
  * Page for Displaying, editing and adding Medicine
  * @returns {JSX.Element}
  */
-const ManageDrugPage = (props: IProps): JSX.Element | null => {
-    const [, setErrorDetails] = useGlobal('errorDetails');
+const ManageDrugPage = (): JSX.Element | null => {
+    const [, setDeleteMedicine] = useGlobal('deleteMedicine');
+    const [, setUpdateMedicine] = useGlobal('updateMedicine');
     const [activeResident] = useGlobal('activeResident');
+    const [activeTabKey] = useGlobal('activeTabKey');
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
-    const [medicineList, setMedicineList] = useGlobal('medicineList');
-    const [mm] = useGlobal('medicineManager');
+    const [medicineList] = useGlobal('medicineList');
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
-    const activeTabKey = props.activeTabKey;
 
     // If this tab isn't active then don't render
     if (activeTabKey !== 'manage') {
@@ -52,34 +48,6 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
         };
         setMedicineInfo(medicineInfo);
         setShowMedicineEdit(true);
-    }
-
-    /**
-     * Handle the delete click event.
-     * @param {React.MouseEvent<HTMLElement>} e
-     * @param {MedicineRecord} medicine
-     */
-    const onDelete = (e: React.MouseEvent<HTMLElement>, medicine: MedicineRecord) => {
-        e.preventDefault();
-        setMedicineInfo({...medicine});
-        setShowDeleteMedicine(true);
-    }
-
-    /**
-     * Fires when user confirms to delete the medication.
-     */
-    const deleteDrug = () => {
-            mm.deleteMedicine(medicineInfo?.Id as number)
-                .then((deleted) => {
-                    if (deleted) {
-                        mm.loadMedicineList(activeResident?.Id as number)
-                        .then((medicineRecords) => {
-                            setMedicineList(medicineRecords);
-                        })
-                        .catch((err) => setErrorDetails(err));
-                    }
-                })
-                .catch((err) => setErrorDetails(err));
     }
 
     return (
@@ -126,7 +94,11 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                     <MedicineDetail
                         drug={drug}
                         key={'med-' + drug.Id}
-                        onDelete={onDelete}
+                        onDelete={(e, medicineRecord) => {
+                            e.preventDefault();
+                            setMedicineInfo({...medicineRecord});
+                            setShowDeleteMedicine(true);
+                        }}
                         onEdit={onEdit}
                     />
                 )}
@@ -139,15 +111,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                     show={showMedicineEdit}
                     onClose={(r) => {
                         setShowMedicineEdit(false);
-                        if (r) {
-                            mm.updateMedicine(r)
-                                .then(() => {
-                                    mm.loadMedicineList(activeResident?.Id as number)
-                                        .then((medicines) => setMedicineList(medicines))
-                                        .catch((err) => setErrorDetails(err))
-                                })
-                                .catch((err) => setErrorDetails(err))
-                        }
+                        setUpdateMedicine(r || null);
                     }}
                     drugInfo={medicineInfo}
                 />
@@ -158,11 +122,10 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                     show={showDeleteMedicine}
                     buttonvariant="danger"
                     onSelect={(a) => {
-                        setShowDeleteMedicine(false);
-                        if (a) {
-                            deleteDrug()
+                            setShowDeleteMedicine(false);
+                            setDeleteMedicine(a ? medicineInfo?.Id : null);
                         }
-                    }}
+                    }
                 >
                     <Confirm.Header>
                         <Confirm.Title>

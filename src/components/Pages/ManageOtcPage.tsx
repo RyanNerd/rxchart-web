@@ -7,23 +7,19 @@ import TooltipButton from "../Buttons/TooltipButton";
 import {Alert} from "react-bootstrap";
 import {MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
 
-interface IProps {
-    activeTabKey: string | null
-}
-
 /**
  * ManageOtcPage
  * Page for Displaying, editing and adding OTC drugs
  * @returns {JSX.Element}
  */
-const ManageOtcPage = (props: IProps): JSX.Element | null => {
+const ManageOtcPage = (): JSX.Element | null => {
+    const [, setDeleteOtcMedicine] = useGlobal('deleteOtcMedicine');
+    const [, setUpdateOtcMedicine] = useGlobal('updateOtcMedicine');
+    const [activeTabKey] = useGlobal('activeTabKey');
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
-    const [mm] = useGlobal('medicineManager');
-    const [otcList, setOtcList] = useGlobal('otcList');
+    const [otcList] = useGlobal('otcList');
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
-    const [, setErrorDetails] = useGlobal('errorDetails');
-    const activeTabKey = props.activeTabKey;
 
     // If this tab isn't active then don't render
     if (activeTabKey !== 'manage-otc') {
@@ -42,34 +38,6 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
         const medicineInfo = (medicine) ? {...medicine} : {...newDrugInfo, OTC: true};
         setMedicineInfo(medicineInfo);
         setShowMedicineEdit(true);
-        setMedicineInfo(medicineInfo);
-        setShowMedicineEdit(true);
-    }
-
-    /**
-     * Handle the click event for delete
-     * @param {React.MouseEvent<HTMLElement>} e
-     * @param {MedicineRecord} medicine
-     */
-    const onDelete = (e: React.MouseEvent<HTMLElement>, medicine: MedicineRecord) => {
-        e.preventDefault();
-        setMedicineInfo({...medicine});
-        setShowDeleteMedicine(true);
-    }
-
-    /**
-     * Fires when user confirms to delete the medicine
-     */
-    const deleteDrug = () => {
-            mm.deleteMedicine(medicineInfo?.Id as number)
-                .then((deleted) => {
-                    if (deleted) {
-                       mm.loadOtcList()
-                            .then((drugs) => setOtcList(drugs))
-                            .catch(() => setOtcList([]));
-                    }
-                })
-                .catch((err) => setErrorDetails(err))
     }
 
     return (
@@ -119,7 +87,11 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
                             'Barcode'
                         ]}
                         key={'otc' + drug.Id}
-                        onDelete={onDelete}
+                        onDelete={(e, medicineRecord) => {
+                            e.preventDefault();
+                            setMedicineInfo({...medicineRecord});
+                            setShowDeleteMedicine(true);}
+                        }
                         onEdit={onEdit}
                     />)
                 }
@@ -133,14 +105,7 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
                     show={showMedicineEdit}
                     onClose={(r) => {
                         setShowMedicineEdit(false);
-                        if (r) {
-                            mm.updateMedicine(r)
-                                .then(() => {
-                                    mm.loadOtcList()
-                                        .then((otcDrugs) => setOtcList(otcDrugs))
-                                })
-                                .catch((err) => setErrorDetails(err))
-                        }
+                        setUpdateOtcMedicine(r || null);
                     }}
                     drugInfo={medicineInfo}
                 />
@@ -153,9 +118,7 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
                     buttonvariant="danger"
                     onSelect={(a) => {
                         setShowDeleteMedicine(false);
-                        if (a) {
-                            deleteDrug();
-                        }
+                        setDeleteOtcMedicine(a ? medicineInfo?.Id : null);
                     }}
                 >
                     <Confirm.Header>

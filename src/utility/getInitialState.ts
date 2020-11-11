@@ -40,16 +40,31 @@ const getInitialState = () => {
     return {
         activeResident: null,
         apiKey: null,
+        activeTabKey: 'login',
         authManager: AuthManager(providers.authenticationProvider),
+        deleteClient: null,
+        deleteDrugLog: null,
+        deleteMedicine: null,
+        deleteOtcMedicine: null,
         development: process.env.REACT_APP_DEVELOPMENT === 'true',
         drugLogList: [] as DrugLogRecord[],
         errorDetails: undefined,
+        login: null,
+        loginFailed: false,
         medicineList: [] as MedicineRecord[],
         medicineManager: MedicineMananger(providers.medicineProvider, providers.medHistoryProvider),
         otcList: [] as MedicineRecord[],
         providers,
+        refreshClients: false,
+        refreshDrugLog: null,
+        refreshMedicine: null,
+        refreshOtc: false,
         residentList: [] as ResidentRecord[],
-        residentManager: ResidentManager(providers.residentProvider)
+        residentManager: ResidentManager(providers.residentProvider),
+        updateClient: null,
+        updateDrugLog: null,
+        updateMedicine: null,
+        updateOtcMedicine: null
     } as State;
 }
 

@@ -14,18 +14,33 @@ declare module 'reactn/default' {
 
     export interface State {
         activeResident: ResidentRecord | null
+        activeTabKey: string
         apiKey: string | null
         authManager: IAuthManager
         count: number
+        deleteClient: number | null
+        deleteDrugLog: number | null
+        deleteMedicine: number | null
+        deleteOtcMedicine: number | null
         development: boolean
         drugLogList: DrugLogRecord[]
         errorDetails: any
+        login: {username: string, password: string} | null
+        loginFailed: boolean
         medicineList: MedicineRecord[]
         medicineManager: IMedicineManager
         otcList: MedicineRecord[]
         providers: IProviders
+        refreshClients: boolean
+        refreshDrugLog: number | DrugLogRecord[] |null
+        refreshMedicine: number | null
+        refreshOtc: boolean
         residentList: ResidentRecord[]
         residentManager: IResidentManager
+        updateClient: ResidentRecord | null
+        updateDrugLog: DrugLogRecord | null
+        updateMedicine: MedicineRecord | null
+        updateOtcMedicine: MedicineRecord | null
         value: string
     }
 }

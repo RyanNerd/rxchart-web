@@ -2,21 +2,16 @@ import React, {useGlobal} from 'reactn';
 import Button from 'react-bootstrap/Button';
 import DrugLogGrid from "../Grids/DrugLogGrid";
 
-interface IProps {
-    activeTabKey: string | null
-}
-
 /**
  * DrugHistoryPage
  * DrugLogGrid with a Print button
- * @param {IProps} props
  * @return {JSX.Element}
  */
-const DrugHistoryPage = (props: IProps): JSX.Element | null => {
+const DrugHistoryPage = (): JSX.Element | null => {
+    const [activeTabKey] =useGlobal('activeTabKey');
     const [drugLogList] = useGlobal('drugLogList');
     const [medicineList] = useGlobal('medicineList');
     const [otcList] = useGlobal('otcList');
-    const activeTabKey = props.activeTabKey;
 
     // If this tab isn't active then don't render
     if (activeTabKey !== 'history') {

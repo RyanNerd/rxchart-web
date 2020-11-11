@@ -1,14 +1,12 @@
 import React, {useGlobal, useEffect, useMemo, useState} from 'reactn';
 import {Alert, Button, ButtonProps, Card} from "react-bootstrap";
 import {randomString} from "../../utility/common";
-import {ReactNode} from "react";
 
 interface IKey {
     [key: string]: string
 }
 
 interface IProps {
-    activeTabKey: string | null
     error: any
     dismissErrorAlert: () => void
 }
@@ -29,31 +27,12 @@ interface IWillow {
  * @return {JSX.Element | null}
  */
 const DiagnosticPage = (props: IProps): JSX.Element | null => {
+    const [activeTabKey] = useGlobal('activeTabKey');
     const [content, setContent] = useState<JSX.Element | null>(null);
     const [development] = useGlobal('development');
     const dismissError = props.dismissErrorAlert;
     const error = props.error;
-    const activeTabKey = props.activeTabKey;
     let finalContent: JSX.Element | null;
-
-    /**
-     * Button that closes the error and lets users sign back in
-     * @param {ButtonProps} props
-     * @constructor
-     */
-    const CloseErrorButton = (props: ButtonProps) => {
-        return (
-        <Button
-            variant="primary"
-            onClick={() => {
-                setContent(null);
-                dismissError();
-            }}
-            {...props}
-        >
-            Close error and sign back in
-        </Button>)
-    }
 
     /**
      * Function to create the unsafe HTML object
@@ -91,11 +70,30 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
      */
     finalContent = useMemo(() => {
         /**
-         * Alert composition component
-         * @param {ReactNode} heading
-         * @param {ReactNode} body
+         * Button that closes the error and lets users sign back in
+         * @param {ButtonProps} props
+         * @constructor
          */
-        const _alert = (heading: ReactNode, body: ReactNode) => {
+        const CloseErrorButton = (props: ButtonProps) => {
+            return (
+                <Button
+                    variant="primary"
+                    onClick={() => {
+                        setContent(null);
+                        dismissError();
+                    }}
+                    {...props}
+                >
+                    Close error and sign back in
+                </Button>)
+        }
+
+        /**
+         * Alert composition component
+         * @param {React.ReactNode} heading
+         * @param {React.ReactNode} body
+         */
+        const _alert = (heading: React.ReactNode, body: React.ReactNode) => {
             return (
                 <Alert
                     variant="danger"

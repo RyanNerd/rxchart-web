@@ -1,5 +1,4 @@
 import React from "reactn";
-import {ReactNode} from "react";
 import Button, {ButtonProps} from "react-bootstrap/Button";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import {Placement} from "react-bootstrap/Overlay";
@@ -10,7 +9,7 @@ import {randomString} from "../../utility/common";
 interface IProps extends ButtonProps {
     children: JSX.Element[] | JSX.Element | string
     placement?: Placement
-    tooltip?: string | ReactNode
+    tooltip?: string | React.ReactNode
     tooltipId?: string
     variant?: Variant
     [key: string]: any
