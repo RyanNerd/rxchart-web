@@ -15,8 +15,8 @@ import TabContent from '../../styles/common.css';
 const LoginPage = (): JSX.Element | null => {
     const [, setErrorDetails] = useGlobal('errorDetails');
     const [, setLogin] = useGlobal('login');
-    const [apiKey] = useGlobal('apiKey');
     const [activeTabKey] = useGlobal('activeTabKey');
+    const [apiKey] = useGlobal('apiKey');
     const [password, setPassword] = useState('');
     const [showAlert, setShowAlert] = useGlobal('loginFailed');
     const [username, setUsername] = useState('');

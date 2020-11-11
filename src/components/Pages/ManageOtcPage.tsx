@@ -38,19 +38,6 @@ const ManageOtcPage = (): JSX.Element | null => {
         const medicineInfo = (medicine) ? {...medicine} : {...newDrugInfo, OTC: true};
         setMedicineInfo(medicineInfo);
         setShowMedicineEdit(true);
-        setMedicineInfo(medicineInfo);
-        setShowMedicineEdit(true);
-    }
-
-    /**
-     * Handle the click event for delete
-     * @param {React.MouseEvent<HTMLElement>} e
-     * @param {MedicineRecord} medicine
-     */
-    const onDelete = (e: React.MouseEvent<HTMLElement>, medicine: MedicineRecord) => {
-        e.preventDefault();
-        setMedicineInfo({...medicine});
-        setShowDeleteMedicine(true);
     }
 
     return (
@@ -100,7 +87,11 @@ const ManageOtcPage = (): JSX.Element | null => {
                             'Barcode'
                         ]}
                         key={'otc' + drug.Id}
-                        onDelete={onDelete}
+                        onDelete={(e, medicineRecord) => {
+                            e.preventDefault();
+                            setMedicineInfo({...medicineRecord});
+                            setShowDeleteMedicine(true);}
+                        }
                         onEdit={onEdit}
                     />)
                 }

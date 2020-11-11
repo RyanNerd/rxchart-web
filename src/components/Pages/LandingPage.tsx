@@ -1,5 +1,6 @@
 import DiagnosticPage from "./DiagnosticPage";
 import DrugHistoryPage from "./DrugHistoryPage";
+import getInitialState from "../../utility/getInitialState";
 import LoginPage from './LoginPage';
 import ManageDrugPage from "./ManageDrugPage";
 import ManageOtcPage from "./ManageOtcPage";
@@ -9,7 +10,6 @@ import React, {useGlobal, setGlobal} from 'reactn';
 import ResidentPage from "./ResidentPage";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import getInitialState from "../../utility/getInitialState";
 
 /**
  * Landing Page - Tab Page Menu UI

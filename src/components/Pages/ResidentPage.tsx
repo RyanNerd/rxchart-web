@@ -72,17 +72,6 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     }
 
     /**
-     * Fires when user clicks the Edit button
-     * @param {React.MouseEvent<HTMLElement>} e
-     * @param {ResidentRecord} resident
-     */
-    const handleEditResident = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
-        e.preventDefault();
-        setResidentInfo({...resident});
-        setShowResidentEdit(true);
-    }
-
-    /**
      * Fires when user clicks the + (add) button
      * @param {React.MouseEvent<HTMLElement>} e
      */
@@ -97,31 +86,6 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
             DOB_DAY: ""
         });
         setShowResidentEdit(true);
-    }
-
-    /**
-     * Fires when ResidentEdit closes.
-     * @param {ResidentRecord | null} residentRecord
-     */
-    const handleModalClose = (residentRecord: ResidentRecord) => {
-        setUpdateClient({...residentRecord}).then(() => {
-            if (residentRecord.Id === activeResident?.Id) {
-                setActiveResident(residentRecord.Id ? residentRecord : null);
-            }
-        })
-    }
-
-    /**
-     * Fires when the selected column / row is clicked
-     * @param {React.MouseEvent<HTMLElement>} e
-     * @param {ResidentRecord} resident
-     */
-    const handleOnSelected = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
-        e.preventDefault();
-        setActiveResident(resident)
-        .then(() => setSearchText(''))
-        .then(() => onSelected())
-        .catch((err) => setErrorDetails(err))
     }
 
     /**
@@ -165,23 +129,32 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                     onDelete={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) =>
                         handleOnDelete(e, resident)
                     }
-                    onEdit={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) =>
-                        handleEditResident(e, resident)
-                    }
-                    onSelected={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) =>
-                        handleOnSelected(e, resident)
-                    }
+                    onEdit={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
+                        e.preventDefault();
+                        setResidentInfo({...resident});
+                        setShowResidentEdit(true);
+                    }}
+                    onSelected={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
+                        e.preventDefault();
+                        setActiveResident(resident)
+                        .then(() => setSearchText(''))
+                        .then(() => onSelected())
+                        .catch((err) => setErrorDetails(err))
+                    }}
                     residentList={filteredResidents}
                 />
             </Row>
 
             {residentInfo &&
                 <ResidentEdit
-                    onClose={(r) => {
+                    onClose={(residentRecord) => {
                         setShowResidentEdit(false);
-                        if (r) {
-                            handleModalClose(r);
-                        }
+                        setUpdateClient(residentRecord)
+                        .then(() => {
+                            if (residentRecord?.Id === activeResident?.Id) {
+                                setActiveResident(residentRecord?.Id ? residentRecord : null);
+                            }
+                        })
                     }}
                     residentInfo={residentInfo}
                     show={showResidentEdit}
@@ -195,7 +168,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                         setShowDeleteResident(false);
                         if (a && residentToDelete) {
                             setDeleteClient(residentToDelete?.Id as number)
-                            .then((state) => {
+                            .then(() => {
                                 if (activeResident?.Id === residentToDelete.Id) {
                                     setActiveResident(null);
                                 }
