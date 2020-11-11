@@ -1,6 +1,6 @@
 {
-  "short_name": "MedTrax",
-  "name": "MedTrax Drug Tracker",
+  "short_name": "RxChart",
+  "name": "RxChart Drug Logger",
   "icons": [
     {
       "src": "android-chrome-192x192.png",

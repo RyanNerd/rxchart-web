@@ -4,7 +4,7 @@ import ResidentEdit from '../Modals/ResidentEdit';
 import ResidentGrid from '../Grids/ResidentGrid';
 import TooltipButton from "../Buttons/TooltipButton";
 import {Alert, Form, Row} from "react-bootstrap";
-import {FullName} from '../../utility/common';
+import {clientFullName} from '../../utility/common';
 import {ResidentRecord} from "../../types/RecordTypes";
 
 interface IProps {
@@ -179,7 +179,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                 >
                     <Confirm.Header>
                         <Confirm.Title>
-                            {"Deactivate " + FullName(residentToDelete)}
+                            {"Deactivate " + clientFullName(residentToDelete)}
                         </Confirm.Title>
                     </Confirm.Header>
                     <Confirm.Body>

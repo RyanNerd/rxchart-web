@@ -1,6 +1,6 @@
 import LandingPage from "./Pages/LandingPage";
 import React, {useGlobal, useEffect, useRef} from 'reactn';
-import {FullName, DOB} from "../utility/common";
+import {clientFullName, clientDOB} from "../utility/common";
 
 /**
  * Main Entry Component
@@ -319,7 +319,7 @@ const App = () => {
             {activeResident &&
                 <h4 style={{textAlign: "center"}}>
                     <span style={{background: residentColor, color: residentForegroundColor}}>
-                        {FullName(activeResident) + ' ' + DOB(activeResident)}
+                        {clientFullName(activeResident) + ' ' + clientDOB(activeResident)}
                     </span>
                 </h4>
             }

@@ -2,7 +2,7 @@ import Button from 'react-bootstrap/Button';
 import React from 'reactn';
 import Table from 'react-bootstrap/Table';
 import ToggleButton from 'react-bootstrap/ToggleButton';
-import {DOB, getFormattedDate, getMDY} from "../../utility/common";
+import {clientDOB, getFormattedDate, getMDY} from "../../utility/common";
 import {ResidentRecord} from "../../types/RecordTypes";
 
 interface IProps {
@@ -37,7 +37,7 @@ const ResidentGrid = (props: IProps): JSX.Element => {
      */
     const ResidentRow = (resident: ResidentRecord) => {
         // Get formatted DOB
-        const dob = DOB(resident);
+        const dob = clientDOB(resident);
 
         // Determine if this row is selected [for radio ToggleButtons]
         const isSelected = onSelected && activeResident && resident.Id === activeResident.Id;

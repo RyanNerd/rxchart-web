@@ -35,6 +35,14 @@ const LandingPage = () => {
                 <LoginPage/>
             </Tab>
             <Tab
+                disabled={apiKey === null}
+                eventKey="resident"
+                title={<span className={activeTabKey === 'resident' ? 'bld' : ''}>Resident</span>}>
+                <ResidentPage
+                    residentSelected={() => setActiveTabKey('medicine')}
+                />
+            </Tab>
+            <Tab
                 disabled={apiKey === null || !activeResident}
                 eventKey="medicine"
                 title={<span className={activeTabKey === 'medicine' ? 'bld' : ''}>Rx</span>}>
@@ -45,14 +53,6 @@ const LandingPage = () => {
                 eventKey="otc"
                 title={<span className={activeTabKey === 'otc' ? 'bld' : ''}>OTC</span>}>
                 <OtcPage/>
-            </Tab>
-            <Tab
-                disabled={apiKey === null}
-                eventKey="resident"
-                title={<span className={activeTabKey === 'resident' ? 'bld' : ''}>Resident</span>}>
-                <ResidentPage
-                    residentSelected={() => setActiveTabKey('medicine')}
-                />
             </Tab>
             <Tab
                 disabled={apiKey === null || !activeResident}

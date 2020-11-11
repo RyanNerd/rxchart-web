@@ -28,8 +28,8 @@ type ReturnValidation = '' | 'is-invalid' | string;
  * @param {ResidentRecord} resident
  * @return {string}
  */
-export const DOB = (resident: ResidentRecord): string => {
-    return DateToString(resident.DOB_MONTH.toString(), resident.DOB_DAY.toString(), resident.DOB_YEAR.toString());
+export const clientDOB = (resident: ResidentRecord): string => {
+    return dateToString(resident.DOB_MONTH.toString(), resident.DOB_DAY.toString(), resident.DOB_YEAR.toString());
 };
 
 /**
@@ -39,7 +39,7 @@ export const DOB = (resident: ResidentRecord): string => {
  * @param {string} year
  * @return {string}
  */
-export const DateToString = (month: string, day: string, year: string): string => {
+export const dateToString = (month: string, day: string, year: string): string => {
     return  month + '/' + day + '/' + year;
 }
 
@@ -47,7 +47,7 @@ export const DateToString = (month: string, day: string, year: string): string =
  * Given a ResidentRecord return the first and last name of the resident in the format: first last
  * @param {ResidentRecord} resident
  */
-export const FullName = (resident: ResidentRecord): string => {
+export const clientFullName = (resident: ResidentRecord): string => {
     return resident.FirstName.trim() + ' ' + resident.LastName.trim();
 };
 

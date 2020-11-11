@@ -1,12 +1,12 @@
-import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
-import Modal from 'react-bootstrap/Modal';
-import {FullName} from "../../utility/common";
-import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
-import {MedicineRecord} from "../../types/RecordTypes";
+import Col from "react-bootstrap/Col";
+import Form from "react-bootstrap/Form";
+import Modal from 'react-bootstrap/Modal';
+import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
+import Row from "react-bootstrap/Row";
 import {Alert} from "react-bootstrap";
+import {clientFullName} from "../../utility/common";
+import {MedicineRecord} from "../../types/RecordTypes";
 
 interface IProps {
     drugInfo: MedicineRecord
@@ -87,7 +87,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
 
     const drugTitleType = drugInfo.Id ? 'Edit ' : 'Add ' as string;
     const drugName = drugInfo.Id ? drugInfo.Drug : 'new drug';
-    const fullName = activeResident && FullName(activeResident);
+    const fullName = activeResident && clientFullName(activeResident);
     const modalTitle = otc ?
         (
             <Modal.Title>
