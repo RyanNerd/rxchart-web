@@ -10,7 +10,7 @@ import MedicineListGroup from "../ListGroups/MedicineListGroup";
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import Row from 'react-bootstrap/Row';
 import TabContent from "../../styles/common.css";
-import {Alert} from "react-bootstrap";
+import {Alert, ListGroup} from "react-bootstrap";
 import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
 import {
     calculateLastTaken, getDrugName,
@@ -19,6 +19,10 @@ import {
     isSearchValid,
     searchDrugs
 } from "../../utility/common";
+import Table from "react-bootstrap/Table";
+import MedicineDetail from "../Grids/MedicineDetail";
+import ShadowBox from "../Buttons/ShadowBox";
+import {drawBarcode} from "../../utility/drawBarcode";
 
 /**
  * OtcPage
@@ -37,6 +41,7 @@ const OtcPage = (): JSX.Element | null => {
     const [drugLogList] = useGlobal('drugLogList');
     const [lastTaken, setLastTaken] = useState<number | null>(null);
     const [otcList] = useGlobal('otcList');
+    const [filteredOtcList, setFilteredOtcList] = useState(otcList);
     const [otcLogList, setOtcLogList] = useState<DrugLogRecord[]>([]);
     const [residentId, setResidentId] = useState(activeResident && activeResident.Id);
     const [searchIsValid, setSearchIsValid] = useState<boolean | null>(null);
@@ -45,6 +50,7 @@ const OtcPage = (): JSX.Element | null => {
     const [showDrugLog, setShowDrugLog] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const focusRef = useRef<HTMLInputElement>(null);
+    const barCode = activeDrug?.Barcode || null;
 
     // We only want to list the OTC drugs on this page that the resident has taken.
     useEffect(() => {
@@ -83,27 +89,34 @@ const OtcPage = (): JSX.Element | null => {
         }
     }, [activeDrug, drugLogList]);
 
-    // Handle if the search text has a match in the otcList.
+    // Filter the otcList by the search textbox value
     useEffect(() => {
-        if (otcList.length > 0) {
-            const drugMatch = searchDrugs(searchText, otcList);
-            if (drugMatch) {
-                setActiveDrug(drugMatch);
+        if (searchText.length > 0) {
+            const filter = otcList.filter((medicineRecord) => {
+                const drug = medicineRecord.Drug.toLowerCase();
+                const barcode = medicineRecord.Barcode ? medicineRecord.Barcode.toLowerCase() : '';
+                const search = searchText.toLowerCase();
+                return drug.includes(search) || barcode.includes(search);
+            })
+
+            if (filter && filter.length > 0) {
+                setSearchIsValid(true);
+                setFilteredOtcList(filter);
+            } else {
+                setSearchIsValid(false);
+                setFilteredOtcList([]);
             }
+        } else {
+            setSearchIsValid(false);
+            setFilteredOtcList(otcList);
         }
-    }, [searchText, otcList]);
+    }, [otcList, searchText])
 
-    // Show or hide the valid search icon
+    // Update the barcode image if the barcode has changed
     useEffect(() => {
-        if (activeDrug) {
-            setSearchIsValid(isSearchValid(searchText, activeDrug));
-        }
-    }, [activeDrug, searchText]);
-
-    // Reset the search text input when the resident changes.
-    useEffect(() => {
-        setSearchText('');
-    }, [activeResident]);
+        // Only try to create a barcode canvas IF there is actually a barcode value.
+        const canvas = barCode ? drawBarcode(barCode, 'otc-barcode') : null;
+    }, [barCode]);
 
     // If there isn't an activeResident or this tab isn't active then don't render
     if (!residentId || activeTabKey !== 'otc') {
@@ -148,60 +161,56 @@ const OtcPage = (): JSX.Element | null => {
     }
 
     const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
-    const shortenedDrugName = activeDrug?.Drug.substring(0, 21);
 
     return (
         <Form>
             <Form.Group className={TabContent} as={Row}>
-                <Form.Group as={Col} controlId="otc-buttons">
-                    <Form.Group as={Row} sm="8">
+                <Col>
+                <Form.Group controlId="otc-buttons">
+                    <Button
+                        className="mr-1"
+                        size="sm"
+                        variant="info"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setDrugInfo({...newDrugInfo, OTC: true});
+                            setShowMedicineEdit(true);
+                        }}
+                    >
+                        + OTC
+                    </Button>
+
+                    {activeDrug &&
                         <Button
-                            className="mr-1"
                             size="sm"
                             variant="info"
                             onClick={(e) => {
                                 e.preventDefault();
-                                setDrugInfo({...newDrugInfo, OTC: true});
+                                setDrugInfo({...activeDrug} as MedicineRecord);
                                 setShowMedicineEdit(true);
                             }}
                         >
-                            + OTC
+                            Edit <b>{activeDrug.Drug}</b>
                         </Button>
-
-                        {activeDrug &&
-                            <Button
-                                size="sm"
-                                variant="info"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    setDrugInfo({...activeDrug} as MedicineRecord);
-                                    setShowMedicineEdit(true);
-
-                                }}
-                            >
-                                Edit <b>{activeDrug.Drug}</b>
-                            </Button>
-                        }
-                    </Form.Group>
-
-                    {otcList.length > 0 &&
-                        <Form.Group as={Row}>
-                            <Form.Control
-                                style={{width: "220px"}}
-                                isValid={searchIsValid || false}
-                                type="search"
-                                value={searchText}
-                                onChange={(e) => setSearchText(e.target.value)}
-                                placeholder="Search OTC"
-                                ref={focusRef}
-                            />
-
-                            {activeDrug &&
-                            <h3 className="ml-4"><b>{shortenedDrugName}</b></h3>
-                            }
-                        </Form.Group>
                     }
                 </Form.Group>
+
+                <Form.Group as={Row}>
+                        <Form.Control
+                            id="otc-page-search-text"
+                            style={{width: "220px"}}
+                            type="search"
+                            value={searchText}
+                            onChange={(e) => setSearchText(e.target.value)}
+                            placeholder="Search OTC medicine"
+                            ref={focusRef}
+                        />
+                    {activeDrug &&
+                    <h3 className="ml-4">
+                        <b>{activeDrug.Drug}</b>
+                    </h3>}
+                    </Form.Group>
+                </Col>
 
                 {activeDrug &&
                     <>
@@ -262,15 +271,72 @@ const OtcPage = (): JSX.Element | null => {
 
                         <Row>
                             <Col sm="4">
-                                <MedicineListGroup
-                                    lastTaken={lastTaken}
-                                    medicineList={otcList}
-                                    activeDrug={activeDrug}
-                                    drugChanged={(drug: MedicineRecord) => setActiveDrug(drug)}
-                                    addDrugLog={(e: React.MouseEvent<HTMLElement>) => addEditDrugLog(e)}
-                                    logDrug={(amount: number) => handleLogDrugAmount(amount)}
-                                    canvasId={"otc-barcode"}
-                                />
+                                <ListGroup>
+                                    <ListGroup.Item>
+                                    {/*<MedicineListGroup*/}
+                                    {/*    lastTaken={lastTaken}*/}
+                                    {/*    medicineList={otcList}*/}
+                                    {/*    activeDrug={activeDrug}*/}
+                                    {/*    drugChanged={(drug: MedicineRecord) => setActiveDrug(drug)}*/}
+                                    {/*    addDrugLog={(e: React.MouseEvent<HTMLElement>) => addEditDrugLog(e)}*/}
+                                    {/*    logDrug={(amount: number) => handleLogDrugAmount(amount)}*/}
+                                    {/*    canvasId={"otc-barcode"}*/}
+                                    {/*/>*/}
+                                    <div style={{height: "325px", overflow: "auto"}}>
+                                    <Table
+                                        striped
+                                        bordered
+                                        hover
+                                        size="sm"
+                                    >
+                                        <thead>
+                                        <tr>
+                                            <th/>
+                                            <th>
+                                                Drug
+                                            </th>
+                                            <th>
+                                                Strength
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {filteredOtcList.map((drug: MedicineRecord) =>
+                                            <MedicineDetail
+                                                drug={drug}
+                                                columns={[
+                                                    'Drug',
+                                                    'Strength'
+                                                ]}
+                                                key={'otc' + drug.Id}
+                                                onSelect={(e, d) => {
+                                                    setActiveDrug(d);
+                                                }}
+                                                activeDrug={activeDrug}
+                                            />)
+                                        }
+                                        </tbody>
+                                    </Table>
+                                    </div>
+                                    </ListGroup.Item>
+
+                                    {activeDrug.Directions &&
+                                    <ListGroup.Item>
+                                        <ShadowBox>
+                                            <b>
+                                                Directions:
+                                            </b>
+                                            <span> {activeDrug.Directions}</span>
+                                        </ShadowBox>
+                                    </ListGroup.Item>
+                                    }
+
+                                    {activeDrug.Barcode &&
+                                        <ListGroup.Item>
+                                            <canvas id="otc-barcode"/>
+                                        </ListGroup.Item>
+                                    }
+                                </ListGroup>
                             </Col>
 
                             <Col sm="8">
