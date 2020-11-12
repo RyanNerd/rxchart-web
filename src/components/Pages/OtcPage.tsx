@@ -109,7 +109,11 @@ const OtcPage = (): JSX.Element | null => {
     // Update the barcode image if the barcode has changed
     useEffect(() => {
         // Only try to create a barcode canvas IF there is actually a barcode value.
-        const canvas = barCode ? drawBarcode(barCode, 'otc-barcode') : null;
+        // tslint-disable-next-line
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        if (barCode) {
+            drawBarcode(barCode, 'otc-barcode');
+        }
     }, [barCode]);
 
     // If there isn't an activeResident or this tab isn't active then don't render
@@ -194,6 +198,7 @@ const OtcPage = (): JSX.Element | null => {
                             id="otc-page-search-text"
                             style={{width: "220px"}}
                             type="search"
+                            isValid={searchIsValid || false}
                             value={searchText}
                             onChange={(e) => setSearchText(e.target.value)}
                             placeholder="Search OTC medicine"
