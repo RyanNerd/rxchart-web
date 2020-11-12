@@ -6,19 +6,12 @@ import DrugLogGrid from "../Grids/DrugLogGrid";
 import Form from 'react-bootstrap/Form';
 import LastTakenButton from "../Buttons/LastTakenButton";
 import MedicineEdit from "../Modals/MedicineEdit";
-import MedicineListGroup from "../ListGroups/MedicineListGroup";
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import Row from 'react-bootstrap/Row';
 import TabContent from "../../styles/common.css";
 import {Alert, ListGroup} from "react-bootstrap";
 import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
-import {
-    calculateLastTaken, getDrugName,
-    getFormattedDate,
-    getLastTakenVariant,
-    isSearchValid,
-    searchDrugs
-} from "../../utility/common";
+import {calculateLastTaken, getDrugName, getFormattedDate, getLastTakenVariant} from "../../utility/common";
 import Table from "react-bootstrap/Table";
 import MedicineDetail from "../Grids/MedicineDetail";
 import ShadowBox from "../Buttons/ShadowBox";
@@ -122,7 +115,7 @@ const OtcPage = (): JSX.Element | null => {
     if (!residentId || activeTabKey !== 'otc') {
         return null;
     } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
     /**
@@ -160,27 +153,87 @@ const OtcPage = (): JSX.Element | null => {
         }
     }
 
+    /**
+     * TODO: Refactor this into components/Buttons
+     */
+    const LogButtons = () => {
+        if (!activeDrug) {
+            return null;
+        }
+
+        return (
+            <>
+            <Button
+                disabled={lastTaken === 0}
+                variant={"outline-" + lastTakenVariant}
+                className="mr-2"
+                onClick={(e) => {
+                    e.preventDefault();
+                    handleLogDrugAmount(1);
+                }}
+            >
+                Log 1 {activeDrug.Drug.substr(0, 25)}
+            </Button>
+
+        <Button
+            disabled={lastTaken === 0}
+            className="mr-2"
+            variant={"outline-" + lastTakenVariant}
+            onClick={(e) => {
+                e.preventDefault();
+                handleLogDrugAmount(2);
+            }}
+        >
+            Log 2
+        </Button>
+
+        <Button
+            disabled={lastTaken === 0}
+            className="mr-2"
+            variant={"outline-" + lastTakenVariant}
+            onClick={(e) => {
+                e.preventDefault();
+                handleLogDrugAmount(3);
+            }}
+        >
+            Log 3
+        </Button>
+
+        <Button
+            disabled={lastTaken === 0}
+            className="mr-2"
+            variant={"outline-" + lastTakenVariant}
+            onClick={(e) => {
+                e.preventDefault();
+                handleLogDrugAmount(4);
+            }}
+        >
+            Log 4
+        </Button>
+        </>
+    )}
+
     const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
 
     return (
         <Form>
             <Form.Group className={TabContent} as={Row}>
                 <Col>
-                <Form.Group controlId="otc-buttons">
-                    <Button
-                        className="mr-1"
-                        size="sm"
-                        variant="info"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            setDrugInfo({...newDrugInfo, OTC: true});
-                            setShowMedicineEdit(true);
-                        }}
-                    >
-                        + OTC
-                    </Button>
+                    <Form.Group controlId="otc-buttons">
+                        <Button
+                            className="mr-1"
+                            size="sm"
+                            variant="info"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                setDrugInfo({...newDrugInfo, OTC: true});
+                                setShowMedicineEdit(true);
+                            }}
+                        >
+                            + OTC
+                        </Button>
 
-                    {activeDrug &&
+                        {activeDrug &&
                         <Button
                             size="sm"
                             variant="info"
@@ -192,10 +245,10 @@ const OtcPage = (): JSX.Element | null => {
                         >
                             Edit <b>{activeDrug.Drug}</b>
                         </Button>
-                    }
-                </Form.Group>
+                        }
+                    </Form.Group>
 
-                <Form.Group as={Row}>
+                    <Form.Group as={Row}>
                         <Form.Control
                             id="otc-page-search-text"
                             style={{width: "220px"}}
@@ -205,203 +258,152 @@ const OtcPage = (): JSX.Element | null => {
                             placeholder="Search OTC medicine"
                             ref={focusRef}
                         />
-                    {activeDrug &&
-                    <h3 className="ml-4">
-                        <b>{activeDrug.Drug}</b>
-                    </h3>}
+                        {activeDrug &&
+                        <h3 className="ml-4">
+                            <b>{activeDrug.Drug}</b>
+                        </h3>}
                     </Form.Group>
                 </Col>
 
                 {activeDrug &&
-                    <>
-                        <Col sm="8">
-                            <span style={{textAlign: "center"}}> <h2>OTC Drug History</h2> </span>
-                            <Button
-                                disabled={lastTaken === 0}
-                                variant={"outline-" + lastTakenVariant}
-                                className="mr-2"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    handleLogDrugAmount(1);
-                                }}
-                            >
-                                Log 1 {activeDrug.Drug.substr(0,25)}
-                            </Button>
+                <>
+                    <Col sm="8">
+                        <span style={{textAlign: "center"}}> <h2>OTC Drug History</h2> </span>
+                        <LogButtons/>
+                        <LastTakenButton
+                            lastTaken={lastTaken}
+                        />
+                    </Col>
 
-                            <Button
-                                disabled={lastTaken === 0}
-                                className="mr-2"
-                                variant={"outline-" + lastTakenVariant}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    handleLogDrugAmount(2);
-                                }}
-                            >
-                                Log 2
-                            </Button>
-
-                            <Button
-                                disabled={lastTaken === 0}
-                                className="mr-2"
-                                variant={"outline-" + lastTakenVariant}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    handleLogDrugAmount(3);
-                                }}
-                            >
-                                Log 3
-                            </Button>
-
-                            <Button
-                                disabled={lastTaken === 0}
-                                className="mr-2"
-                                variant={"outline-" + lastTakenVariant}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    handleLogDrugAmount(4);
-                                }}
-                            >
-                                Log 4
-                            </Button>
-
-                            <LastTakenButton
-                                lastTaken={lastTaken}
-                            />
-                        </Col>
-
-                        <Row>
-                            <Col sm="4">
+                    <Row>
+                        <Col sm="4">
+                            <ListGroup>
                                 <ListGroup>
                                     <ListGroup.Item>
-                                    {/*<MedicineListGroup*/}
-                                    {/*    lastTaken={lastTaken}*/}
-                                    {/*    medicineList={otcList}*/}
-                                    {/*    activeDrug={activeDrug}*/}
-                                    {/*    drugChanged={(drug: MedicineRecord) => setActiveDrug(drug)}*/}
-                                    {/*    addDrugLog={(e: React.MouseEvent<HTMLElement>) => addEditDrugLog(e)}*/}
-                                    {/*    logDrug={(amount: number) => handleLogDrugAmount(amount)}*/}
-                                    {/*    canvasId={"otc-barcode"}*/}
-                                    {/*/>*/}
-                                    <div style={{height: "325px", overflow: "auto"}}>
-                                    <Table
-                                        striped
-                                        bordered
-                                        hover
-                                        size="sm"
-                                    >
-                                        <thead>
-                                        <tr>
-                                            <th/>
-                                            <th>
-                                                Drug
-                                            </th>
-                                            <th>
-                                                Strength
-                                            </th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {filteredOtcList.map((drug: MedicineRecord) =>
-                                            <MedicineDetail
-                                                drug={drug}
-                                                columns={[
-                                                    'Drug',
-                                                    'Strength'
-                                                ]}
-                                                key={'otc' + drug.Id}
-                                                onSelect={(e, d) => {
-                                                    setActiveDrug(d);
-                                                }}
-                                                activeDrug={activeDrug}
-                                            />)
-                                        }
-                                        </tbody>
-                                    </Table>
-                                    </div>
+                                        <LogButtons/>
                                     </ListGroup.Item>
-
-                                    {activeDrug.Directions &&
-                                    <ListGroup.Item>
-                                        <ShadowBox>
-                                            <b>
-                                                Directions:
-                                            </b>
-                                            <span> {activeDrug.Directions}</span>
-                                        </ShadowBox>
-                                    </ListGroup.Item>
-                                    }
-
-                                    {activeDrug.Barcode &&
-                                        <ListGroup.Item>
-                                            <canvas id="otc-barcode"/>
-                                        </ListGroup.Item>
-                                    }
                                 </ListGroup>
-                            </Col>
+                                <ListGroup.Item>
+                                    <div style={{height: "325px", overflow: "auto"}}>
+                                        <Table
+                                            striped
+                                            bordered
+                                            hover
+                                            size="sm"
+                                        >
+                                            <thead>
+                                            <tr>
+                                                <th/>
+                                                <th>
+                                                    Drug
+                                                </th>
+                                                <th>
+                                                    Strength
+                                                </th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {filteredOtcList.map((drug: MedicineRecord) =>
+                                                <MedicineDetail
+                                                    drug={drug}
+                                                    columns={[
+                                                        'Drug',
+                                                        'Strength'
+                                                    ]}
+                                                    key={'otc' + drug.Id}
+                                                    onSelect={(e, d) => {
+                                                        setActiveDrug(d);
+                                                    }}
+                                                    activeDrug={activeDrug}
+                                                />)
+                                            }
+                                            </tbody>
+                                        </Table>
+                                    </div>
+                                </ListGroup.Item>
 
-                            <Col sm="8">
-                                <DrugLogGrid
-                                    columns={['Drug', 'Created', 'Updated', 'Amount']}
-                                    drugLog={otcLogList || []}
-                                    otcList={otcList}
-                                    onEdit={(e, r) => addEditDrugLog(e, r)}
-                                    onDelete={(e, r) =>setShowDeleteDrugLogRecord(r)}
-                                />
-                            </Col>
-                        </Row>
-                    </>
+                                {activeDrug.Directions &&
+                                <ListGroup.Item>
+                                    <ShadowBox>
+                                        <b>
+                                            Directions:
+                                        </b>
+                                        <span> {activeDrug.Directions}</span>
+                                    </ShadowBox>
+                                </ListGroup.Item>
+                                }
+
+                                {activeDrug.Barcode &&
+                                <ListGroup.Item>
+                                    <canvas id="otc-barcode"/>
+                                </ListGroup.Item>
+                                }
+                            </ListGroup>
+                        </Col>
+
+                        <Col sm="8">
+                            <DrugLogGrid
+                                columns={['Drug', 'Created', 'Updated', 'Amount']}
+                                drugLog={otcLogList || []}
+                                otcList={otcList}
+                                onEdit={(e, r) => addEditDrugLog(e, r)}
+                                onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
+                            />
+                        </Col>
+                    </Row>
+                </>
                 }
             </Form.Group>
 
             {/* MedicineEdit Modal*/}
             {drugInfo &&
-                <MedicineEdit
-                    show={showMedicineEdit}
-                    onClose={(r) => {
-                        setShowMedicineEdit(false);
-                        setUpdateOtcMedicine(r);
-                    }}
-                    drugInfo={drugInfo}
-                    otc={true}
-                />
+            <MedicineEdit
+                show={showMedicineEdit}
+                onClose={(r) => {
+                    setShowMedicineEdit(false);
+                    setUpdateOtcMedicine(r);
+                }}
+                drugInfo={drugInfo}
+                otc={true}
+            />
             }
 
             {drugLogInfo &&
-                <DrugLogEdit
-                    show={showDrugLog}
-                    drugLogInfo={drugLogInfo}
-                    onHide={() => setShowDrugLog(!showDrugLog)}
-                    onClose={(drugLogRecord) => {
-                        setShowDrugLog(false);
-                        setUpdateDrugLog(drugLogRecord);
-                    }}
-                />
+            <DrugLogEdit
+                show={showDrugLog}
+                drugLogInfo={drugLogInfo}
+                onHide={() => setShowDrugLog(!showDrugLog)}
+                onClose={(drugLogRecord) => {
+                    setShowDrugLog(false);
+                    setUpdateDrugLog(drugLogRecord);
+                }}
+            />
             }
 
             {showDeleteDrugLogRecord &&
-                <Confirm.Modal
-                    size='lg'
-                    show={typeof showDeleteDrugLogRecord === 'object'}
-                    buttonvariant="danger"
-                    onSelect={(a) => {
-                        setShowDeleteDrugLogRecord(false);
-                        setDeleteDrugLog(a ? showDeleteDrugLogRecord.Id : null);
-                    }}
-                >
-                    <Confirm.Header>
-                        <Confirm.Title>
-                            Delete {getDrugName(showDeleteDrugLogRecord.MedicineId, otcList)} Log Record
-                        </Confirm.Title>
-                    </Confirm.Header>
-                    <Confirm.Body>
-                        <Alert variant="secondary">
-                            Date: {getFormattedDate(showDeleteDrugLogRecord.Updated)}
-                        </Alert>
-                        <b style={{color: "red"}}>
-                            Are you sure?
-                        </b>
-                    </Confirm.Body>
-                </Confirm.Modal>
+            <Confirm.Modal
+                size='lg'
+                show={typeof showDeleteDrugLogRecord === 'object'}
+                buttonvariant="danger"
+                onSelect={(a) => {
+                    setShowDeleteDrugLogRecord(false);
+                    setDeleteDrugLog(a ? showDeleteDrugLogRecord.Id : null);
+                }}
+            >
+                <Confirm.Header>
+                    <Confirm.Title>
+                        Delete {getDrugName(showDeleteDrugLogRecord.MedicineId, otcList)} Log Record
+                    </Confirm.Title>
+                </Confirm.Header>
+                <Confirm.Body>
+                    <Alert variant="secondary">
+                        Date: {getFormattedDate(showDeleteDrugLogRecord.Updated)}
+                    </Alert>
+                    <b style={{color: "red"}}>
+                        Are you sure?
+                    </b>
+                </Confirm.Body>
+            </Confirm.Modal>
             }
         </Form>
     );
