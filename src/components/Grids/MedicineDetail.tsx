@@ -1,12 +1,15 @@
 import Button from "react-bootstrap/Button";
 import React from "reactn";
 import {MedicineRecord} from "../../types/RecordTypes";
+import ToggleButton from "react-bootstrap/ToggleButton";
 
 interface IProps {
     columns?: string[]
     drug: MedicineRecord
     onDelete?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
     onEdit?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
+    onSelect?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
+    activeDrug?: MedicineRecord | null
 }
 
 /**
@@ -20,8 +23,12 @@ const MedicineDetail = (props: IProps): JSX.Element => {
         columns = ['Drug', 'Strength', 'Directions', 'Notes', 'Barcode'],
         drug,
         onDelete,
-        onEdit
+        onEdit,
+        onSelect,
+        activeDrug
     } = props;
+
+    const isSelected = onSelect && activeDrug && activeDrug.Id === drug.Id;
 
     return (
         <tr
@@ -31,27 +38,40 @@ const MedicineDetail = (props: IProps): JSX.Element => {
                 <td style={{textAlign: 'center', verticalAlign: "middle"}}>
                     < Button
                         size="sm"
-                        id={"medicine-edit-btn-" + drug.Id}
+                        id={"medicine-otc-edit-btn-" + drug.Id}
                         onClick={(e) => onEdit(e, drug)}
                     >
                         Edit
                     </Button>
                 </td>
             }
+            {onSelect &&
+            <td style={{textAlign: 'center', verticalAlign: "middle"}}>
+                <ToggleButton
+                    id={"drug-otc-grid-select-btn-" + drug.Id}
+                    type="radio"
+                    name="resident-list"
+                    variant="outline-info"
+                    checked={isSelected || false}
+                    onClick={(e) => onSelect(e, drug)}
+                    value={drug.Id}
+                />
+            </td>
+            }
             {columns.includes('Drug') &&
-                <td>{drug.Drug}</td>
+                <td style={{verticalAlign: "middle"}}>{drug.Drug}</td>
             }
             {columns.includes('Strength') &&
-                <td>{drug.Strength}</td>
+                <td style={{verticalAlign: "middle"}}>{drug.Strength}</td>
             }
             {columns.includes('Directions') &&
-                <td>{drug.Directions}</td>
+                <td style={{verticalAlign: "middle"}}>{drug.Directions}</td>
             }
             {columns.includes('Notes') &&
-                <td>{drug.Notes}</td>
+                <td style={{verticalAlign: "middle"}}>{drug.Notes}</td>
             }
             {columns.includes('Barcode') &&
-                <td>{drug.Barcode}</td>
+                <td style={{verticalAlign: "middle"}}>{drug.Barcode}</td>
             }
             {onDelete &&
                 <td style={{textAlign: 'center', verticalAlign: "middle"}}>

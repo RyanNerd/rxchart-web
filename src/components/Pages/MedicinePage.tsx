@@ -21,6 +21,7 @@ import {
     isSearchValid,
     searchDrugs
 } from "../../utility/common";
+import LogButtons from "../Buttons/LogButtons";
 
 /**
  * MedicinePage
@@ -215,61 +216,18 @@ const MedicinePage = (): JSX.Element | null => {
                     <>
                         <Col sm="7">
                             <span style={{textAlign: "center"}}> <h2>{activeDrug.Drug} History</h2> </span>
-                            <Button
-                                style={lastTaken === 0 ? {cursor: "default"} : {}}
-                                disabled={lastTaken === 0}
-                                variant={"outline-" + lastTakenVariant}
-                                className="mr-2"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    handleLogDrugAmount(1);
-                                }}
-                            >
-                                Log 1 {activeDrug.Drug.substr(0,25)}
-                            </Button>
+                            <LogButtons
+                                lastTaken={lastTaken}
+                                lastTakenVariant={lastTakenVariant}
+                                onLogAmount={(n) => handleLogDrugAmount(n)}
+                                drugName={activeDrug.Drug}
+                            />
 
-                            <Button
-                                style={lastTaken === 0 ? {cursor: "default"} : {}}
-                                disabled={lastTaken === 0}
-                                className="mr-2"
-                                variant={"outline-" + lastTakenVariant}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    handleLogDrugAmount(2);
-                                }}
-                            >
-                                Log 2
-                            </Button>
-
-                            <Button
-                                style={lastTaken === 0 ? {cursor: "default"} : {}}
-                                disabled={lastTaken === 0}
-                                className="mr-2"
-                                variant={"outline-" + lastTakenVariant}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    handleLogDrugAmount(3);
-                                }}
-                            >
-                                Log 3
-                            </Button>
-
-                            <Button
-                                style={lastTaken === 0 ? {cursor: "default"} : {}}
-                                disabled={lastTaken === 0}
-                                className="mr-2"
-                                variant={"outline-" + lastTakenVariant}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    handleLogDrugAmount(4);
-                                }}
-                            >
-                                Log 4
-                            </Button>
-
+                            <span className="ml-3">
                             <LastTakenButton
                                 lastTaken={lastTaken}
                             />
+                            </span>
                         </Col>
 
                         <Row>
