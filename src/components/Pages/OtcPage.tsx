@@ -109,8 +109,6 @@ const OtcPage = (): JSX.Element | null => {
     // Update the barcode image if the barcode has changed
     useEffect(() => {
         // Only try to create a barcode canvas IF there is actually a barcode value.
-        // tslint-disable-next-line
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         if (barCode) {
             drawBarcode(barCode, 'otc-barcode');
         }
