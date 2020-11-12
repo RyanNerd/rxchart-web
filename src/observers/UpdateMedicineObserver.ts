@@ -1,10 +1,10 @@
-import {useEffect, useGlobal} from "reactn";
 import {IMedicineManager} from "../managers/MedicineManager";
+import {useEffect, useGlobal} from "reactn";
 
-const UpdateMedicineObsrver = (mm: IMedicineManager) => {
-    const [updateMedicine, setUpdateMedicine] = useGlobal('updateMedicine');
-    const [, setRefreshMedicine] = useGlobal('refreshMedicine');
+const UpdateMedicineObserver = (mm: IMedicineManager) => {
     const [, setErrorDetails] = useGlobal('errorDetails');
+    const [, setRefreshMedicine] = useGlobal('refreshMedicine');
+    const [updateMedicine, setUpdateMedicine] = useGlobal('updateMedicine');
 
     /**
      * Set to a MedicineRecord when a Medicine record is added or updated
@@ -17,10 +17,12 @@ const UpdateMedicineObsrver = (mm: IMedicineManager) => {
                 const clientId = drugRecord && drugRecord.ResidentId ? drugRecord.ResidentId : null;
                 setRefreshMedicine(clientId);
             })
-            .then(() => {setUpdateMedicine(null)})
+            .then(() => {
+                setUpdateMedicine(null)
+            })
             .catch((err) => setErrorDetails(err));
         }
     }, [updateMedicine, setUpdateMedicine, mm, setErrorDetails, setRefreshMedicine])
 }
 
-export default UpdateMedicineObsrver;
+export default UpdateMedicineObserver;

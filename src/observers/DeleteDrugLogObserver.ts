@@ -1,11 +1,11 @@
-import {useEffect, useGlobal} from "reactn";
 import {IMedicineManager} from "../managers/MedicineManager";
 import {ResidentRecord} from "../types/RecordTypes";
+import {useEffect, useGlobal} from "reactn";
 
 const DeleteDrugLogObserver = (mm: IMedicineManager, activeResident: ResidentRecord | null) => {
-    const [deleteDrugLog, setDeleteDrugLog] = useGlobal('deleteDrugLog');
-    const [, setRefreshDrugLog] = useGlobal('refreshDrugLog');
     const [, setErrorDetails] = useGlobal('errorDetails');
+    const [, setRefreshDrugLog] = useGlobal('refreshDrugLog');
+    const [deleteDrugLog, setDeleteDrugLog] = useGlobal('deleteDrugLog');
 
     /**
      * Set to the MedHistoy.Id for the DrugLogRecord to delete.
@@ -22,7 +22,9 @@ const DeleteDrugLogObserver = (mm: IMedicineManager, activeResident: ResidentRec
                     setErrorDetails(new Error('unable to delete drugLogRecord. Id: ' + deleteDrugLog));
                 }
             })
-            .then(() => {setDeleteDrugLog(null)})
+            .then(() => {
+                setDeleteDrugLog(null)
+            })
             .catch((err) => setErrorDetails(err))
         }
     }, [activeResident, deleteDrugLog, mm, setDeleteDrugLog, setErrorDetails, setRefreshDrugLog])

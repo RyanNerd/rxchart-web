@@ -1,4 +1,4 @@
-import { useEffect, useRef, useGlobal } from "reactn";
+import {useEffect, useGlobal, useRef} from "reactn";
 import {IProviders} from "../utility/getInitialState";
 
 const ApiKeyObserver = (providers: IProviders) => {

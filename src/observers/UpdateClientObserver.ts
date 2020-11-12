@@ -1,10 +1,10 @@
-import {useEffect, useGlobal} from "reactn";
 import {IResidentManager} from "../managers/ResidentManager";
+import {useEffect, useGlobal} from "reactn";
 
 const UpdateClientOvserver = (rm: IResidentManager) => {
-    const [updateClient, setUpdateClient] = useGlobal('updateClient');
-    const [, setRefreshClients] = useGlobal('refreshClients');
     const [, setErrorDetails] = useGlobal('errorDetails');
+    const [, setRefreshClients] = useGlobal('refreshClients');
+    const [updateClient, setUpdateClient] = useGlobal('updateClient');
 
     /**
      * Set to a ResidentRecord when a client is being added or updated

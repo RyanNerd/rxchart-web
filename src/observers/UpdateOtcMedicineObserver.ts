@@ -1,10 +1,10 @@
-import {useEffect, useGlobal} from "reactn";
 import {IMedicineManager} from "../managers/MedicineManager";
+import {useEffect, useGlobal} from "reactn";
 
 const UpdateOtcMedicineObserver = (mm: IMedicineManager) => {
-    const [updateOtcMedicine, setUpdateOtcMedicine] = useGlobal('updateOtcMedicine');
-    const [,setRefreshOtc] = useGlobal('refreshOtc');
     const [, setErrorDetails] = useGlobal('errorDetails');
+    const [, setRefreshOtc] = useGlobal('refreshOtc');
+    const [updateOtcMedicine, setUpdateOtcMedicine] = useGlobal('updateOtcMedicine');
 
 
     /**
@@ -17,7 +17,9 @@ const UpdateOtcMedicineObserver = (mm: IMedicineManager) => {
             .then((drugRecord) => {
                 setRefreshOtc(true);
             })
-            .then(() => {setUpdateOtcMedicine(null)})
+            .then(() => {
+                setUpdateOtcMedicine(null)
+            })
             .catch((err) => setErrorDetails(err));
         }
     }, [mm, setErrorDetails, setRefreshOtc, setUpdateOtcMedicine, updateOtcMedicine])

@@ -1,10 +1,10 @@
-import {useEffect, useGlobal} from "reactn";
 import {IResidentManager} from "../managers/ResidentManager";
+import {useEffect, useGlobal} from "reactn";
 
 const DeleteClientObserver = (rm: IResidentManager) => {
-    const [deleteClient, setDeleteClient] = useGlobal('deleteClient');
-    const [, setRefreshClients] = useGlobal('refreshClients');
     const [, setErrorDetails] = useGlobal('errorDetails');
+    const [, setRefreshClients] = useGlobal('refreshClients');
+    const [deleteClient, setDeleteClient] = useGlobal('deleteClient');
 
     /**
      * Set to the Resident.Id of the record to delete
@@ -20,7 +20,9 @@ const DeleteClientObserver = (rm: IResidentManager) => {
                     setErrorDetails(new Error('Unable to delete client. Id: ' + deleteClient));
                 }
             })
-            .then(() => {setDeleteClient(null)})
+            .then(() => {
+                setDeleteClient(null)
+            })
             .catch((err) => setErrorDetails(err));
         }
     }, [deleteClient, setDeleteClient, rm, setErrorDetails, setRefreshClients]);

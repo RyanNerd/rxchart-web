@@ -1,10 +1,10 @@
-import {useEffect, useGlobal} from "reactn";
 import {IMedicineManager} from "../managers/MedicineManager";
+import {useEffect, useGlobal} from "reactn";
 
 const RefreshOtcObserver = (mm: IMedicineManager) => {
-    const [refreshOtc, setRefreshOtc] = useGlobal('refreshOtc');
-    const [, setOtcList] = useGlobal('otcList');
     const [, setErrorDetails] = useGlobal('errorDetails');
+    const [, setOtcList] = useGlobal('otcList');
+    const [refreshOtc, setRefreshOtc] = useGlobal('refreshOtc');
 
     /**
      * Set to true when the the otcList needs to be rehydrated.

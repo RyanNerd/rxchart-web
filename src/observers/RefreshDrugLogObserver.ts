@@ -1,10 +1,11 @@
-import {useEffect, useGlobal} from "reactn";
 import {IMedicineManager} from "../managers/MedicineManager";
+import {useEffect, useGlobal} from "reactn";
 
 const RefreshDrugLogObserver = (mm: IMedicineManager) => {
-    const [refreshDrugLog, setRefreshDrugLog] = useGlobal('refreshDrugLog');
     const [, setDrugLogList] = useGlobal('drugLogList');
     const [, setErrorDetails] = useGlobal('errorDetails');
+    const [refreshDrugLog, setRefreshDrugLog] = useGlobal('refreshDrugLog');
+
     /**
      * Set to residentId or DrugLogRercord[] when drugLogList needs a refresh
      * @var refreshDrugLog {number|DrugLogRecord[]|null}
@@ -12,7 +13,9 @@ const RefreshDrugLogObserver = (mm: IMedicineManager) => {
     useEffect(() => {
         if (refreshDrugLog) {
             if (Array.isArray(refreshDrugLog)) {
-                setDrugLogList(refreshDrugLog).then((state) => {setRefreshDrugLog(null)})
+                setDrugLogList(refreshDrugLog).then((state) => {
+                    setRefreshDrugLog(null)
+                })
             } else {
                 mm.loadDrugLog(refreshDrugLog)
                 .then((drugs) => {

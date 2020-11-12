@@ -1,11 +1,11 @@
-import {useEffect, useGlobal} from "reactn";
 import {IAuthManager} from "../managers/AuthManager";
+import {useEffect, useGlobal} from "reactn";
 
 const LoginObserver = (am: IAuthManager) => {
-    const [login, setLogin] = useGlobal('login');
     const [, setApiKey] = useGlobal('apiKey');
-    const [, setLoginFailed] = useGlobal('loginFailed');
     const [, setErrorDetails] = useGlobal('errorDetails');
+    const [, setLoginFailed] = useGlobal('loginFailed');
+    const [login, setLogin] = useGlobal('login');
 
     /**
      * Set to {username, password} when a user is attempting to log in.
@@ -29,8 +29,12 @@ const LoginObserver = (am: IAuthManager) => {
                     setLoginFailed(true);
                 }
             })
-            .then(() => {setLogin(null)})
-            .catch((err) => {setErrorDetails(err)})
+            .then(() => {
+                setLogin(null)
+            })
+            .catch((err) => {
+                setErrorDetails(err)
+            })
         }
     }, [login, am, setApiKey, setErrorDetails, setLogin, setLoginFailed])
 }
