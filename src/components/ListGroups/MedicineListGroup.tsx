@@ -3,10 +3,10 @@ import ListGroup from "react-bootstrap/ListGroup";
 import DrugDropdown from "./DrugDropdown";
 import TooltipButton from "../Buttons/TooltipButton";
 import {drawBarcode} from "../../utility/drawBarcode";
-import Button from "react-bootstrap/Button";
 import {MedicineRecord} from "../../types/RecordTypes";
 import {getLastTakenVariant} from "../../utility/common";
 import ShadowBox from "../Buttons/ShadowBox";
+import LogButtons from "../Buttons/LogButtons";
 
 interface IProps {
     activeDrug: MedicineRecord
@@ -104,56 +104,12 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
                     + Log Drug
                 </TooltipButton>
 
-                <Button
-                    style={lastTaken === 0 ? {cursor: "default"} : {}}
-                    disabled={lastTaken === 0}
-                    variant={"outline-" + lastTakenVariant}
-                    className="mr-2"
-                    onClick={(e) => {
-                        e.preventDefault();
-                        logDrug(1);
-                    }}
-                >
-                    Log 1 {shortenedDrugName()}
-                </Button>
-
-                <Button
-                    className="mr-2"
-                    style={lastTaken === 0 ? {cursor: "default"} : {}}
-                    disabled={lastTaken === 0}
-                    variant={"outline-" + lastTakenVariant}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        logDrug(2);
-                    }}
-                >
-                    Log 2
-                </Button>
-
-                <Button
-                    className="mr-2"
-                    style={lastTaken === 0 ? {cursor: "default"} : {}}
-                    disabled={lastTaken === 0}
-                    variant={"outline-" + lastTakenVariant}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        logDrug(3);
-                    }}
-                >
-                    Log 3
-                </Button>
-
-                <Button
-                    style={lastTaken === 0 ? {cursor: "default"} : {}}
-                    disabled={lastTaken === 0}
-                    variant={"outline-" + lastTakenVariant}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        logDrug(4);
-                    }}
-                >
-                    Log 4
-                </Button>
+                <LogButtons
+                    lastTaken={lastTaken}
+                    lastTakenVariant={lastTakenVariant}
+                    onLogAmount={(n) => logDrug(n)}
+                    drugName={shortenedDrugName()}
+                />
             </ListGroup.Item>
 
             {directions && directions.length > 0 &&

@@ -16,6 +16,7 @@ import Table from "react-bootstrap/Table";
 import MedicineDetail from "../Grids/MedicineDetail";
 import ShadowBox from "../Buttons/ShadowBox";
 import {drawBarcode} from "../../utility/drawBarcode";
+import LogButtons from "../Buttons/LogButtons";
 
 /**
  * OtcPage
@@ -153,66 +154,6 @@ const OtcPage = (): JSX.Element | null => {
         }
     }
 
-    /**
-     * TODO: Refactor this into components/Buttons
-     */
-    const LogButtons = () => {
-        if (!activeDrug) {
-            return null;
-        }
-
-        return (
-            <>
-            <Button
-                disabled={lastTaken === 0}
-                variant={"outline-" + lastTakenVariant}
-                className="mr-2"
-                onClick={(e) => {
-                    e.preventDefault();
-                    handleLogDrugAmount(1);
-                }}
-            >
-                Log 1 {activeDrug.Drug.substr(0, 25)}
-            </Button>
-
-        <Button
-            disabled={lastTaken === 0}
-            className="mr-2"
-            variant={"outline-" + lastTakenVariant}
-            onClick={(e) => {
-                e.preventDefault();
-                handleLogDrugAmount(2);
-            }}
-        >
-            Log 2
-        </Button>
-
-        <Button
-            disabled={lastTaken === 0}
-            className="mr-2"
-            variant={"outline-" + lastTakenVariant}
-            onClick={(e) => {
-                e.preventDefault();
-                handleLogDrugAmount(3);
-            }}
-        >
-            Log 3
-        </Button>
-
-        <Button
-            disabled={lastTaken === 0}
-            className="mr-2"
-            variant={"outline-" + lastTakenVariant}
-            onClick={(e) => {
-                e.preventDefault();
-                handleLogDrugAmount(4);
-            }}
-        >
-            Log 4
-        </Button>
-        </>
-    )}
-
     const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
 
     return (
@@ -269,10 +210,18 @@ const OtcPage = (): JSX.Element | null => {
                 <>
                     <Col sm="8">
                         <span style={{textAlign: "center"}}> <h2>OTC Drug History</h2> </span>
-                        <LogButtons/>
+
+                        <LogButtons
+                            onLogAmount={(n) => handleLogDrugAmount(n)}
+                            lastTaken={lastTaken}
+                            lastTakenVariant={lastTakenVariant}
+                            drugName={activeDrug.Drug}
+                        />
+                        <span className="ml-2">
                         <LastTakenButton
                             lastTaken={lastTaken}
                         />
+                        </span>
                     </Col>
 
                     <Row>
@@ -280,7 +229,12 @@ const OtcPage = (): JSX.Element | null => {
                             <ListGroup>
                                 <ListGroup>
                                     <ListGroup.Item>
-                                        <LogButtons/>
+                                        <LogButtons
+                                            onLogAmount={(n) => handleLogDrugAmount(n)}
+                                            lastTaken={lastTaken}
+                                            lastTakenVariant={lastTakenVariant}
+                                            drugName={activeDrug.Drug}
+                                        />
                                     </ListGroup.Item>
                                 </ListGroup>
                                 <ListGroup.Item>
