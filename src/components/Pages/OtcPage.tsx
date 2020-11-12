@@ -5,18 +5,18 @@ import DrugLogEdit from "../Modals/DrugLogEdit";
 import DrugLogGrid from "../Grids/DrugLogGrid";
 import Form from 'react-bootstrap/Form';
 import LastTakenButton from "../Buttons/LastTakenButton";
+import LogButtons from "../Buttons/LogButtons";
+import MedicineDetail from "../Grids/MedicineDetail";
 import MedicineEdit from "../Modals/MedicineEdit";
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import Row from 'react-bootstrap/Row';
-import TabContent from "../../styles/common.css";
-import {Alert, ListGroup} from "react-bootstrap";
-import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
-import {calculateLastTaken, getDrugName, getFormattedDate, getLastTakenVariant} from "../../utility/common";
-import Table from "react-bootstrap/Table";
-import MedicineDetail from "../Grids/MedicineDetail";
 import ShadowBox from "../Buttons/ShadowBox";
+import TabContent from "../../styles/common.css";
+import Table from "react-bootstrap/Table";
+import {Alert, ListGroup} from "react-bootstrap";
+import {calculateLastTaken, getDrugName, getFormattedDate, getLastTakenVariant} from "../../utility/common";
 import {drawBarcode} from "../../utility/drawBarcode";
-import LogButtons from "../Buttons/LogButtons";
+import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
 
 /**
  * OtcPage
@@ -119,23 +119,6 @@ const OtcPage = (): JSX.Element | null => {
         return null;
     } else {
         window.scrollTo({top: 0, behavior: 'smooth'});
-    }
-
-    /**
-     * Fires when user clicks on +Log or the drug log edit button
-     * @param {React.MouseEvent<HTMLElement>} e
-     * @param {DrugLogRecord} drugLogInfo
-     */
-    const addEditDrugLog = (e: React.MouseEvent<HTMLElement>, drugLogInfo?: DrugLogRecord) => {
-        e.preventDefault();
-        const drugLogRecord = drugLogInfo ? {...drugLogInfo} : {
-            Id: null,
-            ResidentId: residentId,
-            MedicineId: activeDrug?.Id,
-            Notes: ""
-        } as DrugLogRecord;
-        setDrugLogInfo(drugLogRecord);
-        setShowDrugLog(true);
     }
 
     /**
@@ -303,8 +286,15 @@ const OtcPage = (): JSX.Element | null => {
                                 columns={['Drug', 'Created', 'Updated', 'Amount']}
                                 drugLog={otcLogList || []}
                                 otcList={otcList}
-                                onEdit={(e, r) => addEditDrugLog(e, r)}
-                                onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
+                                onEdit={(e, r) => {
+                                    e.preventDefault();
+                                    setDrugLogInfo(r);
+                                    setShowDrugLog(true);
+                                }}
+                                onDelete={(e, r) => {
+                                    e.preventDefault();
+                                    setShowDeleteDrugLogRecord(r);
+                                }}
                             />
                         </Col>
                     </Row>
