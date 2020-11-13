@@ -1,6 +1,13 @@
 import {useEffect, useGlobal, useRef} from "reactn";
 import {IProviders} from "../utility/getInitialState";
 
+/**
+ * Watch for changes to the global apiKey
+ * when populated it indicates a successful login and triggers
+ * a refresh of theresidentList and otcList globals, and sets the active tab page to the ResidentPage tab
+ * @param {IProviders} providers
+ * @constructor
+ */
 const ApiKeyObserver = (providers: IProviders) => {
     const [, setActiveTabKey] = useGlobal('activeTabKey');
     const [, setLoginFailed] = useGlobal('loginFailed');

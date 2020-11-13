@@ -1,15 +1,17 @@
 import {IMedicineManager} from "../managers/MedicineManager";
 import {useEffect, useGlobal} from "reactn";
 
+/**
+ * Watch for changes to the refreshOtc global
+ * when set to true indicates that the otcList global should be reloaded
+ * @param {IMedicineManager} mm
+ * @constructor
+ */
 const RefreshOtcObserver = (mm: IMedicineManager) => {
     const [, setErrorDetails] = useGlobal('errorDetails');
     const [, setOtcList] = useGlobal('otcList');
     const [refreshOtc, setRefreshOtc] = useGlobal('refreshOtc');
 
-    /**
-     * Set to true when the the otcList needs to be rehydrated.
-     * @var refreshOtc {boolean}
-     */
     useEffect(() => {
         if (refreshOtc) {
             mm.loadOtcList()

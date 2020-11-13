@@ -2,15 +2,17 @@ import {IMedicineManager} from "../managers/MedicineManager";
 import {ResidentRecord} from "../types/RecordTypes";
 import {useEffect, useGlobal} from "reactn";
 
+/**
+ * Watch for changes to the deleteDrugLog global. When populated it is set to the MedHistory.Id to be deleted
+ * @param {IMedicineManager} mm
+ * @param {ResidentRecord | null} activeResident
+ * @constructor
+ */
 const DeleteDrugLogObserver = (mm: IMedicineManager, activeResident: ResidentRecord | null) => {
     const [, setErrorDetails] = useGlobal('errorDetails');
     const [, setRefreshDrugLog] = useGlobal('refreshDrugLog');
     const [deleteDrugLog, setDeleteDrugLog] = useGlobal('deleteDrugLog');
 
-    /**
-     * Set to the MedHistoy.Id for the DrugLogRecord to delete.
-     * @var deleteDrugLog {number|null}
-     */
     useEffect(() => {
         const clientId = activeResident?.Id;
         if (deleteDrugLog && clientId) {

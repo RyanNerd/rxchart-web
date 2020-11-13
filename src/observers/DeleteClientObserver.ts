@@ -1,15 +1,17 @@
 import {IResidentManager} from "../managers/ResidentManager";
 import {useEffect, useGlobal} from "reactn";
 
+/**
+ * Watch for changes to the global deleteClient
+ * which when populated is the Resident.Id to delete
+ * @param {IResidentManager} rm
+ * @constructor
+ */
 const DeleteClientObserver = (rm: IResidentManager) => {
     const [, setErrorDetails] = useGlobal('errorDetails');
     const [, setRefreshClients] = useGlobal('refreshClients');
     const [deleteClient, setDeleteClient] = useGlobal('deleteClient');
 
-    /**
-     * Set to the Resident.Id of the record to delete
-     * @var deleteClient {}number|null}
-     */
     useEffect(() => {
         if (deleteClient) {
             rm.deleteResident(deleteClient)

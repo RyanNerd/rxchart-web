@@ -2,15 +2,17 @@ import {IMedicineManager} from "../managers/MedicineManager";
 import {ResidentRecord} from "../types/RecordTypes";
 import {useEffect, useGlobal} from "reactn";
 
+/**
+ * Watch for changes to the deleteMedicine global. When populated it is set to Medicine.Id to be deleted.
+ * @param {IMedicineManager} mm
+ * @param {ResidentRecord|null} activeResident
+ * @constructor
+ */
 const DeleteMedicineObserver = (mm: IMedicineManager, activeResident: ResidentRecord | null) => {
     const [, setErrorDetails] = useGlobal('errorDetails');
     const [, setRefreshMedicine] = useGlobal('refreshMedicine');
     const [deleteMedicine, setDeleteMedicine] = useGlobal('deleteMedicine');
 
-    /**
-     * Set to Id of the the MedicineRecord to be deleted
-     * @var deleteMedicne {number|null}
-     */
     useEffect(() => {
         if (deleteMedicine && activeResident) {
             mm.deleteMedicine(deleteMedicine)

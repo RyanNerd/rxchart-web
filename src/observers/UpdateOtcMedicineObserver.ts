@@ -1,20 +1,21 @@
 import {IMedicineManager} from "../managers/MedicineManager";
 import {useEffect, useGlobal} from "reactn";
 
+/**
+ * Watch for changes to the updateOtcMedicine global
+ * when populated is set to the MedicineRecord to be added or updated
+ * @param {IMedicineManager} mm
+ * @constructor
+ */
 const UpdateOtcMedicineObserver = (mm: IMedicineManager) => {
     const [, setErrorDetails] = useGlobal('errorDetails');
     const [, setRefreshOtc] = useGlobal('refreshOtc');
     const [updateOtcMedicine, setUpdateOtcMedicine] = useGlobal('updateOtcMedicine');
 
-
-    /**
-     * Set to a MedicineRecord when an OTC record is added or updated
-     * @var updateOtcMedicine {MedicineRecord|null}
-     */
     useEffect(() => {
         if (updateOtcMedicine) {
             mm.updateMedicine(updateOtcMedicine)
-            .then((drugRecord) => {
+            .then(() => {
                 setRefreshOtc(true);
             })
             .then(() => {

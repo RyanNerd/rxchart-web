@@ -1,15 +1,17 @@
 import {IResidentManager} from "../managers/ResidentManager";
 import {useEffect, useGlobal} from "reactn";
 
+/**
+ * Watch the refreshClients global
+ * when set to true reloads the residentList global
+ * @param {IResidentManager} rm
+ * @constructor
+ */
 const RefreshClientsObserver = (rm: IResidentManager) => {
     const [, setErrorDetails] = useGlobal('errorDetails');
     const [, setResidentList] = useGlobal('residentList');
     const [refreshClients, setRefreshClients] = useGlobal('refreshClients');
 
-    /**
-     * Set to true when the client list needs to be refreshed
-     * @var refreshClients {bool}
-     */
     useEffect(() => {
         if (refreshClients) {
             rm.loadResidentList()

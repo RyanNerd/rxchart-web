@@ -1,20 +1,21 @@
 import {useEffect, useGlobal} from "reactn";
 
+/**
+ * Watch for changes to errorDetails
+ * When populated this is set to the details of the exception/error that occured
+ * @constructor
+ */
 const ErrorDetailsObserver = () => {
     const [, setApiKey] = useGlobal('apiKey');
-    const [activeTabKey, setActiveTabKey] = useGlobal('activeTabKey');
+    const [, setActiveTabKey] = useGlobal('activeTabKey');
     const [errorDetails] = useGlobal('errorDetails');
 
-    /**
-     * Observer for anytime there is an error set on the errorDetails global
-     * @var errorDetails {any}
-     */
     useEffect(() => {
         if (errorDetails) {
             setApiKey(null);
             setActiveTabKey('error');
         }
-    }, [errorDetails, setApiKey, activeTabKey, setActiveTabKey])
+    }, [errorDetails, setApiKey, setActiveTabKey])
 }
 
 export default ErrorDetailsObserver;
