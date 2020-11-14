@@ -19,18 +19,22 @@ export interface IMedicineManager {
  * @constructor
  */
 const MedicineMananger = (
-        medicineProvider: IMedicineProvider,
-        medHistoryProvider: IMedHistoryProvider
-    ): IMedicineManager => {
+    medicineProvider: IMedicineProvider,
+    medHistoryProvider: IMedHistoryProvider
+): IMedicineManager => {
     /**
      * Delete a MedHistory record given the Id.
      * @param {number} drugLogId
      */
     const _deleteDrugLog = async (drugLogId: number) => {
         return medHistoryProvider
-            .delete(drugLogId)
-            .then((deleteResponse) => {return deleteResponse.success})
-            .catch((err) => {throw err})
+        .delete(drugLogId)
+        .then((deleteResponse) => {
+            return deleteResponse.success
+        })
+        .catch((err) => {
+            throw err
+        })
     };
 
     /**
@@ -40,8 +44,12 @@ const MedicineMananger = (
     const _deleteMedicine = async (medicineId: number) => {
         return medicineProvider
         .delete(medicineId)
-        .then((deleteResponse) => {return deleteResponse.success})
-        .catch((err) => {throw err})
+        .then((deleteResponse) => {
+            return deleteResponse.success
+        })
+        .catch((err) => {
+            throw err
+        })
     };
 
     /**
@@ -54,7 +62,9 @@ const MedicineMananger = (
             order_by: [{column: 'Created', direction: 'desc'}],
         };
         return medHistoryProvider.search(searchCriteria)
-            .catch((err) => {throw err});
+        .catch((err) => {
+            throw err
+        });
     };
 
     /**
@@ -67,7 +77,9 @@ const MedicineMananger = (
             order_by: [{column: 'Drug', direction: 'asc'}],
         };
         return medicineProvider.search(searchCriteria)
-            .catch((err) => {throw err})
+        .catch((err) => {
+            throw err
+        })
     }
 
     /**
@@ -79,7 +91,9 @@ const MedicineMananger = (
             order_by: [{column: 'Drug', direction: 'asc'}],
         };
         return medicineProvider.search(searchCriteria)
-            .catch((err) => {throw err})
+        .catch((err) => {
+            throw err
+        })
     };
 
     /**
@@ -89,18 +103,22 @@ const MedicineMananger = (
      */
     const _updateDrugLog = async (drugLogInfo: DrugLogRecord, residentId: number) => {
         return medHistoryProvider
-            .post(drugLogInfo)
-            .then(() => {
-                return _loadDrugLog(residentId)
-                    .then((drugLogList) => {
-                        return drugLogList;
-                    })
-                    .catch((err) => {throw err})
-            })
+        .post(drugLogInfo)
+        .then(() => {
+            return _loadDrugLog(residentId)
             .then((drugLogList) => {
                 return drugLogList;
             })
-            .catch((err) => {throw err})
+            .catch((err) => {
+                throw err
+            })
+        })
+        .then((drugLogList) => {
+            return drugLogList;
+        })
+        .catch((err) => {
+            throw err
+        })
     };
 
     /**
@@ -120,14 +138,14 @@ const MedicineMananger = (
         }
         try {
             return await medicineProvider
-                .post(drugData);
+            .post(drugData);
         } catch (err) {
             throw err;
         }
     }
 
     return {
-        deleteDrugLog: async  (drugLogId: number): Promise<boolean> => {
+        deleteDrugLog: async (drugLogId: number): Promise<boolean> => {
             return await _deleteDrugLog(drugLogId);
         },
         deleteMedicine: async (medicineId: number): Promise<boolean> => {

@@ -22,15 +22,17 @@ interface IProps {
  * @constructor
  */
 const MedicineEdit = (props: IProps): JSX.Element | null => {
-    const [ show, setShow ] = useState(props.show);
-    const [ drugInfo, setDrugInfo ] = useState<MedicineRecord>(props.drugInfo);
-    const [ canSave, setCanSave ] = useState<boolean>(false);
-    const [ activeResident ] = useGlobal('activeResident');
+    const [show, setShow] = useState(props.show);
+    const [drugInfo, setDrugInfo] = useState<MedicineRecord>(props.drugInfo);
+    const [canSave, setCanSave] = useState<boolean>(false);
+    const [activeResident] = useGlobal('activeResident');
     const otc = props.otc;
     const textInput = useRef<HTMLInputElement>(null);
 
     // Observer for show
-    useEffect(() => {setShow(props.show)}, [props.show]);
+    useEffect(() => {
+        setShow(props.show)
+    }, [props.show]);
 
     // Observer/mutator for drugInfo
     useEffect(() => {
@@ -96,7 +98,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
         ) : (
             <Modal.Title>
                 {drugTitleType} <b style={{color: "blue"}}><i>{drugName}</i></b>
-                    <span> for </span><b style={{backgroundColor: "yellow"}}>{fullName}</b>
+                <span> for </span><b style={{backgroundColor: "yellow"}}>{fullName}</b>
             </Modal.Title>
         );
 

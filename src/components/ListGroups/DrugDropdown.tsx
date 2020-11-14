@@ -68,7 +68,7 @@ const DrugDropdown = (props: IProps): JSX.Element | null => {
                     e.preventDefault();
                     props.onSelect(medicine);
                 }}>
-                    {drugDetail}
+                {drugDetail}
             </Dropdown.Item>
         );
     };

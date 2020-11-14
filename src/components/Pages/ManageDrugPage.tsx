@@ -27,7 +27,7 @@ const ManageDrugPage = (): JSX.Element | null => {
     if (activeTabKey !== 'manage') {
         return null;
     } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
     /**
@@ -70,7 +70,7 @@ const ManageDrugPage = (): JSX.Element | null => {
             >
                 <thead>
                 <tr>
-                    <th> </th>
+                    <th></th>
                     <th>
                         Drug
                     </th>
@@ -86,7 +86,7 @@ const ManageDrugPage = (): JSX.Element | null => {
                     <th>
                         Barcode
                     </th>
-                    <th> </th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -106,41 +106,41 @@ const ManageDrugPage = (): JSX.Element | null => {
             </Table>
 
             {showMedicineEdit && medicineInfo &&
-                /* MedicineEdit Modal */
-                <MedicineEdit
-                    show={showMedicineEdit}
-                    onClose={(r) => {
-                        setShowMedicineEdit(false);
-                        setUpdateMedicine(r || null);
-                    }}
-                    drugInfo={medicineInfo}
-                />
+            /* MedicineEdit Modal */
+            <MedicineEdit
+                show={showMedicineEdit}
+                onClose={(r) => {
+                    setShowMedicineEdit(false);
+                    setUpdateMedicine(r || null);
+                }}
+                drugInfo={medicineInfo}
+            />
             }
 
             {medicineInfo && showDeleteMedicine &&
-                <Confirm.Modal
-                    show={showDeleteMedicine}
-                    buttonvariant="danger"
-                    onSelect={(a) => {
-                            setShowDeleteMedicine(false);
-                            setDeleteMedicine(a ? medicineInfo?.Id : null);
-                        }
-                    }
-                >
-                    <Confirm.Header>
-                        <Confirm.Title>
-                            {"Delete " + medicineInfo.Drug}
-                        </Confirm.Title>
-                    </Confirm.Header>
-                    <Confirm.Body>
-                        <Alert variant="danger">
-                            Deleting this medicine will remove <b>ALL</b> history of this drug being taken!
-                        </Alert>
-                        <b style={{color: "red"}}>
-                            Are you sure?
-                        </b>
-                    </Confirm.Body>
-                </Confirm.Modal>
+            <Confirm.Modal
+                show={showDeleteMedicine}
+                buttonvariant="danger"
+                onSelect={(a) => {
+                    setShowDeleteMedicine(false);
+                    setDeleteMedicine(a ? medicineInfo?.Id : null);
+                }
+                }
+            >
+                <Confirm.Header>
+                    <Confirm.Title>
+                        {"Delete " + medicineInfo.Drug}
+                    </Confirm.Title>
+                </Confirm.Header>
+                <Confirm.Body>
+                    <Alert variant="danger">
+                        Deleting this medicine will remove <b>ALL</b> history of this drug being taken!
+                    </Alert>
+                    <b style={{color: "red"}}>
+                        Are you sure?
+                    </b>
+                </Confirm.Body>
+            </Confirm.Modal>
             }
         </>
     );

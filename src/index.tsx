@@ -21,17 +21,17 @@ const InitError = () => {
 }
 
 setGlobal(getInitialState())
-    .then((initialState) => {
-        if (initialState.development) {
-            console.log('RxChart Started', initialState);
-        } else {
-            console.log('RxChart Started');
-        }
-    })
-    .then(() => {
-        ReactDOM.render(<App/>, document.getElementById('root'));
-    })
-    .catch((err) => {
+.then((initialState) => {
+    if (initialState.development) {
+        console.log('RxChart Started', initialState);
+    } else {
+        console.log('RxChart Started');
+    }
+})
+.then(() => {
+    ReactDOM.render(<App/>, document.getElementById('root'));
+})
+.catch((err) => {
         console.log('Something went wrong', err);
         ReactDOM.render(<InitError/>, document.getElementById('root'));
     }

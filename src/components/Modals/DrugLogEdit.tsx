@@ -21,17 +21,21 @@ interface IProps {
  */
 const DrugLogEdit = (props: IProps): JSX.Element | null => {
     const onClose = props.onClose;
-    const [ show, setShow ] = useState(props.show);
-    const [ drugLogInfo, setDrugLogInfo ] = useState(props.drugLogInfo);
+    const [show, setShow] = useState(props.show);
+    const [drugLogInfo, setDrugLogInfo] = useState(props.drugLogInfo);
     const onHide = props.onHide;
-    const [ canSave, setCanSave ] = useState(false);
+    const [canSave, setCanSave] = useState(false);
     const textInput = useRef<HTMLInputElement>(null);
 
     // Observer for show
-    useEffect(() => {setShow(props.show)}, [props.show]);
+    useEffect(() => {
+        setShow(props.show)
+    }, [props.show]);
 
     // Observer for drugInfo
-    useEffect(() => {setDrugLogInfo(props.drugLogInfo)}, [props.drugLogInfo]);
+    useEffect(() => {
+        setDrugLogInfo(props.drugLogInfo)
+    }, [props.drugLogInfo]);
 
     // Disable the Save button if Notes are empty.
     useEffect(() => {
@@ -74,7 +78,7 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
         return null;
     }
 
-     return (
+    return (
         <Modal
             backdrop="static"
             centered

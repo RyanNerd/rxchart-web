@@ -81,7 +81,7 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
          * @returns {Promise<DrugLogRecord>}
          */
         post: async (drugInfo: DrugLogRecord): Promise<DrugLogRecord> => {
-            const uri =_baseUrl + 'medhistory?api_key=' + _apiKey;
+            const uri = _baseUrl + 'medhistory?api_key=' + _apiKey;
             try {
                 const response = await _frak.post<RecordResponse>(uri, drugInfo);
                 if (response.success) {

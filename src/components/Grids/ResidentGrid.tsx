@@ -52,17 +52,17 @@ const ResidentGrid = (props: IProps): JSX.Element => {
                 id={'resident-grid-row-' + resident.Id}
             >
                 {onSelected &&
-                    <td style={{textAlign: 'center', verticalAlign: "middle"}}>
-                        <ToggleButton
-                            id={"resident-grid-select-btn-" + resident.Id}
-                            type="radio"
-                            name="resident-list"
-                            variant="outline-info"
-                            checked={isSelected || false}
-                            onClick={(e) => onSelected(e, resident)}
-                            value={resident.Id}
-                        />
-                    </td>
+                <td style={{textAlign: 'center', verticalAlign: "middle"}}>
+                    <ToggleButton
+                        id={"resident-grid-select-btn-" + resident.Id}
+                        type="radio"
+                        name="resident-list"
+                        variant="outline-info"
+                        checked={isSelected || false}
+                        onClick={(e) => onSelected(e, resident)}
+                        value={resident.Id}
+                    />
+                </td>
                 }
 
                 <td style={{verticalAlign: "middle", fontWeight}}>{resident.LastName}</td>
@@ -72,28 +72,28 @@ const ResidentGrid = (props: IProps): JSX.Element => {
                 <td style={{verticalAlign: "middle", fontWeight}}>{updated}</td>
 
                 {onEdit &&
-                    <td style={{textAlign: 'center', verticalAlign: "middle"}}>
-                        <Button
-                            size="sm"
-                            id={"resident-grid-edit-btn-" + resident.Id}
-                            onClick={(e) => onEdit(e, resident)}
-                        >
-                            Edit
-                        </Button>
-                    </td>
+                <td style={{textAlign: 'center', verticalAlign: "middle"}}>
+                    <Button
+                        size="sm"
+                        id={"resident-grid-edit-btn-" + resident.Id}
+                        onClick={(e) => onEdit(e, resident)}
+                    >
+                        Edit
+                    </Button>
+                </td>
                 }
 
                 {onDelete && !resident.deleted_at &&
-                    <td style={{textAlign: 'center', verticalAlign: "middle"}}>
-                        <Button
-                            size="sm"
-                            id={"resident-grid-delete-btn-" + resident.Id}
-                            variant="outline-danger"
-                            onClick={(e) => onDelete(e, resident)}
-                        >
-                            <span role="img" aria-label="delete">🗑️</span>
-                        </Button>
-                    </td>
+                <td style={{textAlign: 'center', verticalAlign: "middle"}}>
+                    <Button
+                        size="sm"
+                        id={"resident-grid-delete-btn-" + resident.Id}
+                        variant="outline-danger"
+                        onClick={(e) => onDelete(e, resident)}
+                    >
+                        <span role="img" aria-label="delete">🗑️</span>
+                    </Button>
+                </td>
                 }
             </tr>
         );
@@ -104,9 +104,9 @@ const ResidentGrid = (props: IProps): JSX.Element => {
             <thead>
             <tr>
                 {onSelected &&
-                    <th style={{textAlign: "center"}}>
-                        Selected
-                    </th>
+                <th style={{textAlign: "center"}}>
+                    Selected
+                </th>
                 }
                 <th>
                     <span>Last Name</span>
@@ -124,15 +124,15 @@ const ResidentGrid = (props: IProps): JSX.Element => {
                     <span>Activated</span>
                 </th>
                 {onEdit &&
-                    <th/>
+                <th/>
                 }
                 {onDelete &&
-                    <th/>
+                <th/>
                 }
             </tr>
             </thead>
             <tbody>
-                {residentList.length > 0 && residentList.map(ResidentRow)}
+            {residentList.length > 0 && residentList.map(ResidentRow)}
             </tbody>
         </Table>
     );

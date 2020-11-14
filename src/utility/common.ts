@@ -40,7 +40,7 @@ export const clientDOB = (resident: ResidentRecord): string => {
  * @return {string}
  */
 export const dateToString = (month: string, day: string, year: string): string => {
-    return  month + '/' + day + '/' + year;
+    return month + '/' + day + '/' + year;
 }
 
 /**
@@ -80,14 +80,14 @@ export const isDayValid = (day: string, month: string): ReturnValidation => {
         || nMonth === 10
         || nMonth === 11
         || nMonth === 12) {
-            maxDay = 31;
+        maxDay = 31;
     }
     if (nMonth === 4
         || nMonth === 6
         || nMonth === 9) {
-            maxDay = 30;
+        maxDay = 30;
     }
-    return (nDay >=1 && nDay <= maxDay) ? '' : 'is-invalid';
+    return (nDay >= 1 && nDay <= maxDay) ? '' : 'is-invalid';
 };
 
 /**
@@ -113,7 +113,7 @@ export const isYearValid = (year: string, isDOB: boolean): ReturnValidation => {
  */
 export const randomString = (): string => {
     return Math.random().toString(36).substring(2, 15) +
-    Math.random().toString(36).substring(2, 15)
+        Math.random().toString(36).substring(2, 15)
 };
 
 /**
@@ -148,25 +148,35 @@ export const calculateLastTaken = (drugId: number, drugLogList: DrugLogRecord[])
 export const getLastTakenVariant = (lastTaken: number | null): Variant => {
     let variant;
     switch (lastTaken) {
-        case null: variant = 'primary';
+        case null:
+            variant = 'primary';
             break;
-        case 0: variant = 'danger';
+        case 0:
+            variant = 'danger';
             break;
-        case 1: variant = 'danger';
+        case 1:
+            variant = 'danger';
             break;
-        case 2: variant = 'danger';
+        case 2:
+            variant = 'danger';
             break;
-        case 3: variant = 'warning';
+        case 3:
+            variant = 'warning';
             break;
-        case 4: variant = 'warning';
+        case 4:
+            variant = 'warning';
             break;
-        case 5: variant = 'warning';
+        case 5:
+            variant = 'warning';
             break;
-        case 6: variant = 'info';
+        case 6:
+            variant = 'info';
             break;
-        case 7: variant = 'info';
+        case 7:
+            variant = 'info';
             break;
-        default: variant = 'primary';
+        default:
+            variant = 'primary';
     }
     return (lastTaken && lastTaken >= 8) ? 'light' : variant;
 }
@@ -179,21 +189,29 @@ export const getBsColor = (variant: Variant): string => {
     const lcVariant = variant.toLowerCase();
     let hexColor;
     switch (lcVariant) {
-        case 'primary': hexColor = '#0275D8';
+        case 'primary':
+            hexColor = '#0275D8';
             break;
-        case 'success': hexColor = '#5CB85C';
+        case 'success':
+            hexColor = '#5CB85C';
             break;
-        case 'info': hexColor = '#5BC0DE';
+        case 'info':
+            hexColor = '#5BC0DE';
             break;
-        case 'warning': hexColor = '#F0AD4E';
+        case 'warning':
+            hexColor = '#F0AD4E';
             break;
-        case 'danger': hexColor = '#D9534F';
+        case 'danger':
+            hexColor = '#D9534F';
             break;
-        case 'inverse': hexColor = '#292B2C';
+        case 'inverse':
+            hexColor = '#292B2C';
             break;
-        case 'faded': hexColor = '#F7F7F7';
+        case 'faded':
+            hexColor = '#F7F7F7';
             break;
-        case 'light': hexColor = '#888888'; // Custom color
+        case 'light':
+            hexColor = '#888888'; // Custom color
             break
         default:
             throw new Error('variant ' + variant + ' is invalid.');
@@ -222,10 +240,10 @@ export const isToday = (date: Date): boolean => {
  * Return an object containing the day, month, and year as numbers and a date indicating now
  * @return {month: number, day: number, year: number, now: Date}
  */
-export const getMDY = (): {month: number, day: number, year: number, now: Date} => {
+export const getMDY = (): { month: number, day: number, year: number, now: Date } => {
     const now = new Date();
     const day = now.getDate();
-    const month = now.getMonth() +1;
+    const month = now.getMonth() + 1;
     const year = now.getFullYear();
     return {month, day, year, now};
 }
@@ -278,7 +296,7 @@ export const getDrugName = (id: number, list: MedicineRecord[]): string => {
 export const isSearchValid = (searchText: string, drug: MedicineRecord): boolean => {
     const textLen = searchText ? searchText.length : 0;
     let searched;
-    const c = searchText.substr(0,1);
+    const c = searchText.substr(0, 1);
     // Is the first character a digit? If so, search the Barcode otherwise search the Drug name
     if (c >= '0' && c <= '9') {
         searched = drug.Barcode;
@@ -298,7 +316,7 @@ export const searchDrugs = (searchText: string, drugList: MedicineRecord[]) => {
     const textLen = searchText ? searchText.length : 0;
     if (textLen > 0 && drugList && drugList.length > 0) {
         let drugMatch;
-        const c = searchText.substr(0,1);
+        const c = searchText.substr(0, 1);
         // Is the first character a digit? If so, search the Barcode otherwise search the Drug name
         if (c >= '0' && c <= '9') {
             drugMatch = drugList.filter(drug =>

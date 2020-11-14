@@ -14,7 +14,8 @@ import TooltipButton from "../Buttons/TooltipButton";
 import {Alert} from "react-bootstrap";
 import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
 import {
-    calculateLastTaken, getDrugName,
+    calculateLastTaken,
+    getDrugName,
     getFormattedDate,
     getLastTakenVariant,
     getMDY,
@@ -100,7 +101,7 @@ const MedicinePage = (): JSX.Element | null => {
     if (!residentId || activeTabKey !== 'medicine') {
         return null;
     } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
     /**
@@ -183,128 +184,128 @@ const MedicinePage = (): JSX.Element | null => {
                     </Form.Group>
 
                     {medicineList.length > 0 &&
-                        <Form.Group as={Row}>
-                            <Form.Control
-                                id="medicine-page-search-text"
-                                style={{width: "220px"}}
-                                isValid={searchIsValid}
-                                type="search"
-                                value={searchText}
-                                onChange={(e) => setSearchText(e.target.value)}
-                                placeholder="Search medicine"
-                                ref={focusRef}
-                            />
+                    <Form.Group as={Row}>
+                        <Form.Control
+                            id="medicine-page-search-text"
+                            style={{width: "220px"}}
+                            isValid={searchIsValid}
+                            type="search"
+                            value={searchText}
+                            onChange={(e) => setSearchText(e.target.value)}
+                            placeholder="Search medicine"
+                            ref={focusRef}
+                        />
 
-                            {activeDrug &&
-                                <h3 className="ml-4">
-                                    <b>
-                                        <a
-                                            className="hover-underline-animation"
-                                            href={"https://goodrx.com/" + shortenedDrugName}
-                                            rel="noopener noreferrer"
-                                            target="_blank">
-                                            {shortenedDrugName}
-                                        </a>
-                                    </b>
-                                </h3>
-                            }
-                        </Form.Group>
+                        {activeDrug &&
+                        <h3 className="ml-4">
+                            <b>
+                                <a
+                                    className="hover-underline-animation"
+                                    href={"https://goodrx.com/" + shortenedDrugName}
+                                    rel="noopener noreferrer"
+                                    target="_blank">
+                                    {shortenedDrugName}
+                                </a>
+                            </b>
+                        </h3>
+                        }
+                    </Form.Group>
                     }
                 </Form.Group>
 
                 {activeDrug &&
-                    <>
-                        <Col sm="7">
-                            <span style={{textAlign: "center"}}> <h2>{activeDrug.Drug} History</h2> </span>
-                            <LogButtons
-                                lastTaken={lastTaken}
-                                lastTakenVariant={lastTakenVariant}
-                                onLogAmount={(n) => handleLogDrugAmount(n)}
-                                drugName={activeDrug.Drug}
-                            />
+                <>
+                    <Col sm="7">
+                        <span style={{textAlign: "center"}}> <h2>{activeDrug.Drug} History</h2> </span>
+                        <LogButtons
+                            lastTaken={lastTaken}
+                            lastTakenVariant={lastTakenVariant}
+                            onLogAmount={(n) => handleLogDrugAmount(n)}
+                            drugName={activeDrug.Drug}
+                        />
 
-                            <span className="ml-3">
+                        <span className="ml-3">
                             <LastTakenButton
                                 lastTaken={lastTaken}
                             />
                             </span>
+                    </Col>
+
+                    <Row>
+                        <Col sm="5">
+                            <MedicineListGroup
+                                lastTaken={lastTaken}
+                                medicineList={medicineList}
+                                activeDrug={activeDrug}
+                                drugChanged={(drug: MedicineRecord) => setActiveDrug(drug)}
+                                addDrugLog={(e: React.MouseEvent<HTMLElement>) => addEditDrugLog(e)}
+                                logDrug={(amount: number) => handleLogDrugAmount(amount)}
+                                canvasId={'med-barcode'}
+                            />
                         </Col>
 
-                        <Row>
-                            <Col sm="5">
-                                <MedicineListGroup
-                                    lastTaken={lastTaken}
-                                    medicineList={medicineList}
-                                    activeDrug={activeDrug}
-                                    drugChanged={(drug: MedicineRecord) => setActiveDrug(drug)}
-                                    addDrugLog={(e: React.MouseEvent<HTMLElement>) => addEditDrugLog(e)}
-                                    logDrug={(amount: number) => handleLogDrugAmount(amount)}
-                                    canvasId={'med-barcode'}
-                                />
-                            </Col>
-
-                            <Col sm="7">
-                                <DrugLogGrid
-                                    drugLog={drugLogList}
-                                    drugId={activeDrug && activeDrug.Id}
-                                    onEdit={(e, r) => addEditDrugLog(e, r)}
-                                    onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
-                                />
-                            </Col>
-                        </Row>
-                    </>
+                        <Col sm="7">
+                            <DrugLogGrid
+                                drugLog={drugLogList}
+                                drugId={activeDrug && activeDrug.Id}
+                                onEdit={(e, r) => addEditDrugLog(e, r)}
+                                onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
+                            />
+                        </Col>
+                    </Row>
+                </>
                 }
             </Form>
 
             {/* MedicineEdit Modal*/}
             {medicineInfo &&
-                < MedicineEdit
-                    show={showMedicineEdit}
-                    onClose={(r) => {
-                        setShowMedicineEdit(false);
-                        setUpdateMedicine(r);
-                    }}
-                    drugInfo={medicineInfo}
-                />
+            < MedicineEdit
+                show={showMedicineEdit}
+                onClose={(r) => {
+                    setShowMedicineEdit(false);
+                    setUpdateMedicine(r);
+                }}
+                drugInfo={medicineInfo}
+            />
             }
 
             {drugLogInfo &&
-                <DrugLogEdit
-                    show={showDrugLog}
-                    drugLogInfo={drugLogInfo}
-                    onHide={() => setShowDrugLog(!showDrugLog)}
-                    onClose={(drugLogRecord) => {
-                        setShowDrugLog(false);
-                        setUpdateDrugLog(drugLogRecord);
-                    }}
-                />
+            <DrugLogEdit
+                show={showDrugLog}
+                drugLogInfo={drugLogInfo}
+                onHide={() => setShowDrugLog(!showDrugLog)}
+                onClose={(drugLogRecord) => {
+                    setShowDrugLog(false);
+                    setUpdateDrugLog(drugLogRecord);
+                }}
+            />
             }
 
             {/*Confirm Delete of Drug Log*/}
             {showDeleteDrugLogRecord &&
-                <Confirm.Modal
-                    size='lg'
-                    onSelect={(a) => {
-                        setShowDeleteDrugLogRecord(false);
-                        setDeleteDrugLog(a ? showDeleteDrugLogRecord.Id : null);
-                    }}
-                    show={typeof showDeleteDrugLogRecord === 'object'}
-                    buttonvariant="danger"
-                >
-                    <Confirm.Header>
-                        <Confirm.Title>
-                            Delete {getDrugName(showDeleteDrugLogRecord.MedicineId, medicineList)} Log Record
-                        </Confirm.Title>
-                    </Confirm.Header>
-                    <Confirm.Body>
-                        <Alert variant="secondary">
-                            Date: {getFormattedDate(showDeleteDrugLogRecord.Updated)}
-                        </Alert>
-                        <b style={{color: "red"}}>
-                            Are you sure?
-                        </b>
-                    </Confirm.Body>
-                </Confirm.Modal>
+            <Confirm.Modal
+                size='lg'
+                onSelect={(a) => {
+                    setShowDeleteDrugLogRecord(false);
+                    setDeleteDrugLog(a ? showDeleteDrugLogRecord.Id : null);
+                }}
+                show={typeof showDeleteDrugLogRecord === 'object'}
+                buttonvariant="danger"
+            >
+                <Confirm.Header>
+                    <Confirm.Title>
+                        Delete {getDrugName(showDeleteDrugLogRecord.MedicineId, medicineList)} Log Record
+                    </Confirm.Title>
+                </Confirm.Header>
+                <Confirm.Body>
+                    <Alert variant="secondary">
+                        Date: {getFormattedDate(showDeleteDrugLogRecord.Updated)}
+                    </Alert>
+                    <b style={{color: "red"}}>
+                        Are you sure?
+                    </b>
+                </Confirm.Body>
+            </Confirm.Modal>
             }
         </>
     );

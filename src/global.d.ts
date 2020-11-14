@@ -25,14 +25,14 @@ declare module 'reactn/default' {
         development: boolean
         drugLogList: DrugLogRecord[]
         errorDetails: any
-        login: {username: string, password: string} | null
+        login: { username: string, password: string } | null
         loginFailed: boolean
         medicineList: MedicineRecord[]
         medicineManager: IMedicineManager
         otcList: MedicineRecord[]
         providers: IProviders
         refreshClients: boolean
-        refreshDrugLog: number | DrugLogRecord[] |null
+        refreshDrugLog: number | DrugLogRecord[] | null
         refreshMedicine: number | null
         refreshOtc: boolean
         residentList: ResidentRecord[]

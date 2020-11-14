@@ -6,7 +6,7 @@ import ManageDrugPage from "./ManageDrugPage";
 import ManageOtcPage from "./ManageOtcPage";
 import MedicinePage from "./MedicinePage";
 import OtcPage from "./OtcPage";
-import React, {useGlobal, setGlobal} from 'reactn';
+import React, {setGlobal, useGlobal} from 'reactn';
 import ResidentPage from "./ResidentPage";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
