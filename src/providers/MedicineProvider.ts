@@ -38,7 +38,7 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
          * @returns {Promise<MedicineRecord[]>}
          */
         search: async (options: object): Promise<MedicineRecord[]> => {
-            const uri =_baseUrl + 'medicine/search?api_key=' + _apiKey;
+            const uri = _baseUrl + 'medicine/search?api_key=' + _apiKey;
             try {
                 const response = await _frak.post<RecordResponse>(uri, options);
                 if (response.success) {

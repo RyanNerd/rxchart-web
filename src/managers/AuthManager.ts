@@ -18,10 +18,12 @@ const AuthManager = (authenticationProvider: IAuthenticationProvider): IAuthMana
      */
     const _authenticate = async (username: string, password: string) => {
         return authenticationProvider.post({username, password})
-            .then((response) => {
-                return response;
-            })
-            .catch((err) => {throw err})
+        .then((response) => {
+            return response;
+        })
+        .catch((err) => {
+            throw err
+        })
     }
 
     return {

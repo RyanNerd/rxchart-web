@@ -8,7 +8,7 @@ import DrugLogGrid from "../Grids/DrugLogGrid";
  * @return {JSX.Element}
  */
 const DrugHistoryPage = (): JSX.Element | null => {
-    const [activeTabKey] =useGlobal('activeTabKey');
+    const [activeTabKey] = useGlobal('activeTabKey');
     const [drugLogList] = useGlobal('drugLogList');
     const [medicineList] = useGlobal('medicineList');
     const [otcList] = useGlobal('otcList');
@@ -17,7 +17,7 @@ const DrugHistoryPage = (): JSX.Element | null => {
     if (activeTabKey !== 'history') {
         return null;
     } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
     return (

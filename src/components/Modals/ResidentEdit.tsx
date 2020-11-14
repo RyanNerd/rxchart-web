@@ -20,8 +20,8 @@ interface IProps {
  * @constructor
  */
 const ResidentEdit = (props: IProps): JSX.Element | null => {
-    const [ show, setShow ] = useState(props.show);
-    const [ residentInfo, setResidentInfo ] = useState<ResidentRecord>(props.residentInfo);
+    const [show, setShow] = useState(props.show);
+    const [residentInfo, setResidentInfo] = useState<ResidentRecord>(props.residentInfo);
     const focusRef = useRef<HTMLInputElement>(null);
 
     /**
@@ -52,7 +52,9 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
     }
 
     // Observer for show
-    useEffect(() => {setShow(props.show)}, [props.show]);
+    useEffect(() => {
+        setShow(props.show)
+    }, [props.show]);
 
     // Observer for residentInfo property
     useEffect(() => {

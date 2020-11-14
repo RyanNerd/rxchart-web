@@ -1,4 +1,4 @@
-import React, {useGlobal, useEffect, useMemo, useState} from 'reactn';
+import React, {useEffect, useGlobal, useMemo, useState} from 'reactn';
 import {Alert, Button, ButtonProps, Card} from "react-bootstrap";
 import {randomString} from "../../utility/common";
 
@@ -14,7 +14,7 @@ interface IProps {
 interface IWillow {
     authenticated: boolean
     message: string | null
-    missing?: {invalid?: IKey}
+    missing?: { invalid?: IKey }
     status: number
     timestamp: number
     success: boolean
@@ -209,7 +209,7 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
                         </p>
 
                         <ul key={randomString()}>
-                            {invalidMessages.map((message: {key: string, value: any}) => {
+                            {invalidMessages.map((message: { key: string, value: any }) => {
                                 const uniqueId = randomString();
                                 return (
                                     <React.Fragment key={'dp-invalid-' + uniqueId}>
@@ -254,8 +254,8 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
 
         if (!error) {
             return null;
-        }  else {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
         try {

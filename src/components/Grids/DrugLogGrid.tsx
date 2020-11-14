@@ -58,15 +58,14 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
             return otc ? otc[columnName] : null;
         }
         return null;
-   }
+    }
 
     /**
      * Child component for the table for each drug that has been logged.
      * @param {DrugLogRecord} drug
      * @returns {JSX.Element | null}
      */
-    const DrugRow = (drug: DrugLogRecord): JSX.Element | null =>
-    {
+    const DrugRow = (drug: DrugLogRecord): JSX.Element | null => {
         // No drug given then no render
         if (drug === null || !drug.Id) {
             return null;
@@ -91,14 +90,14 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
             style={{color: variantColor}}
         >
             {onEdit &&
-                <td style={{textAlign: 'center', verticalAlign: "middle"}}>
-                    <Button
-                        size="sm"
-                        onClick={e => onEdit(e, drug)}
-                    >
-                        Edit
-                    </Button>
-                </td>
+            <td style={{textAlign: 'center', verticalAlign: "middle"}}>
+                <Button
+                    size="sm"
+                    onClick={e => onEdit(e, drug)}
+                >
+                    Edit
+                </Button>
+            </td>
             }
 
             {columns.includes('Drug') &&
@@ -129,16 +128,16 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
             </td>
 
             {onDelete &&
-                <td style={{textAlign: 'center', verticalAlign: "middle"}}>
-                    <Button
-                        size="sm"
-                        id={"drug-grid-delete-btn-" + drug.Id}
-                        variant="outline-danger"
-                        onClick={e => onDelete(e, drug)}
-                    >
-                        <span role="img" aria-label="delete">🗑️</span>
-                    </Button>
-                </td>
+            <td style={{textAlign: 'center', verticalAlign: "middle"}}>
+                <Button
+                    size="sm"
+                    id={"drug-grid-delete-btn-" + drug.Id}
+                    variant="outline-danger"
+                    onClick={e => onDelete(e, drug)}
+                >
+                    <span role="img" aria-label="delete">🗑️</span>
+                </Button>
+            </td>
             }
         </tr>;
     };
@@ -153,43 +152,43 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
             style={{tableLayout: "fixed", wordWrap: "break-word"}}
         >
             <thead>
-                <tr>
-                    {onEdit &&
-                        <th> </th>
-                    }
-                    {columns.includes('Drug') &&
-                        <th>
-                            Drug
-                        </th>
-                    }
-                    {columns.includes('Created') &&
-                    <th style={{textAlign: 'center', verticalAlign: "middle"}}>
-                        <span>Created</span>
-                    </th>
-                    }
-                    {columns.includes('Updated') &&
-                    <th style={{textAlign: 'center', verticalAlign: "middle"}}>
-                        <span>Updated</span>
-                    </th>
-                    }
-                    {columns.includes('Amount') &&
-                    <th style={{textAlign: 'center', verticalAlign: "middle"}}>
-                        <span>Amount</span>
-                    </th>
-                    }
-                    {onDelete &&
-                        <th> </th>
-                    }
-                </tr>
+            <tr>
+                {onEdit &&
+                <th></th>
+                }
+                {columns.includes('Drug') &&
+                <th>
+                    Drug
+                </th>
+                }
+                {columns.includes('Created') &&
+                <th style={{textAlign: 'center', verticalAlign: "middle"}}>
+                    <span>Created</span>
+                </th>
+                }
+                {columns.includes('Updated') &&
+                <th style={{textAlign: 'center', verticalAlign: "middle"}}>
+                    <span>Updated</span>
+                </th>
+                }
+                {columns.includes('Amount') &&
+                <th style={{textAlign: 'center', verticalAlign: "middle"}}>
+                    <span>Amount</span>
+                </th>
+                }
+                {onDelete &&
+                <th></th>
+                }
+            </tr>
             </thead>
             <tbody>
-                {(drugLog && drugLog.length && filteredDrugs) ?
-                    (
-                        filteredDrugs.map(DrugRow)
-                    ) : (
-                        <></>
-                    )
-                }
+            {(drugLog && drugLog.length && filteredDrugs) ?
+                (
+                    filteredDrugs.map(DrugRow)
+                ) : (
+                    <></>
+                )
+            }
             </tbody>
         </Table>
     )

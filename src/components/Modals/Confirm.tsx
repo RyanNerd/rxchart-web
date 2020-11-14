@@ -45,7 +45,9 @@ const Confirm = {
         const onAnswer = (e: React.MouseEvent<HTMLElement>, answer: boolean) => {
             e.preventDefault();
             setShow(false);
-            if (props.onHide) {props.onHide()}
+            if (props.onHide) {
+                props.onHide()
+            }
             onSelect(answer);
         }
 
@@ -94,9 +96,9 @@ const Confirm = {
      */
     Title: (props: IChildren) => {
         return (
-        <h5 className="modal-title">
-            {props.children}
-        </h5>
+            <h5 className="modal-title">
+                {props.children}
+            </h5>
         )
     },
 

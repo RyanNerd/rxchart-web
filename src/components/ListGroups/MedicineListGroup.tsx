@@ -10,7 +10,7 @@ import LogButtons from "../Buttons/LogButtons";
 
 interface IProps {
     activeDrug: MedicineRecord
-    addDrugLog: (e: React.MouseEvent<HTMLElement>) =>void
+    addDrugLog: (e: React.MouseEvent<HTMLElement>) => void
     canvasId: string
     canvasUpdated?: (c: HTMLCanvasElement) => void
     drugChanged: (d: MedicineRecord) => void
@@ -42,7 +42,7 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
     const directions = activeDrug.Directions || null;
     const drugId = activeDrug.Id || null;
     const fillDateText = activeDrug.FillDateMonth ?
-                activeDrug.FillDateMonth + '/' + activeDrug.FillDateDay +'/' + activeDrug.FillDateYear : null;
+        activeDrug.FillDateMonth + '/' + activeDrug.FillDateDay + '/' + activeDrug.FillDateYear : null;
     const fillDateType = (fillDateText) ? new Date(fillDateText) : null;
     const fillDateOptions = {month: '2-digit', day: '2-digit', year: 'numeric'};
     const fillDate = (fillDateType) ? fillDateType.toLocaleString('en-US', fillDateOptions) : null;
@@ -66,7 +66,7 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
         if (lastTaken <= 1) {
             return activeDrug.Drug + " taken in the last hour";
         }
-        if (lastTaken <=4) {
+        if (lastTaken <= 4) {
             return activeDrug.Drug + " recently taken";
         }
         return null;
@@ -113,35 +113,35 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
             </ListGroup.Item>
 
             {directions && directions.length > 0 &&
-                <ListGroup.Item>
-                    <ShadowBox>
-                        <b>
-                            Directions:
-                        </b>
-                        <span> {activeDrug.Directions}</span>
-                    </ShadowBox>
-                </ListGroup.Item>
+            <ListGroup.Item>
+                <ShadowBox>
+                    <b>
+                        Directions:
+                    </b>
+                    <span> {activeDrug.Directions}</span>
+                </ShadowBox>
+            </ListGroup.Item>
             }
 
             {notes && notes.length > 0 &&
-                <ListGroup.Item>
-                    <p><b>Notes: </b>{activeDrug.Notes}</p>
-                </ListGroup.Item>
+            <ListGroup.Item>
+                <p><b>Notes: </b>{activeDrug.Notes}</p>
+            </ListGroup.Item>
             }
 
             {fillDate &&
-                <ListGroup.Item>
-                    <b>
-                        Fill Date:
-                    </b>
-                    <span> {fillDate}</span>
-                </ListGroup.Item>
+            <ListGroup.Item>
+                <b>
+                    Fill Date:
+                </b>
+                <span> {fillDate}</span>
+            </ListGroup.Item>
             }
 
             {barCode &&
-                <ListGroup.Item variant="info">
-                    <canvas id={canvasId}/>
-                </ListGroup.Item>
+            <ListGroup.Item variant="info">
+                <canvas id={canvasId}/>
+            </ListGroup.Item>
             }
         </ListGroup>
     );

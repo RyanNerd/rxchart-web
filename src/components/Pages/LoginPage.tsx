@@ -33,7 +33,7 @@ const LoginPage = (): JSX.Element | null => {
     if (activeTabKey !== 'login') {
         return null;
     } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
     /**
@@ -43,8 +43,8 @@ const LoginPage = (): JSX.Element | null => {
     const logout = (e: React.MouseEvent<HTMLElement>) => {
         e.persist();
         setGlobal(getInitialState())
-            .then(() => console.log('logout successful'))
-            .catch((err) => setErrorDetails(err))
+        .then(() => console.log('logout successful'))
+        .catch((err) => setErrorDetails(err))
         if (e.ctrlKey) {
             console.log('Testing Diagnostics');
             setErrorDetails(new Error('Testing error handler'));

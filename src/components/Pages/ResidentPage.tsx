@@ -1,5 +1,5 @@
 import Confirm from "../Modals/Confirm";
-import React, {useGlobal, useState, useEffect, useRef} from 'reactn';
+import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import ResidentEdit from '../Modals/ResidentEdit';
 import ResidentGrid from '../Grids/ResidentGrid';
 import TooltipButton from "../Buttons/TooltipButton";
@@ -68,7 +68,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     if (activeTabKey !== 'resident') {
         return null;
     } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
     /**
@@ -146,48 +146,48 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
             </Row>
 
             {residentInfo &&
-                <ResidentEdit
-                    onClose={(residentRecord) => {
-                        setShowResidentEdit(false);
-                        setUpdateClient(residentRecord)
-                        .then(() => {
-                            if (residentRecord?.Id === activeResident?.Id) {
-                                setActiveResident(residentRecord?.Id ? residentRecord : null);
-                            }
-                        })
-                    }}
-                    residentInfo={residentInfo}
-                    show={showResidentEdit}
-                />
+            <ResidentEdit
+                onClose={(residentRecord) => {
+                    setShowResidentEdit(false);
+                    setUpdateClient(residentRecord)
+                    .then(() => {
+                        if (residentRecord?.Id === activeResident?.Id) {
+                            setActiveResident(residentRecord?.Id ? residentRecord : null);
+                        }
+                    })
+                }}
+                residentInfo={residentInfo}
+                show={showResidentEdit}
+            />
             }
 
             {residentToDelete &&
-                <Confirm.Modal
-                    show={showDeleteResident}
-                    onSelect={(a) => {
-                        setShowDeleteResident(false);
-                        if (a && residentToDelete) {
-                            setDeleteClient(residentToDelete?.Id as number)
-                            .then(() => {
-                                if (activeResident?.Id === residentToDelete.Id) {
-                                    setActiveResident(null);
-                                }
-                                setSearchText('');
-                            })
-                        }
-                    }}
-                >
-                    <Confirm.Header>
-                        <Confirm.Title>
-                            {"Deactivate " + clientFullName(residentToDelete)}
-                        </Confirm.Title>
-                    </Confirm.Header>
-                    <Confirm.Body>
-                        <Alert variant="danger">
-                            Are you sure?
-                        </Alert>
-                    </Confirm.Body>
-                </Confirm.Modal>
+            <Confirm.Modal
+                show={showDeleteResident}
+                onSelect={(a) => {
+                    setShowDeleteResident(false);
+                    if (a && residentToDelete) {
+                        setDeleteClient(residentToDelete?.Id as number)
+                        .then(() => {
+                            if (activeResident?.Id === residentToDelete.Id) {
+                                setActiveResident(null);
+                            }
+                            setSearchText('');
+                        })
+                    }
+                }}
+            >
+                <Confirm.Header>
+                    <Confirm.Title>
+                        {"Deactivate " + clientFullName(residentToDelete)}
+                    </Confirm.Title>
+                </Confirm.Header>
+                <Confirm.Body>
+                    <Alert variant="danger">
+                        Are you sure?
+                    </Alert>
+                </Confirm.Body>
+            </Confirm.Modal>
             }
         </Form>
     )

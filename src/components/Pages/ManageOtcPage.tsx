@@ -25,7 +25,7 @@ const ManageOtcPage = (): JSX.Element | null => {
     if (activeTabKey !== 'manage-otc') {
         return null;
     } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
     /**
@@ -60,7 +60,7 @@ const ManageOtcPage = (): JSX.Element | null => {
             >
                 <thead>
                 <tr>
-                    <th> </th>
+                    <th></th>
                     <th>
                         Drug
                     </th>
@@ -73,7 +73,7 @@ const ManageOtcPage = (): JSX.Element | null => {
                     <th>
                         Barcode
                     </th>
-                    <th> </th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -90,7 +90,8 @@ const ManageOtcPage = (): JSX.Element | null => {
                         onDelete={(e, medicineRecord) => {
                             e.preventDefault();
                             setMedicineInfo({...medicineRecord});
-                            setShowDeleteMedicine(true);}
+                            setShowDeleteMedicine(true);
+                        }
                         }
                         onEdit={onEdit}
                     />)
@@ -99,48 +100,48 @@ const ManageOtcPage = (): JSX.Element | null => {
             </Table>
 
             {showMedicineEdit && medicineInfo &&
-                /* MedicineEdit Modal */
-                <MedicineEdit
-                    otc={true}
-                    show={showMedicineEdit}
-                    onClose={(r) => {
-                        setShowMedicineEdit(false);
-                        setUpdateOtcMedicine(r || null);
-                    }}
-                    drugInfo={medicineInfo}
-                />
+            /* MedicineEdit Modal */
+            <MedicineEdit
+                otc={true}
+                show={showMedicineEdit}
+                onClose={(r) => {
+                    setShowMedicineEdit(false);
+                    setUpdateOtcMedicine(r || null);
+                }}
+                drugInfo={medicineInfo}
+            />
             }
 
             {medicineInfo && showDeleteMedicine &&
-                <Confirm.Modal
-                    size="lg"
-                    show={showDeleteMedicine}
-                    buttonvariant="danger"
-                    onSelect={(a) => {
-                        setShowDeleteMedicine(false);
-                        setDeleteOtcMedicine(a ? medicineInfo?.Id : null);
-                    }}
-                >
-                    <Confirm.Header>
-                        <Confirm.Title>
-                            {"Delete " + medicineInfo.Drug}
-                        </Confirm.Title>
-                    </Confirm.Header>
-                    <Confirm.Body>
-                        <Alert
-                            variant="danger"
-                            style={{textAlign: "center"}}
-                        >
+            <Confirm.Modal
+                size="lg"
+                show={showDeleteMedicine}
+                buttonvariant="danger"
+                onSelect={(a) => {
+                    setShowDeleteMedicine(false);
+                    setDeleteOtcMedicine(a ? medicineInfo?.Id : null);
+                }}
+            >
+                <Confirm.Header>
+                    <Confirm.Title>
+                        {"Delete " + medicineInfo.Drug}
+                    </Confirm.Title>
+                </Confirm.Header>
+                <Confirm.Body>
+                    <Alert
+                        variant="danger"
+                        style={{textAlign: "center"}}
+                    >
                             <span>
                                 This will delete the OTC medicine <b>{medicineInfo.Drug}</b> for <i>ALL</i> residents
                             </span>
-                            <span> and <b>ALL</b> history for this drug!</span>
-                        </Alert>
-                        <Alert variant="warning">
-                            Are you sure?
-                        </Alert>
-                    </Confirm.Body>
-                </Confirm.Modal>
+                        <span> and <b>ALL</b> history for this drug!</span>
+                    </Alert>
+                    <Alert variant="warning">
+                        Are you sure?
+                    </Alert>
+                </Confirm.Body>
+            </Confirm.Modal>
             }
         </>
     );
