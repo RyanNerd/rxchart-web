@@ -15,7 +15,6 @@ const UpdateClientOvserver = (rm: IResidentManager) => {
 
     useEffect(() => {
         if (updateClient) {
-            console.log('updateClient', updateClient);
             rm.updateResident(updateClient)
             .then((residentRecord) => {
                 setRefreshClients(true);
