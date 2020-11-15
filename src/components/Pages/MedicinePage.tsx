@@ -103,18 +103,17 @@ const MedicinePage = (): JSX.Element | null => {
     /**
      * Fires when the Log 1 or Log 2 buttons are clicked.
      * @param {number} amount
+     * @param {number} drugId
      */
-    const handleLogDrugAmount = (amount: number) => {
-        if (activeDrug?.Id) {
-            const notes = amount.toString();
-            const drugLogInfo = {
-                Id: null,
-                ResidentId: residentId,
-                MedicineId: activeDrug.Id,
-                Notes: notes
-            };
-            setUpdateDrugLog(drugLogInfo);
-        }
+    const handleLogDrugAmount = (amount: number, drugId: number) => {
+        const notes = amount.toString();
+        const drugLogInfo = {
+            Id: null,
+            ResidentId: residentId,
+            MedicineId: drugId,
+            Notes: notes
+        };
+        setUpdateDrugLog(drugLogInfo);
     }
 
     const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
@@ -169,7 +168,7 @@ const MedicinePage = (): JSX.Element | null => {
                             activeDrug={activeDrug}
                             drugChanged={(drug: MedicineRecord) => setActiveDrug(drug)}
                             addDrugLog={(e: React.MouseEvent<HTMLElement>) => addEditDrugLog(e)}
-                            logDrug={(amount: number) => handleLogDrugAmount(amount)}
+                            logDrug={(amount: number) => handleLogDrugAmount(amount, activeDrug.Id as number)}
                             canvasId={'med-barcode'}
                         />
                         }
@@ -178,22 +177,23 @@ const MedicinePage = (): JSX.Element | null => {
 
                 {activeDrug &&
                 <Col lg="6">
-                        <span style={{textAlign: "center"}}>
-                            <h2>
-                                <a
-                                    className="hover-underline-animation"
-                                    href={"https://goodrx.com/" + activeDrug.Drug}
-                                    rel="noopener noreferrer"
-                                    target="_blank">
-                                    {activeDrug.Drug}
-                                </a> History
-                            </h2>
-                        </span>
+                    <Row className="justify-content-center">
+                        <h2>
+                            <a
+                                className="hover-underline-animation"
+                                href={"https://goodrx.com/" + activeDrug.Drug}
+                                rel="noopener noreferrer"
+                                target="_blank">
+                                {activeDrug.Drug}
+                            </a> History
+                        </h2>
+                    </Row>
+
                     <Row className="mb-3">
                         <LogButtons
                             lastTaken={lastTaken}
                             lastTakenVariant={lastTakenVariant}
-                            onLogAmount={(n) => handleLogDrugAmount(n)}
+                            onLogAmount={(n) => handleLogDrugAmount(n, activeDrug.Id as number)}
                             drugName={activeDrug.Drug}
                         />
                         <span className="ml-3">

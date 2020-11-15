@@ -85,7 +85,7 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
 
     return (
         <ListGroup>
-            <ListGroup.Item active>
+            <ListGroup.Item active className="justify-content-left">
                 <DrugDropdown
                     medicineList={medicineList}
                     drugId={drugId}
