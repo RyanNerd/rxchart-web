@@ -11,7 +11,7 @@ import {IProviders} from "../utility/getInitialState";
 const ApiKeyObserver = (providers: IProviders) => {
     const [, setActiveTabKey] = useGlobal('activeTabKey');
     const [, setLoginFailed] = useGlobal('loginFailed');
-    const [, setRefreshClients] = useGlobal('refreshClients');
+    const [, setClient] = useGlobal('client');
     const [, setRefreshOtc] = useGlobal('refreshOtc');
     const [apiKey] = useGlobal('apiKey');
     let prevApiKey = useRef(apiKey).current;
@@ -24,7 +24,7 @@ const ApiKeyObserver = (providers: IProviders) => {
                 providers.setApi(apiKey);
 
                 // Load ALL Resident records up front and save them in the global store.
-                setRefreshClients(true);
+                setClient({action: "load", payload: null});
 
                 // Load ALL OTC medications once we're logged in.
                 setRefreshOtc(true);

@@ -18,9 +18,8 @@ interface IProps {
  * @constructor
  */
 const ResidentPage = (props: IProps): JSX.Element | null => {
-    const [, setDeleteClient] = useGlobal('deleteClient');
     const [, setErrorDetails] = useGlobal('errorDetails');
-    const [, setUpdateClient] = useGlobal('updateClient');
+    const [, setClient] = useGlobal('client');
     const [activeResident, setActiveResident] = useGlobal('activeResident');
     const [activeTabKey] = useGlobal('activeTabKey');
     const [residentInfo, setResidentInfo] = useState<ResidentRecord | null>(null);
@@ -149,7 +148,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
             <ResidentEdit
                 onClose={(residentRecord) => {
                     setShowResidentEdit(false);
-                    setUpdateClient(residentRecord)
+                    setClient({action: "update", payload: residentRecord})
                     .then(() => {
                         if (residentRecord?.Id === activeResident?.Id) {
                             setActiveResident(residentRecord?.Id ? residentRecord : null);
@@ -167,11 +166,8 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                 onSelect={(a) => {
                     setShowDeleteResident(false);
                     if (a && residentToDelete) {
-                        setDeleteClient(residentToDelete?.Id as number)
+                        setClient({action: "delete", payload: residentToDelete?.Id as number})
                         .then(() => {
-                            if (activeResident?.Id === residentToDelete.Id) {
-                                setActiveResident(null);
-                            }
                             setSearchText('');
                         })
                     }

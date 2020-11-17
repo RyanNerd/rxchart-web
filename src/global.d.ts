@@ -17,8 +17,8 @@ declare module 'reactn/default' {
         activeTabKey: string
         apiKey: string | null
         authManager: IAuthManager
+        client: {action: 'load' | 'update' | 'delete', payload: null | ResidentRecord | number} | null
         count: number
-        deleteClient: number | null
         deleteDrugLog: number | null
         deleteMedicine: number | null
         deleteOtcMedicine: number | null
@@ -32,13 +32,11 @@ declare module 'reactn/default' {
         medicineManager: IMedicineManager
         otcList: MedicineRecord[]
         providers: IProviders
-        refreshClients: boolean
         refreshDrugLog: number | DrugLogRecord[] | null
         refreshMedicine: number | null
         refreshOtc: boolean
         residentList: ResidentRecord[]
         residentManager: IResidentManager
-        updateClient: ResidentRecord | null
         updateDrugLog: DrugLogRecord | null
         updateMedicine: MedicineRecord | null
         updateOtcMedicine: MedicineRecord | null
