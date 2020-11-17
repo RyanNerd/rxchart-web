@@ -2,8 +2,7 @@ import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
-import getInitialState from "../../utility/getInitialState";
-import React, {setGlobal, useEffect, useGlobal, useRef, useState} from 'reactn';
+import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import Row from 'react-bootstrap/Row';
 import TabContent from '../../styles/common.css';
 
@@ -20,6 +19,7 @@ const LoginPage = (): JSX.Element | null => {
     const [password, setPassword] = useState('');
     const [showAlert, setShowAlert] = useGlobal('loginFailed');
     const [username, setUsername] = useState('');
+    const [, setLogout] = useGlobal('logout');
     const focusRef = useRef<HTMLInputElement>(null);
 
     // Set focus to the search input when this page is selected.
@@ -34,21 +34,6 @@ const LoginPage = (): JSX.Element | null => {
         return null;
     } else {
         window.scrollTo({top: 0, behavior: 'smooth'});
-    }
-
-    /**
-     * Fires when the Logout Button is clicked
-     * @param {React.MouseEvent<HTMLElement>} e
-     */
-    const logout = (e: React.MouseEvent<HTMLElement>) => {
-        e.persist();
-        setGlobal(getInitialState())
-        .then(() => console.log('logout successful'))
-        .catch((err) => setErrorDetails(err))
-        if (e.ctrlKey) {
-            console.log('Testing Diagnostics');
-            setErrorDetails(new Error('Testing error handler'));
-        }
     }
 
     const signIn = (
@@ -117,9 +102,15 @@ const LoginPage = (): JSX.Element | null => {
         </>
     )
 
-    const signOut = (
+    const logOff = (
         <Button onClick={(e) => {
-            logout(e)
+            e.persist();
+            if (e.ctrlKey) {
+                console.log('Testing Diagnostics');
+                setErrorDetails(new Error('Testing error handler'));
+            } else {
+                setLogout(true);
+            }
         }}>
             Log Out
         </Button>
@@ -127,7 +118,7 @@ const LoginPage = (): JSX.Element | null => {
 
     return (
         <Form className={TabContent}>
-            {apiKey === null ? (signIn) : (signOut)}
+            {apiKey === null ? (signIn) : (logOff)}
         </Form>
     )
 }

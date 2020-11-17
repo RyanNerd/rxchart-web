@@ -1,12 +1,11 @@
 import DiagnosticPage from "./DiagnosticPage";
 import DrugHistoryPage from "./DrugHistoryPage";
-import getInitialState from "../../utility/getInitialState";
 import LoginPage from './LoginPage';
 import ManageDrugPage from "./ManageDrugPage";
 import ManageOtcPage from "./ManageOtcPage";
 import MedicinePage from "./MedicinePage";
 import OtcPage from "./OtcPage";
-import React, {setGlobal, useGlobal} from 'reactn';
+import React, {useGlobal} from 'reactn';
 import ResidentPage from "./ResidentPage";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
@@ -16,6 +15,7 @@ import Tabs from 'react-bootstrap/Tabs';
  * @constructor
  */
 const LandingPage = () => {
+    const [, setLogout] = useGlobal('logout');
     const [activeResident] = useGlobal('activeResident');
     const [activeTabKey, setActiveTabKey] = useGlobal('activeTabKey');
     const [apiKey] = useGlobal('apiKey');
@@ -83,7 +83,7 @@ const LandingPage = () => {
                 <DiagnosticPage
                     error={errorDetails}
                     dismissErrorAlert={() => {
-                        setGlobal(getInitialState());
+                        setLogout(true);
                         setActiveTabKey('login');
                     }}
                 />

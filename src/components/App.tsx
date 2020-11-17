@@ -17,6 +17,7 @@ import UpdateDrugLogObserver from "../observers/UpdateDrugLogObserver";
 import UpdateMedicineObserver from "../observers/UpdateMedicineObserver";
 import UpdateOtcMedicineObserver from "../observers/UpdateOtcMedicineObserver";
 import {clientFullName, clientDOB} from "../utility/common";
+import LogoutObserver from "../observers/LogoutObserver";
 
 /**
  * Main Entry Component
@@ -43,6 +44,7 @@ const App = () => {
     DeleteOtcMedcineObserver(mm);
     ErrorDetailsObserver();
     LoginObserver(am);
+    LogoutObserver();
     RefreshClientsObserver(rm);
     RefreshDrugLogObserver(mm);
     RefreshMedicineObserver(mm);

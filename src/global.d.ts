@@ -27,6 +27,7 @@ declare module 'reactn/default' {
         errorDetails: any
         login: { username: string, password: string } | null
         loginFailed: boolean
+        logout: boolean
         medicineList: MedicineRecord[]
         medicineManager: IMedicineManager
         otcList: MedicineRecord[]
