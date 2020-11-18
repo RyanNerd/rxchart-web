@@ -25,7 +25,7 @@ import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../../types/RecordType
  */
 const OtcPage = (): JSX.Element | null => {
     const [, setDrugLog] = useGlobal('drugLog');
-    const [, setUpdateOtcMedicine] = useGlobal('updateOtcMedicine');
+    const [, setOtcMedicine] = useGlobal('otcMedicine');
     const [activeDrug, setActiveDrug] = useState<MedicineRecord | null>(null);
     const [activeResident] = useGlobal('activeResident');
     const [activeTabKey] = useGlobal('activeTabKey');
@@ -307,7 +307,7 @@ const OtcPage = (): JSX.Element | null => {
                 show={showMedicineEdit}
                 onClose={(r) => {
                     setShowMedicineEdit(false);
-                    setUpdateOtcMedicine(r);
+                    setOtcMedicine({action: 'update', payload: r});
                 }}
                 drugInfo={drugInfo}
                 otc={true}

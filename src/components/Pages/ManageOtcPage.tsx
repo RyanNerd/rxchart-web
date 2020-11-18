@@ -13,8 +13,7 @@ import {MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
  * @returns {JSX.Element}
  */
 const ManageOtcPage = (): JSX.Element | null => {
-    const [, setDeleteOtcMedicine] = useGlobal('deleteOtcMedicine');
-    const [, setUpdateOtcMedicine] = useGlobal('updateOtcMedicine');
+    const [, setOtcMedicine] = useGlobal('otcMedicine');
     const [activeTabKey] = useGlobal('activeTabKey');
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [otcList] = useGlobal('otcList');
@@ -106,7 +105,7 @@ const ManageOtcPage = (): JSX.Element | null => {
                 show={showMedicineEdit}
                 onClose={(r) => {
                     setShowMedicineEdit(false);
-                    setUpdateOtcMedicine(r || null);
+                    setOtcMedicine({action: 'update', payload: r});
                 }}
                 drugInfo={medicineInfo}
             />
@@ -119,7 +118,7 @@ const ManageOtcPage = (): JSX.Element | null => {
                 buttonvariant="danger"
                 onSelect={(a) => {
                     setShowDeleteMedicine(false);
-                    setDeleteOtcMedicine(a ? medicineInfo?.Id : null);
+                    setOtcMedicine(a ? {action: 'delete', payload: medicineInfo?.Id as number} : null);
                 }}
             >
                 <Confirm.Header>

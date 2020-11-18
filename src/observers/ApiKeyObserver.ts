@@ -10,9 +10,9 @@ import {IProviders} from "../utility/getInitialState";
  */
 const ApiKeyObserver = (providers: IProviders) => {
     const [, setActiveTabKey] = useGlobal('activeTabKey');
-    const [, setLoginFailed] = useGlobal('loginFailed');
     const [, setClient] = useGlobal('client');
-    const [, setRefreshOtc] = useGlobal('refreshOtc');
+    const [, setLoginFailed] = useGlobal('loginFailed');
+    const [, setOtcMedicine] = useGlobal('otcMedicine');
     const [apiKey] = useGlobal('apiKey');
     let prevApiKey = useRef(apiKey).current;
 
@@ -27,7 +27,7 @@ const ApiKeyObserver = (providers: IProviders) => {
                 setClient({action: "load", payload: null});
 
                 // Load ALL OTC medications once we're logged in.
-                setRefreshOtc(true);
+                setOtcMedicine({action: "load", payload: null});
 
                 // Activate the Resident tab
                 setActiveTabKey('resident');

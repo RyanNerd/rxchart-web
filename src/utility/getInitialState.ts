@@ -39,11 +39,10 @@ const getInitialState = () => {
 
     return {
         activeResident: null,
-        apiKey: null,
         activeTabKey: 'login',
+        apiKey: null,
         authManager: AuthManager(providers.authenticationProvider),
         client: null,
-        deleteOtcMedicine: null,
         development: process.env.REACT_APP_DEVELOPMENT === 'true',
         drugLog: null,
         drugLogList: [] as DrugLogRecord[],
@@ -55,11 +54,10 @@ const getInitialState = () => {
         medicineList: [] as MedicineRecord[],
         medicineManager: MedicineMananger(providers.medicineProvider, providers.medHistoryProvider),
         otcList: [] as MedicineRecord[],
+        otcMedicine: null,
         providers,
-        refreshOtc: false,
         residentList: [] as ResidentRecord[],
-        residentManager: ResidentManager(providers.residentProvider),
-        updateOtcMedicine: null
+        residentManager: ResidentManager(providers.residentProvider)
     } as State;
 }
 
