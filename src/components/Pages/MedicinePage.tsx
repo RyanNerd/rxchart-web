@@ -28,8 +28,7 @@ import LogButtons from "../Buttons/LogButtons";
  * @return {JSX.Element | null}
  */
 const MedicinePage = (): JSX.Element | null => {
-    const [, setDeleteDrugLog] = useGlobal('deleteDrugLog');
-    const [, setUpdateDrugLog] = useGlobal('updateDrugLog');
+    const [, setDrugLog] = useGlobal('drugLog');
     const [, setMedicine] = useGlobal('medicine');
     const [activeDrug, setActiveDrug] = useState<MedicineRecord | null>(null);
     const [activeResident] = useGlobal('activeResident');
@@ -113,7 +112,7 @@ const MedicinePage = (): JSX.Element | null => {
             MedicineId: drugId,
             Notes: notes
         };
-        setUpdateDrugLog(drugLogInfo);
+        setDrugLog({action: 'update', payload: drugLogInfo});
     }
 
     const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
@@ -234,7 +233,7 @@ const MedicinePage = (): JSX.Element | null => {
                 onHide={() => setShowDrugLog(!showDrugLog)}
                 onClose={(drugLogRecord) => {
                     setShowDrugLog(false);
-                    setUpdateDrugLog(drugLogRecord);
+                    setDrugLog({action: 'update', payload: drugLogRecord});
                 }}
             />
             }
@@ -244,8 +243,8 @@ const MedicinePage = (): JSX.Element | null => {
             <Confirm.Modal
                 size='lg'
                 onSelect={(a) => {
+                    setDrugLog(a ? {action: 'delete', payload: showDeleteDrugLogRecord?.Id as number} : null);
                     setShowDeleteDrugLogRecord(false);
-                    setDeleteDrugLog(a ? showDeleteDrugLogRecord.Id : null);
                 }}
                 show={typeof showDeleteDrugLogRecord === 'object'}
                 buttonvariant="danger"

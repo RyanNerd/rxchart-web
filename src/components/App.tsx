@@ -1,19 +1,17 @@
 import ActiveResidentObserver from "../observers/ActiveResidentObserver";
 import ApiKeyObserver from "../observers/ApiKeyObserver";
 import ClientObserver from "../observers/ClientObserver";
-import DeleteDrugLogObserver from "../observers/DeleteDrugLogObserver";
 import DeleteOtcMedcineObserver from "../observers/DeleteOtcMedicineObserver";
 import ErrorDetailsObserver from "../observers/ErrorDetailsObserver";
 import LandingPage from "./Pages/LandingPage";
 import LoginObserver from "../observers/LoginObserver";
 import LogoutObserver from "../observers/LogoutObserver";
 import React, {useGlobal} from 'reactn';
-import RefreshDrugLogObserver from "../observers/RefreshDrugLogObserver";
 import RefreshOtcObserver from "../observers/RefreshOtcObserver";
-import UpdateDrugLogObserver from "../observers/UpdateDrugLogObserver";
 import UpdateOtcMedicineObserver from "../observers/UpdateOtcMedicineObserver";
 import {clientFullName, clientDOB} from "../utility/common";
 import MedicineObserver from "../observers/MedicineObserver";
+import DrugLogObserver from "../observers/DrugLogObserver";
 
 /**
  * Main Entry Component
@@ -34,15 +32,13 @@ const App = () => {
     ActiveResidentObserver(activeClient);
     ApiKeyObserver(providers);
     ClientObserver();
-    DeleteDrugLogObserver(mm, activeClient);
     DeleteOtcMedcineObserver(mm);
+    DrugLogObserver(mm, activeClient);
     ErrorDetailsObserver();
     LoginObserver(am);
     LogoutObserver();
     MedicineObserver(mm, activeClient);
-    RefreshDrugLogObserver(mm);
     RefreshOtcObserver(mm);
-    UpdateDrugLogObserver(mm);
     UpdateOtcMedicineObserver(mm);
 
     return (

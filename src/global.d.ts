@@ -19,10 +19,9 @@ declare module 'reactn/default' {
         authManager: IAuthManager
         client: {action: 'load' | 'update' | 'delete', payload: null | ResidentRecord | number} | null
         count: number
-        deleteDrugLog: number | null
-        deleteMedicine: number | null
         deleteOtcMedicine: number | null
         development: boolean
+        drugLog: {action: 'load' | 'update' | 'delete', payload: null | DrugLogRecord | DrugLogRecord[] | number} | null
         drugLogList: DrugLogRecord[]
         errorDetails: any
         login: { username: string, password: string } | null
@@ -33,13 +32,9 @@ declare module 'reactn/default' {
         medicineManager: IMedicineManager
         otcList: MedicineRecord[]
         providers: IProviders
-        refreshDrugLog: number | DrugLogRecord[] | null
-        refreshMedicine: number | null
-        refreshOtc: boolean
+         refreshOtc: boolean
         residentList: ResidentRecord[]
         residentManager: IResidentManager
-        updateDrugLog: DrugLogRecord | null
-        updateMedicine: MedicineRecord | null
         updateOtcMedicine: MedicineRecord | null
         value: string
     }

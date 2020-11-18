@@ -24,8 +24,7 @@ import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../../types/RecordType
  * @returns {JSX.Element | null}
  */
 const OtcPage = (): JSX.Element | null => {
-    const [, setDeleteDrugLog] = useGlobal('deleteDrugLog');
-    const [, setUpdateDrugLog] = useGlobal('updateDrugLog');
+    const [, setDrugLog] = useGlobal('drugLog');
     const [, setUpdateOtcMedicine] = useGlobal('updateOtcMedicine');
     const [activeDrug, setActiveDrug] = useState<MedicineRecord | null>(null);
     const [activeResident] = useGlobal('activeResident');
@@ -33,9 +32,9 @@ const OtcPage = (): JSX.Element | null => {
     const [drugInfo, setDrugInfo] = useState<MedicineRecord | null>(null);
     const [drugLogInfo, setDrugLogInfo] = useState<DrugLogRecord | null>(null);
     const [drugLogList] = useGlobal('drugLogList');
-    const [lastTaken, setLastTaken] = useState<number | null>(null);
     const [otcList] = useGlobal('otcList');
     const [filteredOtcList, setFilteredOtcList] = useState(otcList);
+    const [lastTaken, setLastTaken] = useState<number | null>(null);
     const [otcLogList, setOtcLogList] = useState<DrugLogRecord[]>([]);
     const [residentId, setResidentId] = useState(activeResident && activeResident.Id);
     const [searchIsValid, setSearchIsValid] = useState<boolean | null>(null);
@@ -43,8 +42,8 @@ const OtcPage = (): JSX.Element | null => {
     const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<any>(false);
     const [showDrugLog, setShowDrugLog] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
-    const focusRef = useRef<HTMLInputElement>(null);
     const barCode = activeDrug?.Barcode || null;
+    const focusRef = useRef<HTMLInputElement>(null);
 
     // We only want to list the OTC drugs on this page that the resident has taken.
     useEffect(() => {
@@ -135,7 +134,7 @@ const OtcPage = (): JSX.Element | null => {
                 MedicineId: drugId,
                 Notes: notes
             };
-            setUpdateDrugLog(drugLogInfo);
+            setDrugLog({action: 'update', payload: drugLogInfo});
         }
     }
 
@@ -322,7 +321,7 @@ const OtcPage = (): JSX.Element | null => {
                 onHide={() => setShowDrugLog(!showDrugLog)}
                 onClose={(drugLogRecord) => {
                     setShowDrugLog(false);
-                    setUpdateDrugLog(drugLogRecord);
+                    setDrugLog({action: 'update', payload: drugLogRecord});
                 }}
             />
             }
@@ -334,7 +333,7 @@ const OtcPage = (): JSX.Element | null => {
                 buttonvariant="danger"
                 onSelect={(a) => {
                     setShowDeleteDrugLogRecord(false);
-                    setDeleteDrugLog(a ? showDeleteDrugLogRecord.Id : null);
+                    setDrugLog(a ? {action: 'delete', payload: showDeleteDrugLogRecord?.Id as number} : null);
                 }}
             >
                 <Confirm.Header>
