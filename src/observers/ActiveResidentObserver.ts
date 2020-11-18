@@ -8,14 +8,15 @@ import {ResidentRecord} from "../types/RecordTypes";
  * @constructor
  */
 const ActiveResidentObserver = (activeResident: ResidentRecord | null) => {
-    const [, setRefreshMedicine] = useGlobal('refreshMedicine');
+    const [, setMedicine] = useGlobal('medicine');
     let prevActiveResident = useRef(activeResident).current;
 
     useEffect(() => {
         if (prevActiveResident !== activeResident) {
             // Trigger the refresh of medicineList
             const clientId = activeResident && activeResident.Id ? activeResident.Id : null;
-            setRefreshMedicine(clientId);
+            setMedicine({action: "load", payload: clientId});
+            // todo: setDrugLog({action: "load", payload: clientId});
         }
         return () => {
             // eslint-disable-next-line react-hooks/exhaustive-deps

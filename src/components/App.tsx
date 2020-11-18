@@ -1,21 +1,19 @@
 import ActiveResidentObserver from "../observers/ActiveResidentObserver";
 import ApiKeyObserver from "../observers/ApiKeyObserver";
+import ClientObserver from "../observers/ClientObserver";
 import DeleteDrugLogObserver from "../observers/DeleteDrugLogObserver";
-import DeleteMedicineObserver from "../observers/DeleteMedicineObserver";
 import DeleteOtcMedcineObserver from "../observers/DeleteOtcMedicineObserver";
 import ErrorDetailsObserver from "../observers/ErrorDetailsObserver";
 import LandingPage from "./Pages/LandingPage";
 import LoginObserver from "../observers/LoginObserver";
+import LogoutObserver from "../observers/LogoutObserver";
 import React, {useGlobal} from 'reactn';
 import RefreshDrugLogObserver from "../observers/RefreshDrugLogObserver";
-import RefreshMedicineObserver from "../observers/RefreshMedicineObserver";
 import RefreshOtcObserver from "../observers/RefreshOtcObserver";
 import UpdateDrugLogObserver from "../observers/UpdateDrugLogObserver";
-import UpdateMedicineObserver from "../observers/UpdateMedicineObserver";
 import UpdateOtcMedicineObserver from "../observers/UpdateOtcMedicineObserver";
 import {clientFullName, clientDOB} from "../utility/common";
-import LogoutObserver from "../observers/LogoutObserver";
-import ClientObserver from "../observers/ClientObserver";
+import MedicineObserver from "../observers/MedicineObserver";
 
 /**
  * Main Entry Component
@@ -24,7 +22,7 @@ import ClientObserver from "../observers/ClientObserver";
  * @constructor
  */
 const App = () => {
-    const [activeResident] = useGlobal('activeResident');
+    const [activeClient] = useGlobal('activeResident');
     const [am] = useGlobal('authManager');
     const [development] = useGlobal('development');
     const [mm] = useGlobal('medicineManager');
@@ -33,28 +31,26 @@ const App = () => {
     const residentForegroundColor = development ? "#fffff0" : "black";
 
     // Initialize all the observers
-    ActiveResidentObserver(activeResident);
+    ActiveResidentObserver(activeClient);
     ApiKeyObserver(providers);
     ClientObserver();
-    DeleteDrugLogObserver(mm, activeResident);
-    DeleteMedicineObserver(mm, activeResident);
+    DeleteDrugLogObserver(mm, activeClient);
     DeleteOtcMedcineObserver(mm);
     ErrorDetailsObserver();
     LoginObserver(am);
     LogoutObserver();
+    MedicineObserver(mm, activeClient);
     RefreshDrugLogObserver(mm);
-    RefreshMedicineObserver(mm);
     RefreshOtcObserver(mm);
     UpdateDrugLogObserver(mm);
-    UpdateMedicineObserver(mm);
     UpdateOtcMedicineObserver(mm);
 
     return (
         <>
-            {activeResident &&
+            {activeClient &&
                 <h4 style={{textAlign: "center"}}>
                     <span style={{background: residentColor, color: residentForegroundColor}}>
-                        {clientFullName(activeResident) + ' ' + clientDOB(activeResident)}
+                        {clientFullName(activeClient) + ' ' + clientDOB(activeClient)}
                     </span>
                 </h4>
             }

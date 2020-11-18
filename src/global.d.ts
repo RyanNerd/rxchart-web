@@ -28,6 +28,7 @@ declare module 'reactn/default' {
         login: { username: string, password: string } | null
         loginFailed: boolean
         logout: boolean
+        medicine: {action: 'load' | 'update' | 'delete', payload: null | MedicineRecord | number} | null
         medicineList: MedicineRecord[]
         medicineManager: IMedicineManager
         otcList: MedicineRecord[]

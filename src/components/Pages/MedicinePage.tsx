@@ -30,7 +30,7 @@ import LogButtons from "../Buttons/LogButtons";
 const MedicinePage = (): JSX.Element | null => {
     const [, setDeleteDrugLog] = useGlobal('deleteDrugLog');
     const [, setUpdateDrugLog] = useGlobal('updateDrugLog');
-    const [, setUpdateMedicine] = useGlobal('updateMedicine');
+    const [, setMedicine] = useGlobal('medicine');
     const [activeDrug, setActiveDrug] = useState<MedicineRecord | null>(null);
     const [activeResident] = useGlobal('activeResident');
     const [activeTabKey] = useGlobal('activeTabKey');
@@ -221,7 +221,7 @@ const MedicinePage = (): JSX.Element | null => {
                 show={showMedicineEdit}
                 onClose={(r) => {
                     setShowMedicineEdit(false);
-                    setUpdateMedicine(r);
+                    setMedicine({action: "update", payload: r});
                 }}
                 drugInfo={medicineInfo}
             />

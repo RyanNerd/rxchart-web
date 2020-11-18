@@ -14,8 +14,7 @@ import {MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
  * @returns {JSX.Element}
  */
 const ManageDrugPage = (): JSX.Element | null => {
-    const [, setDeleteMedicine] = useGlobal('deleteMedicine');
-    const [, setUpdateMedicine] = useGlobal('updateMedicine');
+    const [, setMedicine] = useGlobal('medicine');
     const [activeResident] = useGlobal('activeResident');
     const [activeTabKey] = useGlobal('activeTabKey');
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
@@ -111,7 +110,7 @@ const ManageDrugPage = (): JSX.Element | null => {
                 show={showMedicineEdit}
                 onClose={(r) => {
                     setShowMedicineEdit(false);
-                    setUpdateMedicine(r || null);
+                    setMedicine({action: 'update', payload: r});
                 }}
                 drugInfo={medicineInfo}
             />
@@ -123,9 +122,8 @@ const ManageDrugPage = (): JSX.Element | null => {
                 buttonvariant="danger"
                 onSelect={(a) => {
                     setShowDeleteMedicine(false);
-                    setDeleteMedicine(a ? medicineInfo?.Id : null);
-                }
-                }
+                    setMedicine(a ? {action: "delete", payload: medicineInfo?.Id as number} : null);
+                }}
             >
                 <Confirm.Header>
                     <Confirm.Title>

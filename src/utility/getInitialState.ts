@@ -52,6 +52,7 @@ const getInitialState = () => {
         login: null,
         loginFailed: false,
         logout: false,
+        medicine: null,
         medicineList: [] as MedicineRecord[],
         medicineManager: MedicineMananger(providers.medicineProvider, providers.medHistoryProvider),
         otcList: [] as MedicineRecord[],
