@@ -4,12 +4,11 @@ import ClientObserver from "../observers/ClientObserver";
 import DrugLogObserver from "../observers/DrugLogObserver";
 import ErrorDetailsObserver from "../observers/ErrorDetailsObserver";
 import LandingPage from "./Pages/LandingPage";
-import LoginObserver from "../observers/LoginObserver";
-import LogoutObserver from "../observers/LogoutObserver";
 import MedicineObserver from "../observers/MedicineObserver";
 import OtcMedicineObserver from "../observers/OtcMedicineObserver";
 import React, {useGlobal} from 'reactn';
 import {clientFullName, clientDOB} from "../utility/common";
+import AuthObserver from "../observers/AuthObserver";
 
 /**
  * Main Entry Component
@@ -19,7 +18,6 @@ import {clientFullName, clientDOB} from "../utility/common";
  */
 const App = () => {
     const [activeClient] = useGlobal('activeResident');
-    const [am] = useGlobal('authManager');
     const [development] = useGlobal('development');
     const [mm] = useGlobal('medicineManager');
     const [providers] = useGlobal('providers');
@@ -32,8 +30,7 @@ const App = () => {
     ClientObserver();
     DrugLogObserver(mm, activeClient);
     ErrorDetailsObserver();
-    LoginObserver(am);
-    LogoutObserver();
+    AuthObserver();
     MedicineObserver(mm, activeClient);
     OtcMedicineObserver(mm);
 

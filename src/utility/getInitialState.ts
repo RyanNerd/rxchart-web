@@ -41,6 +41,7 @@ const getInitialState = () => {
         activeResident: null,
         activeTabKey: 'login',
         apiKey: null,
+        auth: null,
         authManager: AuthManager(providers.authenticationProvider),
         client: null,
         development: process.env.REACT_APP_DEVELOPMENT === 'true',

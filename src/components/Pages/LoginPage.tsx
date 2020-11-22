@@ -13,13 +13,12 @@ import TabContent from '../../styles/common.css';
  */
 const LoginPage = (): JSX.Element | null => {
     const [, setErrorDetails] = useGlobal('errorDetails');
-    const [, setLogin] = useGlobal('login');
+    const [, setAuth] = useGlobal('auth');
     const [activeTabKey] = useGlobal('activeTabKey');
     const [apiKey] = useGlobal('apiKey');
     const [password, setPassword] = useState('');
     const [showAlert, setShowAlert] = useGlobal('loginFailed');
     const [username, setUsername] = useState('');
-    const [, setLogout] = useGlobal('logout');
     const focusRef = useRef<HTMLInputElement>(null);
 
     // Set focus to the search input when this page is selected.
@@ -64,7 +63,7 @@ const LoginPage = (): JSX.Element | null => {
                         onKeyUp={(e: React.KeyboardEvent<HTMLElement>) => {
                             if (e.key === 'Enter') {
                                 e.preventDefault();
-                                setLogin({username, password});
+                                setAuth({action: 'login', payload: {username, password}});
                             }
                         }}
                     />
@@ -77,7 +76,7 @@ const LoginPage = (): JSX.Element | null => {
                 <Col sm={1}>
                     <Button onClick={(e) => {
                         e.preventDefault();
-                        setLogin({username, password});
+                        setAuth({action: 'login', payload: {username, password}});
                     }}>
                         Login
                     </Button>
@@ -109,7 +108,7 @@ const LoginPage = (): JSX.Element | null => {
                 console.log('Testing Diagnostics');
                 setErrorDetails(new Error('Testing error handler'));
             } else {
-                setLogout(true);
+                setAuth({action: 'logout', payload: null});
             }
         }}>
             Log Out

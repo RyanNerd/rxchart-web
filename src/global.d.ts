@@ -13,6 +13,7 @@ declare module 'reactn/default' {
     }
 
     export interface State {
+        auth: {action: 'login' | 'logout', payload: {username: string, password: string} | null} | null
         activeResident: ResidentRecord | null
         activeTabKey: string
         apiKey: string | null
