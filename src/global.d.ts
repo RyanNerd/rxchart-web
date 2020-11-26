@@ -18,10 +18,14 @@ declare module 'reactn/default' {
         activeTabKey: string
         apiKey: string | null
         authManager: IAuthManager
-        client: {action: 'load' | 'update' | 'delete', payload: null | ResidentRecord | number} | null
+        client: {
+            action: 'load' | 'update' | 'delete'
+            cb?: (c: ResidentRecord) => void
+            payload: null | ResidentRecord | number
+        } | null
         count: number
         development: boolean
-        drugLog: {action: 'load' | 'update' | 'delete', payload: null | DrugLogRecord | DrugLogRecord[] | number} | null
+        drugLog: {action: 'load'|'update'|'delete', payload?: null | DrugLogRecord | DrugLogRecord[] | number} | null
         drugLogList: DrugLogRecord[]
         errorDetails: any
         login: { username: string, password: string } | null

@@ -29,14 +29,13 @@ const ClientObserver = () => {
                     break;
                 }
                 case "update": {
-                    const clientRecord = client.payload as ResidentRecord;
+                    const clientRecord = {...client.payload as ResidentRecord};
                     rm.updateResident(clientRecord)
-                    .then((residentRecord) => {
-                        setClient({action: "load", payload: null});
-                        // When adding a new client set that client as active
-                        if (!clientRecord.Id) {
-                            setActiveResident(residentRecord);
+                    .then((clientRecord) => {
+                        if (client.cb) {
+                            client.cb(clientRecord);
                         }
+                        setClient({action: "load", payload: null});
                     })
                     .catch((err) => setErrorDetails(err))
                     break;
