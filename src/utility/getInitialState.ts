@@ -13,7 +13,7 @@ export interface IProviders {
     residentProvider: IResidentProvider
     medicineProvider: IMedicineProvider
     medHistoryProvider: IMedHistoryProvider
-    setApi: (apiKey: string) => void
+    setApi: (apiKey: string) => Promise<void>
 }
 
 /**
@@ -30,10 +30,10 @@ const getInitialState = () => {
          * Helper function that sets the API key for ALL providers
          * @param {string} apiKey
          */
-        setApi: (apiKey: string) => {
+        setApi: async (apiKey: string): Promise<void>  => {
             providers.medHistoryProvider.setApiKey(apiKey);
             providers.medicineProvider.setApiKey(apiKey);
-            providers.residentProvider.setApiKey(apiKey)
+            providers.residentProvider.setApiKey(apiKey);
         }
     } as IProviders;
 

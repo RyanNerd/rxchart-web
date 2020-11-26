@@ -4,7 +4,7 @@ import {IProviders} from "../utility/getInitialState";
 /**
  * Watch for changes to the global apiKey
  * when populated it indicates a successful login and triggers
- * a refresh of theresidentList and otcList globals, and sets the active tab page to the ResidentPage tab
+ * a refresh of the residentList and otcList globals, and sets the active tab page to the ResidentPage tab
  * @param {IProviders} providers
  * @constructor
  */
@@ -18,19 +18,20 @@ const ApiKeyObserver = (providers: IProviders) => {
 
     useEffect(() => {
         if (prevApiKey !== apiKey) {
-            // Are we logging in (prevApiKey will be falsy and apiKey will have a value)?
+            // Are we logging in (prevApiKey will be null and apiKey will have a value)?
             if (prevApiKey === null && apiKey) {
                 setLoginFailed(false);
-                providers.setApi(apiKey);
+                providers.setApi(apiKey)
+                .then(() => {
+                    // Load ALL Resident records up front and save them in the global store.
+                    setClient({action: "load", payload: null});
 
-                // Load ALL Resident records up front and save them in the global store.
-                setClient({action: "load", payload: null});
+                    // Load ALL OTC medications once we're logged in.
+                    setOtcMedicine({action: "load", payload: null});
 
-                // Load ALL OTC medications once we're logged in.
-                setOtcMedicine({action: "load", payload: null});
-
-                // Activate the Resident tab
-                setActiveTabKey('resident');
+                    // Activate the Resident tab
+                    setActiveTabKey('resident');
+                })
             }
             return () => {
                 // eslint-disable-next-line react-hooks/exhaustive-deps

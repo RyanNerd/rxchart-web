@@ -148,12 +148,18 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
             <ResidentEdit
                 onClose={(residentRecord) => {
                     setShowResidentEdit(false);
-                    setClient({action: "update", payload: residentRecord})
-                    .then(() => {
-                        if (residentRecord?.Id === activeResident?.Id) {
-                            setActiveResident(residentRecord?.Id ? residentRecord : null);
-                        }
-                    })
+                    if (residentRecord) {
+                        setClient({
+                            action: "update",
+                            payload: residentRecord,
+                            cb: (clientRecord) => {
+                                // If we are adding a new resident then make them the active client.
+                                if (!residentRecord.Id) {
+                                    setActiveResident(clientRecord);
+                                }
+                            }
+                        })
+                    }
                 }}
                 residentInfo={residentInfo}
                 show={showResidentEdit}

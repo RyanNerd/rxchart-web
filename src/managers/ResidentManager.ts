@@ -17,49 +17,27 @@ const ResidentManager = (residentProvider: IResidentProvider): IResidentManager 
      * Inserts or updates a Resident record.
      * @param {ResidentRecord} residentRecord
      */
-    const _updateResident = async (residentRecord: ResidentRecord) => {
+    const _updateResident = async (residentRecord: ResidentRecord): Promise<ResidentRecord> => {
         const residentData = {...residentRecord};
-        const residentId = residentData?.Id;
-        // If the residentId is null then we are adding a new Resident
-        if (!residentId) {
-            residentData.Id = null;
-            const searchExisting = {
-                where: [
-                    {column: "FirstName", value: residentData.FirstName},
-                    {column: "LastName", value: residentData.LastName},
-                    {column: "DOB_YEAR", value: residentData.DOB_YEAR},
-                    {column: "DOB_MONTH", value: residentData.DOB_MONTH},
-                    {column: "DOB_DAY", value: residentData.DOB_DAY}
-                ],
-                limit: 1,
-                only_trashed: true
-            };
-            // Check if the resident exists but is trashed.
-            return await residentProvider.search(searchExisting)
-            .then((trashedResidents) => {
-                const trashedResidentId = (trashedResidents.length === 1) ? trashedResidents[0].Id : null;
-                // Do we have a trashed resident?
-                if (trashedResidentId) {
-                    // Reactivate trashed Resident
-                    return residentProvider.restore(trashedResidentId)
-                    .catch((err) => {
-                        throw err
-                    })
+        return searchExisting(residentData)
+        .then(async (clients) => {
+            // Does the client record already exist (including trashed records)
+            if (clients.length > 0) {
+                const client = clients[0];
+                // Trashed (deactivated) client?
+                if (client.deleted_at) {
+                    return await residentProvider.restore(client.Id as number);
                 } else {
-                    // Add new Resident
-                    return residentProvider.post(residentData)
-                    .catch((err) => {
-                        throw err
-                    })
+                    // Is the existing client.Id different? If so then set the residentData record to the existing Id.
+                    if (client.Id !== residentData.Id) {
+                        residentData.Id = client.Id;
+                    }
+                    return await residentProvider.post(residentData);
                 }
-            })
-        } else {
-            // Update the existing resident
-            return residentProvider.post(residentData)
-            .catch((err) => {
-                throw err
-            })
-        }
+            } else {
+                return residentProvider.post(residentData);
+            }
+        })
     }
 
     /**
@@ -93,6 +71,20 @@ const ResidentManager = (residentProvider: IResidentProvider): IResidentManager 
         .catch((err) => {
             throw err
         })
+    }
+
+    const searchExisting = async (clientRecord: ResidentRecord) => {
+        const searchExisting = {
+            where: [
+                {column: "FirstName", value: clientRecord.FirstName},
+                {column: "LastName", value: clientRecord.LastName},
+                {column: "DOB_YEAR", value: clientRecord.DOB_YEAR},
+                {column: "DOB_MONTH", value: clientRecord.DOB_MONTH},
+                {column: "DOB_DAY", value: clientRecord.DOB_DAY}
+            ],
+            with_trashed: true
+        };
+        return await residentProvider.search(searchExisting);
     }
 
     return {
