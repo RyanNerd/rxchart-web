@@ -78,8 +78,6 @@ const MedicinePage = (): JSX.Element | null => {
     // If there isn't an activeResident or this isn't the active tab then do not render
     if (!residentId || activeTabKey !== 'medicine') {
         return null;
-    } else {
-        window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
     /**

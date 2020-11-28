@@ -254,8 +254,6 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
 
         if (!error) {
             return null;
-        } else {
-            window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
         try {

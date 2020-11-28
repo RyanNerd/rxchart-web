@@ -31,8 +31,6 @@ const LoginPage = (): JSX.Element | null => {
     // Prevent render if this tab isn't active
     if (activeTabKey !== 'login') {
         return null;
-    } else {
-        window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
     const signIn = (
