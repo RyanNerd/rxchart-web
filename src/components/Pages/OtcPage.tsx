@@ -116,8 +116,6 @@ const OtcPage = (): JSX.Element | null => {
     // If there isn't an activeResident or this tab isn't active then don't render
     if (!residentId || activeTabKey !== 'otc') {
         return null;
-    } else {
-        window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
     /**

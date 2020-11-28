@@ -66,8 +66,6 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     // Don't render if this tab isn't active.
     if (activeTabKey !== 'resident') {
         return null;
-    } else {
-        window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
     /**
