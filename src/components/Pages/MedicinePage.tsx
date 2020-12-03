@@ -28,7 +28,7 @@ import LogButtons from "../Buttons/LogButtons";
  * @return {JSX.Element | null}
  */
 const MedicinePage = (): JSX.Element | null => {
-    const [, setDrugLog] = useGlobal('drugLog');
+    const [drugLog, setDrugLog] = useGlobal('drugLog');
     const [, setMedicine] = useGlobal('medicine');
     const [activeDrug, setActiveDrug] = useState<MedicineRecord | null>(null);
     const [activeResident] = useGlobal('activeResident');
@@ -160,6 +160,7 @@ const MedicinePage = (): JSX.Element | null => {
                     <Row className="mt-3">
                         {activeDrug &&
                         <MedicineListGroup
+                            disabled={drugLog !== null}
                             lastTaken={lastTaken}
                             medicineList={medicineList}
                             activeDrug={activeDrug}
@@ -188,6 +189,7 @@ const MedicinePage = (): JSX.Element | null => {
 
                     <Row className="mb-3">
                         <LogButtons
+                            disabled={drugLog !== null}
                             lastTaken={lastTaken}
                             lastTakenVariant={lastTakenVariant}
                             onLogAmount={(n) => handleLogDrugAmount(n, activeDrug.Id as number)}

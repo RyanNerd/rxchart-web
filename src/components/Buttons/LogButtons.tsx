@@ -6,6 +6,7 @@ interface IProps {
     lastTakenVariant: string
     onLogAmount: (n: number) => void
     drugName: string
+    disabled?: boolean
 }
 
 const LogButtons = (props: IProps) => {
@@ -13,13 +14,16 @@ const LogButtons = (props: IProps) => {
         lastTaken,
         lastTakenVariant,
         onLogAmount,
+        disabled = false,
         drugName
     } = props;
+
+    const disable = lastTaken === 0 || disabled;
 
     return (
         <>
             <Button
-                disabled={lastTaken === 0}
+                disabled={disable}
                 variant={"outline-" + lastTakenVariant}
                 className="mr-2"
                 onClick={(e) => {
@@ -31,7 +35,7 @@ const LogButtons = (props: IProps) => {
             </Button>
 
             <Button
-                disabled={lastTaken === 0}
+                disabled={disable}
                 className="mr-2"
                 variant={"outline-" + lastTakenVariant}
                 onClick={(e) => {
@@ -43,7 +47,7 @@ const LogButtons = (props: IProps) => {
             </Button>
 
             <Button
-                disabled={lastTaken === 0}
+                disabled={disable}
                 className="mr-2"
                 variant={"outline-" + lastTakenVariant}
                 onClick={(e) => {
@@ -55,7 +59,7 @@ const LogButtons = (props: IProps) => {
             </Button>
 
             <Button
-                disabled={lastTaken === 0}
+                disabled={disable}
                 variant={"outline-" + lastTakenVariant}
                 onClick={(e) => {
                     e.preventDefault();

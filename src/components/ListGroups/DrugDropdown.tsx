@@ -4,6 +4,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import {MedicineRecord} from "../../types/RecordTypes";
 
 interface IProps {
+    disabled?: boolean
     drugId: number | null
     medicineList: MedicineRecord[]
     onSelect: (m: MedicineRecord) => void
@@ -16,7 +17,7 @@ interface IProps {
  * @constructor
  */
 const DrugDropdown = (props: IProps): JSX.Element | null => {
-    const {medicineList, drugId} = props;
+    const {disabled = false, drugId, medicineList} = props;
 
     // Do not render unless we have the required props.
     if (!medicineList || medicineList.length === 0 || !drugId) {
@@ -79,6 +80,7 @@ const DrugDropdown = (props: IProps): JSX.Element | null => {
      */
     return (
         <DropdownButton
+            disabled={disabled}
             onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
             size="lg"
             title={title}

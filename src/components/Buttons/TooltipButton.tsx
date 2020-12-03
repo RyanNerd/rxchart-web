@@ -8,6 +8,7 @@ import {randomString} from "../../utility/common";
 
 interface IProps extends ButtonProps {
     children: JSX.Element[] | JSX.Element | string
+    disabled?: boolean
     placement?: Placement
     tooltip?: string | React.ReactNode
     tooltipId?: string
@@ -23,6 +24,7 @@ interface IProps extends ButtonProps {
  */
 const TooltipButton = (props: IProps): JSX.Element => {
     const {
+        disabled = false,
         placement = 'top',
         tooltip,
         tooltipId = randomString(),
@@ -31,6 +33,7 @@ const TooltipButton = (props: IProps): JSX.Element => {
 
     const button = (
         <Button
+            disabled={disabled}
             {...props}
         >
             {children}
