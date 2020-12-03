@@ -29,7 +29,6 @@ interface IWillow {
 const DiagnosticPage = (props: IProps): JSX.Element | null => {
     const [activeTabKey] = useGlobal('activeTabKey');
     const [content, setContent] = useState<JSX.Element | null>(null);
-    const [development] = useGlobal('development');
     const dismissError = props.dismissErrorAlert;
     const error = props.error;
     let finalContent: JSX.Element | null;
@@ -257,46 +256,42 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
         }
 
         try {
-            if (development) {
-                console.log('Error:', error);
-                console.log('typeof error', typeof error);
+            console.log('Error:', error);
+            console.log('typeof error', typeof error);
 
-                if (content) {
-                    return content;
-                }
-
-                /**
-                 * Duck 🦆 typing to figure out what type error is
-                 */
-                if (error instanceof Object) {
-                    if (error.hasOwnProperty('message') &&
-                        error.hasOwnProperty('status') &&
-                        error.hasOwnProperty('timestamp') &&
-                        error.hasOwnProperty('success')) {
-                        handleWillowError(error);
-                    }
-                }
-                if (error instanceof Response) {
-                    handleResponseError(error);
-                }
-                if (error instanceof Error) {
-                    handleNativeError(error);
-                }
-                if (typeof error === 'string') {
-                    if (error.toLowerCase().includes('html')) {
-                        return handleHtmlError(error);
-                    } else {
-                        return handleNativeError(new Error(error));
-                    }
-                }
-                return (_alert(<b>Unknown Error</b>, 'Check console log.'));
-            } else {
-                return (_alert(<b>'Error'</b>, 'Something went wrong. Check your internet connection and try again.'));
+            if (content) {
+                return content;
             }
+
+            /**
+             * Duck 🦆 typing to figure out what type error is
+             */
+            if (error instanceof Object) {
+                if (error.hasOwnProperty('message') &&
+                    error.hasOwnProperty('status') &&
+                    error.hasOwnProperty('timestamp') &&
+                    error.hasOwnProperty('success')) {
+                    handleWillowError(error);
+                }
+            }
+            if (error instanceof Response) {
+                handleResponseError(error);
+            }
+            if (error instanceof Error) {
+                handleNativeError(error);
+            }
+            if (typeof error === 'string') {
+                if (error.toLowerCase().includes('html')) {
+                    return handleHtmlError(error);
+                } else {
+                    return handleNativeError(new Error(error));
+                }
+            }
+            return (_alert(<b>Unknown Error</b>, 'Check console log.'));
         } catch (e) {
             return (<><p>Error in DiagnosticsPage</p></>);
         }
-    }, [error, development, content, dismissError]) || null;
+    }, [error, content, dismissError]) || null;
 
     // If this tab isn't active then don't render
     if (activeTabKey !== 'error') {

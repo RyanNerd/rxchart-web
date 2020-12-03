@@ -15,7 +15,6 @@ import Tabs from 'react-bootstrap/Tabs';
  * @constructor
  */
 const LandingPage = () => {
-    const [, setLogout] = useGlobal('logout');
     const [activeResident] = useGlobal('activeResident');
     const [activeTabKey, setActiveTabKey] = useGlobal('activeTabKey');
     const [apiKey] = useGlobal('apiKey');
@@ -83,8 +82,7 @@ const LandingPage = () => {
                 <DiagnosticPage
                     error={errorDetails}
                     dismissErrorAlert={() => {
-                        setLogout(true);
-                        setActiveTabKey('login');
+                        window.location.reload();
                     }}
                 />
             </Tab>
