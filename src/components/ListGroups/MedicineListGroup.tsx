@@ -13,6 +13,7 @@ interface IProps {
     addDrugLog: (e: React.MouseEvent<HTMLElement>) => void
     canvasId: string
     canvasUpdated?: (c: HTMLCanvasElement) => void
+    disabled?: boolean
     drugChanged: (d: MedicineRecord) => void
     lastTaken: number | null
     logDrug: (n: number) => void
@@ -31,6 +32,7 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
         addDrugLog,
         canvasId,
         canvasUpdated,
+        disabled = false,
         drugChanged,
         lastTaken,
         logDrug,
@@ -87,6 +89,7 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
         <ListGroup>
             <ListGroup.Item active className="justify-content-left">
                 <DrugDropdown
+                    disabled={disabled}
                     medicineList={medicineList}
                     drugId={drugId}
                     onSelect={(drug: MedicineRecord) => drugChanged(drug)}
@@ -95,6 +98,7 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
 
             <ListGroup.Item>
                 <TooltipButton
+                    disabled={disabled}
                     tooltip={tooltipText(lastTaken)}
                     placement="top"
                     className="mr-2"
@@ -105,6 +109,7 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
                 </TooltipButton>
 
                 <LogButtons
+                    disabled={disabled}
                     lastTaken={lastTaken}
                     lastTakenVariant={lastTakenVariant}
                     onLogAmount={(n) => logDrug(n)}
