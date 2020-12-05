@@ -178,6 +178,11 @@ const OtcPage = (): JSX.Element | null => {
                             type="search"
                             isValid={searchIsValid || false}
                             value={searchText}
+                            onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
+                                if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                }
+                            }}
                             onChange={(e) => setSearchText(e.target.value)}
                             placeholder="Search OTC medicine"
                             ref={focusRef}

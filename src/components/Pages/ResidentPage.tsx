@@ -114,6 +114,11 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                     isValid={searchIsValid}
                     type="search"
                     value={searchText}
+                    onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                        }
+                    }}
                     onChange={(e) => setSearchText(e.target.value)}
                     placeholder="Search resident"
                     ref={focusRef}
