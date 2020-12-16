@@ -233,7 +233,11 @@ const MedicinePage = (): JSX.Element | null => {
                 onHide={() => setShowDrugLog(!showDrugLog)}
                 onClose={(drugLogRecord) => {
                     setShowDrugLog(false);
-                    setDrugLog({action: 'update', payload: drugLogRecord});
+                    if (drugLogRecord) {
+                        setDrugLog({action: 'update', payload: drugLogRecord});
+                    } else {
+                        setDrugLog(null);
+                    }
                 }}
             />
             }
