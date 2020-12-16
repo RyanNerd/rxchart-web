@@ -33,14 +33,13 @@ const MedicinePage = (): JSX.Element | null => {
     const [activeDrug, setActiveDrug] = useState<MedicineRecord | null>(null);
     const [activeResident] = useGlobal('activeResident');
     const [activeTabKey] = useGlobal('activeTabKey');
-    const [drugLogInfo, setDrugLogInfo] = useState<DrugLogRecord | null>(null);
     const [drugLogList] = useGlobal('drugLogList');
     const [lastTaken, setLastTaken] = useState<number | null>(null);
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [medicineList] = useGlobal('medicineList');
     const [residentId, setResidentId] = useState<number | null>(activeResident?.Id || null);
     const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<any>(false);
-    const [showDrugLog, setShowDrugLog] = useState(false);
+    const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const focusRef = useRef<HTMLInputElement>(null);
 
@@ -93,8 +92,7 @@ const MedicinePage = (): JSX.Element | null => {
             MedicineId: activeDrug?.Id,
             Notes: ""
         } as DrugLogRecord;
-        setDrugLogInfo(drugLogRecord);
-        setShowDrugLog(true);
+        setShowDrugLog(drugLogRecord);
     }
 
     /**
@@ -226,13 +224,13 @@ const MedicinePage = (): JSX.Element | null => {
             />
             }
 
-            {drugLogInfo &&
+            {showDrugLog &&
             <DrugLogEdit
-                show={showDrugLog}
-                drugLogInfo={drugLogInfo}
-                onHide={() => setShowDrugLog(!showDrugLog)}
+                show={true}
+                drugLogInfo={showDrugLog}
+                onHide={() => setShowDrugLog(null)}
                 onClose={(drugLogRecord) => {
-                    setShowDrugLog(false);
+                    setShowDrugLog(null);
                     if (drugLogRecord) {
                         setDrugLog({action: 'update', payload: drugLogRecord});
                     } else {
