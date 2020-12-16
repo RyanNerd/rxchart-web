@@ -38,7 +38,7 @@ const MedicinePage = (): JSX.Element | null => {
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [medicineList] = useGlobal('medicineList');
     const [residentId, setResidentId] = useState<number | null>(activeResident?.Id || null);
-    const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<any>(false);
+    const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
     const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const focusRef = useRef<HTMLInputElement>(null);
@@ -246,9 +246,9 @@ const MedicinePage = (): JSX.Element | null => {
                 size='lg'
                 onSelect={(a) => {
                     setDrugLog(a ? {action: 'delete', payload: showDeleteDrugLogRecord?.Id as number} : null);
-                    setShowDeleteDrugLogRecord(false);
+                    setShowDeleteDrugLogRecord(null);
                 }}
-                show={typeof showDeleteDrugLogRecord === 'object'}
+                show={true}
                 buttonvariant="danger"
             >
                 <Confirm.Header>
@@ -257,9 +257,11 @@ const MedicinePage = (): JSX.Element | null => {
                     </Confirm.Title>
                 </Confirm.Header>
                 <Confirm.Body>
+                    {showDeleteDrugLogRecord && showDeleteDrugLogRecord.Updated &&
                     <Alert variant="secondary">
                         Date: {getFormattedDate(showDeleteDrugLogRecord.Updated)}
                     </Alert>
+                    }
                     <b style={{color: "red"}}>
                         Are you sure?
                     </b>
