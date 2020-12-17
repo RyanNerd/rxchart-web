@@ -25,7 +25,7 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
     const [drugLogInfo, setDrugLogInfo] = useState(props.drugLogInfo);
     const onHide = props.onHide;
     const [canSave, setCanSave] = useState(false);
-    const textInput = useRef<HTMLInputElement>(null);
+    const textInput = useRef<HTMLTextAreaElement>(null);
 
     // Observer for show
     useEffect(() => {
@@ -104,7 +104,7 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
                         <Col md="8">
                             <Form.Control
                                 as="textarea"
-                                ref={textInput as React.RefObject<any>}
+                                ref={textInput}
                                 value={drugLogInfo.Notes}
                                 name="Notes"
                                 onChange={(e) => handleOnChange(e)}
