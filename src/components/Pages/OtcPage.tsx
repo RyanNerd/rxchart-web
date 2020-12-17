@@ -39,7 +39,7 @@ const OtcPage = (): JSX.Element | null => {
     const [residentId, setResidentId] = useState(activeResident && activeResident.Id);
     const [searchIsValid, setSearchIsValid] = useState<boolean | null>(null);
     const [searchText, setSearchText] = useState('');
-    const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<any>(false);
+    const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
     const [showDrugLog, setShowDrugLog] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const barCode = activeDrug?.Barcode || null;
@@ -335,7 +335,7 @@ const OtcPage = (): JSX.Element | null => {
                 show={typeof showDeleteDrugLogRecord === 'object'}
                 buttonvariant="danger"
                 onSelect={(a) => {
-                    setShowDeleteDrugLogRecord(false);
+                    setShowDeleteDrugLogRecord(null);
                     setDrugLog(a ? {action: 'delete', payload: showDeleteDrugLogRecord?.Id as number} : null);
                 }}
             >
@@ -345,9 +345,11 @@ const OtcPage = (): JSX.Element | null => {
                     </Confirm.Title>
                 </Confirm.Header>
                 <Confirm.Body>
+                    {showDeleteDrugLogRecord && showDeleteDrugLogRecord.Updated &&
                     <Alert variant="secondary">
                         Date: {getFormattedDate(showDeleteDrugLogRecord.Updated)}
                     </Alert>
+                    }
                     <b style={{color: "red"}}>
                         Are you sure?
                     </b>
