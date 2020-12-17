@@ -21,8 +21,6 @@ interface DateTimeFormatOptions {
     year?: string;
 }
 
-type ReturnValidation = '' | 'is-invalid' | string;
-
 /**
  * Given a ResidentRecord return the resident's DOB as a string.
  * @param {ResidentRecord} resident
@@ -50,62 +48,6 @@ export const dateToString = (month: string, day: string, year: string): string =
 export const clientFullName = (resident: ResidentRecord): string => {
     return resident.FirstName.trim() + ' ' + resident.LastName.trim();
 };
-
-// VALIDATION Functions START
-/**
- * Given a month numeric return 'is-invalid' if the number isn't between 1 and 12, otherwise return ''.
- * @param {string} month
- * @returns {'' | 'is-invalid'}
- */
-export const isMonthValid = (month: string): ReturnValidation => {
-    // tslint:disable-next-line:radix
-    return (parseInt(month) >= 1 && parseInt(month) <= 12) ? '' : 'is-invalid';
-};
-
-/**
- * Given the day and month returns 'is-invalid' if the month and day pair isn't a valid date, otherwise return ''.
- * @param {string} day
- * @param {string} month
- * @return {'' | 'is-invalid'}
- */
-export const isDayValid = (day: string, month: string): ReturnValidation => {
-    let maxDay = 28;
-    const nMonth = parseInt(month);
-    const nDay = parseInt(day);
-    if (nMonth === 1
-        || nMonth === 3
-        || nMonth === 5
-        || nMonth === 7
-        || nMonth === 8
-        || nMonth === 10
-        || nMonth === 11
-        || nMonth === 12) {
-        maxDay = 31;
-    }
-    if (nMonth === 4
-        || nMonth === 6
-        || nMonth === 9) {
-        maxDay = 30;
-    }
-    return (nDay >= 1 && nDay <= maxDay) ? '' : 'is-invalid';
-};
-
-/**
- * Returns 'is-invalid' if the year is not valid using the isDOB flag to determine the valid range.
- * @param {string} year
- * @param {boolean} isDOB
- * @return {'' | 'is-invalid'}
- */
-export const isYearValid = (year: string, isDOB: boolean): ReturnValidation => {
-    const nYear = parseInt(year);
-    if (isDOB) {
-        const today = new Date();
-        const todayYear = today.getFullYear();
-        return (nYear <= todayYear && nYear >= todayYear - 125) ? '' : 'is-invalid';
-    }
-    return (nYear >= 1900 && nYear <= 9999) ? '' : 'is-invalid';
-};
-// VALIDATION Functions END
 
 /**
  * Return a random string.

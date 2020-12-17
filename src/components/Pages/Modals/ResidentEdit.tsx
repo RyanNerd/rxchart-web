@@ -1,11 +1,13 @@
-import React, {useEffect, useRef, useState} from 'reactn';
-import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
+import Form from "react-bootstrap/Form";
+import isDayValid from "../Validation/IsDayValid";
+import isMonthValid from "../Validation/IsMonthValid";
+import isYearValid from "../Validation/IsYearValid";
+import Modal from 'react-bootstrap/Modal';
+import React, {useEffect, useRef, useState} from 'reactn';
 import Row from "react-bootstrap/Row";
-import {isDayValid, isMonthValid, isYearValid} from "../../utility/common";
-import {ResidentRecord} from "../../types/RecordTypes";
+import {ResidentRecord} from "../../../types/RecordTypes";
 
 interface IProps {
     onClose: (r: ResidentRecord | null) => void

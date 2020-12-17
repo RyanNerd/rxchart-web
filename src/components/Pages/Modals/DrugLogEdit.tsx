@@ -4,7 +4,7 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
-import {DrugLogRecord} from "../../types/RecordTypes";
+import {DrugLogRecord} from "../../../types/RecordTypes";
 
 interface IProps {
     drugLogInfo: DrugLogRecord

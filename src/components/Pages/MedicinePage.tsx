@@ -1,11 +1,11 @@
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
-import Confirm from "../Modals/Confirm";
-import DrugLogEdit from "../Modals/DrugLogEdit";
+import Confirm from "./Modals/Confirm";
+import DrugLogEdit from "./Modals/DrugLogEdit";
 import DrugLogGrid from "../Grids/DrugLogGrid";
 import Form from 'react-bootstrap/Form';
 import LastTakenButton from "../Buttons/LastTakenButton";
-import MedicineEdit from "../Modals/MedicineEdit";
+import MedicineEdit from "./Modals/MedicineEdit";
 import MedicineListGroup from "../ListGroups/MedicineListGroup";
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import Row from 'react-bootstrap/Row';

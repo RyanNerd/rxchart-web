@@ -5,8 +5,8 @@ import Modal from 'react-bootstrap/Modal';
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import Row from "react-bootstrap/Row";
 import {Alert} from "react-bootstrap";
-import {clientFullName} from "../../utility/common";
-import {MedicineRecord} from "../../types/RecordTypes";
+import {clientFullName} from "../../../utility/common";
+import {MedicineRecord} from "../../../types/RecordTypes";
 
 interface IProps {
     drugInfo: MedicineRecord
