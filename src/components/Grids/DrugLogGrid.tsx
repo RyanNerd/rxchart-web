@@ -30,7 +30,7 @@ interface IProps {
  */
 const DrugLogGrid = (props: IProps): JSX.Element => {
     const {
-        columns = ['Created', 'Updated', 'Amount'],
+        columns = ['Created', 'Updated', 'Amount', 'Out', 'In'],
         condensed = "false",
         drugId,
         drugLog = [],
@@ -126,7 +126,24 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
             }}>
                 <b>{drug.Notes}</b>
             </td>
-
+            {columns.includes('Out') &&
+                <td style={{
+                    textAlign: 'center',
+                    verticalAlign: "middle",
+                    fontWeight
+                }}>
+                    <b>{drug.Out}</b>
+                </td>
+            }
+            {columns.includes('In') &&
+            <td style={{
+                textAlign: 'center',
+                verticalAlign: "middle",
+                fontWeight
+            }}>
+                <b>{drug.In}</b>
+            </td>
+            }
             {onDelete &&
             <td style={{textAlign: 'center', verticalAlign: "middle"}}>
                 <Button
@@ -174,6 +191,16 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                 {columns.includes('Amount') &&
                 <th style={{textAlign: 'center', verticalAlign: "middle"}}>
                     <span>Amount</span>
+                </th>
+                }
+                {columns.includes('Out') &&
+                <th style={{textAlign: 'center', verticalAlign: "middle"}}>
+                    <span>Out</span>
+                </th>
+                }
+                {columns.includes('In') &&
+                <th style={{textAlign: 'center', verticalAlign: "middle"}}>
+                    <span>In</span>
                 </th>
                 }
                 {onDelete &&

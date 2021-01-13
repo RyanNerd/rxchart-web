@@ -11,6 +11,7 @@ import LogButtons from "../Buttons/LogButtons";
 interface IProps {
     activeDrug: MedicineRecord
     addDrugLog: (e: React.MouseEvent<HTMLElement>) => void
+    buttonTitle?: string
     canvasId: string
     canvasUpdated?: (c: HTMLCanvasElement) => void
     disabled?: boolean
@@ -30,6 +31,7 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
     const {
         activeDrug,
         addDrugLog,
+        buttonTitle = 'Log',
         canvasId,
         canvasUpdated,
         disabled = false,
@@ -109,6 +111,7 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
                 </TooltipButton>
 
                 <LogButtons
+                    buttonTitle={buttonTitle}
                     disabled={disabled}
                     lastTaken={lastTaken}
                     lastTakenVariant={lastTakenVariant}

@@ -106,7 +106,9 @@ const MedicinePage = (): JSX.Element | null => {
             Id: null,
             ResidentId: residentId,
             MedicineId: drugId,
-            Notes: notes
+            Notes: notes,
+            In: null,
+            Out: null
         };
         setDrugLog({action: 'update', payload: drugLogInfo});
     }
@@ -158,14 +160,14 @@ const MedicinePage = (): JSX.Element | null => {
                     <Row className="mt-3">
                         {activeDrug &&
                         <MedicineListGroup
-                            disabled={drugLog !== null}
-                            lastTaken={lastTaken}
-                            medicineList={medicineList}
                             activeDrug={activeDrug}
-                            drugChanged={(drug: MedicineRecord) => setActiveDrug(drug)}
                             addDrugLog={(e: React.MouseEvent<HTMLElement>) => addEditDrugLog(e)}
-                            logDrug={(amount: number) => handleLogDrugAmount(amount, activeDrug.Id as number)}
                             canvasId={'med-barcode'}
+                            disabled={drugLog !== null}
+                            drugChanged={(drug: MedicineRecord) => setActiveDrug(drug)}
+                            lastTaken={lastTaken}
+                            logDrug={(amount: number) => handleLogDrugAmount(amount, activeDrug.Id as number)}
+                            medicineList={medicineList}
                         />
                         }
                     </Row>
@@ -197,7 +199,7 @@ const MedicinePage = (): JSX.Element | null => {
                             <LastTakenButton
                                 lastTaken={lastTaken}
                             />
-                            </span>
+                        </span>
                     </Row>
 
                     <Row>

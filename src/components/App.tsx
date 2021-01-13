@@ -6,7 +6,7 @@ import ErrorDetailsObserver from "../observers/ErrorDetailsObserver";
 import LandingPage from "./Pages/LandingPage";
 import MedicineObserver from "../observers/MedicineObserver";
 import OtcMedicineObserver from "../observers/OtcMedicineObserver";
-import React, {useGlobal} from 'reactn';
+import React, {useGlobal, useState, useEffect} from 'reactn';
 import {clientFullName, clientDOB} from "../utility/common";
 import AuthObserver from "../observers/AuthObserver";
 
@@ -23,6 +23,24 @@ const App = () => {
     const [providers] = useGlobal('providers');
     const residentColor = development ? 'blue' : "#edf11e";
     const residentForegroundColor = development ? "#fffff0" : "black";
+    const version = process.env.REACT_APP_VERSION || '[unknown]';
+    const [rxchartImage, setRxchartImage] = useState<HTMLElement | null>(null);
+
+    useEffect(() => {
+        const handleImageClick = () => {
+            alert('Version: ' + version);
+        }
+
+        if (rxchartImage === null) {
+            setRxchartImage(document.getElementById("rxchart-img"));
+        } else {
+            console.log('addEventListener');
+            rxchartImage.addEventListener('click', handleImageClick, false);
+        }
+        return (() => {
+            rxchartImage?.removeEventListener('click', handleImageClick, false);
+        })
+    },[rxchartImage, version]);
 
     /**
      * Initialize all the observers

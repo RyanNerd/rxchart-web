@@ -130,7 +130,9 @@ const OtcPage = (): JSX.Element | null => {
                 Id: null,
                 ResidentId: residentId,
                 MedicineId: drugId,
-                Notes: notes
+                Notes: notes,
+                In: null,
+                Out: null
             };
             setDrugLog({action: 'update', payload: drugLogInfo});
         }

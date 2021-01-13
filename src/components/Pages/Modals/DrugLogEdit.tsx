@@ -39,7 +39,13 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
 
     // Disable the Save button if Notes are empty.
     useEffect(() => {
-        const canSave = (drugLogInfo && drugLogInfo.Notes.length > 0) || false;
+        const canSave = (drugLogInfo &&
+                            (
+                                drugLogInfo.Notes.length > 0 ||
+                                (drugLogInfo.In && drugLogInfo.In > 0) ||
+                                (drugLogInfo.Out && drugLogInfo.Out > 0)
+                            )
+                        ) || false;
         setCanSave(canSave);
     }, [drugLogInfo]);
 
@@ -107,6 +113,34 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
                                 ref={textInput}
                                 value={drugLogInfo.Notes}
                                 name="Notes"
+                                onChange={(e) => handleOnChange(e)}
+                            />
+                        </Col>
+                    </Form.Group>
+
+                    <Form.Group as={Row} controlId={"checkout-in"}>
+                        <Form.Label column md="4">
+                            Out
+                        </Form.Label>
+                        <Col md="8">
+                            <Form.Control
+                                type="number"
+                                value={drugLogInfo.Out || undefined}
+                                name="Out"
+                                onChange={(e) => handleOnChange(e)}
+                            />
+                        </Col>
+                    </Form.Group>
+
+                    <Form.Group as={Row} controlId={"checkout-in"}>
+                        <Form.Label column md="4">
+                            In
+                        </Form.Label>
+                        <Col md="8">
+                            <Form.Control
+                                type="number"
+                                value={drugLogInfo.In || undefined}
+                                name="In"
                                 onChange={(e) => handleOnChange(e)}
                             />
                         </Col>
