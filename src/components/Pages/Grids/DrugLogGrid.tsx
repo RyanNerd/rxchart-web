@@ -1,7 +1,7 @@
 import React from 'reactn';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
-import {DrugLogRecord, MedicineRecord} from "../../types/RecordTypes";
+import {DrugLogRecord, MedicineRecord} from "../../../types/RecordTypes";
 import {
     calculateLastTaken,
     getBsColor,
@@ -9,9 +9,10 @@ import {
     getLastTakenVariant,
     getObjectByProperty,
     isToday
-} from "../../utility/common";
+} from "../../../utility/common";
 
 interface IProps {
+    checkoutOnly?: boolean
     columns?: string[]
     condensed?: string
     drugId?: number | null
@@ -30,6 +31,7 @@ interface IProps {
  */
 const DrugLogGrid = (props: IProps): JSX.Element => {
     const {
+        checkoutOnly = false,
         columns = ['Created', 'Updated', 'Amount', 'Out', 'In'],
         condensed = "false",
         drugId,
@@ -72,6 +74,8 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
         }
 
         let drugName = drugColumnLookup(drug.MedicineId, 'Drug');
+        const drugDetails = drugColumnLookup(drug.MedicineId, 'Notes');
+
         if (!drugName || drugName.length === 0) {
             drugName = 'UNKNOWN - Medicine removed!';
         }
@@ -84,80 +88,92 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
         const variantColor = getBsColor(variant);
         const fontWeight = isToday(updatedDate) ? 'bold' : undefined;
 
-        return <tr
-            key={'druglog-grid-row-' + drug.Id}
-            id={'druglog-grid-row-' + drug.Id}
-            style={{color: variantColor}}
-        >
-            {onEdit &&
-            <td style={{textAlign: 'center', verticalAlign: "middle"}}>
-                <Button
-                    size="sm"
-                    onClick={e => onEdit(e, drug)}
-                >
-                    Edit
-                </Button>
-            </td>
-            }
+        // If the checkoutOnly switch is true then suppress any rows that don't have an Out value
+        if (checkoutOnly && (drug.Out === null || drug.Out <= 0)) {
+            return null;
+        }
 
-            {columns.includes('Drug') &&
-            <td style={{verticalAlign: "middle", fontWeight}}>
-                <span>{drugName}</span> <span>{drugStrength}</span>
-            </td>
-            }
-            <td style={{
-                textAlign: 'center',
-                verticalAlign: "middle",
-                fontWeight
-            }}>
-                {getFormattedDate(createdDate)}
-            </td>
-            <td style={{
-                textAlign: 'center',
-                verticalAlign: "middle",
-                fontWeight
-            }}>
-                {getFormattedDate(updatedDate)}
-            </td>
-            <td style={{
-                textAlign: 'center',
-                verticalAlign: "middle",
-                fontWeight
-            }}>
-                <b>{drug.Notes}</b>
-            </td>
-            {columns.includes('Out') &&
+        return (
+            <tr
+                key={'druglog-grid-row-' + drug.Id}
+                id={'druglog-grid-row-' + drug.Id}
+                style={{color: variantColor}}
+            >
+                {onEdit &&
+                <td style={{textAlign: 'center', verticalAlign: "middle"}}>
+                    <Button
+                        size="sm"
+                        onClick={e => onEdit(e, drug)}
+                    >
+                        Edit
+                    </Button>
+                </td>
+                }
+
+                {columns.includes('Drug') &&
+                <td style={{verticalAlign: "middle", fontWeight}}>
+                    <span>{drugName}</span> <span>{drugStrength}</span>
+                </td>
+                }
                 <td style={{
                     textAlign: 'center',
                     verticalAlign: "middle",
                     fontWeight
                 }}>
-                    <b>{drug.Out}</b>
+                    {getFormattedDate(createdDate)}
                 </td>
-            }
-            {columns.includes('In') &&
-            <td style={{
-                textAlign: 'center',
-                verticalAlign: "middle",
-                fontWeight
-            }}>
-                <b>{drug.In}</b>
-            </td>
-            }
-            {onDelete &&
-            <td style={{textAlign: 'center', verticalAlign: "middle"}}>
-                <Button
-                    size="sm"
-                    id={"drug-grid-delete-btn-" + drug.Id}
-                    variant="outline-danger"
-                    onClick={e => onDelete(e, drug)}
-                >
-                    <span role="img" aria-label="delete">🗑️</span>
-                </Button>
-            </td>
-            }
-        </tr>;
-    };
+                <td style={{
+                    textAlign: 'center',
+                    verticalAlign: "middle",
+                    fontWeight
+                }}>
+                    {getFormattedDate(updatedDate)}
+                </td>
+                <td style={{
+                    textAlign: 'center',
+                    verticalAlign: "middle",
+                    fontWeight
+                }}>
+                    <b>{drug.Notes}</b>
+                </td>
+                {columns.includes('Out') &&
+                    <td style={{
+                        textAlign: 'center',
+                        verticalAlign: "middle",
+                        fontWeight
+                    }}>
+                        <b>{drug.Out}</b>
+                    </td>
+                }
+                {columns.includes('In') &&
+                <td style={{
+                    textAlign: 'center',
+                    verticalAlign: "middle",
+                    fontWeight
+                }}>
+                    <b>{drug.In}</b>
+                </td>
+                }
+                {columns.includes('Details') &&
+                    <td>
+                        {drugDetails}
+                    </td>
+                }
+                {onDelete &&
+                <td style={{textAlign: 'center', verticalAlign: "middle"}}>
+                    <Button
+                        size="sm"
+                        id={"drug-grid-delete-btn-" + drug.Id}
+                        variant="outline-danger"
+                        onClick={e => onDelete(e, drug)}
+                    >
+                        <span role="img" aria-label="delete">🗑️</span>
+                    </Button>
+                </td>
+                }
+            </tr>
+        );
+    }
 
     return (
         <Table
@@ -202,6 +218,11 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                 <th style={{textAlign: 'center', verticalAlign: "middle"}}>
                     <span>In</span>
                 </th>
+                }
+                {columns.includes('Details') &&
+                    <th>
+                        Details
+                    </th>
                 }
                 {onDelete &&
                 <th></th>

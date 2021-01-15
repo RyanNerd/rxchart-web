@@ -1,12 +1,12 @@
 import React, {useEffect} from 'reactn';
 import ListGroup from "react-bootstrap/ListGroup";
 import DrugDropdown from "./DrugDropdown";
-import TooltipButton from "../Buttons/TooltipButton";
-import {drawBarcode} from "../../utility/drawBarcode";
-import {MedicineRecord} from "../../types/RecordTypes";
-import {getLastTakenVariant} from "../../utility/common";
-import ShadowBox from "../Buttons/ShadowBox";
-import LogButtons from "../Buttons/LogButtons";
+import TooltipButton from "../../Buttons/TooltipButton";
+import {drawBarcode} from "../../../utility/drawBarcode";
+import {MedicineRecord} from "../../../types/RecordTypes";
+import {getLastTakenVariant} from "../../../utility/common";
+import ShadowBox from "../../Buttons/ShadowBox";
+import LogButtons from "../../Buttons/LogButtons";
 
 interface IProps {
     activeDrug: MedicineRecord

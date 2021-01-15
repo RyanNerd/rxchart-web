@@ -2,11 +2,12 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Confirm from "./Modals/Confirm";
 import DrugLogEdit from "./Modals/DrugLogEdit";
-import DrugLogGrid from "../Grids/DrugLogGrid";
+import DrugLogGrid from "./Grids/DrugLogGrid";
 import Form from 'react-bootstrap/Form';
 import LastTakenButton from "../Buttons/LastTakenButton";
+import LogButtons from "../Buttons/LogButtons";
 import MedicineEdit from "./Modals/MedicineEdit";
-import MedicineListGroup from "../ListGroups/MedicineListGroup";
+import MedicineListGroup from "./ListGroups/MedicineListGroup";
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import Row from 'react-bootstrap/Row';
 import TabContent from "../../styles/common.css";
@@ -20,7 +21,7 @@ import {
     getLastTakenVariant,
     getMDY
 } from "../../utility/common";
-import LogButtons from "../Buttons/LogButtons";
+import PrintMedicineCheckout from "../Buttons/PrintMedicineCheckout";
 
 /**
  * MedicinePage
@@ -41,7 +42,9 @@ const MedicinePage = (): JSX.Element | null => {
     const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
     const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
+    const [showMedicineCheckout,setShowMedicineCheckout] = useState(false);
     const focusRef = useRef<HTMLInputElement>(null);
+    const printRef = useRef<any>(null);
 
     // Set the activeDrug when the medicineList changes
     useEffect(() => {
@@ -154,6 +157,16 @@ const MedicinePage = (): JSX.Element | null => {
                         >
                             Edit <b>{activeDrug.Drug}</b>
                         </Button>
+                        }
+
+                        {drugLogList && drugLogList.length > 0 &&
+                            <PrintMedicineCheckout
+                                className="ml-2"
+                                size="sm"
+                                variant="info"
+                            >
+                                Print Medicine Checkout
+                            </PrintMedicineCheckout>
                         }
                     </Row>
 
