@@ -56,17 +56,6 @@ const PrintMedicineCheckout = (props: any) => {
         )
     }
 
-    const popClick = () => {
-        const myWindow = window.open('', 'mywindow', 'status=1,width=650,height=550');
-        if (myWindow) {
-            const el = document.getElementById('checkout-print');
-            const printableElements = el ? el.innerHTML : '';
-            myWindow.document.body.innerHTML ='<html><head><title></title></head><body onafterprint="self.close() onload(self.print())">' +
-                printableElements + '</body></html>';
-            myWindow.print();
-        }
-    }
-
     return (
         <div className="wrap">
             <Button

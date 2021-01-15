@@ -42,9 +42,7 @@ const MedicinePage = (): JSX.Element | null => {
     const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
     const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
-    const [showMedicineCheckout,setShowMedicineCheckout] = useState(false);
     const focusRef = useRef<HTMLInputElement>(null);
-    const printRef = useRef<any>(null);
 
     // Set the activeDrug when the medicineList changes
     useEffect(() => {
