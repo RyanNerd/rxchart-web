@@ -1,10 +1,27 @@
 import React, {useState} from 'reactn';
 import {Button, Modal} from "react-bootstrap";
 import '../../styles/print.css';
+import DrugLogGrid from "../Pages/Grids/DrugLogGrid";
+import {DrugLogRecord, MedicineRecord} from "../../types/RecordTypes";
+import {ButtonProps} from "react-bootstrap/Button";
 
-const PrintMedicineCheckout = (props: any) => {
+interface IProps extends ButtonProps {
+    medicineList: MedicineRecord[]
+    drugLogList: DrugLogRecord[]
+}
+
+const PrintMedicineCheckout = (props: IProps) => {
+    const medicineList = props.medicineList;
+    const drugLogList = props.drugLogList
+
     const [showPrintModal, setShowPrintModal] = useState(false);
 
+    // TODO: const checkoutList =
+
+    /**
+     * Print the element (including modals id="printThis")
+     * @param {HTMLElement} elem
+     */
     const printElement = (elem: HTMLElement) => {
         const domClone = elem.cloneNode(true);
 
@@ -30,10 +47,12 @@ const PrintMedicineCheckout = (props: any) => {
                 show={showPrintModal}
             >
                 <Modal.Body>
-                    <div id="printSelection">
-                        <h1>Place Holder</h1>
-                        <h2>Place Holder 2</h2>
-                    </div>
+                    <DrugLogGrid
+                        condensed="true"
+                        drugLog={drugLogList}
+                        medicineList={medicineList}
+                        drugId={null}
+                    />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button

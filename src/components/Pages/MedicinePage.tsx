@@ -64,7 +64,7 @@ const MedicinePage = (): JSX.Element | null => {
 
     // Set focus to the search input if the page key has changed
     useEffect(() => {
-        if (focusRef && focusRef.current) {
+        if (activeTabKey === 'medicine' && focusRef && focusRef.current) {
             focusRef.current.focus();
         }
     }, [activeTabKey]);
@@ -162,6 +162,8 @@ const MedicinePage = (): JSX.Element | null => {
                                 className="ml-2"
                                 size="sm"
                                 variant="info"
+                                drugLogList={drugLogList}
+                                medicineList={medicineList}
                             >
                                 Print Medicine Checkout
                             </PrintMedicineCheckout>
