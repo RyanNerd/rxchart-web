@@ -15,13 +15,12 @@ import TooltipButton from "../Buttons/TooltipButton";
 import {Alert} from "react-bootstrap";
 import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
 import {
-    calculateLastTaken,
+    calculateLastTaken, getCheckoutList,
     getDrugName,
     getFormattedDate,
     getLastTakenVariant,
     getMDY
 } from "../../utility/common";
-import PrintMedicineCheckout from "../Buttons/PrintMedicineCheckout";
 
 /**
  * MedicinePage
@@ -33,7 +32,9 @@ const MedicinePage = (): JSX.Element | null => {
     const [, setMedicine] = useGlobal('medicine');
     const [activeDrug, setActiveDrug] = useState<MedicineRecord | null>(null);
     const [activeResident] = useGlobal('activeResident');
-    const [activeTabKey] = useGlobal('activeTabKey');
+    const [activeTabKey, setActiveTabKey] = useGlobal('activeTabKey');
+    const [apiKey] = useGlobal('apiKey');
+    const [checkoutDisabled, setCheckoutDisabled] = useState(apiKey === null || !activeResident)
     const [drugLogList] = useGlobal('drugLogList');
     const [lastTaken, setLastTaken] = useState<number | null>(null);
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
@@ -74,6 +75,19 @@ const MedicinePage = (): JSX.Element | null => {
         const clientId = activeResident?.Id ? activeResident.Id : null;
         setResidentId(clientId);
     }, [activeResident]);
+
+    useEffect(() => {
+        if (apiKey && activeResident && drugLogList.length > 0) {
+            const checkoutList = getCheckoutList(drugLogList);
+            if (checkoutList.length > 0) {
+                setCheckoutDisabled(false);
+            } else {
+                setCheckoutDisabled(true);
+            }
+        } else {
+            setCheckoutDisabled(true);
+        }
+    }, [activeResident, apiKey, drugLogList])
 
     // If there isn't an activeResident or this isn't the active tab then do not render
     if (!residentId || activeTabKey !== 'medicine') {
@@ -157,17 +171,15 @@ const MedicinePage = (): JSX.Element | null => {
                         </Button>
                         }
 
-                        {drugLogList && drugLogList.length > 0 &&
-                            <PrintMedicineCheckout
-                                className="ml-2"
-                                size="sm"
-                                variant="info"
-                                drugLogList={drugLogList}
-                                medicineList={medicineList}
-                            >
-                                Print Medicine Checkout
-                            </PrintMedicineCheckout>
-                        }
+                        <Button
+                            className="ml-3"
+                            size="sm"
+                            variant="info"
+                            disabled={checkoutDisabled}
+                            onClick={() =>{setActiveTabKey('medicine-checkout')}}
+                        >
+                            Print Medicine Checkout
+                        </Button>
                     </Row>
 
                     <Row className="mt-3">

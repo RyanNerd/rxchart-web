@@ -1,6 +1,6 @@
 import React from 'reactn';
 import Button from 'react-bootstrap/Button';
-import Table from 'react-bootstrap/Table';
+import Table, {TableProps} from 'react-bootstrap/Table';
 import {DrugLogRecord, MedicineRecord} from "../../../types/RecordTypes";
 import {
     calculateLastTaken,
@@ -11,7 +11,7 @@ import {
     isToday
 } from "../../../utility/common";
 
-interface IProps {
+interface IProps extends TableProps {
     checkoutOnly?: boolean
     columns?: string[]
     condensed?: string
@@ -177,6 +177,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
 
     return (
         <Table
+            {...props}
             className={condensed !== 'false' ? 'w-auto' : ''}
             striped
             bordered
