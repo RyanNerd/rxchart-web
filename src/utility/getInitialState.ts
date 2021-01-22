@@ -21,6 +21,8 @@ export interface IProviders {
  */
 const getInitialState = () => {
     const baseUrl = process.env.REACT_APP_BASEURL || '';
+    const errorDetail = (baseUrl.length === 0) ?
+        'The BASEURL environment variable is not set in the .env file or the .env file is missing' : undefined;
     const providers = {
         authenticationProvider: AuthenticationProvider(baseUrl),
         medHistoryProvider: MedHistoryProvider(baseUrl),
@@ -47,7 +49,7 @@ const getInitialState = () => {
         development: process.env.REACT_APP_DEVELOPMENT === 'true',
         drugLog: null,
         drugLogList: [] as DrugLogRecord[],
-        errorDetails: undefined,
+        errorDetails: errorDetail,
         login: null,
         loginFailed: false,
         logout: false,
