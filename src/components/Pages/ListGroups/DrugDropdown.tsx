@@ -1,7 +1,7 @@
 import React from 'reactn';
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
-import {MedicineRecord} from "../../types/RecordTypes";
+import {MedicineRecord} from "../../../types/RecordTypes";
 
 interface IProps {
     disabled?: boolean

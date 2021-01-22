@@ -1,7 +1,7 @@
 import Confirm from "./Modals/Confirm";
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import ResidentEdit from './Modals/ResidentEdit';
-import ResidentGrid from '../Grids/ResidentGrid';
+import ResidentGrid from './Grids/ResidentGrid';
 import TooltipButton from "../Buttons/TooltipButton";
 import {Alert, Form, Row} from "react-bootstrap";
 import {clientFullName} from '../../utility/common';

@@ -17,6 +17,8 @@ export type DrugLogRecord = {
     Id: null | number
     MedicineId: number
     Notes: string
+    In: null | number
+    Out: null | number
     ResidentId: number
     Updated?: null | Date
     [key: string]: any

@@ -2,11 +2,11 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Confirm from "./Modals/Confirm";
 import DrugLogEdit from "./Modals/DrugLogEdit";
-import DrugLogGrid from "../Grids/DrugLogGrid";
+import DrugLogGrid from "./Grids/DrugLogGrid";
 import Form from 'react-bootstrap/Form';
 import LastTakenButton from "../Buttons/LastTakenButton";
 import LogButtons from "../Buttons/LogButtons";
-import MedicineDetail from "../Grids/MedicineDetail";
+import MedicineDetail from "./Grids/MedicineDetail";
 import MedicineEdit from "./Modals/MedicineEdit";
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import Row from 'react-bootstrap/Row';
@@ -130,7 +130,9 @@ const OtcPage = (): JSX.Element | null => {
                 Id: null,
                 ResidentId: residentId,
                 MedicineId: drugId,
-                Notes: notes
+                Notes: notes,
+                In: null,
+                Out: null
             };
             setDrugLog({action: 'update', payload: drugLogInfo});
         }

@@ -2,11 +2,12 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Confirm from "./Modals/Confirm";
 import DrugLogEdit from "./Modals/DrugLogEdit";
-import DrugLogGrid from "../Grids/DrugLogGrid";
+import DrugLogGrid from "./Grids/DrugLogGrid";
 import Form from 'react-bootstrap/Form';
 import LastTakenButton from "../Buttons/LastTakenButton";
+import LogButtons from "../Buttons/LogButtons";
 import MedicineEdit from "./Modals/MedicineEdit";
-import MedicineListGroup from "../ListGroups/MedicineListGroup";
+import MedicineListGroup from "./ListGroups/MedicineListGroup";
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import Row from 'react-bootstrap/Row';
 import TabContent from "../../styles/common.css";
@@ -14,13 +15,12 @@ import TooltipButton from "../Buttons/TooltipButton";
 import {Alert} from "react-bootstrap";
 import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
 import {
-    calculateLastTaken,
+    calculateLastTaken, getCheckoutList,
     getDrugName,
     getFormattedDate,
     getLastTakenVariant,
     getMDY
 } from "../../utility/common";
-import LogButtons from "../Buttons/LogButtons";
 
 /**
  * MedicinePage
@@ -32,7 +32,9 @@ const MedicinePage = (): JSX.Element | null => {
     const [, setMedicine] = useGlobal('medicine');
     const [activeDrug, setActiveDrug] = useState<MedicineRecord | null>(null);
     const [activeResident] = useGlobal('activeResident');
-    const [activeTabKey] = useGlobal('activeTabKey');
+    const [activeTabKey, setActiveTabKey] = useGlobal('activeTabKey');
+    const [apiKey] = useGlobal('apiKey');
+    const [checkoutDisabled, setCheckoutDisabled] = useState(apiKey === null || !activeResident)
     const [drugLogList] = useGlobal('drugLogList');
     const [lastTaken, setLastTaken] = useState<number | null>(null);
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
@@ -63,7 +65,7 @@ const MedicinePage = (): JSX.Element | null => {
 
     // Set focus to the search input if the page key has changed
     useEffect(() => {
-        if (focusRef && focusRef.current) {
+        if (activeTabKey === 'medicine' && focusRef && focusRef.current) {
             focusRef.current.focus();
         }
     }, [activeTabKey]);
@@ -73,6 +75,19 @@ const MedicinePage = (): JSX.Element | null => {
         const clientId = activeResident?.Id ? activeResident.Id : null;
         setResidentId(clientId);
     }, [activeResident]);
+
+    useEffect(() => {
+        if (apiKey && activeResident && drugLogList.length > 0) {
+            const checkoutList = getCheckoutList(drugLogList);
+            if (checkoutList.length > 0) {
+                setCheckoutDisabled(false);
+            } else {
+                setCheckoutDisabled(true);
+            }
+        } else {
+            setCheckoutDisabled(true);
+        }
+    }, [activeResident, apiKey, drugLogList])
 
     // If there isn't an activeResident or this isn't the active tab then do not render
     if (!residentId || activeTabKey !== 'medicine') {
@@ -106,7 +121,9 @@ const MedicinePage = (): JSX.Element | null => {
             Id: null,
             ResidentId: residentId,
             MedicineId: drugId,
-            Notes: notes
+            Notes: notes,
+            In: null,
+            Out: null
         };
         setDrugLog({action: 'update', payload: drugLogInfo});
     }
@@ -153,19 +170,29 @@ const MedicinePage = (): JSX.Element | null => {
                             Edit <b>{activeDrug.Drug}</b>
                         </Button>
                         }
+
+                        <Button
+                            className="ml-3"
+                            size="sm"
+                            variant="info"
+                            disabled={checkoutDisabled}
+                            onClick={() =>{setActiveTabKey('medicine-checkout')}}
+                        >
+                            Print Medicine Checkout
+                        </Button>
                     </Row>
 
                     <Row className="mt-3">
                         {activeDrug &&
                         <MedicineListGroup
-                            disabled={drugLog !== null}
-                            lastTaken={lastTaken}
-                            medicineList={medicineList}
                             activeDrug={activeDrug}
-                            drugChanged={(drug: MedicineRecord) => setActiveDrug(drug)}
                             addDrugLog={(e: React.MouseEvent<HTMLElement>) => addEditDrugLog(e)}
-                            logDrug={(amount: number) => handleLogDrugAmount(amount, activeDrug.Id as number)}
                             canvasId={'med-barcode'}
+                            disabled={drugLog !== null}
+                            drugChanged={(drug: MedicineRecord) => setActiveDrug(drug)}
+                            lastTaken={lastTaken}
+                            logDrug={(amount: number) => handleLogDrugAmount(amount, activeDrug.Id as number)}
+                            medicineList={medicineList}
                         />
                         }
                     </Row>
@@ -197,7 +224,7 @@ const MedicinePage = (): JSX.Element | null => {
                             <LastTakenButton
                                 lastTaken={lastTaken}
                             />
-                            </span>
+                        </span>
                     </Row>
 
                     <Row>

@@ -1,5 +1,5 @@
 import Confirm from "./Modals/Confirm";
-import MedicineDetail from "../Grids/MedicineDetail";
+import MedicineDetail from "./Grids/MedicineDetail";
 import MedicineEdit from "./Modals/MedicineEdit";
 import React, {useGlobal, useState} from 'reactn';
 import Table from "react-bootstrap/Table";

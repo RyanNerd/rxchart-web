@@ -1,6 +1,6 @@
 import React, {useGlobal} from 'reactn';
 import Button from 'react-bootstrap/Button';
-import DrugLogGrid from "../Grids/DrugLogGrid";
+import DrugLogGrid from './Grids/DrugLogGrid';
 
 /**
  * DrugHistoryPage

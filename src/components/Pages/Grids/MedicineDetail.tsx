@@ -1,6 +1,6 @@
 import Button from "react-bootstrap/Button";
 import React from "reactn";
-import {MedicineRecord} from "../../types/RecordTypes";
+import {MedicineRecord} from "../../../types/RecordTypes";
 import ToggleButton from "react-bootstrap/ToggleButton";
 
 interface IProps {

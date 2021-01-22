@@ -5,10 +5,12 @@ import ManageDrugPage from "./ManageDrugPage";
 import ManageOtcPage from "./ManageOtcPage";
 import MedicinePage from "./MedicinePage";
 import OtcPage from "./OtcPage";
-import React, {useGlobal} from 'reactn';
+import React, {useGlobal, useEffect, useState} from 'reactn';
 import ResidentPage from "./ResidentPage";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
+import MedicineCheckout from "./MedicineCheckout";
+import {getCheckoutList} from "../../utility/common";
 
 /**
  * Landing Page - Tab Page Menu UI
@@ -19,6 +21,21 @@ const LandingPage = () => {
     const [activeTabKey, setActiveTabKey] = useGlobal('activeTabKey');
     const [apiKey] = useGlobal('apiKey');
     const [errorDetails] = useGlobal('errorDetails');
+    const [checkoutDisabled, setCheckoutDisabled] = useState(apiKey === null || !activeResident);
+    const [drugLogList] = useGlobal('drugLogList');
+
+    useEffect(() => {
+        if (apiKey && activeResident && drugLogList.length > 0) {
+            const checkoutList = getCheckoutList(drugLogList);
+            if (checkoutList.length > 0) {
+                setCheckoutDisabled(false);
+            } else {
+                setCheckoutDisabled(true);
+            }
+        } else {
+            setCheckoutDisabled(true);
+        }
+    }, [activeResident, apiKey, drugLogList])
 
     return (
         <Tabs
@@ -74,6 +91,15 @@ const LandingPage = () => {
             >
                 <ManageOtcPage/>
             </Tab>
+
+            <Tab
+                disabled={checkoutDisabled}
+                eventKey="medicine-checkout"
+                title="Medicine Checkout"
+            >
+                <MedicineCheckout/>
+            </Tab>
+
             <Tab
                 disabled={!errorDetails}
                 eventKey="error"

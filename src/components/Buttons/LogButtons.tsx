@@ -7,6 +7,7 @@ interface IProps {
     onLogAmount: (n: number) => void
     drugName: string
     disabled?: boolean
+    buttonTitle?: string
 }
 
 const LogButtons = (props: IProps) => {
@@ -15,7 +16,8 @@ const LogButtons = (props: IProps) => {
         lastTakenVariant,
         onLogAmount,
         disabled = false,
-        drugName
+        drugName,
+        buttonTitle = 'Log'
     } = props;
 
     const disable = lastTaken === 0 || disabled;
@@ -31,7 +33,7 @@ const LogButtons = (props: IProps) => {
                     onLogAmount(1);
                 }}
             >
-                Log 1 {drugName}
+                {buttonTitle} 1 {drugName}
             </Button>
 
             <Button
@@ -43,7 +45,7 @@ const LogButtons = (props: IProps) => {
                     onLogAmount(2);
                 }}
             >
-                Log 2
+                {buttonTitle} 2
             </Button>
 
             <Button
@@ -55,7 +57,7 @@ const LogButtons = (props: IProps) => {
                     onLogAmount(3);
                 }}
             >
-                Log 3
+                {buttonTitle} 3
             </Button>
 
             <Button
@@ -66,7 +68,7 @@ const LogButtons = (props: IProps) => {
                     onLogAmount(4);
                 }}
             >
-                Log 4
+                {buttonTitle} 4
             </Button>
         </>
     )
