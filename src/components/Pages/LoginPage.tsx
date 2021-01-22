@@ -16,6 +16,7 @@ const LoginPage = (): JSX.Element | null => {
     const [, setAuth] = useGlobal('auth');
     const [activeTabKey] = useGlobal('activeTabKey');
     const [apiKey] = useGlobal('apiKey');
+    const [canLogin, setCanLogin] = useState(false);
     const [password, setPassword] = useState('');
     const [showAlert, setShowAlert] = useGlobal('loginFailed');
     const [username, setUsername] = useState('');
@@ -27,6 +28,14 @@ const LoginPage = (): JSX.Element | null => {
             focusRef.current.focus();
         }
     }, [activeTabKey, focusRef]);
+
+    useEffect(() => {
+        if ((!username || username.length === 0) || (!password || password.length === 0)) {
+            setCanLogin(false);
+        } else {
+            setCanLogin(true);
+        }
+    }, [password, username]);
 
     // Prevent render if this tab isn't active
     if (activeTabKey !== 'login') {
@@ -72,10 +81,13 @@ const LoginPage = (): JSX.Element | null => {
 
             <Form.Group as={Row}>
                 <Col sm={1}>
-                    <Button onClick={(e) => {
-                        e.preventDefault();
-                        setAuth({action: 'login', payload: {username, password}});
-                    }}>
+                    <Button
+                        disabled={!canLogin}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setAuth({action: 'login', payload: {username, password}});
+                        }}
+                    >
                         Login
                     </Button>
                 </Col>
