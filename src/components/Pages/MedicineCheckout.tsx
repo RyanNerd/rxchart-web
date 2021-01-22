@@ -1,30 +1,31 @@
 import React, {useGlobal} from 'reactn';
 import {Button, ListGroup} from "react-bootstrap";
 import DrugLogGrid from "../Pages/Grids/DrugLogGrid";
-import {clientFullName, getFormattedDate, isToday} from "../../utility/common";
-import {DrugLogRecord} from "../../types/RecordTypes";
+import {clientFullName, getCheckoutList, getFormattedDate} from "../../utility/common";
 
+/**
+ * MedicineCheckout page
+ * Displays a table of drugLogList records that have In or Out values > 0 and were entered/updated today.
+ * @return {JSX.Element | null}
+ * @constructor
+ */
 const MedicineCheckout = () => {
     const [drugLogList] = useGlobal('drugLogList');
     const [medicineList] = useGlobal('medicineList');
     const [activeTabKey] = useGlobal('activeTabKey');
     const [activeResident] = useGlobal('activeResident');
     const clientName = activeResident ? clientFullName(activeResident) : '';
-    const now = new Date();
-    const today = getFormattedDate(now);
 
+    // Prevent render if the active tab isn't medicine-checkout or there are no drugLogList or medicineList records.
     if (activeTabKey !== 'medicine-checkout' ||
             !drugLogList || drugLogList.length <=0 ||
             !medicineList || medicineList.length <= 0) {
         return null;
     }
 
-    const checkoutList = drugLogList.filter((drug) => {
-        const isThisDay = (drug: DrugLogRecord) => {
-            return drug && drug.Updated && isToday(new Date(drug.Updated));
-        }
-        return (drug.Out && drug.Out > 0) && isThisDay(drug);
-    });
+    const now = new Date();
+    const today = getFormattedDate(now);
+    const checkoutList = getCheckoutList(drugLogList);
 
     return (
         <ListGroup>

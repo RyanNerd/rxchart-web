@@ -277,11 +277,16 @@ export const searchDrugs = (searchText: string, drugList: MedicineRecord[]) => {
     return null;
 }
 
+/**
+ * Given the drugLogList this returns a filtered list of drugLogList records that are populated with In or Out
+ * for today's date.
+ * @param {DrugLogRecord[]} drugLogList
+ */
 export const getCheckoutList = (drugLogList: DrugLogRecord[]) => {
     return drugLogList.filter((drug) => {
         const isThisDay = (drug: DrugLogRecord) => {
             return drug && drug.Updated && isToday(new Date(drug.Updated));
         }
-        return (drug.Out && drug.Out > 0) && isThisDay(drug);
+        return ((drug.Out && drug.Out > 0) || (drug.In && drug.In > 0)) && isThisDay(drug);
     });
 }
