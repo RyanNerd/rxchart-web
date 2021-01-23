@@ -54,7 +54,7 @@ const MedicineDetail = (props: IProps): JSX.Element => {
                     variant="outline-info"
                     checked={isSelected || false}
                     onClick={(e) => onSelect(e, drug)}
-                    value={drug.Id}
+                    value={drug.Id as number}
                 />
             </td>
             }

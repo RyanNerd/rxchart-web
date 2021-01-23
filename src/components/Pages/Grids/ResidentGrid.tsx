@@ -60,7 +60,7 @@ const ResidentGrid = (props: IProps): JSX.Element => {
                         variant="outline-info"
                         checked={isSelected || false}
                         onClick={(e) => onSelected(e, resident)}
-                        value={resident.Id}
+                        value={resident.Id as number}
                     />
                 </td>
                 }
