@@ -231,7 +231,7 @@ const MedicinePage = (): JSX.Element | null => {
                         <DrugLogGrid
                             drugLog={drugLogList}
                             drugId={activeDrug && activeDrug.Id}
-                            columns={['Created', 'Updated','Notes']}
+                            columns={['Created', 'Updated','Notes', 'Out', 'In']}
                             onEdit={(e, r) => addEditDrugLog(e, r)}
                             onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
                         />
