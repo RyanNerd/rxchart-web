@@ -17,10 +17,29 @@
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <style type="text/css" media="print">
+      @page
+      {
+          size:  auto;   /* auto is the initial value */
+          margin: 0mm;  /* this affects the margin in the printer settings */
+      }
+
+      html
+      {
+          background-color: #FFFFFF;
+          margin: 0px;  /* this affects the margin on the html before sending to printer */
+      }
+
+      body
+      {
+          border: solid 1px blue ;
+          margin: 10mm 10mm 15mm 10mm; /* margin you want for the content */
+      }
+    </style>
     <title>℞Chart</title>
   </head>
   <body>
-    <h3 style="text-align: center">℞Chart <img src="%PUBLIC_URL%/prescription.svg" id="rxchart-img" width="30px" height="35px" alt="logo"/> <span style="color: steelblue" id="organization"> </span></h3>
+    <h3 style="text-align: center" class="d-print-none">℞Chart <img src="%PUBLIC_URL%/prescription.svg" id="rxchart-img" width="30px" height="35px" alt="logo"/> <span style="color: steelblue" id="organization"> </span></h3>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
   </body>

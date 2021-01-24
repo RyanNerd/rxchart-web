@@ -13,10 +13,11 @@ import {
 
 interface IProps extends TableProps {
     checkoutOnly?: boolean
-    columns?: string[]
+    columns: string[]
     condensed?: string
     drugId?: number | null
     drugLog?: DrugLogRecord[]
+    includeCheckout?: boolean
     medicineList?: MedicineRecord[]
     onDelete?: (e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) => void
     onEdit?: (e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) => void
@@ -31,11 +32,11 @@ interface IProps extends TableProps {
  */
 const DrugLogGrid = (props: IProps): JSX.Element => {
     const {
-        checkoutOnly = false,
-        columns = ['Created', 'Updated', 'Amount', 'Out', 'In'],
+        columns,
         condensed = "false",
         drugId,
         drugLog = [],
+        includeCheckout = true,
         medicineList = [],
         onDelete,
         onEdit,
@@ -79,6 +80,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
         if (!drugName || drugName.length === 0) {
             drugName = 'UNKNOWN - Medicine removed!';
         }
+
         const medicineId = drug.MedicineId;
         const drugStrength = drugColumnLookup(medicineId, 'Strength');
         const createdDate = new Date(drug.Created || '');
@@ -88,8 +90,8 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
         const variantColor = getBsColor(variant);
         const fontWeight = isToday(updatedDate) ? 'bold' : undefined;
 
-        // If the checkoutOnly switch is true then suppress any rows that don't have an Out value
-        if (checkoutOnly && (drug.Out === null || drug.Out <= 0)) {
+        // If includeCheckout is false then supress any rows where drug.Out >0 or drug.In > 0
+        if (!includeCheckout && ((drug.Out && drug.Out >= 0) || (drug.In && drug.In >= 0) )) {
             return null;
         }
 
@@ -115,6 +117,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                     <span>{drugName}</span> <span>{drugStrength}</span>
                 </td>
                 }
+                {columns.includes('Created') &&
                 <td style={{
                     textAlign: 'center',
                     verticalAlign: "middle",
@@ -122,6 +125,8 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                 }}>
                     {getFormattedDate(createdDate)}
                 </td>
+                }
+                {columns.includes('Updated') &&
                 <td style={{
                     textAlign: 'center',
                     verticalAlign: "middle",
@@ -129,6 +134,8 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                 }}>
                     {getFormattedDate(updatedDate)}
                 </td>
+                }
+                {columns.includes('Notes')}
                 <td style={{
                     textAlign: 'center',
                     verticalAlign: "middle",
@@ -205,9 +212,9 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                     <span>Updated</span>
                 </th>
                 }
-                {columns.includes('Amount') &&
+                {columns.includes('Notes') &&
                 <th style={{textAlign: 'center', verticalAlign: "middle"}}>
-                    <span>Amount</span>
+                    <span>Amount/Notes</span>
                 </th>
                 }
                 {columns.includes('Out') &&

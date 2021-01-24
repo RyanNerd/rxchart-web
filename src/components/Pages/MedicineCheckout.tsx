@@ -31,7 +31,7 @@ const MedicineCheckout = () => {
         <ListGroup>
             <ListGroup.Item>
                 <Button
-                    className="mb-2"
+                    className="mb-2 d-print-none"
                     onClick={() => {
                         window.print();
                     }}
@@ -55,6 +55,7 @@ medications back in to the front office, I can be detained and arrested by the p
             </ListGroup.Item>
             <ListGroup.Item>
                 <DrugLogGrid
+                    columns={['Drug', 'Updated', 'Notes', 'Out', 'In']}
                     drugLog={checkoutList}
                     medicineList={medicineList}
                     drugId={null}

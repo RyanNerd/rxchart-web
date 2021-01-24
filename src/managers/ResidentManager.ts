@@ -62,7 +62,7 @@ const ResidentManager = (residentProvider: IResidentProvider): IResidentManager 
             order_by: [
                 {column: 'LastName', direction: 'asc'},
                 {column: 'FirstName', direction: 'asc'},
-            ],
+            ]
         };
         return await residentProvider.search(searchCriteria)
         .then((residents) => {

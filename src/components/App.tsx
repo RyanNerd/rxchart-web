@@ -88,7 +88,10 @@ const App = () => {
     return (
         <>
             {activeClient &&
-                <h4 style={{textAlign: "center"}}>
+                <h4
+                    className="d-print-none"
+                    style={{textAlign: "center"}}
+                >
                     <span style={{background: residentColor, color: residentForegroundColor}}>
                         {clientFullName(activeClient) + ' ' + clientDOB(activeClient)}
                     </span>
