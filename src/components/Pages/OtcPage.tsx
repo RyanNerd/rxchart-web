@@ -287,7 +287,7 @@ const OtcPage = (): JSX.Element | null => {
 
                         <Col sm="8">
                             <DrugLogGrid
-                                columns={['Drug', 'Created', 'Updated', 'Amount']}
+                                columns={['Drug', 'Created', 'Updated', 'Notes']}
                                 drugLog={otcLogList || []}
                                 otcList={otcList}
                                 onEdit={(e, r) => {

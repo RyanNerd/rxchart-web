@@ -23,6 +23,12 @@ const LandingPage = () => {
     const [errorDetails] = useGlobal('errorDetails');
     const [checkoutDisabled, setCheckoutDisabled] = useState(apiKey === null || !activeResident);
     const [drugLogList] = useGlobal('drugLogList');
+    const navBarElement = document.getElementsByClassName('nav nav-tabs');
+
+    if (navBarElement && navBarElement.length > 0) {
+        const navBar = navBarElement[0];
+        navBar.classList.add('d-print-none');
+    }
 
     useEffect(() => {
         if (apiKey && activeResident && drugLogList.length > 0) {
