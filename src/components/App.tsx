@@ -18,13 +18,14 @@ import AuthObserver from "../observers/AuthObserver";
  */
 const App = () => {
     const [activeClient] = useGlobal('activeResident');
+    const [activeTabKey] = useGlobal('activeTabKey');
     const [development] = useGlobal('development');
     const [mm] = useGlobal('medicineManager');
     const [providers] = useGlobal('providers');
+    const [rxchartImage, setRxchartImage] = useState<HTMLElement | null>(null);
     const residentColor = development ? 'blue' : "#edf11e";
     const residentForegroundColor = development ? "#fffff0" : "black";
     const version = process.env.REACT_APP_VERSION || '[unknown]';
-    const [rxchartImage, setRxchartImage] = useState<HTMLElement | null>(null);
 
     useEffect(() => {
         const handleImageClick = () => {
@@ -55,7 +56,7 @@ const App = () => {
      * values of the global state variable. The global variable for an observer is an object with
      * the signature of {action: {string}, payload: {any}} with the action string property indicating what action the
      * observer should perform; the payload property contains any information the observer needs to act on.
-     * Fpr example the ClientObserver is watching for changes to the global `client` variable. If the client variable
+     * For example the ClientObserver is watching for changes to the global `client` variable. If the client variable
      * isn't null then the observer expects the client variable to be an object with the action property set to one
      * of three values: 'load', 'update', or 'delete'
      * If the action is 'load' then the observer will load all client records into the global variable residentList.
@@ -65,13 +66,13 @@ const App = () => {
      * Advantages:
      * - Simplicity: Set the observed global variable action and payload then automatically the observer will
      *               act accordingly.
-     * - Declaritive: Observers are pure functions implemented via React hooks.
+     * - Declarative: Observers are pure functions implemented via React hooks.
      * - Robust: Due to the declarive nature unexpected side effects & state mutations are minimized.
      * Disadvantages:
      * - Abstraction: Instead of importing an observer, a client sets the observed global variable. Unlike importing
      *                a function which would have a signature it isn't always obvious what action strings and payload
-     *                values are accepatable.
-     * - Flow: Observers react to state changes to the watched global variable so code is excuted similar to events
+     *                values are acceptable.
+     * - Flow: Observers react to state changes to the watched global variable so code is executed similar to events
      *         when the state changes the code executes as opposed to line-by-line linear processing.
      * - Not OOP: Observers are pure functions lacking the advantages (and disadvantages) of object oriented
      *            architecture.
@@ -89,7 +90,7 @@ const App = () => {
         <>
             {activeClient &&
                 <h4
-                    className="d-print-none"
+                    className={activeTabKey === "history" ? "" : "d-print-none"}
                     style={{textAlign: "center"}}
                 >
                     <span style={{background: residentColor, color: residentForegroundColor}}>

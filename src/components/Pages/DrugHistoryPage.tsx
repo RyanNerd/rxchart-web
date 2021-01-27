@@ -21,6 +21,7 @@ const DrugHistoryPage = (): JSX.Element | null => {
     return (
         <>
             <Button
+                className="d-print-none"
                 style={{marginBottom: "5px"}}
                 onClick={() => window.print()}
                 variant="primary"
