@@ -9,6 +9,7 @@ import OtcMedicineObserver from "../observers/OtcMedicineObserver";
 import React, {useGlobal, useState, useEffect} from 'reactn';
 import {clientFullName, clientDOB} from "../utility/common";
 import AuthObserver from "../observers/AuthObserver";
+import {version} from './../../package.json'; /* @see: https://stackoverflow.com/a/36733261/4323201 */
 
 /**
  * Main Entry Component
@@ -25,7 +26,6 @@ const App = () => {
     const [rxchartImage, setRxchartImage] = useState<HTMLElement | null>(null);
     const residentColor = development ? 'blue' : "#edf11e";
     const residentForegroundColor = development ? "#fffff0" : "black";
-    const version = process.env.REACT_APP_VERSION || '[unknown]';
 
     useEffect(() => {
         const handleImageClick = () => {
