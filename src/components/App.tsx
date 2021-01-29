@@ -19,7 +19,6 @@ import {version} from './../../package.json'; /* @see: https://stackoverflow.com
  */
 const App = () => {
     const [activeClient] = useGlobal('activeResident');
-    const [activeTabKey] = useGlobal('activeTabKey');
     const [development] = useGlobal('development');
     const [mm] = useGlobal('medicineManager');
     const [providers] = useGlobal('providers');
@@ -41,7 +40,7 @@ const App = () => {
         return (() => {
             rxchartImage?.removeEventListener('click', handleImageClick, false);
         })
-    },[rxchartImage, version]);
+    },[rxchartImage]);
 
     /**
      * Initialize all the observers
@@ -90,7 +89,7 @@ const App = () => {
         <>
             {activeClient &&
                 <h4
-                    className={activeTabKey === "history" ? "" : "d-print-none"}
+                    className={"d-print-none"}
                     style={{textAlign: "center"}}
                 >
                     <span style={{background: residentColor, color: residentForegroundColor}}>
