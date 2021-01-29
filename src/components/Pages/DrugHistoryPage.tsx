@@ -1,6 +1,7 @@
 import React, {useGlobal} from 'reactn';
 import Button from 'react-bootstrap/Button';
 import DrugLogGrid from './Grids/DrugLogGrid';
+import {clientDOB, clientFullName} from "../../utility/common";
 
 /**
  * DrugHistoryPage
@@ -8,6 +9,7 @@ import DrugLogGrid from './Grids/DrugLogGrid';
  * @return {JSX.Element}
  */
 const DrugHistoryPage = (): JSX.Element | null => {
+    const [activeClient] = useGlobal('activeResident');
     const [activeTabKey] = useGlobal('activeTabKey');
     const [drugLogList] = useGlobal('drugLogList');
     const [medicineList] = useGlobal('medicineList');
@@ -21,14 +23,25 @@ const DrugHistoryPage = (): JSX.Element | null => {
     return (
         <>
             <Button
-                className="d-print-none"
-                style={{marginBottom: "5px"}}
+                className="d-print-none mb-3"
                 onClick={() => window.print()}
                 variant="primary"
                 size="sm"
             >
                 Print
             </Button>
+
+            {activeClient &&
+                <span
+                    className="ml-3 mb-3"
+                    style={{
+                        fontSize: "20px",
+                        fontWeight: "bold"
+                    }}
+                >
+                    {clientFullName(activeClient) + ' DOB:' + clientDOB(activeClient)}
+                </span>
+            }
 
             <DrugLogGrid
                 condensed="true"

@@ -9,7 +9,7 @@ import React, {useGlobal, useEffect, useState} from 'reactn';
 import ResidentPage from "./ResidentPage";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import MedicineCheckout from "./MedicineCheckout";
+import MedicineCheckoutPage from "./MedicineCheckoutPage";
 import {getCheckoutList} from "../../utility/common";
 
 /**
@@ -103,7 +103,7 @@ const LandingPage = () => {
                 eventKey="medicine-checkout"
                 title="Medicine Checkout"
             >
-                <MedicineCheckout/>
+                <MedicineCheckoutPage/>
             </Tab>
 
             <Tab

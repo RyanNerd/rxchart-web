@@ -4,12 +4,12 @@ import DrugLogGrid from "../Pages/Grids/DrugLogGrid";
 import {clientFullName, getCheckoutList, getFormattedDate} from "../../utility/common";
 
 /**
- * MedicineCheckout page
+ * MedicineCheckoutPage
  * Displays a table of drugLogList records that have In or Out values > 0 and were entered/updated today.
  * @return {JSX.Element | null}
  * @constructor
  */
-const MedicineCheckout = () => {
+const MedicineCheckoutPage = () => {
     const [drugLogList] = useGlobal('drugLogList');
     const [medicineList] = useGlobal('medicineList');
     const [activeTabKey] = useGlobal('activeTabKey');
@@ -65,4 +65,4 @@ medications back in to the front office, I can be detained and arrested by the p
     )
 }
 
-export default MedicineCheckout;
+export default MedicineCheckoutPage;
