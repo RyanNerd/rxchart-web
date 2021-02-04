@@ -23,6 +23,7 @@ const LastTakenButton = (props: IProps): JSX.Element | null => {
 
     return (
         <Button
+            size="sm"
             disabled
             style={{cursor: "default"}}
             variant={(lastTaken && lastTaken > 6) ? 'light' : getLastTakenVariant(lastTaken)}

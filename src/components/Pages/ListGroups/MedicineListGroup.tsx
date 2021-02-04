@@ -1,4 +1,4 @@
-import React, {useEffect} from 'reactn';
+import React, {useEffect, useState} from 'reactn';
 import ListGroup from "react-bootstrap/ListGroup";
 import DrugDropdown from "./DrugDropdown";
 import TooltipButton from "../../Buttons/TooltipButton";
@@ -7,6 +7,7 @@ import {MedicineRecord} from "../../../types/RecordTypes";
 import {getLastTakenVariant} from "../../../utility/common";
 import ShadowBox from "../../Buttons/ShadowBox";
 import LogButtons from "../../Buttons/LogButtons";
+import {Button} from "react-bootstrap";
 
 interface IProps {
     activeDrug: MedicineRecord
@@ -50,6 +51,7 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
     const fillDateType = (fillDateText) ? new Date(fillDateText) : null;
     const fillDateOptions = {month: '2-digit', day: '2-digit', year: 'numeric'};
     const fillDate = (fillDateType) ? fillDateType.toLocaleString('en-US', fillDateOptions) : null;
+    const [showDetails, setShowDetails] = useState(false);
 
     // Update the barcode image if the barcode has changed
     useEffect(() => {
@@ -58,7 +60,11 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
         if (canvasUpdated && canvas) {
             canvasUpdated(canvas);
         }
-    }, [barCode, canvasId, canvasUpdated]);
+    }, [barCode, canvasId, canvasUpdated, showDetails]);
+
+    useEffect(() => {
+        setShowDetails(false);
+    }, [drugId])
 
     /**
      * Determine the tooltip text given the number of hours the drug was last taken
@@ -100,6 +106,7 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
 
             <ListGroup.Item>
                 <TooltipButton
+                    size="sm"
                     disabled={disabled}
                     tooltip={tooltipText(lastTaken)}
                     placement="top"
@@ -120,7 +127,11 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
                 />
             </ListGroup.Item>
 
-            {directions && directions.length > 0 &&
+            <ListGroup.Item action onClick={() => setShowDetails(!showDetails)}>
+                {showDetails ? "Hide Details" : "Show Details"}
+            </ListGroup.Item>
+
+            {showDetails && directions && directions.length > 0 &&
             <ListGroup.Item>
                 <ShadowBox>
                     <b>
@@ -131,13 +142,13 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
             </ListGroup.Item>
             }
 
-            {notes && notes.length > 0 &&
+            {showDetails && notes && notes.length > 0 &&
             <ListGroup.Item>
                 <p><b>Notes: </b>{activeDrug.Notes}</p>
             </ListGroup.Item>
             }
 
-            {fillDate &&
+            {showDetails && fillDate &&
             <ListGroup.Item>
                 <b>
                     Fill Date:
@@ -146,7 +157,7 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
             </ListGroup.Item>
             }
 
-            {barCode &&
+            {showDetails && barCode &&
             <ListGroup.Item variant="info">
                 <canvas id={canvasId}/>
             </ListGroup.Item>

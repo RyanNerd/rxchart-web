@@ -21,6 +21,7 @@ import {
     getLastTakenVariant,
     getMDY
 } from "../../utility/common";
+import OtcListGroup from "./ListGroups/OtcListGroup";
 
 /**
  * MedicinePage
@@ -31,6 +32,7 @@ const MedicinePage = (): JSX.Element | null => {
     const [drugLog, setDrugLog] = useGlobal('drugLog');
     const [, setMedicine] = useGlobal('medicine');
     const [activeDrug, setActiveDrug] = useState<MedicineRecord | null>(null);
+    const [activeOtcDrug, setActiveOtcDrug] = useState<MedicineRecord | null>(null);
     const [activeResident] = useGlobal('activeResident');
     const [activeTabKey, setActiveTabKey] = useGlobal('activeTabKey');
     const [apiKey] = useGlobal('apiKey');
@@ -39,6 +41,7 @@ const MedicinePage = (): JSX.Element | null => {
     const [lastTaken, setLastTaken] = useState<number | null>(null);
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [medicineList] = useGlobal('medicineList');
+    const [otcList] = useGlobal('otcList');
     const [residentId, setResidentId] = useState<number | null>(activeResident?.Id || null);
     const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
     const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
@@ -89,6 +92,15 @@ const MedicinePage = (): JSX.Element | null => {
         }
     }, [activeResident, apiKey, drugLogList])
 
+    // Set the activeOtcDrug when the otcList changes.
+    useEffect(() => {
+        if (otcList.length > 0) {
+            setActiveOtcDrug(otcList[0]);
+        } else {
+            setActiveOtcDrug(null);
+        }
+    }, [otcList]);
+
     // If there isn't an activeResident or this isn't the active tab then do not render
     if (!residentId || activeTabKey !== 'medicine') {
         return null;
@@ -128,12 +140,32 @@ const MedicinePage = (): JSX.Element | null => {
         setDrugLog({action: 'update', payload: drugLogInfo});
     }
 
+    /**
+     * Fires when the Log 1 or Log 2, etc. buttons are clicked in the OtcListGroup are clicked
+     * @param {number} amount
+     */
+    const handleLogOtcDrugAmount = (amount: number) => {
+        const drugId = activeOtcDrug?.Id as number;
+        if (drugId) {
+            const notes = amount.toString();
+            const drugLogInfo = {
+                Id: null,
+                ResidentId: residentId,
+                MedicineId: drugId,
+                Notes: notes,
+                In: null,
+                Out: null
+            };
+            setDrugLog({action: 'update', payload: drugLogInfo});
+        }
+    }
+
     const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
 
     return (
         <>
             <Form className={TabContent} as={Row}>
-                <Col lg="5">
+                <Col lg="4">
                     <Row>
                         <TooltipButton
                             className="mr-1"
@@ -196,6 +228,17 @@ const MedicinePage = (): JSX.Element | null => {
                         />
                         }
                     </Row>
+
+                    {activeOtcDrug &&
+                    <Row className="mt-3">
+                        <OtcListGroup
+                            activeOtcDrug={activeOtcDrug}
+                            drugLogList={drugLogList}
+                            logOtcDrugAmount={(n) => handleLogOtcDrugAmount(n)}
+                            otcList={otcList}
+                            setActiveOtcDrug={(d) => setActiveOtcDrug(d)}/>
+                    </Row>
+                    }
                 </Col>
 
                 {activeDrug &&
