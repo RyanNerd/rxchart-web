@@ -7,7 +7,6 @@ import {MedicineRecord} from "../../../types/RecordTypes";
 import {getLastTakenVariant} from "../../../utility/common";
 import ShadowBox from "../../Buttons/ShadowBox";
 import LogButtons from "../../Buttons/LogButtons";
-import {Button} from "react-bootstrap";
 
 interface IProps {
     activeDrug: MedicineRecord

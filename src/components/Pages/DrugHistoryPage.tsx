@@ -15,6 +15,8 @@ const DrugHistoryPage = (): JSX.Element | null => {
     const [medicineList] = useGlobal('medicineList');
     const [otcList] = useGlobal('otcList');
 
+    const allMeds = medicineList.concat(otcList);
+
     // If this tab isn't active then don't render
     if (activeTabKey !== 'history') {
         return null;
@@ -47,9 +49,8 @@ const DrugHistoryPage = (): JSX.Element | null => {
                 condensed="true"
                 columns={['Drug', 'Created', 'Updated', 'Notes', 'Details']}
                 drugLog={drugLogList}
-                medicineList={medicineList}
+                medicineList={allMeds}
                 includeCheckout={false}
-                otcList={otcList}
                 drugId={null}
             />
         </>

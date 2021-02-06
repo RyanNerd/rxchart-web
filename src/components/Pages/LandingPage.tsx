@@ -72,12 +72,6 @@ const LandingPage = () => {
             </Tab>
             <Tab
                 disabled={apiKey === null || !activeResident}
-                eventKey="otc"
-                title={<span className={activeTabKey === 'otc' ? 'bld' : ''}>OTC</span>}>
-                <OtcPage/>
-            </Tab>
-            <Tab
-                disabled={apiKey === null || !activeResident}
                 eventKey="history"
                 title={<span className={activeTabKey === 'history' ? 'bld' : ''}>Drug History</span>}
             >
@@ -97,7 +91,6 @@ const LandingPage = () => {
             >
                 <ManageOtcPage/>
             </Tab>
-
             <Tab
                 disabled={checkoutDisabled}
                 eventKey="medicine-checkout"

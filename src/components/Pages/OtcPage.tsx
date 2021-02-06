@@ -289,7 +289,7 @@ const OtcPage = (): JSX.Element | null => {
                             <DrugLogGrid
                                 columns={['Drug', 'Created', 'Updated', 'Notes']}
                                 drugLog={otcLogList || []}
-                                otcList={otcList}
+                                medicineList={otcList}
                                 onEdit={(e, r) => {
                                     e.preventDefault();
                                     setDrugLogInfo(r);

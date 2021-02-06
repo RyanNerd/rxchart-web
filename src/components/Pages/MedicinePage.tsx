@@ -5,22 +5,15 @@ import DrugLogEdit from "./Modals/DrugLogEdit";
 import DrugLogGrid from "./Grids/DrugLogGrid";
 import Form from 'react-bootstrap/Form';
 import LastTakenButton from "../Buttons/LastTakenButton";
-import LogButtons from "../Buttons/LogButtons";
 import MedicineEdit from "./Modals/MedicineEdit";
 import MedicineListGroup from "./ListGroups/MedicineListGroup";
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import Row from 'react-bootstrap/Row';
 import TabContent from "../../styles/common.css";
 import TooltipButton from "../Buttons/TooltipButton";
-import {Alert} from "react-bootstrap";
+import {Alert, ListGroup} from "react-bootstrap";
 import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
-import {
-    calculateLastTaken, getCheckoutList,
-    getDrugName,
-    getFormattedDate,
-    getLastTakenVariant,
-    getMDY
-} from "../../utility/common";
+import {calculateLastTaken, getCheckoutList, getDrugName, getFormattedDate, getMDY} from "../../utility/common";
 import OtcListGroup from "./ListGroups/OtcListGroup";
 
 /**
@@ -42,6 +35,7 @@ const MedicinePage = (): JSX.Element | null => {
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [medicineList] = useGlobal('medicineList');
     const [otcList] = useGlobal('otcList');
+    const [otcLogList, setOtcLogList] = useState<DrugLogRecord[]>([]);
     const [residentId, setResidentId] = useState<number | null>(activeResident?.Id || null);
     const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
     const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
@@ -100,6 +94,17 @@ const MedicinePage = (): JSX.Element | null => {
             setActiveOtcDrug(null);
         }
     }, [otcList]);
+
+    // We only want to list the OTC drugs on this page that the resident has taken.
+    useEffect(() => {
+        // @link https://stackoverflow.com/questions/31005396/filter-array-of-objects-with-another-array-of-objects
+        const otc = (otcList.length > 0) && drugLogList ? drugLogList.filter((drug: DrugLogRecord) => {
+            return otcList.some((m) => {
+                return m.Id === drug?.MedicineId;
+            });
+        }) : [];
+        setOtcLogList(otc);
+    }, [drugLogList, otcList])
 
     // If there isn't an activeResident or this isn't the active tab then do not render
     if (!residentId || activeTabKey !== 'medicine') {
@@ -160,8 +165,6 @@ const MedicinePage = (): JSX.Element | null => {
         }
     }
 
-    const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
-
     return (
         <>
             <Form className={TabContent} as={Row}>
@@ -208,7 +211,9 @@ const MedicinePage = (): JSX.Element | null => {
                             size="sm"
                             variant="info"
                             disabled={checkoutDisabled}
-                            onClick={() =>{setActiveTabKey('medicine-checkout')}}
+                            onClick={() => {
+                                setActiveTabKey('medicine-checkout')
+                            }}
                         >
                             Print Medicine Checkout
                         </Button>
@@ -242,44 +247,43 @@ const MedicinePage = (): JSX.Element | null => {
                 </Col>
 
                 {activeDrug &&
-                <Col lg="6">
-                    <Row className="justify-content-center">
-                        <h2>
-                            <a
-                                className="hover-underline-animation"
-                                href={"https://goodrx.com/" + activeDrug.Drug}
-                                rel="noopener noreferrer"
-                                target="_blank">
-                                {activeDrug.Drug}
-                            </a> History
-                        </h2>
-                    </Row>
+                <ListGroup as={Col} className="mx-5">
+                    <ListGroup.Item style={{height: "375px", overflow: "auto", textAlign: "center"}}>
+                        <Button
+                            size="lg"
+                            className="hover-underline-animation"
+                            variant="link"
+                            target="_blank"
+                            href={"https://goodrx.com/" + activeDrug.Drug}
+                        >
+                            {activeDrug.Drug}
+                        </Button>
 
-                    <Row className="mb-3">
-                        <LogButtons
-                            disabled={drugLog !== null}
+                        <LastTakenButton
                             lastTaken={lastTaken}
-                            lastTakenVariant={lastTakenVariant}
-                            onLogAmount={(n) => handleLogDrugAmount(n, activeDrug.Id as number)}
-                            drugName={activeDrug.Drug}
                         />
-                        <span className="ml-3">
-                            <LastTakenButton
-                                lastTaken={lastTaken}
-                            />
-                        </span>
-                    </Row>
 
-                    <Row>
                         <DrugLogGrid
                             drugLog={drugLogList}
                             drugId={activeDrug && activeDrug.Id}
-                            columns={['Created', 'Updated','Notes', 'Out', 'In']}
+                            columns={['Created', 'Updated', 'Notes', 'Out', 'In']}
                             onEdit={(e, r) => addEditDrugLog(e, r)}
                             onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
                         />
-                    </Row>
-                </Col>
+                    </ListGroup.Item>
+
+                    <ListGroup.Item style={{height: "385px", overflow: "auto"}}>
+                        <h5 className="mb-2" style={{textAlign: "center"}}>OTC History</h5>
+                        <DrugLogGrid
+                            includeCheckout={false}
+                            drugLog={otcLogList}
+                            medicineList={otcList}
+                            columns={['Drug', 'Created', 'Updated', 'Notes']}
+                            onEdit={(e, r) => addEditDrugLog(e, r)}
+                            onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
+                        />
+                    </ListGroup.Item>
+                </ListGroup>
                 }
             </Form>
 

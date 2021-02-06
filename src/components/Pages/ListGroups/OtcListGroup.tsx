@@ -1,4 +1,4 @@
-import {Form, FormGroup, ListGroup} from "react-bootstrap";
+import {Button, Form, FormGroup, ListGroup} from "react-bootstrap";
 import Table from "react-bootstrap/Table";
 import {DrugLogRecord, MedicineRecord} from "../../../types/RecordTypes";
 import MedicineDetail from "../Grids/MedicineDetail";
@@ -75,6 +75,15 @@ return (
                          onChange={(e) => setSearchText(e.target.value)}
                          placeholder="Search OTC medicine"
                      />
+                     {/* TODO: Add + OTC Medicine and Edit OTC buttons here to the right of Search OTC textbox */}
+
+                     <Button
+                         size="sm"
+                         className="mr-2"
+                         variant={lastTakenVariant}
+                     >
+                         + Log OTC
+                     </Button>
 
                      <LogButtons
                          onLogAmount={(n) => logOtcDrugAmount(n)}
