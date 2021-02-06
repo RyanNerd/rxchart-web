@@ -1,11 +1,12 @@
-import {Button, Form, FormGroup, ListGroup} from "react-bootstrap";
+import {Button, Form, FormGroup, InputGroup, ListGroup} from "react-bootstrap";
 import Table from "react-bootstrap/Table";
-import {DrugLogRecord, MedicineRecord} from "../../../types/RecordTypes";
+import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../../../types/RecordTypes";
 import MedicineDetail from "../Grids/MedicineDetail";
 import ShadowBox from "../../Buttons/ShadowBox";
 import React, {useEffect, useState} from "reactn";
 import LogButtons from "../../Buttons/LogButtons";
 import {calculateLastTaken, getLastTakenVariant} from "../../../utility/common";
+import Col from "react-bootstrap/Col";
 
 interface IProps {
     activeOtcDrug: MedicineRecord
@@ -59,8 +60,10 @@ return (
          <ListGroup>
              <ListGroup.Item>
                  <FormGroup>
+                     <InputGroup>
+                         <InputGroup.Prepend>
                      <Form.Control
-                         className="mb-2"
+                         className="mb-1 mr-2"
                          size="sm"
                          id="otc-page-search-text"
                          style={{width: "220px"}}
@@ -75,8 +78,38 @@ return (
                          onChange={(e) => setSearchText(e.target.value)}
                          placeholder="Search OTC medicine"
                      />
-                     {/* TODO: Add + OTC Medicine and Edit OTC buttons here to the right of Search OTC textbox */}
+                         </InputGroup.Prepend>
+                         <InputGroup.Append>
+                     <Button
+                         className="mr-1"
+                         size="sm"
+                         variant="info"
+                         onClick={(e) => {
+                             e.preventDefault();
+                             // setDrugInfo({...newDrugInfo, OTC: true});
+                             // setShowMedicineEdit(true);
+                         }}
+                     >
+                         + OTC
+                     </Button>
 
+                     {activeOtcDrug &&
+                     <Button
+                         size="sm"
+                         variant="info"
+                         onClick={(e) => {
+                             e.preventDefault();
+                             // setDrugInfo({...activeDrug} as MedicineRecord);
+                             // setShowMedicineEdit(true);
+                         }}
+                     >
+                         Edit <b>{activeOtcDrug.Drug}</b>
+                     </Button>
+                     }
+                         </InputGroup.Append>
+                     </InputGroup>
+                 </FormGroup>
+                 <FormGroup>
                      <Button
                          size="sm"
                          className="mr-2"
