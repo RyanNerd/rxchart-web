@@ -22,7 +22,6 @@ import OtcListGroup from "./ListGroups/OtcListGroup";
  * @return {JSX.Element | null}
  */
 const MedicinePage = (): JSX.Element | null => {
-    const [drugLog, setDrugLog] = useGlobal('drugLog');
     const [, setMedicine] = useGlobal('medicine');
     const [activeDrug, setActiveDrug] = useState<MedicineRecord | null>(null);
     const [activeOtcDrug, setActiveOtcDrug] = useState<MedicineRecord | null>(null);
@@ -30,7 +29,9 @@ const MedicinePage = (): JSX.Element | null => {
     const [activeTabKey, setActiveTabKey] = useGlobal('activeTabKey');
     const [apiKey] = useGlobal('apiKey');
     const [checkoutDisabled, setCheckoutDisabled] = useState(apiKey === null || !activeResident)
+    const [drugLog, setDrugLog] = useGlobal('drugLog');
     const [drugLogList] = useGlobal('drugLogList');
+    const [gridHeight, setGridHeight] = useState('675px');
     const [lastTaken, setLastTaken] = useState<number | null>(null);
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [medicineList] = useGlobal('medicineList');
@@ -104,7 +105,13 @@ const MedicinePage = (): JSX.Element | null => {
             });
         }) : [];
         setOtcLogList(otc);
-    }, [drugLogList, otcList])
+        setGridHeight(otc.length > 0 ? "375px" : "675px");
+    }, [drugLogList, otcList]);
+
+    // // The drug log and otc log grid heights are shortened if the client has any logged OTC drugs.
+    // useEffect(() => {
+    //     setGridHeight(otcLogList.length > 0 ? "375px" : "");
+    // }, [otcLogList]);
 
     // If there isn't an activeResident or this isn't the active tab then do not render
     if (!residentId || activeTabKey !== 'medicine') {
@@ -248,7 +255,7 @@ const MedicinePage = (): JSX.Element | null => {
 
                 {activeDrug &&
                 <ListGroup as={Col} className="mx-5">
-                    <ListGroup.Item style={{height: "375px", overflow: "auto", textAlign: "center"}}>
+                    <ListGroup.Item style={{height: gridHeight, overflow: "auto", textAlign: "center"}}>
                         <Button
                             size="lg"
                             className="hover-underline-animation"
@@ -272,7 +279,8 @@ const MedicinePage = (): JSX.Element | null => {
                         />
                     </ListGroup.Item>
 
-                    <ListGroup.Item style={{height: "385px", overflow: "auto"}}>
+                    {otcLogList.length > 0 &&
+                    <ListGroup.Item style={{height: gridHeight, overflow: "auto"}}>
                         <h5 className="mb-2" style={{textAlign: "center"}}>OTC History</h5>
                         <DrugLogGrid
                             includeCheckout={false}
@@ -283,6 +291,7 @@ const MedicinePage = (): JSX.Element | null => {
                             onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
                         />
                     </ListGroup.Item>
+                    }
                 </ListGroup>
                 }
             </Form>
