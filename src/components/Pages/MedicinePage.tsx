@@ -105,13 +105,10 @@ const MedicinePage = (): JSX.Element | null => {
             });
         }) : [];
         setOtcLogList(otc);
-        setGridHeight(otc.length > 0 ? "375px" : "675px");
-    }, [drugLogList, otcList]);
 
-    // // The drug log and otc log grid heights are shortened if the client has any logged OTC drugs.
-    // useEffect(() => {
-    //     setGridHeight(otcLogList.length > 0 ? "375px" : "");
-    // }, [otcLogList]);
+        // Also, set the gridHeight based on if there are OTC drugs logged
+        setGridHeight(otc.length > 0 ? "385px" : "685px");
+    }, [drugLogList, otcList]);
 
     // If there isn't an activeResident or this isn't the active tab then do not render
     if (!residentId || activeTabKey !== 'medicine') {
@@ -135,7 +132,7 @@ const MedicinePage = (): JSX.Element | null => {
     }
 
     /**
-     * Fires when the Log 1 or Log 2 buttons are clicked.
+     * Fires when the Log 1...4 buttons are clicked.
      * @param {number} amount
      * @param {number} drugId
      */

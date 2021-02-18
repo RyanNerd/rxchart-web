@@ -78,117 +78,117 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
 
             {showDetails &&
             <>
-            <ListGroup.Item>
-                <FormGroup>
-                    <InputGroup>
-                        <InputGroup.Prepend>
-                            <Form.Control
-                                className="mb-1 mr-2"
-                                size="sm"
-                                id="otc-page-search-text"
-                                style={{width: "220px"}}
-                                type="search"
-                                isValid={searchIsValid || false}
-                                value={searchText}
-                                ref={focusRef}
-                                onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
-                                    if (e.key === 'Enter') {
+                <ListGroup.Item>
+                    <FormGroup>
+                        <InputGroup>
+                            <InputGroup.Prepend>
+                                <Form.Control
+                                    className="mb-1 mr-2"
+                                    size="sm"
+                                    id="otc-page-search-text"
+                                    style={{width: "220px"}}
+                                    type="search"
+                                    isValid={searchIsValid || false}
+                                    value={searchText}
+                                    ref={focusRef}
+                                    onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault();
+                                        }
+                                    }}
+                                    onChange={(e) => setSearchText(e.target.value)}
+                                    placeholder="Search OTC medicine"
+                                />
+                            </InputGroup.Prepend>
+                            <InputGroup.Append>
+                                <Button
+                                    className="mr-1"
+                                    size="sm"
+                                    variant="info"
+                                    onClick={(e) => {
                                         e.preventDefault();
-                                    }
-                                }}
-                                onChange={(e) => setSearchText(e.target.value)}
-                                placeholder="Search OTC medicine"
-                            />
-                        </InputGroup.Prepend>
-                        <InputGroup.Append>
-                            <Button
-                                className="mr-1"
-                                size="sm"
-                                variant="info"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    addOtcMedicine();
-                                }}
-                            >
-                                + OTC
-                            </Button>
+                                        addOtcMedicine();
+                                    }}
+                                >
+                                    + OTC
+                                </Button>
 
-                            {activeOtcDrug &&
-                            <Button
-                                size="sm"
-                                variant="info"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    editOtcMedicine();
-                                }}
-                            >
-                                Edit <b>{activeOtcDrug.Drug}</b>
-                            </Button>
-                            }
-                        </InputGroup.Append>
-                    </InputGroup>
-                </FormGroup>
-                <FormGroup>
-                    <Button
-                        size="sm"
-                        className="mr-2"
-                        variant={lastTakenVariant}
-                    >
-                        + Log OTC
-                    </Button>
+                                {activeOtcDrug &&
+                                <Button
+                                    size="sm"
+                                    variant="info"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        editOtcMedicine();
+                                    }}
+                                >
+                                    Edit <b>{activeOtcDrug.Drug}</b>
+                                </Button>
+                                }
+                            </InputGroup.Append>
+                        </InputGroup>
+                    </FormGroup>
+                    <FormGroup>
+                        <Button
+                            size="sm"
+                            className="mr-2"
+                            variant={lastTakenVariant}
+                        >
+                            + Log OTC
+                        </Button>
 
-                    <LogButtons
-                        onLogAmount={(n) => logOtcDrugAmount(n)}
-                        lastTaken={lastTaken}
-                        lastTakenVariant={lastTakenVariant}
-                        drugName={activeOtcDrug.Drug}
-                    />
-                </FormGroup>
-                {activeOtcDrug.Directions &&
+                        <LogButtons
+                            onLogAmount={(n) => logOtcDrugAmount(n)}
+                            lastTaken={lastTaken}
+                            lastTakenVariant={lastTakenVariant}
+                            drugName={activeOtcDrug.Drug}
+                        />
+                    </FormGroup>
+                    {activeOtcDrug.Directions &&
                     <ShadowBox>
                         <span><b>Directions: </b> {activeOtcDrug.Directions}</span>
                     </ShadowBox>
-                }
-            </ListGroup.Item>
+                    }
+                </ListGroup.Item>
 
-            <ListGroup.Item>
-                <div style={{height: "300px", overflow: "auto"}}>
-                    <Table
-                        striped
-                        bordered
-                        hover
-                        size="sm"
-                    >
-                        <thead>
-                        <tr>
-                            <th/>
-                            <th>
-                                Drug
-                            </th>
-                            <th>
-                                Strength
-                            </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {filteredOtcList.map((drug: MedicineRecord) =>
-                            <MedicineDetail
-                                drug={drug}
-                                columns={[
-                                    'Drug',
-                                    'Strength'
-                                ]}
-                                key={'otc' + drug.Id}
-                                onSelect={(e, d) => {
-                                    setActiveOtcDrug(d);
-                                }}
-                                activeDrug={activeOtcDrug}
-                            />)
-                        }
-                        </tbody>
-                    </Table>
-                </div>
-            </ListGroup.Item>
+                <ListGroup.Item>
+                    <div style={{height: "300px", overflow: "auto"}}>
+                        <Table
+                            striped
+                            bordered
+                            hover
+                            size="sm"
+                        >
+                            <thead>
+                            <tr>
+                                <th/>
+                                <th>
+                                    Drug
+                                </th>
+                                <th>
+                                    Strength
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {filteredOtcList.map((drug: MedicineRecord) =>
+                                <MedicineDetail
+                                    drug={drug}
+                                    columns={[
+                                        'Drug',
+                                        'Strength'
+                                    ]}
+                                    key={'otc' + drug.Id}
+                                    onSelect={(e, d) => {
+                                        setActiveOtcDrug(d);
+                                    }}
+                                    activeDrug={activeOtcDrug}
+                                />)
+                            }
+                            </tbody>
+                        </Table>
+                    </div>
+                </ListGroup.Item>
             </>
             }
         </ListGroup>

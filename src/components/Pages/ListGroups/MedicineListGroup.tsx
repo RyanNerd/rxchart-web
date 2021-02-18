@@ -133,34 +133,34 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
 
             {showDetails &&
             <>
-            <ListGroup.Item>
-                {directions && directions.length > 0 &&
+                <ListGroup.Item>
+                    {directions && directions.length > 0 &&
                     <p>
-                    <ShadowBox>
-                        <b>Directions: </b>{activeDrug.Directions}
-                    </ShadowBox>
+                        <ShadowBox>
+                            <b>Directions: </b>{activeDrug.Directions}
+                        </ShadowBox>
                     </p>
-                }
-                {notes && notes.length > 0 &&
+                    }
+                    {notes && notes.length > 0 &&
                     <p>
-                    <ShadowBox>
+                        <ShadowBox>
                             <b>Notes: </b>{activeDrug.Notes}
-                    </ShadowBox>
+                        </ShadowBox>
                     </p>
-                }
-                {fillDate &&
+                    }
+                    {fillDate &&
                     <p>
-                    <ShadowBox>
-                        <b>Fill Date: </b>{fillDate}
-                    </ShadowBox>
+                        <ShadowBox>
+                            <b>Fill Date: </b>{fillDate}
+                        </ShadowBox>
                     </p>
-                }
-            </ListGroup.Item>
-            <ListGroup.Item>
-                {barCode &&
+                    }
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    {barCode &&
                     <canvas id={canvasId}/>
-                }
-            </ListGroup.Item>
+                    }
+                </ListGroup.Item>
             </>
             }
         </ListGroup>
