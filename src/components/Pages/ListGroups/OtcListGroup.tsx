@@ -2,7 +2,7 @@ import {Button, Form, FormGroup, InputGroup, ListGroup} from "react-bootstrap";
 import Table from "react-bootstrap/Table";
 import {DrugLogRecord, MedicineRecord} from "../../../types/RecordTypes";
 import MedicineDetail from "../Grids/MedicineDetail";
-import React, {useEffect, useState} from "reactn";
+import React, {useEffect, useRef, useState} from "reactn";
 import LogButtons from "../../Buttons/LogButtons";
 import {calculateLastTaken, getLastTakenVariant} from "../../../utility/common";
 import ShadowBox from "../../Buttons/ShadowBox";
@@ -34,6 +34,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
     const [searchText, setSearchText] = useState('');
     const [filteredOtcList, setFilteredOtcList] = useState(otcList);
     const [showDetails, setShowDetails] = useState(false);
+    const focusRef = useRef<HTMLInputElement>(null);
 
     // Filter the otcList by the search textbox value
     useEffect(() => {
@@ -58,8 +59,14 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
         }
     }, [otcList, searchText])
 
+    // Set focus to the OTC Search textbox when Show OTC becomes true.
+    useEffect(() => {
+        if (showDetails) {
+            focusRef?.current?.focus();
+        }
+    }, [showDetails])
+
     return (
-        // <ListGroup>
         <ListGroup>
             <ListGroup.Item action onClick={() => setShowDetails(!showDetails)}>
                 {showDetails ? "Hide OTC" : "Show OTC"}
@@ -79,6 +86,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                                 type="search"
                                 isValid={searchIsValid || false}
                                 value={searchText}
+                                ref={focusRef}
                                 onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
                                     if (e.key === 'Enter') {
                                         e.preventDefault();
@@ -179,14 +187,6 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
             </ListGroup.Item>
             </>
             }
-
-
-
-            {/*{activeOtcDrug.Barcode &&*/}
-            {/*<ListGroup.Item>*/}
-            {/*    <canvas id="otc-barcode"/>*/}
-            {/*</ListGroup.Item>*/}
-            {/*}*/}
         </ListGroup>
     )
 }

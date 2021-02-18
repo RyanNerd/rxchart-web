@@ -4,7 +4,6 @@ import LoginPage from './LoginPage';
 import ManageDrugPage from "./ManageDrugPage";
 import ManageOtcPage from "./ManageOtcPage";
 import MedicinePage from "./MedicinePage";
-import OtcPage from "./OtcPage";
 import React, {useGlobal, useEffect, useState} from 'reactn';
 import ResidentPage from "./ResidentPage";
 import Tab from 'react-bootstrap/Tab';
