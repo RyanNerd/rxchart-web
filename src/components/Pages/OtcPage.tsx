@@ -315,7 +315,6 @@ const OtcPage = (): JSX.Element | null => {
                     setOtcMedicine({action: 'update', payload: r});
                 }}
                 drugInfo={drugInfo}
-                otc={true}
             />
             }
 

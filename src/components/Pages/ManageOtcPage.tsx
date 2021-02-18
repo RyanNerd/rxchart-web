@@ -99,7 +99,6 @@ const ManageOtcPage = (): JSX.Element | null => {
             {showMedicineEdit && medicineInfo &&
             /* MedicineEdit Modal */
             <MedicineEdit
-                otc={true}
                 show={showMedicineEdit}
                 onClose={(r) => {
                     setShowMedicineEdit(false);

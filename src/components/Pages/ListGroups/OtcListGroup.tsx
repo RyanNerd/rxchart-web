@@ -5,22 +5,27 @@ import MedicineDetail from "../Grids/MedicineDetail";
 import React, {useEffect, useState} from "reactn";
 import LogButtons from "../../Buttons/LogButtons";
 import {calculateLastTaken, getLastTakenVariant} from "../../../utility/common";
+import ShadowBox from "../../Buttons/ShadowBox";
 
 interface IProps {
     activeOtcDrug: MedicineRecord
+    addOtcMedicine: () => (void)
     drugLogList: DrugLogRecord[]
+    editOtcMedicine: () => (void)
     logOtcDrugAmount: (n: number) => (void)
-    setActiveOtcDrug: (d: MedicineRecord) => (void)
     otcList: MedicineRecord[]
+    setActiveOtcDrug: (d: MedicineRecord) => (void)
 }
 
 const OtcListGroup = (props: IProps): JSX.Element | null => {
     const {
         activeOtcDrug,
-        setActiveOtcDrug,
+        addOtcMedicine,
         drugLogList,
+        editOtcMedicine,
         logOtcDrugAmount,
-        otcList
+        otcList,
+        setActiveOtcDrug
     } = props;
 
     const lastTaken = (activeOtcDrug && activeOtcDrug.Id) ? calculateLastTaken(activeOtcDrug.Id, drugLogList) : null;
@@ -29,8 +34,6 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
     const [searchText, setSearchText] = useState('');
     const [filteredOtcList, setFilteredOtcList] = useState(otcList);
     const [showDetails, setShowDetails] = useState(false);
-
-    // const [otcLogList, setOtcLogList] = useState<DrugLogRecord[]>([]);
 
     // Filter the otcList by the search textbox value
     useEffect(() => {
@@ -92,8 +95,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                                 variant="info"
                                 onClick={(e) => {
                                     e.preventDefault();
-                                    // setDrugInfo({...newDrugInfo, OTC: true});
-                                    // setShowMedicineEdit(true);
+                                    addOtcMedicine();
                                 }}
                             >
                                 + OTC
@@ -105,8 +107,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                                 variant="info"
                                 onClick={(e) => {
                                     e.preventDefault();
-                                    // setDrugInfo({...activeDrug} as MedicineRecord);
-                                    // setShowMedicineEdit(true);
+                                    editOtcMedicine();
                                 }}
                             >
                                 Edit <b>{activeOtcDrug.Drug}</b>
@@ -131,6 +132,11 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                         drugName={activeOtcDrug.Drug}
                     />
                 </FormGroup>
+                {activeOtcDrug.Directions &&
+                    <ShadowBox>
+                        <span><b>Directions: </b> {activeOtcDrug.Directions}</span>
+                    </ShadowBox>
+                }
             </ListGroup.Item>
 
             <ListGroup.Item>
@@ -174,16 +180,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
             </>
             }
 
-            {/*{activeOtcDrug.Directions &&*/}
-            {/*<ListGroup.Item>*/}
-            {/*    <ShadowBox>*/}
-            {/*        <b>*/}
-            {/*            Directions:*/}
-            {/*        </b>*/}
-            {/*        <span> {activeOtcDrug.Directions}</span>*/}
-            {/*    </ShadowBox>*/}
-            {/*</ListGroup.Item>*/}
-            {/*}*/}
+
 
             {/*{activeOtcDrug.Barcode &&*/}
             {/*<ListGroup.Item>*/}

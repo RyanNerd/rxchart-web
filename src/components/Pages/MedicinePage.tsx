@@ -23,6 +23,7 @@ import OtcListGroup from "./ListGroups/OtcListGroup";
  */
 const MedicinePage = (): JSX.Element | null => {
     const [, setMedicine] = useGlobal('medicine');
+    const [, setOtcMedicine] = useGlobal('otcMedicine');
     const [activeDrug, setActiveDrug] = useState<MedicineRecord | null>(null);
     const [activeOtcDrug, setActiveOtcDrug] = useState<MedicineRecord | null>(null);
     const [activeResident] = useGlobal('activeResident');
@@ -33,14 +34,13 @@ const MedicinePage = (): JSX.Element | null => {
     const [drugLogList] = useGlobal('drugLogList');
     const [gridHeight, setGridHeight] = useState('675px');
     const [lastTaken, setLastTaken] = useState<number | null>(null);
-    const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [medicineList] = useGlobal('medicineList');
     const [otcList] = useGlobal('otcList');
     const [otcLogList, setOtcLogList] = useState<DrugLogRecord[]>([]);
     const [residentId, setResidentId] = useState<number | null>(activeResident?.Id || null);
     const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
     const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
-    const [showMedicineEdit, setShowMedicineEdit] = useState(false);
+    const [showMedicineEdit, setShowMedicineEdit] = useState<MedicineRecord | null>(null);
     const focusRef = useRef<HTMLInputElement>(null);
 
     // Set the activeDrug when the medicineList changes
@@ -185,7 +185,7 @@ const MedicinePage = (): JSX.Element | null => {
                             onClick={(e: React.MouseEvent<HTMLElement>) => {
                                 e.preventDefault();
                                 const mdy = getMDY();
-                                setMedicineInfo({
+                                setShowMedicineEdit({
                                     ...newDrugInfo,
                                     OTC: false,
                                     ResidentId: residentId,
@@ -193,7 +193,6 @@ const MedicinePage = (): JSX.Element | null => {
                                     FillDateMonth: mdy.month,
                                     FillDateDay: mdy.day
                                 });
-                                setShowMedicineEdit(true);
                             }}
                         >
                             + Medicine
@@ -205,8 +204,7 @@ const MedicinePage = (): JSX.Element | null => {
                             variant="info"
                             onClick={(e) => {
                                 e.preventDefault();
-                                setMedicineInfo({...activeDrug} as MedicineRecord);
-                                setShowMedicineEdit(true);
+                                setShowMedicineEdit({...activeDrug} as MedicineRecord);
                             }}
                         >
                             Edit <b>{activeDrug.Drug}</b>
@@ -244,6 +242,12 @@ const MedicinePage = (): JSX.Element | null => {
                     {activeOtcDrug &&
                     <Row className="mt-3">
                         <OtcListGroup
+                            addOtcMedicine={() => {
+                                setShowMedicineEdit({...newDrugInfo, OTC: true});
+                            }}
+                            editOtcMedicine={() => {
+                                setShowMedicineEdit({...activeOtcDrug} as MedicineRecord);
+                            }}
                             activeOtcDrug={activeOtcDrug}
                             drugLogList={drugLogList}
                             logOtcDrugAmount={(n) => handleLogOtcDrugAmount(n)}
@@ -297,14 +301,20 @@ const MedicinePage = (): JSX.Element | null => {
             </Form>
 
             {/* MedicineEdit Modal*/}
-            {medicineInfo &&
-            < MedicineEdit
-                show={showMedicineEdit}
+            {showMedicineEdit &&
+            <MedicineEdit
+                show={true}
                 onClose={(r) => {
-                    setShowMedicineEdit(false);
-                    setMedicine({action: "update", payload: r});
+                    setShowMedicineEdit(null);
+                    if (r) {
+                        if (r.OTC) {
+                            setOtcMedicine({action: "update", payload: r});
+                        } else {
+                            setMedicine({action: "update", payload: r});
+                        }
+                    }
                 }}
-                drugInfo={medicineInfo}
+                drugInfo={showMedicineEdit}
             />
             }
 
