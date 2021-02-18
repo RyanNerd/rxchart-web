@@ -61,6 +61,7 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
         }
     }, [barCode, canvasId, canvasUpdated, showDetails]);
 
+    // If the drugId changes then hide the details
     useEffect(() => {
         setShowDetails(false);
     }, [drugId])
@@ -130,36 +131,37 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
                 {showDetails ? "Hide Details" : "Show Details"}
             </ListGroup.Item>
 
-            {showDetails && directions && directions.length > 0 &&
+            {showDetails &&
+            <>
             <ListGroup.Item>
-                <ShadowBox>
-                    <b>
-                        Directions:
-                    </b>
-                    <span> {activeDrug.Directions}</span>
-                </ShadowBox>
+                {directions && directions.length > 0 &&
+                    <p>
+                    <ShadowBox>
+                        <b>Directions: </b>{activeDrug.Directions}
+                    </ShadowBox>
+                    </p>
+                }
+                {notes && notes.length > 0 &&
+                    <p>
+                    <ShadowBox>
+                            <b>Notes: </b>{activeDrug.Notes}
+                    </ShadowBox>
+                    </p>
+                }
+                {fillDate &&
+                    <p>
+                    <ShadowBox>
+                        <b>Fill Date: </b>{fillDate}
+                    </ShadowBox>
+                    </p>
+                }
             </ListGroup.Item>
-            }
-
-            {showDetails && notes && notes.length > 0 &&
             <ListGroup.Item>
-                <p><b>Notes: </b>{activeDrug.Notes}</p>
+                {barCode &&
+                    <canvas id={canvasId}/>
+                }
             </ListGroup.Item>
-            }
-
-            {showDetails && fillDate &&
-            <ListGroup.Item>
-                <b>
-                    Fill Date:
-                </b>
-                <span> {fillDate}</span>
-            </ListGroup.Item>
-            }
-
-            {showDetails && barCode &&
-            <ListGroup.Item variant="info">
-                <canvas id={canvasId}/>
-            </ListGroup.Item>
+            </>
             }
         </ListGroup>
     );

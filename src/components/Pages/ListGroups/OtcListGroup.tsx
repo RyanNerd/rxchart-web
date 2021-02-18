@@ -68,7 +68,11 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
 
     return (
         <ListGroup>
-            <ListGroup.Item action onClick={() => setShowDetails(!showDetails)}>
+            <ListGroup.Item
+                action
+                onClick={() => setShowDetails(!showDetails)} active={showDetails}
+                variant={showDetails ? "info" : undefined}
+            >
                 {showDetails ? "Hide OTC" : "Show OTC"}
             </ListGroup.Item>
 

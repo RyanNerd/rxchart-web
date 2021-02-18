@@ -240,7 +240,7 @@ const MedicinePage = (): JSX.Element | null => {
                     </Row>
 
                     {activeOtcDrug &&
-                    <Row className="mt-3">
+                    <Row className="mt-2">
                         <OtcListGroup
                             addOtcMedicine={() => {
                                 setShowMedicineEdit({...newDrugInfo, OTC: true});
