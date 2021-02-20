@@ -1,4 +1,4 @@
-import React, {useEffect} from 'reactn';
+import React, {useEffect, useState} from 'reactn';
 import ListGroup from "react-bootstrap/ListGroup";
 import DrugDropdown from "./DrugDropdown";
 import TooltipButton from "../../Buttons/TooltipButton";
@@ -50,6 +50,7 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
     const fillDateType = (fillDateText) ? new Date(fillDateText) : null;
     const fillDateOptions = {month: '2-digit', day: '2-digit', year: 'numeric'};
     const fillDate = (fillDateType) ? fillDateType.toLocaleString('en-US', fillDateOptions) : null;
+    const [showDetails, setShowDetails] = useState(false);
 
     // Update the barcode image if the barcode has changed
     useEffect(() => {
@@ -58,7 +59,12 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
         if (canvasUpdated && canvas) {
             canvasUpdated(canvas);
         }
-    }, [barCode, canvasId, canvasUpdated]);
+    }, [barCode, canvasId, canvasUpdated, showDetails]);
+
+    // If the drugId changes then hide the details
+    useEffect(() => {
+        setShowDetails(false);
+    }, [drugId])
 
     /**
      * Determine the tooltip text given the number of hours the drug was last taken
@@ -100,6 +106,7 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
 
             <ListGroup.Item>
                 <TooltipButton
+                    size="sm"
                     disabled={disabled}
                     tooltip={tooltipText(lastTaken)}
                     placement="top"
@@ -120,36 +127,39 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
                 />
             </ListGroup.Item>
 
-            {directions && directions.length > 0 &&
-            <ListGroup.Item>
-                <ShadowBox>
-                    <b>
-                        Directions:
-                    </b>
-                    <span> {activeDrug.Directions}</span>
-                </ShadowBox>
+            <ListGroup.Item action onClick={() => setShowDetails(!showDetails)}>
+                {showDetails ? "Hide Details" : "Show Details"}
             </ListGroup.Item>
-            }
 
-            {notes && notes.length > 0 &&
-            <ListGroup.Item>
-                <p><b>Notes: </b>{activeDrug.Notes}</p>
-            </ListGroup.Item>
-            }
-
-            {fillDate &&
-            <ListGroup.Item>
-                <b>
-                    Fill Date:
-                </b>
-                <span> {fillDate}</span>
-            </ListGroup.Item>
-            }
-
-            {barCode &&
-            <ListGroup.Item variant="info">
-                <canvas id={canvasId}/>
-            </ListGroup.Item>
+            {showDetails &&
+            <>
+                {directions && directions.length > 0 &&
+                <ListGroup.Item>
+                    <ShadowBox>
+                        <b>Directions: </b>{activeDrug.Directions}
+                    </ShadowBox>
+                </ListGroup.Item>
+                }
+                {notes && notes.length > 0 &&
+                <ListGroup.Item>
+                    <ShadowBox>
+                        <b>Notes: </b>{activeDrug.Notes}
+                    </ShadowBox>
+                </ListGroup.Item>
+                }
+                {fillDate &&
+                <ListGroup.Item>
+                    <ShadowBox>
+                        <b>Fill Date: </b>{fillDate}
+                    </ShadowBox>
+                </ListGroup.Item>
+                }
+                {barCode &&
+                <ListGroup.Item>
+                    <canvas id={canvasId}/>
+                </ListGroup.Item>
+                }
+            </>
             }
         </ListGroup>
     );

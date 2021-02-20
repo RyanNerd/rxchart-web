@@ -4,7 +4,6 @@ import LoginPage from './LoginPage';
 import ManageDrugPage from "./ManageDrugPage";
 import ManageOtcPage from "./ManageOtcPage";
 import MedicinePage from "./MedicinePage";
-import OtcPage from "./OtcPage";
 import React, {useGlobal, useEffect, useState} from 'reactn';
 import ResidentPage from "./ResidentPage";
 import Tab from 'react-bootstrap/Tab';
@@ -72,12 +71,6 @@ const LandingPage = () => {
             </Tab>
             <Tab
                 disabled={apiKey === null || !activeResident}
-                eventKey="otc"
-                title={<span className={activeTabKey === 'otc' ? 'bld' : ''}>OTC</span>}>
-                <OtcPage/>
-            </Tab>
-            <Tab
-                disabled={apiKey === null || !activeResident}
                 eventKey="history"
                 title={<span className={activeTabKey === 'history' ? 'bld' : ''}>Drug History</span>}
             >
@@ -97,7 +90,6 @@ const LandingPage = () => {
             >
                 <ManageOtcPage/>
             </Tab>
-
             <Tab
                 disabled={checkoutDisabled}
                 eventKey="medicine-checkout"

@@ -25,6 +25,7 @@ const LogButtons = (props: IProps) => {
     return (
         <>
             <Button
+                size="sm"
                 disabled={disable}
                 variant={"outline-" + lastTakenVariant}
                 className="mr-2"
@@ -37,6 +38,7 @@ const LogButtons = (props: IProps) => {
             </Button>
 
             <Button
+                size="sm"
                 disabled={disable}
                 className="mr-2"
                 variant={"outline-" + lastTakenVariant}
@@ -49,6 +51,7 @@ const LogButtons = (props: IProps) => {
             </Button>
 
             <Button
+                size="sm"
                 disabled={disable}
                 className="mr-2"
                 variant={"outline-" + lastTakenVariant}
@@ -61,6 +64,7 @@ const LogButtons = (props: IProps) => {
             </Button>
 
             <Button
+                size="sm"
                 disabled={disable}
                 variant={"outline-" + lastTakenVariant}
                 onClick={(e) => {

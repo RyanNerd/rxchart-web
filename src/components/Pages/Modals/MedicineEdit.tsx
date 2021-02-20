@@ -11,7 +11,6 @@ import {MedicineRecord} from "../../../types/RecordTypes";
 interface IProps {
     drugInfo: MedicineRecord
     onClose: (r: MedicineRecord | null) => void
-    otc?: boolean
     show: boolean
 }
 
@@ -26,7 +25,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
     const [drugInfo, setDrugInfo] = useState<MedicineRecord>(props.drugInfo);
     const [canSave, setCanSave] = useState<boolean>(false);
     const [activeResident] = useGlobal('activeResident');
-    const otc = props.otc;
+    const otc = drugInfo.OTC;
     const textInput = useRef<HTMLInputElement>(null);
 
     // Observer for show

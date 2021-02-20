@@ -21,7 +21,6 @@ interface IProps extends TableProps {
     medicineList?: MedicineRecord[]
     onDelete?: (e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) => void
     onEdit?: (e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) => void
-    otcList?: MedicineRecord[]
 }
 
 /**
@@ -39,8 +38,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
         includeCheckout = true,
         medicineList = [],
         onDelete,
-        onEdit,
-        otcList = [],
+        onEdit
     } = props;
 
     const filteredDrugs = drugId ? drugLog.filter(drug => drug && drug.MedicineId === drugId) : drugLog;
@@ -57,8 +55,6 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
             if (medicine) {
                 return medicine[columnName];
             }
-            const otc = getObjectByProperty<MedicineRecord>(otcList, 'Id', drugId);
-            return otc ? otc[columnName] : null;
         }
         return null;
     }
@@ -90,7 +86,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
         const variantColor = getBsColor(variant);
         const fontWeight = isToday(updatedDate) ? 'bold' : undefined;
 
-        // If includeCheckout is false then supress any rows where drug.Out >0 or drug.In > 0
+        // If includeCheckout is false then suppress any rows where drug.Out >0 or drug.In > 0
         if (!includeCheckout && ((drug.Out && drug.Out >= 0) || (drug.In && drug.In >= 0) )) {
             return null;
         }

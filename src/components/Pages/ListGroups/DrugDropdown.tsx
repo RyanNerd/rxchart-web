@@ -82,7 +82,7 @@ const DrugDropdown = (props: IProps): JSX.Element | null => {
         <DropdownButton
             disabled={disabled}
             onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
-            size="lg"
+            size="sm"
             title={title}
             variant="primary"
         >
