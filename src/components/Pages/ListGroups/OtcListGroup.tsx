@@ -68,7 +68,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                     <InputGroup>
                         <InputGroup.Prepend>
                             <Form.Control
-                                className="mb-1 mr-2"
+                                className="mr-2"
                                 id="otc-page-search-text"
                                 isValid={searchIsValid || false}
                                 placeholder="Search OTC medicine"
