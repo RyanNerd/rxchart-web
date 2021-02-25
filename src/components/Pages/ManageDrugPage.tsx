@@ -27,6 +27,12 @@ const ManageDrugPage = (): JSX.Element | null => {
         return null;
     }
 
+    // TODO? Put this in a useEffect()??
+    const checkoutList: { id: number | null; value: number; }[] = [];
+    medicineList.map((i) => {
+        checkoutList.push({id: i.Id, value: 0});
+    });
+
     /**
      * Fires when the Edit button is clicked
      * @param {React.MouseEvent<HTMLElement>} e
@@ -59,6 +65,8 @@ const ManageDrugPage = (): JSX.Element | null => {
                 + Medicine
             </TooltipButton>
 
+            {/* todo: Button "Save and Print Checkout" */}
+
             <Table
                 striped
                 bordered
@@ -68,6 +76,7 @@ const ManageDrugPage = (): JSX.Element | null => {
                 <thead>
                 <tr>
                     <th></th>
+                    <th>Checkout</th>
                     <th>
                         Drug
                     </th>
@@ -89,12 +98,26 @@ const ManageDrugPage = (): JSX.Element | null => {
                 <tbody>
                 {medicineList.map((drug: MedicineRecord) =>
                     <MedicineDetail
+                        columns = {['Drug', 'Checkout', 'Strength', 'Directions', 'Notes', 'Barcode']}
                         drug={drug}
                         key={'med-' + drug.Id}
                         onDelete={(e, medicineRecord) => {
                             e.preventDefault();
                             setMedicineInfo({...medicineRecord});
                             setShowDeleteMedicine(true);
+                        }}
+                        onChange={(e, n) =>{
+                            e.preventDefault();
+                            const target = e.target as HTMLInputElement;
+                            const s = checkoutList.find((x) => {return x.id === n});
+                            if (s) {
+                                const value = parseInt(target.value);
+                                if (value >= 0) {
+                                    s.value = value;
+                                } else {
+                                    target.value = "0";
+                                }
+                            }
                         }}
                         onEdit={onEdit}
                     />

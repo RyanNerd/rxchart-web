@@ -2,6 +2,7 @@ import Button from "react-bootstrap/Button";
 import React from "reactn";
 import {MedicineRecord} from "../../../types/RecordTypes";
 import ToggleButton from "react-bootstrap/ToggleButton";
+import Form from "react-bootstrap/Form";
 
 interface IProps {
     columns?: string[]
@@ -9,6 +10,7 @@ interface IProps {
     onDelete?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
     onEdit?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
     onSelect?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
+    onChange?: (e: React.ChangeEvent<HTMLElement>, m: number) => void
     activeDrug?: MedicineRecord | null
 }
 
@@ -22,6 +24,7 @@ const MedicineDetail = (props: IProps): JSX.Element => {
     const {
         columns = ['Drug', 'Strength', 'Directions', 'Notes', 'Barcode'],
         drug,
+        onChange,
         onDelete,
         onEdit,
         onSelect,
@@ -55,6 +58,21 @@ const MedicineDetail = (props: IProps): JSX.Element => {
                     checked={isSelected || false}
                     onClick={(e) => onSelect(e, drug)}
                     value={drug.Id as number}
+                />
+            </td>
+            }
+            {columns.includes('Checkout') && onChange &&
+            <td style={{
+                textAlign: "center",
+                width: "30px"
+            }}>
+                <Form.Control
+                    id={'med-detail-out-' + drug.Id}
+                    type="number"
+                    name="Out"
+                    onChange={(e) => {
+                        onChange(e, drug.Id as number)}
+                    }
                 />
             </td>
             }
