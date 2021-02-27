@@ -48,7 +48,7 @@ const MedicineListGroup = (props: IProps): JSX.Element => {
     const fillDateText = activeDrug.FillDateMonth ?
         activeDrug.FillDateMonth + '/' + activeDrug.FillDateDay + '/' + activeDrug.FillDateYear : null;
     const fillDateType = (fillDateText) ? new Date(fillDateText) : null;
-    const fillDateOptions = {month: '2-digit', day: '2-digit', year: 'numeric'};
+    const fillDateOptions = {month: '2-digit', day: '2-digit', year: 'numeric'} as Intl.DateTimeFormatOptions;
     const fillDate = (fillDateType) ? fillDateType.toLocaleString('en-US', fillDateOptions) : null;
     const [showDetails, setShowDetails] = useState(false);
 
