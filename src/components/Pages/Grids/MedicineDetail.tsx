@@ -67,7 +67,6 @@ const MedicineDetail = (props: IProps): JSX.Element => {
                 width: "30px"
             }}>
                 <Form.Control
-                    id={'med-detail-out-' + drug.Id}
                     type="number"
                     name="Out"
                     onChange={(e) => {
