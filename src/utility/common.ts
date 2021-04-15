@@ -5,22 +5,6 @@ interface IKey {
     [key: string]: any
 }
 
-interface DateTimeFormatOptions {
-    day?: string;
-    era?: string;
-    formatMatcher?: string;
-    hour12?: boolean;
-    hour?: string;
-    localeMatcher?: string;
-    minute?: string;
-    month?: string;
-    second?: string;
-    timeZone?: string;
-    timeZoneName?: string;
-    weekday?: string;
-    year?: string;
-}
-
 /**
  * Given a ResidentRecord return the resident's DOB as a string.
  * @param {ResidentRecord} resident
@@ -172,7 +156,7 @@ export const isToday = (date: Date): boolean => {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric'
-    } as DateTimeFormatOptions;
+    } as Intl.DateTimeFormatOptions;
     const nowFull = now.toLocaleString('en-US', options);
     const dateFull = date.toLocaleString('en-US', options);
     return nowFull === dateFull;
@@ -204,7 +188,7 @@ export const getFormattedDate = (date: Date | string): string => {
         hour: '2-digit',
         minute: '2-digit',
         hour12: true
-    });
+    } as Intl.DateTimeFormatOptions);
 }
 
 /**
