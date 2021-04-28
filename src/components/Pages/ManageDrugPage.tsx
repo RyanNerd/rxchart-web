@@ -67,7 +67,8 @@ const ManageDrugPage = (): JSX.Element | null => {
             >
                 <thead>
                 <tr>
-                    <th></th>
+                    <th></th> {/* Edit */}
+                    <th></th> {/* Checkout */}
                     <th>
                         Drug
                     </th>
@@ -83,9 +84,10 @@ const ManageDrugPage = (): JSX.Element | null => {
                     <th>
                         Barcode
                     </th>
-                    <th></th>
+                    <th></th> {/* Delete */}
                 </tr>
                 </thead>
+                {/* todo: show checkout modal */}
                 <tbody>
                 {medicineList.map((drug: MedicineRecord) =>
                     <MedicineDetail
@@ -97,6 +99,7 @@ const ManageDrugPage = (): JSX.Element | null => {
                             setShowDeleteMedicine(true);
                         }}
                         onEdit={onEdit}
+                        onCheckout={(e, r) => alert('checkout clicked')}
                     />
                 )}
                 </tbody>
