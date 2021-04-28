@@ -4,9 +4,12 @@ import MedicineEdit from "./Modals/MedicineEdit";
 import React, {useGlobal, useState} from 'reactn';
 import Table from "react-bootstrap/Table";
 import TooltipButton from "../Buttons/TooltipButton";
-import {Alert} from "react-bootstrap";
-import {getMDY} from "../../utility/common";
+import {Alert, Form} from "react-bootstrap";
+import {getMDY, isToday} from "../../utility/common";
 import {MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
+import TabContent from "../../styles/common.css";
+import Row from "react-bootstrap/Row";
+import DrugLogGrid from "./Grids/DrugLogGrid";
 
 /**
  * ManageDrugPage
@@ -17,10 +20,18 @@ const ManageDrugPage = (): JSX.Element | null => {
     const [, setMedicine] = useGlobal('medicine');
     const [activeResident] = useGlobal('activeResident');
     const [activeTabKey] = useGlobal('activeTabKey');
+    const [drugLogList] = useGlobal('drugLogList');
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [medicineList] = useGlobal('medicineList');
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
+
+    // We only care about drugs that have a checkout value and were updated/created today.
+    const checkoutList = drugLogList.filter((dr) => {
+        const updated = dr && dr.Updated;
+        const out = dr && dr.Out ? dr.Out : 0;
+        return out > 0 && updated && isToday(updated);
+    });
 
     // If this tab isn't active then don't render
     if (activeTabKey !== 'manage') {
@@ -48,7 +59,8 @@ const ManageDrugPage = (): JSX.Element | null => {
     }
 
     return (
-        <>
+        <Form className={TabContent}>
+            <Row>
             <TooltipButton
                 className="mb-2"
                 tooltip="Manually Add New Medicine"
@@ -58,7 +70,9 @@ const ManageDrugPage = (): JSX.Element | null => {
             >
                 + Medicine
             </TooltipButton>
+            </Row>
 
+            <Row>
             <Table
                 striped
                 bordered
@@ -104,6 +118,18 @@ const ManageDrugPage = (): JSX.Element | null => {
                 )}
                 </tbody>
             </Table>
+            </Row>
+
+            {checkoutList && checkoutList.length > 0 &&
+            <Row>
+                <DrugLogGrid
+                    medicineList={medicineList}
+                    includeCheckout={true}
+                    drugLog={checkoutList}
+                    columns={['Drug', 'Created', 'Updated', 'Notes', 'Out', 'In']}
+                />
+            </Row>
+            }
 
             {showMedicineEdit && medicineInfo &&
             /* MedicineEdit Modal */
@@ -141,7 +167,7 @@ const ManageDrugPage = (): JSX.Element | null => {
                 </Confirm.Body>
             </Confirm.Modal>
             }
-        </>
+        </Form>
     );
 }
 

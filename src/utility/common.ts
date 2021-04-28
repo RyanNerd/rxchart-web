@@ -147,10 +147,11 @@ export const getBsColor = (variant: Variant): string => {
 
 /**
  * Given a date object return true if the date is today.
- * @param {Date} date
+ * @param {Date} dateIn
  * @return {boolean}
  */
-export const isToday = (date: Date): boolean => {
+export const isToday = (dateIn: Date): boolean => {
+    const date = new Date(dateIn);
     const now = new Date();
     const options = {
         day: '2-digit',
@@ -159,6 +160,7 @@ export const isToday = (date: Date): boolean => {
     } as Intl.DateTimeFormatOptions;
     const nowFull = now.toLocaleString('en-US', options);
     const dateFull = date.toLocaleString('en-US', options);
+    console.log('nowFull', nowFull, 'dateFull', dateFull);
     return nowFull === dateFull;
 }
 
