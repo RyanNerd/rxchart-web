@@ -3,15 +3,15 @@ import {MedicineRecord} from "../types/RecordTypes";
 import {useEffect, useGlobal} from "reactn";
 
 /**
- * Watch for changes to the refreshOtc global
+ * Watch for changes to the __otcMedicine global
  * when set to true indicates that the otcList global should be reloaded
  * @param {IMedicineManager} mm
  * @constructor
  */
 const OtcMedicineObserver = (mm: IMedicineManager) => {
-    const [, setErrorDetails] = useGlobal('errorDetails');
+    const [, setErrorDetails] = useGlobal('__errorDetails');
     const [, setOtcList] = useGlobal('otcList');
-    const [otcMedicine, setOtcMedicine] = useGlobal('otcMedicine');
+    const [otcMedicine, setOtcMedicine] = useGlobal('__otcMedicine');
 
     useEffect(() => {
         if (otcMedicine) {

@@ -18,8 +18,8 @@ import {getCheckoutList} from "../../utility/common";
 const LandingPage = () => {
     const [activeResident] = useGlobal('activeResident');
     const [activeTabKey, setActiveTabKey] = useGlobal('activeTabKey');
-    const [apiKey] = useGlobal('apiKey');
-    const [errorDetails] = useGlobal('errorDetails');
+    const [apiKey] = useGlobal('__apiKey');
+    const [errorDetails] = useGlobal('__errorDetails');
     const [checkoutDisabled, setCheckoutDisabled] = useState(apiKey === null || !activeResident);
     const [drugLogList] = useGlobal('drugLogList');
     const navBarElement = document.getElementsByClassName('nav nav-tabs');

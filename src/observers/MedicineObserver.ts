@@ -3,15 +3,14 @@ import {useEffect, useGlobal} from "reactn";
 import {MedicineRecord, ResidentRecord} from "../types/RecordTypes";
 
 /**
- * Watch for changes to the refreshMedicine global
- * when populated it is set to the Resident.Id of the medicineList to be refreshed
+ * Watch for changes to the __medicine global
+ * when set take the action specified: load, update, or delete
  * @param {IMedicineManager} mm
  * @param {ResidentRecord | null}  activeClient
- * @constructor
  */
 const MedicineObserver = (mm: IMedicineManager, activeClient: ResidentRecord | null) => {
-    const [medicine, setMedicine] = useGlobal('medicine');
-    const [, setErrorDetails] = useGlobal('errorDetails');
+    const [medicine, setMedicine] = useGlobal('__medicine');
+    const [, setErrorDetails] = useGlobal('__errorDetails');
     const [, setMedicineList] = useGlobal('medicineList');
 
     useEffect(() => {

@@ -18,8 +18,8 @@ import DrugLogEdit from "./Modals/DrugLogEdit";
  * @returns {JSX.Element}
  */
 const ManageDrugPage = (): JSX.Element | null => {
-    const [, setMedicine] = useGlobal('medicine');
-    const [, setDrugLog] = useGlobal('drugLog');
+    const [, setMedicine] = useGlobal('__medicine');
+    const [, setDrugLog] = useGlobal('__drugLog');
     const [activeResident] = useGlobal('activeResident');
     const [activeTabKey] = useGlobal('activeTabKey');
     const [drugLogList] = useGlobal('drugLogList');
@@ -67,7 +67,6 @@ const ManageDrugPage = (): JSX.Element | null => {
             return cl.MedicineId === r.Id;
         });
 
-        const now = new Date();
         const drugLog = exitingCheckout.length > 0 ? exitingCheckout[0] : {...newDrugLogRecord};
         if (drugLog.ResidentId === 0) {
             drugLog.ResidentId = r.ResidentId as number;

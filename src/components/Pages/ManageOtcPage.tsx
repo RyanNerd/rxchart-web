@@ -13,7 +13,7 @@ import {MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
  * @returns {JSX.Element}
  */
 const ManageOtcPage = (): JSX.Element | null => {
-    const [, setOtcMedicine] = useGlobal('otcMedicine');
+    const [, setOtcMedicine] = useGlobal('__otcMedicine');
     const [activeTabKey] = useGlobal('activeTabKey');
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [otcList] = useGlobal('otcList');

@@ -2,10 +2,14 @@ import {IMedicineManager} from "../managers/MedicineManager";
 import {useEffect, useGlobal} from "reactn";
 import {DrugLogRecord, ResidentRecord} from "../types/RecordTypes";
 
+/**
+ * Watch the __drugLog global
+ * when set take the action specified: load, update, or delete
+ */
 const DrugLogObserver = (mm: IMedicineManager, activeClient: ResidentRecord | null) => {
     const [, setDrugLogList] = useGlobal('drugLogList');
-    const [, setErrorDetails] = useGlobal('errorDetails');
-    const [drugLog, setDrugLog] = useGlobal('drugLog');
+    const [, setErrorDetails] = useGlobal('__errorDetails');
+    const [drugLog, setDrugLog] = useGlobal('__drugLog');
 
     useEffect(() => {
         if (drugLog && activeClient && activeClient.Id) {

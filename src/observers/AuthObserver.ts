@@ -4,14 +4,13 @@ import getInitialState from "../utility/getInitialState";
 /**
  * Watch for changes to the login global
  * When populated it contains the username and password to use to attempt to login
- * @constructor
  */
 const AuthObserver = () => {
-    const [, setApiKey] = useGlobal('apiKey');
-    const [, setErrorDetails] = useGlobal('errorDetails');
+    const [, setApiKey] = useGlobal('__apiKey');
+    const [, setErrorDetails] = useGlobal('__errorDetails');
     const [, setLoginFailed] = useGlobal('loginFailed');
     const [am] = useGlobal('authManager');
-    const [auth, setAuth] = useGlobal('auth');
+    const [auth, setAuth] = useGlobal('__auth');
 
     useEffect(() => {
         if (auth) {
