@@ -160,7 +160,6 @@ export const isToday = (dateIn: Date): boolean => {
     } as Intl.DateTimeFormatOptions;
     const nowFull = now.toLocaleString('en-US', options);
     const dateFull = date.toLocaleString('en-US', options);
-    console.log('nowFull', nowFull, 'dateFull', dateFull);
     return nowFull === dateFull;
 }
 

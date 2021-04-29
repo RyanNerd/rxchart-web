@@ -6,10 +6,11 @@ import Table from "react-bootstrap/Table";
 import TooltipButton from "../Buttons/TooltipButton";
 import {Alert, Form} from "react-bootstrap";
 import {getMDY, isToday} from "../../utility/common";
-import {MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
+import {DrugLogRecord, MedicineRecord, newDrugInfo, newDrugLogRecord} from "../../types/RecordTypes";
 import TabContent from "../../styles/common.css";
 import Row from "react-bootstrap/Row";
 import DrugLogGrid from "./Grids/DrugLogGrid";
+import DrugLogEdit from "./Modals/DrugLogEdit";
 
 /**
  * ManageDrugPage
@@ -18,6 +19,7 @@ import DrugLogGrid from "./Grids/DrugLogGrid";
  */
 const ManageDrugPage = (): JSX.Element | null => {
     const [, setMedicine] = useGlobal('medicine');
+    const [, setDrugLog] = useGlobal('drugLog');
     const [activeResident] = useGlobal('activeResident');
     const [activeTabKey] = useGlobal('activeTabKey');
     const [drugLogList] = useGlobal('drugLogList');
@@ -25,6 +27,7 @@ const ManageDrugPage = (): JSX.Element | null => {
     const [medicineList] = useGlobal('medicineList');
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
+    const [showCheckoutModal, setShowCheckoutModal] = useState<DrugLogRecord | boolean>(false);
 
     // We only care about drugs that have a checkout value and were updated/created today.
     const checkoutList = drugLogList.filter((dr) => {
@@ -56,6 +59,22 @@ const ManageDrugPage = (): JSX.Element | null => {
         };
         setMedicineInfo(medicineInfo);
         setShowMedicineEdit(true);
+    }
+
+    const handleCheckoutClicked = (e: React.MouseEvent<HTMLElement, MouseEvent>, r: MedicineRecord) => {
+        e.preventDefault();
+        const exitingCheckout = checkoutList.filter((cl) => {
+            return cl.MedicineId === r.Id;
+        });
+
+        const now = new Date();
+        const drugLog = exitingCheckout.length > 0 ? exitingCheckout[0] : {...newDrugLogRecord};
+        if (drugLog.ResidentId === 0) {
+            drugLog.ResidentId = r.ResidentId as number;
+            drugLog.MedicineId = r.Id as number;
+        }
+
+        setShowCheckoutModal(drugLog);
     }
 
     return (
@@ -101,7 +120,6 @@ const ManageDrugPage = (): JSX.Element | null => {
                     <th></th> {/* Delete */}
                 </tr>
                 </thead>
-                {/* todo: show checkout modal */}
                 <tbody>
                 {medicineList.map((drug: MedicineRecord) =>
                     <MedicineDetail
@@ -113,7 +131,7 @@ const ManageDrugPage = (): JSX.Element | null => {
                             setShowDeleteMedicine(true);
                         }}
                         onEdit={onEdit}
-                        onCheckout={(e, r) => alert('checkout clicked')}
+                        onCheckout={(e, r) => handleCheckoutClicked(e, r)}
                     />
                 )}
                 </tbody>
@@ -122,7 +140,11 @@ const ManageDrugPage = (): JSX.Element | null => {
 
             {checkoutList && checkoutList.length > 0 &&
             <Row>
+                {/* todo: Add Edit button */}
                 <DrugLogGrid
+                    onEdit={(e, r) => {
+                        alert('edit record clicked')
+                    }}
                     medicineList={medicineList}
                     includeCheckout={true}
                     drugLog={checkoutList}
@@ -142,6 +164,18 @@ const ManageDrugPage = (): JSX.Element | null => {
                 drugInfo={medicineInfo}
             />
             }
+
+            <DrugLogEdit
+                drugLogInfo={showCheckoutModal as DrugLogRecord}
+                onClose={(dl) => {
+                    setShowCheckoutModal(false);
+
+                    setDrugLog({action: "update", payload: dl});
+                  console.log('drugLogRecord', dl);
+                }}
+                onHide={() => setShowCheckoutModal(false)}
+                show={showCheckoutModal !== false}
+            />
 
             {medicineInfo && showDeleteMedicine &&
             <Confirm.Modal
