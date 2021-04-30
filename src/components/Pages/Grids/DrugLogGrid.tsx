@@ -21,6 +21,7 @@ interface IProps extends TableProps {
     medicineList?: MedicineRecord[]
     onDelete?: (e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) => void
     onEdit?: (e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) => void
+    [key: string]: any
 }
 
 /**
@@ -180,13 +181,13 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
 
     return (
         <Table
+            style={{tableLayout: "fixed", wordWrap: "break-word"}}
             {...props}
             className={condensed !== 'false' ? 'w-auto' : ''}
             striped
             bordered
             hover
             size="sm"
-            style={{tableLayout: "fixed", wordWrap: "break-word"}}
         >
             <thead>
             <tr>

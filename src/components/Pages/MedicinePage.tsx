@@ -317,6 +317,7 @@ const MedicinePage = (): JSX.Element | null => {
 
             {showDrugLog &&
             <DrugLogEdit
+                drugName={getDrugName(activeDrug && activeDrug.Id ? activeDrug.Id : 0, medicineList)}
                 show={true}
                 drugLogInfo={showDrugLog}
                 onHide={() => setShowDrugLog(null)}

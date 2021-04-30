@@ -54,7 +54,7 @@ const MedicineDetail = (props: IProps): JSX.Element => {
                         id={"med-checkout-btn-row" + drug.Id}
                         onClick={(e) => onCheckout(e, drug)}
                         >
-                        Checkout
+                        Checkout / Log
                     </Button>
                 </td>
             }

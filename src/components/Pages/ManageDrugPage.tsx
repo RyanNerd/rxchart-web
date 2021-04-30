@@ -5,7 +5,7 @@ import React, {useGlobal, useState} from 'reactn';
 import Table from "react-bootstrap/Table";
 import TooltipButton from "../Buttons/TooltipButton";
 import {Alert, Form} from "react-bootstrap";
-import {getMDY, isToday} from "../../utility/common";
+import {getDrugName, getMDY, isToday} from "../../utility/common";
 import {DrugLogRecord, MedicineRecord, newDrugInfo, newDrugLogRecord} from "../../types/RecordTypes";
 import TabContent from "../../styles/common.css";
 import Row from "react-bootstrap/Row";
@@ -29,11 +29,10 @@ const ManageDrugPage = (): JSX.Element | null => {
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const [showCheckoutModal, setShowCheckoutModal] = useState<DrugLogRecord | boolean>(false);
 
-    // We only care about drugs that have a checkout value and were updated/created today.
+    // We only display the log for drugs that were updated/created today.
     const checkoutList = drugLogList.filter((dr) => {
         const updated = dr && dr.Updated;
-        const out = dr && dr.Out ? dr.Out : 0;
-        return out > 0 && updated && isToday(updated);
+        return updated && isToday(updated);
     });
 
     // If this tab isn't active then don't render
@@ -96,6 +95,7 @@ const ManageDrugPage = (): JSX.Element | null => {
                 bordered
                 hover
                 size="sm"
+                style={{height: "400px",  display: "block", overflowY: "scroll"}}
             >
                 <thead>
                 <tr>
@@ -141,8 +141,11 @@ const ManageDrugPage = (): JSX.Element | null => {
             <Row>
                 {/* todo: Add Edit button */}
                 <DrugLogGrid
+                    style={{height: "250px",  display: "block", overflowY: "scroll"}}
                     onEdit={(e, r) => {
-                        alert('edit record clicked')
+                        if (r) {
+                            setShowCheckoutModal(r);
+                        }
                     }}
                     medicineList={medicineList}
                     includeCheckout={true}
@@ -165,10 +168,11 @@ const ManageDrugPage = (): JSX.Element | null => {
             }
 
             <DrugLogEdit
+                drugName={getDrugName(typeof showCheckoutModal !== "boolean" ?
+                    showCheckoutModal?.MedicineId : 0, medicineList)}
                 drugLogInfo={showCheckoutModal as DrugLogRecord}
                 onClose={(dl) => {
                     setShowCheckoutModal(false);
-
                     setDrugLog({action: "update", payload: dl});
                   console.log('drugLogRecord', dl);
                 }}
