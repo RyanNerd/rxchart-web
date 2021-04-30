@@ -4,13 +4,13 @@ import MedicineEdit from "./Modals/MedicineEdit";
 import React, {useGlobal, useState} from 'reactn';
 import Table from "react-bootstrap/Table";
 import TooltipButton from "../Buttons/TooltipButton";
-import {Alert, Form} from "react-bootstrap";
+import {Alert, Form, Row} from "react-bootstrap";
 import {getDrugName, getMDY, isToday} from "../../utility/common";
 import {DrugLogRecord, MedicineRecord, newDrugInfo, newDrugLogRecord} from "../../types/RecordTypes";
 import TabContent from "../../styles/common.css";
-import Row from "react-bootstrap/Row";
 import DrugLogGrid from "./Grids/DrugLogGrid";
 import DrugLogEdit from "./Modals/DrugLogEdit";
+import Button from "react-bootstrap/Button";
 
 /**
  * ManageDrugPage
@@ -77,83 +77,97 @@ const ManageDrugPage = (): JSX.Element | null => {
 
     return (
         <Form className={TabContent}>
-            <Row>
-            <TooltipButton
-                className="mb-2"
-                tooltip="Manually Add New Medicine"
-                size="sm"
-                variant="info"
-                onClick={(e: React.MouseEvent<HTMLElement>) => onEdit(e, null)}
-            >
-                + Medicine
-            </TooltipButton>
-            </Row>
+                <Row>
+                    <TooltipButton
+                        tooltip="Manually Add New Medicine"
+                        size="sm"
+                        variant="info"
+                        onClick={(e: React.MouseEvent<HTMLElement>) => onEdit(e, null)}
+                    >
+                        + Medicine
+                    </TooltipButton>
 
-            <Row>
-            <Table
-                striped
-                bordered
-                hover
-                size="sm"
-                style={{height: "400px",  display: "block", overflowY: "scroll"}}
-            >
-                <thead>
-                <tr>
-                    <th></th> {/* Edit */}
-                    <th></th> {/* Checkout */}
-                    <th>
-                        Drug
-                    </th>
-                    <th>
-                        Strength
-                    </th>
-                    <th>
-                        Directions
-                    </th>
-                    <th>
-                        Notes
-                    </th>
-                    <th>
-                        Barcode
-                    </th>
-                    <th></th> {/* Delete */}
-                </tr>
-                </thead>
-                <tbody>
-                {medicineList.map((drug: MedicineRecord) =>
-                    <MedicineDetail
-                        drug={drug}
-                        key={'med-' + drug.Id}
-                        onDelete={(e, medicineRecord) => {
-                            e.preventDefault();
-                            setMedicineInfo({...medicineRecord});
-                            setShowDeleteMedicine(true);
+                    <Button
+                        className="ml-3"
+                        size="sm"
+                        variant="info"
+                        disabled={true}
+                        onClick={() => {
+                            // todo: setActiveTabKey('medicine-checkout');
+                            alert('medicine-checkout');
                         }}
-                        onEdit={onEdit}
-                        onCheckout={(e, r) => handleCheckoutClicked(e, r)}
-                    />
-                )}
-                </tbody>
-            </Table>
-            </Row>
+                    >
+                        Print Medicine Checkout
+                    </Button>
+                </Row>
 
-            {checkoutList && checkoutList.length > 0 &&
-            <Row>
-                {/* todo: Add Edit button */}
-                <DrugLogGrid
-                    style={{height: "250px",  display: "block", overflowY: "scroll"}}
-                    onEdit={(e, r) => {
-                        if (r) {
-                            setShowCheckoutModal(r);
-                        }
-                    }}
-                    medicineList={medicineList}
-                    includeCheckout={true}
-                    drugLog={checkoutList}
-                    columns={['Drug', 'Created', 'Updated', 'Notes', 'Out', 'In']}
-                />
-            </Row>
-            }
+
+                <Row style={{height: "475px", overflowY: "scroll"}} className="mt-2">
+                    <Table
+                        striped
+                        bordered
+                        hover
+                        size="sm"
+                    >
+                        <thead>
+                        <tr>
+                            <th></th>
+                            {/* Edit */}
+                            <th></th>
+                            {/* Checkout */}
+                            <th>
+                                Drug
+                            </th>
+                            <th>
+                                Strength
+                            </th>
+                            <th>
+                                Directions
+                            </th>
+                            <th>
+                                Notes
+                            </th>
+                            <th>
+                                Barcode
+                            </th>
+                            <th></th>
+                            {/* Delete */}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {medicineList.map((drug: MedicineRecord) =>
+                            <MedicineDetail
+                                drug={drug}
+                                key={'med-' + drug.Id}
+                                onDelete={(e, medicineRecord) => {
+                                    e.preventDefault();
+                                    setMedicineInfo({...medicineRecord});
+                                    setShowDeleteMedicine(true);
+                                }}
+                                onEdit={onEdit}
+                                onCheckout={(e, r) => handleCheckoutClicked(e, r)}
+                            />
+                        )}
+                        </tbody>
+                    </Table>
+                </Row>
+
+                {checkoutList && checkoutList.length > 0 &&
+                <Row style={{height: "220px", overflowY: "scroll"}} className="mt-2">
+                    <DrugLogGrid
+                        onEdit={(e, r) => {
+                            if (r) {
+                                setShowCheckoutModal(r);
+                            }
+                        }}
+                        medicineList={medicineList}
+                        includeCheckout={true}
+                        drugLog={checkoutList}
+                        columns={['Drug', 'Created', 'Updated', 'Notes', 'Out', 'In']}
+                    />
+                </Row>
+                }
+
 
             {showMedicineEdit && medicineInfo &&
             /* MedicineEdit Modal */
@@ -174,7 +188,7 @@ const ManageDrugPage = (): JSX.Element | null => {
                 onClose={(dl) => {
                     setShowCheckoutModal(false);
                     setDrugLog({action: "update", payload: dl});
-                  console.log('drugLogRecord', dl);
+                    console.log('drugLogRecord', dl);
                 }}
                 onHide={() => setShowCheckoutModal(false)}
                 show={showCheckoutModal !== false}

@@ -50,11 +50,12 @@ const MedicineDetail = (props: IProps): JSX.Element => {
             {onCheckout &&
                 <td style={{textAlign: "center", verticalAlign: "middle"}}>
                     <Button
+                        variant="info"
                         size="sm"
                         id={"med-checkout-btn-row" + drug.Id}
                         onClick={(e) => onCheckout(e, drug)}
                         >
-                        Checkout / Log
+                        + Log Drug
                     </Button>
                 </td>
             }
