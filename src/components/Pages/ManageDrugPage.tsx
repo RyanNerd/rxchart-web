@@ -1,4 +1,3 @@
-import Confirm from "./Modals/Confirm";
 import MedicineDetail from "./Grids/MedicineDetail";
 import MedicineEdit from "./Modals/MedicineEdit";
 import React, {useGlobal, useState} from 'reactn';
@@ -11,6 +10,7 @@ import TabContent from "../../styles/common.css";
 import DrugLogGrid from "./Grids/DrugLogGrid";
 import DrugLogEdit from "./Modals/DrugLogEdit";
 import Button from "react-bootstrap/Button";
+import ConfirmDialogModal from "./Modals/ConfirmDialogModal";
 
 /**
  * ManageDrugPage
@@ -27,6 +27,7 @@ const ManageDrugPage = (): JSX.Element | null => {
     const [medicineList] = useGlobal('medicineList');
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
+    const [showDrugLogDeleteConfirm, setShowDrugLogDeleteConfirm] = useState<DrugLogRecord | boolean>(false);
     const [showCheckoutModal, setShowCheckoutModal] = useState<DrugLogRecord | boolean>(false);
 
     // We only display the log for drugs that were updated/created today.
@@ -73,6 +74,10 @@ const ManageDrugPage = (): JSX.Element | null => {
         }
 
         setShowCheckoutModal(drugLog);
+    }
+
+    const drugName = (drugLogRecord: DrugLogRecord) => {
+        return getDrugName(drugLogRecord.MedicineId as number, medicineList)
     }
 
     return (
@@ -160,6 +165,10 @@ const ManageDrugPage = (): JSX.Element | null => {
                                 setShowCheckoutModal(r);
                             }
                         }}
+                        onDelete={(e, r) => {
+                            e.preventDefault();
+                            setShowDrugLogDeleteConfirm(r);
+                        }}
                         medicineList={medicineList}
                         includeCheckout={true}
                         drugLog={checkoutList}
@@ -188,36 +197,95 @@ const ManageDrugPage = (): JSX.Element | null => {
                 onClose={(dl) => {
                     setShowCheckoutModal(false);
                     setDrugLog({action: "update", payload: dl});
-                    console.log('drugLogRecord', dl);
                 }}
                 onHide={() => setShowCheckoutModal(false)}
                 show={showCheckoutModal !== false}
             />
 
-            {medicineInfo && showDeleteMedicine &&
-            <Confirm.Modal
-                show={showDeleteMedicine}
-                buttonvariant="danger"
-                onSelect={(a) => {
-                    setShowDeleteMedicine(false);
-                    setMedicine(a ? {action: "delete", payload: medicineInfo?.Id as number} : null);
-                }}
-            >
-                <Confirm.Header>
-                    <Confirm.Title>
-                        {"Delete " + medicineInfo.Drug}
-                    </Confirm.Title>
-                </Confirm.Header>
-                <Confirm.Body>
+            <ConfirmDialogModal
+                centered
+                show={showDrugLogDeleteConfirm !== false}
+                title={<h3>Delete Drug Log Entry</h3>}
+                body={
                     <Alert variant="danger">
-                        Deleting this medicine will remove <b>ALL</b> history of this drug being taken!
+                        {"Delete " + drugName(showDrugLogDeleteConfirm as DrugLogRecord) + " from the drug log?"}
                     </Alert>
-                    <b style={{color: "red"}}>
-                        Are you sure?
-                    </b>
-                </Confirm.Body>
-            </Confirm.Modal>
-            }
+                }
+                yesButton={
+                    <Button
+                        variant="danger"
+                        onClick={(e) =>
+                        {
+                            e.preventDefault();
+                            const drugLogRecord = showDrugLogDeleteConfirm as DrugLogRecord;
+                            const drugLogId = drugLogRecord.Id as number;
+                            setDrugLog({action: "delete", payload: drugLogId})
+                            setShowDrugLogDeleteConfirm(false);
+                        }}
+                    >
+                        Delete
+                    </Button>
+                }
+                noButton={
+                    <Button
+                        variant="secondary"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setShowDrugLogDeleteConfirm(false);
+                        }}
+                    >
+                        Cancel
+                    </Button>
+                }
+            />
+
+            <ConfirmDialogModal
+                centered
+                size="lg"
+                show={medicineInfo !== null && showDeleteMedicine}
+                title={
+                    <Alert
+                        variant="danger"
+                    >
+                        <span><b>DANGER</b>: Delete Medication <b>{medicineInfo?.Drug}</b></span>
+                    </Alert>
+                }
+                body={
+                    <Alert
+                        variant="danger"
+                    >
+                        <p>
+                            Deleting <b>{medicineInfo?.Drug}</b> will destroy <b>ALL</b> drug log history for this drug!
+                        </p>
+                        <p>
+                            <b>This can not be undone!</b>
+                        </p>
+                    </Alert>
+                }
+                yesButton={
+                    <Button
+                        variant="danger"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setMedicine({action: "delete", payload: medicineInfo?.Id as number});
+                            setShowDeleteMedicine(false)
+                        }}
+                    >
+                        {"Delete " + medicineInfo?.Drug}
+                    </Button>
+                }
+                noButton={
+                    <Button
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setShowDeleteMedicine(false);
+                        }}
+                        variant="secondary"
+                    >
+                        Cancel
+                    </Button>
+                }
+            />
         </Form>
     );
 }
