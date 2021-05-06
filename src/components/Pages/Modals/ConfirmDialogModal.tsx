@@ -7,7 +7,7 @@ import {ReactChild, ReactChildren, useEffect} from "react";
 
 interface IProps extends ModalProps {
     show: boolean
-    body?: string | JSX.Element | JSX.Element[]
+    body?: string | ReactChildren | ReactChild | JSX.Element[] | JSX.Element
     title?: string | ReactChildren | ReactChild | JSX.Element[] | JSX.Element
     onAnswer?: (a: boolean) => void
     yesButton?: JSX.Element
@@ -15,6 +15,10 @@ interface IProps extends ModalProps {
     [key: string]: any
 }
 
+/**
+ * ConfirmDialogModal - Uses composition instead of inheritance
+ * @param props {IProps}
+ */
 const ConfirmDialogModal = (props: IProps) => {
     const {
         onAnswer,
@@ -27,6 +31,7 @@ const ConfirmDialogModal = (props: IProps) => {
 
     const [showModal, setShowModal] = useState(show);
 
+    // Monitor changes to the show property
     useEffect(() => {
         setShowModal(show);
     }, [show]);
@@ -44,6 +49,10 @@ const ConfirmDialogModal = (props: IProps) => {
         }
     }
 
+    /**
+     * Generic AnswerButton
+     * @param props {boolean}
+     */
     const AnswerButton = (props: {a: boolean}) => {
         return (
             <Button
