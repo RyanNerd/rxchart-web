@@ -9,7 +9,7 @@ interface IProps {
     onDelete?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
     onEdit?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
     onSelect?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
-    onCheckout?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
+    onLogDrug?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
     activeDrug?: MedicineRecord | null
 }
 
@@ -17,7 +17,6 @@ interface IProps {
  * MedicineDetail table row
  * @param {IProps} props
  * @return {JSX.Element}
- * @constructor
  */
 const MedicineDetail = (props: IProps): JSX.Element => {
     const {
@@ -26,7 +25,7 @@ const MedicineDetail = (props: IProps): JSX.Element => {
         onDelete,
         onEdit,
         onSelect,
-        onCheckout,
+        onLogDrug,
         activeDrug
     } = props;
 
@@ -47,13 +46,13 @@ const MedicineDetail = (props: IProps): JSX.Element => {
                 </Button>
             </td>
             }
-            {onCheckout &&
+            {onLogDrug &&
                 <td style={{textAlign: "center", verticalAlign: "middle"}}>
                     <Button
                         variant="info"
                         size="sm"
                         id={"med-checkout-btn-row" + drug.Id}
-                        onClick={(e) => onCheckout(e, drug)}
+                        onClick={(e) => onLogDrug(e, drug)}
                         >
                         + Log Drug
                     </Button>

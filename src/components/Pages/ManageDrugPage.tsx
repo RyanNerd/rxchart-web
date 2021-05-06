@@ -1,6 +1,6 @@
 import MedicineDetail from "./Grids/MedicineDetail";
 import MedicineEdit from "./Modals/MedicineEdit";
-import React, {useGlobal, useState} from 'reactn';
+import React, {useEffect, useGlobal, useState} from 'reactn';
 import Table from "react-bootstrap/Table";
 import TooltipButton from "../Buttons/TooltipButton";
 import {Alert, Form, Row} from "react-bootstrap";
@@ -21,7 +21,7 @@ const ManageDrugPage = (): JSX.Element | null => {
     const [, setMedicine] = useGlobal('__medicine');
     const [, setDrugLog] = useGlobal('__drugLog');
     const [activeResident] = useGlobal('activeResident');
-    const [activeTabKey] = useGlobal('activeTabKey');
+    const [activeTabKey, setActiveTabKey] = useGlobal('activeTabKey');
     const [drugLogList] = useGlobal('drugLogList');
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [medicineList] = useGlobal('medicineList');
@@ -29,12 +29,21 @@ const ManageDrugPage = (): JSX.Element | null => {
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const [showDrugLogDeleteConfirm, setShowDrugLogDeleteConfirm] = useState<DrugLogRecord | boolean>(false);
     const [showCheckoutModal, setShowCheckoutModal] = useState<DrugLogRecord | boolean>(false);
+    const [todayDrugLogList, setTodayDrugLogList] = useState<DrugLogRecord[]>([]);
+
+    /**
+     * Return true if there are any drugLog records that have Out > 0
+     */
+    const hasCheckout = () => todayDrugLogList.some(r => r.Out && r.Out > 0);
 
     // We only display the log for drugs that were updated/created today.
-    const checkoutList = drugLogList.filter((dr) => {
-        const updated = dr && dr.Updated;
-        return updated && isToday(updated);
-    });
+    useEffect(() => {
+        const logList = drugLogList.filter((dr) => {
+            const updated = dr && dr.Updated;
+            return updated && isToday(updated);
+        });
+        setTodayDrugLogList(logList);
+    }, [drugLogList]);
 
     // If this tab isn't active then don't render
     if (activeTabKey !== 'manage') {
@@ -61,13 +70,23 @@ const ManageDrugPage = (): JSX.Element | null => {
         setShowMedicineEdit(true);
     }
 
-    const handleCheckoutClicked = (e: React.MouseEvent<HTMLElement, MouseEvent>, r: MedicineRecord) => {
+    /**
+     * Handle when user clicks on the + Log Drug from the Medicine Detail table
+     * @param e {React.MouseEvent<HTMLElement>}
+     * @param r {MedicineRecord}
+     */
+    const handleLogDrug = (e: React.MouseEvent<HTMLElement, MouseEvent>, r: MedicineRecord) => {
         e.preventDefault();
-        const exitingCheckout = checkoutList.filter((cl) => {
-            return cl.MedicineId === r.Id;
+
+        // Search todayDrugLogList to see if a record already exists.
+        const drugLogRecords = todayDrugLogList.filter((dl) => {
+            return dl.MedicineId === r.Id;
         });
 
-        const drugLog = exitingCheckout.length > 0 ? exitingCheckout[0] : {...newDrugLogRecord};
+        // Set drugLog to either the existing drugLogRecord or create a new one to be inserted.
+        const drugLog = drugLogRecords.length > 0 ? drugLogRecords[0] : {...newDrugLogRecord};
+
+        // If new ResidentId will be 0 so we need to set fields up correctly for the insert.
         if (drugLog.ResidentId === 0) {
             drugLog.ResidentId = r.ResidentId as number;
             drugLog.MedicineId = r.Id as number;
@@ -76,6 +95,10 @@ const ManageDrugPage = (): JSX.Element | null => {
         setShowCheckoutModal(drugLog);
     }
 
+    /**
+     * Convenience function to get drug name
+     * @param drugLogRecord {DrugLogRecord}
+     */
     const drugName = (drugLogRecord: DrugLogRecord) => {
         return getDrugName(drugLogRecord.MedicineId as number, medicineList)
     }
@@ -96,16 +119,14 @@ const ManageDrugPage = (): JSX.Element | null => {
                         className="ml-3"
                         size="sm"
                         variant="info"
-                        disabled={true}
+                        disabled={!hasCheckout()}
                         onClick={() => {
-                            // todo: setActiveTabKey('medicine-checkout');
-                            alert('medicine-checkout');
+                            setActiveTabKey('medicine-checkout')
                         }}
                     >
                         Print Medicine Checkout
                     </Button>
                 </Row>
-
 
                 <Row style={{height: "475px", overflowY: "scroll"}} className="mt-2">
                     <Table
@@ -150,14 +171,14 @@ const ManageDrugPage = (): JSX.Element | null => {
                                     setShowDeleteMedicine(true);
                                 }}
                                 onEdit={onEdit}
-                                onCheckout={(e, r) => handleCheckoutClicked(e, r)}
+                                onLogDrug={(e, r) => handleLogDrug(e, r)}
                             />
                         )}
                         </tbody>
                     </Table>
                 </Row>
 
-                {checkoutList && checkoutList.length > 0 &&
+                {todayDrugLogList && todayDrugLogList.length > 0 &&
                 <Row style={{height: "220px", overflowY: "scroll"}} className="mt-2">
                     <DrugLogGrid
                         onEdit={(e, r) => {
@@ -171,7 +192,7 @@ const ManageDrugPage = (): JSX.Element | null => {
                         }}
                         medicineList={medicineList}
                         includeCheckout={true}
-                        drugLog={checkoutList}
+                        drugLog={todayDrugLogList}
                         columns={['Drug', 'Created', 'Updated', 'Notes', 'Out', 'In']}
                     />
                 </Row>
