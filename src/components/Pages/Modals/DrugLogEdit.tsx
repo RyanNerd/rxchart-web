@@ -53,14 +53,24 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
 
     /**
      * Fires when a text field or checkbox is changing.
-     * @param {React.KeyboardEvent<HTMLElement>} e
+     * @param e {React.KeyboardEvent<HTMLElement>}
+     * @param isNumber {boolean}
      */
-    const handleOnChange = (e: React.ChangeEvent<HTMLElement>) => {
+    const handleOnChange = (e: React.ChangeEvent<HTMLElement>, isNumber?: boolean) => {
         const target = e.target as HTMLInputElement;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
         if (drugLogInfo !== null) {
-            drugLogInfo[name] = value;
+            if (isNumber) {
+                const num = parseInt(value as string);
+                if (num <= 0) {
+                    drugLogInfo[name] = null;
+                } else {
+                    drugLogInfo[name] = num;
+                }
+            } else {
+                drugLogInfo[name] = value;
+            }
             setDrugLogInfo({...drugLogInfo});
         }
     }
@@ -129,7 +139,7 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
                                 type="number"
                                 value={drugLogInfo.Out || undefined}
                                 name="Out"
-                                onChange={(e) => handleOnChange(e)}
+                                onChange={(e) => handleOnChange(e, true)}
                             />
                         </Col>
                     </Form.Group>
@@ -143,7 +153,7 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
                                 type="number"
                                 value={drugLogInfo.In || undefined}
                                 name="In"
-                                onChange={(e) => handleOnChange(e)}
+                                onChange={(e) => handleOnChange(e, true)}
                             />
                         </Col>
                     </Form.Group>
