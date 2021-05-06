@@ -2,15 +2,14 @@ import {useEffect, useGlobal} from "reactn";
 import {ResidentRecord} from "../types/RecordTypes";
 
 /**
- * Watch the client global
+ * Watch the __client global
  * when set take the action specified: load, update, or delete
- * @constructor
  */
 const ClientObserver = () => {
-    const [, setErrorDetails] = useGlobal('errorDetails');
+    const [, setErrorDetails] = useGlobal('__errorDetails');
     const [, setResidentList] = useGlobal('residentList');
     const [activeResident, setActiveResident] = useGlobal('activeResident');
-    const [client, setClient] = useGlobal('client');
+    const [client, setClient] = useGlobal('__client');
     const [rm] = useGlobal('residentManager');
 
     useEffect(() => {

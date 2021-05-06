@@ -1,12 +1,16 @@
-import Confirm from "./Modals/Confirm";
 import MedicineDetail from "./Grids/MedicineDetail";
 import MedicineEdit from "./Modals/MedicineEdit";
 import React, {useGlobal, useState} from 'reactn';
 import Table from "react-bootstrap/Table";
 import TooltipButton from "../Buttons/TooltipButton";
-import {Alert} from "react-bootstrap";
-import {getMDY} from "../../utility/common";
-import {MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
+import {Alert, Form, Row} from "react-bootstrap";
+import {getDrugName, getMDY, isToday} from "../../utility/common";
+import {DrugLogRecord, MedicineRecord, newDrugInfo, newDrugLogRecord} from "../../types/RecordTypes";
+import TabContent from "../../styles/common.css";
+import DrugLogGrid from "./Grids/DrugLogGrid";
+import DrugLogEdit from "./Modals/DrugLogEdit";
+import Button from "react-bootstrap/Button";
+import ConfirmDialogModal from "./Modals/ConfirmDialogModal";
 
 /**
  * ManageDrugPage
@@ -14,13 +18,23 @@ import {MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
  * @returns {JSX.Element}
  */
 const ManageDrugPage = (): JSX.Element | null => {
-    const [, setMedicine] = useGlobal('medicine');
+    const [, setMedicine] = useGlobal('__medicine');
+    const [, setDrugLog] = useGlobal('__drugLog');
     const [activeResident] = useGlobal('activeResident');
     const [activeTabKey] = useGlobal('activeTabKey');
+    const [drugLogList] = useGlobal('drugLogList');
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [medicineList] = useGlobal('medicineList');
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
+    const [showDrugLogDeleteConfirm, setShowDrugLogDeleteConfirm] = useState<DrugLogRecord | boolean>(false);
+    const [showCheckoutModal, setShowCheckoutModal] = useState<DrugLogRecord | boolean>(false);
+
+    // We only display the log for drugs that were updated/created today.
+    const checkoutList = drugLogList.filter((dr) => {
+        const updated = dr && dr.Updated;
+        return updated && isToday(updated);
+    });
 
     // If this tab isn't active then don't render
     if (activeTabKey !== 'manage') {
@@ -47,60 +61,122 @@ const ManageDrugPage = (): JSX.Element | null => {
         setShowMedicineEdit(true);
     }
 
-    return (
-        <>
-            <TooltipButton
-                className="mb-2"
-                tooltip="Manually Add New Medicine"
-                size="sm"
-                variant="info"
-                onClick={(e: React.MouseEvent<HTMLElement>) => onEdit(e, null)}
-            >
-                + Medicine
-            </TooltipButton>
+    const handleCheckoutClicked = (e: React.MouseEvent<HTMLElement, MouseEvent>, r: MedicineRecord) => {
+        e.preventDefault();
+        const exitingCheckout = checkoutList.filter((cl) => {
+            return cl.MedicineId === r.Id;
+        });
 
-            <Table
-                striped
-                bordered
-                hover
-                size="sm"
-            >
-                <thead>
-                <tr>
-                    <th></th>
-                    <th>
-                        Drug
-                    </th>
-                    <th>
-                        Strength
-                    </th>
-                    <th>
-                        Directions
-                    </th>
-                    <th>
-                        Notes
-                    </th>
-                    <th>
-                        Barcode
-                    </th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                {medicineList.map((drug: MedicineRecord) =>
-                    <MedicineDetail
-                        drug={drug}
-                        key={'med-' + drug.Id}
-                        onDelete={(e, medicineRecord) => {
-                            e.preventDefault();
-                            setMedicineInfo({...medicineRecord});
-                            setShowDeleteMedicine(true);
+        const drugLog = exitingCheckout.length > 0 ? exitingCheckout[0] : {...newDrugLogRecord};
+        if (drugLog.ResidentId === 0) {
+            drugLog.ResidentId = r.ResidentId as number;
+            drugLog.MedicineId = r.Id as number;
+        }
+
+        setShowCheckoutModal(drugLog);
+    }
+
+    const drugName = (drugLogRecord: DrugLogRecord) => {
+        return getDrugName(drugLogRecord.MedicineId as number, medicineList)
+    }
+
+    return (
+        <Form className={TabContent}>
+                <Row>
+                    <TooltipButton
+                        tooltip="Manually Add New Medicine"
+                        size="sm"
+                        variant="info"
+                        onClick={(e: React.MouseEvent<HTMLElement>) => onEdit(e, null)}
+                    >
+                        + Medicine
+                    </TooltipButton>
+
+                    <Button
+                        className="ml-3"
+                        size="sm"
+                        variant="info"
+                        disabled={true}
+                        onClick={() => {
+                            // todo: setActiveTabKey('medicine-checkout');
+                            alert('medicine-checkout');
                         }}
-                        onEdit={onEdit}
+                    >
+                        Print Medicine Checkout
+                    </Button>
+                </Row>
+
+
+                <Row style={{height: "475px", overflowY: "scroll"}} className="mt-2">
+                    <Table
+                        striped
+                        bordered
+                        hover
+                        size="sm"
+                    >
+                        <thead>
+                        <tr>
+                            <th></th>
+                            {/* Edit */}
+                            <th></th>
+                            {/* Checkout */}
+                            <th>
+                                Drug
+                            </th>
+                            <th>
+                                Strength
+                            </th>
+                            <th>
+                                Directions
+                            </th>
+                            <th>
+                                Notes
+                            </th>
+                            <th>
+                                Barcode
+                            </th>
+                            <th></th>
+                            {/* Delete */}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {medicineList.map((drug: MedicineRecord) =>
+                            <MedicineDetail
+                                drug={drug}
+                                key={'med-' + drug.Id}
+                                onDelete={(e, medicineRecord) => {
+                                    e.preventDefault();
+                                    setMedicineInfo({...medicineRecord});
+                                    setShowDeleteMedicine(true);
+                                }}
+                                onEdit={onEdit}
+                                onCheckout={(e, r) => handleCheckoutClicked(e, r)}
+                            />
+                        )}
+                        </tbody>
+                    </Table>
+                </Row>
+
+                {checkoutList && checkoutList.length > 0 &&
+                <Row style={{height: "220px", overflowY: "scroll"}} className="mt-2">
+                    <DrugLogGrid
+                        onEdit={(e, r) => {
+                            if (r) {
+                                setShowCheckoutModal(r);
+                            }
+                        }}
+                        onDelete={(e, r) => {
+                            e.preventDefault();
+                            setShowDrugLogDeleteConfirm(r);
+                        }}
+                        medicineList={medicineList}
+                        includeCheckout={true}
+                        drugLog={checkoutList}
+                        columns={['Drug', 'Created', 'Updated', 'Notes', 'Out', 'In']}
                     />
-                )}
-                </tbody>
-            </Table>
+                </Row>
+                }
+
 
             {showMedicineEdit && medicineInfo &&
             /* MedicineEdit Modal */
@@ -114,31 +190,103 @@ const ManageDrugPage = (): JSX.Element | null => {
             />
             }
 
-            {medicineInfo && showDeleteMedicine &&
-            <Confirm.Modal
-                show={showDeleteMedicine}
-                buttonvariant="danger"
-                onSelect={(a) => {
-                    setShowDeleteMedicine(false);
-                    setMedicine(a ? {action: "delete", payload: medicineInfo?.Id as number} : null);
+            <DrugLogEdit
+                drugName={getDrugName(typeof showCheckoutModal !== "boolean" ?
+                    showCheckoutModal?.MedicineId : 0, medicineList)}
+                drugLogInfo={showCheckoutModal as DrugLogRecord}
+                onClose={(dl) => {
+                    setShowCheckoutModal(false);
+                    setDrugLog({action: "update", payload: dl});
                 }}
-            >
-                <Confirm.Header>
-                    <Confirm.Title>
-                        {"Delete " + medicineInfo.Drug}
-                    </Confirm.Title>
-                </Confirm.Header>
-                <Confirm.Body>
+                onHide={() => setShowCheckoutModal(false)}
+                show={showCheckoutModal !== false}
+            />
+
+            <ConfirmDialogModal
+                centered
+                show={showDrugLogDeleteConfirm !== false}
+                title={<h3>Delete Drug Log Entry</h3>}
+                body={
                     <Alert variant="danger">
-                        Deleting this medicine will remove <b>ALL</b> history of this drug being taken!
+                        {"Delete " + drugName(showDrugLogDeleteConfirm as DrugLogRecord) + " from the drug log?"}
                     </Alert>
-                    <b style={{color: "red"}}>
-                        Are you sure?
-                    </b>
-                </Confirm.Body>
-            </Confirm.Modal>
-            }
-        </>
+                }
+                yesButton={
+                    <Button
+                        variant="danger"
+                        onClick={(e) =>
+                        {
+                            e.preventDefault();
+                            const drugLogRecord = showDrugLogDeleteConfirm as DrugLogRecord;
+                            const drugLogId = drugLogRecord.Id as number;
+                            setDrugLog({action: "delete", payload: drugLogId})
+                            setShowDrugLogDeleteConfirm(false);
+                        }}
+                    >
+                        Delete
+                    </Button>
+                }
+                noButton={
+                    <Button
+                        variant="secondary"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setShowDrugLogDeleteConfirm(false);
+                        }}
+                    >
+                        Cancel
+                    </Button>
+                }
+            />
+
+            <ConfirmDialogModal
+                centered
+                size="lg"
+                show={medicineInfo !== null && showDeleteMedicine}
+                title={
+                    <Alert
+                        variant="danger"
+                    >
+                        <span><b>DANGER</b>: Delete Medication <b>{medicineInfo?.Drug}</b></span>
+                    </Alert>
+                }
+                body={
+                    <Alert
+                        variant="danger"
+                    >
+                        <p>
+                            Deleting <b>{medicineInfo?.Drug}</b> will destroy <b>ALL</b> drug log history for this drug!
+                        </p>
+                        <p>
+                            <b>This can not be undone!</b>
+                        </p>
+                    </Alert>
+                }
+                yesButton={
+                    <Button
+                        variant="danger"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setMedicine({action: "delete", payload: medicineInfo?.Id as number});
+                            setShowDeleteMedicine(false)
+                        }}
+                    >
+                        {"Delete " + medicineInfo?.Drug}
+                    </Button>
+                }
+                noButton={
+                    <Button
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setShowDeleteMedicine(false);
+                        }}
+                        variant="secondary"
+                    >
+                        Cancel
+                    </Button>
+                }
+            />
+        </Form>
     );
 }
 

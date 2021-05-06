@@ -4,7 +4,7 @@ import LoginPage from './LoginPage';
 import ManageDrugPage from "./ManageDrugPage";
 import ManageOtcPage from "./ManageOtcPage";
 import MedicinePage from "./MedicinePage";
-import React, {useGlobal, useEffect, useState} from 'reactn';
+import React, {useEffect, useGlobal, useState} from 'reactn';
 import ResidentPage from "./ResidentPage";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
@@ -18,8 +18,8 @@ import {getCheckoutList} from "../../utility/common";
 const LandingPage = () => {
     const [activeResident] = useGlobal('activeResident');
     const [activeTabKey, setActiveTabKey] = useGlobal('activeTabKey');
-    const [apiKey] = useGlobal('apiKey');
-    const [errorDetails] = useGlobal('errorDetails');
+    const [apiKey] = useGlobal('__apiKey');
+    const [errorDetails] = useGlobal('__errorDetails');
     const [checkoutDisabled, setCheckoutDisabled] = useState(apiKey === null || !activeResident);
     const [drugLogList] = useGlobal('drugLogList');
     const navBarElement = document.getElementsByClassName('nav nav-tabs');
@@ -71,13 +71,6 @@ const LandingPage = () => {
             </Tab>
             <Tab
                 disabled={apiKey === null || !activeResident}
-                eventKey="history"
-                title={<span className={activeTabKey === 'history' ? 'bld' : ''}>Drug History</span>}
-            >
-                <DrugHistoryPage/>
-            </Tab>
-            <Tab
-                disabled={apiKey === null || !activeResident}
                 eventKey="manage"
                 title={<span className={activeTabKey === 'manage' ? 'bld' : ''}>Manage Rx</span>}
             >
@@ -89,6 +82,13 @@ const LandingPage = () => {
                 title={<span className={activeTabKey === 'manage-otc' ? 'bld' : ''}>Manage OTC</span>}
             >
                 <ManageOtcPage/>
+            </Tab>
+            <Tab
+                disabled={apiKey === null || !activeResident}
+                eventKey="history"
+                title={<span className={activeTabKey === 'history' ? 'bld' : ''}>Drug History</span>}
+            >
+                <DrugHistoryPage/>
             </Tab>
             <Tab
                 disabled={checkoutDisabled}

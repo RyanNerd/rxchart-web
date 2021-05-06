@@ -13,29 +13,29 @@ declare module 'reactn/default' {
     }
 
     export interface State {
-        auth: {action: 'login' | 'logout', payload: {username: string, password: string} | null} | null
+        __auth: {action: 'login' | 'logout', payload: {username: string, password: string} | null} | null
         activeResident: ResidentRecord | null
         activeTabKey: string
-        apiKey: string | null
+        __apiKey: string | null
         authManager: IAuthManager
-        client: {
+        __client: {
             action: 'load' | 'update' | 'delete'
             cb?: (c: ResidentRecord) => void
             payload: null | ResidentRecord | number
         } | null
         count: number
         development: boolean
-        drugLog: {action: 'load'|'update'|'delete', payload?: null | DrugLogRecord | DrugLogRecord[] | number} | null
+        __drugLog: {action: 'load'|'update'|'delete', payload?: null | DrugLogRecord | DrugLogRecord[] | number} | null
         drugLogList: DrugLogRecord[]
-        errorDetails: any
+        __errorDetails: any
         login: { username: string, password: string } | null
         loginFailed: boolean
         logout: boolean
-        medicine: {action: 'load' | 'update' | 'delete', payload: null | MedicineRecord | number} | null
+        __medicine: {action: 'load' | 'update' | 'delete', payload: null | MedicineRecord | number} | null
         medicineList: MedicineRecord[]
         medicineManager: IMedicineManager
         otcList: MedicineRecord[]
-        otcMedicine: {action: 'load' | 'update' | 'delete', payload: null | MedicineRecord | number} | null
+        __otcMedicine: {action: 'load' | 'update' | 'delete', payload: null | MedicineRecord | number} | null
         providers: IProviders
         residentList: ResidentRecord[]
         residentManager: IResidentManager

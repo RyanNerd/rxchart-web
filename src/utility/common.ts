@@ -147,10 +147,11 @@ export const getBsColor = (variant: Variant): string => {
 
 /**
  * Given a date object return true if the date is today.
- * @param {Date} date
+ * @param {Date} dateIn
  * @return {boolean}
  */
-export const isToday = (date: Date): boolean => {
+export const isToday = (dateIn: Date): boolean => {
+    const date = new Date(dateIn);
     const now = new Date();
     const options = {
         day: '2-digit',

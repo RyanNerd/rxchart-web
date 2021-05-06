@@ -22,15 +22,15 @@ import OtcListGroup from "./ListGroups/OtcListGroup";
  * @return {JSX.Element | null}
  */
 const MedicinePage = (): JSX.Element | null => {
-    const [, setMedicine] = useGlobal('medicine');
-    const [, setOtcMedicine] = useGlobal('otcMedicine');
+    const [, setMedicine] = useGlobal('__medicine');
+    const [, setOtcMedicine] = useGlobal('__otcMedicine');
     const [activeDrug, setActiveDrug] = useState<MedicineRecord | null>(null);
     const [activeOtcDrug, setActiveOtcDrug] = useState<MedicineRecord | null>(null);
     const [activeResident] = useGlobal('activeResident');
     const [activeTabKey, setActiveTabKey] = useGlobal('activeTabKey');
-    const [apiKey] = useGlobal('apiKey');
+    const [apiKey] = useGlobal('__apiKey');
     const [checkoutDisabled, setCheckoutDisabled] = useState(apiKey === null || !activeResident)
-    const [drugLog, setDrugLog] = useGlobal('drugLog');
+    const [drugLog, setDrugLog] = useGlobal('__drugLog');
     const [drugLogList] = useGlobal('drugLogList');
     const [gridHeight, setGridHeight] = useState('675px');
     const [lastTaken, setLastTaken] = useState<number | null>(null);
@@ -317,6 +317,7 @@ const MedicinePage = (): JSX.Element | null => {
 
             {showDrugLog &&
             <DrugLogEdit
+                drugName={getDrugName(activeDrug && activeDrug.Id ? activeDrug.Id : 0, medicineList)}
                 show={true}
                 drugLogInfo={showDrugLog}
                 onHide={() => setShowDrugLog(null)}

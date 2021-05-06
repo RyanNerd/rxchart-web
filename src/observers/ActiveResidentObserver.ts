@@ -5,11 +5,10 @@ import {ResidentRecord} from "../types/RecordTypes";
  * Watch for changes to the global activeResident
  * when populated it triggers a refresh of the medicineList global
  * @param {ResidentRecord|null} activeResident
- * @constructor
  */
 const ActiveResidentObserver = (activeResident: ResidentRecord | null) => {
-    const [, setMedicine] = useGlobal('medicine');
-    const [, setDrugLog] = useGlobal('drugLog');
+    const [, setMedicine] = useGlobal('__medicine');
+    const [, setDrugLog] = useGlobal('__drugLog');
     let prevActiveResident = useRef(activeResident).current;
 
     useEffect(() => {

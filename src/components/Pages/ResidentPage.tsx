@@ -18,8 +18,8 @@ interface IProps {
  * @constructor
  */
 const ResidentPage = (props: IProps): JSX.Element | null => {
-    const [, setClient] = useGlobal('client');
-    const [, setErrorDetails] = useGlobal('errorDetails');
+    const [, setClient] = useGlobal('__client');
+    const [, setErrorDetails] = useGlobal('__errorDetails');
     const [activeResident, setActiveResident] = useGlobal('activeResident');
     const [activeTabKey] = useGlobal('activeTabKey');
     const [residentInfo, setResidentInfo] = useState<ResidentRecord | null>(null);

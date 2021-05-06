@@ -8,6 +8,7 @@ import {DrugLogRecord} from "../../../types/RecordTypes";
 
 interface IProps {
     drugLogInfo: DrugLogRecord
+    drugName?: string
     onClose: (drugLogInfo: DrugLogRecord | null) => void
     onHide: () => void
     show: boolean
@@ -26,6 +27,7 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
     const onHide = props.onHide;
     const [canSave, setCanSave] = useState(false);
     const textInput = useRef<HTMLTextAreaElement>(null);
+    const title = props.drugName ? 'Log ' + props.drugName.trim() : 'Log Drug';
 
     // Observer for show
     useEffect(() => {
@@ -97,7 +99,7 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
             show={show}
         >
             <Modal.Header closeButton>
-                <Modal.Title>Drug Log</Modal.Title>
+                <Modal.Title>{title}</Modal.Title>
             </Modal.Header>
 
             <Modal.Body>

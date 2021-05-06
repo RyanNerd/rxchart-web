@@ -9,6 +9,7 @@ interface IProps {
     onDelete?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
     onEdit?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
     onSelect?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
+    onCheckout?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
     activeDrug?: MedicineRecord | null
 }
 
@@ -25,6 +26,7 @@ const MedicineDetail = (props: IProps): JSX.Element => {
         onDelete,
         onEdit,
         onSelect,
+        onCheckout,
         activeDrug
     } = props;
 
@@ -35,15 +37,27 @@ const MedicineDetail = (props: IProps): JSX.Element => {
             id={'med-detail-grid-row-' + drug.Id}
         >
             {onEdit &&
-            <td style={{textAlign: 'center', verticalAlign: "middle"}}>
+            <td style={{textAlign: "center", verticalAlign: "middle"}}>
                 < Button
                     size="sm"
-                    id={"medicine-otc-edit-btn-" + drug.Id}
+                    id={"medicine-edit-btn-row" + drug.Id}
                     onClick={(e) => onEdit(e, drug)}
                 >
                     Edit
                 </Button>
             </td>
+            }
+            {onCheckout &&
+                <td style={{textAlign: "center", verticalAlign: "middle"}}>
+                    <Button
+                        variant="info"
+                        size="sm"
+                        id={"med-checkout-btn-row" + drug.Id}
+                        onClick={(e) => onCheckout(e, drug)}
+                        >
+                        + Log Drug
+                    </Button>
+                </td>
             }
             {onSelect &&
             <td style={{textAlign: 'center', verticalAlign: "middle"}}>
