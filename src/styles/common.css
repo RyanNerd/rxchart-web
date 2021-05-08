@@ -46,3 +46,7 @@ a.hover-underline-animation:hover, a.hover-underline-animation:visited, a.hover-
 {
     text-decoration: none;
 }
+
+li.no-marker::marker {
+    content: none;
+}
