@@ -3,9 +3,10 @@ import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import ResidentEdit from './Modals/ResidentEdit';
 import ResidentGrid from './Grids/ResidentGrid';
 import TooltipButton from "../Buttons/TooltipButton";
-import {Alert, Form, Row} from "react-bootstrap";
+import {Alert, Button, Form, Row} from "react-bootstrap";
 import {clientFullName} from '../../utility/common';
 import {ResidentRecord} from "../../types/RecordTypes";
+import ClientRoster from "./Modals/ClientRoster";
 
 interface IProps {
     residentSelected: () => void
@@ -30,6 +31,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     const [searchText, setSearchText] = useState('');
     const [showDeleteResident, setShowDeleteResident] = useState(false);
     const [showResidentEdit, setShowResidentEdit] = useState(false);
+    const [showClientRoster, setShowClientRoster] = useState(false);
     const focusRef = useRef<HTMLInputElement>(null);
     const onSelected = props.residentSelected;
 
@@ -123,6 +125,22 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                     placeholder="Search resident"
                     ref={focusRef}
                 />
+
+                <Button
+                    className="ml-2"
+                    onClick={(e) => {
+                    e.preventDefault();
+                    setShowClientRoster(true);
+                }}>
+                    Print Client Roster
+                </Button>
+
+                {showClientRoster &&
+                    <ClientRoster
+                        onUnload={() => setShowClientRoster(false)}
+                        clientList={residentList}
+                    />
+                }
             </Row>
 
             <Row className="mt-3">
