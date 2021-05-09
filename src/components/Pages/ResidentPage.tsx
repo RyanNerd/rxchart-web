@@ -128,10 +128,11 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
 
                 <Button
                     className="ml-2"
+                    disabled={showClientRoster}
                     onClick={(e) => {
-                    e.preventDefault();
-                    setShowClientRoster(true);
-                }}>
+                        e.preventDefault();
+                        setShowClientRoster(true);
+                    }}>
                     Print Client Roster
                 </Button>
 
