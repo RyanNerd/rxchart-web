@@ -11,8 +11,8 @@ import OtcMedicineObserver from "../observers/OtcMedicineObserver";
 import React, {useEffect, useGlobal, useState} from 'reactn';
 import TooltipButton from "./Buttons/TooltipButton";
 import {clientDOB, clientFullName} from "../utility/common";
-import {version} from './../../package.json';
-import {Button} from "react-bootstrap"; // @see: https://stackoverflow.com/a/36733261/4323201
+import {Button} from "react-bootstrap";
+import About from "./Pages/Modals/About"; // @see: https://stackoverflow.com/a/36733261/4323201
 
 /**
  * Main Entry Component
@@ -26,15 +26,16 @@ const App = () => {
     const [providers] = useGlobal('providers');
     const [rxchartImage, setRxchartImage] = useState<HTMLElement | null>(null);
     const [showClientRoster, setShowClientRoster] = useState(false);
+    const [showAboutPage, setShowAboutPage] = useState(false);
 
     // The Rx image is established in index.html (outside of the React framework)
     // So we add a native click eventListener via useEffect() and remove the listener when the app closes.
     useEffect(() => {
         /**
-         * Show the version from package.json
+         * Show the About modal
          */
         const handleImageClick = () => {
-            alert('Version: ' + version);
+            setShowAboutPage(true);
         }
 
         if (rxchartImage === null) {
@@ -131,6 +132,11 @@ const App = () => {
                 clientList={[activeClient]}
             />
             }
+
+            <About
+                show={showAboutPage}
+                onHide={()=>setShowAboutPage(false)}
+            />
         </>
     );
 }
