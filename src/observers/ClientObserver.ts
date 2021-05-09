@@ -34,6 +34,7 @@ const ClientObserver = () => {
                         if (client.cb) {
                             client.cb(clientRecord);
                         }
+                        setActiveResident(clientRecord);
                         setClient({action: "load", payload: null});
                     })
                     .catch((err) => setErrorDetails(err))
