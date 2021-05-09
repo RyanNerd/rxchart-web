@@ -15,7 +15,7 @@ const ClientRoster = (props: IProps) => {
 
     const newWindow = useRef<NewWindow | null>(null);
 
-    const clientListing = (clientRecord: ResidentRecord) => {
+    const clientListItem = (clientRecord: ResidentRecord) => {
         return (
             <li className="no-marker">
                 <h1 style={{lineHeight: "125px", fontSize: "5em"}}>
@@ -59,7 +59,12 @@ const ClientRoster = (props: IProps) => {
                 onUnload={() => onUnload()}
             >
                 <ul>
-                    {clientList.map((r) => clientListing(r))}
+                    {clientList.map((r) => {
+                        return <>
+                            {clientListItem(r)}
+                            {clientListItem(r)}
+                        </>
+                    })}
                 </ul>
             </NewWindow>
         </>

@@ -6,16 +6,17 @@ import ErrorDetailsObserver from "../observers/ErrorDetailsObserver";
 import LandingPage from "./Pages/LandingPage";
 import MedicineObserver from "../observers/MedicineObserver";
 import OtcMedicineObserver from "../observers/OtcMedicineObserver";
-import React, {useGlobal, useState, useEffect} from 'reactn';
-import {clientFullName, clientDOB} from "../utility/common";
+import React, {useEffect, useGlobal, useState} from 'reactn';
+import {clientDOB, clientFullName} from "../utility/common";
 import AuthObserver from "../observers/AuthObserver";
-import {version} from './../../package.json'; /* @see: https://stackoverflow.com/a/36733261/4323201 */
+import {version} from './../../package.json'; // @see: https://stackoverflow.com/a/36733261/4323201
+import ClientRoster from "./Pages/Modals/ClientRoster";
+import TooltipButton from "./Buttons/TooltipButton";
 
 /**
  * Main Entry Component
  * Also the single source of truth for database updates and global state management
  * @returns {JSX.Element}
- * @constructor
  */
 const App = () => {
     const [activeClient] = useGlobal('activeResident');
@@ -23,10 +24,14 @@ const App = () => {
     const [mm] = useGlobal('medicineManager');
     const [providers] = useGlobal('providers');
     const [rxchartImage, setRxchartImage] = useState<HTMLElement | null>(null);
-    const residentColor = development ? 'blue' : "#edf11e";
-    const residentForegroundColor = development ? "#fffff0" : "black";
+    const [showClientRoster, setShowClientRoster] = useState(false);
 
+    // The Rx image is established in index.html (outside of the React framework)
+    // So we add a native click eventListener via useEffect() and remove the listener when the app closes.
     useEffect(() => {
+        /**
+         * Show the version from package.json
+         */
         const handleImageClick = () => {
             alert('Version: ' + version);
         }
@@ -34,13 +39,13 @@ const App = () => {
         if (rxchartImage === null) {
             setRxchartImage(document.getElementById("rxchart-img"));
         } else {
-            console.log('addEventListener');
             rxchartImage.addEventListener('click', handleImageClick, false);
         }
+
         return (() => {
             rxchartImage?.removeEventListener('click', handleImageClick, false);
         })
-    },[rxchartImage]);
+    }, [rxchartImage]);
 
     /**
      * Initialize all the observers
@@ -88,19 +93,34 @@ const App = () => {
     return (
         <>
             {activeClient &&
-                <h4
-                    className={"d-print-none"}
-                    style={{textAlign: "center"}}
+            <h4
+                className={"d-print-none"}
+                style={{textAlign: "center"}}
+            >
+                <TooltipButton
+                    variant={development ? "outline-danger" : "outline-warning"}
+                    placement="right"
+                    tooltip="Print Medbox Labels"
+                    disabled={showClientRoster}
+                    onClick={() => setShowClientRoster(true)}
                 >
-                    <span style={{background: residentColor, color: residentForegroundColor}}>
-                        {clientFullName(activeClient) + ' ' + clientDOB(activeClient)}
-                    </span>
-                </h4>
+                        <span style={{fontStyle: development ? "italic" : "bold"}}>
+                            {clientFullName(activeClient) + ' ' + clientDOB(activeClient)}
+                        </span>
+                </TooltipButton>
+            </h4>
             }
 
             <div style={{marginLeft: "15px"}}>
                 <LandingPage/>
             </div>
+
+            {showClientRoster && activeClient &&
+            <ClientRoster
+                onUnload={() => setShowClientRoster(false)}
+                clientList={[activeClient]}
+            />
+            }
         </>
     );
 }
