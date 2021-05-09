@@ -1,17 +1,18 @@
 import ActiveResidentObserver from "../observers/ActiveResidentObserver";
 import ApiKeyObserver from "../observers/ApiKeyObserver";
+import AuthObserver from "../observers/AuthObserver";
 import ClientObserver from "../observers/ClientObserver";
+import ClientRoster from "./Pages/Modals/ClientRoster";
 import DrugLogObserver from "../observers/DrugLogObserver";
 import ErrorDetailsObserver from "../observers/ErrorDetailsObserver";
 import LandingPage from "./Pages/LandingPage";
 import MedicineObserver from "../observers/MedicineObserver";
 import OtcMedicineObserver from "../observers/OtcMedicineObserver";
 import React, {useEffect, useGlobal, useState} from 'reactn';
-import {clientDOB, clientFullName} from "../utility/common";
-import AuthObserver from "../observers/AuthObserver";
-import {version} from './../../package.json'; // @see: https://stackoverflow.com/a/36733261/4323201
-import ClientRoster from "./Pages/Modals/ClientRoster";
 import TooltipButton from "./Buttons/TooltipButton";
+import {clientDOB, clientFullName} from "../utility/common";
+import {version} from './../../package.json';
+import {Button} from "react-bootstrap"; // @see: https://stackoverflow.com/a/36733261/4323201
 
 /**
  * Main Entry Component
@@ -94,20 +95,29 @@ const App = () => {
         <>
             {activeClient &&
             <h4
-                className={"d-print-none"}
+                className="d-print-none"
                 style={{textAlign: "center"}}
             >
                 <TooltipButton
                     variant={development ? "outline-danger" : "outline-warning"}
-                    placement="right"
+                    placement="left"
                     tooltip="Print Medbox Labels"
                     disabled={showClientRoster}
                     onClick={() => setShowClientRoster(true)}
                 >
                         <span style={{fontStyle: development ? "italic" : "bold"}}>
-                            {clientFullName(activeClient) + ' ' + clientDOB(activeClient)}
+                            {clientFullName(activeClient)}
                         </span>
                 </TooltipButton>
+
+                <Button
+                    variant="outline-dark"
+                    disabled={true}
+                >
+                    <span style={{fontStyle: "bold"}}>
+                        {clientDOB(activeClient)}
+                    </span>
+                </Button>
             </h4>
             }
 

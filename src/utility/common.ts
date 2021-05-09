@@ -11,18 +11,27 @@ interface IKey {
  * @return {string}
  */
 export const clientDOB = (resident: ResidentRecord): string => {
-    return dateToString(resident.DOB_MONTH.toString(), resident.DOB_DAY.toString(), resident.DOB_YEAR.toString());
+    return dateToString(resident.DOB_MONTH.toString(), resident.DOB_DAY.toString(), resident.DOB_YEAR.toString(), true);
 };
 
 /**
  * Given the month day and year return the date as a string in the format mm/dd/yyyy
- * @param {string} month
- * @param {string} day
- * @param {string} year
+ * @param month {string}
+ * @param day {string}
+ * @param year {string}
+ * @param leadingZeros {?boolean}
  * @return {string}
  */
-export const dateToString = (month: string, day: string, year: string): string => {
-    return month + '/' + day + '/' + year;
+export const dateToString = (month: string, day: string, year: string, leadingZeros?: boolean): string => {
+    const padZero = (num: string) => {
+        return ('00' + parseInt(num)).slice(-2);
+    }
+
+    if (leadingZeros) {
+        return padZero(month) + '/' + padZero(day) + '/' + year;
+    } else {
+        return month + '/' + day + '/' + year;
+    }
 }
 
 /**
