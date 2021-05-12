@@ -20,7 +20,6 @@ interface IProps extends ButtonProps {
  * Button with a tooltip overlay
  * @param {IProps} props
  * @returns {JSX.Element}
- * @constructor
  */
 const TooltipButton = (props: IProps): JSX.Element => {
     const {
