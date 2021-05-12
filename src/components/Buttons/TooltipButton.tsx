@@ -52,6 +52,15 @@ const TooltipButton = (props: IProps): JSX.Element => {
                     {tooltip}
                 </Tooltip>
             }
+            defaultShow={false}
+            delay={50}
+            flip={false}
+            onHide={undefined}
+            onToggle={undefined}
+            popperConfig={undefined}
+            show={undefined}
+            target={undefined}
+            trigger={undefined}
         >
             {button}
         </OverlayTrigger>

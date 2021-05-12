@@ -106,9 +106,9 @@ const App = () => {
                     disabled={showClientRoster}
                     onClick={() => setShowClientRoster(true)}
                 >
-                        <span style={{fontStyle: development ? "italic" : "bold"}}>
-                            {clientFullName(activeClient)}
-                        </span>
+                    <span style={{fontStyle: development ? "italic" : "bold"}}>
+                        {clientFullName(activeClient)}
+                    </span>
                 </TooltipButton>
 
                 <Button
