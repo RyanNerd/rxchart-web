@@ -17,7 +17,6 @@ interface IProps {
  * ResidentGrid component
  * @param {IProps} props
  * @returns {JSX.Element}
- * @constructor
  */
 const ResidentGrid = (props: IProps): JSX.Element => {
     const {
@@ -33,7 +32,6 @@ const ResidentGrid = (props: IProps): JSX.Element => {
      *
      * @param {object} resident Resident record object
      * @returns {null | ResidentRow}
-     * @constructor
      */
     const ResidentRow = (resident: ResidentRecord) => {
         // Get formatted DOB

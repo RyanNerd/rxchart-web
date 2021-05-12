@@ -28,7 +28,6 @@ interface IProps extends TableProps {
  * DrugLogGrid
  * @param {IProps} props
  * @return {JSX.Element}
- * @constructor
  */
 const DrugLogGrid = (props: IProps): JSX.Element => {
     const {

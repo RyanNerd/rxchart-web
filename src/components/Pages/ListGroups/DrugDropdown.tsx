@@ -14,7 +14,6 @@ interface IProps {
  * Drug Dropdown
  * @param {IProps} props
  * @returns {JSX.Element | null}
- * @constructor
  */
 const DrugDropdown = (props: IProps): JSX.Element | null => {
     const {disabled = false, drugId, medicineList} = props;

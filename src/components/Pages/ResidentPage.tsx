@@ -16,7 +16,6 @@ interface IProps {
  * Display Resident Grid
  * Allow user to edit and add Residents
  * @return {JSX.Element}
- * @constructor
  */
 const ResidentPage = (props: IProps): JSX.Element | null => {
     const [, setClient] = useGlobal('__client');

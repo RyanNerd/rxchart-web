@@ -7,9 +7,8 @@ import Row from 'react-bootstrap/Row';
 import TabContent from '../../styles/common.css';
 
 /**
- * Sign in page
+ *  Sign in page
  * @returns {JSX.Element}
- * @constructor
  */
 const LoginPage = (): JSX.Element | null => {
     const [, setErrorDetails] = useGlobal('__errorDetails');

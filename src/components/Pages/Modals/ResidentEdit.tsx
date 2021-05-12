@@ -19,7 +19,6 @@ interface IProps {
  * Edit Modal for Resident
  * @param {IProps} props
  * @returns {JSX.Element | null}
- * @constructor
  */
 const ResidentEdit = (props: IProps): JSX.Element | null => {
     const [show, setShow] = useState(props.show);

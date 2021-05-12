@@ -18,7 +18,6 @@ interface IProps {
  * Edit Modal for Medicine
  * @param {IProps} props
  * @returns {JSX.Element | null}
- * @constructor
  */
 const MedicineEdit = (props: IProps): JSX.Element | null => {
     const [show, setShow] = useState(props.show);

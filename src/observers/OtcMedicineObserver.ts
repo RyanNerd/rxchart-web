@@ -6,7 +6,6 @@ import {useEffect, useGlobal} from "reactn";
  * Watch for changes to the __otcMedicine global
  * when set to true indicates that the otcList global should be reloaded
  * @param {IMedicineManager} mm
- * @constructor
  */
 const OtcMedicineObserver = (mm: IMedicineManager) => {
     const [, setErrorDetails] = useGlobal('__errorDetails');

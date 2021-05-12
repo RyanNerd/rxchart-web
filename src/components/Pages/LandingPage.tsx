@@ -13,7 +13,6 @@ import {getCheckoutList} from "../../utility/common";
 
 /**
  * Landing Page - Tab Page Menu UI
- * @constructor
  */
 const LandingPage = () => {
     const [activeResident] = useGlobal('activeResident');

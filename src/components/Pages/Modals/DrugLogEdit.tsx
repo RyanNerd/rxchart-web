@@ -18,7 +18,6 @@ interface IProps {
  * Edit Modal for DrugLog
  * @param {IProps} props
  * @returns {JSX.Element | null}
- * @constructor
  */
 const DrugLogEdit = (props: IProps): JSX.Element | null => {
     const onClose = props.onClose;

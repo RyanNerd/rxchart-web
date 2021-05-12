@@ -16,7 +16,6 @@ export interface IMedicineManager {
  * Medicine Manager
  * @param {IMedicineProvider} medicineProvider
  * @param {IMedHistoryProvider} medHistoryProvider
- * @constructor
  */
 const MedicineMananger = (
     medicineProvider: IMedicineProvider,

@@ -71,7 +71,6 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
         /**
          * Button that closes the error and lets users sign back in
          * @param {ButtonProps} props
-         * @constructor
          */
         const CloseErrorButton = (props: ButtonProps) => {
             return (

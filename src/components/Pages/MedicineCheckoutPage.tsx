@@ -7,7 +7,6 @@ import {clientFullName, getCheckoutList, getFormattedDate} from "../../utility/c
  * MedicineCheckoutPage
  * Displays a table of drugLogList records that have In or Out values > 0 and were entered/updated today.
  * @return {JSX.Element | null}
- * @constructor
  */
 const MedicineCheckoutPage = () => {
     const [drugLogList] = useGlobal('drugLogList');

@@ -10,7 +10,6 @@ export interface IResidentManager {
 /**
  * ResidentManager handles business logic for updating, deleting, and loading Resident data.
  * @param {IResidentProvider} residentProvider
- * @constructor
  */
 const ResidentManager = (residentProvider: IResidentProvider): IResidentManager => {
     /**

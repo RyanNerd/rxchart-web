@@ -26,7 +26,6 @@ type AuthCredentials = {
 /**
  * Authentication Provider API Connector
  * @param {string} url
- * @constructor
  */
 const AuthenticationProvider = (url: string): IAuthenticationProvider => {
     const _baseUrl = url;
