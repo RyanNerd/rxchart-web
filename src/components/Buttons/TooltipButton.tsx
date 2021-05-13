@@ -1,18 +1,21 @@
 import React from "reactn";
 import Button, {ButtonProps} from "react-bootstrap/Button";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import OverlayTrigger, {OverlayTriggerProps} from "react-bootstrap/OverlayTrigger";
 import {Placement} from "react-bootstrap/Overlay";
 import {Variant} from "react-bootstrap/types";
 import Tooltip from "react-bootstrap/Tooltip";
 import {randomString} from "../../utility/common";
 
-interface IProps extends ButtonProps {
-    children: JSX.Element[] | JSX.Element | string
+// @ts-ignore Some props are completely incompatible and even the type `any` doesn't make TS happy
+interface IProps extends ButtonProps, OverlayTriggerProps {
+    target?: any
+    children: any
     disabled?: boolean
     placement?: Placement
     tooltip?: string | React.ReactNode
     tooltipId?: string
     variant?: Variant
+    overlay?: any
     [key: string]: any
 }
 
@@ -23,7 +26,6 @@ interface IProps extends ButtonProps {
  */
 const TooltipButton = (props: IProps): JSX.Element => {
     const {
-        disabled = false,
         placement = 'top',
         tooltip,
         tooltipId = randomString(),
@@ -32,7 +34,6 @@ const TooltipButton = (props: IProps): JSX.Element => {
 
     const button = (
         <Button
-            disabled={disabled}
             {...props}
         >
             {children}
@@ -46,21 +47,14 @@ const TooltipButton = (props: IProps): JSX.Element => {
 
     return (
         <OverlayTrigger
+            {...props}
             placement={placement}
             overlay={
                 <Tooltip id={tooltipId}>
                     {tooltip}
                 </Tooltip>
             }
-            defaultShow={false}
-            delay={50}
-            flip={false}
-            onHide={undefined}
-            onToggle={undefined}
-            popperConfig={undefined}
-            show={undefined}
             target={undefined}
-            trigger={undefined}
         >
             {button}
         </OverlayTrigger>
