@@ -1,5 +1,5 @@
 import React, {useEffect, useRef} from 'reactn';
-import NewWindow from "react-new-window";
+import NewImprovedWindow from "react-new-improved-window";
 import {ResidentRecord} from "../../../types/RecordTypes";
 
 interface IProps {
@@ -13,7 +13,7 @@ const ClientRoster = (props: IProps) => {
         clientList
     } = props;
 
-    const newWindow = useRef<NewWindow | null>(null);
+    const newWindow = useRef<NewImprovedWindow | null>(null);
 
     const clientListItem = (clientRecord: ResidentRecord) => {
         return (
@@ -27,7 +27,7 @@ const ClientRoster = (props: IProps) => {
 
     useEffect(() => {
         if (newWindow && newWindow.current) {
-            const currentWindow = newWindow.current as NewWindow;
+            const currentWindow = newWindow.current as NewImprovedWindow;
 
             // @ts-ignore TS thinks that the window property is private (nope) so it throws false positive errors.
             const thisWindow = currentWindow.window as typeof window;
@@ -53,7 +53,9 @@ const ClientRoster = (props: IProps) => {
 
     return (
         <>
-            <NewWindow
+            <NewImprovedWindow
+                features={{height:800, width: 840}}
+                center="parent"
                 title="Print Client Roster"
                 ref={newWindow}
                 onUnload={() => onUnload()}
@@ -66,7 +68,7 @@ const ClientRoster = (props: IProps) => {
                         </>
                     })}
                 </ul>
-            </NewWindow>
+            </NewImprovedWindow>
         </>
     )
 }
