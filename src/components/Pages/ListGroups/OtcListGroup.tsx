@@ -84,7 +84,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                                 }}
                             />
                         </InputGroup.Prepend>
-                        <InputGroup.Append>
+                        <InputGroup.Append style={{zIndex: 0}}>
                             <Button
                                 className="mr-1"
                                 size="sm"
