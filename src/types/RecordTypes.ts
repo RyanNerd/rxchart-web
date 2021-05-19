@@ -6,6 +6,7 @@ export type ResidentRecord = {
     FirstName: string
     Id: null | number
     LastName: string
+    Notes: string
     Updated?: null | Date
     UserId?: number
     deleted_at?: null | Date

@@ -2,7 +2,7 @@ import React from 'reactn';
 import {Button, ListGroup, ListGroupItem, Modal, ModalBody, ModalFooter} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import ModalHeader from "react-bootstrap/ModalHeader";
-import {version} from './../../../../package.json';
+import {version} from './../../../../package.json'; // @see: https://stackoverflow.com/a/36733261/4323201
 
 interface IProps {
     show: boolean

@@ -11,8 +11,9 @@ import OtcMedicineObserver from "../observers/OtcMedicineObserver";
 import React, {useEffect, useGlobal, useState} from 'reactn';
 import TooltipButton from "./Buttons/TooltipButton";
 import {clientDOB, clientFullName} from "../utility/common";
-import {Button} from "react-bootstrap";
-import About from "./Pages/Modals/About"; // @see: https://stackoverflow.com/a/36733261/4323201
+import {Popover, PopoverTitle} from "react-bootstrap";
+import About from "./Pages/Modals/About";
+import PopoverButton from "./Buttons/PopoverButton";
 
 /**
  * Main Entry Component
@@ -111,14 +112,33 @@ const App = () => {
                     </span>
                 </TooltipButton>
 
-                <Button
-                    variant="outline-dark"
-                    disabled={true}
+                <PopoverButton
+                    placement="bottom"
+                    trigger="hover"
+                    overlay={
+                        <Popover id="client-notes-popover">
+                            <PopoverTitle>
+                                Client Notes
+                            </PopoverTitle>
+                            <Popover.Content>
+                                {activeClient.Notes}
+                            </Popover.Content>
+                        </Popover>
+                    }
                 >
                     <span style={{fontStyle: "bold"}}>
                         {clientDOB(activeClient)}
                     </span>
-                </Button>
+                </PopoverButton>
+
+                {/*<Button*/}
+                {/*    variant="outline-dark"*/}
+                {/*    disabled={true}*/}
+                {/*>*/}
+                {/*    <span style={{fontStyle: "bold"}}>*/}
+                {/*        {clientDOB(activeClient)}*/}
+                {/*    </span>*/}
+                {/*</Button>*/}
             </h4>
             }
 
