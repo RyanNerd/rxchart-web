@@ -15,6 +15,7 @@ const ResidentManager = (residentProvider: IResidentProvider): IResidentManager 
     /**
      * Inserts or updates a Resident record.
      * @param {ResidentRecord} residentRecord
+     * @todo Move dupe logic to back-end
      */
     const _updateResident = async (residentRecord: ResidentRecord): Promise<ResidentRecord> => {
         const residentData = {...residentRecord};
