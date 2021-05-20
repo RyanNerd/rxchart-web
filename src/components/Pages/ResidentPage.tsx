@@ -22,14 +22,13 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [activeResident, setActiveResident] = useGlobal('activeResident');
     const [activeTabKey] = useGlobal('activeTabKey');
-    const [residentInfo, setResidentInfo] = useState<ResidentRecord | null>(null);
     const [residentList] = useGlobal('residentList');
     const [filteredResidents, setFilteredResidents] = useState<ResidentRecord[]>(residentList);
     const [residentToDelete, setResidentToDelete] = useState<ResidentRecord | null>(null);
     const [searchIsValid, setSearchIsValid] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [showDeleteResident, setShowDeleteResident] = useState(false);
-    const [showResidentEdit, setShowResidentEdit] = useState(false);
+    const [showResidentEdit, setShowResidentEdit] = useState<ResidentRecord | null>(null);
     const [showClientRoster, setShowClientRoster] = useState(false);
     const focusRef = useRef<HTMLInputElement>(null);
     const onSelected = props.residentSelected;
@@ -75,7 +74,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
      */
     const handleAddResident = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
-        setResidentInfo({
+        setShowResidentEdit({
             Id: null,
             FirstName: "",
             LastName: "",
@@ -84,7 +83,6 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
             DOB_DAY: "",
             Notes: ""
         });
-        setShowResidentEdit(true);
     }
 
     /**
@@ -152,8 +150,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                     }
                     onEdit={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
                         e.preventDefault();
-                        setResidentInfo({...resident});
-                        setShowResidentEdit(true);
+                        setShowResidentEdit({...resident});
                     }}
                     onSelected={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
                         e.preventDefault();
@@ -166,10 +163,8 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                 />
             </Row>
 
-            {residentInfo &&
             <ResidentEdit
                 onClose={(residentRecord) => {
-                    setShowResidentEdit(false);
                     if (residentRecord) {
                         setClient({
                             action: "update",
@@ -182,11 +177,12 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                             }
                         })
                     }
+                    setShowResidentEdit(null);
                 }}
-                residentInfo={residentInfo}
-                show={showResidentEdit}
+                residentInfo={showResidentEdit as ResidentRecord}
+                show={showResidentEdit !== null}
             />
-            }
+
 
             {residentToDelete &&
             <Confirm.Modal
