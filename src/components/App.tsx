@@ -93,10 +93,20 @@ const App = () => {
     MedicineObserver(mm, activeClient);     // Watching: medicine
     OtcMedicineObserver(mm);                // Watching: otcMedicine
 
+    const clientNotesPopover =
+        <Popover id="client-notes-popover">
+            <PopoverTitle>
+                Client Notes
+            </PopoverTitle>
+            <Popover.Content>
+                {activeClient && activeClient?.Notes}
+            </Popover.Content>
+        </Popover>
+
     return (
         <>
             {activeClient &&
-            <h4
+            <h1
                 className="d-print-none"
                 style={{textAlign: "center"}}
             >
@@ -114,32 +124,16 @@ const App = () => {
 
                 <PopoverButton
                     placement="bottom"
-                    trigger="hover"
-                    overlay={
-                        <Popover id="client-notes-popover">
-                            <PopoverTitle>
-                                Client Notes
-                            </PopoverTitle>
-                            <Popover.Content>
-                                {activeClient.Notes}
-                            </Popover.Content>
-                        </Popover>
-                    }
+                    disabled={!activeClient.Notes}
+                    variant={activeClient.Notes ? "danger" : "outline-dark"}
+                    defaultShow={!!activeClient.Notes}
+                    popover={activeClient.Notes ? clientNotesPopover : undefined}
                 >
                     <span style={{fontStyle: "bold"}}>
-                        {clientDOB(activeClient)}
+                        <span>{clientDOB(activeClient)}</span> {activeClient.Notes && <span>🔔</span>}
                     </span>
                 </PopoverButton>
-
-                {/*<Button*/}
-                {/*    variant="outline-dark"*/}
-                {/*    disabled={true}*/}
-                {/*>*/}
-                {/*    <span style={{fontStyle: "bold"}}>*/}
-                {/*        {clientDOB(activeClient)}*/}
-                {/*    </span>*/}
-                {/*</Button>*/}
-            </h4>
+            </h1>
             }
 
             <div style={{marginLeft: "15px"}}>

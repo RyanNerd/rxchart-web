@@ -11,6 +11,7 @@ interface IProps extends ButtonProps, OverlayTriggerProps {
     disabled?: boolean
     placement?: Placement
     overlay?: OverlayChildren
+    popover?: OverlayChildren
     variant?: Variant
     [key: string]: any
 }
@@ -24,7 +25,7 @@ const PopoverButton = (props: IProps): JSX.Element => {
     const {
         placement = 'top',
         children,
-        overlay
+        overlay = props.popover
     } = props;
 
     const button = (
