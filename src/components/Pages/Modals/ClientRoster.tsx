@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'reactn';
+import React, {useEffect, useState} from 'reactn';
 import NewImprovedWindow from "react-new-improved-window";
 import {ResidentRecord} from "../../../types/RecordTypes";
 
@@ -13,7 +13,7 @@ const ClientRoster = (props: IProps) => {
         clientList
     } = props;
 
-    const newWindow = useRef<NewImprovedWindow | null>(null);
+    const [printWindow, setPrintWindow] = useState<Window | null>(null);
 
     const clientListItem = (clientRecord: ResidentRecord) => {
         return (
@@ -26,12 +26,7 @@ const ClientRoster = (props: IProps) => {
     }
 
     useEffect(() => {
-        if (newWindow && newWindow.current) {
-            const currentWindow = newWindow.current as NewImprovedWindow;
-
-            // @ts-ignore TS thinks that the window property is private (nope) so it throws false positive errors.
-            const thisWindow = currentWindow.window as typeof window;
-
+        if (printWindow) {
             /**
              * Handle the afterprint event
              * @param e {Event} Afterprint event
@@ -40,16 +35,16 @@ const ClientRoster = (props: IProps) => {
                 e.preventDefault();
 
                 // Close this window when we are done printing.
-                thisWindow.close();
+                printWindow.close();
             }
 
-            thisWindow.addEventListener('afterprint', handleAfterPrint);
-            thisWindow.focus();
-            thisWindow.print();
+            printWindow.addEventListener('afterprint', handleAfterPrint);
+            printWindow.focus();
+            printWindow.print();
 
-            return () => thisWindow.removeEventListener('afterprint', handleAfterPrint);
+            return () => printWindow.removeEventListener('afterprint', handleAfterPrint);
         }
-    }, [newWindow]);
+    }, [printWindow]);
 
     return (
         <>
@@ -57,15 +52,17 @@ const ClientRoster = (props: IProps) => {
                 features={{height:800, width: 840}}
                 center="parent"
                 title="Print Client Roster"
-                ref={newWindow}
+                onOpen={(w)=>setPrintWindow(w)}
                 onUnload={() => onUnload()}
             >
                 <ul>
                     {clientList.map((r) => {
-                        return <>
-                            {clientListItem(r)}
-                            {clientListItem(r)}
-                        </>
+                        return (
+                            <>
+                                {clientListItem(r)}
+                                {clientListItem(r)}
+                            </>
+                        )
                     })}
                 </ul>
             </NewImprovedWindow>

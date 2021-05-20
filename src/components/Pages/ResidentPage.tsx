@@ -81,7 +81,8 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
             LastName: "",
             DOB_YEAR: "",
             DOB_MONTH: "",
-            DOB_DAY: ""
+            DOB_DAY: "",
+            Notes: ""
         });
         setShowResidentEdit(true);
     }

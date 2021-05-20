@@ -22,7 +22,7 @@ interface IProps {
 const MedicineEdit = (props: IProps): JSX.Element | null => {
     const [show, setShow] = useState(props.show);
     const [drugInfo, setDrugInfo] = useState<MedicineRecord>(props.drugInfo);
-    const [canSave, setCanSave] = useState<boolean>(false);
+    const [canSave, setCanSave] = useState(false);
     const [activeResident] = useGlobal('activeResident');
     const otc = drugInfo.OTC;
     const textInput = useRef<HTMLInputElement>(null);
@@ -46,11 +46,11 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
 
     // Disable the Save button if the Drug name is empty.
     useEffect(() => {
-        if (drugInfo && drugInfo.Drug) {
-            if (drugInfo.Drug.length > 0) {
+            if (drugInfo?.Drug.length > 0) {
                 setCanSave(true);
+            } else {
+                setCanSave(false);
             }
-        }
     }, [drugInfo]);
 
     /**
@@ -118,22 +118,24 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
 
             <Modal.Body>
                 <Form>
-                    {otc && drugTitleType === 'Edit ' &&
-                    <Form.Group as={Row} controlId="otc-alert">
-                        <Form.Label
-                            column sm="2"
-                        >
-                            <span style={{color: "red"}}><b>OTC Warning</b></span>
-                        </Form.Label>
+                    {otc && drugInfo.Id ?
+                        (<Form.Group as={Row} controlId="otc-alert">
+                            <Form.Label
+                                column sm="2"
+                            >
+                                <span style={{color: "red"}}><b>OTC Warning</b></span>
+                            </Form.Label>
 
-                        <Alert
-                            variant="danger"
-                        >
-                            <span style={{color: "red"}}>
-                                <b>CAUTION:</b>
-                            </span> Changes to this OTC medicine will affect <b>ALL</b> residents!
-                        </Alert>
-                    </Form.Group>
+                            <Col sm="9">
+                                <Alert
+                                    variant="danger"
+                                >
+                                <span style={{color: "red"}}>
+                                    <b>CAUTION:</b>
+                                </span> Changes to this OTC medicine will affect <b>ALL</b> residents!
+                                </Alert>
+                            </Col>
+                        </Form.Group>) : (<></>)
                     }
 
                     <Form.Group as={Row}>

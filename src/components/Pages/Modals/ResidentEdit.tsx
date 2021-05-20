@@ -171,6 +171,20 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                             </div>
                         </Col>
                     </Form.Group>
+                    <Form.Group as={Row}>
+                        <Form.Label column sm="2">
+                            Notes
+                        </Form.Label>
+                        <Col sm={9}>
+                            <Form.Control
+                                as="textarea"
+                                rows={4}
+                                value={residentInfo.Notes}
+                                name="Notes"
+                                onChange={(e) => handleOnChange(e)}
+                            />
+                        </Col>
+                    </Form.Group>
                 </Form>
             </Modal.Body>
 

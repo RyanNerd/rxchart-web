@@ -11,8 +11,9 @@ import OtcMedicineObserver from "../observers/OtcMedicineObserver";
 import React, {useEffect, useGlobal, useState} from 'reactn';
 import TooltipButton from "./Buttons/TooltipButton";
 import {clientDOB, clientFullName} from "../utility/common";
-import {Button} from "react-bootstrap";
-import About from "./Pages/Modals/About"; // @see: https://stackoverflow.com/a/36733261/4323201
+import {Popover, PopoverTitle} from "react-bootstrap";
+import About from "./Pages/Modals/About";
+import PopoverButton from "./Buttons/PopoverButton";
 
 /**
  * Main Entry Component
@@ -92,10 +93,20 @@ const App = () => {
     MedicineObserver(mm, activeClient);     // Watching: medicine
     OtcMedicineObserver(mm);                // Watching: otcMedicine
 
+    const clientNotesPopover =
+        <Popover id="client-notes-popover">
+            <PopoverTitle>
+                Client Notes
+            </PopoverTitle>
+            <Popover.Content>
+                {activeClient && activeClient?.Notes}
+            </Popover.Content>
+        </Popover>
+
     return (
         <>
             {activeClient &&
-            <h4
+            <h1
                 className="d-print-none"
                 style={{textAlign: "center"}}
             >
@@ -111,15 +122,18 @@ const App = () => {
                     </span>
                 </TooltipButton>
 
-                <Button
-                    variant="outline-dark"
-                    disabled={true}
+                <PopoverButton
+                    placement="bottom"
+                    disabled={!activeClient.Notes}
+                    variant={activeClient.Notes ? "danger" : "outline-dark"}
+                    defaultShow={!!activeClient.Notes}
+                    popover={activeClient.Notes ? clientNotesPopover : undefined}
                 >
                     <span style={{fontStyle: "bold"}}>
-                        {clientDOB(activeClient)}
+                        <span>{clientDOB(activeClient)}</span> {activeClient.Notes && <span>🔔</span>}
                     </span>
-                </Button>
-            </h4>
+                </PopoverButton>
+            </h1>
             }
 
             <div style={{marginLeft: "15px"}}>
