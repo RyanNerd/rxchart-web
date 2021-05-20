@@ -29,10 +29,6 @@ const ClientObserver = () => {
                 }
                 case "update": {
                     const clientRecord = {...client.payload as ResidentRecord};
-                    if (clientRecord.Notes.length === 0) {
-                        // @ts-ignore
-                        clientRecord.Notes = null;
-                    }
                     rm.updateResident(clientRecord)
                     .then((clientRecord) => {
                         if (client.cb) {

@@ -41,12 +41,12 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
     // Disable the Save button if Notes are empty.
     useEffect(() => {
         const canSave = (drugLogInfo &&
-                            (
-                                drugLogInfo.Notes.length > 0 ||
-                                (drugLogInfo.In && drugLogInfo.In > 0) ||
-                                (drugLogInfo.Out && drugLogInfo.Out > 0)
-                            )
-                        ) || false;
+            (
+                (drugLogInfo?.Notes && drugLogInfo.Notes.length > 0) ||
+                (drugLogInfo?.In && drugLogInfo.In > 0) ||
+                (drugLogInfo?.Out && drugLogInfo.Out > 0)
+            )
+        ) || false;
         setCanSave(canSave);
     }, [drugLogInfo]);
 
