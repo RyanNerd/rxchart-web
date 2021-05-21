@@ -20,7 +20,7 @@ declare module 'reactn/default' {
         authManager: IAuthManager
         __client: {
             action: 'load' | 'update' | 'delete'
-            cb?: (c: ResidentRecord) => void
+            cb?: (c: ResidentRecord | ResidentRecord[] | undefined) => void
             payload: null | ResidentRecord | number
         } | null
         count: number

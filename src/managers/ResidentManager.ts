@@ -19,25 +19,14 @@ const ResidentManager = (residentProvider: IResidentProvider): IResidentManager 
      */
     const _updateResident = async (residentRecord: ResidentRecord): Promise<ResidentRecord> => {
         const residentData = {...residentRecord};
-        return searchExisting(residentData)
-        .then(async (clients) => {
-            // Does the client record already exist (including trashed records)
-            if (clients.length > 0) {
-                const client = clients[0];
-                // Trashed (deactivated) client?
-                if (client.deleted_at) {
-                    return await residentProvider.restore(client.Id as number);
-                } else {
-                    // Is the existing client.Id different? If so then set the residentData record to the existing Id.
-                    if (client.Id !== residentData.Id) {
-                        residentData.Id = client.Id;
-                    }
-                    return await residentProvider.post(residentData);
-                }
-            } else {
-                return residentProvider.post(residentData);
-            }
-        })
+        if (!residentData.Id) {
+            residentData.Id = null;
+        }
+        try {
+            return await residentProvider.post(residentData);
+        } catch (err) {
+            throw err;
+        }
     }
 
     /**
@@ -71,20 +60,6 @@ const ResidentManager = (residentProvider: IResidentProvider): IResidentManager 
         .catch((err) => {
             throw err
         })
-    }
-
-    const searchExisting = async (clientRecord: ResidentRecord) => {
-        const searchExisting = {
-            where: [
-                {column: "FirstName", value: clientRecord.FirstName},
-                {column: "LastName", value: clientRecord.LastName},
-                {column: "DOB_YEAR", value: clientRecord.DOB_YEAR},
-                {column: "DOB_MONTH", value: clientRecord.DOB_MONTH},
-                {column: "DOB_DAY", value: clientRecord.DOB_DAY}
-            ],
-            with_trashed: true
-        };
-        return await residentProvider.search(searchExisting);
     }
 
     return {

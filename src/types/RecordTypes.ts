@@ -25,15 +25,6 @@ export type DrugLogRecord = {
     [key: string]: any
 };
 
-export const newDrugLogRecord = {
-    Id: null,
-    MedicineId: 0,
-    Notes: "",
-    In: null,
-    Out: null,
-    ResidentId: 0
-} as DrugLogRecord;
-
 export type MedicineRecord = {
     Barcode: string | null
     Directions: string | null
@@ -58,3 +49,22 @@ export const newDrugInfo = {
     ResidentId: null,
     Strength: ''
 } as MedicineRecord;
+
+export const newDrugLogRecord = {
+    Id: null,
+    MedicineId: 0,
+    Notes: "",
+    In: null,
+    Out: null,
+    ResidentId: 0
+} as DrugLogRecord;
+
+export const newResidentRecord = {
+    Id: null,
+    FirstName: "",
+    LastName: "",
+    DOB_YEAR: "",
+    DOB_MONTH: "",
+    DOB_DAY: "",
+    Notes: ""
+} as ResidentRecord
