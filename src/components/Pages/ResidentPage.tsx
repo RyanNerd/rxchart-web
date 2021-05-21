@@ -5,7 +5,7 @@ import ResidentGrid from './Grids/ResidentGrid';
 import TooltipButton from "../Buttons/TooltipButton";
 import {Alert, Button, Form, Row} from "react-bootstrap";
 import {clientFullName} from '../../utility/common';
-import {ResidentRecord} from "../../types/RecordTypes";
+import {newResidentRecord, ResidentRecord} from "../../types/RecordTypes";
 import ClientRoster from "./Modals/ClientRoster";
 
 interface IProps {
@@ -22,14 +22,13 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [activeResident, setActiveResident] = useGlobal('activeResident');
     const [activeTabKey] = useGlobal('activeTabKey');
-    const [residentInfo, setResidentInfo] = useState<ResidentRecord | null>(null);
     const [residentList] = useGlobal('residentList');
     const [filteredResidents, setFilteredResidents] = useState<ResidentRecord[]>(residentList);
     const [residentToDelete, setResidentToDelete] = useState<ResidentRecord | null>(null);
     const [searchIsValid, setSearchIsValid] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [showDeleteResident, setShowDeleteResident] = useState(false);
-    const [showResidentEdit, setShowResidentEdit] = useState(false);
+    const [showResidentEdit, setShowResidentEdit] = useState<ResidentRecord | null>(null);
     const [showClientRoster, setShowClientRoster] = useState(false);
     const focusRef = useRef<HTMLInputElement>(null);
     const onSelected = props.residentSelected;
@@ -70,32 +69,14 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     }
 
     /**
-     * Fires when user clicks the + (add) button
-     * @param {React.MouseEvent<HTMLElement>} e
-     */
-    const handleAddResident = (e: React.MouseEvent<HTMLElement>) => {
-        e.preventDefault();
-        setResidentInfo({
-            Id: null,
-            FirstName: "",
-            LastName: "",
-            DOB_YEAR: "",
-            DOB_MONTH: "",
-            DOB_DAY: "",
-            Notes: ""
-        });
-        setShowResidentEdit(true);
-    }
-
-    /**
-     * Fires when user clicks on resident trash icon
-     * @param {React.MouseEvent<HTMLElement>} e
+     * Fires when user clicks on the select button or if the user is trying to add an existing active client
      * @param {ResidentRecord} resident
      */
-    const handleOnDelete = (e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
-        e.preventDefault();
-        setResidentToDelete(resident);
-        setShowDeleteResident(true);
+    const handleOnSelected = (resident: ResidentRecord) => {
+        setActiveResident(resident)
+        .then(() => setSearchText(''))
+        .then(() => onSelected())
+        .catch((err) => setErrorDetails(err))
     }
 
     return (
@@ -105,7 +86,10 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                     className="mr-2"
                     placement="top"
                     tooltip="Add New Resident"
-                    onClick={(e: React.MouseEvent<HTMLElement>) => handleAddResident(e)}
+                    onClick={(e: React.MouseEvent<HTMLElement>) => {
+                        e.preventDefault();
+                        setShowResidentEdit({...newResidentRecord});
+                    }}
                 >
                     + Resident
                 </TooltipButton>
@@ -147,46 +131,69 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
             <Row className="mt-3">
                 <ResidentGrid
                     activeResident={activeResident}
-                    onDelete={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) =>
-                        handleOnDelete(e, resident)
-                    }
+                    residentList={filteredResidents}
+                    onDelete={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
+                        e.preventDefault();
+                        setResidentToDelete(resident);
+                        setShowDeleteResident(true);
+                    }}
                     onEdit={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
                         e.preventDefault();
-                        setResidentInfo({...resident});
-                        setShowResidentEdit(true);
+                        setShowResidentEdit({...resident});
                     }}
-                    onSelected={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
+                    onSelected={(e: React.MouseEvent<HTMLElement>, r: ResidentRecord) => {
                         e.preventDefault();
-                        setActiveResident(resident)
-                        .then(() => setSearchText(''))
-                        .then(() => onSelected())
-                        .catch((err) => setErrorDetails(err))
+                        handleOnSelected(r)
                     }}
-                    residentList={filteredResidents}
                 />
             </Row>
 
-            {residentInfo &&
             <ResidentEdit
-                onClose={(residentRecord) => {
-                    setShowResidentEdit(false);
-                    if (residentRecord) {
+                residentInfo={showResidentEdit as ResidentRecord}
+                show={showResidentEdit !== null}
+                onClose={(client) => {
+                    // Hide this modal
+                    setShowResidentEdit(null);
+
+                    // Do we have a record to update or add?
+                    if (client) {
+                        // Are we adding a new record?
+                        if (client.Id === null) {
+                            // Search residentList for any existing clients to prevent adding dupes
+                            const existing = residentList.find(r =>
+                                r.FirstName.trim().toLowerCase() === client.FirstName.trim().toLowerCase() &&
+                                r.LastName.trim().toLowerCase() === client.LastName.trim().toLowerCase() &&
+                                (typeof r.DOB_DAY === 'string' ?
+                                    parseInt(r.DOB_DAY) : r.DOB_DAY) ===
+                                (typeof client.DOB_DAY === 'string' ?
+                                    parseInt(client.DOB_DAY) : client.DOB_DAY) &&
+                                (typeof r.DOB_MONTH === 'string' ?
+                                    parseInt(r.DOB_MONTH) : r.DOB_MONTH) ===
+                                (typeof client.DOB_MONTH === 'string' ?
+                                    parseInt(client.DOB_MONTH) : client.DOB_MONTH) &&
+                                (typeof r.DOB_YEAR === 'string' ?
+                                    parseInt(r.DOB_YEAR) : r.DOB_YEAR) ===
+                                (typeof client.DOB_YEAR === 'string' ?
+                                    parseInt(client.DOB_YEAR) : client.DOB_YEAR)
+                            )
+
+                            // Is user trying to add an existing active client?
+                            // If so then make the exiting client the active instead.
+                            if (existing) {
+                                handleOnSelected(existing);
+                                return;
+                            }
+                        }
+
+                        // Update or add the client
                         setClient({
                             action: "update",
-                            payload: residentRecord,
-                            cb: (clientRecord) => {
-                                // If we are adding a new resident then make them the active client.
-                                if (!residentRecord.Id) {
-                                    setActiveResident(clientRecord);
-                                }
-                            }
-                        })
+                            payload: client,
+                            cb: (c) => handleOnSelected(c as ResidentRecord)
+                        });
                     }
                 }}
-                residentInfo={residentInfo}
-                show={showResidentEdit}
             />
-            }
 
             {residentToDelete &&
             <Confirm.Modal

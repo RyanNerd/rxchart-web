@@ -19,10 +19,10 @@ const ClientObserver = () => {
                 case "load": {
                     rm.loadResidentList()
                     .then((clients) => {
-                        setResidentList(clients)
+                        return setResidentList(clients);
                     })
                     .then(() => {
-                        setClient(null)
+                        return setClient(null);
                     })
                     .catch((err) => setErrorDetails(err))
                     break;
@@ -30,13 +30,16 @@ const ClientObserver = () => {
                 case "update": {
                     const clientRecord = {...client.payload as ResidentRecord};
                     rm.updateResident(clientRecord)
-                    .then((clientRecord) => {
-                        if (client.cb) {
-                            client.cb(clientRecord);
-                        }
-                        setActiveResident(clientRecord);
-                        setClient({action: "load", payload: null});
+                    .then((updatedClient) => {
+                        // Refresh the residentList
+                        setClient({action: "load", payload: null})
+                        .then(() => {
+                            if (client.cb) {
+                                client.cb(updatedClient);
+                            }
+                        })
                     })
+                    .then(() => setClient(null))
                     .catch((err) => setErrorDetails(err))
                     break;
                 }
@@ -45,12 +48,14 @@ const ClientObserver = () => {
                     rm.deleteResident(clientId)
                     .then((deleted) => {
                         if (deleted) {
-                            setClient({action: 'load', payload: null});
-                            if (activeResident?.Id === clientId) {
-                                setActiveResident(null);
-                            }
+                            return setClient({action: 'load', payload: null});
                         } else {
                             setErrorDetails(new Error('Unable to delete client. Id: ' + clientId));
+                        }
+                    })
+                    .then(() => {
+                        if (activeResident?.Id === clientId) {
+                            setActiveResident(null);
                         }
                     })
                     .catch((err) => setErrorDetails(err));

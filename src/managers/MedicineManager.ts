@@ -129,12 +129,7 @@ const MedicineMananger = (
         if (!drugData.Id) {
             drugData.Id = null;
         }
-        if (drugData.Notes === '') {
-            drugData.Notes = null;
-        }
-        if (drugInfo.Directions === '') {
-            drugData.Directions = null;
-        }
+
         try {
             return await medicineProvider
             .post(drugData);
