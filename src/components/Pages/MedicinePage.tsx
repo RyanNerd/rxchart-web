@@ -119,6 +119,7 @@ const MedicinePage = (): JSX.Element | null => {
      * Fires when user clicks on +Log or the drug log edit button
      * @param {React.MouseEvent<HTMLElement>} e
      * @param {DrugLogRecord} drugLogInfo
+     * @todo Fix this for OTC drugs as well
      */
     const addEditDrugLog = (e: React.MouseEvent<HTMLElement>, drugLogInfo?: DrugLogRecord) => {
         e.preventDefault();
@@ -248,6 +249,10 @@ const MedicinePage = (): JSX.Element | null => {
                             activeOtcDrug={activeOtcDrug}
                             drugLogList={drugLogList}
                             logOtcDrugAmount={(n) => handleLogOtcDrugAmount(n)}
+                            logOtcDrug={() => {
+                                // TODO: Show EditDrug modal for the OTC drug
+                                alert('not implemented');
+                            }}
                             otcList={otcList}
                             setActiveOtcDrug={(d) => setActiveOtcDrug(d)}/>
                     </Row>
