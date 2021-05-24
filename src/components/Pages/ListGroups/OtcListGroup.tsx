@@ -3,7 +3,7 @@ import MedicineDetail from "../Grids/MedicineDetail";
 import React, {useEffect, useState} from "reactn";
 import ShadowBox from "../../Buttons/ShadowBox";
 import Table from "react-bootstrap/Table";
-import {Button, Form, FormGroup, InputGroup, ListGroup, ListGroupItem} from "react-bootstrap";
+import {Button, Collapse, Form, FormGroup, InputGroup, ListGroup, ListGroupItem} from "react-bootstrap";
 import {DrugLogRecord, MedicineRecord} from "../../../types/RecordTypes";
 import {calculateLastTaken, getLastTakenVariant} from "../../../utility/common";
 import {useRef} from "react";
@@ -66,15 +66,6 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
         }
     }, [otcList, searchText])
 
-    // Set focus to the search textbox when showOtc becomes true
-    useEffect(() => {
-        if (showOtc) {
-            searchRef?.current?.focus();
-        }  else {
-            setSearchText('');
-        }
-    }, [searchRef, showOtc])
-
     return (
         <ListGroup>
             <ListGroupItem
@@ -82,14 +73,17 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                 as="button"
                 active={!showOtc}
                 onClick={() => setShowOtc(!showOtc)}
+                style={{height: "35px", verticalAlign: "middle", lineHeight: "100%"}}
             >
                 <div style={{textAlign: "center"}}>
                     {showOtc ? 'Hide OTC' : 'Show OTC'}
                 </div>
             </ListGroupItem>
 
-            {showOtc &&
-            <>
+            <Collapse
+                in={showOtc}
+                onEntered={() => searchRef?.current?.focus()}
+            >
                 <ListGroup.Item>
                     <FormGroup>
                         <InputGroup>
@@ -163,7 +157,9 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                     </ShadowBox>
                     }
                 </ListGroup.Item>
+            </Collapse>
 
+            <Collapse in={showOtc}>
                 <ListGroup.Item>
                     <div style={{height: "300px", overflow: "auto"}}>
                         <Table
@@ -202,8 +198,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                         </Table>
                     </div>
                 </ListGroup.Item>
-            </>
-            }
+            </Collapse>
         </ListGroup>
     )
 }
