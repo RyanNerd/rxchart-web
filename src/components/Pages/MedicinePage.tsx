@@ -37,6 +37,7 @@ const MedicinePage = (): JSX.Element | null => {
     const [medicineList] = useGlobal('medicineList');
     const [otcList] = useGlobal('otcList');
     const [otcLogList, setOtcLogList] = useState<DrugLogRecord[]>([]);
+    const [otcGroupShown, setOtcGroupShown] = useState<boolean>(false);
     const [residentId, setResidentId] = useState<number | null>(activeResident?.Id || null);
     const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
     const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
@@ -174,6 +175,7 @@ const MedicinePage = (): JSX.Element | null => {
         <>
             <Form className={TabContent} as={Row}>
                 <Col lg="4">
+                    {!otcGroupShown &&
                     <Row>
                         <TooltipButton
                             className="mr-1"
@@ -221,9 +223,10 @@ const MedicinePage = (): JSX.Element | null => {
                             Print Medicine Checkout
                         </Button>
                     </Row>
+                    }
 
+                    {!otcGroupShown && activeDrug &&
                     <Row className="mt-3">
-                        {activeDrug &&
                         <MedicineListGroup
                             activeDrug={activeDrug}
                             addDrugLog={(e: React.MouseEvent<HTMLElement>) => addEditDrugLog(e)}
@@ -234,11 +237,11 @@ const MedicinePage = (): JSX.Element | null => {
                             logDrug={(amount: number) => handleLogDrugAmount(amount, activeDrug.Id as number)}
                             medicineList={medicineList}
                         />
-                        }
                     </Row>
+                    }
 
                     {activeOtcDrug &&
-                    <Row className="mt-4">
+                    <Row className={otcGroupShown ? "" : "mt-4"}>
                         <OtcListGroup
                             addOtcMedicine={() => {
                                 setShowMedicineEdit({...newDrugInfo, OTC: true});
@@ -254,7 +257,9 @@ const MedicinePage = (): JSX.Element | null => {
                                 alert('not implemented');
                             }}
                             otcList={otcList}
-                            setActiveOtcDrug={(d) => setActiveOtcDrug(d)}/>
+                            setActiveOtcDrug={(d) => setActiveOtcDrug(d)}
+                            onDisplay={(d)=>setOtcGroupShown(d)}
+                        />
                     </Row>
                     }
                 </Col>

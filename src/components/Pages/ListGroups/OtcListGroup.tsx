@@ -17,6 +17,7 @@ interface IProps {
     logOtcDrugAmount: (n: number) => void
     otcList: MedicineRecord[]
     setActiveOtcDrug: (d: MedicineRecord) => void
+    onDisplay?: (s: boolean) => void
 }
 
 /**
@@ -31,6 +32,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
         editOtcMedicine,
         logOtcDrug,
         logOtcDrugAmount,
+        onDisplay,
         otcList,
         setActiveOtcDrug
     } = props;
@@ -65,6 +67,13 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
             setFilteredOtcList(otcList);
         }
     }, [otcList, searchText])
+
+    // Invoke callback when the OtcListGroup is shown or hidden
+    useEffect(() => {
+        if (onDisplay) {
+            onDisplay(showOtc);
+        }
+    }, [showOtc, onDisplay])
 
     return (
         <ListGroup>
@@ -161,7 +170,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
 
             <Collapse in={showOtc}>
                 <ListGroup.Item>
-                    <div style={{height: "300px", overflow: "auto"}}>
+                    <div style={{height: "450px", overflow: "auto"}}>
                         <Table
                             bordered
                             hover
