@@ -82,7 +82,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                 as="button"
                 active={!showOtc}
                 onClick={() => setShowOtc(!showOtc)}
-                style={{height: "35px", verticalAlign: "middle", lineHeight: "100%"}}
+                style={{height: "35px", verticalAlign: "middle", lineHeight: "100%", zIndex: 0}}
             >
                 <div style={{textAlign: "center"}}>
                     {showOtc ? 'Hide OTC' : 'Show OTC'}
