@@ -7,14 +7,14 @@ import Form from 'react-bootstrap/Form';
 import LastTakenButton from "../Buttons/LastTakenButton";
 import MedicineEdit from "./Modals/MedicineEdit";
 import MedicineListGroup from "./ListGroups/MedicineListGroup";
-import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
+import OtcListGroup from "./ListGroups/OtcListGroup";
+import React, {useEffect, useGlobal, useState} from 'reactn';
 import Row from 'react-bootstrap/Row';
 import TabContent from "../../styles/common.css";
 import TooltipButton from "../Buttons/TooltipButton";
 import {Alert, ListGroup} from "react-bootstrap";
 import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
 import {calculateLastTaken, getCheckoutList, getDrugName, getFormattedDate, getMDY} from "../../utility/common";
-import OtcListGroup from "./ListGroups/OtcListGroup";
 
 /**
  * MedicinePage
@@ -35,14 +35,13 @@ const MedicinePage = (): JSX.Element | null => {
     const [gridHeight, setGridHeight] = useState('675px');
     const [lastTaken, setLastTaken] = useState<number | null>(null);
     const [medicineList] = useGlobal('medicineList');
+    const [otcGroupShown, setOtcGroupShown] = useState<boolean>(false);
     const [otcList] = useGlobal('otcList');
     const [otcLogList, setOtcLogList] = useState<DrugLogRecord[]>([]);
-    const [otcGroupShown, setOtcGroupShown] = useState<boolean>(false);
     const [residentId, setResidentId] = useState<number | null>(activeResident?.Id || null);
     const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
     const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
     const [showMedicineEdit, setShowMedicineEdit] = useState<MedicineRecord | null>(null);
-    const focusRef = useRef<HTMLInputElement>(null);
 
     // Set the activeDrug when the medicineList changes
     useEffect(() => {
@@ -62,21 +61,15 @@ const MedicinePage = (): JSX.Element | null => {
         }
     }, [activeDrug, drugLogList]);
 
-    // Set focus to the search input if the page key has changed
-    useEffect(() => {
-        if (activeTabKey === 'medicine' && focusRef && focusRef.current) {
-            focusRef.current.focus();
-        }
-    }, [activeTabKey]);
-
     // Set the local clientId state
     useEffect(() => {
         const clientId = activeResident?.Id ? activeResident.Id : null;
         setResidentId(clientId);
     }, [activeResident]);
 
+    // Disable or Enable Print Checkout button based on if there are any drugs marked as to be checked out
     useEffect(() => {
-        if (apiKey && activeResident && drugLogList.length > 0) {
+        if (drugLogList?.length > 0) {
             const checkoutList = getCheckoutList(drugLogList);
             if (checkoutList.length > 0) {
                 setCheckoutDisabled(false);
@@ -86,7 +79,7 @@ const MedicinePage = (): JSX.Element | null => {
         } else {
             setCheckoutDisabled(true);
         }
-    }, [activeResident, apiKey, drugLogList])
+    }, [drugLogList])
 
     // Set the activeOtcDrug when the otcList changes.
     useEffect(() => {
