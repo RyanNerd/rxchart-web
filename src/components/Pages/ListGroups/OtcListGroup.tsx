@@ -13,7 +13,7 @@ interface IProps {
     addOtcMedicine: () => void
     drugLogList: DrugLogRecord[]
     editOtcMedicine: () => void
-    logOtcDrug: () => void
+    logOtcDrug: (e: React.MouseEvent<HTMLElement>) => void
     logOtcDrugAmount: (n: number) => void
     otcList: MedicineRecord[]
     setActiveOtcDrug: (d: MedicineRecord) => void
@@ -145,7 +145,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                     </FormGroup>
                     <FormGroup>
                         <Button
-                            onClick={() => logOtcDrug()}
+                            onClick={(e) => logOtcDrug(e)}
                             className="mr-2"
                             size="sm"
                             variant={lastTakenVariant}
