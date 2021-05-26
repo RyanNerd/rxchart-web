@@ -2,7 +2,6 @@ import React from 'reactn';
 import {Button, ListGroup, ListGroupItem, Modal, ModalBody, ModalFooter} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import ModalHeader from "react-bootstrap/ModalHeader";
-import {version} from './../../../../package.json'; // @see: https://stackoverflow.com/a/36733261/4323201
 
 interface IProps {
     show: boolean
@@ -16,12 +15,17 @@ const About = (props: IProps) => {
     } = props;
 
     const [showModal, setShowModal] = useState(show);
+    const version = process.env.REACT_APP_VERSION; // @see: https://stackoverflow.com/a/50822003/4323201
 
+    /**
+     * Handle when the modal closes
+     */
     const handleClose = () => {
         setShowModal(false);
         onHide();
     }
 
+    // Observer on the show prop
     useEffect(() => {
         setShowModal(show);
     }, [show]);
