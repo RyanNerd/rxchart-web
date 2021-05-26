@@ -45,7 +45,17 @@ const About = (props: IProps) => {
             <ModalBody>
                 <ListGroup>
                     <ListGroupItem>
-                        Version: {version}
+                        <ul>
+                            <li>Version: {version}</li>
+                            <li>
+                                <a
+                                    href="https://github.com/RyanNerd/rxchart-web/releases/latest"
+                                    target="_blank"
+                                >
+                                    Release Detail
+                                </a>
+                            </li>
+                        </ul>
                     </ListGroupItem>
                     <ListGroupItem>
                         Support:
