@@ -27,9 +27,9 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     const [residentToDelete, setResidentToDelete] = useState<ResidentRecord | null>(null);
     const [searchIsValid, setSearchIsValid] = useState(false);
     const [searchText, setSearchText] = useState('');
+    const [showClientRoster, setShowClientRoster] = useState(false);
     const [showDeleteResident, setShowDeleteResident] = useState(false);
     const [showResidentEdit, setShowResidentEdit] = useState<ResidentRecord | null>(null);
-    const [showClientRoster, setShowClientRoster] = useState(false);
     const focusRef = useRef<HTMLInputElement>(null);
     const onSelected = props.residentSelected;
 
@@ -44,8 +44,8 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     useEffect(() => {
         if (searchText.length > 0) {
             const filter = residentList.filter((residentRecord) => {
-                const lastName = residentRecord.LastName.toLowerCase();
                 const firstName = residentRecord.FirstName.toLowerCase();
+                const lastName = residentRecord.LastName.toLowerCase();
                 const search = searchText.toLowerCase();
                 return lastName.includes(search) || firstName.includes(search);
             })

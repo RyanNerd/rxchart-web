@@ -7,14 +7,14 @@ import Form from 'react-bootstrap/Form';
 import LastTakenButton from "../Buttons/LastTakenButton";
 import MedicineEdit from "./Modals/MedicineEdit";
 import MedicineListGroup from "./ListGroups/MedicineListGroup";
-import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
+import OtcListGroup from "./ListGroups/OtcListGroup";
+import React, {useEffect, useGlobal, useState} from 'reactn';
 import Row from 'react-bootstrap/Row';
 import TabContent from "../../styles/common.css";
 import TooltipButton from "../Buttons/TooltipButton";
 import {Alert, ListGroup} from "react-bootstrap";
 import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
 import {calculateLastTaken, getCheckoutList, getDrugName, getFormattedDate, getMDY} from "../../utility/common";
-import OtcListGroup from "./ListGroups/OtcListGroup";
 
 /**
  * MedicinePage
@@ -35,13 +35,13 @@ const MedicinePage = (): JSX.Element | null => {
     const [gridHeight, setGridHeight] = useState('675px');
     const [lastTaken, setLastTaken] = useState<number | null>(null);
     const [medicineList] = useGlobal('medicineList');
+    const [otcGroupShown, setOtcGroupShown] = useState<boolean>(false);
     const [otcList] = useGlobal('otcList');
     const [otcLogList, setOtcLogList] = useState<DrugLogRecord[]>([]);
     const [residentId, setResidentId] = useState<number | null>(activeResident?.Id || null);
     const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
     const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
     const [showMedicineEdit, setShowMedicineEdit] = useState<MedicineRecord | null>(null);
-    const focusRef = useRef<HTMLInputElement>(null);
 
     // Set the activeDrug when the medicineList changes
     useEffect(() => {
@@ -61,21 +61,15 @@ const MedicinePage = (): JSX.Element | null => {
         }
     }, [activeDrug, drugLogList]);
 
-    // Set focus to the search input if the page key has changed
-    useEffect(() => {
-        if (activeTabKey === 'medicine' && focusRef && focusRef.current) {
-            focusRef.current.focus();
-        }
-    }, [activeTabKey]);
-
     // Set the local clientId state
     useEffect(() => {
         const clientId = activeResident?.Id ? activeResident.Id : null;
         setResidentId(clientId);
     }, [activeResident]);
 
+    // Disable or Enable Print Checkout button based on if there are any drugs marked as to be checked out
     useEffect(() => {
-        if (apiKey && activeResident && drugLogList.length > 0) {
+        if (drugLogList?.length > 0) {
             const checkoutList = getCheckoutList(drugLogList);
             if (checkoutList.length > 0) {
                 setCheckoutDisabled(false);
@@ -85,7 +79,7 @@ const MedicinePage = (): JSX.Element | null => {
         } else {
             setCheckoutDisabled(true);
         }
-    }, [activeResident, apiKey, drugLogList])
+    }, [drugLogList])
 
     // Set the activeOtcDrug when the otcList changes.
     useEffect(() => {
@@ -117,17 +111,30 @@ const MedicinePage = (): JSX.Element | null => {
 
     /**
      * Fires when user clicks on +Log or the drug log edit button
-     * @param {React.MouseEvent<HTMLElement>} e
      * @param {DrugLogRecord} drugLogInfo
      */
-    const addEditDrugLog = (e: React.MouseEvent<HTMLElement>, drugLogInfo?: DrugLogRecord) => {
-        e.preventDefault();
+    const addEditDrugLog = (drugLogInfo?: DrugLogRecord) => {
         const drugLogRecord = drugLogInfo ? {...drugLogInfo} : {
             Id: null,
             ResidentId: residentId,
             MedicineId: activeDrug?.Id,
             Notes: ""
         } as DrugLogRecord;
+        setShowDrugLog(drugLogRecord);
+    }
+
+    /**
+     * Fires when user clicks on +Log or the drug log edit button for OTC drugs
+     * @param {DrugLogRecord} drugLogInfo
+     */
+    const addEditOtcLog = (drugLogInfo?: DrugLogRecord) => {
+        const drugLogRecord = drugLogInfo ? {...drugLogInfo} : {
+            Id: null,
+            ResidentId: residentId,
+            MedicineId: activeOtcDrug?.Id,
+            Notes: ""
+        } as DrugLogRecord;
+        console.log('OTC drugLogRecord', drugLogRecord);
         setShowDrugLog(drugLogRecord);
     }
 
@@ -150,7 +157,7 @@ const MedicinePage = (): JSX.Element | null => {
     }
 
     /**
-     * Fires when the Log 1 or Log 2, etc. buttons are clicked in the OtcListGroup are clicked
+     * Fires when the Log 1 or Log 2, etc. buttons are clicked for OTC drugs
      * @param {number} amount
      */
     const handleLogOtcDrugAmount = (amount: number) => {
@@ -173,6 +180,7 @@ const MedicinePage = (): JSX.Element | null => {
         <>
             <Form className={TabContent} as={Row}>
                 <Col lg="4">
+                    {!otcGroupShown &&
                     <Row>
                         <TooltipButton
                             className="mr-1"
@@ -220,12 +228,16 @@ const MedicinePage = (): JSX.Element | null => {
                             Print Medicine Checkout
                         </Button>
                     </Row>
+                    }
 
+                    {!otcGroupShown && activeDrug &&
                     <Row className="mt-3">
-                        {activeDrug &&
                         <MedicineListGroup
                             activeDrug={activeDrug}
-                            addDrugLog={(e: React.MouseEvent<HTMLElement>) => addEditDrugLog(e)}
+                            addDrugLog={(e: React.MouseEvent<HTMLElement>) => {
+                                e.preventDefault();
+                                addEditDrugLog();
+                            }}
                             canvasId={'med-barcode'}
                             disabled={drugLog !== null}
                             drugChanged={(drug: MedicineRecord) => setActiveDrug(drug)}
@@ -233,11 +245,11 @@ const MedicinePage = (): JSX.Element | null => {
                             logDrug={(amount: number) => handleLogDrugAmount(amount, activeDrug.Id as number)}
                             medicineList={medicineList}
                         />
-                        }
                     </Row>
+                    }
 
                     {activeOtcDrug &&
-                    <Row className="mt-4">
+                    <Row className={otcGroupShown ? "" : "mt-4"}>
                         <OtcListGroup
                             addOtcMedicine={() => {
                                 setShowMedicineEdit({...newDrugInfo, OTC: true});
@@ -248,8 +260,14 @@ const MedicinePage = (): JSX.Element | null => {
                             activeOtcDrug={activeOtcDrug}
                             drugLogList={drugLogList}
                             logOtcDrugAmount={(n) => handleLogOtcDrugAmount(n)}
+                            logOtcDrug={(e) => {
+                                e.preventDefault();
+                                addEditOtcLog();
+                            }}
                             otcList={otcList}
-                            setActiveOtcDrug={(d) => setActiveOtcDrug(d)}/>
+                            setActiveOtcDrug={(d) => setActiveOtcDrug(d)}
+                            onDisplay={(d) => setOtcGroupShown(d)}
+                        />
                     </Row>
                     }
                 </Col>
@@ -275,7 +293,10 @@ const MedicinePage = (): JSX.Element | null => {
                             drugLog={drugLogList}
                             drugId={activeDrug && activeDrug.Id}
                             columns={['Created', 'Updated', 'Notes', 'Out', 'In']}
-                            onEdit={(e, r) => addEditDrugLog(e, r)}
+                            onEdit={(e, r) => {
+                                e.preventDefault();
+                                addEditDrugLog(r);
+                            }}
                             onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
                         />
                     </ListGroup.Item>
@@ -288,7 +309,10 @@ const MedicinePage = (): JSX.Element | null => {
                             drugLog={otcLogList}
                             medicineList={otcList}
                             columns={['Drug', 'Created', 'Updated', 'Notes']}
-                            onEdit={(e, r) => addEditDrugLog(e, r)}
+                            onEdit={(e, r) => {
+                                e.preventDefault();
+                                addEditOtcLog(r);
+                            }}
                             onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
                         />
                     </ListGroup.Item>
@@ -317,7 +341,7 @@ const MedicinePage = (): JSX.Element | null => {
 
             {showDrugLog &&
             <DrugLogEdit
-                drugName={getDrugName(activeDrug && activeDrug.Id ? activeDrug.Id : 0, medicineList)}
+                drugName={getDrugName(showDrugLog.MedicineId, medicineList.concat(otcList))}
                 show={true}
                 drugLogInfo={showDrugLog}
                 onHide={() => setShowDrugLog(null)}
