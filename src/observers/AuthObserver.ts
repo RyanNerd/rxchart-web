@@ -6,9 +6,8 @@ import getInitialState from "../utility/getInitialState";
  * When populated it contains the username and password to use to attempt to login
  */
 const AuthObserver = () => {
-    const [, setApiKey] = useGlobal('__apiKey');
+    const [, setSignIn] = useGlobal('signIn');
     const [, setErrorDetails] = useGlobal('__errorDetails');
-    const [, setLoginFailed] = useGlobal('loginFailed');
     const [am] = useGlobal('authManager');
     const [auth, setAuth] = useGlobal('__auth');
 
@@ -23,41 +22,24 @@ const AuthObserver = () => {
                 // Send the user name and password to the web service
                 am.authenticate(username, password)
                 .then((response) => {
-                    // This element lives in index.html so we use old fashioned JS and DOM manipulation to update
-                    const organizationElement = document.getElementById("organization");
-                    if (response.success) {
-                        setApiKey(response.apiKey);
-                        // Display the organization name that logged in
-                        if (organizationElement) {
-                            organizationElement.innerHTML = response.organization;
-                        }
-                    } else {
-                        setLoginFailed(true);
-                    }
+                    return response;
                 })
-                .then(() => {
-                    setAuth(null)
+                .then((signInResponse) => {
+                    return setSignIn(signInResponse);
                 })
-                .catch((err) => {
-                    setErrorDetails(err)
-                })
+                .catch((err)=>setErrorDetails(err))
+                .finally(()=>setAuth(null))
             }
 
             // Handle logout
             if (action === 'logout') {
                 setGlobal(getInitialState())
                 .then(() => console.log('logout successful'))
-                .then(() => {
-                    const organizationElement = document.getElementById("organization");
-                    if (organizationElement) {
-                        organizationElement.innerHTML = "";
-                    }
-                })
-                .catch((err) => setErrorDetails(err))
-                setAuth(null);
+                .catch((err) => {setErrorDetails(err)})
+                .finally(()=>setAuth(null))
             }
         }
-    }, [am, auth, setApiKey, setAuth, setErrorDetails, setLoginFailed])
+    }, [am, auth, setAuth, setErrorDetails, setSignIn])
 }
 
 export default AuthObserver;

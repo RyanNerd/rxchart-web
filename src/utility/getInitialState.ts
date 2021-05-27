@@ -17,12 +17,17 @@ export interface IProviders {
 }
 
 /**
- * Determines and returns the initial global state when the app starts or when a user logs out
+ * Determines and returns the initial global state when the app starts or when a user logs out.
+ * @throws {Error}
  */
 const getInitialState = () => {
-    const baseUrl = process.env.REACT_APP_BASEURL || '';
-    const errorDetail = (baseUrl.length === 0) ?
-        'The BASEURL environment variable is not set in the .env file or the .env file is missing' : undefined;
+    const baseUrl = process.env.REACT_APP_BASEURL;
+
+    if (!baseUrl || baseUrl.length === 0) {
+        throw new Error('The BASEURL environment variable is not set in the .env file or the .env file is missing');
+    }
+
+    const errorDetail = undefined;
     const providers = {
         authenticationProvider: AuthenticationProvider(baseUrl),
         medHistoryProvider: MedHistoryProvider(baseUrl),
@@ -42,7 +47,6 @@ const getInitialState = () => {
     return {
         activeResident: null,
         activeTabKey: 'login',
-        __apiKey: null,
         __auth: null,
         authManager: AuthManager(providers.authenticationProvider),
         __client: null,
@@ -50,9 +54,7 @@ const getInitialState = () => {
         __drugLog: null,
         drugLogList: [] as DrugLogRecord[],
         __errorDetails: errorDetail,
-        login: null,
-        loginFailed: false,
-        logout: false,
+        signIn: {apiKey: null, organization: null, success: null},
         __medicine: null,
         medicineList: [] as MedicineRecord[],
         medicineManager: MedicineMananger(providers.medicineProvider, providers.medHistoryProvider),

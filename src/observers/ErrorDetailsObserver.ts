@@ -5,16 +5,16 @@ import {useEffect, useGlobal} from "reactn";
  * When populated this is set to the details of the exception/error that occurred
  */
 const ErrorDetailsObserver = () => {
-    const [, setApiKey] = useGlobal('__apiKey');
+    const [, setSignIn] = useGlobal('signIn');
     const [, setActiveTabKey] = useGlobal('activeTabKey');
     const [errorDetails] = useGlobal('__errorDetails');
 
     useEffect(() => {
         if (errorDetails) {
-            setApiKey(null);
+            setSignIn({organization: null, apiKey: null, success: null});
             setActiveTabKey('error');
         }
-    }, [errorDetails, setApiKey, setActiveTabKey])
+    }, [errorDetails, setSignIn, setActiveTabKey])
 }
 
 export default ErrorDetailsObserver;

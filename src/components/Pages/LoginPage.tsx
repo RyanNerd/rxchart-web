@@ -17,10 +17,9 @@ const LoginPage = (): JSX.Element | null => {
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [, setAuth] = useGlobal('__auth');
     const [activeTabKey] = useGlobal('activeTabKey');
-    const [apiKey] = useGlobal('__apiKey');
+    const [signIn, setSignIn] = useGlobal('signIn');
     const [canLogin, setCanLogin] = useState(false);
     const [password, setPassword] = useState('');
-    const [showAlert, setShowAlert] = useGlobal('loginFailed');
     const [username, setUsername] = useState('');
     const [showAboutPage, setShowAboutPage] = useState(false);
     const focusRef = useRef<HTMLInputElement>(null);
@@ -40,33 +39,16 @@ const LoginPage = (): JSX.Element | null => {
         }
     }, [password, username]);
 
-    // // The Rx image is established in index.html (outside of the React framework)
-    // // So we add a native click eventListener via useEffect() and remove the listener when the app closes.
-    // useEffect(() => {
-    //     /**
-    //      * Show the About modal
-    //      */
-    //     const handleImageClick = () => {
-    //         setShowAboutPage(true);
-    //     }
-    //
-    //     if (rxchartImage === null) {
-    //         setRxchartImage(document.getElementById("rxchart-img"));
-    //     } else {
-    //         rxchartImage.addEventListener('click', handleImageClick, false);
-    //     }
-    //
-    //     return (() => {
-    //         rxchartImage?.removeEventListener('click', handleImageClick, false);
-    //     })
-    // }, [rxchartImage]);
-
     // Prevent render if this tab isn't active
     if (activeTabKey !== 'login') {
         return null;
     }
 
-    const signIn = (
+    const authenticate = () => {
+        setAuth({action: 'login', payload: {username, password}});
+    }
+
+    const signOn = (
         <Container className="neu-main">
         <div className="neu-content">
             <img alt="logo" src={RxIcon} onClick={()=>setShowAboutPage(true)}/>
@@ -97,17 +79,17 @@ const LoginPage = (): JSX.Element | null => {
                     onKeyUp={(e: React.KeyboardEvent<HTMLElement>) => {
                         if (e.key === 'Enter') {
                             e.preventDefault();
-                            setAuth({action: 'login', payload: {username, password}});
+                            authenticate();
                         }
                     }}
                 />
             </div>
             <button
                 className="neu-button"
-                disabled={!canLogin || showAlert}
+                disabled={!canLogin || (signIn.success !== null && !signIn.success)}
                 onClick={(e) => {
                     e.preventDefault();
-                    setAuth({action: 'login', payload: {username, password}});
+                    authenticate();
                 }}
             >
                 Login
@@ -115,8 +97,10 @@ const LoginPage = (): JSX.Element | null => {
 
             <Alert
                 variant="warning"
-                show={showAlert}
-                onClose={() => setShowAlert(!showAlert)}
+                show={signIn.success !== null && !signIn.success}
+                onClose={() => {
+                    setSignIn({apiKey: null, success: null, organization: null});
+                }}
                 className="mt-4"
                 dismissible
             >
@@ -158,8 +142,7 @@ const LoginPage = (): JSX.Element | null => {
 
     return (
         <Form className={TabContent}>
-            {apiKey === null ? (signIn) : (logOff)}
-
+            {signIn.apiKey === null || signIn.apiKey.length === 0 ? (signOn) : (logOff)}
             <About
                 show={showAboutPage}
                 onHide={()=>setShowAboutPage(false)}

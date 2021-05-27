@@ -51,6 +51,7 @@ const About = (props: IProps) => {
                                 <a
                                     href="https://github.com/RyanNerd/rxchart-web/releases/latest"
                                     target="_blank"
+                                    rel="noreferrer"
                                 >
                                     Release Detail
                                 </a>

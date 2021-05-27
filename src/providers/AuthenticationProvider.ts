@@ -13,9 +13,9 @@ type AuthResponse = {
 }
 
 export type Authenticated = {
-    success: boolean,
-    apiKey: string,
-    organization: string
+    success: boolean | null,
+    apiKey: string | null,
+    organization: string | null
 }
 
 type AuthCredentials = {

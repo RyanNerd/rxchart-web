@@ -10,16 +10,15 @@ import {IProviders} from "../utility/getInitialState";
 const ApiKeyObserver = (providers: IProviders) => {
     const [, setActiveTabKey] = useGlobal('activeTabKey');
     const [, setClient] = useGlobal('__client');
-    const [, setLoginFailed] = useGlobal('loginFailed');
     const [, setOtcMedicine] = useGlobal('__otcMedicine');
-    const [apiKey] = useGlobal('__apiKey');
+    const [signIn] = useGlobal('signIn');
+    const apiKey = signIn.apiKey;
     let prevApiKey = useRef(apiKey).current;
 
     useEffect(() => {
         if (prevApiKey !== apiKey) {
             // Are we logging in (prevApiKey will be null and apiKey will have a value)?
             if (prevApiKey === null && apiKey) {
-                setLoginFailed(false);
                 providers.setApi(apiKey)
                 .then(() => {
                     // Load ALL Resident records up front and save them in the global store.
