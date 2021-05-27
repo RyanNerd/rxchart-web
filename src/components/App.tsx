@@ -28,6 +28,7 @@ const App = () => {
     const [providers] = useGlobal('providers');
     const [showClientRoster, setShowClientRoster] = useState(false);
     const [showAboutPage, setShowAboutPage] = useState(false);
+    const [signIn] = useGlobal('signIn');
 
     /**
      * Initialize all the observers
@@ -65,7 +66,7 @@ const App = () => {
      *            architecture.
      */
     ActiveResidentObserver(activeClient);   // Watching: __activeResident
-    ApiKeyObserver(providers);              // Watching: apiKey
+    ApiKeyObserver(providers, signIn);      // Watching: apiKey
     ClientObserver();                       // Watching: __client
     DrugLogObserver(mm, activeClient);      // Watching: __drugLog
     ErrorDetailsObserver();                 // Watching: __errorDetails
@@ -97,8 +98,9 @@ const App = () => {
                 />
                 <span
                     style={{color: "steelblue"}}
-                    id="organization"
-                ></span>
+                >
+                    {signIn.organization}
+                </span>
             </h3>
 
             {activeClient &&

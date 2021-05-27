@@ -1,17 +1,18 @@
 import {useEffect, useGlobal, useRef} from "reactn";
 import {IProviders} from "../utility/getInitialState";
+import {Authenticated} from "../providers/AuthenticationProvider";
 
 /**
  * Watch for changes to the global __apiKey
  * when populated it indicates a successful login and triggers
  * a refresh of the residentList and otcList globals, and sets the active tab page to the ResidentPage tab
  * @param {IProviders} providers
+ * @param {Authenticated} signIn
  */
-const ApiKeyObserver = (providers: IProviders) => {
+const ApiKeyObserver = (providers: IProviders, signIn: Authenticated) => {
     const [, setActiveTabKey] = useGlobal('activeTabKey');
     const [, setClient] = useGlobal('__client');
     const [, setOtcMedicine] = useGlobal('__otcMedicine');
-    const [signIn] = useGlobal('signIn');
     const apiKey = signIn.apiKey;
     let prevApiKey = useRef(apiKey).current;
 
