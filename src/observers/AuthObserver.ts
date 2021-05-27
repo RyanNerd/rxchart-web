@@ -23,11 +23,11 @@ const AuthObserver = () => {
                 // Send the user name and password to the web service
                 am.authenticate(username, password)
                 .then((response) => {
+                    // This element lives in index.html so we use old fashioned JS and DOM manipulation to update
+                    const organizationElement = document.getElementById("organization");
                     if (response.success) {
                         setApiKey(response.apiKey);
                         // Display the organization name that logged in
-                        // This element lives in index.html so we use old fashioned JS and DOM manipulation to update
-                        const organizationElement = document.getElementById("organization");
                         if (organizationElement) {
                             organizationElement.innerHTML = response.organization;
                         }
@@ -47,6 +47,12 @@ const AuthObserver = () => {
             if (action === 'logout') {
                 setGlobal(getInitialState())
                 .then(() => console.log('logout successful'))
+                .then(() => {
+                    const organizationElement = document.getElementById("organization");
+                    if (organizationElement) {
+                        organizationElement.innerHTML = "";
+                    }
+                })
                 .catch((err) => setErrorDetails(err))
                 setAuth(null);
             }

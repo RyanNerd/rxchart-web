@@ -10,10 +10,11 @@ import LandingPage from "./Pages/LandingPage";
 import MedicineObserver from "../observers/MedicineObserver";
 import OtcMedicineObserver from "../observers/OtcMedicineObserver";
 import PopoverButton from "./Buttons/PopoverButton";
-import React, {useEffect, useGlobal, useState} from 'reactn';
+import React, {useGlobal, useState} from 'reactn';
 import TooltipButton from "./Buttons/TooltipButton";
 import {Popover, PopoverTitle} from "react-bootstrap";
 import {clientDOB, clientFullName} from "../utility/common";
+import {ReactComponent as RxIcon} from "../icons/prescription.svg";
 
 /**
  * Main Entry Component
@@ -25,30 +26,8 @@ const App = () => {
     const [development] = useGlobal('development');
     const [mm] = useGlobal('medicineManager');
     const [providers] = useGlobal('providers');
-    const [rxchartImage, setRxchartImage] = useState<HTMLElement | null>(null);
     const [showClientRoster, setShowClientRoster] = useState(false);
     const [showAboutPage, setShowAboutPage] = useState(false);
-
-    // The Rx image is established in index.html (outside of the React framework)
-    // So we add a native click eventListener via useEffect() and remove the listener when the app closes.
-    useEffect(() => {
-        /**
-         * Show the About modal
-         */
-        const handleImageClick = () => {
-            setShowAboutPage(true);
-        }
-
-        if (rxchartImage === null) {
-            setRxchartImage(document.getElementById("rxchart-img"));
-        } else {
-            rxchartImage.addEventListener('click', handleImageClick, false);
-        }
-
-        return (() => {
-            rxchartImage?.removeEventListener('click', handleImageClick, false);
-        })
-    }, [rxchartImage]);
 
     /**
      * Initialize all the observers
@@ -109,6 +88,19 @@ const App = () => {
 
     return (
         <>
+            <h3 style={{textAlign: "center"}} className="d-print-none">℞Chart{ }
+                <RxIcon
+                    style={{cursor: "pointer", pointerEvents: "all"}}
+                    onClick={()=>setShowAboutPage(true)}
+                    width="30px"
+                    height="35px"
+                />
+                <span
+                    style={{color: "steelblue"}}
+                    id="organization"
+                ></span>
+            </h3>
+
             {activeClient &&
             <h1
                 className="d-print-none"
