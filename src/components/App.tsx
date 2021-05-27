@@ -54,16 +54,17 @@ const App = () => {
      * Initialize all the observers
      * Observers are a type of hybred middleware similar to Publish/Subscribe with intelligent Agents
      * Below we are "Subscribing" the observers.
-     * The observers themselves are "Intelligent Agents" that use a global state varaible as a "sensor" to
+     * The observers themselves are "Intelligent Agents" that use a global state variable as a "sensor" to
      * determine what actions need to be taken based on the current state of the machine.
      * @see https://en.wikipedia.org/wiki/Middleware_(distributed_applications)#Types
      *
      * Observers are like functions but instead of accepting arguments they use React's hook mechanisms
      * to observe changes to a single global state variable. The observer decides the actions to take based on the
      * values of the global state variable. The global variable for an observer is an object with
-     * the signature of {action: {string}, payload: {any}} with the action string property indicating what action the
-     * observer should perform; the payload property contains any information the observer needs to act on.
-     * For example the ClientObserver is watching for changes to the global `client` variable. If the client variable
+     * the signature of {action: string, payload: any, cb?: ()=>void } with the action string property indicating what
+     * action the observer should perform; the payload property contains any information the observer needs to act on.
+     * Optionally there may be a call back signature which can be used to update the invoking process with state change.
+     * For example the ClientObserver is watching for changes to the global `__client` variable. If the client variable
      * isn't null then the observer expects the client variable to be an object with the action property set to one
      * of three values: 'load', 'update', or 'delete'
      * If the action is 'load' then the observer will load all client records into the global variable residentList.
@@ -84,15 +85,18 @@ const App = () => {
      * - Not OOP: Observers are pure functions lacking the advantages (and disadvantages) of object oriented
      *            architecture.
      */
-    ActiveResidentObserver(activeClient);   // Watching: activeResident
+    ActiveResidentObserver(activeClient);   // Watching: __activeResident
     ApiKeyObserver(providers);              // Watching: apiKey
-    ClientObserver();                       // Watching: client
-    DrugLogObserver(mm, activeClient);      // Watching: drugLog
-    ErrorDetailsObserver();                 // Watching: errorDetails
-    AuthObserver();                         // Watching: auth
-    MedicineObserver(mm, activeClient);     // Watching: medicine
-    OtcMedicineObserver(mm);                // Watching: otcMedicine
+    ClientObserver();                       // Watching: __client
+    DrugLogObserver(mm, activeClient);      // Watching: __drugLog
+    ErrorDetailsObserver();                 // Watching: __errorDetails
+    AuthObserver();                         // Watching: __auth
+    MedicineObserver(mm, activeClient);     // Watching: __medicine
+    OtcMedicineObserver(mm);                // Watching: __otcMedicine
 
+    /**
+     * Client notes popover attached to the active client DOB button at the top of the web page.
+     */
     const clientNotesPopover =
         <Popover id="client-notes-popover">
             <PopoverTitle>
