@@ -1,3 +1,7 @@
+import React, {useGlobal, useState} from 'reactn';
+
+import {Popover, PopoverTitle} from "react-bootstrap";
+
 import About from "./Pages/Modals/About";
 import ActiveResidentObserver from "../observers/ActiveResidentObserver";
 import ApiKeyObserver from "../observers/ApiKeyObserver";
@@ -10,11 +14,9 @@ import LandingPage from "./Pages/LandingPage";
 import MedicineObserver from "../observers/MedicineObserver";
 import OtcMedicineObserver from "../observers/OtcMedicineObserver";
 import PopoverButton from "./Buttons/PopoverButton";
-import React, {useGlobal, useState} from 'reactn';
 import TooltipButton from "./Buttons/TooltipButton";
-import {Popover, PopoverTitle} from "react-bootstrap";
-import {clientDOB, clientFullName} from "../utility/common";
 import {ReactComponent as RxIcon} from "../icons/prescription.svg";
+import {clientDOB, clientFullName} from "../utility/common";
 
 /**
  * Main Entry Component
