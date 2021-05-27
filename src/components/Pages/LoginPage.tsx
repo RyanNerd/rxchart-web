@@ -1,23 +1,26 @@
-import Alert from 'react-bootstrap/Alert';
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
-import Row from 'react-bootstrap/Row';
-import TabContent from '../../styles/common.css';
+import {ReactComponent as LockIcon} from '../../icons/lock.svg';
+import {ReactComponent as UserIcon} from '../../icons/user.svg';
+
+import Alert from 'react-bootstrap/Alert';
+import {Container} from 'react-bootstrap';
+
+import '../../styles/neumorphism.css';
+import About from "./Modals/About";
+import RxIcon from '../../icons/prescription.svg';
 
 /**
  *  Sign in page
  * @returns {JSX.Element}
  */
 const LoginPage = (): JSX.Element | null => {
-    const [, setErrorDetails] = useGlobal('__errorDetails');
     const [, setAuth] = useGlobal('__auth');
+    const [, setErrorDetails] = useGlobal('__errorDetails');
     const [activeTabKey] = useGlobal('activeTabKey');
-    const [apiKey] = useGlobal('__apiKey');
     const [canLogin, setCanLogin] = useState(false);
     const [password, setPassword] = useState('');
-    const [showAlert, setShowAlert] = useGlobal('loginFailed');
+    const [showAboutPage, setShowAboutPage] = useState(false);
+    const [signIn, setSignIn] = useGlobal('signIn');
     const [username, setUsername] = useState('');
     const focusRef = useRef<HTMLInputElement>(null);
 
@@ -41,93 +44,110 @@ const LoginPage = (): JSX.Element | null => {
         return null;
     }
 
-    const signIn = (
-        <>
-            <Form.Group as={Row}>
-                <Col sm={1}>
-                    <Form.Label>User Name</Form.Label>
-                </Col>
-                <Col sm={3}>
-                    <Form.Control
+    const authenticate = () => {
+        setAuth({action: 'login', payload: {username, password}});
+    }
+
+    const signOn = (
+        <Container className="neu-main">
+            <div className="neu-content">
+                <img alt="logo" src={RxIcon} onClick={() => setShowAboutPage(true)}/>
+                <div className="text">℞Chart</div>
+                <div className="neu-field">
+                    <UserIcon
+                        className="ml-4"
+                        style={{marginTop: "12px"}}
+                    />
+                    <input
                         type="text"
+                        placeholder="Username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        className="ml-3 mb3"
                         ref={focusRef}
+                        required
                     />
-                </Col>
-            </Form.Group>
-
-            <Form.Group as={Row}>
-                <Col sm={1}>
-                    <Form.Label>Password</Form.Label>
-                </Col>
-                <Col sm={3}>
-                    <Form.Control
+                </div>
+                <div className="neu-field">
+                    <LockIcon className="ml-4" style={{marginTop: "12px"}}/>
+                    <input
                         type="password"
+                        placeholder="Password"
+                        className="ml-3"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         onKeyUp={(e: React.KeyboardEvent<HTMLElement>) => {
                             if (e.key === 'Enter') {
                                 e.preventDefault();
-                                setAuth({action: 'login', payload: {username, password}});
+                                authenticate();
                             }
                         }}
                     />
-                </Col>
-            </Form.Group>
+                </div>
+                <button
+                    className="neu-button"
+                    disabled={!canLogin || (signIn.success !== null && !signIn.success)}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        authenticate();
+                    }}
+                >
+                    Login
+                </button>
 
-            <Form.Group as={Row}/>
-
-            <Form.Group as={Row}>
-                <Col sm={1}>
-                    <Button
-                        disabled={!canLogin}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            setAuth({action: 'login', payload: {username, password}});
-                        }}
-                    >
-                        Login
-                    </Button>
-                </Col>
-
-                <Col sm={3}>
-                    <Alert
-                        variant="warning"
-                        show={showAlert}
-                        onClose={() => setShowAlert(!showAlert)}
-                        dismissible
-                    >
-                        <Alert.Heading>
-                            <strong>Invalid Credentials</strong>
-                        </Alert.Heading>
-                        <p>
-                            Invalid Username or Password
-                        </p>
-                    </Alert>
-                </Col>
-            </Form.Group>
-        </>
+                <Alert
+                    variant="warning"
+                    show={signIn.success !== null && !signIn.success}
+                    onClose={() => {
+                        setSignIn({apiKey: null, success: null, organization: null});
+                    }}
+                    className="mt-4"
+                    dismissible
+                >
+                    <Alert.Heading>
+                        <strong>Invalid Credentials</strong>
+                    </Alert.Heading>
+                    <p>
+                        Invalid Username or Password
+                    </p>
+                </Alert>
+            </div>
+        </Container>
     )
 
     const logOff = (
-        <Button onClick={(e) => {
-            e.persist();
-            if (e.ctrlKey) {
-                console.log('Testing Diagnostics');
-                setErrorDetails(new Error('Testing error handler'));
-            } else {
-                setAuth({action: 'logout', payload: null});
-            }
-        }}>
-            Log Out
-        </Button>
+        <Container className="neu-main">
+            <div className="neu-content">
+                <img alt="logo" src={RxIcon} onClick={() => setShowAboutPage(true)}/>
+                <div className="text">℞Chart</div>
+
+                <button
+                    className="neu-button"
+                    onClick={(e) => {
+                        e.persist();
+                        if (e.ctrlKey) {
+                            console.log('Testing Diagnostics');
+                            setErrorDetails(new Error('Testing error handler'));
+                        } else {
+                            setAuth({action: 'logout', payload: null});
+                        }
+                    }}
+                >
+                    Log Out
+                </button>
+            </div>
+        </Container>
     )
 
     return (
-        <Form className={TabContent}>
-            {apiKey === null ? (signIn) : (logOff)}
-        </Form>
+        <>
+            {signIn.apiKey === null || signIn.apiKey.length === 0 ? (signOn) : (logOff)}
+
+            <About
+                show={showAboutPage}
+                onHide={() => setShowAboutPage(false)}
+            />
+        </>
     )
 }
 

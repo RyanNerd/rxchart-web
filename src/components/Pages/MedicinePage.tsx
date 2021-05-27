@@ -28,8 +28,7 @@ const MedicinePage = (): JSX.Element | null => {
     const [activeOtcDrug, setActiveOtcDrug] = useState<MedicineRecord | null>(null);
     const [activeResident] = useGlobal('activeResident');
     const [activeTabKey, setActiveTabKey] = useGlobal('activeTabKey');
-    const [apiKey] = useGlobal('__apiKey');
-    const [checkoutDisabled, setCheckoutDisabled] = useState(apiKey === null || !activeResident)
+    const [checkoutDisabled, setCheckoutDisabled] = useState(!activeResident);
     const [drugLog, setDrugLog] = useGlobal('__drugLog');
     const [drugLogList] = useGlobal('drugLogList');
     const [gridHeight, setGridHeight] = useState('675px');

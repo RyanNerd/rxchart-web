@@ -4,6 +4,7 @@ import {IResidentManager} from "./managers/ResidentManager";
 import {IMedicineManager} from "./managers/MedicineManager";
 import {IAuthManager} from "./managers/AuthManager";
 import {IProviders} from "./utility/getInitialState";
+import {Authenticated} from "./providers/AuthenticationProvider";
 
 declare module 'reactn/default' {
     export interface Reducers {
@@ -16,8 +17,7 @@ declare module 'reactn/default' {
         __auth: {action: 'login' | 'logout', payload: {username: string, password: string} | null} | null
         activeResident: ResidentRecord | null
         activeTabKey: string
-        __apiKey: string | null
-        authManager: IAuthManager
+                authManager: IAuthManager
         __client: {
             action: 'load' | 'update' | 'delete'
             cb?: (c: ResidentRecord | ResidentRecord[] | undefined) => void
@@ -28,9 +28,6 @@ declare module 'reactn/default' {
         __drugLog: {action: 'load'|'update'|'delete', payload?: null | DrugLogRecord | DrugLogRecord[] | number} | null
         drugLogList: DrugLogRecord[]
         __errorDetails: any
-        login: { username: string, password: string } | null
-        loginFailed: boolean
-        logout: boolean
         __medicine: {action: 'load' | 'update' | 'delete', payload: null | MedicineRecord | number} | null
         medicineList: MedicineRecord[]
         medicineManager: IMedicineManager
@@ -39,6 +36,7 @@ declare module 'reactn/default' {
         providers: IProviders
         residentList: ResidentRecord[]
         residentManager: IResidentManager
+        signIn: Authenticated
         value: string
     }
 }
