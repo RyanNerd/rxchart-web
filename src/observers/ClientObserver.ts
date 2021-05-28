@@ -1,4 +1,5 @@
 import {useEffect, useGlobal} from "reactn";
+
 import {ResidentRecord} from "../types/RecordTypes";
 
 /**
@@ -21,12 +22,13 @@ const ClientObserver = () => {
                     .then((clients) => {
                         return setResidentList(clients);
                     })
-                    .then(() => {
+                    .catch((err) => setErrorDetails(err))
+                    .finally(() => {
                         return setClient(null);
                     })
-                    .catch((err) => setErrorDetails(err))
                     break;
                 }
+
                 case "update": {
                     const clientRecord = {...client.payload as ResidentRecord};
                     rm.updateResident(clientRecord)
@@ -39,10 +41,11 @@ const ClientObserver = () => {
                             }
                         })
                     })
-                    .then(() => setClient(null))
                     .catch((err) => setErrorDetails(err))
+                    .finally(() => setClient(null))
                     break;
                 }
+
                 case "delete": {
                     const clientId = client.payload as number;
                     rm.deleteResident(clientId)
@@ -58,7 +61,9 @@ const ClientObserver = () => {
                             setActiveResident(null);
                         }
                     })
-                    .catch((err) => setErrorDetails(err));
+                    .catch((err) => setErrorDetails(err))
+                    .finally(() => setClient(null))
+                    break;
                 }
             }
         }
