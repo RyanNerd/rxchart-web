@@ -1,6 +1,9 @@
 import React from 'reactn';
-import DropdownButton from "react-bootstrap/DropdownButton";
+
 import Dropdown from "react-bootstrap/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
+import {Spinner} from "react-bootstrap";
+
 import {MedicineRecord} from "../../../types/RecordTypes";
 
 interface IProps {
@@ -74,6 +77,24 @@ const DrugDropdown = (props: IProps): JSX.Element | null => {
     };
 
     /**
+     * Spinner to be shown when dropdown is disabled with an optional component to the right
+     * @param {React.ReactNode} title
+     */
+    const disabledSpinner = (title?: React.ReactNode) => {
+        return (
+            <>
+                <Spinner
+                    animation="grow"
+                    size="sm"
+                    as="span"
+                    role="status"
+                    aria-hidden="true"
+                /> { } {title}
+            </>
+        )
+    }
+
+    /**
      * Work-around so React 17 can be used
      * @link https://github.com/react-bootstrap/react-bootstrap/issues/5409#issuecomment-718699584
      */
@@ -82,7 +103,7 @@ const DrugDropdown = (props: IProps): JSX.Element | null => {
             disabled={disabled}
             onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
             size="sm"
-            title={title}
+            title={disabled ? disabledSpinner(title) : title}
             variant="primary"
         >
             {medicineList.map(MedicineDropdownItems)}

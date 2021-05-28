@@ -129,7 +129,7 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
                         </Col>
                     </Form.Group>
 
-                    <Form.Group as={Row} controlId={"checkout-in"}>
+                    <Form.Group as={Row} controlId="checkout-out">
                         <Form.Label column md="4">
                             Out
                         </Form.Label>
@@ -143,7 +143,7 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
                         </Col>
                     </Form.Group>
 
-                    <Form.Group as={Row} controlId={"checkout-in"}>
+                    <Form.Group as={Row} controlId="checkout-in">
                         <Form.Label column md="4">
                             In
                         </Form.Label>
