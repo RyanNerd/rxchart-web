@@ -1,6 +1,7 @@
+import {useEffect, useGlobal} from "reactn";
+
 import {IMedicineManager} from "../managers/MedicineManager";
 import {MedicineRecord} from "../types/RecordTypes";
-import {useEffect, useGlobal} from "reactn";
 
 /**
  * Watch for changes to the __otcMedicine global
@@ -19,39 +20,39 @@ const OtcMedicineObserver = (mm: IMedicineManager) => {
                 case "load": {
                     mm.loadOtcList()
                     .then((otcList) => {
-                        setOtcList(otcList)
+                        return setOtcList(otcList);
                     })
-                    .then(() => {
-                        setOtcMedicine(null)
-                    })
-                    .catch((err) => {
-                        setErrorDetails(err)
-                    })
+                    .catch((err) => setErrorDetails(err))
+                    .finally(() => setOtcMedicine(null))
                     break;
                 }
+
                 case "update": {
                     const otcRecord = otcMedicine.payload as MedicineRecord;
                     if (otcRecord) {
                         mm.updateMedicine(otcRecord)
                         .then(() => {
-                            setOtcMedicine({action: "load", payload: null});
+                            return setOtcMedicine({action: "load", payload: null});
                         })
-                        .catch((err) => setErrorDetails(err));
+                        .catch((err) => setErrorDetails(err))
+                        .finally(() => setOtcMedicine(null))
                     }
                     break;
                 }
+
                 case "delete": {
                     const medicineId = otcMedicine.payload as number;
                     if (medicineId) {
                         mm.deleteMedicine(medicineId)
                         .then((deleted) => {
                             if (deleted) {
-                                setOtcMedicine({action: "load", payload: null});
+                                return setOtcMedicine({action: "load", payload: null});
                             } else {
-                                setErrorDetails(new Error('Unable to delete OTC medicine Id: ' + medicineId));
+                                return setErrorDetails(new Error('Unable to delete OTC medicine Id: ' + medicineId));
                             }
                         })
-                        .catch((err) => setErrorDetails(err));
+                        .catch((err) => setErrorDetails(err))
+                        .finally(() => setOtcMedicine(null))
                     }
                     break;
                 }

@@ -1,5 +1,6 @@
-import {IMedicineManager} from "../managers/MedicineManager";
 import {useEffect, useGlobal} from "reactn";
+
+import {IMedicineManager} from "../managers/MedicineManager";
 import {MedicineRecord, ResidentRecord} from "../types/RecordTypes";
 
 /**
@@ -20,37 +21,40 @@ const MedicineObserver = (mm: IMedicineManager, activeClient: ResidentRecord | n
                 case "load": {
                     mm.loadMedicineList(medicine.payload as number)
                     .then((meds) => {
-                        setMedicineList(meds)
+                        return setMedicineList(meds);
                     })
-                    .then(() => {
-                        setMedicine(null)
-                    })
-                    .catch((err) => setErrorDetails(err));
+                    .catch((err) => setErrorDetails(err))
+                    .finally(() => setMedicine(null))
                     break;
                 }
+
                 case "update": {
                     const medicineRecord = medicine.payload;
                     if (medicineRecord) {
                         mm.updateMedicine(medicineRecord as MedicineRecord)
                         .then((drugRecord) => {
                             const clientId = drugRecord && drugRecord.ResidentId ? drugRecord.ResidentId : null;
-                            setMedicine({action: "load", payload: clientId});
+                            return setMedicine({action: "load", payload: clientId});
                         })
-                        .catch((err) => setErrorDetails(err));
+                        .catch((err) => setErrorDetails(err))
+                        .finally(() => setMedicine(null))
                     }
                     break;
                 }
+
                 case "delete": {
                     const medicineId = medicine.payload as number;
                     mm.deleteMedicine(medicineId)
                     .then((deleted) => {
                         if (deleted) {
-                            setMedicine({action: "load", payload: activeClient?.Id || null});
+                            return setMedicine({action: "load", payload: activeClient?.Id || null});
                         } else {
-                            setErrorDetails(new Error('Unable to delete Medicine record Id: ' + medicineId))
+                           return  setErrorDetails(new Error('Unable to delete Medicine record Id: ' + medicineId));
                         }
                     })
-                    .catch((err) => setErrorDetails(err));
+                    .catch((err) => setErrorDetails(err))
+                    .finally(() => setMedicine(null))
+                    break;
                 }
             }
         }

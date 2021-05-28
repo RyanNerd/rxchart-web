@@ -11,8 +11,8 @@ const ErrorDetailsObserver = () => {
 
     useEffect(() => {
         if (errorDetails) {
-            setSignIn({organization: null, apiKey: null, success: null});
-            setActiveTabKey('error');
+            setSignIn({organization: null, apiKey: null, success: null})
+            .then(() => setActiveTabKey('error'))
         }
     }, [errorDetails, setSignIn, setActiveTabKey])
 }

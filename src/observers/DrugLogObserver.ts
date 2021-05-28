@@ -1,5 +1,6 @@
-import {IMedicineManager} from "../managers/MedicineManager";
 import {useEffect, useGlobal} from "reactn";
+
+import {IMedicineManager} from "../managers/MedicineManager";
 import {DrugLogRecord, ResidentRecord} from "../types/RecordTypes";
 
 /**
@@ -19,41 +20,46 @@ const DrugLogObserver = (mm: IMedicineManager, activeClient: ResidentRecord | nu
             switch (action) {
                 case "load": {
                     if (Array.isArray(payload)) {
-                        setDrugLogList(payload).then(() => {
-                            setDrugLog(null)
-                        })
+                        setDrugLogList(payload)
+                        .catch((err) => setErrorDetails(err))
+                        .finally(() => setDrugLog(null))
                     } else {
                         mm.loadDrugLog(clientId)
-                        .then((drugs) => { setDrugLogList(drugs) })
-                        .then(() => {
-                            setDrugLog(null)
+                        .then((drugs) => {
+                            return setDrugLogList(drugs);
                         })
                         .catch((err) => setErrorDetails(err))
+                        .finally(() => setDrugLog(null))
                     }
                     break;
                 }
+
                 case "update": {
                     const drugLogRecord = drugLog.payload;
                     if (drugLogRecord) {
                         mm.updateDrugLog(drugLogRecord as DrugLogRecord, clientId)
                         .then((drugLogs) => {
-                            setDrugLog({action: 'load', payload: drugLogs})
+                            return setDrugLog({action: 'load', payload: drugLogs})
                         })
                         .catch((err) => setErrorDetails(err))
+                        .finally(() => setDrugLog(null))
                     }
                     break;
                 }
+
                 case "delete": {
                     const drugLogId = drugLog.payload as number;
                     mm.deleteDrugLog(drugLogId)
                     .then((deleted) => {
                         if (deleted) {
-                            setDrugLog({action: 'load', payload: clientId});
+                            return setDrugLog({action: 'load', payload: clientId});
                         } else {
-                            setErrorDetails(new Error('unable to delete drugLogRecord. Id: ' + drugLogId));
+                            return setErrorDetails(new Error('unable to delete drugLogRecord. Id: ' + drugLogId));
                         }
                     })
                     .catch((err) => setErrorDetails(err))
+                    .finally(() => setDrugLog(null))
+                    break;
                 }
             }
         }

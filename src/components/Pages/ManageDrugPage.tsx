@@ -1,16 +1,18 @@
+import React, {useEffect, useGlobal, useState} from 'reactn';
+
+import Button from "react-bootstrap/Button";
+import Table from "react-bootstrap/Table";
+import {Alert, Form, Row} from "react-bootstrap";
+
+import ConfirmDialogModal from "./Modals/ConfirmDialogModal";
+import DrugLogEdit from "./Modals/DrugLogEdit";
+import DrugLogGrid from "./Grids/DrugLogGrid";
 import MedicineDetail from "./Grids/MedicineDetail";
 import MedicineEdit from "./Modals/MedicineEdit";
-import React, {useEffect, useGlobal, useState} from 'reactn';
-import Table from "react-bootstrap/Table";
-import TooltipButton from "../Buttons/TooltipButton";
-import {Alert, Form, Row} from "react-bootstrap";
-import {getDrugName, getMDY, isToday} from "../../utility/common";
-import {DrugLogRecord, MedicineRecord, newDrugInfo, newDrugLogRecord} from "../../types/RecordTypes";
 import TabContent from "../../styles/common.css";
-import DrugLogGrid from "./Grids/DrugLogGrid";
-import DrugLogEdit from "./Modals/DrugLogEdit";
-import Button from "react-bootstrap/Button";
-import ConfirmDialogModal from "./Modals/ConfirmDialogModal";
+import TooltipButton from "../Buttons/TooltipButton";
+import {DrugLogRecord, MedicineRecord, newDrugInfo, newDrugLogRecord} from "../../types/RecordTypes";
+import {getDrugName, getMDY, isToday} from "../../utility/common";
 
 /**
  * ManageDrugPage
@@ -240,7 +242,7 @@ const ManageDrugPage = (): JSX.Element | null => {
                             e.preventDefault();
                             const drugLogRecord = showDrugLogDeleteConfirm as DrugLogRecord;
                             const drugLogId = drugLogRecord.Id as number;
-                            setDrugLog({action: "delete", payload: drugLogId})
+                            setDrugLog({action: "delete", payload: drugLogId});
                             setShowDrugLogDeleteConfirm(false);
                         }}
                     >
@@ -289,7 +291,7 @@ const ManageDrugPage = (): JSX.Element | null => {
                         onClick={(e) => {
                             e.preventDefault();
                             setMedicine({action: "delete", payload: medicineInfo?.Id as number});
-                            setShowDeleteMedicine(false)
+                            setShowDeleteMedicine(false);
                         }}
                     >
                         {"Delete " + medicineInfo?.Drug}
