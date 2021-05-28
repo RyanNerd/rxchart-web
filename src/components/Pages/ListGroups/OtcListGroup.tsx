@@ -1,23 +1,26 @@
-import LogButtons from "../../Buttons/LogButtons";
-import MedicineDetail from "../Grids/MedicineDetail";
-import React, {useEffect, useState} from "reactn";
-import ShadowBox from "../../Buttons/ShadowBox";
+import React, {useEffect, useRef, useState} from "reactn";
+
 import Table from "react-bootstrap/Table";
 import {Button, Collapse, Form, FormGroup, InputGroup, ListGroup, ListGroupItem} from "react-bootstrap";
+
+import DisabledSpinner from "./DisabledSpinner";
+import LogButtons from "../../Buttons/LogButtons";
+import MedicineDetail from "../Grids/MedicineDetail";
+import ShadowBox from "../../Buttons/ShadowBox";
 import {DrugLogRecord, MedicineRecord} from "../../../types/RecordTypes";
 import {calculateLastTaken, getLastTakenVariant} from "../../../utility/common";
-import {useRef} from "react";
 
 interface IProps {
     activeOtcDrug: MedicineRecord
     addOtcMedicine: () => void
+    disabled?: boolean
     drugLogList: DrugLogRecord[]
     editOtcMedicine: () => void
     logOtcDrug: (e: React.MouseEvent<HTMLElement>) => void
     logOtcDrugAmount: (n: number) => void
+    onDisplay?: (s: boolean) => void
     otcList: MedicineRecord[]
     setActiveOtcDrug: (d: MedicineRecord) => void
-    onDisplay?: (s: boolean) => void
 }
 
 /**
@@ -28,6 +31,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
     const {
         activeOtcDrug,
         addOtcMedicine,
+        disabled = false,
         drugLogList,
         editOtcMedicine,
         logOtcDrug,
@@ -37,12 +41,12 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
         setActiveOtcDrug
     } = props;
 
-    const lastTaken = (activeOtcDrug && activeOtcDrug.Id) ? calculateLastTaken(activeOtcDrug.Id, drugLogList) : null;
-    const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
+    const [filteredOtcList, setFilteredOtcList] = useState(otcList);
     const [searchIsValid, setSearchIsValid] = useState<boolean | null>(null);
     const [searchText, setSearchText] = useState('');
-    const [filteredOtcList, setFilteredOtcList] = useState(otcList);
     const [showOtc, setShowOtc] = useState(false);
+    const lastTaken = (activeOtcDrug && activeOtcDrug.Id) ? calculateLastTaken(activeOtcDrug.Id, drugLogList) : null;
+    const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
     const searchRef = useRef<HTMLInputElement>(null);
 
     // Filter the otcList by the search textbox value
@@ -79,13 +83,18 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
         <ListGroup>
             <ListGroupItem
                 action
-                as="button"
                 active={!showOtc}
+                as="button"
+                disabled={disabled}
                 onClick={() => setShowOtc(!showOtc)}
                 style={{height: "35px", verticalAlign: "middle", lineHeight: "100%", zIndex: 0}}
             >
                 <div style={{textAlign: "center"}}>
-                    {showOtc ? 'Hide OTC' : 'Show OTC'}
+                    {disabled ?
+                        (<DisabledSpinner>{showOtc ? 'Hide OTC' : 'Show OTC'}</DisabledSpinner>)
+                        :
+                        (<>{showOtc ? 'Hide OTC' : 'Show OTC'}</>)
+                    }
                 </div>
             </ListGroupItem>
 
@@ -93,7 +102,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                 in={showOtc}
                 onEntered={() => searchRef?.current?.focus()}
             >
-                <ListGroup.Item>
+                <ListGroup.Item disabled={disabled}>
                     <FormGroup>
                         <InputGroup>
                             <InputGroup.Prepend>
@@ -101,41 +110,41 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                                     className="mr-2"
                                     id="otc-page-search-text"
                                     isValid={searchIsValid || false}
-                                    placeholder="Search OTC medicine"
-                                    size="sm"
-                                    style={{width: "220px"}}
-                                    type="search"
-                                    ref={searchRef}
-                                    value={searchText}
                                     onChange={(e) => setSearchText(e.target.value)}
                                     onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
                                         if (e.key === 'Enter') {
                                             e.preventDefault();
                                         }
                                     }}
+                                    placeholder="Search OTC medicine"
+                                    ref={searchRef}
+                                    size="sm"
+                                    style={{width: "220px"}}
+                                    type="search"
+                                    value={searchText}
                                 />
                             </InputGroup.Prepend>
                             <InputGroup.Append style={{zIndex: 0}}>
                                 <Button
                                     className="mr-1"
-                                    size="sm"
-                                    variant="info"
                                     onClick={(e) => {
                                         e.preventDefault();
                                         addOtcMedicine();
                                     }}
+                                    size="sm"
+                                    variant="info"
                                 >
                                     + OTC
                                 </Button>
 
                                 {activeOtcDrug &&
                                 <Button
-                                    size="sm"
-                                    variant="info"
                                     onClick={(e) => {
                                         e.preventDefault();
                                         editOtcMedicine();
                                     }}
+                                    size="sm"
+                                    variant="info"
                                 >
                                     Edit <b>{activeOtcDrug.Drug}</b>
                                 </Button>
@@ -145,8 +154,8 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                     </FormGroup>
                     <FormGroup>
                         <Button
-                            onClick={(e) => logOtcDrug(e)}
                             className="mr-2"
+                            onClick={(e) => logOtcDrug(e)}
                             size="sm"
                             variant={lastTakenVariant}
                         >
@@ -169,7 +178,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
             </Collapse>
 
             <Collapse in={showOtc}>
-                <ListGroup.Item>
+                <ListGroup.Item disabled={disabled}>
                     <div style={{height: "450px", overflow: "auto"}}>
                         <Table
                             bordered
