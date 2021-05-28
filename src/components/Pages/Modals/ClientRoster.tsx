@@ -27,22 +27,23 @@ const ClientRoster = (props: IProps) => {
 
     useEffect(() => {
         if (printWindow) {
-            /**
-             * Handle the afterprint event
-             * @param e {Event} Afterprint event
-             */
             const handleAfterPrint = (e: Event) => {
                 e.preventDefault();
-
-                // Close this window when we are done printing.
                 printWindow.close();
             }
 
             printWindow.addEventListener('afterprint', handleAfterPrint);
             printWindow.focus();
-            printWindow.print();
 
-            return () => printWindow.removeEventListener('afterprint', handleAfterPrint);
+            // Wait a bit for the CSS to be applied to the new window before we invoke the print dialog.
+            setTimeout(() => {
+                printWindow.print();
+            }, 1000);
+
+            // Clean up
+            return () => {
+                printWindow.removeEventListener('afterprint', handleAfterPrint);
+            }
         }
     }, [printWindow]);
 
