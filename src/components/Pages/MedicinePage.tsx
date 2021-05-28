@@ -1,18 +1,20 @@
+import React, {useEffect, useGlobal, useState} from 'reactn';
+
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
+import {Alert, ListGroup} from "react-bootstrap";
+
 import Confirm from "./Modals/Confirm";
 import DrugLogEdit from "./Modals/DrugLogEdit";
 import DrugLogGrid from "./Grids/DrugLogGrid";
-import Form from 'react-bootstrap/Form';
 import LastTakenButton from "../Buttons/LastTakenButton";
 import MedicineEdit from "./Modals/MedicineEdit";
 import MedicineListGroup from "./ListGroups/MedicineListGroup";
 import OtcListGroup from "./ListGroups/OtcListGroup";
-import React, {useEffect, useGlobal, useState} from 'reactn';
-import Row from 'react-bootstrap/Row';
 import TabContent from "../../styles/common.css";
 import TooltipButton from "../Buttons/TooltipButton";
-import {Alert, ListGroup} from "react-bootstrap";
 import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
 import {calculateLastTaken, getCheckoutList, getDrugName, getFormattedDate, getMDY} from "../../utility/common";
 
@@ -43,6 +45,7 @@ const MedicinePage = (): JSX.Element | null => {
     const [showMedicineEdit, setShowMedicineEdit] = useState<MedicineRecord | null>(null);
 
     // Set the activeDrug when the medicineList changes
+    // Todo: Better handling of state here
     useEffect(() => {
         if (medicineList.length > 0) {
             setActiveDrug(medicineList[0]);
@@ -250,6 +253,7 @@ const MedicinePage = (): JSX.Element | null => {
                     {activeOtcDrug &&
                     <Row className={otcGroupShown ? "" : "mt-4"}>
                         <OtcListGroup
+                            disabled={drugLog !== null}
                             addOtcMedicine={() => {
                                 setShowMedicineEdit({...newDrugInfo, OTC: true});
                             }}
@@ -348,8 +352,6 @@ const MedicinePage = (): JSX.Element | null => {
                     setShowDrugLog(null);
                     if (drugLogRecord) {
                         setDrugLog({action: 'update', payload: drugLogRecord});
-                    } else {
-                        setDrugLog(null);
                     }
                 }}
             />
@@ -360,8 +362,10 @@ const MedicinePage = (): JSX.Element | null => {
             <Confirm.Modal
                 size='lg'
                 onSelect={(a) => {
-                    setDrugLog(a ? {action: 'delete', payload: showDeleteDrugLogRecord?.Id as number} : null);
                     setShowDeleteDrugLogRecord(null);
+                    if (a) {
+                        setDrugLog({action: 'delete', payload: showDeleteDrugLogRecord?.Id as number});
+                    }
                 }}
                 show={true}
                 buttonvariant="danger"
