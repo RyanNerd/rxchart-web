@@ -16,7 +16,14 @@ import OtcListGroup from "./ListGroups/OtcListGroup";
 import TabContent from "../../styles/common.css";
 import TooltipButton from "../Buttons/TooltipButton";
 import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
-import {calculateLastTaken, getCheckoutList, getFormattedDate, getMDY, getMedicineRecord} from "../../utility/common";
+import {
+    calculateLastTaken,
+    getCheckoutList,
+    getDrugName,
+    getFormattedDate,
+    getMDY,
+    getMedicineRecord
+} from "../../utility/common";
 
 /**
  * MedicinePage
@@ -184,7 +191,7 @@ const MedicinePage = (): JSX.Element | null => {
      * @return {string | undefined}
      */
     const drugName = (medicineId: number): string | undefined => {
-        return getMedicineRecord(medicineId, medicineList.concat(otcList))?.Drug;
+        return getDrugName(medicineId, medicineList.concat(otcList));
     }
 
     return (

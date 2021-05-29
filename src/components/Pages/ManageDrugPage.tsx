@@ -12,7 +12,7 @@ import MedicineEdit from "./Modals/MedicineEdit";
 import TabContent from "../../styles/common.css";
 import TooltipButton from "../Buttons/TooltipButton";
 import {DrugLogRecord, MedicineRecord, newDrugInfo, newDrugLogRecord} from "../../types/RecordTypes";
-import {getMDY, getMedicineRecord, isToday} from "../../utility/common";
+import {getDrugName, getMDY, isToday} from "../../utility/common";
 
 /**
  * ManageDrugPage
@@ -104,7 +104,7 @@ const ManageDrugPage = (): JSX.Element | null => {
      * @return {string | undefined}
      */
     const drugName = (medicineId: number): string | undefined => {
-        return getMedicineRecord(medicineId, medicineList.concat(otcList))?.Drug;
+        return getDrugName(medicineId, medicineList.concat(otcList));
     }
 
     return (
