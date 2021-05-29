@@ -11,8 +11,8 @@ import MedicineDetail from "./Grids/MedicineDetail";
 import MedicineEdit from "./Modals/MedicineEdit";
 import TabContent from "../../styles/common.css";
 import TooltipButton from "../Buttons/TooltipButton";
-import {DrugLogRecord, MedicineRecord, newDrugInfo, newDrugLogRecord} from "../../types/RecordTypes";
-import {getDrugName, getMDY, isToday} from "../../utility/common";
+import {DrugLogRecord, MedicineRecord, newDrugLogRecord, newMedicineRecord} from "../../types/RecordTypes";
+import {getDrugName, isToday} from "../../utility/common";
 
 /**
  * ManageDrugPage
@@ -60,14 +60,13 @@ const ManageDrugPage = (): JSX.Element | null => {
      */
     const onEdit = (e: React.MouseEvent<HTMLElement>, medicine: MedicineRecord | null) => {
         e.preventDefault();
-        const mdy = getMDY();
         const medicineInfo = (medicine) ? {...medicine} : {
-            ...newDrugInfo,
+            ...newMedicineRecord,
             OTC: false,
             ResidentId: activeResident?.Id,
-            FillDateDay: mdy.day,
-            FillDateMonth: mdy.month,
-            FillDateYear: mdy.year
+            FillDateDay: "",
+            FillDateMonth: "",
+            FillDateYear: ""
         };
         setMedicineInfo(medicineInfo);
         setShowMedicineEdit(true);

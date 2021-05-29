@@ -29,9 +29,9 @@ export type MedicineRecord = {
     Barcode: string | null
     Directions: string | null
     Drug: string
-    FillDateDay?: string | string[] | number
-    FillDateMonth?: string | string[] | number
-    FillDateYear?: string | string[] | number
+    FillDateDay?: string | number
+    FillDateMonth?: string
+    FillDateYear?: string | number
     [key: string]: any
     Id: number | null
     Notes: string | null
@@ -40,7 +40,7 @@ export type MedicineRecord = {
     Strength: string | null
 };
 
-export const newDrugInfo = {
+export const newMedicineRecord = {
     Barcode: '',
     Directions: '',
     Drug: '',

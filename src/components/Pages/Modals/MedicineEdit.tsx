@@ -7,6 +7,9 @@ import Row from "react-bootstrap/Row";
 import {Alert} from "react-bootstrap";
 import {clientFullName} from "../../../utility/common";
 import {MedicineRecord} from "../../../types/RecordTypes";
+import isMonthValid from "../Validation/IsMonthValid";
+import isDayValid from "../Validation/IsDayValid";
+import isYearValid from "../Validation/IsYearValid";
 
 interface IProps {
     drugInfo: MedicineRecord
@@ -46,12 +49,26 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
 
     // Disable the Save button if the Drug name is empty.
     useEffect(() => {
-            if (drugInfo?.Drug.length > 0) {
-                setCanSave(true);
-            } else {
-                setCanSave(false);
+        if (drugInfo?.Drug.length > 0) {
+            // Check if any of the FillDate fields are populated then all need to be populated or all blank
+            let cnt = 0;
+            if (drugInfo.FillDateMonth !== "") {
+                cnt++;
             }
-    }, [drugInfo]);
+            if (drugInfo.FillDateDay !== "") {
+                cnt++;
+            }
+            if (drugInfo.FillDateYear !== "") {
+                cnt++;
+            }
+
+            // If any elements have an is-invalid class marker then don't allow a save.
+            const isInvalidClasses = document.querySelectorAll('.is-invalid');
+            setCanSave(isInvalidClasses.length === 0 && (cnt === 0 || cnt === 3));
+        } else {
+            setCanSave(false);
+        }
+    }, [drugInfo, setCanSave]);
 
     /**
      * Fires when a text field or checkbox is changing.
@@ -118,8 +135,9 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
 
             <Modal.Body>
                 <Form>
-                    {otc && drugInfo.Id ?
-                        (<Form.Group as={Row} controlId="otc-alert">
+                    {otc && drugInfo?.Id &&
+                        (
+                            <Form.Group as={Row} controlId="otc-alert">
                             <Form.Label
                                 column sm="2"
                             >
@@ -135,7 +153,8 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                                 </span> Changes to this OTC medicine will affect <b>ALL</b> residents!
                                 </Alert>
                             </Col>
-                        </Form.Group>) : (<></>)
+                            </Form.Group>
+                        )
                     }
 
                     <Form.Group as={Row}>
@@ -145,12 +164,17 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
 
                         <Col sm="4">
                             <Form.Control
+                                className={drugInfo.Drug !== '' ? '' : 'is-invalid'}
                                 ref={textInput}
                                 type="text"
                                 value={drugInfo.Drug}
                                 name="Drug"
                                 onChange={(e) => handleOnChange(e)}
+                                required
                             />
+                            <div className="invalid-feedback">
+                                Drug Name cannot be blank.
+                            </div>
                         </Col>
 
                         <Form.Label column sm="1">
@@ -218,7 +242,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                         </Col>
                     </Form.Group>
 
-                    {!otc &&
+                    {!otc && drugInfo &&
                     <Form.Group as={Row}>
                         <Form.Label column sm="2">
                             Fill Date
@@ -226,35 +250,59 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                         <Form.Label column sm="1">
                             Month
                         </Form.Label>
-                        <Col sm={1}>
+                        <Col sm="2">
                             <Form.Control
+                                className={
+                                    drugInfo.FillDateMonth === "" ? "" :isMonthValid(drugInfo.FillDateMonth as string)
+                                }
                                 type="text"
                                 value={drugInfo.FillDateMonth}
                                 name="FillDateMonth"
-                                onChange={(e) => handleOnChange(e)}
-                            />
+                                onChange={(e) => handleOnChange(e)}>
+                            </Form.Control>
+                            <div className="invalid-feedback">
+                                Invalid Month
+                            </div>
                         </Col>
                         <Form.Label column sm="1">
                             Day
                         </Form.Label>
-                        <Col sm={1}>
+                        <Col sm="2">
                             <Form.Control
+                                className={
+                                    drugInfo.FillDateDay === "" ?
+                                        ""
+                                        :
+                                        isDayValid(drugInfo.FillDateDay as string, drugInfo.FillDateMonth as string)
+                                }
                                 type="text"
                                 value={drugInfo.FillDateDay}
                                 name="FillDateDay"
                                 onChange={(e) => handleOnChange(e)}
                             />
+                            <div className="invalid-feedback">
+                                Invalid Day
+                            </div>
                         </Col>
                         <Form.Label column sm="1">
                             Year
                         </Form.Label>
                         <Col sm={2}>
                             <Form.Control
+                                className={
+                                    drugInfo.FillDateYear === "" ?
+                                        ""
+                                        :
+                                        isYearValid(drugInfo.FillDateYear as string, false)
+                                }
                                 type="text"
                                 value={drugInfo.FillDateYear}
                                 name="FillDateYear"
                                 onChange={(e) => handleOnChange(e)}
                             />
+                            <div className="invalid-feedback">
+                                Invalid Year
+                            </div>
                         </Col>
                     </Form.Group>
                     }

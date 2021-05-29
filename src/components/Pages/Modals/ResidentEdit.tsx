@@ -23,6 +23,7 @@ interface IProps {
 const ResidentEdit = (props: IProps): JSX.Element | null => {
     const [show, setShow] = useState(props.show);
     const [residentInfo, setResidentInfo] = useState<ResidentRecord>(props.residentInfo);
+    const [canSave, setCanSave] = useState(true);
     const focusRef = useRef<HTMLInputElement>(null);
 
     /**
@@ -64,6 +65,12 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
         }
     }, [props.residentInfo]);
 
+    // Anytime the fields change check if we have any invalid entries
+    useEffect(() => {
+        const isInvalidClasses = document.querySelectorAll('.is-invalid');
+        setCanSave(isInvalidClasses.length === 0);
+    }, [residentInfo, setResidentInfo]);
+
     // Prevent render if there is no data.
     if (!residentInfo) {
         return null;
@@ -97,6 +104,7 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                                 name="FirstName"
                                 onChange={(e) => handleOnChange(e)}
                                 ref={focusRef}
+                                required
                             />
                             <div className="invalid-feedback">
                                 First name can not be blank.
@@ -114,6 +122,7 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                                 value={residentInfo.LastName}
                                 name="LastName"
                                 onChange={(e) => handleOnChange(e)}
+                                required
                             />
                             <div className="invalid-feedback">
                                 Last name can not be blank.
@@ -132,6 +141,7 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                                 value={residentInfo.DOB_MONTH}
                                 name="DOB_MONTH"
                                 onChange={(e) => handleOnChange(e)}
+                                required
                             />
                             <div className="invalid-feedback">
                                 Enter the month (1-12).
@@ -150,6 +160,7 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                                 value={residentInfo.DOB_DAY}
                                 name="DOB_DAY"
                                 onChange={(e) => handleOnChange(e)}
+                                required
                             />
                             <div className="invalid-feedback">
                                 Enter a valid day (1-31).
@@ -165,6 +176,7 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                                 value={residentInfo.DOB_YEAR}
                                 name="DOB_YEAR"
                                 onChange={(e) => handleOnChange(e)}
+                                required
                             />
                             <div className="invalid-feedback">
                                 Enter a valid birth year.
@@ -196,12 +208,7 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                     Cancel
                 </Button>
                 <Button
-                    disabled={
-                        isMonthValid(residentInfo.DOB_MONTH.toString()) +
-                        isDayValid(residentInfo.DOB_DAY.toString(), residentInfo.DOB_MONTH.toString()) +
-                        isYearValid(residentInfo.DOB_YEAR.toString()
-                            , true) !== ''
-                    }
+                    disabled={!canSave}
                     onClick={(e) => handleHide(e, true)}
                     variant="primary"
                 >

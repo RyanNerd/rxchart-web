@@ -5,7 +5,7 @@ import React, {useGlobal, useState} from 'reactn';
 import Table from "react-bootstrap/Table";
 import TooltipButton from "../Buttons/TooltipButton";
 import {Alert} from "react-bootstrap";
-import {MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
+import {MedicineRecord, newMedicineRecord} from "../../types/RecordTypes";
 
 /**
  * ManageOtcPage
@@ -32,7 +32,7 @@ const ManageOtcPage = (): JSX.Element | null => {
      */
     const onEdit = (e: React.MouseEvent<HTMLElement>, medicine?: MedicineRecord | null) => {
         e.preventDefault();
-        const medicineInfo = (medicine) ? {...medicine} : {...newDrugInfo, OTC: true};
+        const medicineInfo = (medicine) ? {...medicine} : {...newMedicineRecord, OTC: true};
         setMedicineInfo(medicineInfo);
         setShowMedicineEdit(true);
     }

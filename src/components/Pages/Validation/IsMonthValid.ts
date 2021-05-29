@@ -6,7 +6,6 @@ type ReturnValidation = '' | 'is-invalid' | string;
  * @returns {'' | 'is-invalid'}
  */
 const isMonthValid = (month: string): ReturnValidation => {
-    // tslint:disable-next-line:radix
     return (parseInt(month) >= 1 && parseInt(month) <= 12) ? '' : 'is-invalid';
 };
 
