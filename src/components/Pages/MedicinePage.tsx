@@ -16,7 +16,7 @@ import OtcListGroup from "./ListGroups/OtcListGroup";
 import TabContent from "../../styles/common.css";
 import TooltipButton from "../Buttons/TooltipButton";
 import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
-import {calculateLastTaken, getCheckoutList, getDrugName, getFormattedDate, getMDY} from "../../utility/common";
+import {calculateLastTaken, getCheckoutList, getFormattedDate, getMDY, getMedicineRecord} from "../../utility/common";
 
 /**
  * MedicinePage
@@ -176,6 +176,15 @@ const MedicinePage = (): JSX.Element | null => {
             };
             setDrugLog({action: 'update', payload: drugLogInfo});
         }
+    }
+
+    /**
+     * Convenience function to get drug name
+     * @param {number} medicineId
+     * @return {string | undefined}
+     */
+    const drugName = (medicineId: number): string | undefined => {
+        return getMedicineRecord(medicineId, medicineList.concat(otcList))?.Drug;
     }
 
     return (
@@ -344,7 +353,8 @@ const MedicinePage = (): JSX.Element | null => {
 
             {showDrugLog &&
             <DrugLogEdit
-                drugName={getDrugName(showDrugLog.MedicineId, medicineList.concat(otcList))}
+                otc={getMedicineRecord(showDrugLog.MedicineId, medicineList.concat(otcList))?.OTC || false}
+                drugName={getMedicineRecord(showDrugLog.MedicineId, medicineList.concat(otcList))?.Drug || '[unknown]'}
                 show={true}
                 drugLogInfo={showDrugLog}
                 onHide={() => setShowDrugLog(null)}
@@ -372,7 +382,7 @@ const MedicinePage = (): JSX.Element | null => {
             >
                 <Confirm.Header>
                     <Confirm.Title>
-                        Delete {getDrugName(showDeleteDrugLogRecord.MedicineId, medicineList)} Log Record
+                        Delete {drugName(showDeleteDrugLogRecord.MedicineId)} Log Record
                     </Confirm.Title>
                 </Confirm.Header>
                 <Confirm.Body>

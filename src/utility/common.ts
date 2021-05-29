@@ -224,6 +224,16 @@ export const getDrugName = (id: number, list: MedicineRecord[]): string => {
 }
 
 /**
+ * Given the Id of the Medicine return the medicine record
+ * @param {number} medicineId
+ * @param {MedicineRecord[]} medicineList
+ * @return {MedicineRecord | undefined}
+ */
+export const getMedicineRecord = (medicineId: number, medicineList: MedicineRecord[]): MedicineRecord | undefined => {
+    return getObjectByProperty<MedicineRecord>(medicineList, 'Id', medicineId);
+}
+
+/**
  * Given the searchText and activeDrug determine if the search is valid and return true if so, otherwise false.
  * @param {string} searchText
  * @param {MedicineRecord} drug
