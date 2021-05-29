@@ -30,8 +30,8 @@ const ManageDrugPage = (): JSX.Element | null => {
     const [otcList] = useGlobal('otcList');
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
-    const [showDrugLogDeleteConfirm, setShowDrugLogDeleteConfirm] = useState<DrugLogRecord | boolean>(false);
-    const [showCheckoutModal, setShowCheckoutModal] = useState<DrugLogRecord | boolean>(false);
+    const [showDrugLogDeleteConfirm, setShowDrugLogDeleteConfirm] = useState<DrugLogRecord | null>(null);
+    const [showCheckoutModal, setShowCheckoutModal] = useState<DrugLogRecord | null>(null);
     const [todayDrugLogList, setTodayDrugLogList] = useState<DrugLogRecord[]>([]);
 
     /**
@@ -215,26 +215,23 @@ const ManageDrugPage = (): JSX.Element | null => {
             }
 
             <DrugLogEdit
-                drugName={drugName(typeof showCheckoutModal !== "boolean" ?
-                    showCheckoutModal?.MedicineId : 0) || "[unknown]"}
+                drugName={drugName(showCheckoutModal?.MedicineId as number) || "[unknown]"}
                 drugLogInfo={showCheckoutModal as DrugLogRecord}
                 onClose={(dl) => {
-                    setShowCheckoutModal(false);
+                    setShowCheckoutModal(null);
                     setDrugLog({action: "update", payload: dl});
                 }}
-                onHide={() => setShowCheckoutModal(false)}
-                show={showCheckoutModal !== false}
+                onHide={() => setShowCheckoutModal(null)}
+                show={showCheckoutModal !== null}
             />
 
             <ConfirmDialogModal
                 centered
-                show={showDrugLogDeleteConfirm !== false}
+                show={showDrugLogDeleteConfirm !== null}
                 title={<h3>Delete Drug Log Entry</h3>}
                 body={
                     <Alert variant="danger">
-                        {typeof showDrugLogDeleteConfirm !== 'boolean' &&
-                        "Delete " + drugName(showDrugLogDeleteConfirm?.MedicineId) + " from the drug log?"
-                        }
+                        {"Delete " + drugName(showDrugLogDeleteConfirm?.MedicineId as number) + " from the drug log?"}
                     </Alert>
                 }
                 yesButton={
@@ -246,7 +243,7 @@ const ManageDrugPage = (): JSX.Element | null => {
                             const drugLogRecord = showDrugLogDeleteConfirm as DrugLogRecord;
                             const drugLogId = drugLogRecord.Id as number;
                             setDrugLog({action: "delete", payload: drugLogId});
-                            setShowDrugLogDeleteConfirm(false);
+                            setShowDrugLogDeleteConfirm(null);
                         }}
                     >
                         Delete
@@ -257,7 +254,7 @@ const ManageDrugPage = (): JSX.Element | null => {
                         variant="secondary"
                         onClick={(e) => {
                             e.preventDefault();
-                            setShowDrugLogDeleteConfirm(false);
+                            setShowDrugLogDeleteConfirm(null);
                         }}
                     >
                         Cancel
