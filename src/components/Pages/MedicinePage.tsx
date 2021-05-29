@@ -15,13 +15,12 @@ import MedicineListGroup from "./ListGroups/MedicineListGroup";
 import OtcListGroup from "./ListGroups/OtcListGroup";
 import TabContent from "../../styles/common.css";
 import TooltipButton from "../Buttons/TooltipButton";
-import {DrugLogRecord, MedicineRecord, newDrugInfo} from "../../types/RecordTypes";
+import {DrugLogRecord, MedicineRecord, newMedicineRecord} from "../../types/RecordTypes";
 import {
     calculateLastTaken,
     getCheckoutList,
     getDrugName,
     getFormattedDate,
-    getMDY,
     getMedicineRecord
 } from "../../utility/common";
 
@@ -207,14 +206,13 @@ const MedicinePage = (): JSX.Element | null => {
                             variant="info"
                             onClick={(e: React.MouseEvent<HTMLElement>) => {
                                 e.preventDefault();
-                                const mdy = getMDY();
                                 setShowMedicineEdit({
-                                    ...newDrugInfo,
+                                    ...newMedicineRecord,
                                     OTC: false,
                                     ResidentId: residentId,
-                                    FillDateYear: mdy.year,
-                                    FillDateMonth: mdy.month,
-                                    FillDateDay: mdy.day
+                                    FillDateYear: "",
+                                    FillDateMonth: "",
+                                    FillDateDay: ""
                                 });
                             }}
                         >
@@ -271,7 +269,7 @@ const MedicinePage = (): JSX.Element | null => {
                         <OtcListGroup
                             disabled={drugLog !== null}
                             addOtcMedicine={() => {
-                                setShowMedicineEdit({...newDrugInfo, OTC: true});
+                                setShowMedicineEdit({...newMedicineRecord, OTC: true});
                             }}
                             editOtcMedicine={() => {
                                 setShowMedicineEdit({...activeOtcDrug} as MedicineRecord);
