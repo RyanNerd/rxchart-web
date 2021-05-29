@@ -1,5 +1,6 @@
-import {DrugLogRecord, MedicineRecord, ResidentRecord} from "../types/RecordTypes";
 import {Variant} from "react-bootstrap/types";
+
+import {DrugLogRecord, MedicineRecord, ResidentRecord} from "../types/RecordTypes";
 
 interface IKey {
     [key: string]: any
@@ -213,14 +214,23 @@ export const getObjectByProperty = <T>(objectList: IKey, propName: string, searc
 }
 
 /**
- * Given the MedicineId return the name of the drug
- * @param {number} id
- * @param {MedicineRecord[]} list
- * @return {string}
+ * Given the MedicineId, and medicineList return the name of the drug
+ * @param {number} medicineId
+ * @param {MedicineRecord[]} medicineList
+ * @retirm {string | undefined}
  */
-export const getDrugName = (id: number, list: MedicineRecord[]): string => {
-    const drug = getObjectByProperty<MedicineRecord>(list, 'Id', id);
-    return drug ? drug.Drug : '[not found]';
+export const getDrugName = (medicineId: number, medicineList: MedicineRecord[]): string | undefined => {
+    return getMedicineRecord(medicineId, medicineList)?.Drug;
+}
+
+/**
+ * Given the Id of the Medicine return the medicine record
+ * @param {number} medicineId
+ * @param {MedicineRecord[]} medicineList
+ * @return {MedicineRecord | undefined}
+ */
+export const getMedicineRecord = (medicineId: number, medicineList: MedicineRecord[]): MedicineRecord | undefined => {
+    return getObjectByProperty<MedicineRecord>(medicineList, 'Id', medicineId);
 }
 
 /**

@@ -8,9 +8,10 @@ import {DrugLogRecord} from "../../../types/RecordTypes";
 
 interface IProps {
     drugLogInfo: DrugLogRecord
-    drugName?: string
+    drugName: string
     onClose: (drugLogInfo: DrugLogRecord | null) => void
     onHide: () => void
+    otc?: boolean
     show: boolean
 }
 
@@ -20,13 +21,14 @@ interface IProps {
  * @returns {JSX.Element | null}
  */
 const DrugLogEdit = (props: IProps): JSX.Element | null => {
-    const onClose = props.onClose;
-    const [show, setShow] = useState(props.show);
-    const [drugLogInfo, setDrugLogInfo] = useState(props.drugLogInfo);
-    const onHide = props.onHide;
     const [canSave, setCanSave] = useState(false);
-    const textInput = useRef<HTMLTextAreaElement>(null);
+    const [drugLogInfo, setDrugLogInfo] = useState(props.drugLogInfo);
+    const [show, setShow] = useState(props.show);
+    const otc = props.otc;
+    const onClose = props.onClose;
+    const onHide = props.onHide;
     const title = props.drugName ? 'Log ' + props.drugName.trim() : 'Log Drug';
+    const textInput = useRef<HTMLTextAreaElement>(null);
 
     // Observer for show
     useEffect(() => {
@@ -42,9 +44,9 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
     useEffect(() => {
         const canSave = (drugLogInfo &&
             (
-                (drugLogInfo?.Notes && drugLogInfo.Notes.length > 0) ||
-                (drugLogInfo?.In && drugLogInfo.In > 0) ||
-                (drugLogInfo?.Out && drugLogInfo.Out > 0)
+                (drugLogInfo.Notes?.length > 0) ||
+                (drugLogInfo.In && drugLogInfo.In > 0) ||
+                (drugLogInfo.Out && drugLogInfo.Out> 0)
             )
         ) || false;
         setCanSave(canSave);
@@ -129,33 +131,37 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
                         </Col>
                     </Form.Group>
 
-                    <Form.Group as={Row} controlId="checkout-out">
-                        <Form.Label column md="4">
-                            Out
-                        </Form.Label>
-                        <Col md="8">
-                            <Form.Control
-                                type="number"
-                                value={drugLogInfo.Out || undefined}
-                                name="Out"
-                                onChange={(e) => handleOnChange(e, true)}
-                            />
-                        </Col>
-                    </Form.Group>
+                    {!otc &&
+                    <>
+                        <Form.Group as={Row} controlId="checkout-out">
+                            <Form.Label column md="4">
+                                Out
+                            </Form.Label>
+                            <Col md="8">
+                                <Form.Control
+                                    type="number"
+                                    value={drugLogInfo.Out || undefined}
+                                    name="Out"
+                                    onChange={(e) => handleOnChange(e, true)}
+                                />
+                            </Col>
+                        </Form.Group>
 
-                    <Form.Group as={Row} controlId="checkout-in">
-                        <Form.Label column md="4">
-                            In
-                        </Form.Label>
-                        <Col md="8">
-                            <Form.Control
-                                type="number"
-                                value={drugLogInfo.In || undefined}
-                                name="In"
-                                onChange={(e) => handleOnChange(e, true)}
-                            />
-                        </Col>
-                    </Form.Group>
+                        <Form.Group as={Row} controlId="checkout-in">
+                            <Form.Label column md="4">
+                                In
+                            </Form.Label>
+                            <Col md="8">
+                                <Form.Control
+                                    type="number"
+                                    value={drugLogInfo.In || undefined}
+                                    name="In"
+                                    onChange={(e) => handleOnChange(e, true)}
+                                />
+                            </Col>
+                        </Form.Group>
+                    </>
+                    }
                 </Form>
             </Modal.Body>
 

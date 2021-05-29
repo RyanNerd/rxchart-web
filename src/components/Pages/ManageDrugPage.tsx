@@ -27,6 +27,7 @@ const ManageDrugPage = (): JSX.Element | null => {
     const [drugLogList] = useGlobal('drugLogList');
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [medicineList] = useGlobal('medicineList');
+    const [otcList] = useGlobal('otcList');
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const [showDrugLogDeleteConfirm, setShowDrugLogDeleteConfirm] = useState<DrugLogRecord | boolean>(false);
@@ -99,10 +100,11 @@ const ManageDrugPage = (): JSX.Element | null => {
 
     /**
      * Convenience function to get drug name
-     * @param drugLogRecord {DrugLogRecord}
+     * @param {number} medicineId
+     * @return {string | undefined}
      */
-    const drugName = (drugLogRecord: DrugLogRecord) => {
-        return getDrugName(drugLogRecord.MedicineId as number, medicineList)
+    const drugName = (medicineId: number): string | undefined => {
+        return getDrugName(medicineId, medicineList.concat(otcList));
     }
 
     return (
@@ -192,14 +194,13 @@ const ManageDrugPage = (): JSX.Element | null => {
                             e.preventDefault();
                             setShowDrugLogDeleteConfirm(r);
                         }}
-                        medicineList={medicineList}
+                        medicineList={medicineList.concat(otcList)}
                         includeCheckout={true}
                         drugLog={todayDrugLogList}
                         columns={['Drug', 'Created', 'Updated', 'Notes', 'Out', 'In']}
                     />
                 </Row>
                 }
-
 
             {showMedicineEdit && medicineInfo &&
             /* MedicineEdit Modal */
@@ -214,8 +215,8 @@ const ManageDrugPage = (): JSX.Element | null => {
             }
 
             <DrugLogEdit
-                drugName={getDrugName(typeof showCheckoutModal !== "boolean" ?
-                    showCheckoutModal?.MedicineId : 0, medicineList)}
+                drugName={drugName(typeof showCheckoutModal !== "boolean" ?
+                    showCheckoutModal?.MedicineId : 0) || "[unknown]"}
                 drugLogInfo={showCheckoutModal as DrugLogRecord}
                 onClose={(dl) => {
                     setShowCheckoutModal(false);
@@ -231,7 +232,9 @@ const ManageDrugPage = (): JSX.Element | null => {
                 title={<h3>Delete Drug Log Entry</h3>}
                 body={
                     <Alert variant="danger">
-                        {"Delete " + drugName(showDrugLogDeleteConfirm as DrugLogRecord) + " from the drug log?"}
+                        {typeof showDrugLogDeleteConfirm !== 'boolean' &&
+                        "Delete " + drugName(showDrugLogDeleteConfirm?.MedicineId) + " from the drug log?"
+                        }
                     </Alert>
                 }
                 yesButton={
