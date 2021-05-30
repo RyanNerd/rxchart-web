@@ -17,6 +17,8 @@ import PopoverButton from "./Buttons/PopoverButton";
 import TooltipButton from "./Buttons/TooltipButton";
 import {ReactComponent as RxIcon} from "../icons/prescription.svg";
 import {clientDOB, clientFullName} from "../utility/common";
+import ResidentEdit from "./Pages/Modals/ResidentEdit";
+import {ResidentRecord} from "../types/RecordTypes";
 
 /**
  * Main Entry Component
@@ -24,10 +26,12 @@ import {clientDOB, clientFullName} from "../utility/common";
  * @returns {JSX.Element}
  */
 const App = () => {
-    const [activeClient] = useGlobal('activeResident');
+    const [, setClient] = useGlobal('__client');
+    const [activeClient, setActiveClient] = useGlobal('activeResident');
     const [development] = useGlobal('development');
     const [mm] = useGlobal('medicineManager');
     const [providers] = useGlobal('providers');
+    const [showClientEdit, setShowClientEdit] = useState(false);
     const [showClientRoster, setShowClientRoster] = useState(false);
     const [showAboutPage, setShowAboutPage] = useState(false);
     const [signIn] = useGlobal('signIn');
@@ -123,11 +127,11 @@ const App = () => {
                 </TooltipButton>
 
                 <PopoverButton
-                    placement="bottom"
-                    disabled={!activeClient.Notes}
-                    variant={activeClient.Notes ? "danger" : "outline-dark"}
                     defaultShow={!!activeClient.Notes}
+                    onClick={() => setShowClientEdit(true)}
+                    placement="bottom"
                     popover={activeClient.Notes ? clientNotesPopover : undefined}
+                    variant={activeClient.Notes ? "danger" : "outline-dark"}
                 >
                     <span style={{fontStyle: "bold"}}>
                         <span>{clientDOB(activeClient)}</span> {activeClient.Notes && <span>🔔</span>}
@@ -146,6 +150,21 @@ const App = () => {
                 clientList={[activeClient]}
             />
             }
+
+            <ResidentEdit
+                residentInfo={activeClient as ResidentRecord}
+                show={activeClient !== null && showClientEdit}
+                onClose={(client) => {
+                    setShowClientEdit(false);
+                    setClient(
+                        client ? {
+                            action: "update",
+                            payload: client,
+                            cb: (c) => setActiveClient(c as ResidentRecord)
+                        } : null
+                    );
+                }}
+            />
 
             <About
                 show={showAboutPage}
