@@ -38,11 +38,20 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
     // Observer/mutator for drugInfo
     useEffect(() => {
         const info = {...props.drugInfo};
-        if (info && info.Directions === null) {
+        if (info?.Directions === null) {
             info.Directions = '';
         }
-        if (info && info.Notes === null) {
+        if (info?.Notes === null) {
             info.Notes = '';
+        }
+        if (info?.FillDateMonth === null) {
+            info.FillDateMonth = '';
+        }
+        if (info?.FillDateDay === null) {
+            info.FillDateDay = '';
+        }
+        if (info?.FillDateYear === null) {
+            info.FillDateYear = '';
         }
         setDrugInfo(info);
     }, [props.drugInfo]);
@@ -253,7 +262,10 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                         <Col sm="2">
                             <Form.Control
                                 className={
-                                    drugInfo.FillDateMonth === "" ? "" :isMonthValid(drugInfo.FillDateMonth as string)
+                                    drugInfo.FillDateMonth?.length === 0 ?
+                                        ""
+                                        :
+                                        isMonthValid(drugInfo.FillDateMonth as string)
                                 }
                                 type="text"
                                 value={drugInfo.FillDateMonth}
