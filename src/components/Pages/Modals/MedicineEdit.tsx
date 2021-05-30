@@ -114,6 +114,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
     const drugTitleType = drugInfo.Id ? 'Edit ' : 'Add ' as string;
     const drugName = drugInfo.Id ? drugInfo.Drug : 'new drug';
     const fullName = activeResident && clientFullName(activeResident);
+
     const modalTitle = otc ?
         (
             <Modal.Title>
@@ -126,15 +127,34 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
             </Modal.Title>
         );
 
+    const otcAlert = otc && drugInfo.Id !== null ?
+        (
+            <Form.Group as={Row} controlId="otc-alert">
+                <Form.Label
+                    column sm="2"
+                >
+                    <span style={{color: "red"}}><b>OTC Warning</b></span>
+                </Form.Label>
+
+                <Col sm="9">
+                    <Alert
+                        variant="danger"
+                    >
+                                <span style={{color: "red"}}>
+                                    <b>CAUTION:</b>
+                                </span> Changes to this OTC medicine will affect <b>ALL</b> clients!
+                    </Alert>
+                </Col>
+            </Form.Group>
+        ) : (
+            <></>
+        );
+
     return (
         <Modal
             backdrop="static"
             centered
-            onEntered={() => {
-                if (textInput && textInput.current) {
-                    textInput.current.focus()
-                }
-            }}
+            onEntered={() => textInput?.current?.focus()}
             show={show}
             size="lg"
         >
@@ -144,27 +164,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
 
             <Modal.Body>
                 <Form>
-                    {otc && drugInfo?.Id &&
-                        (
-                            <Form.Group as={Row} controlId="otc-alert">
-                            <Form.Label
-                                column sm="2"
-                            >
-                                <span style={{color: "red"}}><b>OTC Warning</b></span>
-                            </Form.Label>
-
-                            <Col sm="9">
-                                <Alert
-                                    variant="danger"
-                                >
-                                <span style={{color: "red"}}>
-                                    <b>CAUTION:</b>
-                                </span> Changes to this OTC medicine will affect <b>ALL</b> residents!
-                                </Alert>
-                            </Col>
-                            </Form.Group>
-                        )
-                    }
+                    {otcAlert}
 
                     <Form.Group as={Row}>
                         <Form.Label column sm="2">
