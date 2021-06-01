@@ -10,9 +10,6 @@ Run the [RxChart Back-End Service](https://github.com/RyanNerd/rxchart-app) PHP 
 
 In the base directory where RxChart Web Client is located run:
 
-`yarn start`
+`npm start`
 
 This will start a web page: `http://localhost:3000`
-
-You will then be prompted to login with a user name and password.
-The username and password is set on RxChart Back-End in the `.env` file.
