@@ -8,7 +8,7 @@ import Row from "react-bootstrap/Row";
 import {Alert} from "react-bootstrap";
 
 import {MedicineRecord} from "../../../types/RecordTypes";
-import {clientFullName, isDayValid, isMonthValid, isYearValid} from "../../../utility/common";
+import {clientFullName, isDateFuture, isDayValid, isMonthValid, isYearValid} from "../../../utility/common";
 
 interface IProps {
     drugInfo: MedicineRecord
@@ -57,26 +57,52 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
 
     // Disable the Save button if the Drug name is empty.
     useEffect(() => {
+        // Is the Drug field populated?
         if (drugInfo?.Drug.length > 0) {
-            // Check if any of the FillDate fields are populated then all need to be populated or all blank
-            let cnt = 0;
-            if (drugInfo.FillDateMonth !== "") {
-                cnt++;
-            }
-            if (drugInfo.FillDateDay !== "") {
-                cnt++;
-            }
-            if (drugInfo.FillDateYear !== "") {
-                cnt++;
-            }
-
-            // If any elements have an is-invalid class marker then don't allow a save.
+            // If any elements have an is-invalid class marker or the fill date is incomplete/ invalid
+            // then don't allow a save.
             const isInvalidClasses = document.querySelectorAll('.is-invalid');
-            setCanSave(isInvalidClasses.length === 0 && (cnt === 0 || cnt === 3));
+            setCanSave(isInvalidClasses.length === 0);
         } else {
             setCanSave(false);
         }
     }, [drugInfo, setCanSave]);
+
+    /**
+     * Returns true if the Fill Date fields have a valid fill date or if the fill date is empty.
+     */
+    const isFillDateValid = () => {
+        const fillDateMonth  = drugInfo.FillDateMonth;
+        const fillDateDay = drugInfo.FillDateDay;
+        const fillDateYear = drugInfo.FillDateYear;
+
+        // Check if any of the FillDate fields are populated then all need to be populated or all blank
+        let cnt = 0;
+        if (fillDateMonth !== "") {
+            cnt++;
+        }
+        if (fillDateDay !== "") {
+            cnt++;
+        }
+        if (fillDateYear !== "") {
+            cnt++;
+        }
+
+        // Fill date can't be in the future
+        if (cnt === 3) {
+            const fillDate = new Date(
+                parseInt(fillDateYear as string),
+                parseInt(fillDateMonth as string)-1,
+                parseInt(fillDateDay as string)
+            );
+
+            if (isDateFuture(fillDate)) {
+                cnt = 4;
+            }
+        }
+
+        return (cnt === 0 || cnt === 3);
+    }
 
     /**
      * Fires when a text field or checkbox is changing.
@@ -252,8 +278,13 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
 
                     {!otc && drugInfo &&
                     <Form.Group as={Row}>
-                        <Form.Label column sm="2">
-                            Fill Date
+                        <Form.Label
+                            column sm="2"
+                        >
+                            <span className={(isFillDateValid() ? '' : 'is-invalid')}>Fill Date</span>
+                            <div className="invalid-feedback">
+                                Invalid Fill Date
+                            </div>
                         </Form.Label>
                         <Form.Label column sm="1">
                             Month

@@ -174,11 +174,12 @@ export const isToday = (dateIn: Date): boolean => {
 }
 
 /**
- * Return an object containing the day, month, and year as numbers and a date indicating now
+ * Return an object containing the day, month, and year as numbers and a date indicating now or a given date
+ * @param {Date} inDate
  * @return {month: number, day: number, year: number, now: Date}
  */
-export const getMDY = (): { month: number, day: number, year: number, now: Date } => {
-    const now = new Date();
+export const getMDY = (inDate?: Date): { month: number, day: number, year: number, now: Date } => {
+    const now = inDate ? new Date(inDate) : new Date();
     const day = now.getDate();
     const month = now.getMonth() + 1;
     const year = now.getFullYear();
@@ -200,6 +201,20 @@ export const getFormattedDate = (date: Date | string): string => {
         minute: '2-digit',
         hour12: true
     } as Intl.DateTimeFormatOptions);
+}
+
+/**
+ * Given a date return true if the date is in the future, false otherwise.
+ * @param {Date} dateIn
+ * @return {boolean}
+ */
+export const isDateFuture = (dateIn: Date): boolean => {
+    const nowMDY = getMDY();
+    const dateMDY = getMDY(dateIn);
+    //  ('00' + parseInt(num)).slice(-2);
+    const nowString = nowMDY.year.toString() + ('00' + nowMDY.month).slice(-2) + ('00' + nowMDY.day).slice(-2);
+    const dateString = dateMDY.year.toString() + ('00' + dateMDY.month).slice(-2) + ('00' + dateMDY.day).slice(-2);
+    return parseInt(dateString) > parseInt(nowString);
 }
 
 /**
