@@ -1,13 +1,13 @@
+import React, {useEffect, useRef, useState} from 'reactn';
+
 import Button from 'react-bootstrap/Button';
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
-import isDayValid from "../Validation/IsDayValid";
-import isMonthValid from "../Validation/IsMonthValid";
-import isYearValid from "../Validation/IsYearValid";
 import Modal from 'react-bootstrap/Modal';
-import React, {useEffect, useRef, useState} from 'reactn';
 import Row from "react-bootstrap/Row";
+
 import {ResidentRecord} from "../../../types/RecordTypes";
+import {isDayValid, isMonthValid, isYearValid} from "../../../utility/common";
 
 interface IProps {
     onClose: (r: ResidentRecord | null) => void
@@ -21,9 +21,9 @@ interface IProps {
  * @returns {JSX.Element | null}
  */
 const ResidentEdit = (props: IProps): JSX.Element | null => {
-    const [show, setShow] = useState(props.show);
-    const [residentInfo, setResidentInfo] = useState<ResidentRecord>(props.residentInfo);
     const [canSave, setCanSave] = useState(true);
+    const [residentInfo, setResidentInfo] = useState<ResidentRecord>(props.residentInfo);
+    const [show, setShow] = useState(props.show);
     const focusRef = useRef<HTMLInputElement>(null);
 
     /**
@@ -136,7 +136,9 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                         </Form.Label>
                         <Col sm="2">
                             <Form.Control
-                                className={isMonthValid(residentInfo.DOB_MONTH.toString())}
+                                className={(
+                                    isMonthValid(residentInfo.DOB_MONTH.toString()) ? '' : 'is-invalid'
+                                )}
                                 type="text"
                                 value={residentInfo.DOB_MONTH}
                                 name="DOB_MONTH"
@@ -154,7 +156,12 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                         <Col sm={2}>
                             <Form.Control
                                 className={
-                                    isDayValid(residentInfo.DOB_DAY.toString(), residentInfo.DOB_MONTH.toString())
+                                    (
+                                        isDayValid(
+                                        residentInfo.DOB_DAY.toString(),
+                                        residentInfo.DOB_MONTH.toString()
+                                        ) ? '': 'is-invalid'
+                                    )
                                 }
                                 type="text"
                                 value={residentInfo.DOB_DAY}
@@ -171,7 +178,9 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                         </Form.Label>
                         <Col sm={3}>
                             <Form.Control
-                                className={isYearValid(residentInfo.DOB_YEAR.toString(), true)}
+                                className={(
+                                    isYearValid(residentInfo.DOB_YEAR.toString(), true) ? '' : 'is-invalid'
+                                )}
                                 type="text"
                                 value={residentInfo.DOB_YEAR}
                                 name="DOB_YEAR"

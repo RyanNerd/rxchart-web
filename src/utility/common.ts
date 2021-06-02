@@ -294,3 +294,56 @@ export const getCheckoutList = (drugLogList: DrugLogRecord[]) => {
         return ((drug.Out && drug.Out > 0) || (drug.In && drug.In > 0)) && isThisDay(drug);
     });
 }
+
+/**
+ * Given the day and month returns false if the month and day pair isn't a valid day date, otherwise returns true.
+ * @param {string} day
+ * @param {string} month
+ * @return {boolean}
+ */
+export const isDayValid = (day: string, month: string): boolean => {
+    let maxDay = 28;
+    const nMonth = parseInt(month);
+    const nDay = parseInt(day);
+    if (nMonth === 1
+        || nMonth === 3
+        || nMonth === 5
+        || nMonth === 7
+        || nMonth === 8
+        || nMonth === 10
+        || nMonth === 11
+        || nMonth === 12) {
+        maxDay = 31;
+    }
+    if (nMonth === 4
+        || nMonth === 6
+        || nMonth === 9) {
+        maxDay = 30;
+    }
+    return (nDay >= 1 && nDay <= maxDay);
+};
+
+/**
+ * Given a month numeric return 'is-invalid' if the number isn't between 1 and 12, otherwise return ''.
+ * @param {string} month
+ * @returns {boolean}
+ */
+export const isMonthValid = (month: string): boolean => {
+    return (parseInt(month) >= 1 && parseInt(month) <= 12);
+};
+
+/**
+ * Returns 'is-invalid' if the year is not valid using the isDOB flag to determine the valid range.
+ * @param {string} year
+ * @param {boolean} isDOB
+ * @return {boolean}
+ */
+export const isYearValid = (year: string, isDOB: boolean): boolean => {
+    const nYear = parseInt(year);
+    if (isDOB) {
+        const today = new Date();
+        const todayYear = today.getFullYear();
+        return (nYear <= todayYear && nYear >= todayYear - 125);
+    }
+    return (nYear >= 1900 && nYear <= 9999);
+};
