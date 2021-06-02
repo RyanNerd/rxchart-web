@@ -1,15 +1,14 @@
+import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
+
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Modal from 'react-bootstrap/Modal';
-import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import Row from "react-bootstrap/Row";
 import {Alert} from "react-bootstrap";
-import {clientFullName} from "../../../utility/common";
+
 import {MedicineRecord} from "../../../types/RecordTypes";
-import isMonthValid from "../Validation/IsMonthValid";
-import isDayValid from "../Validation/IsDayValid";
-import isYearValid from "../Validation/IsYearValid";
+import {clientFullName, isDayValid, isMonthValid, isYearValid} from "../../../utility/common";
 
 interface IProps {
     drugInfo: MedicineRecord
@@ -23,10 +22,10 @@ interface IProps {
  * @returns {JSX.Element | null}
  */
 const MedicineEdit = (props: IProps): JSX.Element | null => {
-    const [show, setShow] = useState(props.show);
-    const [drugInfo, setDrugInfo] = useState<MedicineRecord>(props.drugInfo);
-    const [canSave, setCanSave] = useState(false);
     const [activeResident] = useGlobal('activeResident');
+    const [canSave, setCanSave] = useState(false);
+    const [drugInfo, setDrugInfo] = useState<MedicineRecord>(props.drugInfo);
+    const [show, setShow] = useState(props.show);
     const otc = drugInfo.OTC;
     const textInput = useRef<HTMLInputElement>(null);
 
@@ -265,7 +264,9 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                                     drugInfo.FillDateMonth?.length === 0 ?
                                         ""
                                         :
-                                        isMonthValid(drugInfo.FillDateMonth as string)
+                                        (
+                                            isMonthValid(drugInfo.FillDateMonth as string) ? '' : 'is-invalid'
+                                        )
                                 }
                                 type="text"
                                 value={drugInfo.FillDateMonth}
@@ -285,7 +286,10 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                                     drugInfo.FillDateDay === "" ?
                                         ""
                                         :
-                                        isDayValid(drugInfo.FillDateDay as string, drugInfo.FillDateMonth as string)
+                                        (isDayValid(
+                                            drugInfo.FillDateDay as string,
+                                            drugInfo.FillDateMonth as string
+                                        ) ? '' : 'is-invalid')
                                 }
                                 type="text"
                                 value={drugInfo.FillDateDay}
@@ -305,7 +309,12 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                                     drugInfo.FillDateYear === "" ?
                                         ""
                                         :
-                                        isYearValid(drugInfo.FillDateYear as string, false)
+                                        (
+                                            isYearValid(
+                                                drugInfo.FillDateYear as string,
+                                                false
+                                            ) ? '' : 'is-invalid'
+                                        )
                                 }
                                 type="text"
                                 value={drugInfo.FillDateYear}
