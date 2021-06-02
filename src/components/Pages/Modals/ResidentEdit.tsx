@@ -7,7 +7,7 @@ import Modal from 'react-bootstrap/Modal';
 import Row from "react-bootstrap/Row";
 
 import {ResidentRecord} from "../../../types/RecordTypes";
-import {isDayValid, isMonthValid, isYearValid} from "../../../utility/common";
+import {isDateFuture, isDayValid, isMonthValid, isYearValid} from "../../../utility/common";
 
 interface IProps {
     onClose: (r: ResidentRecord | null) => void
@@ -51,6 +51,26 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
             props.onClose(null);
         }
         setShow(false);
+    }
+
+    const isDobValid = () => {
+        const dobYear = residentInfo.DOB_YEAR.toString();
+        const dobMonth = residentInfo.DOB_MONTH.toString();
+        const dobDay = residentInfo.DOB_DAY.toString();
+        const dob = new Date(
+            residentInfo.DOB_YEAR as number,
+            residentInfo.DOB_MONTH as number,
+            residentInfo.DOB_DAY as number
+        );
+
+        if (dobYear !== '' && dobMonth !== ''  && dobDay !== '') {
+            return isYearValid(dobYear, true) &&
+                isMonthValid(dobMonth) &&
+                isDayValid(dobDay, dobMonth) &&
+                !isDateFuture(dob);
+        } else {
+            return false;
+        }
     }
 
     // Observer for show
@@ -132,7 +152,10 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
 
                     <Form.Group as={Row}>
                         <Form.Label column sm="2">
-                            DOB Month
+                            <span className={isDobValid() ? '' : 'is-invalid'}>DOB</span>{" "}<span>Month</span>
+                            <div className="invalid-feedback">
+                                Invalid Date of Birth
+                            </div>
                         </Form.Label>
                         <Col sm="2">
                             <Form.Control
@@ -170,7 +193,7 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                                 required
                             />
                             <div className="invalid-feedback">
-                                Enter a valid day (1-31).
+                                Enter a valid day.
                             </div>
                         </Col>
                         <Form.Label column sm={1}>
