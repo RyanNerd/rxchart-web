@@ -131,6 +131,7 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                             </div>
                         </Col>
                     </Form.Group>
+
                     <Form.Group as={Row} controlId="resident-last_name">
                         <Form.Label column sm="2">
                             Last Name
@@ -147,6 +148,21 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                             <div className="invalid-feedback">
                                 Last name can not be blank.
                             </div>
+                        </Col>
+                    </Form.Group>
+
+                    <Form.Group as={Row} controlId="client-nickname">
+                        <Form.Label column sm="2">
+                            Nickname
+                        </Form.Label>
+                        <Col sm="7">
+                            <Form.Control
+                                type="text"
+                                value={residentInfo.Nickname}
+                                name="Nickname"
+                                onChange={(e) => handleOnChange(e)}
+                                required
+                            />
                         </Col>
                     </Form.Group>
 

@@ -46,8 +46,9 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
             const filter = residentList.filter((residentRecord) => {
                 const firstName = residentRecord.FirstName.toLowerCase();
                 const lastName = residentRecord.LastName.toLowerCase();
+                const nickname = residentRecord.Nickname ? residentRecord.Nickname.toLowerCase() : '';
                 const search = searchText.toLowerCase();
-                return lastName.includes(search) || firstName.includes(search);
+                return lastName.includes(search) || firstName.includes(search) || nickname.includes(search);
             })
 
             if (filter && filter.length > 0) {
