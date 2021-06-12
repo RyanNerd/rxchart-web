@@ -36,7 +36,8 @@ export const dateToString = (month: string, day: string, year: string, leadingZe
 }
 
 /**
- * Given a ResidentRecord return the first and last name of the resident in the format: first last
+ * Given a ResidentRecord return the first and last name of the client in the format: first last
+ * If the client Nickname field is populated then the format is: first last "nickname"
  * @param {ResidentRecord} resident
  */
 export const clientFullName = (resident: ResidentRecord): string => {
