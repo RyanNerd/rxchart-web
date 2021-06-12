@@ -6,6 +6,7 @@ export type ResidentRecord = {
     FirstName: string
     Id: null | number
     LastName: string
+    Nickname: string
     Notes: string
     Updated?: null | Date
     UserId?: number
@@ -63,6 +64,7 @@ export const newResidentRecord = {
     Id: null,
     FirstName: "",
     LastName: "",
+    Nickname: "",
     DOB_YEAR: "",
     DOB_MONTH: "",
     DOB_DAY: "",

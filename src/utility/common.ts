@@ -40,7 +40,12 @@ export const dateToString = (month: string, day: string, year: string, leadingZe
  * @param {ResidentRecord} resident
  */
 export const clientFullName = (resident: ResidentRecord): string => {
-    return resident.FirstName.trim() + ' ' + resident.LastName.trim();
+    const clientName = resident.FirstName.trim() + ' ' + resident.LastName.trim();
+    if (resident?.Nickname && resident?.Nickname.trim().length > 0) {
+        return clientName + ' "' + resident.Nickname.trim() + '"';
+    } else {
+        return clientName;
+    }
 };
 
 /**

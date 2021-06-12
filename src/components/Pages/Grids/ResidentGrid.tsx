@@ -65,6 +65,7 @@ const ResidentGrid = (props: IProps): JSX.Element => {
 
                 <td style={{verticalAlign: "middle", fontWeight}}>{resident.LastName}</td>
                 <td style={{verticalAlign: "middle", fontWeight}}>{resident.FirstName}</td>
+                <td style={{verticalAlign: "middle", fontWeight}}>{resident.Nickname}</td>
                 <td style={{verticalAlign: "middle", fontWeight}}>{dob}</td>
                 <td style={{verticalAlign: "middle", fontWeight}}>{created}</td>
                 <td style={{verticalAlign: "middle", fontWeight}}>{updated}</td>
@@ -111,6 +112,9 @@ const ResidentGrid = (props: IProps): JSX.Element => {
                 </th>
                 <th>
                     <span>First Name</span>
+                </th>
+                <th>
+                    <span>Nickname</span>
                 </th>
                 <th>
                     <span>DOB</span>
