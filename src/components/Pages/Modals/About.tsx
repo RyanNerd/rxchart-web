@@ -65,7 +65,7 @@ const About = (props: IProps) => {
                             target="_blank"
                             href="https://github.com/RyanNerd/rxchart-web/issues"
                         >
-                            Report a problem
+                            Report a problem or request a feature
                         </Button>
                     </ListGroupItem>
                     <ListGroupItem>
