@@ -242,7 +242,11 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                                 value={residentInfo.Notes}
                                 name="Notes"
                                 onChange={(e) => handleOnChange(e)}
+                                className={residentInfo?.Notes?.trim().length > 500 ? 'is-invalid' : ''}
                             />
+                            <div className="invalid-feedback">
+                                Notes can only be 500 characters long. length={residentInfo?.Notes?.trim().length}
+                            </div>
                         </Col>
                     </Form.Group>
                 </Form>
