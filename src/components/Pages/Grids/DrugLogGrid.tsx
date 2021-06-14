@@ -70,8 +70,16 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
             return null;
         }
 
+        // Figure out medicine field values
         let drugName = drugColumnLookup(drug.MedicineId, 'Drug');
-        const drugDetails = drugColumnLookup(drug.MedicineId, 'Notes');
+        const medicineNotes = drugColumnLookup(drug.MedicineId, 'Notes');
+        const medicineDirections = drugColumnLookup(drug.MedicineId, 'Directions');
+        const drugDetails =
+                medicineNotes && medicineNotes.trim().length >0
+                ?
+                medicineNotes
+                :
+                medicineDirections || '';
 
         if (!drugName || drugName.length === 0) {
             drugName = 'UNKNOWN - Medicine removed!';
