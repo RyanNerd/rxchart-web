@@ -34,12 +34,17 @@ const ClientButton = (props: IProps) => {
         </span>
     );
 
+    /**
+     * Work-around so React 17 can be used
+     * @link https://github.com/react-bootstrap/react-bootstrap/issues/5409#issuecomment-718699584
+     */
     return (
         <DropdownButton
             variant="success"
             title={clientName}
             id="client-dropdown-button"
             className={className}
+            onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
             disabled={disabled}
         >
             <Dropdown.Item
@@ -56,6 +61,12 @@ const ClientButton = (props: IProps) => {
                 onClick={()=>handleClick('hmis')}
             >
                 Copy name to clipboard and launch HMIS
+            </Dropdown.Item>
+            <Dropdown.Divider/>
+            <Dropdown.Item
+                onClick={()=>handleClick('switch')}
+            >
+                Switch to a different client
             </Dropdown.Item>
         </DropdownButton>
     )

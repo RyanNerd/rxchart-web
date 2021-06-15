@@ -1,4 +1,4 @@
-import React, {useGlobal, useState} from 'reactn';
+import React, {useGlobal, useState, useEffect} from 'reactn';
 
 import {ButtonGroup} from "react-bootstrap";
 
@@ -27,6 +27,7 @@ import {ResidentRecord} from "../types/RecordTypes";
 const App = () => {
     const [, setClient] = useGlobal('__client');
     const [activeClient, setActiveClient] = useGlobal('activeResident');
+    const [, setActiveTabKey] = useGlobal('activeTabKey');
     const [development] = useGlobal('development');
     const [mm] = useGlobal('medicineManager');
     const [providers] = useGlobal('providers');
@@ -34,6 +35,7 @@ const App = () => {
     const [showClientRoster, setShowClientRoster] = useState(false);
     const [showAboutPage, setShowAboutPage] = useState(false);
     const [signIn] = useGlobal('signIn');
+    const [hmisName, setHmisName] = useState('');
 
     /**
      * Initialize all the observers
@@ -79,6 +81,23 @@ const App = () => {
     MedicineObserver(mm, activeClient);     // Watching: __medicine
     OtcMedicineObserver(mm);                // Watching: __otcMedicine
 
+    /**
+     * Launch HMIS website when hmisName is populated, but first copy the name to the clipboard.
+     */
+    useEffect(() => {
+        if (hmisName?.trim().length > 0) {
+            const handleClipboardEvent = (e: ClipboardEvent) => {
+                e?.clipboardData?.setData('text/plain', (hmisName));
+                e.preventDefault();
+            }
+            document.addEventListener('copy', (e: ClipboardEvent) => handleClipboardEvent(e));
+            document.execCommand('copy');
+            window.open('https://www.clienttrack.net/utahhmis', '_blank');
+            setHmisName('');
+            return ()=> document.removeEventListener('copy', handleClipboardEvent);
+        }
+    }, [hmisName]);
+
     return (
         <>
             <h3 style={{textAlign: "center"}} className="d-print-none">℞Chart{ }
@@ -110,8 +129,15 @@ const App = () => {
                                 case 'edit':
                                     setShowClientEdit(true);
                                     break;
-                                default:
-                                    alert(choice);
+                                case 'print':
+                                    setShowClientRoster(true);
+                                    break;
+                                case 'hmis':
+                                    setHmisName(activeClient.LastName + ', ' + activeClient.FirstName);
+                                    break;
+                                case 'switch':
+                                    setActiveTabKey('resident');
+                                    break;
                             }
                         }}
                     />
