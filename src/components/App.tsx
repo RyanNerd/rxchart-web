@@ -1,11 +1,13 @@
-import React, {useGlobal, useState} from 'reactn';
+import React, {useGlobal, useState, useEffect} from 'reactn';
 
-import {Popover, PopoverTitle} from "react-bootstrap";
+import {ButtonGroup} from "react-bootstrap";
 
 import About from "./Pages/Modals/About";
 import ActiveResidentObserver from "../observers/ActiveResidentObserver";
 import ApiKeyObserver from "../observers/ApiKeyObserver";
 import AuthObserver from "../observers/AuthObserver";
+import ClientButton from "./Buttons/ClientButton";
+import ClientDobButton from "./Buttons/ClientDobButton";
 import ClientObserver from "../observers/ClientObserver";
 import ClientRoster from "./Pages/Modals/ClientRoster";
 import DrugLogObserver from "../observers/DrugLogObserver";
@@ -13,11 +15,8 @@ import ErrorDetailsObserver from "../observers/ErrorDetailsObserver";
 import LandingPage from "./Pages/LandingPage";
 import MedicineObserver from "../observers/MedicineObserver";
 import OtcMedicineObserver from "../observers/OtcMedicineObserver";
-import PopoverButton from "./Buttons/PopoverButton";
-import TooltipButton from "./Buttons/TooltipButton";
-import {ReactComponent as RxIcon} from "../icons/prescription.svg";
-import {clientDOB, clientFullName} from "../utility/common";
 import ResidentEdit from "./Pages/Modals/ResidentEdit";
+import {ReactComponent as RxIcon} from "../icons/prescription.svg";
 import {ResidentRecord} from "../types/RecordTypes";
 
 /**
@@ -28,6 +27,7 @@ import {ResidentRecord} from "../types/RecordTypes";
 const App = () => {
     const [, setClient] = useGlobal('__client');
     const [activeClient, setActiveClient] = useGlobal('activeResident');
+    const [, setActiveTabKey] = useGlobal('activeTabKey');
     const [development] = useGlobal('development');
     const [mm] = useGlobal('medicineManager');
     const [providers] = useGlobal('providers');
@@ -35,6 +35,7 @@ const App = () => {
     const [showClientRoster, setShowClientRoster] = useState(false);
     const [showAboutPage, setShowAboutPage] = useState(false);
     const [signIn] = useGlobal('signIn');
+    const [hmisName, setHmisName] = useState('');
 
     /**
      * Initialize all the observers
@@ -81,17 +82,21 @@ const App = () => {
     OtcMedicineObserver(mm);                // Watching: __otcMedicine
 
     /**
-     * Client notes popover attached to the active client DOB button at the top of the web page.
+     * Launch HMIS website when hmisName is populated, but first copy the name to the clipboard.
      */
-    const clientNotesPopover =
-        <Popover id="client-notes-popover">
-            <PopoverTitle>
-                Client Notes
-            </PopoverTitle>
-            <Popover.Content>
-                {activeClient && activeClient?.Notes}
-            </Popover.Content>
-        </Popover>
+    useEffect(() => {
+        if (hmisName?.trim().length > 0) {
+            const handleClipboardEvent = (e: ClipboardEvent) => {
+                e?.clipboardData?.setData('text/plain', (hmisName));
+                e.preventDefault();
+            }
+            document.addEventListener('copy', (e: ClipboardEvent) => handleClipboardEvent(e));
+            document.execCommand('copy');
+            window.open('https://www.clienttrack.net/utahhmis', '_blank');
+            setHmisName('');
+            return ()=> document.removeEventListener('copy', handleClipboardEvent);
+        }
+    }, [hmisName]);
 
     return (
         <>
@@ -111,32 +116,37 @@ const App = () => {
 
             {activeClient &&
             <h1
-                className="d-print-none"
+                className="d-print-none auto-center"
                 style={{textAlign: "center"}}
             >
-                <TooltipButton
-                    variant={development ? "outline-danger" : "outline-warning"}
-                    placement="left"
-                    tooltip="Print Medbox Labels"
-                    disabled={showClientRoster}
-                    onClick={() => setShowClientRoster(true)}
-                >
-                    <span style={{fontStyle: development ? "italic" : "bold"}}>
-                        {clientFullName(activeClient)}
-                    </span>
-                </TooltipButton>
+                <ButtonGroup>
+                    <ClientButton
+                        className="mr-2"
+                        clientRecord={activeClient}
+                        development={development}
+                        onSelect={(choice)=> {
+                            switch (choice) {
+                                case 'edit':
+                                    setShowClientEdit(true);
+                                    break;
+                                case 'print':
+                                    setShowClientRoster(true);
+                                    break;
+                                case 'hmis':
+                                    setHmisName(activeClient.LastName + ', ' + activeClient.FirstName);
+                                    break;
+                                case 'switch':
+                                    setActiveTabKey('resident');
+                                    break;
+                            }
+                        }}
+                    />
 
-                <PopoverButton
-                    defaultShow={!!activeClient.Notes}
-                    onClick={() => setShowClientEdit(true)}
-                    placement="bottom"
-                    popover={activeClient.Notes ? clientNotesPopover : undefined}
-                    variant={activeClient.Notes ? "danger" : "outline-dark"}
-                >
-                    <span style={{fontStyle: "bold"}}>
-                        <span>{clientDOB(activeClient)}</span> {activeClient.Notes && <span>🔔</span>}
-                    </span>
-                </PopoverButton>
+                    <ClientDobButton
+                        clientRecord={activeClient}
+                        development={development}
+                    />
+                </ButtonGroup>
             </h1>
             }
 
