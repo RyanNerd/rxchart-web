@@ -1,12 +1,14 @@
-import Confirm from "./Modals/Confirm";
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
+
+import {Alert, Button, Form, Row} from "react-bootstrap";
+
+import ClientRoster from "./Modals/ClientRoster";
+import Confirm from "./Modals/Confirm";
 import ResidentEdit from './Modals/ResidentEdit';
 import ResidentGrid from './Grids/ResidentGrid';
 import TooltipButton from "../Buttons/TooltipButton";
-import {Alert, Button, Form, Row} from "react-bootstrap";
 import {clientFullName} from '../../utility/common';
 import {newResidentRecord, ResidentRecord} from "../../types/RecordTypes";
-import ClientRoster from "./Modals/ClientRoster";
 
 interface IProps {
     residentSelected: () => void
@@ -15,7 +17,7 @@ interface IProps {
 /**
  * Display Resident Grid
  * Allow user to edit and add Residents
- * @return {JSX.Element}
+ * @return {JSX.Element | null}
  */
 const ResidentPage = (props: IProps): JSX.Element | null => {
     const [, setClient] = useGlobal('__client');
@@ -27,6 +29,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     const [residentToDelete, setResidentToDelete] = useState<ResidentRecord | null>(null);
     const [searchIsValid, setSearchIsValid] = useState(false);
     const [searchText, setSearchText] = useState('');
+    const [showClientPrint, setShowClientPrint] = useState<ResidentRecord | null>(null);
     const [showClientRoster, setShowClientRoster] = useState(false);
     const [showDeleteResident, setShowDeleteResident] = useState(false);
     const [showResidentEdit, setShowResidentEdit] = useState<ResidentRecord | null>(null);
@@ -127,6 +130,18 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                         clientList={residentList}
                     />
                 }
+
+                {showClientPrint !== null &&
+                    <
+                        ClientRoster
+                            onUnload={()=>{
+                                setShowClientPrint(null);
+                                handleOnSelected(showClientPrint);
+                            }}
+                            clientList={[showClientPrint]}
+                    />
+                }
+
             </Row>
 
             <Row className="mt-3">
@@ -184,14 +199,26 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                                 handleOnSelected(existing);
                                 return;
                             }
+                            setClient({
+                                action: "update",
+                                payload: client,
+                                cb: (c) => {
+                                    setActiveResident(c as ResidentRecord)
+                                        .then(() => setShowClientPrint(c as ResidentRecord));
+                                }
+                            })
+                            .then();
+                        } else {
+                            // Update the client
+                            setClient({
+                                action: "update",
+                                payload: client,
+                                cb: (c) => {
+                                    handleOnSelected(c as ResidentRecord);
+                                }
+                            })
+                            .then();
                         }
-
-                        // Update or add the client
-                        setClient({
-                            action: "update",
-                            payload: client,
-                            cb: (c) => handleOnSelected(c as ResidentRecord)
-                        });
                     }
                 }}
             />
