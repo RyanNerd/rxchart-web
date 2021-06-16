@@ -39,7 +39,7 @@ const App = () => {
 
     /**
      * Initialize all the observers
-     * Observers are a type of hybred middleware similar to Publish/Subscribe with intelligent Agents
+     * Observers are a type of hybrid middleware similar to Publish/Subscribe with intelligent Agents
      * Below we are "Subscribing" the observers.
      * The observers themselves are "Intelligent Agents" that use a global state variable as a "sensor" to
      * determine what actions need to be taken based on the current state of the machine.
