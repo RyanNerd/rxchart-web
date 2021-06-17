@@ -58,6 +58,11 @@ const ClientButton = (props: IProps) => {
                 Print Medbox Labels
             </Dropdown.Item>
             <Dropdown.Item
+                onClick={()=>handleClick('copy')}
+            >
+                Copy name to clipboard
+            </Dropdown.Item>
+            <Dropdown.Item
                 onClick={()=>handleClick('hmis')}
             >
                 Copy name to clipboard and launch HMIS

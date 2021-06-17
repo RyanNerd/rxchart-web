@@ -36,6 +36,7 @@ const App = () => {
     const [showAboutPage, setShowAboutPage] = useState(false);
     const [signIn] = useGlobal('signIn');
     const [hmisName, setHmisName] = useState('');
+    const [copyText, setCopyText] = useState('');
 
     /**
      * Initialize all the observers
@@ -81,20 +82,26 @@ const App = () => {
     MedicineObserver(mm, activeClient);     // Watching: __medicine
     OtcMedicineObserver(mm);                // Watching: __otcMedicine
 
+    // When copyText is populated copy it to the clipboard
+    useEffect(() => {
+        if (copyText !== '') {
+            navigator.clipboard.writeText(copyText).then((()=>setCopyText('')));
+        }
+    }, [copyText]);
+
     /**
      * Launch HMIS website when hmisName is populated, but first copy the name to the clipboard.
      */
     useEffect(() => {
+        // Copy paste side effect trigger
         if (hmisName?.trim().length > 0) {
-            const handleClipboardEvent = (e: ClipboardEvent) => {
-                e?.clipboardData?.setData('text/plain', (hmisName));
-                e.preventDefault();
-            }
-            document.addEventListener('copy', (e: ClipboardEvent) => handleClipboardEvent(e));
-            document.execCommand('copy');
-            window.open('https://www.clienttrack.net/utahhmis', '_blank');
-            setHmisName('');
-            return ()=> document.removeEventListener('copy', handleClipboardEvent);
+            // Copy name to clipboard.
+            setCopyText(hmisName);
+            // Kludge to allow clipboard time to get populated.
+            setTimeout(()=> {
+                window.open('https://www.clienttrack.net/utahhmis', '_blank');
+                setHmisName('');
+            }, 500);
         }
     }, [hmisName]);
 
@@ -131,6 +138,9 @@ const App = () => {
                                     break;
                                 case 'print':
                                     setShowClientRoster(true);
+                                    break;
+                                case 'copy':
+                                    setCopyText(activeClient.LastName + ', ' + activeClient.FirstName);
                                     break;
                                 case 'hmis':
                                     setHmisName(activeClient.LastName + ', ' + activeClient.FirstName);
