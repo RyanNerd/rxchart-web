@@ -13,7 +13,7 @@ interface IProps {
 
 interface IWillow {
     authenticated: boolean
-    message: string | null
+    message: string[] | null
     missing?: { invalid?: IKey }
     status: number
     timestamp: number
@@ -202,10 +202,21 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
                         <CloseErrorButton className="float-right"/>
                     </Card.Header>
                     <Card.Body>
-                        <p>
-                            <b>{error.message}</b>
-                        </p>
+                        <h6>Messages</h6>
+                        <ul key={randomString()}>
+                            {error?.message?.map((value: string) => {
+                                const uniqueId = randomString();
+                                return (
+                                    <React.Fragment key={'msg-' + uniqueId}>
+                                <li>
+                                    {value}
+                                </li>
+                                </React.Fragment>
+                                )
+                            })}
+                        </ul>
 
+                        <h6>Fields</h6>
                         <ul key={randomString()}>
                             {invalidMessages.map((message: { key: string, value: any }) => {
                                 const uniqueId = randomString();

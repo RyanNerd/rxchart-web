@@ -4,20 +4,19 @@
   "private": true,
   "dependencies": {
     "@types/bwip-js": "^2.1.0",
-    "@types/jest": "^26.0.23",
-    "@types/node": "^15.3.0",
-    "@types/react": "^17.0.6",
-    "@types/react-dom": "^17.0.5",
+    "@types/node": "^15.12.2",
+    "@types/react": "^17.0.11",
+    "@types/react-dom": "^17.0.7",
     "bootstrap": "^4.6.0",
-    "bwip-js": "^3.0.0",
+    "bwip-js": "^3.0.1",
     "frak": "^3.1.4",
     "react": "^17.0.2",
-    "react-bootstrap": "^1.6.0",
+    "react-bootstrap": "^1.6.1",
     "react-dom": "^17.0.2",
     "react-new-improved-window": "^0.2.4",
     "react-scripts": "^4.0.3",
     "reactn": "^2.2.7",
-    "typescript": "^4.2.4"
+    "typescript": "^4.3.3"
   },
   "scripts": {
     "start": "react-scripts start",
