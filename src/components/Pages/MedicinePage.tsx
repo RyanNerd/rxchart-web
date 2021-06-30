@@ -51,7 +51,6 @@ const MedicinePage = (): JSX.Element | null => {
     const [showMedicineEdit, setShowMedicineEdit] = useState<MedicineRecord | null>(null);
 
     // Set the activeDrug when the medicineList changes
-    // Todo: Better handling of state here
     useEffect(() => {
         if (medicineList.length > 0) {
             setActiveDrug(medicineList[0]);

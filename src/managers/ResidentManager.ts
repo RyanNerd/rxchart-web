@@ -47,9 +47,9 @@ const ResidentManager = (residentProvider: IResidentProvider): IResidentManager 
      */
     const _loadResidentList = async () => {
         const searchCriteria = {
-            order_by: [
-                {column: 'LastName', direction: 'asc'},
-                {column: 'FirstName', direction: 'asc'},
+            orderBy: [
+                ['LastName', 'asc'],
+                ['FirstName', 'asc']
             ]
         };
         return await residentProvider.search(searchCriteria)

@@ -57,8 +57,8 @@ const MedicineMananger = (
      */
     const _loadDrugLog = async (residentId: number) => {
         const searchCriteria = {
-            where: [{column: 'ResidentId', comparison: '=', value: residentId}],
-            order_by: [{column: 'Created', direction: 'desc'}],
+            where: [['ResidentId', '=', residentId]],
+            orderBy: [['Created', 'desc']]
         };
         return medHistoryProvider.search(searchCriteria)
         .catch((err) => {
@@ -72,8 +72,12 @@ const MedicineMananger = (
      */
     const _loadMedicineList = async (residentId: number) => {
         const searchCriteria = {
-            where: [{column: 'ResidentId', value: residentId}],
-            order_by: [{column: 'Drug', direction: 'asc'}],
+            where: [
+                ['ResidentId', '=', residentId]
+            ],
+            orderBy: [
+                ['Drug', 'asc']
+            ]
         };
         return medicineProvider.search(searchCriteria)
         .catch((err) => {
@@ -86,8 +90,8 @@ const MedicineMananger = (
      */
     const _loadOtcList = async () => {
         const searchCriteria = {
-            where: [{column: 'OTC', value: true}],
-            order_by: [{column: 'Drug', direction: 'asc'}],
+            where: [['OTC', '=', true]],
+            orderBy: [['Drug','asc']]
         };
         return medicineProvider.search(searchCriteria)
         .catch((err) => {
