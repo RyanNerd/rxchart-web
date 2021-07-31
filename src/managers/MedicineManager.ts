@@ -1,6 +1,7 @@
 import {DrugLogRecord, MedicineRecord} from "../types/RecordTypes";
 import {IMedicineProvider} from "../providers/MedicineProvider";
 import {IMedHistoryProvider} from "../providers/MedHistoryProvider";
+import {asyncWrapper, promiseWrapper} from "../utility/common";
 
 export interface IMedicineManager {
     deleteDrugLog: (drugLogId: number) => Promise<boolean>
@@ -26,30 +27,18 @@ const MedicineMananger = (
      * @param {number} drugLogId
      */
     const _deleteDrugLog = async (drugLogId: number) => {
-        return medHistoryProvider
-        .delete(drugLogId)
-        .then((deleteResponse) => {
-            return deleteResponse.success
-        })
-        .catch((err) => {
-            throw err
-        })
-    };
+        const [e, r] = await asyncWrapper(medHistoryProvider.delete(drugLogId));
+        if (e) throw e; else return r.success;
+    }
 
     /**
      * Delete a Medicine record given the Id.
      * @param {number} medicineId
      */
     const _deleteMedicine = async (medicineId: number) => {
-        return medicineProvider
-        .delete(medicineId)
-        .then((deleteResponse) => {
-            return deleteResponse.success
-        })
-        .catch((err) => {
-            throw err
-        })
-    };
+        const [e, r] = await asyncWrapper(medicineProvider.delete(medicineId));
+        if (e) throw e; else return r.success;
+    }
 
     /**
      * Returns all the MedHistory records for the given ResidentId as a promise
@@ -57,14 +46,12 @@ const MedicineMananger = (
      */
     const _loadDrugLog = async (residentId: number) => {
         const searchCriteria = {
-            where: [{column: 'ResidentId', comparison: '=', value: residentId}],
-            order_by: [{column: 'Created', direction: 'desc'}],
+            where: [['ResidentId', '=', residentId]],
+            orderBy: [['Created', 'desc']]
         };
-        return medHistoryProvider.search(searchCriteria)
-        .catch((err) => {
-            throw err
-        });
-    };
+        const [e, r] = await asyncWrapper(medHistoryProvider.search(searchCriteria));
+        if (e) throw e; else return r as Promise<DrugLogRecord[]>;
+    }
 
     /**
      * Returns all the Medicine records for the given ResidentId as a promise
@@ -72,13 +59,11 @@ const MedicineMananger = (
      */
     const _loadMedicineList = async (residentId: number) => {
         const searchCriteria = {
-            where: [{column: 'ResidentId', value: residentId}],
-            order_by: [{column: 'Drug', direction: 'asc'}],
+            where: [['ResidentId', '=', residentId]],
+            orderBy: [['Drug', 'asc']]
         };
-        return medicineProvider.search(searchCriteria)
-        .catch((err) => {
-            throw err
-        })
+        const [e, r] = await asyncWrapper(medicineProvider.search(searchCriteria));
+        if (e) throw e; else return r as Promise<MedicineRecord[]>;
     }
 
     /**
@@ -86,14 +71,12 @@ const MedicineMananger = (
      */
     const _loadOtcList = async () => {
         const searchCriteria = {
-            where: [{column: 'OTC', value: true}],
-            order_by: [{column: 'Drug', direction: 'asc'}],
+            where: [['OTC', '=', true]],
+            orderBy: [['Drug','asc']]
         };
-        return medicineProvider.search(searchCriteria)
-        .catch((err) => {
-            throw err
-        })
-    };
+        const [e, r] = await asyncWrapper(medicineProvider.search(searchCriteria));
+        if (e) throw e; else return r as Promise<MedicineRecord[]>;
+    }
 
     /**
      * Add or update a MedHistory record
@@ -101,41 +84,22 @@ const MedicineMananger = (
      * @param {number} residentId
      */
     const _updateDrugLog = async (drugLogInfo: DrugLogRecord, residentId: number) => {
-        return medHistoryProvider
-        .post(drugLogInfo)
-        .then(() => {
-            return _loadDrugLog(residentId)
-            .then((drugLogList) => {
-                return drugLogList;
+        return promiseWrapper(medHistoryProvider.post(drugLogInfo)).then(([err, result]) => {
+            if (err) throw err;
+            return promiseWrapper(_loadDrugLog(residentId)).then(([err, drugLogList]) => {
+                if (err) throw err;
+                return drugLogList as DrugLogRecord[];
             })
-            .catch((err) => {
-                throw err
-            })
-        })
-        .then((drugLogList) => {
-            return drugLogList;
-        })
-        .catch((err) => {
-            throw err
-        })
-    };
+        });
+    }
 
     /**
      * Adds or updates a Medicine record.
      * @param {MedicineRecord} drugInfo
      */
     const _updateMedicine = async (drugInfo: MedicineRecord) => {
-        const drugData = {...drugInfo};
-        if (!drugData.Id) {
-            drugData.Id = null;
-        }
-
-        try {
-            return await medicineProvider
-            .post(drugData);
-        } catch (err) {
-            throw err;
-        }
+        const [e, r] = await asyncWrapper(medicineProvider.post(drugInfo));
+        if (e) throw e; else return r as Promise<MedicineRecord>;
     }
 
     return {

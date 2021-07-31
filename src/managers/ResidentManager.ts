@@ -1,5 +1,6 @@
 import {IResidentProvider} from "../providers/ResidentProvider";
 import {ResidentRecord} from "../types/RecordTypes";
+import {asyncWrapper} from "../utility/common";
 
 export interface IResidentManager {
     deleteResident: (residentId: number) => Promise<boolean>
@@ -17,15 +18,8 @@ const ResidentManager = (residentProvider: IResidentProvider): IResidentManager 
      * @param {ResidentRecord} residentRecord
      */
     const _updateResident = async (residentRecord: ResidentRecord): Promise<ResidentRecord> => {
-        const residentData = {...residentRecord};
-        if (!residentData.Id) {
-            residentData.Id = null;
-        }
-        try {
-            return await residentProvider.post(residentData);
-        } catch (err) {
-            throw err;
-        }
+        const [e, r] = await asyncWrapper(residentProvider.post(residentRecord));
+        if (e) throw e; else return r as Promise<ResidentRecord>;
     }
 
     /**
@@ -33,13 +27,8 @@ const ResidentManager = (residentProvider: IResidentProvider): IResidentManager 
      * @param {number} residentId
      */
     const _deleteResident = async (residentId: number) => {
-        return await residentProvider.delete(residentId)
-        .then((response) => {
-            return response.success
-        })
-        .catch((err) => {
-            throw err
-        })
+        const [e, r] = await asyncWrapper(residentProvider.delete(residentId));
+        if (e) throw e; else return r.success as Promise<boolean>;
     }
 
     /**
@@ -47,18 +36,13 @@ const ResidentManager = (residentProvider: IResidentProvider): IResidentManager 
      */
     const _loadResidentList = async () => {
         const searchCriteria = {
-            order_by: [
-                {column: 'LastName', direction: 'asc'},
-                {column: 'FirstName', direction: 'asc'},
+            orderBy: [
+                ['LastName', 'asc'],
+                ['FirstName', 'asc']
             ]
         };
-        return await residentProvider.search(searchCriteria)
-        .then((residents) => {
-            return residents;
-        })
-        .catch((err) => {
-            throw err
-        })
+        const [e, r] = await asyncWrapper(residentProvider.search(searchCriteria));
+        if (e) throw e; else return r as Promise<ResidentRecord[]>;
     }
 
     return {

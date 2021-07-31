@@ -47,7 +47,7 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
                     if (response.status === 404) {
                         return [] as MedicineRecord[];
                     }
-                    throw new Error(response.toString());
+                    throw response;
                 }
             } catch (err) {
                 throw err;

@@ -1,4 +1,5 @@
 import {Authenticated, IAuthenticationProvider} from "../providers/AuthenticationProvider";
+import {asyncWrapper} from "../utility/common";
 
 export interface IAuthManager {
     authenticate: (username: string, password: string) => Promise<Authenticated>
@@ -16,13 +17,8 @@ const AuthManager = (authenticationProvider: IAuthenticationProvider): IAuthMana
      * @return Promise<Authenticated | void>
      */
     const _authenticate = async (username: string, password: string) => {
-        return authenticationProvider.post({username, password})
-        .then((response) => {
-            return response;
-        })
-        .catch((err) => {
-            throw err
-        })
+        const [e, r] = await asyncWrapper(authenticationProvider.post({username, password}));
+        if (e) throw e; else return r;
     }
 
     return {

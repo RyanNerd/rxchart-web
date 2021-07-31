@@ -368,3 +368,30 @@ export const isYearValid = (year: string, isDOB: boolean): boolean => {
     }
     return (nYear >= 1900 && nYear <= 9999);
 };
+
+/**
+ * A functional wrapper around async/await
+ * @link https://dev.to/dewaldels/javascript-async-await-wrapper-22ao
+ * @param {Promise<any>} fn
+ * @return {[error: any, data: any]}
+ */
+export const asyncWrapper = async (fn: Promise<any>) => {
+    try {
+        const data = await fn;
+        return [null, data];
+    }
+    catch (error) {
+        return [error, null];
+    }
+}
+
+/**
+ * A functional wrapper around Promises
+ * @link https://github.com/JFDI-Consulting/attempt#or-for-old-style-promise-handling
+ * @param {Promise<any>} fn
+ */
+export const promiseWrapper = async (fn: Promise<any>) => {
+    const success = (r: any) => [null, r];
+    const fail = (e: any) => [e, null];
+    return Promise.resolve().then(await fn).then(success).catch(fail);
+}
