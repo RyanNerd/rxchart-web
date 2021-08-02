@@ -63,7 +63,7 @@ const App = () => {
      * - Simplicity: Set the observed global variable action and payload then automatically the observer will
      *               act accordingly.
      * - Declarative: Observers are pure functions implemented via React hooks.
-     * - Robust: Due to the declarive nature unexpected side effects & state mutations are minimized.
+     * - Robust: Due to the declarative nature unexpected side effects & state mutations are minimized.
      * Disadvantages:
      * - Abstraction: Instead of importing an observer, a client sets the observed global variable. Unlike importing
      *                a function which would have a signature it isn't always obvious what action strings and payload
@@ -140,10 +140,10 @@ const App = () => {
                                     setShowClientRoster(true);
                                     break;
                                 case 'copy':
-                                    setCopyText(activeClient.LastName + ', ' + activeClient.FirstName);
+                                    setCopyText(activeClient.FirstName.trim() + ' ' + activeClient.LastName);
                                     break;
                                 case 'hmis':
-                                    setHmisName(activeClient.LastName + ', ' + activeClient.FirstName);
+                                    setHmisName(activeClient.FirstName.trim() + ' ' + activeClient.LastName);
                                     break;
                                 case 'switch':
                                     setActiveTabKey('resident');

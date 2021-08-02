@@ -169,7 +169,7 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
                         setContent(_alert('Fetch Response Error',
                             <>
                                 <p>Status: {response.status}</p>
-                                <p>Stats Text: {response.statusText}</p>
+                                <p>Status Text: {response.statusText}</p>
                                 <p>Text: {text}</p>
                             </>)
                         );
