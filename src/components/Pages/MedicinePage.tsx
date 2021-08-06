@@ -42,6 +42,7 @@ const MedicinePage = (): JSX.Element | null => {
     const [gridHeight, setGridHeight] = useState('675px');
     const [lastTaken, setLastTaken] = useState<number | null>(null);
     const [medicineList] = useGlobal('medicineList');
+    const [filteredMedicineList, setFilteredMedicineList] = useState(medicineList);
     const [otcGroupShown, setOtcGroupShown] = useState<boolean>(false);
     const [otcList] = useGlobal('otcList');
     const [otcLogList, setOtcLogList] = useState<DrugLogRecord[]>([]);
@@ -50,14 +51,14 @@ const MedicinePage = (): JSX.Element | null => {
     const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
     const [showMedicineEdit, setShowMedicineEdit] = useState<MedicineRecord | null>(null);
 
-    // Set the activeDrug when the medicineList changes
+    // Set the activeDrug when the filteredMedicineList changes
     useEffect(() => {
-        if (medicineList.length > 0) {
-            setActiveDrug(medicineList[0]);
+        if (filteredMedicineList.length > 0) {
+            setActiveDrug(filteredMedicineList[0]);
         } else {
             setActiveDrug(null);
         }
-    }, [medicineList]);
+    }, [filteredMedicineList]);
 
     // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
     useEffect(() => {
@@ -96,6 +97,11 @@ const MedicinePage = (): JSX.Element | null => {
             setActiveOtcDrug(null);
         }
     }, [otcList]);
+
+    // Refresh the filteredMedicineList when medicineList changes
+    useEffect(() => {
+        setFilteredMedicineList(medicineList.filter((m) => m.Active));
+    }, [medicineList]);
 
     // We only want to list the OTC drugs on this page that the resident has taken.
     useEffect(() => {
@@ -141,7 +147,6 @@ const MedicinePage = (): JSX.Element | null => {
             MedicineId: activeOtcDrug?.Id,
             Notes: ""
         } as DrugLogRecord;
-        console.log('OTC drugLogRecord', drugLogRecord);
         setShowDrugLog(drugLogRecord);
     }
 
@@ -258,7 +263,7 @@ const MedicinePage = (): JSX.Element | null => {
                             drugChanged={(drug: MedicineRecord) => setActiveDrug(drug)}
                             lastTaken={lastTaken}
                             logDrug={(amount: number) => handleLogDrugAmount(amount, activeDrug.Id as number)}
-                            medicineList={medicineList}
+                            medicineList={filteredMedicineList}
                         />
                     </Row>
                     }
