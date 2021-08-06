@@ -234,7 +234,6 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
 
                         <Col sm="9">
                             <Form.Control
-                                ref={textInput}
                                 type="text"
                                 value={drugInfo.OtherNames}
                                 placeholder="Other names for the drug"
