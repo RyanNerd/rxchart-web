@@ -59,9 +59,9 @@ const DrugDropdown = (props: IProps): JSX.Element | null => {
      * @returns {JSX.Element}
      */
     const MedicineDropdownItems = (medicine: MedicineRecord): JSX.Element => {
-        const drug = medicine.Drug;
+        const otherNames = medicine.OtherNames ? ' (' + medicine.OtherNames + ') ' : '';
         const strength = medicine.Strength ? medicine.Strength : '';
-        const drugDetail = drug + ' ' + strength;
+        const drugDetail = medicine.Drug+ ' ' + strength + otherNames;
         const key = medicine.Id?.toString();
         return (
             <Dropdown.Item

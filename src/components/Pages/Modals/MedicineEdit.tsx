@@ -157,6 +157,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
             <Form.Group as={Row} controlId="otc-alert">
                 <Form.Label
                     column sm="2"
+                    style={{userSelect: "none"}}
                 >
                     <span style={{color: "red"}}><b>OTC Warning</b></span>
                 </Form.Label>
@@ -192,7 +193,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                     {otcAlert}
 
                     <Form.Group as={Row}>
-                        <Form.Label column sm="2">
+                        <Form.Label column sm="2" style={{userSelect: "none"}}>
                             Drug Name
                         </Form.Label>
 
@@ -211,11 +212,11 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                             </div>
                         </Col>
 
-                        <Form.Label column sm="1">
+                        <Form.Label column sm="1" style={{userSelect: "none"}}>
                             Strength
                         </Form.Label>
 
-                        <Col sm="4">
+                        <Col sm="2">
                             <Form.Control
                                 type="text"
                                 value={drugInfo.Strength ? drugInfo.Strength : ''}
@@ -226,8 +227,51 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                         </Col>
                     </Form.Group>
 
+                    <Form.Group as={Row}>
+                        <Form.Label column sm="2" style={{userSelect: "none"}}>
+                            Other Names
+                        </Form.Label>
+
+                        <Col sm="9">
+                            <Form.Control
+                                ref={textInput}
+                                type="text"
+                                value={drugInfo.OtherNames}
+                                placeholder="Other names for the drug"
+                                name="OtherNames"
+                                onChange={(e) => handleOnChange(e)}
+                            />
+                        </Col>
+                    </Form.Group>
+
+                    {!drugInfo.OTC &&
+                    <Form.Group as={Row}>
+                        <Col sm="3">
+                            <Form.Label style={{userSelect: "none"}}>
+                                Active
+                            </Form.Label>
+                        </Col>
+                        <Col sm="2">
+                            <Form.Check
+                                style={{transform: "scale(2)"}}
+                                onChange={(e) => handleOnChange(e)}
+                                checked={drugInfo.Active}
+                                name="Active"
+                                tabIndex={-1}
+                            />
+                        </Col>
+                        <Col sm="6">
+                            {!drugInfo.Active &&
+                            <>
+                            <span style={{fontWeight: "bold"}}>{drugInfo.Drug}</span> will not appear in the dropdown
+                            </>
+                            }
+                        </Col>
+                    </Form.Group>
+                    }
+
                     <Form.Group as={Row} controlId="drug-Directions">
-                        <Form.Label column sm="2">
+                        <Form.Label column sm="2" style={{userSelect: "none"}}>
                             Directions
                         </Form.Label>
 
@@ -245,7 +289,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
 
                     {!otc &&
                     <Form.Group as={Row} controlId="otc-drug-Notes">
-                        <Form.Label column sm="2">
+                        <Form.Label column sm="2" style={{userSelect: "none"}}>
                             Notes
                         </Form.Label>
 
@@ -262,7 +306,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                     }
 
                     <Form.Group as={Row} controlId="drug-barcode">
-                        <Form.Label column sm="2">
+                        <Form.Label column sm="2" style={{userSelect: "none"}}>
                             Barcode
                         </Form.Label>
 
@@ -280,13 +324,14 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                     <Form.Group as={Row}>
                         <Form.Label
                             column sm="2"
+                            style={{userSelect: "none"}}
                         >
                             <span className={(isFillDateValid() ? '' : 'is-invalid')}>Fill Date</span>
                             <div className="invalid-feedback">
                                 Invalid Fill Date
                             </div>
                         </Form.Label>
-                        <Form.Label column sm="1">
+                        <Form.Label column sm="1" style={{userSelect: "none"}}>
                             Month
                         </Form.Label>
                         <Col sm="2">
@@ -308,7 +353,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                                 Invalid Month
                             </div>
                         </Col>
-                        <Form.Label column sm="1">
+                        <Form.Label column sm="1" style={{userSelect: "none"}}>
                             Day
                         </Form.Label>
                         <Col sm="2">
@@ -331,7 +376,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                                 Invalid Day
                             </div>
                         </Col>
-                        <Form.Label column sm="1">
+                        <Form.Label column sm="1" style={{userSelect: "none"}}>
                             Year
                         </Form.Label>
                         <Col sm={2}>

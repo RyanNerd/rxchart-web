@@ -49,6 +49,7 @@ const MedicineDetail = (props: IProps): JSX.Element => {
             {onLogDrug &&
                 <td style={{textAlign: "center", verticalAlign: "middle"}}>
                     <Button
+                        disabled={!drug.Active}
                         variant="info"
                         size="sm"
                         id={"med-checkout-btn-row" + drug.Id}
