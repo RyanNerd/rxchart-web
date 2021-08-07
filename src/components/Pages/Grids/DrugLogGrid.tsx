@@ -188,7 +188,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
 
     return (
         <Table
-            style={{tableLayout: "fixed", wordWrap: "break-word"}}
+            style={{wordWrap: "break-word"}}
             {...props}
             className={condensed !== 'false' ? 'w-auto' : ''}
             striped

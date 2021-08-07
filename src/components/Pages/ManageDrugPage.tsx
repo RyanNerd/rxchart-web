@@ -106,6 +106,9 @@ const ManageDrugPage = (): JSX.Element | null => {
         return getDrugName(medicineId, medicineList.concat(otcList));
     }
 
+    const rowHeight = todayDrugLogList && todayDrugLogList.length > 0 ? '475px' : '';
+    const rowOverflow = rowHeight.length > 0 ? 'scroll' : undefined;
+
     return (
         <Form className={TabContent}>
                 <Row>
@@ -131,7 +134,7 @@ const ManageDrugPage = (): JSX.Element | null => {
                     </Button>
                 </Row>
 
-                <Row style={{height: "475px", overflowY: "scroll"}} className="mt-2">
+                <Row style={{height: rowHeight, overflowY: rowOverflow}} className="mt-2">
                     <Table
                         striped
                         bordered
