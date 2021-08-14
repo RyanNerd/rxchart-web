@@ -1,5 +1,5 @@
 import 'reactn';
-import {DrugLogRecord, MedicineRecord, ResidentRecord} from './types/RecordTypes';
+import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord, ResidentRecord} from './types/RecordTypes';
 import {IResidentManager} from "./managers/ResidentManager";
 import {IMedicineManager} from "./managers/MedicineManager";
 import {IAuthManager} from "./managers/AuthManager";
@@ -29,7 +29,11 @@ declare module 'reactn/default' {
         drugLogList: DrugLogRecord[]
         __errorDetails: any
         __medicine: {action: 'load' | 'update' | 'delete', payload: null | MedicineRecord | number} | null
+        __pillbox: {action: 'load' | 'update' | 'delete', payload: null | PillboxRecord | number} | null
+        __pillboxItem: {action: 'load'|'update'|'delete', payload?: null|pillboxItemRecord|PillboxItemRecord[]} | null
         medicineList: MedicineRecord[]
+        pillboxList: PillboxRecord[]
+        pillboxItemList: PillboxItemRecord[]
         medicineManager: IMedicineManager
         otcList: MedicineRecord[]
         __otcMedicine: {action: 'load' | 'update' | 'delete', payload: null | MedicineRecord | number} | null

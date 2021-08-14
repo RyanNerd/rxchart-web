@@ -74,3 +74,30 @@ export const newResidentRecord = {
     DOB_DAY: "",
     Notes: ""
 } as ResidentRecord
+
+export type PillboxRecord = {
+    Id: number | null
+    ResidentId: number | null
+    Name: string
+    Notes: string | null
+}
+
+export const newPillboxRecord = {
+    Id: null,
+    Name: "",
+    Notes: null
+}
+
+export type PillboxItemRecord = {
+    Id: number | null
+    ResidentId: number
+    PillboxId: number
+    Quantity: number
+}
+
+export const newPillboxItemRecord = {
+    Id: null,
+    ResidentId: 0,
+    PillboxId: 0,
+    Quantity: 1
+}

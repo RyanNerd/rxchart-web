@@ -9,14 +9,18 @@ import {ResidentRecord} from "../types/RecordTypes";
 const ActiveResidentObserver = (activeResident: ResidentRecord | null) => {
     const [, setMedicine] = useGlobal('__medicine');
     const [, setDrugLog] = useGlobal('__drugLog');
+    const [, setPillbox] = useGlobal('__pillbox');
+    const [, setPillboxItem] = useGlobal('__pillboxItem');
     let prevActiveResident = useRef(activeResident).current;
 
     useEffect(() => {
         if (prevActiveResident !== activeResident) {
-            // Trigger the refresh of medicineList
+            // Trigger the refresh of medicineList, drugLogList, PillboxList, and PillboxItemList
             const clientId = activeResident && activeResident.Id ? activeResident.Id : null;
             setMedicine({action: "load", payload: clientId});
             setDrugLog({action: "load", payload: clientId});
+            setPillbox({action: "load", payload: clientId});
+            setPillboxItem({action: "load", payload: clientId});
         }
         return () => {
             // eslint-disable-next-line react-hooks/exhaustive-deps

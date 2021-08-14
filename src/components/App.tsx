@@ -18,6 +18,8 @@ import OtcMedicineObserver from "../observers/OtcMedicineObserver";
 import ResidentEdit from "./Pages/Modals/ResidentEdit";
 import {ReactComponent as RxIcon} from "../icons/prescription.svg";
 import {ResidentRecord} from "../types/RecordTypes";
+import PillboxObserver from "../observers/PillboxObserver";
+import PillboxItemObserver from "../observers/PillboxItemObserver";
 
 /**
  * Main Entry Component
@@ -80,6 +82,8 @@ const App = () => {
     ErrorDetailsObserver();                 // Watching: __errorDetails
     AuthObserver();                         // Watching: __auth
     MedicineObserver(mm, activeClient);     // Watching: __medicine
+    PillboxObserver(mm, activeClient);      // Watching: __pillbox
+    PillboxItemObserver(mm, activeClient);  // Watching: __pillboxItem
     OtcMedicineObserver(mm);                // Watching: __otcMedicine
 
     // When copyText is populated copy it to the clipboard
