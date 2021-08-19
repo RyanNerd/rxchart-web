@@ -10,6 +10,7 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import MedicineCheckoutPage from "./MedicineCheckoutPage";
 import {getCheckoutList} from "../../utility/common";
+import PillboxPage from "./PillboxPage";
 
 /**
  * Landing Page - Tab Page Menu UI
@@ -75,6 +76,13 @@ const LandingPage = () => {
                 title={<span className={activeTabKey === 'manage' ? 'bld' : ''}>Manage Rx</span>}
             >
                 <ManageDrugPage/>
+            </Tab>
+            <Tab
+                disabled={apiKey === null || !activeResident}
+                eventKey="pillbox"
+                title={<span className={activeTabKey === 'pillbox' ? 'bld' : ''}>Pillbox</span>}
+            >
+                <PillboxPage/>
             </Tab>
             <Tab
                 disabled={apiKey === null}

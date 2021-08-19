@@ -79,7 +79,7 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
          * @returns {Promise<PillboxRecord>}
          */
         post: async (drugInfo: PillboxRecord): Promise<PillboxRecord> => {
-            const uri = _baseUrl + 'medicine?api_key=' + _apiKey;
+            const uri = _baseUrl + 'pillbox?api_key=' + _apiKey;
             try {
                 const response = await _frak.post<RecordResponse>(uri, drugInfo);
                 if (response.success) {

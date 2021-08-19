@@ -80,10 +80,12 @@ export type PillboxRecord = {
     ResidentId: number | null
     Name: string
     Notes: string | null
+    [key: string]: any
 }
 
 export const newPillboxRecord = {
     Id: null,
+    ResidentId: 0,
     Name: "",
     Notes: null
 }
