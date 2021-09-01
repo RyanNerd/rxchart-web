@@ -7,7 +7,7 @@ import Modal from 'react-bootstrap/Modal';
 import Row from "react-bootstrap/Row";
 
 import {PillboxRecord} from "../../../types/RecordTypes";
-import {clientFullName, isDateFuture, isDayValid, isMonthValid, isYearValid} from "../../../utility/common";
+import {clientFullName} from "../../../utility/common";
 
 interface IProps {
     pillboxInfo: PillboxRecord

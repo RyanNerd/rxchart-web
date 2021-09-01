@@ -11,7 +11,6 @@ const PillboxItemObserver = (mm: IMedicineManager, activeClient: ResidentRecord 
     const [, setPillboxItemList] = useGlobal('pillboxItemList');
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [pillboxItemObserver, setPillboxItemObserver] = useGlobal('__pillboxItem');
-    console.log('__pillboxItem', pillboxItemObserver);
 
     useEffect(() => {
         if (pillboxItemObserver && activeClient && activeClient.Id) {

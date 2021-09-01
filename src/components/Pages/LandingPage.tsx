@@ -24,6 +24,8 @@ const LandingPage = () => {
     const [checkoutDisabled, setCheckoutDisabled] = useState(!activeResident);
     const [drugLogList] = useGlobal('drugLogList');
     const navBarElement = document.getElementsByClassName('nav nav-tabs');
+    const [pillboxList] = useGlobal('pillboxList');
+    const [pillboxItemList] = useGlobal('pillboxItemList');
 
     if (navBarElement && navBarElement.length > 0) {
         const navBar = navBarElement[0];
@@ -82,7 +84,12 @@ const LandingPage = () => {
                 eventKey="pillbox"
                 title={<span className={activeTabKey === 'pillbox' ? 'bld' : ''}>Pillbox</span>}
             >
-                <PillboxPage/>
+                <PillboxPage
+                    pillboxList={pillboxList}
+                    pillboxItemList={pillboxItemList}
+                    activeResident={activeResident}
+                    activeTabKey={activeTabKey}
+                />
             </Tab>
             <Tab
                 disabled={apiKey === null}
@@ -99,7 +106,7 @@ const LandingPage = () => {
                 <DrugHistoryPage/>
             </Tab>
             <Tab
-                disabled={checkoutDisabled}
+                disabled={apiKey === null || checkoutDisabled || !activeResident}
                 eventKey="medicine-checkout"
                 title="Medicine Checkout"
             >
