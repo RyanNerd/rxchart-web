@@ -59,7 +59,7 @@ const LandingPage = () => {
                 <LoginPage/>
             </Tab>
             <Tab
-                disabled={apiKey === null}
+                disabled={!apiKey}
                 eventKey="resident"
                 title={<span className={activeTabKey === 'resident' ? 'bld' : ''}>Resident</span>}>
                 <ResidentPage
@@ -67,20 +67,20 @@ const LandingPage = () => {
                 />
             </Tab>
             <Tab
-                disabled={apiKey === null || !activeResident}
+                disabled={!apiKey || !activeResident}
                 eventKey="medicine"
                 title={<span className={activeTabKey === 'medicine' ? 'bld' : ''}>Rx</span>}>
                 <MedicinePage/>
             </Tab>
             <Tab
-                disabled={apiKey === null || !activeResident}
+                disabled={!apiKey || !activeResident}
                 eventKey="manage"
                 title={<span className={activeTabKey === 'manage' ? 'bld' : ''}>Manage Rx</span>}
             >
                 <ManageDrugPage/>
             </Tab>
             <Tab
-                disabled={apiKey === null || !activeResident}
+                disabled={!apiKey || !activeResident}
                 eventKey="pillbox"
                 title={<span className={activeTabKey === 'pillbox' ? 'bld' : ''}>Pillbox</span>}
             >
@@ -92,21 +92,21 @@ const LandingPage = () => {
                 />
             </Tab>
             <Tab
-                disabled={apiKey === null}
+                disabled={!apiKey}
                 eventKey="manage-otc"
                 title={<span className={activeTabKey === 'manage-otc' ? 'bld' : ''}>Manage OTC</span>}
             >
                 <ManageOtcPage/>
             </Tab>
             <Tab
-                disabled={apiKey === null || !activeResident}
+                disabled={!apiKey || !activeResident}
                 eventKey="history"
                 title={<span className={activeTabKey === 'history' ? 'bld' : ''}>Drug History</span>}
             >
                 <DrugHistoryPage/>
             </Tab>
             <Tab
-                disabled={apiKey === null || checkoutDisabled || !activeResident}
+                disabled={!apiKey || checkoutDisabled || !activeResident}
                 eventKey="medicine-checkout"
                 title="Medicine Checkout"
             >
