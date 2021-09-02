@@ -1,11 +1,17 @@
 import React, {useEffect, useGlobal, useState} from 'reactn';
 
-import {Button, Row, Col, Tab, Nav, Card} from "react-bootstrap";
+import {Button, Row, Col, Tab, Nav, Card, Alert} from "react-bootstrap";
 
 import PillboxEdit from "./Modals/PillboxEdit";
 import PillboxItemGrid from "./Grids/PillboxItemGrid";
 import TooltipButton from "../Buttons/TooltipButton";
-import {newPillboxRecord, PillboxItemRecord, PillboxRecord, ResidentRecord} from "../../types/RecordTypes";
+import {
+    newPillboxRecord,
+    PillboxItemRecord,
+    PillboxRecord,
+    ResidentRecord
+} from "../../types/RecordTypes";
+import ConfirmDialogModal from "./Modals/ConfirmDialogModal";
 
 interface IProps {
     pillboxList: PillboxRecord[]
@@ -23,14 +29,7 @@ const PillboxPage = (props: IProps) => {
     const [, setPillbox] = useGlobal('__pillbox');
     const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord | null>(null);
     const [activePillbox, setActivePillbox] = useState<PillboxRecord|null>(null);
-
-    /**
-     * Fires when the user clicks on a Pillbox selection on the left side
-     * @param {string | null} id
-     */
-    const handleSelect = (id: string | null) => {
-        setActivePillbox(id ? pillboxList.find((pb) => pb.Id === parseInt(id)) || null : null);
-    }
+    const [showPillboxDeleteConfirm, setShowPillboxDeleteConfirm] = useState(false);
 
     // Refresh when props change
     useEffect(() => {
@@ -96,10 +95,13 @@ const PillboxPage = (props: IProps) => {
                         <PillboxItemGrid
                             onEdit={(e, r) => {
                                 e.preventDefault();
+                                // TODO: Create and launch PillboxItemModal
                                 alert('todo: Launch PillboxItemModal. For PillboxItem.Id = ' + r.Id);
                             }}
                             onDelete={(e, r) => {
-                                alert('todo: Delete');
+                                e.preventDefault();
+                                // TODO: Delete PillboxItem
+                                alert('todo: Delete PillboxItem.Id = ' + r.Id);
                             }}
                             pillboxId={id as number}
                             residentId={activeResident?.Id as number}
@@ -139,31 +141,41 @@ const PillboxPage = (props: IProps) => {
                 >
                     + Pillbox
                 </TooltipButton>
-                <Button
-                    className="ml-3"
-                    variant="success"
-                    size="sm"
-                    onClick={() => alert('todo: Logic to add pills to the current pillbox')}
-                >
-                    + Add medication to pillbox
-                </Button>
-                <Button
-                    className="ml-4"
-                    variant="primary"
-                    size="sm"
-                    onClick={() => alert('todo: Logic to add pills to the current pillbox')}
-                >
-                   Edit {activePillbox?.Name}
-                </Button>
-                <Button
-                    className="ml-3"
-                    variant="danger"
-                    size="sm"
-                    onClick={() => alert('todo: Logic to add pills to the current pillbox')}
-                >
-                    <span role="img" aria-label="delete">🗑️</span>{" "}Delete {activePillbox?.Name}
-                </Button>
 
+                {activePillbox &&
+                <>
+                    <Button
+                        className="ml-3"
+                        variant="success"
+                        size="sm"
+                        onClick={() => alert('todo: Logic to add drugs to the active pillbox')}
+                    >
+                        + Add drugs to {activePillbox.Name}
+                    </Button>
+                    <Button
+                        className="ml-4"
+                        variant="primary"
+                        size="sm"
+                        onClick={() => {
+                            const pillboxRecord = {...activePillbox};
+                            pillboxRecord.ResidentId = activeResident?.Id as number;
+                            setPillboxInfo(pillboxRecord);
+                        }}
+                    >
+                        Edit {activePillbox.Name}
+                    </Button>
+                    <Button
+                        className="ml-3"
+                        variant="danger"
+                        size="sm"
+                        onClick={() => {
+                            setShowPillboxDeleteConfirm(true);
+                        }}
+                    >
+                        <span role="img" aria-label="delete">🗑️</span>{" "}Delete {activePillbox.Name}
+                    </Button>
+                </>
+                }
             </Row>
 
             <Row className="mt-3">
@@ -177,7 +189,10 @@ const PillboxPage = (props: IProps) => {
                                 id={"main-pillbox-nav-" + activeResident.Id}
                                 variant="pills"
                                 className="flex-column"
-                                onSelect={handleSelect}
+                                onSelect={(id) => {
+                                    setActivePillbox(id ?
+                                        pillboxList.find((pb) => pb.Id === parseInt(id)) || null : null);
+                                }}
                             >
                                 {pillboxList.map(NavItem)}
                             </Nav>
@@ -194,8 +209,7 @@ const PillboxPage = (props: IProps) => {
                             There are no Pillboxes. Click on the + Pillbox button to add one.
                         </Card.Body>
                     </Card>
-                )
-                }
+                )}
             </Row>
 
             {pillboxInfo &&
@@ -211,6 +225,42 @@ const PillboxPage = (props: IProps) => {
                     }
                 show={true}/>
             }
+
+            {/*Delete Pillbox Modal*/}
+            <ConfirmDialogModal
+                centered
+                show={showPillboxDeleteConfirm}
+                title={<h3>Delete Pillbox {activePillbox?.Name}</h3>}
+                body={
+                    <Alert variant="danger">
+                        {"Delete Pillbox: " + activePillbox?.Name}
+                    </Alert>
+                }
+                yesButton={
+                    <Button
+                        variant="danger"
+                        onClick={(e) =>
+                        {
+                            e.preventDefault();
+                            setShowPillboxDeleteConfirm(false)
+                            setPillbox({action:'delete', payload: activePillbox?.Id as number});
+                        }}
+                    >
+                        Delete
+                    </Button>
+                }
+                noButton={
+                    <Button
+                        variant="secondary"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setShowPillboxDeleteConfirm(false);
+                        }}
+                    >
+                        Cancel
+                    </Button>
+                }
+            />
         </>
     )
 }
