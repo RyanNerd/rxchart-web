@@ -78,6 +78,7 @@ const PillboxPage = (props: IProps) => {
         const pillboxName = pillboxRecord.Name;
         const pillboxNotes = pillboxRecord.Notes;
         const active = activePillbox?.Id === id;
+        const pillboxItems = pillboxItemList.filter(pbi => pbi.PillboxId === id);
 
         return (
             <Tab.Pane
@@ -92,27 +93,28 @@ const PillboxPage = (props: IProps) => {
                         </h4>
                     </Card.Title>
                     <Card.Body>
-                        <PillboxItemGrid
-                            onEdit={(e, r) => {
-                                e.preventDefault();
-                                // TODO: Create and launch PillboxItemModal
-                                alert('todo: Launch PillboxItemModal. For PillboxItem.Id = ' + r.Id);
-                            }}
-                            onDelete={(e, r) => {
-                                e.preventDefault();
-                                // TODO: Delete PillboxItem
-                                alert('todo: Delete PillboxItem.Id = ' + r.Id);
-                            }}
-                            pillboxId={id as number}
-                            residentId={activeResident?.Id as number}
-                            medicineList={medicineList}
-                            pillboxItemList={pillboxItemList}/>
-                        <p>
-                            currentPillboxId: {activePillbox?.Id}
-                            <br/>
-                            pillboxId: {id}
-                            <br/>
-                        </p>
+                        {pillboxItems.length > 0 ?
+                            (<PillboxItemGrid
+                                onEdit={(e, r) => {
+                                    e.preventDefault();
+                                    // TODO: Create and launch PillboxItemModal
+                                    alert('todo: Launch PillboxItemModal. For PillboxItem.Id = ' + r.Id);
+                                }}
+                                onDelete={(e, r) => {
+                                    e.preventDefault();
+                                    // TODO: Delete PillboxItem
+                                    alert('todo: Delete PillboxItem.Id = ' + r.Id);
+                                }}
+                                pillboxId={id as number}
+                                residentId={activeResident?.Id as number}
+                                medicineList={medicineList}
+                                pillboxItemList={pillboxItems}
+                            />) : (
+                                <p>
+                                    No drugs are in this pill box
+                                </p>
+                            )
+                        }
                     </Card.Body>
                     <Card.Footer>
                         <p>

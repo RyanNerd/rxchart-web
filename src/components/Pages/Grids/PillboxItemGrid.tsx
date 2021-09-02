@@ -43,22 +43,24 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
         return null;
     }
 
-    // Get the pillboxItems for the specified Pillbox
-    const pillboxItems = pillboxItemList.filter(pbi => pbi.PillboxId === pillboxId);
-
     /**
      * Returns {MedicineRecord[]}
      */
     // Get a list of MedicineRecords for each pillboxItem
     const pillMedList = medicineList.filter((medicine: MedicineRecord) => {
-        return pillboxItems.some((pir) => {
+        return pillboxItemList.some((pir) => {
             return medicine.Id === pir.MedicineId;
         });
     });
 
+    if (!pillMedList || pillMedList.length === 0) {
+        return null;
+    }
+
     // Build out pills<PillRowType>[]
     const pills = [] as PillRowType[];
     pillMedList.forEach((m) => {
+        // TODO: Use find here instead of filter / or figure out a better way of doing this
         const pillRecords = pillboxItemList.filter((r) => r.MedicineId === m.Id);
         if (pillRecords.length === 1) {
             const pillRecord = pillRecords[0];
