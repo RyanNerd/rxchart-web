@@ -115,6 +115,10 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
                 </td>
 
                 <td>
+                    {pill.Strength}
+                </td>
+
+                <td>
                     {pill.Quantity}
                 </td>
 
@@ -145,6 +149,7 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
             <tr>
                 <th>{/*Edit*/}</th>
                 <th>Drug</th>
+                <th>Strength</th>
                 <th>Quantity</th>
                 <th>{/*Delete*/}</th>
             </tr>

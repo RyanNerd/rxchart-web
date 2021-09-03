@@ -21,14 +21,14 @@ interface IProps {
 }
 
 const PillboxPage = (props: IProps) => {
+    const [, setPillbox] = useGlobal('__pillbox');
+    const [activePillbox, setActivePillbox] = useState<PillboxRecord|null>(null);
     const [activeResident, setActiveResident] = useState(props.activeResident);
-    const [pillboxList, setPillboxList] = useState(props.pillboxList);
-    const [pillboxItemList, setPillboxItemList] = useState(props.pillboxItemList);
     const [activeTabKey, setActiveTabKey] = useState(props.activeTabKey);
     const [medicineList] = useGlobal('medicineList');
-    const [, setPillbox] = useGlobal('__pillbox');
     const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord | null>(null);
-    const [activePillbox, setActivePillbox] = useState<PillboxRecord|null>(null);
+    const [pillboxItemList, setPillboxItemList] = useState(props.pillboxItemList);
+    const [pillboxList, setPillboxList] = useState(props.pillboxList);
     const [showPillboxDeleteConfirm, setShowPillboxDeleteConfirm] = useState(false);
 
     // Refresh when props change
@@ -76,7 +76,7 @@ const PillboxPage = (props: IProps) => {
     const TabPane = (pillboxRecord: PillboxRecord) => {
         const id = pillboxRecord.Id;
         const pillboxName = pillboxRecord.Name;
-        const pillboxNotes = pillboxRecord.Notes;
+        const pillboxNotes = pillboxRecord.Notes || '';
         const active = activePillbox?.Id === id;
         const pillboxItems = pillboxItemList.filter(pbi => pbi.PillboxId === id);
 
@@ -93,6 +93,17 @@ const PillboxPage = (props: IProps) => {
                         </h4>
                     </Card.Title>
                     <Card.Body>
+                        {activePillbox &&
+                        <Button
+                            className="mb-3"
+                            variant="info"
+                            size="sm"
+                            onClick={() => alert('todo: Logic to add drugs to the active pillbox')}
+                        >
+                            + Add drugs to {activePillbox.Name}
+                        </Button>
+                        }
+
                         {pillboxItems.length > 0 ?
                             (<PillboxItemGrid
                                 onEdit={(e, r) => {
@@ -116,11 +127,13 @@ const PillboxPage = (props: IProps) => {
                             )
                         }
                     </Card.Body>
+                    {pillboxNotes.length > 0 &&
                     <Card.Footer>
                         <p>
                             {pillboxNotes}
                         </p>
                     </Card.Footer>
+                    }
                 </Card>
             </Tab.Pane>
         )
@@ -147,15 +160,7 @@ const PillboxPage = (props: IProps) => {
                 {activePillbox &&
                 <>
                     <Button
-                        className="ml-3"
-                        variant="success"
-                        size="sm"
-                        onClick={() => alert('todo: Logic to add drugs to the active pillbox')}
-                    >
-                        + Add drugs to {activePillbox.Name}
-                    </Button>
-                    <Button
-                        className="ml-4"
+                        className="ml-2"
                         variant="primary"
                         size="sm"
                         onClick={() => {
@@ -167,7 +172,7 @@ const PillboxPage = (props: IProps) => {
                         Edit {activePillbox.Name}
                     </Button>
                     <Button
-                        className="ml-3"
+                        className="ml-2"
                         variant="danger"
                         size="sm"
                         onClick={() => {
