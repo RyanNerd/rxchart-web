@@ -2,6 +2,7 @@ import React from 'reactn';
 import Button from 'react-bootstrap/Button';
 import Table, {TableProps} from 'react-bootstrap/Table';
 import {MedicineRecord, PillboxItemRecord} from "../../../types/RecordTypes";
+import {multiSort, randomString, SortDirection} from "../../../utility/common";
 
 interface IProps extends TableProps {
     [key: string]: any
@@ -9,18 +10,17 @@ interface IProps extends TableProps {
     residentId: number
     medicineList: MedicineRecord[]
     pillboxItemList: PillboxItemRecord[]
-    onDelete: (e: React.MouseEvent<HTMLElement>, r: PillboxItemRecord) => void
     onEdit: (e: React.MouseEvent<HTMLElement>, r: PillboxItemRecord) => void
 }
 
 type PillRowType = {
-    Id: number
+    Id: number | null
     ResidentId: number
     PillboxId: number
     MedicineId: number
     Drug: string
     Strength: string
-    Quantity: number
+    Quantity: number | null
 }
 
 /**
@@ -34,47 +34,46 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
         residentId,
         pillboxItemList,
         medicineList,
-        onDelete,
         onEdit
     } = props;
 
     // No render if there isn't anything to render
-    if (!pillboxItemList || pillboxItemList.length === 0) {
-        return null;
-    }
-
-    /**
-     * Returns {MedicineRecord[]}
-     */
-    // Get a list of MedicineRecords for each pillboxItem
-    const pillMedList = medicineList.filter((medicine: MedicineRecord) => {
-        return pillboxItemList.some((pir) => {
-            return medicine.Id === pir.MedicineId;
-        });
-    });
-
-    if (!pillMedList || pillMedList.length === 0) {
+    if (medicineList.length === 0) {
         return null;
     }
 
     // Build out pills<PillRowType>[]
-    const pills = [] as PillRowType[];
-    pillMedList.forEach((m) => {
-        // TODO: Use find here instead of filter / or figure out a better way of doing this
-        const pillRecords = pillboxItemList.filter((r) => r.MedicineId === m.Id);
-        if (pillRecords.length === 1) {
-            const pillRecord = pillRecords[0];
-            pills.push({
-                Id: pillRecord.Id as number,
+    const pillBuild = [] as PillRowType[];
+    medicineList.forEach((m) => {
+        const pillboxItemRecord = pillboxItemList.find((r) => r.MedicineId === m.Id);
+        if (pillboxItemRecord) {
+            pillBuild.push({
+                Id: pillboxItemRecord.Id as number,
                 PillboxId: pillboxId,
                 ResidentId: residentId,
                 MedicineId: m.Id as number,
                 Drug: m.Drug,
                 Strength: m.Strength as string,
-                Quantity: pillRecord.Quantity
+                Quantity: pillboxItemRecord.Quantity
+            })
+        } else {
+            pillBuild.push({
+                Id: null,
+                PillboxId: pillboxId,
+                ResidentId: residentId,
+                MedicineId: m.Id as number,
+                Drug: m.Drug,
+                Strength: m.Strength as string,
+                Quantity: 0
             })
         }
     });
+
+    // @ts-ignore multiSort isn't currently generic so the first argument throws:
+    //      TS2345: Argument of type 'PillRowType[]' is not assignable to parameter of type '[]'.
+    //      Target allows only 0 element(s) but source may have more.
+    // @fixme: see above
+    const pills = multiSort(pillBuild, {Quantity: SortDirection.asc, Drug: SortDirection.desc});
 
     /**
      * Child component for the table for each medicine in the pill box.
@@ -82,55 +81,82 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
      * @param pill
      */
     const PillRow = (pill: PillRowType): JSX.Element | null => {
-        // No medicine record given then no render
-        if (pill === null || !pill.Id) {
-            return null;
-        }
+        const domId = pill.Id ? pill.Id : randomString();
+        const isInPillbox = !!(pill.Quantity && pill.Quantity > 0);
+        const fontWeight = isInPillbox ? 'bold' : undefined;
+        const fontStyle = isInPillbox ? undefined : 'italic';
+        const color = isInPillbox ? '#28a745' : undefined;
+        const quantity = pill.Quantity || 0;
 
         return (
             <tr
-                key={'pill-grid-row-' + pill.Id}
-                id={'pill-grid-row-' + pill.Id}
+                key={'pill-grid-row-' + domId}
+                id={'pill-grid-row-' + domId}
             >
+                <td style={{verticalAlign: "middle", fontStyle, fontWeight, color}}>
+                    {pill.Drug}
+                </td>
+
+                <td style={{verticalAlign: "middle", fontStyle, fontWeight, color}}>
+                    {pill.Strength}
+                </td>
+
                 <td style={{textAlign: 'center', verticalAlign: "middle"}}>
+
                     <Button
-                        id={"pill-grid-edit-btn" + pill.Id}
+                        id={"pill-grid-inc-btn" + domId}
                         size="sm"
+                        variant="info"
+                        disabled={quantity === 0}
                         onClick={((e) => {
                             onEdit(e, {
                                 Id: pill.Id,
                                 PillboxId: pill.PillboxId,
                                 ResidentId: pill.ResidentId,
                                 MedicineId: pill.MedicineId,
-                                Quantity: pill.Quantity
+                                Quantity: quantity-1
                             });
                         })}
                     >
-                        Edit
+                        -
                     </Button>
-                </td>
 
-                <td>
-                    {pill.Drug}
-                </td>
-
-                <td>
-                    {pill.Strength}
-                </td>
-
-                <td>
-                    {pill.Quantity}
-                </td>
-
-                <td style={{textAlign: 'center', verticalAlign: "middle"}}>
                     <Button
+                        id={"pill-grid-edit-btn" + domId}
                         size="sm"
-                        id={"pill-grid-delete-btn-" + pill.Id}
-                        variant="outline-danger"
-                        onClick={e => onDelete(e, pill)}
+                        variant={isInPillbox ? 'success' : 'info'}
+                        className="ml-2"
+                        onClick={((e) => {
+                            onEdit(e, {
+                                Id: pill.Id,
+                                PillboxId: pill.PillboxId,
+                                ResidentId: pill.ResidentId,
+                                MedicineId: pill.MedicineId,
+                                Quantity: quantity
+                            });
+                        })}
                     >
-                        <span role="img" aria-label="delete">🗑️</span>
+                        {pill.Quantity || '0'}
                     </Button>
+
+                    <Button
+                        id={"pill-grid-inc-btn" + domId}
+                        size="sm"
+                        variant="info"
+                        className="ml-2"
+                        onClick={((e) => {
+                            onEdit(e, {
+                                Id: pill.Id,
+                                PillboxId: pill.PillboxId,
+                                ResidentId: pill.ResidentId,
+                                MedicineId: pill.MedicineId,
+                                Quantity: quantity + 1
+                            });
+                        })}
+                    >
+                        +
+                    </Button>
+
                 </td>
             </tr>
         );
@@ -147,11 +173,9 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
         >
             <thead>
             <tr>
-                <th>{/*Edit*/}</th>
                 <th>Drug</th>
                 <th>Strength</th>
-                <th>Quantity</th>
-                <th>{/*Delete*/}</th>
+                <th style={{textAlign: 'center', verticalAlign: "middle"}}>QTY</th>
             </tr>
             </thead>
             <tbody>

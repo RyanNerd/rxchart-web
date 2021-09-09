@@ -26,6 +26,7 @@ const PillboxPage = (props: IProps) => {
     const [activeResident, setActiveResident] = useState(props.activeResident);
     const [activeTabKey, setActiveTabKey] = useState(props.activeTabKey);
     const [medicineList] = useGlobal('medicineList');
+    const [filteredMedicineList, setFilteredMedicineList] = useState(medicineList.filter((m) => m.Active));
     const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord | null>(null);
     const [pillboxItemList, setPillboxItemList] = useState(props.pillboxItemList);
     const [pillboxList, setPillboxList] = useState(props.pillboxList);
@@ -37,8 +38,9 @@ const PillboxPage = (props: IProps) => {
         setPillboxList(props.pillboxList);
         setPillboxItemList(props.pillboxItemList);
         setActiveTabKey(props.activeTabKey);
+        setFilteredMedicineList(medicineList.filter((m) => m.Active));
         setActivePillbox(props.pillboxList?.length > 0 ? props.pillboxList[0] : null);
-    }, [props]);
+    }, [props, medicineList]);
 
     // Do not render if the pillbox tab is not the active tab
     if (activeTabKey !== 'pillbox') {
@@ -80,6 +82,8 @@ const PillboxPage = (props: IProps) => {
         const active = activePillbox?.Id === id;
         const pillboxItems = pillboxItemList.filter(pbi => pbi.PillboxId === id);
 
+        // @ts-ignore
+        // @ts-ignore
         return (
             <Tab.Pane
                 eventKey={id as number}
@@ -93,39 +97,17 @@ const PillboxPage = (props: IProps) => {
                         </h4>
                     </Card.Title>
                     <Card.Body>
-                        {activePillbox &&
-                        <Button
-                            className="mb-3"
-                            variant="info"
-                            size="sm"
-                            onClick={() => alert('todo: Logic to add drugs to the active pillbox')}
-                        >
-                            + Add drugs to {activePillbox.Name}
-                        </Button>
-                        }
-
-                        {pillboxItems.length > 0 ?
-                            (<PillboxItemGrid
-                                onEdit={(e, r) => {
-                                    e.preventDefault();
-                                    // TODO: Create and launch PillboxItemModal
-                                    alert('todo: Launch PillboxItemModal. For PillboxItem.Id = ' + r.Id);
-                                }}
-                                onDelete={(e, r) => {
-                                    e.preventDefault();
-                                    // TODO: Delete PillboxItem
-                                    alert('todo: Delete PillboxItem.Id = ' + r.Id);
-                                }}
-                                pillboxId={id as number}
-                                residentId={activeResident?.Id as number}
-                                medicineList={medicineList}
-                                pillboxItemList={pillboxItems}
-                            />) : (
-                                <p>
-                                    No drugs are in this pill box
-                                </p>
-                            )
-                        }
+                        <PillboxItemGrid
+                            onEdit={(e, r) => {
+                                e.preventDefault();
+                                // TODO: Create and launch PillboxItemModal
+                                alert('todo: Launch PillboxItemModal. For PillboxItem.Id = ' + r.Id);
+                            }}
+                            pillboxId={id as number}
+                            residentId={activeResident?.Id as number}
+                            medicineList={filteredMedicineList}
+                            pillboxItemList={pillboxItems}
+                        />
                     </Card.Body>
                     {pillboxNotes.length > 0 &&
                     <Card.Footer>
