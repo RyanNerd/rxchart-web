@@ -2,7 +2,7 @@ import React from 'reactn';
 import Button from 'react-bootstrap/Button';
 import Table, {TableProps} from 'react-bootstrap/Table';
 import {MedicineRecord, PillboxItemRecord} from "../../../types/RecordTypes";
-import {multiSort, randomString, SortDirection} from "../../../utility/common";
+import {BsColors, multiSort, randomString, SortDirection} from "../../../utility/common";
 import {ButtonGroup, Dropdown} from "react-bootstrap";
 
 interface IProps extends TableProps {
@@ -86,7 +86,7 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
         const isInPillbox = !!(pill.Quantity && pill.Quantity > 0);
         const fontWeight = isInPillbox ? 'bold' : undefined;
         const fontStyle = isInPillbox ? undefined : 'italic';
-        const color = isInPillbox ? '#28a745' : undefined;
+        const color = isInPillbox ? BsColors.success : undefined;
         const quantity = pill.Quantity || 0;
 
         return (

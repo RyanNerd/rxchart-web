@@ -12,6 +12,7 @@ import {
     ResidentRecord
 } from "../../types/RecordTypes";
 import ConfirmDialogModal from "./Modals/ConfirmDialogModal";
+import {BsColors} from "../../utility/common";
 
 interface IProps {
     pillboxList: PillboxRecord[]
@@ -90,9 +91,21 @@ const PillboxPage = (props: IProps) => {
             >
                 <Card>
                     <Card.Title>
-                        <h4 style={{margin: "5px 5px"}}>
-                            {pillboxName + " (items in pillbox will be green and have a positive quantity)"}
-                        </h4>
+                        <h5 className="mt-3 ml-2 user-select-none">
+                            <span style={{
+                                color: BsColors.white,
+                                backgroundColor: BsColors.primary,
+                                padding: ".5rem 1rem",
+                                boxSizing: "border-box",
+                                borderRadius: ".25rem"
+                            }}
+                            >
+                                {pillboxName}
+                            </span>
+                            {" (drugs in the pillbox will be"}
+                            <span style={{color: BsColors.success, fontWeight: "bold"}}> green</span>
+                            {" and have a positive quantity)"}
+                        </h5>
                     </Card.Title>
                     <Card.Body>
                         <PillboxItemGrid
