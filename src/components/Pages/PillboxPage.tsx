@@ -22,12 +22,13 @@ interface IProps {
 }
 
 const PillboxPage = (props: IProps) => {
+    const [, setPillboxItemObserver] = useGlobal('__pillboxItem');
     const [, setPillbox] = useGlobal('__pillbox');
     const [activePillbox, setActivePillbox] = useState<PillboxRecord|null>(null);
     const [activeResident, setActiveResident] = useState(props.activeResident);
     const [activeTabKey, setActiveTabKey] = useState(props.activeTabKey);
     const [medicineList] = useGlobal('medicineList');
-    const [filteredMedicineList, setFilteredMedicineList] = useState(medicineList.filter((m) => m.Active));
+    const [filteredMedicineList, setFilteredMedicineList] = useState(medicineList.filter(m => m.Active));
     const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord | null>(null);
     const [pillboxItemList, setPillboxItemList] = useState(props.pillboxItemList);
     const [pillboxList, setPillboxList] = useState(props.pillboxList);
@@ -109,26 +110,11 @@ const PillboxPage = (props: IProps) => {
                     </Card.Title>
                     <Card.Body>
                         <PillboxItemGrid
-                            onEdit={(r) => {
-                                // Is this is new pillbox item to be added?
-                                if (!r.Id) {
-                                    if (r.Quantity !== 0) {
-                                        // todo: insert record
-                                    } else {
-                                        // todo: throw error or ignore?
-                                    }
-                                } else {
-                                    if (r.Quantity !== 0) {
-                                        // todo: handle update
-                                    } else {
-                                        // todo: handle "delete"
-                                    }
-                                }
-                            }}
-                            pillboxId={id as number}
-                            residentId={activeResident?.Id as number}
                             medicineList={filteredMedicineList}
+                            onEdit={r => setPillboxItemObserver({action: "update", payload: r})}
+                            pillboxId={id as number}
                             pillboxItemList={pillboxItems}
+                            residentId={activeResident?.Id as number}
                         />
                     </Card.Body>
                     {pillboxNotes.length > 0 &&
@@ -147,16 +133,16 @@ const PillboxPage = (props: IProps) => {
         <>
             <Row>
                 <TooltipButton
-                    placement="top"
-                    tooltip="Add new Pillbox"
-                    size="sm"
-                    variant="info"
                     onClick={(e) => {
                         e.preventDefault();
                         const pillboxRecord = {...newPillboxRecord};
                         pillboxRecord.ResidentId = activeResident?.Id as number;
                         setPillboxInfo(pillboxRecord);
                     }}
+                    placement="top"
+                    size="sm"
+                    tooltip="Add new Pillbox"
+                    variant="info"
                 >
                     + Pillbox
                 </TooltipButton>
@@ -165,23 +151,23 @@ const PillboxPage = (props: IProps) => {
                 <>
                     <Button
                         className="ml-2"
-                        variant="primary"
-                        size="sm"
                         onClick={() => {
                             const pillboxRecord = {...activePillbox};
                             pillboxRecord.ResidentId = activeResident?.Id as number;
                             setPillboxInfo(pillboxRecord);
                         }}
+                        size="sm"
+                        variant="primary"
                     >
                         Edit {activePillbox.Name}
                     </Button>
                     <Button
                         className="ml-2"
-                        variant="danger"
-                        size="sm"
                         onClick={() => {
                             setShowPillboxDeleteConfirm(true);
                         }}
+                        size="sm"
+                        variant="danger"
                     >
                         <span role="img" aria-label="delete">🗑️</span>{" "}Delete {activePillbox.Name}
                     </Button>
@@ -197,13 +183,13 @@ const PillboxPage = (props: IProps) => {
                     >
                         <Col sm={2} style={{paddingLeft: "0"}}>
                             <Nav
-                                id={"main-pillbox-nav-" + activeResident.Id}
-                                variant="pills"
                                 className="flex-column"
+                                id={"main-pillbox-nav-" + activeResident.Id}
                                 onSelect={(id) => {
                                     setActivePillbox(id ?
                                         pillboxList.find((pb) => pb.Id === parseInt(id)) || null : null);
                                 }}
+                                variant="pills"
                             >
                                 {pillboxList.map(NavItem)}
                             </Nav>
@@ -225,7 +211,6 @@ const PillboxPage = (props: IProps) => {
 
             {pillboxInfo &&
                 <PillboxEdit
-                    pillboxInfo={pillboxInfo}
                     onClose={
                         (r) => {
                             setPillboxInfo(null);
@@ -234,7 +219,9 @@ const PillboxPage = (props: IProps) => {
                             }
                         }
                     }
-                show={true}/>
+                    pillboxInfo={pillboxInfo}
+                    show={true}
+                />
             }
 
             {/*Delete Pillbox Modal*/}

@@ -7,21 +7,21 @@ import {ButtonGroup, Dropdown} from "react-bootstrap";
 
 interface IProps extends TableProps {
     [key: string]: any
-    pillboxId: number
-    residentId: number
     medicineList: MedicineRecord[]
-    pillboxItemList: PillboxItemRecord[]
     onEdit: ( r: PillboxItemRecord) => void
+    pillboxId: number
+    pillboxItemList: PillboxItemRecord[]
+    residentId: number
 }
 
 type PillRowType = {
-    Id: number | null
-    ResidentId: number
-    PillboxId: number
-    MedicineId: number
     Drug: string
-    Strength: string
+    Id: number | null
+    MedicineId: number
+    PillboxId: number
     Quantity: number | null
+    ResidentId: number
+    Strength: string | null
 }
 
 /**
@@ -31,11 +31,11 @@ type PillRowType = {
  */
 const PillboxItemGrid = (props: IProps): JSX.Element | null => {
     const {
-        pillboxId,
-        residentId,
-        pillboxItemList,
         medicineList,
-        onEdit
+        onEdit,
+        pillboxId,
+        pillboxItemList,
+        residentId
     } = props;
 
     // No render if there isn't anything to render
@@ -49,23 +49,23 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
         const pillboxItemRecord = pillboxItemList.find((r) => r.MedicineId === m.Id);
         if (pillboxItemRecord) {
             pillBuild.push({
-                Id: pillboxItemRecord.Id as number,
-                PillboxId: pillboxId,
-                ResidentId: residentId,
-                MedicineId: m.Id as number,
                 Drug: m.Drug,
-                Strength: m.Strength as string,
-                Quantity: pillboxItemRecord.Quantity
+                Id: pillboxItemRecord.Id,
+                MedicineId: m.Id as number,
+                PillboxId: pillboxId,
+                Quantity: pillboxItemRecord.Quantity,
+                ResidentId: residentId,
+                Strength: m.Strength
             })
         } else {
             pillBuild.push({
-                Id: null,
-                PillboxId: pillboxId,
-                ResidentId: residentId,
-                MedicineId: m.Id as number,
                 Drug: m.Drug,
-                Strength: m.Strength as string,
-                Quantity: 0
+                Id: null,
+                MedicineId: m.Id as number,
+                PillboxId: pillboxId,
+                Quantity: 0,
+                ResidentId: residentId,
+                Strength: m.Strength
             })
         }
     });
@@ -82,11 +82,11 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
      * @param pill
      */
     const PillRow = (pill: PillRowType): JSX.Element | null => {
-        const domId = pill.Id ? pill.Id : randomString();
         const isInPillbox = !!(pill.Quantity && pill.Quantity > 0);
-        const fontWeight = isInPillbox ? 'bold' : undefined;
-        const fontStyle = isInPillbox ? undefined : 'italic';
         const color = isInPillbox ? BsColors.success : undefined;
+        const domId = pill.Id ? pill.Id : randomString();
+        const fontStyle = isInPillbox ? undefined : 'italic';
+        const fontWeight = isInPillbox ? 'bold' : undefined;
         const quantity = pill.Quantity || 0;
 
         return (
@@ -105,19 +105,19 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
                 <td style={{textAlign: 'center', verticalAlign: "middle"}}>
 
                     <Button
-                        id={"pill-grid-inc-btn" + domId}
-                        size="sm"
-                        variant="info"
                         disabled={quantity === 0}
+                        id={"pill-grid-inc-btn" + domId}
                         onClick={((e) => {
                             onEdit({
                                 Id: pill.Id,
-                                PillboxId: pill.PillboxId,
-                                ResidentId: pill.ResidentId,
                                 MedicineId: pill.MedicineId,
-                                Quantity: quantity-1
+                                PillboxId: pill.PillboxId,
+                                Quantity: quantity-1,
+                                ResidentId: pill.ResidentId
                             });
                         })}
+                        size="sm"
+                        variant="info"
                     >
                         -
                     </Button>
@@ -126,17 +126,17 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
                         onSelect={k => {
                             onEdit({
                                 Id: pill.Id,
-                                PillboxId: pill.PillboxId,
-                                ResidentId: pill.ResidentId,
                                 MedicineId: pill.MedicineId,
-                                Quantity: parseInt(k || "0")
+                                PillboxId: pill.PillboxId,
+                                Quantity: parseInt(k || "0"),
+                                ResidentId: pill.ResidentId
                             });
                         }}
                     >
                         <Button
-                            variant={isInPillbox ? 'success' : 'info'}
-                            size="sm"
                             className="ml-2"
+                            size="sm"
+                            variant={isInPillbox ? 'success' : 'info'}
                         >
                             {pill.Quantity || "0"}
                         </Button>
@@ -146,25 +146,23 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
                             id={"pill-grid-dropdown-" + domId}
                         />
                         <Dropdown.Menu>
-                            <Dropdown.Item eventKey="0" disabled={pill.Quantity === 0}>0</Dropdown.Item>
-                            <Dropdown.Item eventKey="1" disabled={pill.Quantity === 1}>1</Dropdown.Item>
-                            <Dropdown.Item eventKey="2" disabled={pill.Quantity === 2}>2</Dropdown.Item>
-                            <Dropdown.Item eventKey="3" disabled={pill.Quantity === 3}>3</Dropdown.Item>
-                            <Dropdown.Item eventKey="4" disabled={pill.Quantity === 4}>4</Dropdown.Item>
-                            <Dropdown.Item eventKey="5" disabled={pill.Quantity === 5}>5</Dropdown.Item>
-                            <Dropdown.Item eventKey="6" disabled={pill.Quantity === 6}>6</Dropdown.Item>
-                            <Dropdown.Item eventKey="7" disabled={pill.Quantity === 7}>7</Dropdown.Item>
-                            <Dropdown.Item eventKey="8" disabled={pill.Quantity === 8}>8</Dropdown.Item>
-                            <Dropdown.Item eventKey="9" disabled={pill.Quantity === 9}>9</Dropdown.Item>
+                            <Dropdown.Item eventKey="0"  disabled={pill.Quantity === 0}>0</Dropdown.Item>
+                            <Dropdown.Item eventKey="1"  disabled={pill.Quantity === 1}>1</Dropdown.Item>
+                            <Dropdown.Item eventKey="2"  disabled={pill.Quantity === 2}>2</Dropdown.Item>
+                            <Dropdown.Item eventKey="3"  disabled={pill.Quantity === 3}>3</Dropdown.Item>
+                            <Dropdown.Item eventKey="4"  disabled={pill.Quantity === 4}>4</Dropdown.Item>
+                            <Dropdown.Item eventKey="5"  disabled={pill.Quantity === 5}>5</Dropdown.Item>
+                            <Dropdown.Item eventKey="6"  disabled={pill.Quantity === 6}>6</Dropdown.Item>
+                            <Dropdown.Item eventKey="7"  disabled={pill.Quantity === 7}>7</Dropdown.Item>
+                            <Dropdown.Item eventKey="8"  disabled={pill.Quantity === 8}>8</Dropdown.Item>
+                            <Dropdown.Item eventKey="9"  disabled={pill.Quantity === 9}>9</Dropdown.Item>
                             <Dropdown.Item eventKey="10" disabled={pill.Quantity === 10}>10</Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
 
                     <Button
-                        id={"pill-grid-inc-btn" + domId}
-                        size="sm"
-                        variant="info"
                         className="ml-2"
+                        id={"pill-grid-inc-btn" + domId}
                         onClick={((e) => {
                             onEdit({
                                 Id: pill.Id,
@@ -174,6 +172,8 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
                                 Quantity: quantity + 1
                             });
                         })}
+                        size="sm"
+                        variant="info"
                     >
                         +
                     </Button>
@@ -187,10 +187,10 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
         <Table
             style={{wordWrap: "break-word"}}
             {...props}
-            striped
             bordered
             hover
             size="sm"
+            striped
         >
             <thead>
             <tr>
