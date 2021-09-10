@@ -82,8 +82,6 @@ const PillboxPage = (props: IProps) => {
         const active = activePillbox?.Id === id;
         const pillboxItems = pillboxItemList.filter(pbi => pbi.PillboxId === id);
 
-        // @ts-ignore
-        // @ts-ignore
         return (
             <Tab.Pane
                 eventKey={id as number}
@@ -93,15 +91,26 @@ const PillboxPage = (props: IProps) => {
                 <Card>
                     <Card.Title>
                         <h4 style={{margin: "5px 5px"}}>
-                            {pillboxName}
+                            {pillboxName + " (items in pillbox will be green and have a positive quantity)"}
                         </h4>
                     </Card.Title>
                     <Card.Body>
                         <PillboxItemGrid
-                            onEdit={(e, r) => {
-                                e.preventDefault();
-                                // TODO: Create and launch PillboxItemModal
-                                alert('todo: Launch PillboxItemModal. For PillboxItem.Id = ' + r.Id);
+                            onEdit={(r) => {
+                                // Is this is new pillbox item to be added?
+                                if (!r.Id) {
+                                    if (r.Quantity !== 0) {
+                                        // todo: insert record
+                                    } else {
+                                        // todo: throw error or ignore?
+                                    }
+                                } else {
+                                    if (r.Quantity !== 0) {
+                                        // todo: handle update
+                                    } else {
+                                        // todo: handle "delete"
+                                    }
+                                }
                             }}
                             pillboxId={id as number}
                             residentId={activeResident?.Id as number}
