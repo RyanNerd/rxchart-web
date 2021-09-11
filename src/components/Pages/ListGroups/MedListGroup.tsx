@@ -22,6 +22,11 @@ interface IProps {
     pillboxItemList: PillboxItemRecord[]
 }
 
+interface IDropdownItem {
+    id: number, // zero indicated a divider
+    description: string
+}
+
 /**
  * MedListGroup
  * @param {IProps} props
@@ -38,12 +43,11 @@ const MedListGroup = (props: IProps): JSX.Element => {
         lastTaken,
         logDrug,
         medicineList,
-        pillboxList,
+        pillboxList = [],
         pillboxItemList
     } = props;
 
-    const activeDrug = activeId > 0 ? medicineList.find(m => m.Id === activeId) : undefined;
-
+    const activeDrug = (medicineList.find(m => m.Id === props.activeId));
     const barCode = activeDrug?.Barcode || null;
     const notes = activeDrug?.Notes || null;
     const directions = activeDrug?.Directions || null;
@@ -92,7 +96,7 @@ const MedListGroup = (props: IProps): JSX.Element => {
     }
 
     const getDrugsInPillbox = (pillboxId: number) => {
-        alert('build drugs');
+        alert('build drugs. PillboxId: ' + pillboxId);
         const meds = medicineList.filter(m => {
             return m.Active &&
                 pillboxItemList.some(p => p.MedicineId === m.Id && p.PillboxId === pillboxId && p.Quantity > 0);
@@ -106,22 +110,47 @@ const MedListGroup = (props: IProps): JSX.Element => {
         return meds;
     }
 
+    // Build the items list here:
+    const getDropdownItems = () => {
+        const items = [] as IDropdownItem[];
+        pillboxList.forEach(p => {
+            items.push({
+                id: -(p.Id as number),
+                description: p.Name
+            });
+        });
+
+        items.push({
+            id: 0,
+            description: ''
+        })
+
+        medicineList.forEach(m => {
+            const otherNames = m.OtherNames ? ' (' + m.OtherNames + ') ' : '';
+            const strength = m.Strength ? m.Strength : '';
+            const description = m.Drug + ' ' + strength + otherNames;
+
+            items.push({
+                id: m.Id as number,
+                description
+            })
+        });
+        return items;
+    }
+
+
     return (
         <ListGroup>
             <ListGroup.Item active className="justify-content-left">
                 <MedDropdown
                     disabled={disabled}
-                    medicineList={medicineList}
-                    pillboxList={pillboxList}
+                    itemList={getDropdownItems()}
                     activeId={activeId}
-                    onSelect={i => {
-                        alert('Drug changed to: ' + i);
-                        drugChanged(i);
-                    }}
+                    onSelect={i => drugChanged(i)}
                 />
             </ListGroup.Item>
 
-            {activeDrug ?
+            {activeDrug && activeId > 0 ?
                 (<>
                 <ListGroup.Item>
                     <TooltipButton
@@ -176,6 +205,7 @@ const MedListGroup = (props: IProps): JSX.Element => {
                 }
             </>) : (
                 <ListGroup.Item>
+                    <p>Here we are</p>
                     <ul>
                         {getDrugsInPillbox(-activeId).map(d =>
                             (

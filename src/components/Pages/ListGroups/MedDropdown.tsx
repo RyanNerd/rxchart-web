@@ -1,4 +1,4 @@
-import React from 'reactn';
+import React, {useState} from 'reactn';
 
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
@@ -15,8 +15,7 @@ interface IDropdownItem {
 interface IProps {
     disabled?: boolean
     activeId: number // Negative indicates the record is a pillbox
-    medicineList: MedicineRecord[]
-    pillboxList: PillboxRecord[]
+    itemList: IDropdownItem[]
     onSelect: (s: number) => void
 }
 
@@ -29,54 +28,16 @@ const MedDropdown = (props: IProps): JSX.Element | null => {
     const {
         disabled = false,
         activeId,
-        medicineList,
-        pillboxList,
+        itemList,
         onSelect
     } = props;
 
     // Do not render unless we have the required props.
-    if (!medicineList || medicineList.length === 0) {
+    if (!itemList || itemList.length === 0) {
         return null;
     }
 
-    const buildDropdownItems = () => {
-        const items = [] as IDropdownItem[];
-        pillboxList.forEach(p =>{
-            items.push({
-                id: -(p.Id as number),
-                description: p.Name
-            });
-        });
-
-        items.push({
-            id: 0,
-            description: ''
-        })
-
-        medicineList.forEach(m => {
-            const otherNames = m.OtherNames ? ' (' + m.OtherNames + ') ' : '';
-            const strength = m.Strength ? m.Strength : '';
-            const description = m.Drug + ' ' + strength + otherNames;
-
-            items.push({
-                id: m.Id as number,
-                description
-            })
-        });
-
-        return items;
-    }
-
-    const activeItem = activeId < 0 ?
-        pillboxList.find(p => p.Id === Math.abs(activeId)) : medicineList.find(m => m.Id === activeId);
-    const title = activeId < 0 ? activeItem?.Name : activeItem?.Drug + " " + activeItem?.Strength;
-
-    // Do not render if there isn't an active item.
-    if (!activeItem) {
-        return null;
-    }
-
-    const itemList = buildDropdownItems();
+    const title = itemList.find(i => i.id === activeId)?.description;
 
     /**
      * Dropdown Items component
