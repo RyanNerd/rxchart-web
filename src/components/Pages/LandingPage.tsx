@@ -16,6 +16,7 @@ import PillboxPage from "./PillboxPage";
  * Landing Page - Tab Page Menu UI
  */
 const LandingPage = () => {
+    // todo: load all global lists here moving state at this level with each tab/component getting fed from here
     const [activeResident] = useGlobal('activeResident');
     const [activeTabKey, setActiveTabKey] = useGlobal('activeTabKey');
     const [signIn] = useGlobal('signIn');
@@ -26,7 +27,9 @@ const LandingPage = () => {
     const navBarElement = document.getElementsByClassName('nav nav-tabs');
     const [pillboxList] = useGlobal('pillboxList');
     const [pillboxItemList] = useGlobal('pillboxItemList');
+    const [medicineList] = useGlobal('medicineList');
 
+    // todo: can this be removed? Why is this being done?
     if (navBarElement && navBarElement.length > 0) {
         const navBar = navBarElement[0];
         navBar.classList.add('d-print-none');
@@ -70,7 +73,14 @@ const LandingPage = () => {
                 disabled={!apiKey || !activeResident}
                 eventKey="medicine"
                 title={<span className={activeTabKey === 'medicine' ? 'bld' : ''}>Rx</span>}>
-                <MedicinePage/>
+                <MedicinePage
+                    activeTabKey={activeTabKey}
+                    drugLogList={drugLogList}
+                    activeResident={activeResident}
+                    medicineList={medicineList}
+                    pillboxList={pillboxList}
+                    pillboxItemList={pillboxItemList}
+                />
             </Tab>
             <Tab
                 disabled={!apiKey || !activeResident}
@@ -80,7 +90,7 @@ const LandingPage = () => {
                 <ManageDrugPage/>
             </Tab>
             <Tab
-                disabled={!apiKey || !activeResident}
+                disabled={!apiKey || !activeResident || medicineList.length < 3}
                 eventKey="pillbox"
                 title={<span className={activeTabKey === 'pillbox' ? 'bld' : ''}>Pillbox</span>}
             >

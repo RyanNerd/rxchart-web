@@ -1,16 +1,11 @@
 import React, {useEffect, useGlobal, useState} from 'reactn';
 
-import {Button, Row, Col, Tab, Nav, Card, Alert} from "react-bootstrap";
+import {Alert, Button, Card, Col, Nav, Row, Tab} from "react-bootstrap";
 
 import PillboxEdit from "./Modals/PillboxEdit";
 import PillboxItemGrid from "./Grids/PillboxItemGrid";
 import TooltipButton from "../Buttons/TooltipButton";
-import {
-    newPillboxRecord,
-    PillboxItemRecord,
-    PillboxRecord,
-    ResidentRecord
-} from "../../types/RecordTypes";
+import {newPillboxRecord, PillboxItemRecord, PillboxRecord, ResidentRecord} from "../../types/RecordTypes";
 import ConfirmDialogModal from "./Modals/ConfirmDialogModal";
 import {BsColors} from "../../utility/common";
 
@@ -83,6 +78,7 @@ const PillboxPage = (props: IProps) => {
         const pillboxNotes = pillboxRecord.Notes || '';
         const active = activePillbox?.Id === id;
         const pillboxItems = pillboxItemList.filter(pbi => pbi.PillboxId === id);
+        const pillboxItemCount = (pillboxItems.filter(pbi => pbi.Quantity > 0)).length;
 
         return (
             <Tab.Pane
@@ -103,9 +99,14 @@ const PillboxPage = (props: IProps) => {
                             >
                                 {pillboxName}
                             </span>
-                            {" (drugs in the pillbox will be"}
-                            <span style={{color: BsColors.success, fontWeight: "bold"}}> green</span>
-                            {" and have a positive quantity)"}
+                            <span style={{color: BsColors.success, fontWeight: "bold"}}> Drugs</span>
+                            {" in the pillbox: "}
+                            <span style={{
+                                color: pillboxItemCount > 0 ? BsColors.success : BsColors.gray,
+                                fontWeight: pillboxItemCount > 0 ? "bold" : undefined
+                            }}>
+                                {pillboxItemCount}
+                            </span>
                         </h5>
                     </Card.Title>
                     <Card.Body>

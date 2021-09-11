@@ -15,7 +15,14 @@ import MedicineListGroup from "./ListGroups/MedicineListGroup";
 import OtcListGroup from "./ListGroups/OtcListGroup";
 import TabContent from "../../styles/common.css";
 import TooltipButton from "../Buttons/TooltipButton";
-import {DrugLogRecord, MedicineRecord, newMedicineRecord} from "../../types/RecordTypes";
+import {
+    DrugLogRecord,
+    MedicineRecord,
+    newMedicineRecord,
+    PillboxItemRecord,
+    PillboxRecord,
+    ResidentRecord
+} from "../../types/RecordTypes";
 import {
     calculateLastTaken,
     getCheckoutList,
@@ -23,25 +30,35 @@ import {
     getFormattedDate,
     getMedicineRecord
 } from "../../utility/common";
+import MedListGroup from "./ListGroups/MedListGroup";
+
+interface IProps {
+    drugLogList: DrugLogRecord[]
+    activeResident: ResidentRecord | null
+    activeTabKey: string
+    medicineList: MedicineRecord[]
+    pillboxList: PillboxRecord[]
+    pillboxItemList: PillboxItemRecord[]
+}
 
 /**
  * MedicinePage
  * UI for logging prescription medications
  * @return {JSX.Element | null}
  */
-const MedicinePage = (): JSX.Element | null => {
+const MedicinePage = (props: IProps): JSX.Element | null => {
     const [, setMedicine] = useGlobal('__medicine');
     const [, setOtcMedicine] = useGlobal('__otcMedicine');
     const [activeDrug, setActiveDrug] = useState<MedicineRecord | null>(null);
     const [activeOtcDrug, setActiveOtcDrug] = useState<MedicineRecord | null>(null);
-    const [activeResident] = useGlobal('activeResident');
-    const [activeTabKey, setActiveTabKey] = useGlobal('activeTabKey');
+    const [activeResident, setActiveResident] = useState(props.activeResident);
+    const [activeTabKey, setActiveTabKey] = useState(props.activeTabKey);
     const [checkoutDisabled, setCheckoutDisabled] = useState(!activeResident);
     const [drugLog, setDrugLog] = useGlobal('__drugLog');
-    const [drugLogList] = useGlobal('drugLogList');
+    const [drugLogList, setDrugLogList] = useState(props.drugLogList);
     const [gridHeight, setGridHeight] = useState('675px');
     const [lastTaken, setLastTaken] = useState<number | null>(null);
-    const [medicineList] = useGlobal('medicineList');
+    const [medicineList, setMedicineList] = useState(props.medicineList);
     const [filteredMedicineList, setFilteredMedicineList] = useState(medicineList);
     const [otcGroupShown, setOtcGroupShown] = useState<boolean>(false);
     const [otcList] = useGlobal('otcList');
@@ -50,6 +67,19 @@ const MedicinePage = (): JSX.Element | null => {
     const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
     const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
     const [showMedicineEdit, setShowMedicineEdit] = useState<MedicineRecord | null>(null);
+    const [pillboxList, setPillboxList] = useState(props.pillboxList);
+    const [pillboxItemList, setPillboxItemList] = useState(props.pillboxItemList);
+    const [activeId, setActiveId] = useState<number | null>(null);
+
+    // Refresh when props change
+    useEffect(() => {
+        setDrugLogList(props.drugLogList);
+        setActiveResident(props.activeResident);
+        setActiveTabKey(props.activeTabKey);
+        setMedicineList(props.medicineList);
+        setPillboxList(props.pillboxList);
+        setPillboxItemList(props.pillboxItemList);
+    }, [props]);
 
     // Set the activeDrug when the filteredMedicineList changes
     useEffect(() => {
@@ -57,6 +87,12 @@ const MedicinePage = (): JSX.Element | null => {
             setActiveDrug(filteredMedicineList[0]);
         } else {
             setActiveDrug(null);
+        }
+    }, [filteredMedicineList]);
+
+    useEffect(() => {
+        if (filteredMedicineList.length > 0) {
+            setActiveId(filteredMedicineList[0].Id);
         }
     }, [filteredMedicineList]);
 
@@ -252,19 +288,37 @@ const MedicinePage = (): JSX.Element | null => {
 
                     {!otcGroupShown && activeDrug &&
                     <Row className="mt-3">
-                        <MedicineListGroup
-                            activeDrug={activeDrug}
+                        <MedListGroup
+                            activeId={activeId || 0}
                             addDrugLog={(e: React.MouseEvent<HTMLElement>) => {
                                 e.preventDefault();
                                 addEditDrugLog();
                             }}
-                            canvasId={'med-barcode'}
-                            disabled={drugLog !== null}
-                            drugChanged={(drug: MedicineRecord) => setActiveDrug(drug)}
+                            canvasId="med-barcode"
+                            drugChanged={id => {
+                                setActiveId(id);
+                                setActiveDrug(medicineList.find(m => m.Id === id) || null);
+                            }}
                             lastTaken={lastTaken}
-                            logDrug={(amount: number) => handleLogDrugAmount(amount, activeDrug.Id as number)}
+                            logDrug={n => handleLogDrugAmount(n, activeDrug.Id as number)}
                             medicineList={filteredMedicineList}
+                            pillboxList={pillboxList}
+                            pillboxItemList={pillboxItemList}
                         />
+
+                        {/*<MedicineListGroup*/}
+                        {/*    activeDrug={activeDrug}*/}
+                        {/*    addDrugLog={(e: React.MouseEvent<HTMLElement>) => {*/}
+                        {/*        e.preventDefault();*/}
+                        {/*        addEditDrugLog();*/}
+                        {/*    }}*/}
+                        {/*    canvasId={'med-barcode'}*/}
+                        {/*    disabled={drugLog !== null}*/}
+                        {/*    drugChanged={(drug: MedicineRecord) => setActiveDrug(drug)}*/}
+                        {/*    lastTaken={lastTaken}*/}
+                        {/*    logDrug={(amount: number) => handleLogDrugAmount(amount, activeDrug.Id as number)}*/}
+                        {/*    medicineList={filteredMedicineList}*/}
+                        {/*/>*/}
                     </Row>
                     }
 

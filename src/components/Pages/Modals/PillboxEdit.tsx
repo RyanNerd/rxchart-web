@@ -83,7 +83,7 @@ const PillboxEdit = (props: IProps): JSX.Element | null => {
         return null;
     }
 
-    const titleType = pillboxInfo.Id ? 'Edit ' : 'Add ' as string;
+    const titleType = pillboxInfo.Id ? 'Edit Pillbox ' : 'Add Pillbox ' as string;
     const fullName = activeResident && clientFullName(activeResident);
 
     return (
@@ -96,16 +96,16 @@ const PillboxEdit = (props: IProps): JSX.Element | null => {
         >
             <Modal.Header closeButton>
                 <Modal.Title>
-                    {titleType} <b style={{color: "blue"}}><i>{"place holder"}</i></b>
+                    {titleType} <b style={{color: "blue"}}><i>{pillboxInfo.Name}</i></b>
                     <span> for </span><b style={{backgroundColor: "yellow"}}>{fullName}</b>
                 </Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
                 <Form>
-                    <Form.Group as={Row}>
+                    <Form.Group as={Row} controlId="pillbox-modal-name">
                         <Form.Label column sm="2" style={{userSelect: "none"}}>
-                            Drug Name
+                            Pillbox Name
                         </Form.Label>
 
                         <Col sm="4">
@@ -124,7 +124,7 @@ const PillboxEdit = (props: IProps): JSX.Element | null => {
                         </Col>
                     </Form.Group>
 
-                    <Form.Group as={Row} controlId="pillbox-notes">
+                    <Form.Group as={Row} controlId="pillbox-modal-notes">
                         <Form.Label column sm="2" style={{userSelect: "none"}}>
                             Notes
                         </Form.Label>

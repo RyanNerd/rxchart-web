@@ -165,7 +165,9 @@ const App = () => {
             }
 
             <div style={{marginLeft: "15px"}}>
-                <LandingPage/>
+                <React.StrictMode>
+                    <LandingPage/>
+                </React.StrictMode>
             </div>
 
             {showClientRoster && activeClient &&
