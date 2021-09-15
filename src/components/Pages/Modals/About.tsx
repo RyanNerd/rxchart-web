@@ -1,6 +1,6 @@
-import React from 'reactn';
+import React, {useEffect, useState} from 'reactn';
+
 import {Button, ListGroup, ListGroupItem, Modal, ModalBody, ModalFooter} from "react-bootstrap";
-import {useEffect, useState} from "react";
 import ModalHeader from "react-bootstrap/ModalHeader";
 
 interface IProps {

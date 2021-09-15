@@ -35,18 +35,15 @@ const LandingPage = () => {
         navBar.classList.add('d-print-none');
     }
 
+    // Enable or disable the Print Medicine Checkout button
     useEffect(() => {
-        if (apiKey && activeResident && drugLogList.length > 0) {
+        if (drugLogList.length > 0) {
             const checkoutList = getCheckoutList(drugLogList);
-            if (checkoutList.length > 0) {
-                setCheckoutDisabled(false);
-            } else {
-                setCheckoutDisabled(true);
-            }
+            setCheckoutDisabled(checkoutList.length <= 0)
         } else {
             setCheckoutDisabled(true);
         }
-    }, [activeResident, apiKey, drugLogList])
+    }, [drugLogList])
 
     return (
         <Tabs
@@ -90,15 +87,16 @@ const LandingPage = () => {
                 <ManageDrugPage/>
             </Tab>
             <Tab
-                disabled={!apiKey || !activeResident || medicineList.length < 3}
+                disabled={!apiKey || !activeResident}
                 eventKey="pillbox"
                 title={<span className={activeTabKey === 'pillbox' ? 'bld' : ''}>Pillbox</span>}
             >
                 <PillboxPage
-                    pillboxList={pillboxList}
-                    pillboxItemList={pillboxItemList}
                     activeResident={activeResident}
                     activeTabKey={activeTabKey}
+                    medicineList = {medicineList}
+                    pillboxList={pillboxList}
+                    pillboxItemList={pillboxItemList}
                 />
             </Tab>
             <Tab

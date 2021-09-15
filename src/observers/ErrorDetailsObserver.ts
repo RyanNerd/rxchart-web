@@ -14,7 +14,7 @@ const ErrorDetailsObserver = () => {
         if (errorDetails) {
             setActiveTabKey('error')
             .then(()=>setSignIn({organization: null, apiKey: null, success: null}))
-            .then(() =>setActiveResident(null));
+            .then(()=>setActiveResident(null));
         }
     }, [errorDetails, setSignIn, setActiveTabKey, setActiveResident])
 }

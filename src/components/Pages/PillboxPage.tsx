@@ -5,15 +5,23 @@ import {Alert, Button, Card, Col, Nav, Row, Tab} from "react-bootstrap";
 import PillboxEdit from "./Modals/PillboxEdit";
 import PillboxItemGrid from "./Grids/PillboxItemGrid";
 import TooltipButton from "../Buttons/TooltipButton";
-import {newPillboxRecord, PillboxItemRecord, PillboxRecord, ResidentRecord} from "../../types/RecordTypes";
+import {
+    MedicineRecord,
+    newPillboxRecord,
+    PillboxItemRecord,
+    PillboxRecord,
+    ResidentRecord
+} from "../../types/RecordTypes";
 import ConfirmDialogModal from "./Modals/ConfirmDialogModal";
 import {BsColors} from "../../utility/common";
+import getPillboxItems, {PillRowType} from "./Grids/getPillboxItems";
 
 interface IProps {
-    pillboxList: PillboxRecord[]
-    pillboxItemList: PillboxItemRecord[]
     activeResident: ResidentRecord|null
     activeTabKey: string
+    medicineList: MedicineRecord[]
+    pillboxItemList: PillboxItemRecord[]
+    pillboxList: PillboxRecord[]
 }
 
 const PillboxPage = (props: IProps) => {
@@ -23,7 +31,6 @@ const PillboxPage = (props: IProps) => {
     const [activeResident, setActiveResident] = useState(props.activeResident);
     const [activeTabKey, setActiveTabKey] = useState(props.activeTabKey);
     const [medicineList] = useGlobal('medicineList');
-    const [filteredMedicineList, setFilteredMedicineList] = useState(medicineList.filter(m => m.Active));
     const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord | null>(null);
     const [pillboxItemList, setPillboxItemList] = useState(props.pillboxItemList);
     const [pillboxList, setPillboxList] = useState(props.pillboxList);
@@ -31,18 +38,15 @@ const PillboxPage = (props: IProps) => {
 
     // Refresh when props change
     useEffect(() => {
-        setActiveResident(props.activeResident);
-        setPillboxList(props.pillboxList);
-        setPillboxItemList(props.pillboxItemList);
-        setActiveTabKey(props.activeTabKey);
-        setFilteredMedicineList(medicineList.filter((m) => m.Active));
         setActivePillbox(props.pillboxList?.length > 0 ? props.pillboxList[0] : null);
+        setActiveResident(props.activeResident);
+        setActiveTabKey(props.activeTabKey);
+        setPillboxItemList(props.pillboxItemList);
+        setPillboxList(props.pillboxList);
     }, [props, medicineList]);
 
     // Do not render if the pillbox tab is not the active tab
-    if (activeTabKey !== 'pillbox') {
-        return null;
-    }
+    if (activeTabKey !== 'pillbox') return null;
 
     /**
      * Left side Pill Buttons one for each Pillbox record
@@ -79,7 +83,7 @@ const PillboxPage = (props: IProps) => {
         const active = activePillbox?.Id === id;
         const pillboxItems = pillboxItemList.filter(pbi => pbi.PillboxId === id);
         const pillboxItemCount = (pillboxItems.filter(pbi => pbi.Quantity > 0)).length;
-
+        const pillboxGridItems = id ? getPillboxItems(medicineList, pillboxItemList, id) : [] as PillRowType[];
         return (
             <Tab.Pane
                 eventKey={id as number}
@@ -97,7 +101,7 @@ const PillboxPage = (props: IProps) => {
                                 borderRadius: ".25rem"
                             }}
                             >
-                                {pillboxName}
+                                {pillboxName.trim()}
                             </span>
                             <span style={{color: BsColors.success, fontWeight: "bold"}}> Drugs</span>
                             {" in the pillbox: "}
@@ -111,11 +115,8 @@ const PillboxPage = (props: IProps) => {
                     </Card.Title>
                     <Card.Body>
                         <PillboxItemGrid
-                            medicineList={filteredMedicineList}
+                            pillboxGridItems={pillboxGridItems}
                             onEdit={r => setPillboxItemObserver({action: "update", payload: r})}
-                            pillboxId={id as number}
-                            pillboxItemList={pillboxItems}
-                            residentId={activeResident?.Id as number}
                         />
                     </Card.Body>
                     {pillboxNotes.length > 0 &&
@@ -214,11 +215,10 @@ const PillboxPage = (props: IProps) => {
                 <PillboxEdit
                     onClose={
                         (r) => {
-                            setPillboxInfo(null);
-                            if (r) {
-                                setPillbox({action: "update", payload: r});
+                                setPillboxInfo(null);
+                                if (r) setPillbox({action: "update", payload: r});
                             }
-                        }
+
                     }
                     pillboxInfo={pillboxInfo}
                     show={true}

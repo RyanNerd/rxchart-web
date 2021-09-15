@@ -1,11 +1,9 @@
-import React, {useState} from 'reactn';
+import React from 'reactn';
 
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 
-import {MedicineRecord, PillboxRecord} from "../../../types/RecordTypes";
 import DisabledSpinner from "./DisabledSpinner";
-import {forEach} from "react-bootstrap/ElementChildren";
 
 interface IDropdownItem {
     id: number, // zero indicated a divider

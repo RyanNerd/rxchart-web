@@ -13,55 +13,57 @@ const PillboxItemObserver = (mm: IMedicineManager, activeClient: ResidentRecord 
     const [pillboxItemObserver, setPillboxItemObserver] = useGlobal('__pillboxItem');
 
     useEffect(() => {
-        if (pillboxItemObserver && activeClient && activeClient.Id) {
-            const clientId = activeClient.Id;
-            const action  = pillboxItemObserver.action;
-            const payload = pillboxItemObserver.payload;
-            switch (action) {
-                case "load": {
-                    if (Array.isArray(payload)) {
-                        setPillboxItemList(payload)
-                            .catch((err) => setErrorDetails(err))
-                            .finally(() => setPillboxItemObserver(null));
-                    } else {
-                        mm.loadPillboxItem(clientId)
-                            .then((pillboxItems) => {
-                                return setPillboxItemList(pillboxItems);
-                            })
-                            .catch((err) => setErrorDetails(err))
-                            .finally(() => setPillboxItemObserver(null));
-                    }
-                    break;
-                }
-
-                case "update": {
-                    const pillboxItemRecord = pillboxItemObserver.payload;
-                    if (pillboxItemRecord) {
-                        mm.updatePillboxItem(pillboxItemRecord as PillboxItemRecord)
-                            .then((pillboxItem) => {
-                                return setPillboxItemObserver({action: 'load', payload: pillboxItem})
-                            })
-                            .catch((err) => setErrorDetails(err))
-                            .finally(() => setPillboxItemObserver(null));
-                    }
-                    break;
-                }
-
-                case "delete": {
-                    const pillboxItemId = pillboxItemObserver.payload as number;
-                    mm.deletePillboxItem(pillboxItemId)
-                        .then((deleted) => {
-                            if (deleted) {
-                                return setPillboxItemObserver({action: 'load', payload: clientId});
+        if (pillboxItemObserver) {
+            if (activeClient) {
+                if (activeClient.Id) {
+                    const clientId = activeClient.Id;
+                    const action = pillboxItemObserver.action;
+                    const payload = pillboxItemObserver.payload;
+                    switch (action) {
+                        case "load": {
+                            if (Array.isArray(payload)) {
+                                setPillboxItemList(payload)
+                                    .catch((err) => setErrorDetails(err))
+                                    .finally(() => setPillboxItemObserver(null));
                             } else {
-                                return setErrorDetails(
-                                    new Error('unable to delete PillboxItem record. Id: ' + pillboxItemId)
-                                );
+                                mm.loadPillboxItem(clientId)
+                                    .then((pillboxItems) => {
+                                        return setPillboxItemList(pillboxItems);
+                                    })
+                                    .catch((err) => setErrorDetails(err))
+                                    .finally(() => setPillboxItemObserver(null));
                             }
-                        })
-                        .catch((err) => setErrorDetails(err))
-                        .finally(() => setPillboxItemObserver(null));
-                    break;
+                            break;
+                        }
+
+                        case "update": {
+                            const pillboxItemRecord = pillboxItemObserver.payload;
+                            if (pillboxItemRecord) {
+                                mm.updatePillboxItem(pillboxItemRecord as PillboxItemRecord)
+                                    .then((pillboxItem) => {
+                                        return setPillboxItemObserver({action: 'load', payload: pillboxItem})
+                                    })
+                                    .catch((err) => setErrorDetails(err))
+                                    .finally(() => setPillboxItemObserver(null));
+                            }
+                            break;
+                        }
+
+                        case "delete": {
+                            const pillboxItemId = pillboxItemObserver.payload as number;
+                            mm.deletePillboxItem(pillboxItemId)
+                                .then((deleted) => {
+                                    if (deleted) return setPillboxItemObserver({action: 'load', payload: clientId});
+                                    else {
+                                        return setErrorDetails(
+                                            new Error('unable to delete PillboxItem record. Id: ' + pillboxItemId));
+                                    }
+                                })
+                                .catch((err) => setErrorDetails(err))
+                                .finally(() => setPillboxItemObserver(null));
+                            break;
+                        }
+                    }
                 }
             }
         }

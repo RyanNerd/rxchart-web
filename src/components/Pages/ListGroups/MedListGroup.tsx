@@ -2,11 +2,11 @@ import ListGroup from "react-bootstrap/ListGroup";
 import LogButtons from "../../Buttons/LogButtons";
 import React, {useEffect} from 'reactn';
 import ShadowBox from "../../Buttons/ShadowBox";
-import TooltipButton from "../../Buttons/TooltipButton";
 import {MedicineRecord, PillboxItemRecord, PillboxRecord} from "../../../types/RecordTypes";
 import {drawBarcode} from "../../../utility/drawBarcode";
 import {getLastTakenVariant} from "../../../utility/common";
 import MedDropdown from "./MedDropdown";
+import {Button} from "react-bootstrap";
 
 interface IProps {
     activeId: number
@@ -43,15 +43,13 @@ const MedListGroup = (props: IProps): JSX.Element => {
         lastTaken,
         logDrug,
         medicineList,
-        pillboxList = [],
-        pillboxItemList
+        pillboxList = []
     } = props;
 
     const activeDrug = (medicineList.find(m => m.Id === props.activeId));
     const barCode = activeDrug?.Barcode || null;
     const notes = activeDrug?.Notes || null;
     const directions = activeDrug?.Directions || null;
-    const drugId = activeDrug?.Id || null;
     const fillDateText = activeDrug?.FillDateMonth ?
         activeDrug.FillDateMonth + '/' + activeDrug.FillDateDay + '/' + activeDrug.FillDateYear : null;
     const fillDateType = (fillDateText) ? new Date(fillDateText) : null;
@@ -67,22 +65,6 @@ const MedListGroup = (props: IProps): JSX.Element => {
         }
     }, [barCode, canvasId, canvasUpdated]);
 
-    /**
-     * Determine the tooltip text given the number of hours the drug was last taken
-     * @param {number | null} lastTaken
-     * @returns {string | null}
-     */
-    const tooltipText = (lastTaken: number | null): string | null => {
-        if (lastTaken === null) return null;
-        if (lastTaken <= 1) {
-            return activeDrug?.Drug + " taken in the last hour";
-        }
-        if (lastTaken <= 4) {
-            return activeDrug?.Drug + " recently taken";
-        }
-        return null;
-    }
-
     const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
 
     const shortenedDrugName = () => {
@@ -93,21 +75,6 @@ const MedListGroup = (props: IProps): JSX.Element => {
         } else {
             return drug.substr(0, lenCutOff);
         }
-    }
-
-    const getDrugsInPillbox = (pillboxId: number) => {
-        alert('build drugs. PillboxId: ' + pillboxId);
-        const meds = medicineList.filter(m => {
-            return m.Active &&
-                pillboxItemList.some(p => p.MedicineId === m.Id && p.PillboxId === pillboxId && p.Quantity > 0);
-        });
-        meds.forEach((m, i) => {
-            const pill = pillboxItemList.find(p => p.MedicineId === m.Id);
-            if (pill) {
-                meds[i].Quantity = pill.Quantity;
-            }
-        });
-        return meds;
     }
 
     // Build the items list here:
@@ -138,7 +105,7 @@ const MedListGroup = (props: IProps): JSX.Element => {
         return items;
     }
 
-
+    // todo: Get +Log all drugs in pillbox button working.
     return (
         <ListGroup>
             <ListGroup.Item active className="justify-content-left">
@@ -153,17 +120,15 @@ const MedListGroup = (props: IProps): JSX.Element => {
             {activeDrug && activeId > 0 ?
                 (<>
                 <ListGroup.Item>
-                    <TooltipButton
+                    <Button
                         size="sm"
                         disabled={disabled}
-                        tooltip={tooltipText(lastTaken)}
-                        placement="top"
                         className="mr-2"
                         variant={lastTakenVariant}
                         onClick={(e: React.MouseEvent<HTMLElement>) => addDrugLog(e)}
                     >
                         + Log Drug
-                    </TooltipButton>
+                    </Button>
 
                     <LogButtons
                         disabled={disabled}
@@ -205,16 +170,14 @@ const MedListGroup = (props: IProps): JSX.Element => {
                 }
             </>) : (
                 <ListGroup.Item>
-                    <p>Here we are</p>
-                    <ul>
-                        {getDrugsInPillbox(-activeId).map(d =>
-                            (
-                                <li>
-                                    {d.Drug} {" "} {d.Quantity}
-                                </li>
-                            )
-                        )}
-                    </ul>
+                    <Button
+                        size="sm"
+                        disabled={disabled}
+                        variant={lastTakenVariant}
+                        onClick={(e: React.MouseEvent<HTMLElement>) => alert('todo: log all drugs in pillbox')}
+                    >
+                        + Log ALL Drugs in Pillbox
+                    </Button>
                 </ListGroup.Item>
                 )
             }

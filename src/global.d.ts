@@ -13,6 +13,11 @@ declare module 'reactn/default' {
         increment: (global: State, dispatch: Dispatch, i: number) => Pick<State, 'count'>
     }
 
+    export interface IPillboxItemObserver {
+        action: 'load'|'update'|'delete',
+        payload?: null|pillboxItemRecord|PillboxItemRecord[]
+    }
+
     export interface State {
         __auth: {action: 'login' | 'logout', payload: {username: string, password: string} | null} | null
         activeResident: ResidentRecord | null
@@ -30,7 +35,7 @@ declare module 'reactn/default' {
         __errorDetails: any
         __medicine: {action: 'load' | 'update' | 'delete', payload: null | MedicineRecord | number} | null
         __pillbox: {action: 'load' | 'update' | 'delete', payload: null | PillboxRecord | number} | null
-        __pillboxItem: {action: 'load'|'update'|'delete', payload?: null|pillboxItemRecord|PillboxItemRecord[]} | null
+        __pillboxItem: TPillboxItemObserver | null
         medicineList: MedicineRecord[]
         pillboxList: PillboxRecord[]
         pillboxItemList: PillboxItemRecord[]

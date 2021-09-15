@@ -1,27 +1,17 @@
 import React from 'reactn';
+
 import Button from 'react-bootstrap/Button';
 import Table, {TableProps} from 'react-bootstrap/Table';
-import {MedicineRecord, PillboxItemRecord} from "../../../types/RecordTypes";
-import {BsColors, multiSort, randomString, SortDirection} from "../../../utility/common";
 import {ButtonGroup, Dropdown} from "react-bootstrap";
+import {PillboxItemRecord} from "../../../types/RecordTypes";
+
+import {BsColors, randomString} from "../../../utility/common";
+import {PillRowType} from "./getPillboxItems";
 
 interface IProps extends TableProps {
     [key: string]: any
-    medicineList: MedicineRecord[]
     onEdit: ( r: PillboxItemRecord) => void
-    pillboxId: number
-    pillboxItemList: PillboxItemRecord[]
-    residentId: number
-}
-
-type PillRowType = {
-    Drug: string
-    Id: number | null
-    MedicineId: number
-    PillboxId: number
-    Quantity: number | null
-    ResidentId: number
-    Strength: string | null
+    pillboxGridItems: PillRowType[]
 }
 
 /**
@@ -31,50 +21,19 @@ type PillRowType = {
  */
 const PillboxItemGrid = (props: IProps): JSX.Element | null => {
     const {
-        medicineList,
-        onEdit,
-        pillboxId,
-        pillboxItemList,
-        residentId
+        pillboxGridItems,
+        onEdit
     } = props;
 
     // No render if there isn't anything to render
-    if (medicineList.length === 0) {
+    if (pillboxGridItems.length === 0) {
         return null;
     }
-
-    // Build out pills<PillRowType>[]
-    const pillBuild = [] as PillRowType[];
-    medicineList.forEach((m) => {
-        const pillboxItemRecord = pillboxItemList.find((r) => r.MedicineId === m.Id);
-        if (pillboxItemRecord) {
-            pillBuild.push({
-                Drug: m.Drug,
-                Id: pillboxItemRecord.Id,
-                MedicineId: m.Id as number,
-                PillboxId: pillboxId,
-                Quantity: pillboxItemRecord.Quantity,
-                ResidentId: residentId,
-                Strength: m.Strength
-            })
-        } else {
-            pillBuild.push({
-                Drug: m.Drug,
-                Id: null,
-                MedicineId: m.Id as number,
-                PillboxId: pillboxId,
-                Quantity: 0,
-                ResidentId: residentId,
-                Strength: m.Strength
-            })
-        }
-    });
 
     // @ts-ignore multiSort isn't currently generic so the first argument throws:
     //      TS2345: Argument of type 'PillRowType[]' is not assignable to parameter of type '[]'.
     //      Target allows only 0 element(s) but source may have more.
     // @fixme: see above
-    const pills = multiSort(pillBuild, {Quantity: SortDirection.asc, Drug: SortDirection.desc});
 
     /**
      * Child component for the table for each medicine in the pill box.
@@ -88,6 +47,7 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
         const fontStyle = isInPillbox ? undefined : 'italic';
         const fontWeight = isInPillbox ? 'bold' : undefined;
         const quantity = pill.Quantity || 0;
+        const pillboxId = Math.abs(pill.PillboxId);
 
         return (
             <tr
@@ -111,7 +71,7 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
                             onEdit({
                                 Id: pill.Id,
                                 MedicineId: pill.MedicineId,
-                                PillboxId: pill.PillboxId,
+                                PillboxId: pillboxId,
                                 Quantity: quantity-1,
                                 ResidentId: pill.ResidentId
                             });
@@ -127,7 +87,7 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
                             onEdit({
                                 Id: pill.Id,
                                 MedicineId: pill.MedicineId,
-                                PillboxId: pill.PillboxId,
+                                PillboxId: pillboxId,
                                 Quantity: parseInt(k || "0"),
                                 ResidentId: pill.ResidentId
                             });
@@ -166,7 +126,7 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
                         onClick={((e) => {
                             onEdit({
                                 Id: pill.Id,
-                                PillboxId: pill.PillboxId,
+                                PillboxId: pillboxId,
                                 ResidentId: pill.ResidentId,
                                 MedicineId: pill.MedicineId,
                                 Quantity: quantity + 1
@@ -200,7 +160,7 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
             </tr>
             </thead>
             <tbody>
-                {pills.map((p) =>PillRow(p))}
+                {pillboxGridItems.map((p) =>PillRow(p))}
             </tbody>
         </Table>
     )

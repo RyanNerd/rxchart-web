@@ -30,6 +30,8 @@ import {
     getMedicineRecord
 } from "../../utility/common";
 import MedListGroup from "./ListGroups/MedListGroup";
+import PillboxItemGrid from "./Grids/PillboxItemGrid";
+import getPillboxItems from "./Grids/getPillboxItems";
 
 interface IProps {
     drugLogList: DrugLogRecord[]
@@ -48,6 +50,7 @@ interface IProps {
 const MedicinePage = (props: IProps): JSX.Element | null => {
     const [, setMedicine] = useGlobal('__medicine');
     const [, setOtcMedicine] = useGlobal('__otcMedicine');
+    const [, setPillboxItemObserver] = useGlobal('__pillboxItem');
     const [activeOtcDrug, setActiveOtcDrug] = useState<MedicineRecord | null>(null);
     const [activeResident, setActiveResident] = useState(props.activeResident);
     const [activeTabKey, setActiveTabKey] = useState(props.activeTabKey);
@@ -92,7 +95,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
     useEffect(() => {
         if (activeId > 0) {
-            const activeDrug = getActiveDrug();
+            const activeDrug = filteredMedicineList.find(m => m.Id === activeId)
             if (activeDrug && activeDrug.Id) {
                 setLastTaken(calculateLastTaken(activeDrug.Id, drugLogList));
             } else {
@@ -101,7 +104,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         } else {
             setLastTaken(null);
         }
-    }, [activeId, drugLogList]);
+    }, [activeId, drugLogList, filteredMedicineList]);
 
     // Set the local clientId state
     useEffect(() => {
@@ -148,8 +151,10 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         setOtcLogList(otc);
 
         // Also, set the gridHeight based on if there are OTC drugs logged
-        setGridHeight(otc.length > 0 ? "385px" : "685px");
-    }, [drugLogList, otcList]);
+        // FIXME: NOW figure out grid height and so fourth. ONLY Show OTC grid if OTC item is selected instead
+        // of this complex and unneeded height calculation
+        setGridHeight(otc.length > 0 && activeId > 0 ? "385px" : "685px");
+    }, [drugLogList, otcList, activeId]);
 
     // If there isn't an activeResident or this isn't the active tab then do not render
     if (!residentId || activeTabKey !== 'medicine') {
@@ -350,20 +355,27 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             lastTaken={lastTaken}
                         />
 
-                        {/* todo: drugId < 0 then ??? */}
-                        <DrugLogGrid
-                            drugLog={drugLogList}
-                            drugId={activeId}
-                            columns={['Created', 'Updated', 'Notes', 'Out', 'In']}
-                            onEdit={(e, r) => {
-                                e.preventDefault();
-                                addEditDrugLog(r);
-                            }}
-                            onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
-                        />
+                        {activeId > 0 ?
+                            (<DrugLogGrid
+                                    drugLog={drugLogList}
+                                    drugId={activeId}
+                                    columns={['Created', 'Updated', 'Notes', 'Out', 'In']}
+                                    onEdit={(e, r) => {
+                                        e.preventDefault();
+                                        addEditDrugLog(r);
+                                    }}
+                                    onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
+                                />
+                            ) : (
+                                <PillboxItemGrid
+                                    pillboxGridItems={getPillboxItems(medicineList, pillboxItemList, activeId)}
+                                    onEdit={r => setPillboxItemObserver({action: "update", payload: r})}
+                                />
+                            )
+                        }
                     </ListGroup.Item>
 
-                    {otcLogList.length > 0 &&
+                    {otcLogList.length > 0 && activeId > 0 &&
                     <ListGroup.Item style={{height: gridHeight, overflow: "auto"}}>
                         <h5 className="mb-2" style={{textAlign: "center"}}>OTC History</h5>
                         <DrugLogGrid
