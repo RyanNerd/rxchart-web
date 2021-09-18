@@ -4,7 +4,7 @@ import MedicineManager from "../managers/MedicineManager";
 import MedicineProvider, {IMedicineProvider} from "../providers/MedicineProvider";
 import ResidentManager from "../managers/ResidentManager";
 import ResidentProvider, {IResidentProvider} from "../providers/ResidentProvider";
-import {DrugLogRecord, MedicineRecord, PillboxItemRecord, ResidentRecord} from "../types/RecordTypes";
+import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord, ResidentRecord} from "../types/RecordTypes";
 import {State} from "reactn/default";
 import AuthManager from "../managers/AuthManager";
 import PillboxProvider, {IPillboxProvider} from "../providers/PillboxProvider";
@@ -67,6 +67,7 @@ const getInitialState = () => {
         __medicine: null,
         __pillbox: null,
         __pillboxItem: null,
+        pillboxList: [] as PillboxRecord[],
         pillboxItemList: [] as PillboxItemRecord[],
         medicineList: [] as MedicineRecord[],
         medicineManager: MedicineManager(

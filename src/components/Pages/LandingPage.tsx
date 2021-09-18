@@ -28,6 +28,7 @@ const LandingPage = () => {
     const [pillboxList] = useGlobal('pillboxList');
     const [pillboxItemList] = useGlobal('pillboxItemList');
     const [medicineList] = useGlobal('medicineList');
+    const [otcList] = useGlobal('otcList');
 
     // todo: can this be removed? Why is this being done?
     if (navBarElement && navBarElement.length > 0) {
@@ -75,6 +76,7 @@ const LandingPage = () => {
                     drugLogList={drugLogList}
                     activeResident={activeResident}
                     medicineList={medicineList}
+                    otcList={otcList}
                     pillboxList={pillboxList}
                     pillboxItemList={pillboxItemList}
                 />

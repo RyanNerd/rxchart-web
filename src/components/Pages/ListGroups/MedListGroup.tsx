@@ -1,28 +1,29 @@
+import React, {useEffect, useState} from 'reactn';
+
 import ListGroup from "react-bootstrap/ListGroup";
-import LogButtons from "../../Buttons/LogButtons";
-import React, {useEffect} from 'reactn';
-import ShadowBox from "../../Buttons/ShadowBox";
-import {MedicineRecord, PillboxItemRecord, PillboxRecord} from "../../../types/RecordTypes";
-import {drawBarcode} from "../../../utility/drawBarcode";
-import {getLastTakenVariant} from "../../../utility/common";
-import MedDropdown from "./MedDropdown";
 import {Button} from "react-bootstrap";
 
+import LogButtons from "../../Buttons/LogButtons";
+import MedDropdown from "./MedDropdown";
+import ShadowBox from "../../Buttons/ShadowBox";
+import {MedicineRecord, newMedicineRecord, PillboxItemRecord, PillboxRecord} from "../../../types/RecordTypes";
+import {drawBarcode} from "../../../utility/drawBarcode";
+import {getLastTakenVariant, randomString} from "../../../utility/common";
+import TooltipButton from "../../Buttons/TooltipButton";
+
 interface IProps {
-    activeId: number
+    activeMed: MedicineRecord | null
     addDrugLog: (e: React.MouseEvent<HTMLElement>) => void
-    canvasId: string
-    canvasUpdated?: (c: HTMLCanvasElement) => void
-    disabled?: boolean
-    drugChanged: (i: number) => void
-    lastTaken: number | null
     logDrug: (n: number) => void
+    itemChanged: (i: number) => void
+    canvasUpdated?: (c: HTMLCanvasElement) => void
+    canvasId?: string
+    disabled?: boolean
     medicineList: MedicineRecord[]
-    pillboxList: PillboxRecord[]
-    pillboxItemList: PillboxItemRecord[]
+    lastTaken: number | null
 }
 
-interface IDropdownItem {
+export interface IMedDropdownItem {
     id: number, // zero indicated a divider
     description: string
 }
@@ -34,27 +35,27 @@ interface IDropdownItem {
  */
 const MedListGroup = (props: IProps): JSX.Element => {
     const {
-        activeId,
+        activeMed = null,
         addDrugLog,
-        canvasId,
-        canvasUpdated,
-        disabled = false,
-        drugChanged,
-        lastTaken,
         logDrug,
+        itemChanged,
+        canvasUpdated,
+        canvasId = randomString(),
+        disabled = false,
         medicineList,
-        pillboxList = []
+        lastTaken = null
     } = props;
 
-    const activeDrug = (medicineList.find(m => m.Id === props.activeId));
-    const barCode = activeDrug?.Barcode || null;
-    const notes = activeDrug?.Notes || null;
-    const directions = activeDrug?.Directions || null;
-    const fillDateText = activeDrug?.FillDateMonth ?
-        activeDrug.FillDateMonth + '/' + activeDrug.FillDateDay + '/' + activeDrug.FillDateYear : null;
+    const barCode = activeMed?.Barcode || null;
+    const notes = activeMed?.Notes || null;
+    const directions = activeMed?.Directions || null;
+    const fillDateText = activeMed?.FillDateMonth ?
+        activeMed.FillDateMonth + '/' + activeMed.FillDateDay + '/' + activeMed.FillDateYear : null;
     const fillDateType = (fillDateText) ? new Date(fillDateText) : null;
     const fillDateOptions = {month: '2-digit', day: '2-digit', year: 'numeric'} as Intl.DateTimeFormatOptions;
     const fillDate = (fillDateType) ? fillDateType.toLocaleString('en-US', fillDateOptions) : null;
+    const itemList = [] as IMedDropdownItem[];
+    medicineList.forEach(m => itemList.push({id: m.Id as number, description: m.Drug}));
 
     // Update the barcode image if the barcode has changed
     useEffect(() => {
@@ -63,13 +64,13 @@ const MedListGroup = (props: IProps): JSX.Element => {
         if (canvasUpdated && canvas) {
             canvasUpdated(canvas);
         }
-    }, [barCode, canvasId, canvasUpdated]);
+    }, [barCode, canvasUpdated]);
 
     const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
 
     const shortenedDrugName = () => {
-        const lenCutOff = activeDrug?.OTC ? 10 : 35;
-        const drug = activeDrug?.Drug || '';
+        const lenCutOff = activeMed?.OTC ? 10 : 35;
+        const drug = activeMed?.Drug || '';
         if (drug.length > lenCutOff) {
             return drug.substr(0, lenCutOff) + '...';
         } else {
@@ -77,47 +78,56 @@ const MedListGroup = (props: IProps): JSX.Element => {
         }
     }
 
-    // Build the items list here:
-    const getDropdownItems = () => {
-        const items = [] as IDropdownItem[];
-        pillboxList.forEach(p => {
-            items.push({
-                id: -(p.Id as number),
-                description: p.Name
-            });
-        });
-
-        items.push({
-            id: 0,
-            description: ''
-        })
-
-        medicineList.forEach(m => {
-            const otherNames = m.OtherNames ? ' (' + m.OtherNames + ') ' : '';
-            const strength = m.Strength ? m.Strength : '';
-            const description = m.Drug + ' ' + strength + otherNames;
-
-            items.push({
-                id: m.Id as number,
-                description
-            })
-        });
-        return items;
-    }
-
-    // todo: Get +Log all drugs in pillbox button working.
+    // todo: whole lot of reorganizing this stuff
     return (
         <ListGroup>
-            <ListGroup.Item active className="justify-content-left">
-                <MedDropdown
-                    disabled={disabled}
-                    itemList={getDropdownItems()}
-                    activeId={activeId}
-                    onSelect={i => drugChanged(i)}
-                />
+            <ListGroup.Item>
+                <TooltipButton
+                    className="mr-1"
+                    tooltip="Manually Add New Medicine"
+                    size="sm"
+                    variant="info"
+                    onClick={(e: React.MouseEvent<HTMLElement>) => {
+                        e.preventDefault();
+                        // setShowMedicineEdit({
+                        //     ...newMedicineRecord,
+                        //     OTC: false,
+                        //     ResidentId: residentId,
+                        //     FillDateYear: "",
+                        //     FillDateMonth: "",
+                        //     FillDateDay: ""
+                        // });
+                    }}
+                >
+                    + Medicine
+                </TooltipButton>
+
+                <Button
+                    size="sm"
+                    variant="info"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        // const activeDrug = getActiveDrug();
+                        // setShowMedicineEdit({...activeDrug} as MedicineRecord);
+                    }}
+                >
+                    {/*Edit <b>{getActiveDrug()?.Drug}</b>*/}
+                    Edit
+                </Button>
             </ListGroup.Item>
 
-            {activeDrug && activeId > 0 ?
+            <ListGroup.Item active className="justify-content-left">
+                {activeMed?.Id &&
+                <MedDropdown
+                    disabled={disabled}
+                    itemList={itemList}
+                    activeId={activeMed.Id}
+                    onSelect={i => itemChanged(i)}
+                />
+                }
+            </ListGroup.Item>
+
+            {activeMed?
                 (<>
                 <ListGroup.Item>
                     <Button
@@ -142,7 +152,7 @@ const MedListGroup = (props: IProps): JSX.Element => {
                 {directions && directions.length > 0 &&
                 <ListGroup.Item>
                     <ShadowBox>
-                        <b>Directions: </b>{activeDrug.Directions}
+                        <b>Directions: </b>{activeMed.Directions}
                     </ShadowBox>
                 </ListGroup.Item>
                 }
@@ -150,7 +160,7 @@ const MedListGroup = (props: IProps): JSX.Element => {
                 {notes && notes.length > 0 &&
                 <ListGroup.Item>
                     <ShadowBox>
-                        <b>Notes: </b>{activeDrug.Notes}
+                        <b>Notes: </b>{activeMed.Notes}
                     </ShadowBox>
                 </ListGroup.Item>
                 }

@@ -18,7 +18,6 @@ interface IProps {
     editOtcMedicine: () => void
     logOtcDrug: (e: React.MouseEvent<HTMLElement>) => void
     logOtcDrugAmount: (n: number) => void
-    onDisplay?: (s: boolean) => void
     otcList: MedicineRecord[]
     setActiveOtcDrug: (d: MedicineRecord) => void
 }
@@ -36,7 +35,6 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
         editOtcMedicine,
         logOtcDrug,
         logOtcDrugAmount,
-        onDisplay,
         otcList,
         setActiveOtcDrug
     } = props;
@@ -72,34 +70,29 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
         }
     }, [otcList, searchText])
 
-    // Invoke callback when the OtcListGroup is shown or hidden
-    useEffect(() => {
-        if (onDisplay) {
-            onDisplay(showOtc);
-        }
-    }, [showOtc, onDisplay])
-
+    // TODO: Remove Collapse or move it up to MedicinePage
+    // FIXME: Set focus via other means to the search textbox
     return (
         <ListGroup>
-            <ListGroupItem
-                action
-                active={!showOtc}
-                as="button"
-                disabled={disabled}
-                onClick={() => setShowOtc(!showOtc)}
-                style={{height: "35px", verticalAlign: "middle", lineHeight: "100%", zIndex: 0}}
-            >
-                <div style={{textAlign: "center"}}>
-                    {disabled ?
-                        (<DisabledSpinner>{showOtc ? 'Hide OTC' : 'Show OTC'}</DisabledSpinner>)
-                        :
-                        (<>{showOtc ? 'Hide OTC' : 'Show OTC'}</>)
-                    }
-                </div>
-            </ListGroupItem>
+            {/*<ListGroupItem*/}
+            {/*    action*/}
+            {/*    active={!showOtc}*/}
+            {/*    as="button"*/}
+            {/*    disabled={disabled}*/}
+            {/*    onClick={() => setShowOtc(!showOtc)}*/}
+            {/*    style={{height: "35px", verticalAlign: "middle", lineHeight: "100%", zIndex: 0}}*/}
+            {/*>*/}
+            {/*    <div style={{textAlign: "center"}}>*/}
+            {/*        {disabled ?*/}
+            {/*            (<DisabledSpinner>{showOtc ? 'Hide OTC' : 'Show OTC'}</DisabledSpinner>)*/}
+            {/*            :*/}
+            {/*            (<>{showOtc ? 'Hide OTC' : 'Show OTC'}</>)*/}
+            {/*        }*/}
+            {/*    </div>*/}
+            {/*</ListGroupItem>*/}
 
             <Collapse
-                in={showOtc}
+                in={true}
                 onEntered={() => searchRef?.current?.focus()}
             >
                 <ListGroup.Item disabled={disabled}>
@@ -177,7 +170,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                 </ListGroup.Item>
             </Collapse>
 
-            <Collapse in={showOtc}>
+            <Collapse in={true}>
                 <ListGroup.Item disabled={disabled}>
                     <div style={{height: "450px", overflow: "auto"}}>
                         <Table

@@ -4,16 +4,9 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import {Alert, ListGroup} from "react-bootstrap";
-
-import Confirm from "./Modals/Confirm";
-import DrugLogEdit from "./Modals/DrugLogEdit";
-import DrugLogGrid from "./Grids/DrugLogGrid";
-import LastTakenButton from "../Buttons/LastTakenButton";
-import MedicineEdit from "./Modals/MedicineEdit";
-import OtcListGroup from "./ListGroups/OtcListGroup";
+import {Alert, ToggleButton} from "react-bootstrap";
 import TabContent from "../../styles/common.css";
-import TooltipButton from "../Buttons/TooltipButton";
+import MedListGroup, {IMedDropdownItem} from "./ListGroups/MedListGroup";
 import {
     DrugLogRecord,
     MedicineRecord,
@@ -29,9 +22,22 @@ import {
     getFormattedDate,
     getMedicineRecord
 } from "../../utility/common";
-import MedListGroup from "./ListGroups/MedListGroup";
 import PillboxItemGrid from "./Grids/PillboxItemGrid";
 import getPillboxItems from "./Grids/getPillboxItems";
+import OtcListGroup from "./ListGroups/OtcListGroup";
+import ListGroup from "react-bootstrap/ListGroup";
+import LastTakenButton from "../Buttons/LastTakenButton";
+import DrugLogGrid from "./Grids/DrugLogGrid";
+import DrugLogEdit from "./Modals/DrugLogEdit";
+import Confirm from './Modals/Confirm';
+import MedicineEdit from "./Modals/MedicineEdit";
+import PillboxListGroup from "./ListGroups/PillboxListGroup";
+
+enum LIST_TYPE {
+    Medicine = "med",
+    OTC = "otc",
+    Pillbox = "pillbox"
+}
 
 interface IProps {
     drugLogList: DrugLogRecord[]
@@ -40,6 +46,7 @@ interface IProps {
     medicineList: MedicineRecord[]
     pillboxList: PillboxRecord[]
     pillboxItemList: PillboxItemRecord[]
+    otcList: MedicineRecord[]
 }
 
 /**
@@ -51,60 +58,49 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [, setMedicine] = useGlobal('__medicine');
     const [, setOtcMedicine] = useGlobal('__otcMedicine');
     const [, setPillboxItemObserver] = useGlobal('__pillboxItem');
-    const [activeOtcDrug, setActiveOtcDrug] = useState<MedicineRecord | null>(null);
+
     const [activeResident, setActiveResident] = useState(props.activeResident);
     const [activeTabKey, setActiveTabKey] = useState(props.activeTabKey);
     const [checkoutDisabled, setCheckoutDisabled] = useState(!activeResident);
     const [drugLog, setDrugLog] = useGlobal('__drugLog');
-    const [drugLogList, setDrugLogList] = useState(props.drugLogList);
-    const [gridHeight, setGridHeight] = useState('675px');
-    const [lastTaken, setLastTaken] = useState<number | null>(null);
-    const [medicineList, setMedicineList] = useState(props.medicineList);
-    const [filteredMedicineList, setFilteredMedicineList] = useState(medicineList);
-    const [otcGroupShown, setOtcGroupShown] = useState<boolean>(false);
-    const [otcList] = useGlobal('otcList');
-    const [otcLogList, setOtcLogList] = useState<DrugLogRecord[]>([]);
+
     const [residentId, setResidentId] = useState<number | null>(activeResident?.Id || null);
     const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
     const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
     const [showMedicineEdit, setShowMedicineEdit] = useState<MedicineRecord | null>(null);
-    const [pillboxList, setPillboxList] = useState(props.pillboxList);
-    const [pillboxItemList, setPillboxItemList] = useState(props.pillboxItemList);
-    const [activeId, setActiveId] = useState(0);
+    const [lastTaken, setLastTaken] = useState<number | null>(null);
 
-    /**
-     * Convenience function to get the MedicineRecord given the Id
-     */
-    const getActiveDrug = () => {return filteredMedicineList.find(m => m.Id === activeId)};
+    // Lists from props
+    const [drugLogList, setDrugLogList] = useState(props.drugLogList);
+    const [medicineList, setMedicineList] = useState(props.medicineList);
+    const [otcList, setOtcList] = useState(props.otcList);
+    const [otcLogList, setOtcLogList] = useState<DrugLogRecord[]>([]);
+    const [pillboxItemList, setPillboxItemList] = useState(props.pillboxItemList);
+    const [pillboxList, setPillboxList] = useState(props.pillboxList);
+
+    // Display state and active Items
+    // fixme: Default activeMed
+    const [listType, setListType] = useState<LIST_TYPE>(LIST_TYPE.Medicine);
+    const [activeMed, setActiveMed] = useState<MedicineRecord | null>(medicineList.length > 0 ? medicineList[0] : null);
+    const [activeOtc, setActiveOtc] = useState<MedicineRecord | null>(otcList.length > 0 ? otcList[0] : null);
+    const [activePillbox, setActivePillbox] = useState<PillboxRecord|null>(pillboxList.length>0? pillboxList[0] : null);
 
     // Refresh when props change
     useEffect(() => {
         setDrugLogList(props.drugLogList);
         setActiveResident(props.activeResident);
         setActiveTabKey(props.activeTabKey);
-        setMedicineList(props.medicineList);
+        setMedicineList(props.medicineList.filter(m => m.Active) || []); // On this page we only care about active
+        setOtcList(props.otcList);
         setPillboxList(props.pillboxList);
         setPillboxItemList(props.pillboxItemList);
+        setListType(LIST_TYPE.Medicine);
     }, [props]);
-
-    // When the filteredMedicineList changes reset the activeId to the first element Id of the array.
-    useEffect(() => {
-        setActiveId(filteredMedicineList.length > 0 ? filteredMedicineList[0].Id || 0 : 0);
-    }, [filteredMedicineList]);
 
     // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
     useEffect(() => {
-        if (activeId > 0) {
-            const activeDrug = filteredMedicineList.find(m => m.Id === activeId)
-            if (activeDrug && activeDrug.Id) {
-                setLastTaken(calculateLastTaken(activeDrug.Id, drugLogList));
-            } else {
-                setLastTaken(null);
-            }
-        } else {
-            setLastTaken(null);
-        }
-    }, [activeId, drugLogList, filteredMedicineList]);
+        setLastTaken(activeMed?.Id ? calculateLastTaken(activeMed.Id, drugLogList) : null);
+    }, [activeMed, drugLogList, medicineList]);
 
     // Set the local clientId state
     useEffect(() => {
@@ -128,17 +124,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
     // Set the activeOtcDrug when the otcList changes.
     useEffect(() => {
-        if (otcList.length > 0) {
-            setActiveOtcDrug(otcList[0]);
-        } else {
-            setActiveOtcDrug(null);
-        }
+        setActiveOtc(otcList.length > 0 ? otcList[0] : null);
     }, [otcList]);
-
-    // Refresh the filteredMedicineList when medicineList changes
-    useEffect(() => {
-        setFilteredMedicineList(medicineList.filter((m) => m.Active));
-    }, [medicineList]);
 
     // We only want to list the OTC drugs on this page that the resident has taken.
     useEffect(() => {
@@ -149,12 +136,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             });
         }) : [];
         setOtcLogList(otc);
-
-        // Also, set the gridHeight based on if there are OTC drugs logged
-        // FIXME: NOW figure out grid height and so fourth. ONLY Show OTC grid if OTC item is selected instead
-        // of this complex and unneeded height calculation
-        setGridHeight(otc.length > 0 && activeId > 0 ? "385px" : "685px");
-    }, [drugLogList, otcList, activeId]);
+    }, [drugLogList, otcList]);
 
     // If there isn't an activeResident or this isn't the active tab then do not render
     if (!residentId || activeTabKey !== 'medicine') {
@@ -170,7 +152,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         const drugLogRecord = drugLogInfo ? {...drugLogInfo} : {
             Id: null,
             ResidentId: residentId,
-            MedicineId: activeId,
+            MedicineId: activeMed?.Id,
             Notes: ""
         } as DrugLogRecord;
         setShowDrugLog(drugLogRecord);
@@ -184,7 +166,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         const drugLogRecord = drugLogInfo ? {...drugLogInfo} : {
             Id: null,
             ResidentId: residentId,
-            MedicineId: activeOtcDrug?.Id,
+            MedicineId: activeOtc?.Id,
             Notes: ""
         } as DrugLogRecord;
         setShowDrugLog(drugLogRecord);
@@ -213,7 +195,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      * @param {number} amount
      */
     const handleLogOtcDrugAmount = (amount: number) => {
-        const drugId = activeOtcDrug?.Id as number;
+        const drugId = activeOtc?.Id as number;
         if (drugId) {
             const notes = amount.toString();
             const drugLogInfo = {
@@ -241,41 +223,52 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         <>
             <Form className={TabContent} as={Row}>
                 <Col lg="4">
-                    {!otcGroupShown &&
                     <Row>
-                        <TooltipButton
-                            className="mr-1"
-                            tooltip="Manually Add New Medicine"
+                        <ToggleButton
+                            key="med-list-group-med-btn"
+                            id="med-list-group-med-radio-btn"
+                            type="radio"
                             size="sm"
-                            variant="info"
-                            onClick={(e: React.MouseEvent<HTMLElement>) => {
-                                e.preventDefault();
-                                setShowMedicineEdit({
-                                    ...newMedicineRecord,
-                                    OTC: false,
-                                    ResidentId: residentId,
-                                    FillDateYear: "",
-                                    FillDateMonth: "",
-                                    FillDateDay: ""
-                                });
-                            }}
+                            variant="outline-success"
+                            name="radio-med-list-group"
+                            value={LIST_TYPE.Medicine}
+                            checked={listType === LIST_TYPE.Medicine}
+                            onChange={(e) => setListType(LIST_TYPE.Medicine)}
                         >
-                            + Medicine
-                        </TooltipButton>
+                            <span className="ml-2">Medicine</span>
+                        </ToggleButton>
 
-                        {activeId > 0 &&
-                        <Button
+                        <ToggleButton
+                            key="med-list-group-otc-btn"
+                            id="med-list-group-otc-radio-btn"
+                            className="ml-2"
+                            disabled={otcList?.length === 0}
+                            type="radio"
                             size="sm"
-                            variant="info"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                const activeDrug = getActiveDrug();
-                                setShowMedicineEdit({...activeDrug} as MedicineRecord);
-                            }}
+                            variant="outline-success"
+                            name="radio-med-list-group"
+                            value={LIST_TYPE.OTC}
+                            checked={listType === LIST_TYPE.OTC}
+                            onChange={(e) => setListType(LIST_TYPE.OTC)}
                         >
-                            Edit <b>{getActiveDrug()?.Drug}</b>
-                        </Button>
-                        }
+                            <span className="ml-2">OTC</span>
+                        </ToggleButton>
+
+                        <ToggleButton
+                            key="med-list-group-pill-btn"
+                            id="med-list-group-pill-radio-btn"
+                            className="ml-2"
+                            size="sm"
+                            type="radio"
+                            disabled={pillboxList.length === 0}
+                            variant="outline-success"
+                            name="radio-med-list-group"
+                            value={LIST_TYPE.Pillbox}
+                            checked={listType === LIST_TYPE.Pillbox}
+                            onChange={(e) => setListType(LIST_TYPE.Pillbox)}
+                        >
+                            <span className="ml-2">Pillbox</span>
+                        </ToggleButton>
 
                         <Button
                             className="ml-3"
@@ -289,41 +282,39 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             Print Medicine Checkout
                         </Button>
                     </Row>
-                    }
 
-                    {!otcGroupShown &&
-                    <Row className="mt-3">
+                    <Row>
+                        {listType === LIST_TYPE.Medicine &&
                         <MedListGroup
-                            activeId={activeId}
+                            activeMed={activeMed}
                             addDrugLog={(e: React.MouseEvent<HTMLElement>) => {
                                 e.preventDefault();
                                 addEditDrugLog();
                             }}
                             canvasId="med-barcode"
-                            drugChanged={id => setActiveId(id)}
+                            itemChanged={id => {
+                                setActiveMed(medicineList.find(m => m.Id === id) || null)
+                            }}
                             lastTaken={lastTaken}
                             logDrug={n => {
-                                const activeDrug = getActiveDrug();
-                                handleLogDrugAmount(n, activeDrug?.Id as number)
+                                // const activeDrug = getActiveDrug();
+                                // handleLogDrugAmount(n, activeDrug?.Id as number)
                             }}
-                            medicineList={filteredMedicineList}
-                            pillboxList={pillboxList}
-                            pillboxItemList={pillboxItemList}
+                            medicineList={medicineList}
                         />
-                    </Row>
-                    }
+                        }
 
-                    {activeOtcDrug &&
-                    <Row className={otcGroupShown ? "" : "mt-4"}>
+
+                        {listType === LIST_TYPE.OTC && activeOtc &&
                         <OtcListGroup
                             disabled={drugLog !== null}
                             addOtcMedicine={() => {
                                 setShowMedicineEdit({...newMedicineRecord, OTC: true});
                             }}
                             editOtcMedicine={() => {
-                                setShowMedicineEdit({...activeOtcDrug} as MedicineRecord);
+                                setShowMedicineEdit({...activeOtc} as MedicineRecord);
                             }}
-                            activeOtcDrug={activeOtcDrug}
+                            activeOtcDrug={activeOtc}
                             drugLogList={drugLogList}
                             logOtcDrugAmount={(n) => handleLogOtcDrugAmount(n)}
                             logOtcDrug={(e) => {
@@ -331,52 +322,50 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                                 addEditOtcLog();
                             }}
                             otcList={otcList}
-                            setActiveOtcDrug={(d) => setActiveOtcDrug(d)}
-                            onDisplay={(d) => setOtcGroupShown(d)}
+                            setActiveOtcDrug={(d) => setActiveOtc(d)}
                         />
+                        }
+
+                        {listType === LIST_TYPE.Pillbox &&
+                        <PillboxListGroup/>
+                        }
                     </Row>
-                    }
                 </Col>
 
-                {activeId &&
                 <ListGroup as={Col} className="mx-5">
-                    <ListGroup.Item style={{height: gridHeight, overflow: "auto", textAlign: "center"}}>
+                    {listType === LIST_TYPE.Medicine &&
+                    <ListGroup.Item style={{textAlign: "center"}}>
                         <Button
                             size="lg"
                             className="hover-underline-animation"
                             variant="link"
                             target="_blank"
-                            href={"https://goodrx.com/" + getActiveDrug()?.Drug}
+                            href={"https://goodrx.com/" + activeMed?.Drug}
                         >
-                            {getActiveDrug()?.Drug}
+                            {activeMed?.Drug}
                         </Button>
 
                         <LastTakenButton
                             lastTaken={lastTaken}
                         />
 
-                        {activeId > 0 ?
-                            (<DrugLogGrid
-                                    drugLog={drugLogList}
-                                    drugId={activeId}
-                                    columns={['Created', 'Updated', 'Notes', 'Out', 'In']}
-                                    onEdit={(e, r) => {
-                                        e.preventDefault();
-                                        addEditDrugLog(r);
-                                    }}
-                                    onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
-                                />
-                            ) : (
-                                <PillboxItemGrid
-                                    pillboxGridItems={getPillboxItems(medicineList, pillboxItemList, activeId)}
-                                    onEdit={r => setPillboxItemObserver({action: "update", payload: r})}
-                                />
-                            )
+                        {activeMed?.Id &&
+                        <DrugLogGrid
+                            drugLog={drugLogList}
+                            drugId={activeMed.Id}
+                            columns={['Created', 'Updated', 'Notes', 'Out', 'In']}
+                            onEdit={(e, r) => {
+                                e.preventDefault();
+                                addEditDrugLog(r);
+                            }}
+                            onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
+                        />
                         }
                     </ListGroup.Item>
+                    }
 
-                    {otcLogList.length > 0 && activeId > 0 &&
-                    <ListGroup.Item style={{height: gridHeight, overflow: "auto"}}>
+                    {listType === LIST_TYPE.OTC &&
+                    <ListGroup.Item style={{overflow: "auto"}}>
                         <h5 className="mb-2" style={{textAlign: "center"}}>OTC History</h5>
                         <DrugLogGrid
                             includeCheckout={false}
@@ -391,15 +380,21 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         />
                     </ListGroup.Item>
                     }
+
+                    {listType === LIST_TYPE.Pillbox && activePillbox && activePillbox.Id &&
+                        <PillboxItemGrid
+                            onEdit={() => alert('todo: edit pillbox thingy')}
+                            pillboxGridItems={getPillboxItems(medicineList, pillboxItemList, activePillbox.Id)}
+                            />
+                    }
                 </ListGroup>
-                }
             </Form>
 
             {/* MedicineEdit Modal*/}
             {showMedicineEdit &&
             <MedicineEdit
                 show={true}
-                onClose={(r) => {
+                onClose={(r: MedicineRecord | null) => {
                     setShowMedicineEdit(null);
                     if (r) {
                         if (r.OTC) {
