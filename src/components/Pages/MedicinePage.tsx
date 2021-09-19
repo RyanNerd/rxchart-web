@@ -6,7 +6,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import {Alert, ToggleButton} from "react-bootstrap";
 import TabContent from "../../styles/common.css";
-import MedListGroup, {IMedDropdownItem} from "./ListGroups/MedListGroup";
+import MedListGroup from "./ListGroups/MedListGroup";
 import {
     DrugLogRecord,
     MedicineRecord,
@@ -43,9 +43,7 @@ interface IProps {
     drugLogList: DrugLogRecord[]
     activeResident: ResidentRecord | null
     activeTabKey: string
-    medicineList: MedicineRecord[]
-    pillboxList: PillboxRecord[]
-    pillboxItemList: PillboxItemRecord[]
+
     otcList: MedicineRecord[]
 }
 
@@ -70,18 +68,20 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [showMedicineEdit, setShowMedicineEdit] = useState<MedicineRecord | null>(null);
     const [lastTaken, setLastTaken] = useState<number | null>(null);
 
-    // Lists from props
+    // Lists
     const [drugLogList, setDrugLogList] = useState(props.drugLogList);
-    const [medicineList, setMedicineList] = useState(props.medicineList);
+    const [globalMedicineList] = useGlobal('medicineList');
+    const [medicineList, setMedicineList] = useState(globalMedicineList);
     const [otcList, setOtcList] = useState(props.otcList);
     const [otcLogList, setOtcLogList] = useState<DrugLogRecord[]>([]);
-    const [pillboxItemList, setPillboxItemList] = useState(props.pillboxItemList);
-    const [pillboxList, setPillboxList] = useState(props.pillboxList);
+    const [pillboxItemList, setPillboxItemList] = useGlobal('pillboxItemList');
+    const [pillboxList, setPillboxList] = useGlobal('pillboxList');
 
     // Display state and active Items
     // fixme: Default activeMed
     const [listType, setListType] = useState<LIST_TYPE>(LIST_TYPE.Medicine);
-    const [activeMed, setActiveMed] = useState<MedicineRecord | null>(medicineList.length > 0 ? medicineList[0] : null);
+    const [activeMed, setActiveMed] =
+        useState<MedicineRecord | null>(globalMedicineList.length > 0 ? globalMedicineList[0] : null);
     const [activeOtc, setActiveOtc] = useState<MedicineRecord | null>(otcList.length > 0 ? otcList[0] : null);
     const [activePillbox, setActivePillbox] = useState<PillboxRecord|null>(pillboxList.length>0? pillboxList[0] : null);
 
@@ -90,12 +90,10 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         setDrugLogList(props.drugLogList);
         setActiveResident(props.activeResident);
         setActiveTabKey(props.activeTabKey);
-        setMedicineList(props.medicineList.filter(m => m.Active) || []); // On this page we only care about active
+        setMedicineList(globalMedicineList.filter(m => m.Active) || []); // On this page we only care about active
         setOtcList(props.otcList);
-        setPillboxList(props.pillboxList);
-        setPillboxItemList(props.pillboxItemList);
         setListType(LIST_TYPE.Medicine);
-    }, [props]);
+    }, [props, globalMedicineList]);
 
     // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
     useEffect(() => {

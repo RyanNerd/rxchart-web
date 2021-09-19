@@ -19,30 +19,25 @@ import getPillboxItems, {PillRowType} from "./Grids/getPillboxItems";
 interface IProps {
     activeResident: ResidentRecord|null
     activeTabKey: string
-    medicineList: MedicineRecord[]
-    pillboxItemList: PillboxItemRecord[]
-    pillboxList: PillboxRecord[]
 }
 
 const PillboxPage = (props: IProps) => {
     const [, setPillboxItemObserver] = useGlobal('__pillboxItem');
     const [, setPillbox] = useGlobal('__pillbox');
+    const [pillboxItemList] = useGlobal('pillboxItemList');
+    const [pillboxList] = useGlobal('pillboxList');
     const [activePillbox, setActivePillbox] = useState<PillboxRecord|null>(null);
     const [activeResident, setActiveResident] = useState(props.activeResident);
     const [activeTabKey, setActiveTabKey] = useState(props.activeTabKey);
     const [medicineList] = useGlobal('medicineList');
     const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord | null>(null);
-    const [pillboxItemList, setPillboxItemList] = useState(props.pillboxItemList);
-    const [pillboxList, setPillboxList] = useState(props.pillboxList);
     const [showPillboxDeleteConfirm, setShowPillboxDeleteConfirm] = useState(false);
 
     // Refresh when props change
     useEffect(() => {
-        setActivePillbox(props.pillboxList?.length > 0 ? props.pillboxList[0] : null);
+        setActivePillbox(pillboxList?.length > 0 ? pillboxList[0] : null);
         setActiveResident(props.activeResident);
         setActiveTabKey(props.activeTabKey);
-        setPillboxItemList(props.pillboxItemList);
-        setPillboxList(props.pillboxList);
     }, [props, medicineList]);
 
     // Do not render if the pillbox tab is not the active tab

@@ -25,9 +25,6 @@ const LandingPage = () => {
     const [checkoutDisabled, setCheckoutDisabled] = useState(!activeResident);
     const [drugLogList] = useGlobal('drugLogList');
     const navBarElement = document.getElementsByClassName('nav nav-tabs');
-    const [pillboxList] = useGlobal('pillboxList');
-    const [pillboxItemList] = useGlobal('pillboxItemList');
-    const [medicineList] = useGlobal('medicineList');
     const [otcList] = useGlobal('otcList');
 
     // todo: can this be removed? Why is this being done?
@@ -71,15 +68,16 @@ const LandingPage = () => {
                 disabled={!apiKey || !activeResident}
                 eventKey="medicine"
                 title={<span className={activeTabKey === 'medicine' ? 'bld' : ''}>Rx</span>}>
-                <MedicinePage
-                    activeTabKey={activeTabKey}
-                    drugLogList={drugLogList}
-                    activeResident={activeResident}
-                    medicineList={medicineList}
-                    otcList={otcList}
-                    pillboxList={pillboxList}
-                    pillboxItemList={pillboxItemList}
-                />
+                {activeResident && activeTabKey === "medicine" &&
+                <Tab.Content>
+                    <MedicinePage
+                        activeTabKey={activeTabKey}
+                        drugLogList={drugLogList}
+                        activeResident={activeResident}
+                        otcList={otcList}
+                    />
+                </Tab.Content>
+                }
             </Tab>
             <Tab
                 disabled={!apiKey || !activeResident}
@@ -96,9 +94,6 @@ const LandingPage = () => {
                 <PillboxPage
                     activeResident={activeResident}
                     activeTabKey={activeTabKey}
-                    medicineList = {medicineList}
-                    pillboxList={pillboxList}
-                    pillboxItemList={pillboxItemList}
                 />
             </Tab>
             <Tab
