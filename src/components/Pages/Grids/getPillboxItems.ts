@@ -17,12 +17,17 @@ export type PillRowType = {
     Strength: string | null
 }
 
+/**
+ * Builds out and returns PillRowType[] given the pillboxId
+ * @param {MedicineRecord[]} medicineList
+ * @param {PillboxItemRecord[]} pillboxItemList
+ * @param {number} pillboxId
+ */
 const getPillboxItems = (medicineList: MedicineRecord[], pillboxItemList: PillboxItemRecord[], pillboxId: number) => {
-    // Build out pills<PillRowType>[]
     const pillBuild = [] as PillRowType[];
     medicineList.forEach((m) => {
         const residentId = m.ResidentId as number;
-        const pillboxItemRecord = pillboxItemList.find((r) => r.MedicineId === m.Id && m.Active);
+        const pillboxItemRecord = pillboxItemList.find(r => r.MedicineId === m.Id && r.PillboxId === pillboxId);
         if (pillboxItemRecord) {
             pillBuild.push({
                 Drug: m.Drug,

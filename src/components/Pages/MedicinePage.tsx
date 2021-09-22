@@ -32,8 +32,9 @@ import OtcListGroup from "./ListGroups/OtcListGroup";
 import PillboxItemGrid from "./Grids/PillboxItemGrid";
 import PillboxListGroup from "./ListGroups/PillboxListGroup";
 import TabContent from "../../styles/common.css";
-import getPillboxItems from "./Grids/getPillboxItems";
+import getPillboxItems, {PillRowType} from "./Grids/getPillboxItems";
 import usePrevious from "../../hooks/usePrevious";
+import PillboxCard from "./Grids/PillboxCard";
 
 // Display states
 enum DISPLAY_TYPE {
@@ -127,21 +128,21 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         }
     }, [drugLogList])
 
-    // Set initial activeMed when the client changes.
+    // Set initial activeMed when the medicineList changes
     useEffect(() => {
         if (prevMedicineList !== medicineList) {
             setActiveMed(medicineList.length > 0 ? medicineList[0] : null);
         }
     }, [medicineList, prevMedicineList]);
 
-    // Set activeOtc state to the first element of the otcList when the client changes.
+    // Set activeOtc state to the first element of the otcList when the otcList changes
     useEffect(() => {
         if (prevOtcList !== otcList) {
             setActiveOtc(otcList.length > 0 ? otcList[0] : null);
         }
     }, [otcList, prevOtcList]);
 
-    // Set activePillbox state to the first element of the pillboxList (if any exist).
+    // Set activePillbox to the first element of pillboxList when the pillboxList changes
     useEffect(() => {
         if (prevPillboxList !== pillboxList) {
             setActivePillbox(pillboxList.length > 0 ? pillboxList[0] : null);
@@ -268,7 +269,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             className="ml-2"
                             size="sm"
                             type="radio"
-                            disabled={pillboxList.length === 0}
                             variant="outline-success"
                             name="radio-med-list-group"
                             value={DISPLAY_TYPE.Pillbox}
@@ -334,7 +334,12 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         }
 
                         {displayType === DISPLAY_TYPE.Pillbox &&
-                        <PillboxListGroup/>
+                        <PillboxListGroup
+                            pillboxList={pillboxList}
+                            activePillbox={activePillbox}
+                            onSelect={id => setActivePillbox(pillboxList.find(pb => pb.Id === id) as PillboxRecord)}
+                            clientId={clientId}
+                        />
                         }
                     </Row>
                 </Col>
@@ -389,10 +394,11 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     }
 
                     {displayType === DISPLAY_TYPE.Pillbox && activePillbox && activePillbox.Id &&
-                        <PillboxItemGrid
-                            onEdit={() => alert('todo: edit pillbox thingy')}
-                            pillboxGridItems={getPillboxItems(medicineList, pillboxItemList, activePillbox.Id)}
-                            />
+                        <PillboxCard
+                            medicineList={medicineList}
+                            pillboxItemList={pillboxItemList}
+                            activePillbox={activePillbox}
+                        />
                     }
                 </ListGroup>
             </Form>

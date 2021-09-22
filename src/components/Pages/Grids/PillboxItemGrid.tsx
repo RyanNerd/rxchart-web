@@ -49,16 +49,23 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
         const quantity = pill.Quantity || 0;
         const pillboxId = Math.abs(pill.PillboxId);
 
+        // todo: make onClick on the rows show drug log history or something meaningful
         return (
             <tr
                 key={'pill-grid-row-' + domId}
                 id={'pill-grid-row-' + domId}
             >
-                <td style={{verticalAlign: "middle", fontStyle, fontWeight, color}}>
+                <td
+                    style={{verticalAlign: "middle", fontStyle, fontWeight, color, cursor: "pointer"}}
+                    onClick={() => alert('clickty' + pill.Id)}
+                >
                     {pill.Drug}
                 </td>
 
-                <td style={{verticalAlign: "middle", fontStyle, fontWeight, color}}>
+                <td
+                    style={{verticalAlign: "middle", fontStyle, fontWeight, color, cursor: "pointer"}}
+                    onClick={() => alert('clickty')}
+                >
                     {pill.Strength}
                 </td>
 
