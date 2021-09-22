@@ -16,7 +16,6 @@ import PillboxPage from "./PillboxPage";
  * Landing Page - Tab Page Menu UI
  */
 const LandingPage = () => {
-    // todo: load all global lists here moving state at this level with each tab/component getting fed from here
     const [activeResident] = useGlobal('activeResident');
     const [activeTabKey, setActiveTabKey] = useGlobal('activeTabKey');
     const [signIn] = useGlobal('signIn');
@@ -24,13 +23,13 @@ const LandingPage = () => {
     const [errorDetails] = useGlobal('__errorDetails');
     const [checkoutDisabled, setCheckoutDisabled] = useState(!activeResident);
     const [drugLogList] = useGlobal('drugLogList');
-    const navBarElement = document.getElementsByClassName('nav nav-tabs');
-    const [otcList] = useGlobal('otcList');
 
-    // todo: can this be removed? Why is this being done?
-    if (navBarElement && navBarElement.length > 0) {
-        const navBar = navBarElement[0];
-        navBar.classList.add('d-print-none');
+    // We need to get a ref to the outer (class nav nav-tabs) div element to prevent printing it.
+    // React-bootstrap adds this with no id attribute or other method of obtaining a ref, so we need to use
+    // the old fashioned method of element retrieval to get a ref and add the d-print-none class
+    const navBarElement = document.getElementsByClassName('nav nav-tabs');
+    if (navBarElement?.length > 0) {
+        navBarElement[0].classList.add('d-print-none');
     }
 
     // Enable or disable the Print Medicine Checkout button
@@ -74,7 +73,6 @@ const LandingPage = () => {
                         activeTabKey={activeTabKey}
                         drugLogList={drugLogList}
                         activeResident={activeResident}
-                        otcList={otcList}
                     />
                 </Tab.Content>
                 }

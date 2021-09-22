@@ -46,8 +46,8 @@ const MedListGroup = (props: IProps): JSX.Element => {
         lastTaken = null
     } = props;
 
-    const barCode = activeMed?.Barcode || null;
-    const notes = activeMed?.Notes || null;
+    const barCode = activeMed?.Barcode && activeMed.Barcode.length > 0 ? activeMed.Barcode : null;
+    const notes = activeMed?.Notes && activeMed.Notes.length > 0 ? activeMed.Notes : null;
     const directions = activeMed?.Directions || null;
     const fillDateText = activeMed?.FillDateMonth ?
         activeMed.FillDateMonth + '/' + activeMed.FillDateDay + '/' + activeMed.FillDateYear : null;
@@ -64,7 +64,7 @@ const MedListGroup = (props: IProps): JSX.Element => {
         if (canvasUpdated && canvas) {
             canvasUpdated(canvas);
         }
-    }, [barCode, canvasUpdated]);
+    }, [barCode, canvasUpdated, canvasId]);
 
     const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
 
@@ -78,7 +78,6 @@ const MedListGroup = (props: IProps): JSX.Element => {
         }
     }
 
-    // todo: whole lot of reorganizing this stuff
     return (
         <ListGroup>
             <ListGroup.Item>
@@ -88,6 +87,8 @@ const MedListGroup = (props: IProps): JSX.Element => {
                     size="sm"
                     variant="info"
                     onClick={(e: React.MouseEvent<HTMLElement>) => {
+                        // todo: do we want to add MedicineEdit in or make this a callback to the MedicinePage?
+                        //  (probably cb)
                         e.preventDefault();
                         // setShowMedicineEdit({
                         //     ...newMedicineRecord,
@@ -103,6 +104,7 @@ const MedListGroup = (props: IProps): JSX.Element => {
                 </TooltipButton>
 
                 <Button
+                    disabled={!activeMed}
                     size="sm"
                     variant="info"
                     onClick={(e) => {
@@ -112,23 +114,21 @@ const MedListGroup = (props: IProps): JSX.Element => {
                     }}
                 >
                     {/*Edit <b>{getActiveDrug()?.Drug}</b>*/}
-                    Edit
+                    Edit <b>{activeMed?.Drug}</b>
                 </Button>
             </ListGroup.Item>
 
+            {activeMed && activeMed.Id &&
+            <>
             <ListGroup.Item active className="justify-content-left">
-                {activeMed?.Id &&
                 <MedDropdown
                     disabled={disabled}
                     itemList={itemList}
                     activeId={activeMed.Id}
                     onSelect={i => itemChanged(i)}
                 />
-                }
             </ListGroup.Item>
 
-            {activeMed?
-                (<>
                 <ListGroup.Item>
                     <Button
                         size="sm"
@@ -149,7 +149,7 @@ const MedListGroup = (props: IProps): JSX.Element => {
                     />
                 </ListGroup.Item>
 
-                {directions && directions.length > 0 &&
+                {directions &&
                 <ListGroup.Item>
                     <ShadowBox>
                         <b>Directions: </b>{activeMed.Directions}
@@ -157,7 +157,7 @@ const MedListGroup = (props: IProps): JSX.Element => {
                 </ListGroup.Item>
                 }
 
-                {notes && notes.length > 0 &&
+                {notes &&
                 <ListGroup.Item>
                     <ShadowBox>
                         <b>Notes: </b>{activeMed.Notes}
@@ -178,18 +178,7 @@ const MedListGroup = (props: IProps): JSX.Element => {
                     <canvas id={canvasId}/>
                 </ListGroup.Item>
                 }
-            </>) : (
-                <ListGroup.Item>
-                    <Button
-                        size="sm"
-                        disabled={disabled}
-                        variant={lastTakenVariant}
-                        onClick={(e: React.MouseEvent<HTMLElement>) => alert('todo: log all drugs in pillbox')}
-                    >
-                        + Log ALL Drugs in Pillbox
-                    </Button>
-                </ListGroup.Item>
-                )
+            </>
             }
         </ListGroup>
     );
