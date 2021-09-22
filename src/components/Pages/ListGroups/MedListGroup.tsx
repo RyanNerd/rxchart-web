@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'reactn';
+import React, {useEffect} from 'reactn';
 
 import ListGroup from "react-bootstrap/ListGroup";
 import {Button} from "react-bootstrap";
@@ -6,7 +6,7 @@ import {Button} from "react-bootstrap";
 import LogButtons from "../../Buttons/LogButtons";
 import MedDropdown from "./MedDropdown";
 import ShadowBox from "../../Buttons/ShadowBox";
-import {MedicineRecord, newMedicineRecord, PillboxItemRecord, PillboxRecord} from "../../../types/RecordTypes";
+import {MedicineRecord} from "../../../types/RecordTypes";
 import {drawBarcode} from "../../../utility/drawBarcode";
 import {getLastTakenVariant, randomString} from "../../../utility/common";
 import TooltipButton from "../../Buttons/TooltipButton";

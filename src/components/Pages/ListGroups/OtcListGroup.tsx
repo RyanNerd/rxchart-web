@@ -1,9 +1,8 @@
 import React, {useEffect, useRef, useState} from "reactn";
 
 import Table from "react-bootstrap/Table";
-import {Button, Collapse, Form, FormGroup, InputGroup, ListGroup, ListGroupItem} from "react-bootstrap";
+import {Button, Form, FormGroup, InputGroup, ListGroup} from "react-bootstrap";
 
-import DisabledSpinner from "./DisabledSpinner";
 import LogButtons from "../../Buttons/LogButtons";
 import MedicineDetail from "../Grids/MedicineDetail";
 import ShadowBox from "../../Buttons/ShadowBox";
@@ -69,7 +68,6 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
         }
     }, [otcList, searchText])
 
-    // TODO: Remove Collapse or move it up to MedicinePage
     // FIXME: Set focus via other means to the search textbox
     return (
         <ListGroup>

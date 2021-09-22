@@ -3,6 +3,7 @@ import React, {useEffect, useGlobal, useState} from 'reactn';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
+import ListGroup from "react-bootstrap/ListGroup";
 import Row from 'react-bootstrap/Row';
 import {Alert, ToggleButton} from "react-bootstrap";
 
@@ -25,14 +26,11 @@ import Confirm from './Modals/Confirm';
 import DrugLogEdit from "./Modals/DrugLogEdit";
 import DrugLogGrid from "./Grids/DrugLogGrid";
 import LastTakenButton from "../Buttons/LastTakenButton";
-import ListGroup from "react-bootstrap/ListGroup";
 import MedListGroup from "./ListGroups/MedListGroup";
 import MedicineEdit from "./Modals/MedicineEdit";
 import OtcListGroup from "./ListGroups/OtcListGroup";
-import PillboxItemGrid from "./Grids/PillboxItemGrid";
 import PillboxListGroup from "./ListGroups/PillboxListGroup";
 import TabContent from "../../styles/common.css";
-import getPillboxItems, {PillRowType} from "./Grids/getPillboxItems";
 import usePrevious from "../../hooks/usePrevious";
 import PillboxCard from "./Grids/PillboxCard";
 
