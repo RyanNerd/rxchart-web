@@ -37,7 +37,10 @@ const MedicineObserver = (mm: IMedicineManager, activeClient: ResidentRecord | n
                         mm.updateMedicine(medicineRecord as MedicineRecord)
                         .then((drugRecord) => {
                             const clientId = drugRecord && drugRecord.ResidentId ? drugRecord.ResidentId : null;
-                            return setMedicine({action: "load", payload: clientId});
+                            setMedicine({action: "load", payload: clientId});
+                            if (medicine.cb) {
+                                medicine.cb(drugRecord);
+                            }
                         })
                         .catch((err) => setErrorDetails(err))
                         .finally(() => setMedicine(null))

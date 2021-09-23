@@ -101,10 +101,12 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         }
     }, [props, otcList, prevClient]);
 
+    // activeTabKey refresh from prop
     useEffect(() => {
         setActiveTabKey(props.activeTabKey);
     }, [props.activeTabKey]);
 
+    // drugLogList (and related otcLogList) refresh from prop
     useEffect(() => {
         setDrugLogList(props.drugLogList);
 
@@ -115,11 +117,14 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         }));
     }, [props.drugLogList])
 
+    // Refresh of medicineList from globalMedicineList;
     useEffect(() => {
         setMedicineList(globalMedicineList.filter(m => m.Active));
     }, [globalMedicineList]);
 
+    // Set the default activeMed
     useEffect(() => {
+        // We are using medicineList === null as an indicator of if the medicine list has changed and needs new
         if (medicineList !== null) {
             // todo: move to direct param once we figure out why medicine dropdown is stupid.
             const activeMed = medicineList.length > 0 ? medicineList[0] : null;
@@ -145,7 +150,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             setCheckoutDisabled(true);
         }
     }, [drugLogList])
-
 
     // Set activeOtc state to the first element of the otcList when the otcList changes
     useEffect(() => {
@@ -315,6 +319,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                                 e.preventDefault();
                                 addEditDrugLog();
                             }}
+                            editMedicine={(m) => setShowMedicineEdit(m)}
                             canvasId="med-barcode"
                             itemChanged={id => setActiveMed(medicineList.find(m => m.Id === id) || null)}
                             lastTaken={lastTaken}
@@ -356,6 +361,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 </Col>
 
                 <ListGroup as={Col} className="mx-5">
+                    {/* todo: convert this to DrugLogCard??? */}
                     {displayType === DISPLAY_TYPE.Medicine &&
                     <ListGroup.Item style={{textAlign: "center"}}>
                         <Button
@@ -387,6 +393,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     </ListGroup.Item>
                     }
 
+                    {/* todo: convert this to OtcLogCard??? */}
                     {displayType === DISPLAY_TYPE.OTC &&
                     <ListGroup.Item style={{overflow: "auto"}}>
                         <h5 className="mb-2" style={{textAlign: "center"}}>OTC History</h5>
@@ -422,9 +429,18 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     setShowMedicineEdit(null);
                     if (r) {
                         if (r.OTC) {
-                            setOtcMedicine({action: "update", payload: r});
+                            // fixme: callback not working for added OTC
+                            setOtcMedicine({
+                                action: "update",
+                                payload: r,
+                                cb: (m) => setActiveOtc(m as MedicineRecord)
+                            });
                         } else {
-                            setMedicine({action: "update", payload: r});
+                            setMedicine({
+                                action: "update",
+                                payload: r,
+                                cb: (m) => setActiveMed(m as MedicineRecord)
+                            });
                         }
                     }
                 }}

@@ -9,6 +9,7 @@ import ShadowBox from "../../Buttons/ShadowBox";
 import {DrugLogRecord, MedicineRecord} from "../../../types/RecordTypes";
 import {calculateLastTaken, getLastTakenVariant} from "../../../utility/common";
 
+// todo: simplify combine addOtcMedicine and editOtcMedicine into editOtcMedicine that may also handle inserts
 interface IProps {
     activeOtc: MedicineRecord
     addOtcMedicine: () => void
@@ -175,6 +176,8 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                                 drug={drug}
                                 key={'otc' + drug.Id}
                                 onSelect={(e, d) => {
+                                    // todo: Change <MedicineDetail> so that e doesn't get passed to parent (uneeded)
+                                    e.preventDefault();
                                     setActiveOtcDrug(d);
                                 }}
                             />)

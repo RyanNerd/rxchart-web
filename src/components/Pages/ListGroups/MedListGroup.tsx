@@ -6,7 +6,7 @@ import {Button} from "react-bootstrap";
 import LogButtons from "../../Buttons/LogButtons";
 import MedDropdown from "./MedDropdown";
 import ShadowBox from "../../Buttons/ShadowBox";
-import {MedicineRecord} from "../../../types/RecordTypes";
+import {MedicineRecord, newMedicineRecord} from "../../../types/RecordTypes";
 import {drawBarcode} from "../../../utility/drawBarcode";
 import {getLastTakenVariant, randomString} from "../../../utility/common";
 import TooltipButton from "../../Buttons/TooltipButton";
@@ -14,6 +14,7 @@ import TooltipButton from "../../Buttons/TooltipButton";
 interface IProps {
     activeMed: MedicineRecord | null
     addDrugLog: (e: React.MouseEvent<HTMLElement>) => void
+    editMedicine: (m: MedicineRecord) => void
     logDrug: (n: number) => void
     itemChanged: (i: number) => void
     canvasUpdated?: (c: HTMLCanvasElement) => void
@@ -37,6 +38,7 @@ const MedListGroup = (props: IProps): JSX.Element => {
     const {
         activeMed = null,
         addDrugLog,
+        editMedicine,
         logDrug,
         itemChanged,
         canvasUpdated,
@@ -55,6 +57,8 @@ const MedListGroup = (props: IProps): JSX.Element => {
     const fillDateOptions = {month: '2-digit', day: '2-digit', year: 'numeric'} as Intl.DateTimeFormatOptions;
     const fillDate = (fillDateType) ? fillDateType.toLocaleString('en-US', fillDateOptions) : null;
     const itemList = [] as IMedDropdownItem[];
+
+    // todo: Add Pillboxes to itemList ???
     medicineList.forEach(m => itemList.push({id: m.Id as number, description: m.Drug}));
 
     // Update the barcode image if the barcode has changed
@@ -87,17 +91,18 @@ const MedListGroup = (props: IProps): JSX.Element => {
                     size="sm"
                     variant="info"
                     onClick={(e: React.MouseEvent<HTMLElement>) => {
-                        // todo: do we want to add MedicineEdit in or make this a callback to the MedicinePage?
-                        //  (probably cb)
                         e.preventDefault();
-                        // setShowMedicineEdit({
-                        //     ...newMedicineRecord,
-                        //     OTC: false,
-                        //     ResidentId: residentId,
-                        //     FillDateYear: "",
-                        //     FillDateMonth: "",
-                        //     FillDateDay: ""
-                        // });
+                        const clientId = activeMed?.ResidentId;
+                        if (clientId) {
+                            editMedicine({
+                                ...newMedicineRecord,
+                                OTC: false,
+                                ResidentId: clientId,
+                                FillDateYear: "",
+                                FillDateMonth: "",
+                                FillDateDay: ""
+                            });
+                        }
                     }}
                 >
                     + Medicine
@@ -109,11 +114,11 @@ const MedListGroup = (props: IProps): JSX.Element => {
                     variant="info"
                     onClick={(e) => {
                         e.preventDefault();
-                        // const activeDrug = getActiveDrug();
-                        // setShowMedicineEdit({...activeDrug} as MedicineRecord);
+                        if (activeMed) {
+                            editMedicine(activeMed);
+                        }
                     }}
                 >
-                    {/*Edit <b>{getActiveDrug()?.Drug}</b>*/}
                     Edit <b>{activeMed?.Drug}</b>
                 </Button>
             </ListGroup.Item>

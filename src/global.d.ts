@@ -47,7 +47,7 @@ declare module 'reactn/default' {
         __medicine: {
             action: 'load' | 'update' | 'delete',
             payload: null | MedicineRecord | number,
-            cb?: (mr: MedicineRecord[]) => void
+            cb?: (mr: MedicineRecord[] | MedicineRecord) => void
         } | null
         __pillbox: {
             action: 'load' | 'update' | 'delete',
@@ -64,7 +64,11 @@ declare module 'reactn/default' {
         pillboxItemList: PillboxItemRecord[]
         medicineManager: IMedicineManager
         otcList: MedicineRecord[]
-        __otcMedicine: {action: 'load' | 'update' | 'delete', payload: null | MedicineRecord | number} | null
+        __otcMedicine: {
+            action: 'load' | 'update' | 'delete',
+            payload: null | MedicineRecord | number,
+            cb?: (m: MedicineRecord | MedicineRecord[]) => void
+        } | null
         providers: IProviders
         residentList: ResidentRecord[]
         residentManager: IResidentManager

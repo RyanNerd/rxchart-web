@@ -20,7 +20,10 @@ const OtcMedicineObserver = (mm: IMedicineManager) => {
                 case "load": {
                     mm.loadOtcList()
                     .then((otcList) => {
-                        return setOtcList(otcList);
+                        setOtcList(otcList);
+                        if (otcMedicine.cb) {
+                            otcMedicine.cb(otcList);
+                        }
                     })
                     .catch((err) => setErrorDetails(err))
                     .finally(() => setOtcMedicine(null))
@@ -32,7 +35,10 @@ const OtcMedicineObserver = (mm: IMedicineManager) => {
                     if (otcRecord) {
                         mm.updateMedicine(otcRecord)
                         .then(() => {
-                            return setOtcMedicine({action: "load", payload: null});
+                            setOtcMedicine({action: "load", payload: null});
+                            if (otcMedicine.cb) {
+                                otcMedicine.cb(otcRecord);
+                            }
                         })
                         .catch((err) => setErrorDetails(err))
                         .finally(() => setOtcMedicine(null))
@@ -46,9 +52,9 @@ const OtcMedicineObserver = (mm: IMedicineManager) => {
                         mm.deleteMedicine(medicineId)
                         .then((deleted) => {
                             if (deleted) {
-                                return setOtcMedicine({action: "load", payload: null});
+                                setOtcMedicine({action: "load", payload: null});
                             } else {
-                                return setErrorDetails(new Error('Unable to delete OTC medicine Id: ' + medicineId));
+                                setErrorDetails(new Error('Unable to delete OTC medicine Id: ' + medicineId));
                             }
                         })
                         .catch((err) => setErrorDetails(err))
