@@ -13,14 +13,14 @@ import {
     newMedicineRecord,
     PillboxRecord,
     ResidentRecord
-} from "../../types/RecordTypes";
+} from "types/RecordTypes";
 import {
     calculateLastTaken,
     getCheckoutList,
     getDrugName,
     getFormattedDate,
     getMedicineRecord
-} from "../../utility/common";
+} from "utility/common";
 
 import Confirm from './Modals/Confirm';
 import DrugLogEdit from "./Modals/DrugLogEdit";
@@ -114,7 +114,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         setOtcLogList(props.drugLogList.filter((drug: DrugLogRecord) => {
             return otcList.some((m) => {return m.Id === drug?.MedicineId;});
         }));
-    }, [props.drugLogList])
+    }, [props.drugLogList, otcList])
 
     // Refresh of medicineList from globalMedicineList;
     useEffect(() => {
