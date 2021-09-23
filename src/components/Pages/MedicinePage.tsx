@@ -5,7 +5,7 @@ import Form from 'react-bootstrap/Form';
 import ListGroup from "react-bootstrap/ListGroup";
 import Row from 'react-bootstrap/Row';
 import React, {useEffect, useGlobal, useState} from 'reactn';
-import {DrugLogRecord, MedicineRecord, newMedicineRecord, PillboxRecord, ResidentRecord} from "types/RecordTypes";
+import {DrugLogRecord, MedicineRecord, PillboxRecord, ResidentRecord} from "types/RecordTypes";
 import {calculateLastTaken, getCheckoutList, getDrugName, getFormattedDate, getMedicineRecord} from "utility/common";
 import usePrevious from "../../hooks/usePrevious";
 import TabContent from "../../styles/common.css";
@@ -315,12 +315,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         {displayType === DISPLAY_TYPE.OTC && activeOtc &&
                         <OtcListGroup
                             disabled={otcList.length === 0}
-                            addOtcMedicine={() => {
-                                setShowMedicineEdit({...newMedicineRecord, OTC: true});
-                            }}
-                            editOtcMedicine={() => {
-                                setShowMedicineEdit({...activeOtc} as MedicineRecord);
-                            }}
+                            editOtcMedicine={(r) => setShowMedicineEdit(r)}
                             activeOtc={activeOtc}
                             drugLogList={drugLogList}
                             logOtcDrugAmount={(n) => handleLogOtcDrugAmount(n)}

@@ -1,19 +1,17 @@
 import {Button, Form, FormGroup, InputGroup, ListGroup} from "react-bootstrap";
 import Table from "react-bootstrap/Table";
 import React, {useEffect, useRef, useState} from "reactn";
-import {DrugLogRecord, MedicineRecord} from "types/RecordTypes";
+import {DrugLogRecord, MedicineRecord, newMedicineRecord} from "types/RecordTypes";
 import {calculateLastTaken, getLastTakenVariant} from "utility/common";
 import LogButtons from "../../Buttons/LogButtons";
 import ShadowBox from "../../Buttons/ShadowBox";
 import MedicineDetail from "../Grids/MedicineDetail";
 
-// todo: simplify combine addOtcMedicine and editOtcMedicine into editOtcMedicine that may also handle inserts
 interface IProps {
     activeOtc: MedicineRecord
-    addOtcMedicine: () => void
     disabled?: boolean
     drugLogList: DrugLogRecord[]
-    editOtcMedicine: () => void
+    editOtcMedicine: (m: MedicineRecord) => void
     logOtcDrug: (e: React.MouseEvent<HTMLElement>) => void
     logOtcDrugAmount: (n: number) => void
     otcList: MedicineRecord[]
@@ -27,7 +25,6 @@ interface IProps {
 const OtcListGroup = (props: IProps): JSX.Element | null => {
     const {
         activeOtc,
-        addOtcMedicine,
         disabled = false,
         drugLogList,
         editOtcMedicine,
@@ -97,7 +94,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                                 className="mr-1"
                                 onClick={(e) => {
                                     e.preventDefault();
-                                    addOtcMedicine();
+                                    editOtcMedicine({...newMedicineRecord, OTC: true});
                                 }}
                                 size="sm"
                                 variant="info"
@@ -109,7 +106,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                             <Button
                                 onClick={(e) => {
                                     e.preventDefault();
-                                    editOtcMedicine();
+                                    editOtcMedicine({...activeOtc} as MedicineRecord);
                                 }}
                                 size="sm"
                                 variant="info"
