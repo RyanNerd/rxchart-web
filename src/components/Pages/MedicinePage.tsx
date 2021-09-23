@@ -304,9 +304,17 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             }}
                             editMedicine={(m) => setShowMedicineEdit(m)}
                             canvasId="med-barcode"
-                            itemChanged={id => setActiveMed(medicineList.find(m => m.Id === id) || null)}
+                            itemChanged={id => {
+                                if (id < 0) {
+                                    setActivePillbox(pillboxList.find(p => p.Id === Math.abs(id)) ||null);
+                                    setDisplayType(DISPLAY_TYPE.Pillbox);
+                                } else {
+                                    setActiveMed(medicineList.find(m => m.Id === id) || null);
+                                }
+                            }}
                             lastTaken={lastTaken}
                             logDrug={n => handleLogDrugAmount(n)}
+                            pillboxList={pillboxList}
                             medicineList={medicineList}
                         />
                         }

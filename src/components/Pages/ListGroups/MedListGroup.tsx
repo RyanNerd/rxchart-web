@@ -1,7 +1,7 @@
 import {Button} from "react-bootstrap";
 import ListGroup from "react-bootstrap/ListGroup";
 import React, {useEffect} from 'reactn';
-import {MedicineRecord, newMedicineRecord} from "types/RecordTypes";
+import {MedicineRecord, newMedicineRecord, PillboxRecord} from "types/RecordTypes";
 import {getLastTakenVariant, randomString} from "utility/common";
 import {drawBarcode} from "utility/drawBarcode";
 import LogButtons from "../../Buttons/LogButtons";
@@ -19,6 +19,7 @@ interface IProps {
     canvasId?: string
     disabled?: boolean
     medicineList: MedicineRecord[]
+    pillboxList: PillboxRecord[]
     lastTaken: number | null
 }
 
@@ -43,6 +44,7 @@ const MedListGroup = (props: IProps): JSX.Element => {
         canvasId = randomString(),
         disabled = false,
         medicineList,
+        pillboxList,
         lastTaken = null
     } = props;
 
@@ -56,7 +58,11 @@ const MedListGroup = (props: IProps): JSX.Element => {
     const fillDate = (fillDateType) ? fillDateType.toLocaleString('en-US', fillDateOptions) : null;
     const itemList = [] as IMedDropdownItem[];
 
-    // todo: Add Pillboxes to itemList ???
+    // Build the itemList with any pillboxes and meds from medicineList
+    pillboxList.forEach(p => itemList.push({id: -(p.Id as number), description: p.Name}));
+    if (pillboxList.length !== 0) {
+        itemList.push({id: 0, description: "divider"});
+    }
     medicineList.forEach(m => itemList.push({id: m.Id as number, description: m.Drug}));
 
     // Update the barcode image if the barcode has changed
@@ -70,6 +76,9 @@ const MedListGroup = (props: IProps): JSX.Element => {
 
     const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
 
+    /**
+     * For display purposes cut off long drug names
+     */
     const shortenedDrugName = () => {
         const lenCutOff = activeMed?.OTC ? 10 : 35;
         const drug = activeMed?.Drug || '';
