@@ -13,21 +13,9 @@ declare module 'reactn/default' {
         increment: (global: State, dispatch: Dispatch, i: number) => Pick<State, 'count'>
     }
 
-    export interface IPillboxItemObserver {
-        action: 'load'|'update'|'delete',
-        payload?: null|pillboxItemRecord|PillboxItemRecord[]
-    }
-
     export interface State {
         __auth: {action: 'login' | 'logout', payload: {username: string, password: string} | null} | null
         activeResident: ResidentRecord | null
-        activeClient: {
-            client: ResidentRecord,
-            medicineList: MedicineRecord[] | null,
-            drugLogList: DrugLogRecord[] | null,
-            pillboxList: PillboxRecord[] | null,
-            pillboxItemList: PillboxItemRecord[] | null
-        } | null
         activeTabKey: string
                 authManager: IAuthManager
         __client: {
@@ -40,7 +28,7 @@ declare module 'reactn/default' {
         __drugLog: {
             action: 'load'|'update'|'delete',
             payload?: null | DrugLogRecord | DrugLogRecord[] | number.drugLogList,
-            cb?: (dl: DrugLogRecord[]) => void
+            cb?: (dl: DrugLogRecord[] | DrugLogRecord) => void
         } | null
         drugLogList: DrugLogRecord[]
         __errorDetails: any
@@ -52,12 +40,12 @@ declare module 'reactn/default' {
         __pillbox: {
             action: 'load' | 'update' | 'delete',
             payload: null | PillboxRecord | number,
-            cb?: (pb) => void
+            cb?: (pb: PillboxRecord[] | PillboxRecord) => void
         } | null
         __pillboxItem: {
             action: 'load' | 'update' | 'delete',
             payload: null | PillboxItemRecord | number,
-            cb?: (pbi: PillboxItemRecord[]) => void
+            cb?: (pbi: PillboxItemRecord[] | PillboxItemRecord) => void
         } | null
         medicineList: MedicineRecord[]
         pillboxList: PillboxRecord[]

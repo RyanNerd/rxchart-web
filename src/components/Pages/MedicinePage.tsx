@@ -57,7 +57,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [, setMedicine] = useGlobal('__medicine');
     const [, setOtcMedicine] = useGlobal('__otcMedicine');
     const [, setDrugLog] = useGlobal('__drugLog');
-    // const [, setPillboxItemObserver] = useGlobal('__pillboxItem');
 
     // Internal state
     const [activeClient, setActiveClient] = useState(props.activeResident);

@@ -55,7 +55,6 @@ const getInitialState = () => {
 
     return {
         activeResident: null,
-        activeClient: null,
         activeTabKey: 'login',
         __auth: null,
         authManager: AuthManager(providers.authenticationProvider),
