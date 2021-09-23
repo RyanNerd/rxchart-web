@@ -1,6 +1,6 @@
 import {Button, Form, FormGroup, InputGroup, ListGroup} from "react-bootstrap";
 import Table from "react-bootstrap/Table";
-import React, {useEffect, useRef, useState} from "reactn";
+import React, {useEffect, useState} from "reactn";
 import {DrugLogRecord, MedicineRecord, newMedicineRecord} from "types/RecordTypes";
 import {calculateLastTaken, getLastTakenVariant} from "utility/common";
 import LogButtons from "../../Buttons/LogButtons";
@@ -39,7 +39,6 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
     const [searchText, setSearchText] = useState('');
     const lastTaken = (activeOtc && activeOtc.Id) ? calculateLastTaken(activeOtc.Id, drugLogList) : null;
     const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
-    const searchRef = useRef<HTMLInputElement>(null);
 
     // Filter the otcList by the search textbox value
     useEffect(() => {
@@ -47,8 +46,9 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
             const filter = otcList.filter((medicineRecord) => {
                 const drug = medicineRecord.Drug.toLowerCase();
                 const barcode = medicineRecord.Barcode ? medicineRecord.Barcode.toLowerCase() : '';
+                const other = medicineRecord.OtherNames ? medicineRecord.OtherNames.toLowerCase() : '';
                 const search = searchText.toLowerCase();
-                return drug.includes(search) || barcode.includes(search);
+                return drug.includes(search) || barcode.includes(search) || other.includes(search);
             })
 
             if (filter && filter.length > 0) {
@@ -64,7 +64,6 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
         }
     }, [otcList, searchText])
 
-    // FIXME: Set focus via other means to the search textbox
     return (
         <ListGroup>
             <ListGroup.Item disabled={disabled}>
@@ -72,6 +71,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                     <InputGroup>
                         <InputGroup.Prepend>
                             <Form.Control
+                                autoFocus
                                 className="mr-2"
                                 id="otc-page-search-text"
                                 isValid={searchIsValid || false}
@@ -82,7 +82,6 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                                     }
                                 }}
                                 placeholder="Search OTC medicine"
-                                ref={searchRef}
                                 size="sm"
                                 style={{width: "220px"}}
                                 type="search"
@@ -140,6 +139,14 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                 </ShadowBox>
                 }
             </ListGroup.Item>
+
+            {activeOtc.OtherNames &&
+            <ListGroup.Item>
+                <ShadowBox>
+                    <span><b>Other Names: </b> {activeOtc.OtherNames}</span>
+                </ShadowBox>
+            </ListGroup.Item>
+            }
 
             <ListGroup.Item disabled={disabled}>
                 <div style={{height: "450px", overflow: "auto"}}>

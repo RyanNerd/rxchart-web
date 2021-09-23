@@ -34,6 +34,7 @@ const MedicineDetail = (props: IProps): JSX.Element => {
     return (
         <tr
             id={'med-detail-grid-row-' + drug.Id}
+            style={{fontWeight: isSelected ? 'bold' : undefined}}
         >
             {onEdit &&
             <td style={{textAlign: "center", verticalAlign: "middle"}}>
