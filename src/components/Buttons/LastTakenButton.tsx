@@ -1,6 +1,6 @@
-import React from "reactn";
 import Button from "react-bootstrap/Button";
-import {getLastTakenVariant} from "../../utility/common";
+import React from "reactn";
+import {getLastTakenVariant} from "utility/common";
 
 interface IProps {
     lastTaken?: number | null

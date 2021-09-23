@@ -1,18 +1,16 @@
-import React, {useEffect, useGlobal, useState} from 'reactn';
-
+import {Alert, Form, Row} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Table from "react-bootstrap/Table";
-import {Alert, Form, Row} from "react-bootstrap";
-
-import ConfirmDialogModal from "./Modals/ConfirmDialogModal";
-import DrugLogEdit from "./Modals/DrugLogEdit";
-import DrugLogGrid from "./Grids/DrugLogGrid";
-import MedicineDetail from "./Grids/MedicineDetail";
-import MedicineEdit from "./Modals/MedicineEdit";
+import React, {useEffect, useGlobal, useState} from 'reactn';
+import {DrugLogRecord, MedicineRecord, newDrugLogRecord, newMedicineRecord} from "types/RecordTypes";
+import {getDrugName, isToday} from "utility/common";
 import TabContent from "../../styles/common.css";
 import TooltipButton from "../Buttons/TooltipButton";
-import {DrugLogRecord, MedicineRecord, newDrugLogRecord, newMedicineRecord} from "../../types/RecordTypes";
-import {getDrugName, isToday} from "../../utility/common";
+import DrugLogGrid from "./Grids/DrugLogGrid";
+import MedicineDetail from "./Grids/MedicineDetail";
+import ConfirmDialogModal from "./Modals/ConfirmDialogModal";
+import DrugLogEdit from "./Modals/DrugLogEdit";
+import MedicineEdit from "./Modals/MedicineEdit";
 
 /**
  * ManageDrugPage

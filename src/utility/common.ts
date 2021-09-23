@@ -1,6 +1,5 @@
 import {Variant} from "react-bootstrap/types";
-
-import {DrugLogRecord, MedicineRecord, ResidentRecord} from "../types/RecordTypes";
+import {DrugLogRecord, MedicineRecord, ResidentRecord} from "types/RecordTypes";
 
 interface IKey {
     [key: string]: any

@@ -1,9 +1,7 @@
-import React from 'reactn';
-
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
-
-import {MedicineRecord} from "../../../types/RecordTypes";
+import React from 'reactn';
+import {MedicineRecord} from "types/RecordTypes";
 import DisabledSpinner from "./DisabledSpinner";
 
 interface IProps {

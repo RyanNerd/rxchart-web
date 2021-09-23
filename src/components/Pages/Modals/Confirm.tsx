@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'reactn';
-import Modal, {ModalProps} from 'react-bootstrap/Modal';
 import Button from "react-bootstrap/Button";
+import Modal, {ModalProps} from 'react-bootstrap/Modal';
 import {ButtonVariant} from "react-bootstrap/types";
+import React, {useEffect, useState} from 'reactn';
 
 interface IChildren {
     children: any // ReactChildren | ReactChild | JSX.Element[] | JSX.Element | string

@@ -1,6 +1,6 @@
-import React, {useEffect, useGlobal, useMemo, useState} from 'reactn';
 import {Alert, Button, ButtonProps, Card} from "react-bootstrap";
-import {randomString} from "../../utility/common";
+import React, {useEffect, useGlobal, useMemo, useState} from 'reactn';
+import {randomString} from "utility/common";
 
 interface IKey {
     [key: string]: string

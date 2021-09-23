@@ -1,9 +1,9 @@
 import Button from 'react-bootstrap/Button';
-import React from 'reactn';
 import Table from 'react-bootstrap/Table';
 import ToggleButton from 'react-bootstrap/ToggleButton';
-import {clientDOB, getFormattedDate, getMDY} from "../../../utility/common";
-import {ResidentRecord} from "../../../types/RecordTypes";
+import React from 'reactn';
+import {ResidentRecord} from "types/RecordTypes";
+import {clientDOB, getFormattedDate, getMDY} from "utility/common";
 
 interface IProps {
     activeResident: ResidentRecord | null

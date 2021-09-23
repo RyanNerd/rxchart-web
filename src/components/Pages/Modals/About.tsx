@@ -1,7 +1,6 @@
-import React, {useEffect, useState} from 'reactn';
-
 import {Button, ListGroup, ListGroupItem, Modal, ModalBody, ModalFooter} from "react-bootstrap";
 import ModalHeader from "react-bootstrap/ModalHeader";
+import React, {useEffect, useState} from 'reactn';
 
 interface IProps {
     show: boolean

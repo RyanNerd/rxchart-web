@@ -1,7 +1,7 @@
-import React, {useGlobal} from 'reactn';
 import {Button, ListGroup} from "react-bootstrap";
+import React, {useGlobal} from 'reactn';
+import {clientFullName, getCheckoutList, getFormattedDate} from "utility/common";
 import DrugLogGrid from "../Pages/Grids/DrugLogGrid";
-import {clientFullName, getCheckoutList, getFormattedDate} from "../../utility/common";
 
 /**
  * MedicineCheckoutPage

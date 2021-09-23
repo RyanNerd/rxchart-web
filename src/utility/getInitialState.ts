@@ -1,14 +1,14 @@
+import {State} from "reactn/default";
+import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord, ResidentRecord} from "types/RecordTypes";
+import AuthManager from "../managers/AuthManager";
+import MedicineManager from "../managers/MedicineManager";
+import ResidentManager from "../managers/ResidentManager";
 import AuthenticationProvider, {IAuthenticationProvider} from "../providers/AuthenticationProvider";
 import MedHistoryProvider, {IMedHistoryProvider} from "../providers/MedHistoryProvider";
-import MedicineManager from "../managers/MedicineManager";
 import MedicineProvider, {IMedicineProvider} from "../providers/MedicineProvider";
-import ResidentManager from "../managers/ResidentManager";
-import ResidentProvider, {IResidentProvider} from "../providers/ResidentProvider";
-import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord, ResidentRecord} from "../types/RecordTypes";
-import {State} from "reactn/default";
-import AuthManager from "../managers/AuthManager";
-import PillboxProvider, {IPillboxProvider} from "../providers/PillboxProvider";
 import PillboxItemProvider, {IPillboxItemProvider} from "../providers/PillboxItemProvider";
+import PillboxProvider, {IPillboxProvider} from "../providers/PillboxProvider";
+import ResidentProvider, {IResidentProvider} from "../providers/ResidentProvider";
 
 export interface IProviders {
     authenticationProvider: IAuthenticationProvider

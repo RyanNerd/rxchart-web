@@ -1,6 +1,5 @@
 import {useEffect, useGlobal} from "reactn";
-
-import {ResidentRecord} from "../types/RecordTypes";
+import {ResidentRecord} from "types/RecordTypes";
 
 /**
  * Watch the __client global

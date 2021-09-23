@@ -1,10 +1,10 @@
+import {IAuthManager} from "managers/AuthManager";
+import {IMedicineManager} from "managers/MedicineManager";
+import {IResidentManager} from "managers/ResidentManager";
+import {Authenticated} from "providers/AuthenticationProvider";
 import 'reactn';
-import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord, ResidentRecord} from './types/RecordTypes';
-import {IResidentManager} from "./managers/ResidentManager";
-import {IMedicineManager} from "./managers/MedicineManager";
-import {IAuthManager} from "./managers/AuthManager";
-import {IProviders} from "./utility/getInitialState";
-import {Authenticated} from "./providers/AuthenticationProvider";
+import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord, ResidentRecord} from 'types/RecordTypes';
+import {IProviders} from "utility/getInitialState";
 
 declare module 'reactn/default' {
     export interface Reducers {

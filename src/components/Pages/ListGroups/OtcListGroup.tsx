@@ -1,13 +1,11 @@
-import React, {useEffect, useRef, useState} from "reactn";
-
-import Table from "react-bootstrap/Table";
 import {Button, Form, FormGroup, InputGroup, ListGroup} from "react-bootstrap";
-
+import Table from "react-bootstrap/Table";
+import React, {useEffect, useRef, useState} from "reactn";
+import {DrugLogRecord, MedicineRecord} from "types/RecordTypes";
+import {calculateLastTaken, getLastTakenVariant} from "utility/common";
 import LogButtons from "../../Buttons/LogButtons";
-import MedicineDetail from "../Grids/MedicineDetail";
 import ShadowBox from "../../Buttons/ShadowBox";
-import {DrugLogRecord, MedicineRecord} from "../../../types/RecordTypes";
-import {calculateLastTaken, getLastTakenVariant} from "../../../utility/common";
+import MedicineDetail from "../Grids/MedicineDetail";
 
 // todo: simplify combine addOtcMedicine and editOtcMedicine into editOtcMedicine that may also handle inserts
 interface IProps {

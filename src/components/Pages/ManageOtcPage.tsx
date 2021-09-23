@@ -1,11 +1,11 @@
-import Confirm from "./Modals/Confirm";
-import MedicineDetail from "./Grids/MedicineDetail";
-import MedicineEdit from "./Modals/MedicineEdit";
-import React, {useGlobal, useState} from 'reactn';
-import Table from "react-bootstrap/Table";
-import TooltipButton from "../Buttons/TooltipButton";
 import {Alert} from "react-bootstrap";
-import {MedicineRecord, newMedicineRecord} from "../../types/RecordTypes";
+import Table from "react-bootstrap/Table";
+import React, {useGlobal, useState} from 'reactn';
+import {MedicineRecord, newMedicineRecord} from "types/RecordTypes";
+import TooltipButton from "../Buttons/TooltipButton";
+import MedicineDetail from "./Grids/MedicineDetail";
+import Confirm from "./Modals/Confirm";
+import MedicineEdit from "./Modals/MedicineEdit";
 
 /**
  * ManageOtcPage

@@ -1,5 +1,5 @@
-import {PillboxRecord} from '../types/RecordTypes';
 import Frak from "frak/lib/components/Frak";
+import {PillboxRecord} from 'types/RecordTypes';
 
 export interface IPillboxProvider {
     setApiKey: (apiKey: string) => void

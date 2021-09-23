@@ -1,5 +1,5 @@
-import React from "reactn";
 import Button from "react-bootstrap/Button";
+import React from "reactn";
 
 interface IProps {
     lastTaken: number | null | undefined

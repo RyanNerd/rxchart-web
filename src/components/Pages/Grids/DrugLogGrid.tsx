@@ -1,7 +1,7 @@
-import React from 'reactn';
 import Button from 'react-bootstrap/Button';
 import Table, {TableProps} from 'react-bootstrap/Table';
-import {DrugLogRecord, MedicineRecord} from "../../../types/RecordTypes";
+import React from 'reactn';
+import {DrugLogRecord, MedicineRecord} from "types/RecordTypes";
 import {
     calculateLastTaken,
     getBsColor,
@@ -9,7 +9,7 @@ import {
     getLastTakenVariant,
     getObjectByProperty,
     isToday
-} from "../../../utility/common";
+} from "utility/common";
 
 interface IProps extends TableProps {
     checkoutOnly?: boolean

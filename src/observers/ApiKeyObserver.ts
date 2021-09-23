@@ -1,7 +1,7 @@
+import {Authenticated} from "providers/AuthenticationProvider";
 import {useEffect, useGlobal} from "reactn";
-import {IProviders} from "../utility/getInitialState";
-import {Authenticated} from "../providers/AuthenticationProvider";
-import {asyncWrapper} from "../utility/common";
+import {asyncWrapper} from "utility/common";
+import {IProviders} from "utility/getInitialState";
 
 /**
  * Watch for changes to the global __apiKey

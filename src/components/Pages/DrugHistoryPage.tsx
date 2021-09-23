@@ -1,7 +1,7 @@
-import React, {useGlobal} from 'reactn';
 import Button from 'react-bootstrap/Button';
+import React, {useGlobal} from 'reactn';
+import {clientDOB, clientFullName} from "utility/common";
 import DrugLogGrid from './Grids/DrugLogGrid';
-import {clientDOB, clientFullName} from "../../utility/common";
 
 /**
  * DrugHistoryPage

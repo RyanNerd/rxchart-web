@@ -1,5 +1,5 @@
-import {MedicineRecord, PillboxItemRecord} from "../../../types/RecordTypes";
-import {multiSort, SortDirection} from "../../../utility/common";
+import {MedicineRecord, PillboxItemRecord} from "types/RecordTypes";
+import {multiSort, SortDirection} from "utility/common";
 
 export interface IPillboxItemGrid {
     medicineList: MedicineRecord[]

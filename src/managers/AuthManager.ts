@@ -1,5 +1,5 @@
-import {Authenticated, IAuthenticationProvider} from "../providers/AuthenticationProvider";
-import {asyncWrapper} from "../utility/common";
+import {Authenticated, IAuthenticationProvider} from "providers/AuthenticationProvider";
+import {asyncWrapper} from "utility/common";
 
 export interface IAuthManager {
     authenticate: (username: string, password: string) => Promise<Authenticated>

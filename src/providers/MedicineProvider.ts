@@ -1,5 +1,5 @@
-import {MedicineRecord} from '../types/RecordTypes';
 import Frak from "frak/lib/components/Frak";
+import {MedicineRecord} from 'types/RecordTypes';
 
 export interface IMedicineProvider {
     setApiKey: (apiKey: string) => void

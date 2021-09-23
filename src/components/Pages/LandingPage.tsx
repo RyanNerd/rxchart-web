@@ -1,15 +1,15 @@
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
+import React, {useEffect, useGlobal, useState} from 'reactn';
+import {getCheckoutList} from "utility/common";
 import DiagnosticPage from "./DiagnosticPage";
 import DrugHistoryPage from "./DrugHistoryPage";
 import LoginPage from './LoginPage';
 import ManageDrugPage from "./ManageDrugPage";
 import ManageOtcPage from "./ManageOtcPage";
-import MedicinePage from "./MedicinePage";
-import React, {useEffect, useGlobal, useState} from 'reactn';
-import ResidentPage from "./ResidentPage";
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
 import MedicineCheckoutPage from "./MedicineCheckoutPage";
-import {getCheckoutList} from "../../utility/common";
+import MedicinePage from "./MedicinePage";
+import ResidentPage from "./ResidentPage";
 
 /**
  * Landing Page - Tab Page Menu UI

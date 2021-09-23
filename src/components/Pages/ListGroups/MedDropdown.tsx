@@ -1,8 +1,6 @@
-import React from 'reactn';
-
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
-
+import React from 'reactn';
 import DisabledSpinner from "./DisabledSpinner";
 
 interface IDropdownItem {
@@ -54,9 +52,8 @@ const MedDropdown = (props: IProps): JSX.Element | null => {
             <Dropdown.Item
                 key={i.id.toString()}
                 active={i.id === activeId}
-                onSelect={(s) => {
-                    onSelect(i.id);
-                }}>
+                onSelect={() => onSelect(i.id)}
+            >
                 {i.description}
             </Dropdown.Item>
         );

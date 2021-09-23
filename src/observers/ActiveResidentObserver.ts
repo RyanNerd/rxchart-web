@@ -1,5 +1,5 @@
 import {useEffect, useGlobal} from "reactn";
-import {ResidentRecord} from "../types/RecordTypes";
+import {ResidentRecord} from "types/RecordTypes";
 import usePrevious from "../hooks/usePrevious";
 
 /**

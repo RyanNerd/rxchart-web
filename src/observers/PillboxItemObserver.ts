@@ -1,7 +1,6 @@
+import {IMedicineManager} from "managers/MedicineManager";
 import {useEffect, useGlobal} from "reactn";
-
-import {IMedicineManager} from "../managers/MedicineManager";
-import {PillboxItemRecord, ResidentRecord} from "../types/RecordTypes";
+import {PillboxItemRecord, ResidentRecord} from "types/RecordTypes";
 
 /**
  * Watch the __pillboxItem global

@@ -1,25 +1,23 @@
-import React, {useGlobal, useState, useEffect} from 'reactn';
-
 import {ButtonGroup} from "react-bootstrap";
-
-import About from "./Pages/Modals/About";
+import React, {useEffect, useGlobal, useState} from 'reactn';
+import {ResidentRecord} from "types/RecordTypes";
+import {ReactComponent as RxIcon} from "../icons/prescription.svg";
 import ActiveResidentObserver from "../observers/ActiveResidentObserver";
 import ApiKeyObserver from "../observers/ApiKeyObserver";
 import AuthObserver from "../observers/AuthObserver";
-import ClientButton from "./Buttons/ClientButton";
-import ClientDobButton from "./Buttons/ClientDobButton";
 import ClientObserver from "../observers/ClientObserver";
-import ClientRoster from "./Pages/Modals/ClientRoster";
 import DrugLogObserver from "../observers/DrugLogObserver";
 import ErrorDetailsObserver from "../observers/ErrorDetailsObserver";
-import LandingPage from "./Pages/LandingPage";
 import MedicineObserver from "../observers/MedicineObserver";
 import OtcMedicineObserver from "../observers/OtcMedicineObserver";
-import ResidentEdit from "./Pages/Modals/ResidentEdit";
-import {ReactComponent as RxIcon} from "../icons/prescription.svg";
-import {ResidentRecord} from "../types/RecordTypes";
-import PillboxObserver from "../observers/PillboxObserver";
 import PillboxItemObserver from "../observers/PillboxItemObserver";
+import PillboxObserver from "../observers/PillboxObserver";
+import ClientButton from "./Buttons/ClientButton";
+import ClientDobButton from "./Buttons/ClientDobButton";
+import LandingPage from "./Pages/LandingPage";
+import About from "./Pages/Modals/About";
+import ClientRoster from "./Pages/Modals/ClientRoster";
+import ResidentEdit from "./Pages/Modals/ResidentEdit";
 
 /**
  * Main Entry Component

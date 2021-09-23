@@ -1,14 +1,12 @@
-import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
-
 import {Alert, Button, Form, Row} from "react-bootstrap";
-
+import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
+import {newResidentRecord, ResidentRecord} from "types/RecordTypes";
+import {clientFullName} from 'utility/common';
+import TooltipButton from "../Buttons/TooltipButton";
+import ResidentGrid from './Grids/ResidentGrid';
 import ClientRoster from "./Modals/ClientRoster";
 import Confirm from "./Modals/Confirm";
 import ResidentEdit from './Modals/ResidentEdit';
-import ResidentGrid from './Grids/ResidentGrid';
-import TooltipButton from "../Buttons/TooltipButton";
-import {clientFullName} from '../../utility/common';
-import {newResidentRecord, ResidentRecord} from "../../types/RecordTypes";
 
 interface IProps {
     residentSelected: () => void

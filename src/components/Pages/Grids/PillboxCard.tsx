@@ -1,9 +1,9 @@
-import React, {useGlobal} from "reactn";
 import {Card} from "react-bootstrap";
-import {BsColors} from "../../../utility/common";
-import PillboxItemGrid from "./PillboxItemGrid";
+import React, {useGlobal} from "reactn";
+import {MedicineRecord, PillboxItemRecord, PillboxRecord} from "types/RecordTypes";
+import {BsColors} from "utility/common";
 import getPillboxItems, {PillRowType} from "./getPillboxItems";
-import {MedicineRecord, PillboxItemRecord, PillboxRecord} from "../../../types/RecordTypes";
+import PillboxItemGrid from "./PillboxItemGrid";
 
 interface IProp {
     medicineList: MedicineRecord[]

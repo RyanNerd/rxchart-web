@@ -1,7 +1,6 @@
+import {IMedicineManager} from "managers/MedicineManager";
 import {useEffect, useGlobal} from "reactn";
-
-import {IMedicineManager} from "../managers/MedicineManager";
-import {MedicineRecord} from "../types/RecordTypes";
+import {MedicineRecord} from "types/RecordTypes";
 
 /**
  * Watch for changes to the __otcMedicine global

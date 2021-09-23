@@ -1,14 +1,12 @@
-import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
-
+import {Alert} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Modal from 'react-bootstrap/Modal';
 import Row from "react-bootstrap/Row";
-import {Alert} from "react-bootstrap";
-
-import {MedicineRecord} from "../../../types/RecordTypes";
-import {clientFullName, isDateFuture, isDayValid, isMonthValid, isYearValid} from "../../../utility/common";
+import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
+import {MedicineRecord} from "types/RecordTypes";
+import {clientFullName, isDateFuture, isDayValid, isMonthValid, isYearValid} from "utility/common";
 
 interface IProps {
     drugInfo: MedicineRecord

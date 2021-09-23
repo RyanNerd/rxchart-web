@@ -1,13 +1,11 @@
+import {Container} from 'react-bootstrap';
+import Alert from 'react-bootstrap/Alert';
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import {ReactComponent as LockIcon} from '../../icons/lock.svg';
+import RxIcon from '../../icons/prescription.svg';
 import {ReactComponent as UserIcon} from '../../icons/user.svg';
-
-import Alert from 'react-bootstrap/Alert';
-import {Container} from 'react-bootstrap';
-
 import '../../styles/neumorphism.css';
 import About from "./Modals/About";
-import RxIcon from '../../icons/prescription.svg';
 
 /**
  *  Sign in page

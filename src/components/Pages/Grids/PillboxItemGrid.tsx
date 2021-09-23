@@ -1,11 +1,9 @@
-import React from 'reactn';
-
+import {ButtonGroup, Dropdown} from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
 import Table, {TableProps} from 'react-bootstrap/Table';
-import {ButtonGroup, Dropdown} from "react-bootstrap";
-import {PillboxItemRecord} from "../../../types/RecordTypes";
-
-import {BsColors, randomString} from "../../../utility/common";
+import React from 'reactn';
+import {PillboxItemRecord} from "types/RecordTypes";
+import {BsColors, randomString} from "utility/common";
 import {PillRowType} from "./getPillboxItems";
 
 interface IProps extends TableProps {
@@ -75,6 +73,7 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
                         disabled={quantity === 0}
                         id={"pill-grid-inc-btn" + domId}
                         onClick={((e) => {
+                            e.preventDefault();
                             onEdit({
                                 Id: pill.Id,
                                 MedicineId: pill.MedicineId,
@@ -131,6 +130,7 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
                         className="ml-2"
                         id={"pill-grid-inc-btn" + domId}
                         onClick={((e) => {
+                            e.preventDefault();
                             onEdit({
                                 Id: pill.Id,
                                 PillboxId: pillboxId,

@@ -1,10 +1,9 @@
-import React, {useState, useEffect} from 'reactn';
 import {ReactChild, ReactChildren} from 'react';
-
-import Modal, {ModalProps} from 'react-bootstrap/Modal';
-import Button from "react-bootstrap/Button";
-import ModalHeader from "react-bootstrap/ModalHeader";
 import {ModalBody, ModalFooter} from "react-bootstrap";
+import Button from "react-bootstrap/Button";
+import Modal, {ModalProps} from 'react-bootstrap/Modal';
+import ModalHeader from "react-bootstrap/ModalHeader";
+import React, {useEffect, useState} from 'reactn';
 
 interface IProps extends ModalProps {
     show: boolean

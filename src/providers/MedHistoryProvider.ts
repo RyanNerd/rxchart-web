@@ -1,5 +1,5 @@
-import {DrugLogRecord} from '../types/RecordTypes';
 import Frak from "frak/lib/components/Frak";
+import {DrugLogRecord} from 'types/RecordTypes';
 
 type DeleteResponse = { success: boolean };
 type RecordResponse = {

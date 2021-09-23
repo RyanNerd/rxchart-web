@@ -1,38 +1,23 @@
-import React, {useEffect, useGlobal, useState} from 'reactn';
-
+import {Alert, ToggleButton} from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import ListGroup from "react-bootstrap/ListGroup";
 import Row from 'react-bootstrap/Row';
-import {Alert, ToggleButton} from "react-bootstrap";
-
-import {
-    DrugLogRecord,
-    MedicineRecord,
-    newMedicineRecord,
-    PillboxRecord,
-    ResidentRecord
-} from "types/RecordTypes";
-import {
-    calculateLastTaken,
-    getCheckoutList,
-    getDrugName,
-    getFormattedDate,
-    getMedicineRecord
-} from "utility/common";
-
-import Confirm from './Modals/Confirm';
-import DrugLogEdit from "./Modals/DrugLogEdit";
-import DrugLogGrid from "./Grids/DrugLogGrid";
+import React, {useEffect, useGlobal, useState} from 'reactn';
+import {DrugLogRecord, MedicineRecord, newMedicineRecord, PillboxRecord, ResidentRecord} from "types/RecordTypes";
+import {calculateLastTaken, getCheckoutList, getDrugName, getFormattedDate, getMedicineRecord} from "utility/common";
+import usePrevious from "../../hooks/usePrevious";
+import TabContent from "../../styles/common.css";
 import LastTakenButton from "../Buttons/LastTakenButton";
+import DrugLogGrid from "./Grids/DrugLogGrid";
+import PillboxCard from "./Grids/PillboxCard";
 import MedListGroup from "./ListGroups/MedListGroup";
-import MedicineEdit from "./Modals/MedicineEdit";
 import OtcListGroup from "./ListGroups/OtcListGroup";
 import PillboxListGroup from "./ListGroups/PillboxListGroup";
-import TabContent from "../../styles/common.css";
-import usePrevious from "../../hooks/usePrevious";
-import PillboxCard from "./Grids/PillboxCard";
+import Confirm from './Modals/Confirm';
+import DrugLogEdit from "./Modals/DrugLogEdit";
+import MedicineEdit from "./Modals/MedicineEdit";
 
 // Display states
 enum DISPLAY_TYPE {

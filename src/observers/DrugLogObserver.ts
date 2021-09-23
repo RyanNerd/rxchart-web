@@ -1,7 +1,6 @@
+import {IMedicineManager} from "managers/MedicineManager";
 import {useEffect, useGlobal} from "reactn";
-
-import {IMedicineManager} from "../managers/MedicineManager";
-import {DrugLogRecord, ResidentRecord} from "../types/RecordTypes";
+import {DrugLogRecord, ResidentRecord} from "types/RecordTypes";
 
 /**
  * Watch the __drugLog global

@@ -1,9 +1,9 @@
-import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord} from "../types/RecordTypes";
-import {IMedicineProvider} from "../providers/MedicineProvider";
-import {IMedHistoryProvider} from "../providers/MedHistoryProvider";
-import {IPillboxProvider} from "../providers/PillboxProvider";
-import {asyncWrapper, promiseWrapper} from "../utility/common";
-import {IPillboxItemProvider} from "../providers/PillboxItemProvider";
+import {IMedHistoryProvider} from "providers/MedHistoryProvider";
+import {IMedicineProvider} from "providers/MedicineProvider";
+import {IPillboxItemProvider} from "providers/PillboxItemProvider";
+import {IPillboxProvider} from "providers/PillboxProvider";
+import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord} from "types/RecordTypes";
+import {asyncWrapper, promiseWrapper} from "utility/common";
 
 export interface IMedicineManager {
     deleteDrugLog: (drugLogId: number) => Promise<boolean>

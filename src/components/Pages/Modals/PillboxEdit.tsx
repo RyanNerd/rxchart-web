@@ -1,13 +1,11 @@
-import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
-
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Modal from 'react-bootstrap/Modal';
 import Row from "react-bootstrap/Row";
-
-import {PillboxRecord} from "../../../types/RecordTypes";
-import {clientFullName} from "../../../utility/common";
+import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
+import {PillboxRecord} from "types/RecordTypes";
+import {clientFullName} from "utility/common";
 
 interface IProps {
     pillboxInfo: PillboxRecord
