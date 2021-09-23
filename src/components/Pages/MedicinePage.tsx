@@ -110,9 +110,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     useEffect(() => {
         // We are using medicineList === null as an indicator of if the medicine list has changed and needs new
         if (medicineList !== null) {
-            // todo: move to direct param once we figure out why medicine dropdown is stupid.
-            const activeMed = medicineList.length > 0 ? medicineList[0] : null;
-            setActiveMed(activeMed);
+            setActiveMed(medicineList.length > 0 ? medicineList[0] : null);
         }
     }, [medicineList])
 
