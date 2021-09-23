@@ -21,7 +21,10 @@ const MedicineObserver = (mm: IMedicineManager, activeClient: ResidentRecord | n
                 case "load": {
                     mm.loadMedicineList(medicine.payload as number)
                     .then((meds) => {
-                        return setMedicineList(meds);
+                        setMedicineList(meds);
+                        if (medicine.cb) {
+                            medicine.cb(meds);
+                        }
                     })
                     .catch((err) => setErrorDetails(err))
                     .finally(() => setMedicine(null))

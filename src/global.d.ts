@@ -21,6 +21,13 @@ declare module 'reactn/default' {
     export interface State {
         __auth: {action: 'login' | 'logout', payload: {username: string, password: string} | null} | null
         activeResident: ResidentRecord | null
+        activeClient: {
+            client: ResidentRecord,
+            medicineList: MedicineRecord[] | null,
+            drugLogList: DrugLogRecord[] | null,
+            pillboxList: PillboxRecord[] | null,
+            pillboxItemList: PillboxItemRecord[] | null
+        } | null
         activeTabKey: string
                 authManager: IAuthManager
         __client: {
@@ -30,12 +37,28 @@ declare module 'reactn/default' {
         } | null
         count: number
         development: boolean
-        __drugLog: {action: 'load'|'update'|'delete', payload?: null | DrugLogRecord | DrugLogRecord[] | number} | null
+        __drugLog: {
+            action: 'load'|'update'|'delete',
+            payload?: null | DrugLogRecord | DrugLogRecord[] | number.drugLogList,
+            cb?: (dl: DrugLogRecord[]) => void
+        } | null
         drugLogList: DrugLogRecord[]
         __errorDetails: any
-        __medicine: {action: 'load' | 'update' | 'delete', payload: null | MedicineRecord | number} | null
-        __pillbox: {action: 'load' | 'update' | 'delete', payload: null | PillboxRecord | number} | null
-        __pillboxItem: TPillboxItemObserver | null
+        __medicine: {
+            action: 'load' | 'update' | 'delete',
+            payload: null | MedicineRecord | number,
+            cb?: (mr: MedicineRecord[]) => void
+        } | null
+        __pillbox: {
+            action: 'load' | 'update' | 'delete',
+            payload: null | PillboxRecord | number,
+            cb?: (pb) => void
+        } | null
+        __pillboxItem: {
+            action: 'load' | 'update' | 'delete',
+            payload: null | PillboxItemRecord | number,
+            cb?: (pbi: PillboxItemRecord[]) => void
+        } | null
         medicineList: MedicineRecord[]
         pillboxList: PillboxRecord[]
         pillboxItemList: PillboxItemRecord[]

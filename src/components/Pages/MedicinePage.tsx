@@ -74,7 +74,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     // Lists
     const [drugLogList, setDrugLogList] = useState(props.drugLogList);
     const [globalMedicineList] = useGlobal('medicineList');
-    const [medicineList, setMedicineList] = useState(globalMedicineList.filter(m => m.Active));
+    const [medicineList, setMedicineList] = useState<MedicineRecord[]|null>(null);
     const [otcList] = useGlobal('otcList');
     const [otcLogList, setOtcLogList] = useState<DrugLogRecord[]>([]);
     const [pillboxItemList] = useGlobal('pillboxItemList');
@@ -86,26 +86,46 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [activeOtc, setActiveOtc] = useState<MedicineRecord | null>(null);
     const [activePillbox, setActivePillbox] = useState<PillboxRecord | null>(null);
 
-    const prevMedicineList = usePrevious(medicineList);
     const prevOtcList = usePrevious(otcList);
     const prevPillboxList = usePrevious(pillboxList);
+    const prevClient = usePrevious(props.activeResident);
 
-    // Refresh local state when props change
+    // Refresh activeClient when the activeResident global changes.
+    useEffect(() => {
+        if (prevClient !== props.activeResident) {
+            // setDrugLogList(props.drugLogList);
+            setActiveClient(props.activeResident);
+
+            // Set the clientId
+            setClientId(props.activeResident?.Id ? props.activeResident.Id : null);
+        }
+    }, [props, otcList, prevClient]);
+
+    useEffect(() => {
+        setActiveTabKey(props.activeTabKey);
+    }, [props.activeTabKey]);
+
     useEffect(() => {
         setDrugLogList(props.drugLogList);
-        setActiveClient(props.activeResident);
-        setActiveTabKey(props.activeTabKey);
-        setMedicineList(globalMedicineList.filter(m => m.Active));
-
-        // Set the clientId
-        setClientId(props.activeResident?.Id ? props.activeResident.Id : null);
 
         // We only want to list the OTC drugs on this page that the resident has taken.
         // @link https://stackoverflow.com/questions/31005396/filter-array-of-objects-with-another-array-of-objects
         setOtcLogList(props.drugLogList.filter((drug: DrugLogRecord) => {
             return otcList.some((m) => {return m.Id === drug?.MedicineId;});
         }));
-    }, [props, globalMedicineList, otcList]);
+    }, [props.drugLogList])
+
+    useEffect(() => {
+        setMedicineList(globalMedicineList.filter(m => m.Active));
+    }, [globalMedicineList]);
+
+    useEffect(() => {
+        if (medicineList !== null) {
+            // todo: move to direct param once we figure out why medicine dropdown is stupid.
+            const activeMed = medicineList.length > 0 ? medicineList[0] : null;
+            setActiveMed(activeMed);
+        }
+    }, [medicineList])
 
     // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
     useEffect(() => {
@@ -126,12 +146,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         }
     }, [drugLogList])
 
-    // Set initial activeMed when the medicineList changes
-    useEffect(() => {
-        if (prevMedicineList !== medicineList) {
-            setActiveMed(medicineList.length > 0 ? medicineList[0] : null);
-        }
-    }, [medicineList, prevMedicineList]);
 
     // Set activeOtc state to the first element of the otcList when the otcList changes
     useEffect(() => {
@@ -148,7 +162,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     }, [pillboxList, prevPillboxList]);
 
     // If there isn't an activeResident or this isn't the active tab then do not render
-    if (!clientId || activeTabKey !== 'medicine') {
+    if (!clientId || !medicineList || activeTabKey !== 'medicine') {
         return null;
     }
 
@@ -308,7 +322,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             medicineList={medicineList}
                         />
                         }
-
 
                         {displayType === DISPLAY_TYPE.OTC && activeOtc &&
                         <OtcListGroup

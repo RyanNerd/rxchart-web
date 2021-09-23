@@ -21,7 +21,10 @@ const PillboxObserver = (mm: IMedicineManager, activeClient: ResidentRecord | nu
                 case "load": {
                     mm.loadPillboxList(pillbox.payload as number)
                         .then((meds) => {
-                            return setPillboxList(meds);
+                            setPillboxList(meds);
+                            if (pillbox.cb) {
+                                pillbox.cb(meds);
+                            }
                         })
                         .catch((err) => setErrorDetails(err))
                         .finally(() => setPillbox(null))

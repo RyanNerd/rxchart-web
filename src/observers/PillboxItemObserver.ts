@@ -22,16 +22,21 @@ const PillboxItemObserver = (mm: IMedicineManager, activeClient: ResidentRecord 
                     switch (action) {
                         case "load": {
                             if (Array.isArray(payload)) {
-                                setPillboxItemList(payload)
-                                    .catch((err) => setErrorDetails(err))
-                                    .finally(() => setPillboxItemObserver(null));
+                                setPillboxItemList(payload);
+                                if (pillboxItemObserver.cb) {
+                                    pillboxItemObserver.cb(payload);
+                                }
+                                setPillboxItemObserver(null);
                             } else {
                                 mm.loadPillboxItem(clientId)
-                                    .then((pillboxItems) => {
-                                        return setPillboxItemList(pillboxItems);
-                                    })
-                                    .catch((err) => setErrorDetails(err))
-                                    .finally(() => setPillboxItemObserver(null));
+                                .then((pillboxItems) => {
+                                    setPillboxItemList(pillboxItems);
+                                    if (pillboxItemObserver.cb) {
+                                        pillboxItemObserver.cb(pillboxItems);
+                                    }
+                                })
+                                .catch((err) => setErrorDetails(err))
+                                .finally(() => setPillboxItemObserver(null));
                             }
                             break;
                         }

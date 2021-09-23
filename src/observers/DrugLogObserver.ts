@@ -20,13 +20,18 @@ const DrugLogObserver = (mm: IMedicineManager, activeClient: ResidentRecord | nu
             switch (action) {
                 case "load": {
                     if (Array.isArray(payload)) {
-                        setDrugLogList(payload)
-                        .catch((err) => setErrorDetails(err))
-                        .finally(() => setDrugLog(null))
+                        setDrugLogList(payload);
+                        if (drugLog.cb) {
+                            drugLog.cb(payload);
+                        }
+                        setDrugLog(null);
                     } else {
                         mm.loadDrugLog(clientId)
                         .then((drugs) => {
-                            return setDrugLogList(drugs);
+                            setDrugLogList(drugs);
+                            if (drugLog.cb) {
+                                return drugLog.cb(drugs);
+                            }
                         })
                         .catch((err) => setErrorDetails(err))
                         .finally(() => setDrugLog(null))
