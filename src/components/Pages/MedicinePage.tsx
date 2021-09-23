@@ -265,6 +265,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             key="med-list-group-pill-btn"
                             id="med-list-group-pill-radio-btn"
                             className="ml-2"
+                            disabled={medicineList.length < 5}
                             size="sm"
                             type="radio"
                             variant="outline-success"
