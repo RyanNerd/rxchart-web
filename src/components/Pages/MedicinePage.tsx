@@ -1,4 +1,4 @@
-import {Alert, ToggleButton} from "react-bootstrap";
+import {Alert, Toast, ToggleButton} from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
@@ -6,7 +6,14 @@ import ListGroup from "react-bootstrap/ListGroup";
 import Row from 'react-bootstrap/Row';
 import React, {useEffect, useGlobal, useState} from 'reactn';
 import {DrugLogRecord, MedicineRecord, PillboxRecord, ResidentRecord} from "types/RecordTypes";
-import {calculateLastTaken, getCheckoutList, getDrugName, getFormattedDate, getMedicineRecord} from "utility/common";
+import {
+    asyncWrapper,
+    calculateLastTaken,
+    getCheckoutList,
+    getDrugName,
+    getFormattedDate,
+    getMedicineRecord
+} from "utility/common";
 import usePrevious from "../../hooks/usePrevious";
 import TabContent from "../../styles/common.css";
 import LastTakenButton from "../Buttons/LastTakenButton";
@@ -42,6 +49,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [, setMedicine] = useGlobal('__medicine');
     const [, setOtcMedicine] = useGlobal('__otcMedicine');
     const [, setDrugLog] = useGlobal('__drugLog');
+    const [mm] = useGlobal('medicineManager');
+    const [, setErrorDetails] = useGlobal('__errorDetails');
 
     // Internal state
     const [activeClient, setActiveClient] = useState(props.activeResident);
@@ -73,6 +82,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const prevOtcList = usePrevious(otcList);
     const prevPillboxList = usePrevious(pillboxList);
     const prevClient = usePrevious(props.activeResident);
+
+    const [toast, setToast] = useState<null|DrugLogRecord>(null);
 
     // Refresh activeClient when the activeResident global changes.
     useEffect(() => {
@@ -226,17 +237,24 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         return getDrugName(medicineId, medicineList.concat(otcList));
     }
 
-    // TODO: This is diagnosis only. Remove once we can bulk update.
-    const logToast = (dl: DrugLogRecord | DrugLogRecord[]) => {
-        const drugLogRecord = dl as DrugLogRecord;
-        const med = medicineList.find(m => drugLogRecord?.MedicineId === m.Id);
-        const medName = drugName(drugLogRecord.MedicineId);
-        const medNotes = med?.Notes
-        alert('Toast drugLogRecord: ' + medName + ' ' + medNotes);
+    /**
+     * Add drugs to the drugLogList asynchronously
+     * @param {DrugLogRecord} drugLogInfo
+     */
+    const updateDrugLog = async (drugLogInfo: DrugLogRecord): Promise<DrugLogRecord> => {
+        const [e, r] = await asyncWrapper(mm.updateDrugLog(drugLogInfo));
+        if (e) await setErrorDetails(e);
+        return r as DrugLogRecord;
     }
 
+    /**
+     * Handle when the user clicks on Log Pillbox
+     */
     const handleLogPillbox = () => {
-        const pbi = pillboxItemList.filter(p => p.PillboxId === activePillbox?.Id && p.Quantity > 0)
+        // Get all the pillboxItems for the activePillbox that have a Quantity > 0
+        const pbi = pillboxItemList.filter(p => p.PillboxId === activePillbox?.Id && p.Quantity > 0);
+
+        // Iterate through the pillbox items and log the drug as taken
         pbi.forEach(pbi => {
             const notes = 'pb: ' + pbi.Quantity
             const drugLogInfo = {
@@ -248,14 +266,12 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 Out: null
             };
 
-            // FIXME: Only updates one. See DrugLogObserver.ts
-            setDrugLog({
-                action: 'update',
-                payload: drugLogInfo,
-                cb: (dl) => logToast(dl)
-            });
-        });
+            // Because the drugs are logged in rapid succession
+            // we asynchronously process the inserts and toast our successes each time
+            updateDrugLog(drugLogInfo).then(r => setToast(r))
+        })
 
+        // Now that all the pills in the pillbox are logged rehydrate the drugLogList
         setDrugLog({action: "load", payload: clientId});
     }
 
@@ -514,6 +530,28 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     </b>
                 </Confirm.Body>
             </Confirm.Modal>
+            }
+
+            {toast &&
+                <Toast
+                    style={{
+                        position: "absolute",
+                        top: 0,
+                        right: 0
+                    }}
+                    onClose={()=>setToast(null)}
+                    show={true}
+                    delay={3000}
+                    autohide
+                >
+                    <Toast.Header>
+                        Pillbox {activePillbox?.Name}
+                    </Toast.Header>
+
+                    <Toast.Body>
+                        Added {drugName(toast.MedicineId)}
+                    </Toast.Body>
+                </Toast>
             }
         </>
     );

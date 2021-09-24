@@ -3,7 +3,7 @@ import {IMedicineProvider} from "providers/MedicineProvider";
 import {IPillboxItemProvider} from "providers/PillboxItemProvider";
 import {IPillboxProvider} from "providers/PillboxProvider";
 import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord} from "types/RecordTypes";
-import {asyncWrapper, promiseWrapper} from "utility/common";
+import {asyncWrapper} from "utility/common";
 
 export interface IMedicineManager {
     deleteDrugLog: (drugLogId: number) => Promise<boolean>
@@ -15,7 +15,7 @@ export interface IMedicineManager {
     loadPillboxList: (residentId: number) => Promise<PillboxRecord[]>
     loadPillboxItem: (clientId: number) => Promise<PillboxItemRecord[]>
     loadOtcList: () => Promise<MedicineRecord[]>
-    updateDrugLog: (drugLogRecord: DrugLogRecord, residentId: number) => Promise<DrugLogRecord[]>
+    updateDrugLog: (drugLogRecord: DrugLogRecord) => Promise<DrugLogRecord>
     updateMedicine: (medicine: MedicineRecord) => Promise<MedicineRecord>
     updatePillbox: (pillbox: PillboxRecord) => Promise<PillboxRecord>
     updatePillboxItem: (pillboxItemRecord: PillboxItemRecord) => Promise<PillboxItemRecord>
@@ -137,17 +137,10 @@ const MedicineManager = (
     /**
      * Add or update a MedHistory record
      * @param {DrugLogRecord} drugLogInfo
-     * @param {number} residentId
      */
-    const _updateDrugLog = async (drugLogInfo: DrugLogRecord, residentId: number) => {
-        // FIXME: updateDrugLog should return the drugLogRecord from the server not the whole list
-        return promiseWrapper(medHistoryProvider.post(drugLogInfo)).then(([err, result]) => {
-            if (err) throw err;
-            return promiseWrapper(_loadDrugLog(residentId)).then(([err, drugLogList]) => {
-                if (err) throw err;
-                return drugLogList as DrugLogRecord[];
-            })
-        });
+    const _updateDrugLog = async (drugLogInfo: DrugLogRecord) => {
+        const [e, r] = await asyncWrapper(medHistoryProvider.post(drugLogInfo));
+        if (e) throw e; else return r as Promise<DrugLogRecord>;
     }
 
     /**
@@ -205,8 +198,8 @@ const MedicineManager = (
         loadOtcList: async (): Promise<MedicineRecord[]> => {
             return await _loadOtcList();
         },
-        updateDrugLog: async (drugLogRecord: DrugLogRecord, residentId: number): Promise<DrugLogRecord[]> => {
-            return await _updateDrugLog(drugLogRecord, residentId);
+        updateDrugLog: async (drugLogRecord: DrugLogRecord): Promise<DrugLogRecord> => {
+            return await _updateDrugLog(drugLogRecord);
         },
         updateMedicine: async (medicine: MedicineRecord): Promise<MedicineRecord> => {
             return await _updateMedicine(medicine);
