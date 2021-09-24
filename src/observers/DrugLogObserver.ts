@@ -39,11 +39,16 @@ const DrugLogObserver = (mm: IMedicineManager, activeClient: ResidentRecord | nu
                 }
 
                 case "update": {
-                    const drugLogRecord = drugLog.payload;
+                    const drugLogRecord = drugLog.payload as DrugLogRecord;
                     if (drugLogRecord) {
                         mm.updateDrugLog(drugLogRecord as DrugLogRecord, clientId)
                         .then((drugLogs) => {
-                            return setDrugLog({action: 'load', payload: drugLogs})
+                            // FIXME: updateDrugLog should return the drugLogRecord from the server not the whole list
+                            if (drugLog.cb) {
+                                drugLog.cb(drugLogRecord);
+                            } else {
+                                setDrugLog({action: 'load', payload: drugLogs});
+                            }
                         })
                         .catch((err) => setErrorDetails(err))
                         .finally(() => setDrugLog(null))

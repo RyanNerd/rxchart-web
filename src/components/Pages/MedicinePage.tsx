@@ -226,6 +226,39 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         return getDrugName(medicineId, medicineList.concat(otcList));
     }
 
+    // TODO: This is diagnosis only. Remove once we can bulk update.
+    const logToast = (dl: DrugLogRecord | DrugLogRecord[]) => {
+        const drugLogRecord = dl as DrugLogRecord;
+        const med = medicineList.find(m => drugLogRecord?.MedicineId === m.Id);
+        const medName = drugName(drugLogRecord.MedicineId);
+        const medNotes = med?.Notes
+        alert('Toast drugLogRecord: ' + medName + ' ' + medNotes);
+    }
+
+    const handleLogPillbox = () => {
+        const pbi = pillboxItemList.filter(p => p.PillboxId === activePillbox?.Id && p.Quantity > 0)
+        pbi.forEach(pbi => {
+            const notes = 'pb: ' + pbi.Quantity
+            const drugLogInfo = {
+                Id: null,
+                ResidentId: clientId,
+                MedicineId: pbi.MedicineId,
+                Notes: notes,
+                In: null,
+                Out: null
+            };
+
+            // FIXME: Only updates one. See DrugLogObserver.ts
+            setDrugLog({
+                action: 'update',
+                payload: drugLogInfo,
+                cb: (dl) => logToast(dl)
+            });
+        });
+
+        setDrugLog({action: "load", payload: clientId});
+    }
+
     return (
         <>
             <Form className={TabContent} as={Row}>
@@ -341,6 +374,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             activePillbox={activePillbox}
                             onSelect={id => setActivePillbox(pillboxList.find(pb => pb.Id === id) as PillboxRecord)}
                             clientId={clientId}
+                            pillboxItemList={pillboxItemList}
+                            logPillbox={() => handleLogPillbox()}
                         />
                         }
                     </Row>

@@ -140,6 +140,7 @@ const MedicineManager = (
      * @param {number} residentId
      */
     const _updateDrugLog = async (drugLogInfo: DrugLogRecord, residentId: number) => {
+        // FIXME: updateDrugLog should return the drugLogRecord from the server not the whole list
         return promiseWrapper(medHistoryProvider.post(drugLogInfo)).then(([err, result]) => {
             if (err) throw err;
             return promiseWrapper(_loadDrugLog(residentId)).then(([err, drugLogList]) => {

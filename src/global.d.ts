@@ -27,7 +27,7 @@ declare module 'reactn/default' {
         development: boolean
         __drugLog: {
             action: 'load'|'update'|'delete',
-            payload?: null | DrugLogRecord | DrugLogRecord[] | number.drugLogList,
+            payload?: null | DrugLogRecord | DrugLogRecord[] | number,
             cb?: (dl: DrugLogRecord[] | DrugLogRecord) => void
         } | null
         drugLogList: DrugLogRecord[]

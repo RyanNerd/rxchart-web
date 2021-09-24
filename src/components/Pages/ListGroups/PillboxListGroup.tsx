@@ -1,8 +1,8 @@
 import {Alert, Button, Card, Dropdown, DropdownButton} from "react-bootstrap";
-
 import ListGroup from "react-bootstrap/ListGroup";
-import React, {useGlobal, useState} from 'reactn';
-import {newPillboxRecord, PillboxRecord} from "types/RecordTypes";
+import React, {useEffect, useGlobal, useState} from 'reactn';
+import {newPillboxRecord, PillboxItemRecord, PillboxRecord} from "types/RecordTypes";
+import {isToday} from "utility/common";
 import TooltipButton from "../../Buttons/TooltipButton";
 import ConfirmDialogModal from "../Modals/ConfirmDialogModal";
 import PillboxEdit from "../Modals/PillboxEdit";
@@ -12,6 +12,8 @@ interface IProps {
     activePillbox: PillboxRecord | null
     onSelect: (n: number) => void
     clientId: number
+    pillboxItemList: PillboxItemRecord[]
+    logPillbox: () => void
 }
 
 /**
@@ -24,13 +26,38 @@ const PillboxListGroup = (props: IProps) => {
         pillboxList,
         activePillbox,
         onSelect,
-        clientId
+        clientId,
+        pillboxItemList,
+        logPillbox
     } = props;
 
-    // const [, setPillboxItemObserver] = useGlobal('__pillboxItem');
     const [, setPillbox] = useGlobal('__pillbox');
     const [showPillboxDeleteConfirm, setShowPillboxDeleteConfirm] = useState(false);
     const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord | null>(null);
+    const [pillboxHistory, setPillboxHistory] =
+        useState(window.localStorage.getItem('pillbox-history-' + activePillbox?.Id));
+    const [logDisabled, setLogDisabled] = useState(false);
+
+    useEffect(() => {
+        const pbh = window.localStorage.getItem('pillbox-history-' + activePillbox?.Id);
+        setPillboxHistory(pbh);
+    }, [activePillbox, pillboxHistory]);
+
+    useEffect(() => {
+        const pillboxSome = pillboxItemList.some(i => i.PillboxId === activePillbox?.Id && i.Quantity > 0);
+        if (!pillboxSome) {
+            setLogDisabled(true);
+        } else {
+            if (pillboxHistory) {
+                const pd = JSON.parse(pillboxHistory);
+                const dt = new Date(pd);
+                const today = isToday(dt);
+                setLogDisabled(today);
+            } else {
+                setLogDisabled(false);
+            }
+        }
+    }, [pillboxHistory, pillboxItemList, activePillbox]);
 
     /**
      * Pillbox Dropdown Item component
@@ -47,6 +74,25 @@ const PillboxListGroup = (props: IProps) => {
                 {pillboxRecord.Name}
             </Dropdown.Item>
         )
+    }
+
+    /**
+     * Return the pillboxHistory as a nicely formatted date time string
+     * @param {string} h
+     */
+    const getPillboxHistoryAsDate = (h: string): string => {
+        const ph = JSON.parse(h);
+        if (ph) {
+            return new Date(ph).toLocaleDateString() + ' ' + new Date(ph).toLocaleTimeString();
+        }
+        return '';
+    }
+
+    const handleLogPillbox = () => {
+        const now = JSON.stringify(new Date());
+        window.localStorage.setItem('pillbox-history-' + activePillbox?.Id, now);
+        setPillboxHistory(now);
+        logPillbox()
     }
 
     /**
@@ -76,7 +122,8 @@ const PillboxListGroup = (props: IProps) => {
                     <>
                     <Button
                         className="ml-2"
-                        onClick={() => {
+                        onClick={(e) => {
+                            e.preventDefault();
                             const pillboxRecord = {...activePillbox};
                             pillboxRecord.ResidentId = clientId;
                             setPillboxInfo(pillboxRecord);
@@ -114,6 +161,37 @@ const PillboxListGroup = (props: IProps) => {
                     )
                 }
             </ListGroup.Item>
+
+            {activePillbox &&
+            <ListGroup.Item>
+                <Button
+                    disabled={logDisabled}
+                    variant={logDisabled ? "outline-info" : "info"}
+                    onClick={() => handleLogPillbox()}
+                >
+                    Log Pillbox {activePillbox.Name}
+                </Button>
+            </ListGroup.Item>
+            }
+
+            {logDisabled && pillboxHistory &&
+            <ListGroup.Item>
+                <Alert
+                    variant="danger"
+                >
+                    <Alert.Heading>
+                        Pillbox {activePillbox?.Name} logged earier today at {getPillboxHistoryAsDate(pillboxHistory)}
+                    </Alert.Heading>
+                    <Button
+                        variant="danger"
+                        onClick={() => handleLogPillbox()}
+                    >
+                        Log Pillbox {activePillbox?.Name} Anyway?
+                    </Button>
+                </Alert>
+
+            </ListGroup.Item>
+            }
         </ListGroup>
 
 
