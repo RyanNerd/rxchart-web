@@ -131,8 +131,10 @@ const PillboxListGroup = (props: IProps) => {
                 {activePillbox?.Id &&
                     <ListGroup.Item>
                         <Button
-                            disabled={getDrugsInThePillbox(activePillbox.Id, pillboxItemList).length === 0}
-                            variant={getDrugsInThePillbox(activePillbox.Id, pillboxItemList).length === 0 ? "outline-info" : "info"}
+                            disabled={getDrugsInThePillbox(activePillbox.Id, pillboxItemList).length === 0 ||
+                                isPillboxLogToday(activePillbox.Id)}
+                            variant={getDrugsInThePillbox(activePillbox.Id, pillboxItemList).length === 0 ||
+                                isPillboxLogToday(activePillbox.Id) ? "outline-info" : "info"}
                             onClick={() => logPillbox()}
                         >
                             Log Pillbox {activePillbox.Name}

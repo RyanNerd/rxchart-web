@@ -70,7 +70,14 @@ const MedListGroup = (props: IProps): JSX.Element => {
     if (pbCnt > 0) {
         itemList.push({id: 0, description: "divider"});
     }
-    medicineList.forEach(m => itemList.push({id: m.Id as number, description: m.Drug + ' ' + m.Strength}));
+    medicineList.forEach(m => {
+        const strength = m.Strength || '';
+        const description = m.Drug + ' ' + strength;
+        itemList.push({
+            id: m.Id as number,
+            description
+        })
+    });
 
     // Update the barcode image if the barcode has changed
     useEffect(() => {
