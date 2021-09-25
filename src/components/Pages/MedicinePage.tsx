@@ -7,7 +7,6 @@ import Row from 'react-bootstrap/Row';
 import React, {useEffect, useGlobal, useState} from 'reactn';
 import {DrugLogRecord, MedicineRecord, PillboxRecord, ResidentRecord} from "types/RecordTypes";
 import {
-    asyncWrapper,
     calculateLastTaken,
     getCheckoutList,
     getDrugName,
@@ -84,47 +83,15 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [toast, setToast] = useState<null|DrugLogRecord>(null);
 
     /**
-     * Add drugs to the drugLogList asynchronously
-     * @param {DrugLogRecord} drugLogInfo
-     */
-    const updateDrugLog = async (drugLogInfo: DrugLogRecord): Promise<DrugLogRecord> => {
-        const [e, r] = await asyncWrapper(mm.updateDrugLog(drugLogInfo));
-        if (e) await setErrorDetails(e);
-        return r as DrugLogRecord;
-    }
-
-    /**
-     * Asynchronously fetch the DrugLogRecords for the given clientId
-     * @param {number} clientId
-     */
-    const loadDrugLog = async (clientId: number): Promise<DrugLogRecord[]> => {
-        const [e, r] = await asyncWrapper(mm.loadDrugLog(clientId));
-        if (e) await setErrorDetails(e);
-        return r as DrugLogRecord[];
-    }
-
-    /**
-     * Given the drugLogId Asynchronously delete the record.
-     * @param {number} drugLogId
-     */
-    const deleteDrugLog = async (drugLogId: number): Promise<boolean> => {
-        const [e, d] = await asyncWrapper(mm.deleteDrugLog(drugLogId));
-        if (e) await setErrorDetails(e);
-        return d as boolean;
-    }
-
-    /**
      * Given a DrugLogRecord Update or Insert the record and rehydrate the drugLogList
      * @param {DrugLogRecord} drugLog
      * @param clientId
      */
-    const saveDrugLog = (drugLog: DrugLogRecord, clientId: number): Promise<DrugLogRecord> => {
-        return updateDrugLog(drugLog)
-        .then((r) => {
-            // Rehydrate the drugLogList
-            loadDrugLog(clientId).then(drugs => setDrugLogList(drugs));
-            return r;
-        })
+    const saveDrugLog = async (drugLog: DrugLogRecord, clientId: number): Promise<DrugLogRecord> => {
+        const r = await mm.updateDrugLog(drugLog);
+        // Rehydrate the drugLogList
+        mm.loadDrugLog(clientId).then(drugs => setDrugLogList(drugs));
+        return r;
     }
 
     // Refresh activeClient when the activeResident global changes.
@@ -291,16 +258,14 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 Out: null
             };
 
-            // Because the drugs are logged in rapid succession
-            // we asynchronously process the inserts and toast our successes each time
-            updateDrugLog(drugLogInfo).then(r => setToast(r))
+            mm.updateDrugLog(drugLogInfo).then(r =>setToast(r));
         })
 
         // Save the date and time to local storage.
         setPillboxLogDate(activePillbox?.Id as number);
 
         // Now that all the pills in the pillbox are logged rehydrate the drugLogList
-        loadDrugLog(clientId).then(drugs => setDrugLogList(drugs));
+        mm.loadDrugLog(clientId).then(drugs => setDrugLogList(drugs));
 
         // Change  to DISPLAY_TYPE.Medicine
         setDisplayType(DISPLAY_TYPE.Medicine);
@@ -538,9 +503,9 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 size='lg'
                 onSelect={a => {
                     setShowDeleteDrugLogRecord(null);
-                    if (a) deleteDrugLog(showDeleteDrugLogRecord?.Id as number).then(ok => {
+                    if (a) mm.deleteDrugLog(showDeleteDrugLogRecord?.Id as number).then(ok => {
                         if (ok) {
-                            loadDrugLog(clientId).then(drugs => setDrugLogList(drugs));
+                            mm.loadDrugLog(clientId).then(drugs => setDrugLogList(drugs));
                         } else {
                             setErrorDetails('DrugLog delete failed for Id: ' + showDeleteDrugLogRecord.Id);
                         }

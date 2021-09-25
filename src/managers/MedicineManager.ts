@@ -123,7 +123,7 @@ const MedicineManager = (
     }
 
     /**
-     * Returns all of the OTC medicines as a promise
+     * Returns all the OTC medicines as a promise
      */
     const _loadOtcList = async () => {
         const searchCriteria = {
