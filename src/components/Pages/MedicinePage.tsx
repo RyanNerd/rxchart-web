@@ -47,11 +47,10 @@ interface IProps {
  * @return {JSX.Element | null}
  */
 const MedicinePage = (props: IProps): JSX.Element | null => {
+    const [, setErrorDetails] = useGlobal('__errorDetails');
     const [, setMedicine] = useGlobal('__medicine');
     const [, setOtcMedicine] = useGlobal('__otcMedicine');
-    const [, setDrugLog] = useGlobal('__drugLog');
     const [mm] = useGlobal('medicineManager');
-    const [, setErrorDetails] = useGlobal('__errorDetails');
 
     // Internal state
     const [activeClient, setActiveClient] = useState(props.activeResident);
@@ -85,6 +84,62 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const prevClient = usePrevious(props.activeResident);
 
     const [toast, setToast] = useState<null|DrugLogRecord>(null);
+
+    /**
+     * Add drugs to the drugLogList asynchronously
+     * @param {DrugLogRecord} drugLogInfo
+     */
+    const updateDrugLog = async (drugLogInfo: DrugLogRecord): Promise<DrugLogRecord> => {
+        const [e, r] = await asyncWrapper(mm.updateDrugLog(drugLogInfo));
+        if (e) await setErrorDetails(e);
+        return r as DrugLogRecord;
+    }
+
+    /**
+     * Asynchronously fetch the DrugLogRecords for the given clientId
+     * @param {number} clientId
+     */
+    const loadDrugLog = async (clientId: number): Promise<DrugLogRecord[]> => {
+        const [e, r] = await asyncWrapper(mm.loadDrugLog(clientId));
+        if (e) await setErrorDetails(e);
+        return r as DrugLogRecord[];
+    }
+
+    /**
+     * Given the drugLogId Asynchronously delete the record.
+     * @param {number} drugLogId
+     */
+    const deleteDrugLog = async (drugLogId: number): Promise<boolean> => {
+        const [e, d] = await asyncWrapper(mm.deleteDrugLog(drugLogId));
+        if (e) await setErrorDetails(e);
+        return d as boolean;
+    }
+
+    /**
+     * Given a DrugLogRecord Update or Insert the record and rehydrate the drugLogList
+     * @param {DrugLogRecord} drugLog
+     * @param clientId
+     */
+    const saveDrugLog = (drugLog: DrugLogRecord, clientId: number): Promise<DrugLogRecord> => {
+        return updateDrugLog(drugLog)
+        .then((r) => {
+            // Rehydrate the drugLogList and
+            loadDrugLog(clientId).then(drugs => setDrugLogList(drugs));
+
+            // TODO: OH OH.... WELL THIS IS WHY WE WERE USING OBSERVERS and their advantage.
+            // TODO: No longer use props.drugLogList get it from useGlobal() instead!!!!!
+            // TODO: This will likely have an impact on the whole system. Damn!
+            // Check if the drugLog record is OTC and if so rehydrate the
+            const m = getMedicineRecord(r.MedicineId, medicineList as MedicineRecord[]);
+            if (m?.OTC) {
+                // We only want to list the OTC drugs on this page that the resident has taken.
+                setOtcLogList(props.drugLogList.filter((drug: DrugLogRecord) => {
+                    return otcList.some((m) => {return m.Id === drug?.MedicineId;});
+                }));
+            }
+            return r;
+        })
+    }
 
     // Refresh activeClient when the activeResident global changes.
     useEffect(() => {
@@ -206,7 +261,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             In: null,
             Out: null
         };
-        setDrugLog({action: 'update', payload: drugLogInfo});
+        saveDrugLog(drugLogInfo, clientId).then(r => setToast(r));
     }
 
     /**
@@ -225,7 +280,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 In: null,
                 Out: null
             };
-            setDrugLog({action: 'update', payload: drugLogInfo});
+            saveDrugLog(drugLogInfo, clientId).then(r => setToast(r));
         }
     }
 
@@ -236,16 +291,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      */
     const drugName = (medicineId: number): string | undefined => {
         return getDrugName(medicineId, medicineList.concat(otcList));
-    }
-
-    /**
-     * Add drugs to the drugLogList asynchronously
-     * @param {DrugLogRecord} drugLogInfo
-     */
-    const updateDrugLog = async (drugLogInfo: DrugLogRecord): Promise<DrugLogRecord> => {
-        const [e, r] = await asyncWrapper(mm.updateDrugLog(drugLogInfo));
-        if (e) await setErrorDetails(e);
-        return r as DrugLogRecord;
     }
 
     /**
@@ -276,7 +321,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         setPillboxLogDate(activePillbox?.Id as number);
 
         // Now that all the pills in the pillbox are logged rehydrate the drugLogList
-        setDrugLog({action: "load", payload: clientId});
+        loadDrugLog(clientId).then(drugs => setDrugLogList(drugs));
 
         // Change  to DISPLAY_TYPE.Medicine
         setDisplayType(DISPLAY_TYPE.Medicine);
@@ -502,7 +547,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 onClose={(drugLogRecord) => {
                     setShowDrugLog(null);
                     if (drugLogRecord) {
-                        setDrugLog({action: 'update', payload: drugLogRecord});
+                        saveDrugLog(drugLogRecord, clientId).then(r => setToast(r))
                     }
                 }}
             />
@@ -512,11 +557,15 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             {showDeleteDrugLogRecord &&
             <Confirm.Modal
                 size='lg'
-                onSelect={(a) => {
+                onSelect={a => {
                     setShowDeleteDrugLogRecord(null);
-                    if (a) {
-                        setDrugLog({action: 'delete', payload: showDeleteDrugLogRecord?.Id as number});
-                    }
+                    if (a) deleteDrugLog(showDeleteDrugLogRecord?.Id as number).then(ok => {
+                        if (ok) {
+                            loadDrugLog(clientId);
+                        } else {
+                            setErrorDetails('DrugLog delete failed for Id: ' + showDeleteDrugLogRecord.Id);
+                        }
+                    })
                 }}
                 show={true}
                 buttonvariant="danger"
@@ -552,11 +601,11 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     autohide
                 >
                     <Toast.Header>
-                        Pillbox {activePillbox?.Name}
+                        Updating Drug History
                     </Toast.Header>
 
                     <Toast.Body>
-                        Added {drugName(toast.MedicineId)}
+                        Added/Updated {drugName(toast.MedicineId)}
                     </Toast.Body>
                 </Toast>
             }
