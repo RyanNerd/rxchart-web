@@ -36,7 +36,6 @@ enum DISPLAY_TYPE {
 }
 
 interface IProps {
-    drugLogList: DrugLogRecord[]
     activeResident: ResidentRecord | null
     activeTabKey: string
 }
@@ -65,7 +64,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [showMedicineEdit, setShowMedicineEdit] = useState<MedicineRecord | null>(null);
 
     // Lists
-    const [drugLogList, setDrugLogList] = useState(props.drugLogList);
+    const [drugLogList, setDrugLogList] = useGlobal('drugLogList');
     const [globalMedicineList] = useGlobal('medicineList');
     const [medicineList, setMedicineList] = useState<MedicineRecord[]|null>(null);
     const [otcList] = useGlobal('otcList');
@@ -123,20 +122,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const saveDrugLog = (drugLog: DrugLogRecord, clientId: number): Promise<DrugLogRecord> => {
         return updateDrugLog(drugLog)
         .then((r) => {
-            // Rehydrate the drugLogList and
+            // Rehydrate the drugLogList
             loadDrugLog(clientId).then(drugs => setDrugLogList(drugs));
-
-            // TODO: OH OH.... WELL THIS IS WHY WE WERE USING OBSERVERS and their advantage.
-            // TODO: No longer use props.drugLogList get it from useGlobal() instead!!!!!
-            // TODO: This will likely have an impact on the whole system. Damn!
-            // Check if the drugLog record is OTC and if so rehydrate the
-            const m = getMedicineRecord(r.MedicineId, medicineList as MedicineRecord[]);
-            if (m?.OTC) {
-                // We only want to list the OTC drugs on this page that the resident has taken.
-                setOtcLogList(props.drugLogList.filter((drug: DrugLogRecord) => {
-                    return otcList.some((m) => {return m.Id === drug?.MedicineId;});
-                }));
-            }
             return r;
         })
     }
@@ -150,23 +137,21 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             // Set the clientId
             setClientId(props.activeResident?.Id ? props.activeResident.Id : null);
         }
-    }, [props, otcList, prevClient]);
+    }, [props, prevClient]);
 
     // activeTabKey refresh from prop
     useEffect(() => {
         setActiveTabKey(props.activeTabKey);
     }, [props.activeTabKey]);
 
-    // drugLogList (and related otcLogList) refresh from prop
+    // Update the otcLogList when the drugLogList is changed.
     useEffect(() => {
-        setDrugLogList(props.drugLogList);
-
         // We only want to list the OTC drugs on this page that the resident has taken.
         // @link https://stackoverflow.com/questions/31005396/filter-array-of-objects-with-another-array-of-objects
-        setOtcLogList(props.drugLogList.filter((drug: DrugLogRecord) => {
+        setOtcLogList(drugLogList.filter((drug: DrugLogRecord) => {
             return otcList.some((m) => {return m.Id === drug?.MedicineId;});
         }));
-    }, [props.drugLogList, otcList])
+    }, [drugLogList, otcList])
 
     // Refresh of medicineList from globalMedicineList;
     useEffect(() => {
@@ -182,6 +167,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     }, [medicineList])
 
     // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
+    // TODO: Move this to a function call
     useEffect(() => {
         setLastTaken(activeMed?.Id ? calculateLastTaken(activeMed.Id, drugLogList) : null);
     }, [activeMed, drugLogList, medicineList]);

@@ -70,7 +70,6 @@ const LandingPage = () => {
                 <Tab.Content>
                     <MedicinePage
                         activeTabKey={activeTabKey}
-                        drugLogList={drugLogList}
                         activeResident={activeResident}
                     />
                 </Tab.Content>
