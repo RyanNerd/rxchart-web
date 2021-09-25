@@ -6,12 +6,12 @@ import {getLastTakenVariant, isPillboxLogToday, randomString} from "utility/comm
 import {drawBarcode} from "utility/drawBarcode";
 import LogButtons from "../../Buttons/LogButtons";
 import ShadowBox from "../../Buttons/ShadowBox";
-import TooltipButton from "../../Buttons/TooltipButton";
 import MedDropdown from "./MedDropdown";
 
 interface IProps {
     activeMed: MedicineRecord | null
-    addDrugLog: (e: React.MouseEvent<HTMLElement>) => void
+    addDrugLog: () => void
+    clientId: number
     editMedicine: (m: MedicineRecord) => void
     logDrug: (n: number) => void
     itemChanged: (i: number) => void
@@ -24,7 +24,7 @@ interface IProps {
 }
 
 export interface IMedDropdownItem {
-    id: number, // zero indicated a divider
+    id: number, // zero indicates a divider
     description: string
 }
 
@@ -37,6 +37,7 @@ const MedListGroup = (props: IProps): JSX.Element => {
     const {
         activeMed = null,
         addDrugLog,
+        clientId,
         editMedicine,
         logDrug,
         itemChanged,
@@ -93,28 +94,24 @@ const MedListGroup = (props: IProps): JSX.Element => {
     return (
         <ListGroup>
             <ListGroup.Item>
-                <TooltipButton
+                <Button
                     className="mr-1"
-                    tooltip="Manually Add New Medicine"
                     size="sm"
                     variant="info"
-                    onClick={(e: React.MouseEvent<HTMLElement>) => {
+                    onClick={(e) => {
                         e.preventDefault();
-                        const clientId = activeMed?.ResidentId;
-                        if (clientId) {
-                            editMedicine({
-                                ...newMedicineRecord,
-                                OTC: false,
-                                ResidentId: clientId,
-                                FillDateYear: "",
-                                FillDateMonth: "",
-                                FillDateDay: ""
-                            });
-                        }
+                        editMedicine({
+                            ...newMedicineRecord,
+                            OTC: false,
+                            ResidentId: clientId,
+                            FillDateYear: "",
+                            FillDateMonth: "",
+                            FillDateDay: ""
+                        });
                     }}
                 >
                     + Medicine
-                </TooltipButton>
+                </Button>
 
                 <Button
                     disabled={!activeMed}
@@ -148,7 +145,10 @@ const MedListGroup = (props: IProps): JSX.Element => {
                             disabled={disabled}
                             className="mr-2"
                             variant={lastTakenVariant}
-                            onClick={(e: React.MouseEvent<HTMLElement>) => addDrugLog(e)}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                addDrugLog();
+                            }}
                         >
                             + Log {activeMed?.Drug}
                         </Button>

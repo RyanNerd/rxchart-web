@@ -185,7 +185,7 @@ const ManageDrugPage = (): JSX.Element | null => {
                 {todayDrugLogList && todayDrugLogList.length > 0 &&
                 <Row style={{height: "220px", overflowY: "scroll"}} className="mt-2">
                     <DrugLogGrid
-                        onEdit={(e, r) => {
+                        onEdit={(r) => {
                             if (r) {
                                 setShowCheckoutModal(r);
                             }

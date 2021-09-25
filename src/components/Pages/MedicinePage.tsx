@@ -45,8 +45,6 @@ interface IProps {
  */
 const MedicinePage = (props: IProps): JSX.Element | null => {
     const [, setErrorDetails] = useGlobal('__errorDetails');
-    const [, setMedicine] = useGlobal('__medicine');
-    const [, setOtcMedicine] = useGlobal('__otcMedicine');
     const [mm] = useGlobal('medicineManager');
 
     // Internal state
@@ -62,9 +60,9 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
     // Lists
     const [drugLogList, setDrugLogList] = useGlobal('drugLogList');
-    const [globalMedicineList] = useGlobal('medicineList');
+    const [globalMedicineList, setGlobalMedicineList] = useGlobal('medicineList');
     const [medicineList, setMedicineList] = useState<MedicineRecord[]|null>(null);
-    const [otcList] = useGlobal('otcList');
+    const [otcList, setOtcList] = useGlobal('otcList');
     const [otcLogList, setOtcLogList] = useState<DrugLogRecord[]>([]);
     const [pillboxItemList] = useGlobal('pillboxItemList');
     const [pillboxList] = useGlobal('pillboxList');
@@ -89,8 +87,30 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const saveDrugLog = async (drugLog: DrugLogRecord, clientId: number): Promise<DrugLogRecord> => {
         const r = await mm.updateDrugLog(drugLog);
         // Rehydrate the drugLogList
-        mm.loadDrugLog(clientId).then(drugs => setDrugLogList(drugs));
+        const drugs = await mm.loadDrugLog(clientId);
+        await setDrugLogList(drugs);
         return r;
+    }
+
+    /**
+     * Given a MedicineRecord Update or Insert the record and rehydrate the globalMedicineList
+     * @param {MedicineRecord} med
+     * @param {number} clientId
+     */
+    const saveMedicine = async (med: MedicineRecord, clientId: number) => {
+        const m = await mm.updateMedicine(med);
+
+        // Rehydrate the global medicineList
+        const ml = await mm.loadMedicineList(clientId);
+        await setGlobalMedicineList(ml);
+
+        // If the updated record is OTC we need to refresh the otcList as well.
+        if (m.OTC) {
+            // Rehydrate the global otcList
+            const ol = await mm.loadOtcList();
+            await setOtcList(ol);
+        }
+        return m;
     }
 
     // Refresh activeClient when the activeResident global changes.
@@ -342,10 +362,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         {displayType === DISPLAY_TYPE.Medicine &&
                         <MedListGroup
                             activeMed={activeMed}
-                            addDrugLog={(e: React.MouseEvent<HTMLElement>) => {
-                                e.preventDefault();
-                                addEditDrugLog();
-                            }}
+                            addDrugLog={() => addEditDrugLog()}
+                            clientId={clientId}
                             editMedicine={(m) => setShowMedicineEdit(m)}
                             canvasId="med-barcode"
                             itemChanged={id => {
@@ -415,10 +433,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             drugLog={drugLogList}
                             drugId={activeMed.Id}
                             columns={['Created', 'Updated', 'Notes', 'Out', 'In']}
-                            onEdit={(e, r) => {
-                                e.preventDefault();
-                                addEditDrugLog(r);
-                            }}
+                            onEdit={(r) => addEditDrugLog(r)}
                             onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
                         />
                         }
@@ -434,10 +449,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             drugLog={otcLogList}
                             medicineList={otcList}
                             columns={['Drug', 'Created', 'Updated', 'Notes']}
-                            onEdit={(e, r) => {
-                                e.preventDefault();
-                                addEditOtcLog(r);
-                            }}
+                            onEdit={(r) => addEditOtcLog(r)}
                             onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
                         />
                     </ListGroup.Item>
@@ -460,20 +472,14 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 onClose={(r: MedicineRecord | null) => {
                     setShowMedicineEdit(null);
                     if (r) {
-                        if (r.OTC) {
-                            // fixme: callback not working for added OTC
-                            setOtcMedicine({
-                                action: "update",
-                                payload: r,
-                                cb: (m) => setActiveOtc(m as MedicineRecord)
-                            });
-                        } else {
-                            setMedicine({
-                                action: "update",
-                                payload: r,
-                                cb: (m) => setActiveMed(m as MedicineRecord)
-                            });
-                        }
+                        saveMedicine(r, clientId)
+                        .then(m => {
+                            if (m.OTC) {
+                                setActiveOtc(m);
+                            } else {
+                                setActiveMed(m);
+                            }
+                        })
                     }
                 }}
                 drugInfo={showMedicineEdit}

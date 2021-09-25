@@ -20,7 +20,7 @@ interface IProps extends TableProps {
     includeCheckout?: boolean
     medicineList?: MedicineRecord[]
     onDelete?: (e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) => void
-    onEdit?: (e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) => void
+    onEdit?: (r: DrugLogRecord) => void
     [key: string]: any
 }
 
@@ -109,7 +109,10 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                 <td style={{textAlign: 'center', verticalAlign: "middle"}}>
                     <Button
                         size="sm"
-                        onClick={e => onEdit(e, drug)}
+                        onClick={e => {
+                            e.preventDefault();
+                            onEdit(drug);
+                        }}
                     >
                         Edit
                     </Button>
