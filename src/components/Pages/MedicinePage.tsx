@@ -56,7 +56,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [clientId, setClientId] = useState<number | null>(activeClient?.Id || null);
     const [activeTabKey, setActiveTabKey] = useState(props.activeTabKey);
     const [checkoutDisabled, setCheckoutDisabled] = useState(!activeClient);
-    const [lastTaken, setLastTaken] = useState<number | null>(null);
 
     // Modal show/hide states
     const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
@@ -165,12 +164,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             setActiveMed(medicineList.length > 0 ? medicineList[0] : null);
         }
     }, [medicineList])
-
-    // Calculate how many hours it has been since the activeDrug was taken and set showLastTakenWarning value
-    // TODO: Move this to a function call
-    useEffect(() => {
-        setLastTaken(activeMed?.Id ? calculateLastTaken(activeMed.Id, drugLogList) : null);
-    }, [activeMed, drugLogList, medicineList]);
 
     // Disable or Enable Print Checkout button based on if there are any drugs marked as to be checked out
     useEffect(() => {
@@ -399,7 +392,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                                     setActiveMed(medicineList.find(m => m.Id === id) || null);
                                 }
                             }}
-                            lastTaken={lastTaken}
+                            lastTaken={activeMed?.Id ? calculateLastTaken(activeMed.Id, drugLogList) : null}
                             logDrug={n => handleLogDrugAmount(n)}
                             pillboxList={pillboxList}
                             medicineList={medicineList}
@@ -450,7 +443,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         </Button>
 
                         <LastTakenButton
-                            lastTaken={lastTaken}
+                            lastTaken={activeMed?.Id ? calculateLastTaken(activeMed.Id, drugLogList) : null}
                         />
 
                         {activeMed?.Id &&
