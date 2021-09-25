@@ -1,13 +1,8 @@
 import {Alert, Button, Card, Dropdown, DropdownButton} from "react-bootstrap";
 import ListGroup from "react-bootstrap/ListGroup";
-import React, {useEffect, useGlobal, useState} from 'reactn';
+import React, {useGlobal, useState} from 'reactn';
 import {newPillboxRecord, PillboxItemRecord, PillboxRecord} from "types/RecordTypes";
-import {
-    getPillboxLogDate,
-    getPillboxLogDateString,
-    isPillboxLogToday,
-    setPillboxLogDate
-} from "utility/common";
+import {getDrugsInThePillbox, getPillboxLogDate, isPillboxLogToday} from "utility/common";
 import TooltipButton from "../../Buttons/TooltipButton";
 import ConfirmDialogModal from "../Modals/ConfirmDialogModal";
 import PillboxEdit from "../Modals/PillboxEdit";
@@ -39,18 +34,6 @@ const PillboxListGroup = (props: IProps) => {
     const [, setPillbox] = useGlobal('__pillbox');
     const [showPillboxDeleteConfirm, setShowPillboxDeleteConfirm] = useState(false);
     const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord | null>(null);
-    const [pillboxHistory, setPillboxHistory] =
-        useState(activePillbox?.Id ? getPillboxLogDateString(activePillbox.Id) : null);
-    const [logDisabled, setLogDisabled] = useState(false);
-
-    useEffect(() => {
-        const pillboxSome = pillboxItemList.some(i => i.PillboxId === activePillbox?.Id && i.Quantity > 0);
-        if (!pillboxSome) {
-            setLogDisabled(true);
-        } else {
-            setLogDisabled(isPillboxLogToday(activePillbox?.Id || 0));
-        }
-    }, [pillboxHistory, pillboxItemList, activePillbox]);
 
     /**
      * Pillbox Dropdown Item component
@@ -70,19 +53,12 @@ const PillboxListGroup = (props: IProps) => {
     }
 
     /**
-     * Return the pillboxHistory as a nicely formatted date time string
-     * @param {number} n
+     * Return the pillbox Log Date as a nicely formatted time string
+     * @param {number} pillboxId
      */
-    const getPillboxLogAsFormattedDateString = (n: number): string => {
-        const logDate = getPillboxLogDate(n)
-        return logDate ?
-            logDate.toLocaleDateString() + ' ' + logDate.toLocaleTimeString() : '';
-    }
-
-    const handleLogPillbox = () => {
-        const now = setPillboxLogDate(activePillbox?.Id as number);
-        setPillboxHistory(now);
-        logPillbox();
+    const getPillboxLogTime = (pillboxId: number): string => {
+        const logDate = getPillboxLogDate(pillboxId);
+        return logDate ? logDate.toLocaleTimeString() : '';
     }
 
     /**
@@ -152,30 +128,32 @@ const PillboxListGroup = (props: IProps) => {
                     }
                 </ListGroup.Item>
 
-                {activePillbox &&
+                {activePillbox?.Id &&
                     <ListGroup.Item>
                         <Button
-                            disabled={logDisabled}
-                            variant={logDisabled ? "outline-info" : "info"}
-                            onClick={() => handleLogPillbox()}
+                            disabled={getDrugsInThePillbox(activePillbox.Id, pillboxItemList).length === 0}
+                            variant={getDrugsInThePillbox(activePillbox.Id, pillboxItemList).length === 0 ? "outline-info" : "info"}
+                            onClick={() => logPillbox()}
                         >
                             Log Pillbox {activePillbox.Name}
                         </Button>
                     </ListGroup.Item>
                 }
 
-                {logDisabled && activePillbox?.Id &&
+                {activePillbox?.Id &&
+                    getDrugsInThePillbox(activePillbox.Id, pillboxItemList).length > 0 &&
+                    isPillboxLogToday(activePillbox.Id) &&
                     <ListGroup.Item>
                         <Alert
                             variant="danger"
                         >
                             <Alert.Heading>
                                 Pillbox <b>{activePillbox.Name}</b> logged earier today at {" "}
-                                {activePillbox.Id ? getPillboxLogAsFormattedDateString(activePillbox.Id) : null}
+                                {activePillbox.Id ? getPillboxLogTime(activePillbox.Id) : null}
                             </Alert.Heading>
                             <Button
                                 variant="danger"
-                                onClick={() => handleLogPillbox()}
+                                onClick={() => logPillbox()}
                             >
                                 Log Pillbox <b>{activePillbox?.Name}</b> Anyway?
                             </Button>
@@ -185,7 +163,7 @@ const PillboxListGroup = (props: IProps) => {
                 }
             </ListGroup>
 
-
+            {/*Add/Edit Pillbox Modal*/}
             {pillboxInfo &&
                 <PillboxEdit
                     onClose={
@@ -193,7 +171,6 @@ const PillboxListGroup = (props: IProps) => {
                             setPillboxInfo(null);
                             if (r) setPillbox({action: "update", payload: r});
                         }
-
                     }
                     pillboxInfo={pillboxInfo}
                     show={true}

@@ -12,7 +12,8 @@ import {
     getCheckoutList,
     getDrugName,
     getFormattedDate,
-    getMedicineRecord
+    getMedicineRecord,
+    setPillboxLogDate
 } from "utility/common";
 import usePrevious from "../../hooks/usePrevious";
 import TabContent from "../../styles/common.css";
@@ -271,8 +272,14 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             updateDrugLog(drugLogInfo).then(r => setToast(r))
         })
 
+        // Save the date and time to local storage.
+        setPillboxLogDate(activePillbox?.Id as number);
+
         // Now that all the pills in the pillbox are logged rehydrate the drugLogList
         setDrugLog({action: "load", payload: clientId});
+
+        // Change  to DISPLAY_TYPE.Medicine
+        setDisplayType(DISPLAY_TYPE.Medicine);
     }
 
     return (
