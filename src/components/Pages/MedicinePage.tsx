@@ -540,7 +540,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     setShowDeleteDrugLogRecord(null);
                     if (a) deleteDrugLog(showDeleteDrugLogRecord?.Id as number).then(ok => {
                         if (ok) {
-                            loadDrugLog(clientId);
+                            loadDrugLog(clientId).then(drugs => setDrugLogList(drugs));
                         } else {
                             setErrorDetails('DrugLog delete failed for Id: ' + showDeleteDrugLogRecord.Id);
                         }
