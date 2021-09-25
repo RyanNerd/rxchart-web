@@ -2,7 +2,12 @@ import {Alert, Button, Card, Dropdown, DropdownButton} from "react-bootstrap";
 import ListGroup from "react-bootstrap/ListGroup";
 import React, {useEffect, useGlobal, useState} from 'reactn';
 import {newPillboxRecord, PillboxItemRecord, PillboxRecord} from "types/RecordTypes";
-import {isToday} from "utility/common";
+import {
+    getPillboxLogDate,
+    getPillboxLogDateString,
+    isPillboxLogToday,
+    setPillboxLogDate
+} from "utility/common";
 import TooltipButton from "../../Buttons/TooltipButton";
 import ConfirmDialogModal from "../Modals/ConfirmDialogModal";
 import PillboxEdit from "../Modals/PillboxEdit";
@@ -35,27 +40,15 @@ const PillboxListGroup = (props: IProps) => {
     const [showPillboxDeleteConfirm, setShowPillboxDeleteConfirm] = useState(false);
     const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord | null>(null);
     const [pillboxHistory, setPillboxHistory] =
-        useState(window.localStorage.getItem('pillbox-history-' + activePillbox?.Id));
+        useState(activePillbox?.Id ? getPillboxLogDateString(activePillbox.Id) : null);
     const [logDisabled, setLogDisabled] = useState(false);
-
-    useEffect(() => {
-        const pbh = window.localStorage.getItem('pillbox-history-' + activePillbox?.Id);
-        setPillboxHistory(pbh);
-    }, [activePillbox, pillboxHistory]);
 
     useEffect(() => {
         const pillboxSome = pillboxItemList.some(i => i.PillboxId === activePillbox?.Id && i.Quantity > 0);
         if (!pillboxSome) {
             setLogDisabled(true);
         } else {
-            if (pillboxHistory) {
-                const pd = JSON.parse(pillboxHistory);
-                const dt = new Date(pd);
-                const today = isToday(dt);
-                setLogDisabled(today);
-            } else {
-                setLogDisabled(false);
-            }
+            setLogDisabled(isPillboxLogToday(activePillbox?.Id || 0));
         }
     }, [pillboxHistory, pillboxItemList, activePillbox]);
 
@@ -78,21 +71,18 @@ const PillboxListGroup = (props: IProps) => {
 
     /**
      * Return the pillboxHistory as a nicely formatted date time string
-     * @param {string} h
+     * @param {number} n
      */
-    const getPillboxHistoryAsDate = (h: string): string => {
-        const ph = JSON.parse(h);
-        if (ph) {
-            return new Date(ph).toLocaleDateString() + ' ' + new Date(ph).toLocaleTimeString();
-        }
-        return '';
+    const getPillboxLogAsFormattedDateString = (n: number): string => {
+        const logDate = getPillboxLogDate(n)
+        return logDate ?
+            logDate.toLocaleDateString() + ' ' + logDate.toLocaleTimeString() : '';
     }
 
     const handleLogPillbox = () => {
-        const now = JSON.stringify(new Date());
-        window.localStorage.setItem('pillbox-history-' + activePillbox?.Id, now);
+        const now = setPillboxLogDate(activePillbox?.Id as number);
         setPillboxHistory(now);
-        logPillbox()
+        logPillbox();
     }
 
     /**
@@ -101,112 +91,113 @@ const PillboxListGroup = (props: IProps) => {
      */
     return (
         <>
-        <ListGroup>
-            <ListGroup.Item>
-                <TooltipButton
-                    onClick={(e) => {
-                        e.preventDefault();
-                        const pillboxRecord = {...newPillboxRecord};
-                        pillboxRecord.ResidentId = clientId;
-                        setPillboxInfo(pillboxRecord);
-                    }}
-                    placement="top"
-                    size="sm"
-                    tooltip="Add new Pillbox"
-                    variant="info"
-                >
-                    + Pillbox
-                </TooltipButton>
-
-                {activePillbox &&
-                    <>
-                    <Button
-                        className="ml-2"
+            <ListGroup>
+                <ListGroup.Item>
+                    <TooltipButton
                         onClick={(e) => {
                             e.preventDefault();
-                            const pillboxRecord = {...activePillbox};
+                            const pillboxRecord = {...newPillboxRecord};
                             pillboxRecord.ResidentId = clientId;
                             setPillboxInfo(pillboxRecord);
                         }}
+                        placement="top"
                         size="sm"
-                        variant="primary"
+                        tooltip="Add new Pillbox"
+                        variant="info"
                     >
-                        Edit {activePillbox.Name}
-                    </Button>
-                    <Button
-                        className="ml-2"
-                        onClick={() => setShowPillboxDeleteConfirm(true)}
-                        size="sm"
-                        variant="danger"
-                    >
-                        <span role="img" aria-label="delete">🗑️</span>{" "}Delete {activePillbox.Name}
-                    </Button>
-                    </>
+                        + Pillbox
+                    </TooltipButton>
+
+                    {activePillbox &&
+                        <>
+                            <Button
+                                className="ml-2"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    const pillboxRecord = {...activePillbox};
+                                    pillboxRecord.ResidentId = clientId;
+                                    setPillboxInfo(pillboxRecord);
+                                }}
+                                size="sm"
+                                variant="primary"
+                            >
+                                Edit {activePillbox.Name}
+                            </Button>
+                            <Button
+                                className="ml-2"
+                                onClick={() => setShowPillboxDeleteConfirm(true)}
+                                size="sm"
+                                variant="danger"
+                            >
+                                <span role="img" aria-label="delete">🗑️</span>{" "}Delete {activePillbox.Name}
+                            </Button>
+                        </>
+                    }
+                </ListGroup.Item>
+
+                <ListGroup.Item>
+                    {activePillbox ?
+                        (<DropdownButton
+                            title={activePillbox.Name}
+                            onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
+                        >
+                            {pillboxList.map(PillboxItem)}
+                        </DropdownButton>) : (
+                            <Card className="mt-2">
+                                <Card.Body>
+                                    There are no Pillboxes. Click on the + Pillbox button to add one.
+                                </Card.Body>
+                            </Card>
+                        )
+                    }
+                </ListGroup.Item>
+
+                {activePillbox &&
+                    <ListGroup.Item>
+                        <Button
+                            disabled={logDisabled}
+                            variant={logDisabled ? "outline-info" : "info"}
+                            onClick={() => handleLogPillbox()}
+                        >
+                            Log Pillbox {activePillbox.Name}
+                        </Button>
+                    </ListGroup.Item>
                 }
-            </ListGroup.Item>
 
-            <ListGroup.Item>
-                {activePillbox ?
-                    (<DropdownButton
-                        title={activePillbox.Name}
-                        onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
-                    >
-                        {pillboxList.map(PillboxItem)}
-                    </DropdownButton>) : (
-                        <Card className="mt-2">
-                            <Card.Body>
-                                There are no Pillboxes. Click on the + Pillbox button to add one.
-                            </Card.Body>
-                        </Card>
-                    )
+                {logDisabled && activePillbox?.Id &&
+                    <ListGroup.Item>
+                        <Alert
+                            variant="danger"
+                        >
+                            <Alert.Heading>
+                                Pillbox <b>{activePillbox.Name}</b> logged earier today at {" "}
+                                {activePillbox.Id ? getPillboxLogAsFormattedDateString(activePillbox.Id) : null}
+                            </Alert.Heading>
+                            <Button
+                                variant="danger"
+                                onClick={() => handleLogPillbox()}
+                            >
+                                Log Pillbox <b>{activePillbox?.Name}</b> Anyway?
+                            </Button>
+                        </Alert>
+
+                    </ListGroup.Item>
                 }
-            </ListGroup.Item>
-
-            {activePillbox &&
-            <ListGroup.Item>
-                <Button
-                    disabled={logDisabled}
-                    variant={logDisabled ? "outline-info" : "info"}
-                    onClick={() => handleLogPillbox()}
-                >
-                    Log Pillbox {activePillbox.Name}
-                </Button>
-            </ListGroup.Item>
-            }
-
-            {logDisabled && pillboxHistory &&
-            <ListGroup.Item>
-                <Alert
-                    variant="danger"
-                >
-                    <Alert.Heading>
-                        Pillbox {activePillbox?.Name} logged earier today at {getPillboxHistoryAsDate(pillboxHistory)}
-                    </Alert.Heading>
-                    <Button
-                        variant="danger"
-                        onClick={() => handleLogPillbox()}
-                    >
-                        Log Pillbox {activePillbox?.Name} Anyway?
-                    </Button>
-                </Alert>
-
-            </ListGroup.Item>
-            }
-        </ListGroup>
+            </ListGroup>
 
 
             {pillboxInfo &&
-            <PillboxEdit
-                onClose={
-                    (r) => {
-                        setPillboxInfo(null);
-                        if (r) setPillbox({action: "update", payload: r});
-                    }
+                <PillboxEdit
+                    onClose={
+                        (r) => {
+                            setPillboxInfo(null);
+                            if (r) setPillbox({action: "update", payload: r});
+                        }
 
-                }
-                pillboxInfo={pillboxInfo}
-                show={true}
-            />
+                    }
+                    pillboxInfo={pillboxInfo}
+                    show={true}
+                />
             }
 
             {/*Delete Pillbox Modal*/}
@@ -222,11 +213,10 @@ const PillboxListGroup = (props: IProps) => {
                 yesButton={
                     <Button
                         variant="danger"
-                        onClick={(e) =>
-                        {
+                        onClick={(e) => {
                             e.preventDefault();
                             setShowPillboxDeleteConfirm(false)
-                            setPillbox({action:'delete', payload: activePillbox?.Id as number});
+                            setPillbox({action: 'delete', payload: activePillbox?.Id as number});
                         }}
                     >
                         Delete

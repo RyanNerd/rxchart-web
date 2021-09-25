@@ -474,3 +474,28 @@ export enum BsColors {
     white = "#fff",
     yellow = "#ffc107"
 }
+
+export const getPillboxLogDateString = (pillboxId: number) => {
+    const key = 'pillbox-history-' + pillboxId;
+    const pbh = window.localStorage.getItem(key);
+    return pbh ? JSON.parse(pbh) : null;
+}
+
+export const setPillboxLogDate = (pillboxId: number) => {
+    const now = JSON.stringify(new Date());
+    window.localStorage.setItem('pillbox-history-' + pillboxId, now);
+    return getPillboxLogDateString(pillboxId);
+}
+
+export const isPillboxLogToday = (pillboxId: number) => {
+    const pbh = getPillboxLogDate(pillboxId);
+    return pbh ? isToday(new Date(pbh)) : false;
+}
+
+export const getPillboxLogDate = (pillboxId: number) => {
+    const logDate = getPillboxLogDateString(pillboxId);
+    if (logDate) {
+        return new Date(logDate);
+    }
+    return null;
+}

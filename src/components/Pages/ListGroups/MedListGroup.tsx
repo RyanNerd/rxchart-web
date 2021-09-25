@@ -2,7 +2,7 @@ import {Button} from "react-bootstrap";
 import ListGroup from "react-bootstrap/ListGroup";
 import React, {useEffect} from 'reactn';
 import {MedicineRecord, newMedicineRecord, PillboxRecord} from "types/RecordTypes";
-import {getLastTakenVariant, randomString} from "utility/common";
+import {getLastTakenVariant, isPillboxLogToday, randomString} from "utility/common";
 import {drawBarcode} from "utility/drawBarcode";
 import LogButtons from "../../Buttons/LogButtons";
 import ShadowBox from "../../Buttons/ShadowBox";
@@ -59,8 +59,15 @@ const MedListGroup = (props: IProps): JSX.Element => {
     const itemList = [] as IMedDropdownItem[];
 
     // Build the itemList with any pillboxes and meds from medicineList
-    pillboxList.forEach(p => itemList.push({id: -(p.Id as number), description: p.Name}));
-    if (pillboxList.length !== 0) {
+    let pbCnt = 0;
+    pillboxList.forEach(p => {
+        const pillboxId = p.Id as number;
+        if (!isPillboxLogToday(pillboxId)) {
+            itemList.push({id: -(pillboxId), description: p.Name});
+            pbCnt++;
+        }
+    });
+    if (pbCnt > 0) {
         itemList.push({id: 0, description: "divider"});
     }
     medicineList.forEach(m => itemList.push({id: m.Id as number, description: m.Drug}));
@@ -131,66 +138,66 @@ const MedListGroup = (props: IProps): JSX.Element => {
             </ListGroup.Item>
 
             {activeMed && activeMed.Id &&
-            <>
-            <ListGroup.Item active className="justify-content-left">
-                <MedDropdown
-                    disabled={disabled}
-                    itemList={itemList}
-                    activeId={activeMed.Id}
-                    onSelect={i => itemChanged(i)}
-                />
-            </ListGroup.Item>
+                <>
+                    <ListGroup.Item active className="justify-content-left">
+                        <MedDropdown
+                            disabled={disabled}
+                            itemList={itemList}
+                            activeId={activeMed.Id}
+                            onSelect={i => itemChanged(i)}
+                        />
+                    </ListGroup.Item>
 
-                <ListGroup.Item>
-                    <Button
-                        size="sm"
-                        disabled={disabled}
-                        className="mr-2"
-                        variant={lastTakenVariant}
-                        onClick={(e: React.MouseEvent<HTMLElement>) => addDrugLog(e)}
-                    >
-                        + Log Drug
-                    </Button>
+                    <ListGroup.Item>
+                        <Button
+                            size="sm"
+                            disabled={disabled}
+                            className="mr-2"
+                            variant={lastTakenVariant}
+                            onClick={(e: React.MouseEvent<HTMLElement>) => addDrugLog(e)}
+                        >
+                            + Log Drug
+                        </Button>
 
-                    <LogButtons
-                        disabled={disabled}
-                        lastTaken={lastTaken}
-                        lastTakenVariant={lastTakenVariant}
-                        onLogAmount={(n) => logDrug(n)}
-                        drugName={shortenedDrugName()}
-                    />
-                </ListGroup.Item>
+                        <LogButtons
+                            disabled={disabled}
+                            lastTaken={lastTaken}
+                            lastTakenVariant={lastTakenVariant}
+                            onLogAmount={(n) => logDrug(n)}
+                            drugName={shortenedDrugName()}
+                        />
+                    </ListGroup.Item>
 
-                {directions &&
-                <ListGroup.Item>
-                    <ShadowBox>
-                        <b>Directions: </b>{activeMed.Directions}
-                    </ShadowBox>
-                </ListGroup.Item>
-                }
+                    {directions &&
+                        <ListGroup.Item>
+                            <ShadowBox>
+                                <b>Directions: </b>{activeMed.Directions}
+                            </ShadowBox>
+                        </ListGroup.Item>
+                    }
 
-                {notes &&
-                <ListGroup.Item>
-                    <ShadowBox>
-                        <b>Notes: </b>{activeMed.Notes}
-                    </ShadowBox>
-                </ListGroup.Item>
-                }
+                    {notes &&
+                        <ListGroup.Item>
+                            <ShadowBox>
+                                <b>Notes: </b>{activeMed.Notes}
+                            </ShadowBox>
+                        </ListGroup.Item>
+                    }
 
-                {fillDate &&
-                <ListGroup.Item>
-                    <ShadowBox>
-                        <b>Fill Date: </b>{fillDate}
-                    </ShadowBox>
-                </ListGroup.Item>
-                }
+                    {fillDate &&
+                        <ListGroup.Item>
+                            <ShadowBox>
+                                <b>Fill Date: </b>{fillDate}
+                            </ShadowBox>
+                        </ListGroup.Item>
+                    }
 
-                {barCode &&
-                <ListGroup.Item>
-                    <canvas id={canvasId}/>
-                </ListGroup.Item>
-                }
-            </>
+                    {barCode &&
+                        <ListGroup.Item>
+                            <canvas id={canvasId}/>
+                        </ListGroup.Item>
+                    }
+                </>
             }
         </ListGroup>
     );
