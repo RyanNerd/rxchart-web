@@ -66,7 +66,15 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
 
     return (
         <ListGroup>
-            <ListGroup.Item disabled={disabled}>
+            <ListGroup.Item
+                disabled={disabled}
+                style={{
+                    paddingTop: "0.45rem",
+                    paddingRight: "1.25rem",
+                    paddingBottom: 0,
+                    paddingLeft: "1.25rem"
+                }}
+            >
                 <FormGroup>
                     <InputGroup>
                         <InputGroup.Prepend>
@@ -176,7 +184,14 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
             </ListGroup.Item>
 
             {activeOtc.Directions &&
-                <ListGroup.Item>
+                <ListGroup.Item
+                    style={{
+                        paddingTop: "0.25rem",
+                        paddingRight: "1.25rem",
+                        paddingBottom: "0.25rem",
+                        paddingLeft: "1.25rem"
+                    }}
+                >
                     <ShadowBox>
                         <span><b>Directions: </b> {activeOtc.Directions}</span>
                     </ShadowBox>
@@ -184,7 +199,14 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
             }
 
             {activeOtc.OtherNames &&
-                <ListGroup.Item>
+                <ListGroup.Item
+                    style={{
+                        paddingTop: "0.25rem",
+                        paddingRight: "1.25rem",
+                        paddingBottom: "0.25rem",
+                        paddingLeft: "1.25rem"
+                    }}
+                >
                     <ShadowBox>
                         <span><b>Other Names: </b> {activeOtc.OtherNames}</span>
                     </ShadowBox>

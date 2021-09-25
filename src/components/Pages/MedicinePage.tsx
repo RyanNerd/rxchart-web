@@ -294,7 +294,14 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         <>
             <Row className={TabContent}>
                 <ListGroup as={Col}>
-                    <ListGroup.Item>
+                    <ListGroup.Item
+                        style={{
+                            paddingTop: "0.45rem",
+                            paddingRight: "1.25rem",
+                            paddingBottom: 0,
+                            paddingLeft: "1.25rem"
+                        }}
+                    >
                         <ToggleButton
                             key="med-list-group-med-btn"
                             id="med-list-group-med-radio-btn"
