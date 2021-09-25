@@ -87,13 +87,8 @@ const MedListGroup = (props: IProps): JSX.Element => {
      * For display purposes cut off long drug names
      */
     const shortenedDrugName = () => {
-        const lenCutOff = activeMed?.OTC ? 10 : 35;
         const drug = activeMed?.Drug || '';
-        if (drug.length > lenCutOff) {
-            return drug.substr(0, lenCutOff) + '...';
-        } else {
-            return drug.substr(0, lenCutOff);
-        }
+        return drug.length > 14 ? drug.substr(0, 14) + '...' : drug;
     }
 
     return (
@@ -156,7 +151,7 @@ const MedListGroup = (props: IProps): JSX.Element => {
                             variant={lastTakenVariant}
                             onClick={(e: React.MouseEvent<HTMLElement>) => addDrugLog(e)}
                         >
-                            + Log Drug
+                            + Log {shortenedDrugName()}
                         </Button>
 
                         <LogButtons
@@ -164,7 +159,6 @@ const MedListGroup = (props: IProps): JSX.Element => {
                             lastTaken={lastTaken}
                             lastTakenVariant={lastTakenVariant}
                             onLogAmount={(n) => logDrug(n)}
-                            drugName={shortenedDrugName()}
                         />
                     </ListGroup.Item>
 

@@ -40,6 +40,14 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
     const lastTaken = (activeOtc && activeOtc.Id) ? calculateLastTaken(activeOtc.Id, drugLogList) : null;
     const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
 
+    /**
+     * For display purposes cut off long drug names
+     */
+    const shortenedDrugName = () => {
+        const drug = activeOtc.Drug || '';
+        return drug.length > 25 ? drug.substr(0, 25) + '...' : drug;
+    }
+
     // Filter the otcList by the search textbox value
     useEffect(() => {
         if (searchText.length > 0) {
@@ -123,11 +131,10 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                         size="sm"
                         variant={lastTakenVariant}
                     >
-                        + Log OTC
+                        + Log {shortenedDrugName()}
                     </Button>
 
                     <LogButtons
-                        drugName={activeOtc.Drug}
                         lastTaken={lastTaken}
                         lastTakenVariant={lastTakenVariant}
                         onLogAmount={(n) => logOtcDrugAmount(n)}
