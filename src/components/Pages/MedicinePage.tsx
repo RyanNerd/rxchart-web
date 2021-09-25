@@ -1,7 +1,6 @@
 import {Alert, Toast, ToggleButton} from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
 import ListGroup from "react-bootstrap/ListGroup";
 import Row from 'react-bootstrap/Row';
 import React, {useEffect, useGlobal, useState} from 'reactn';
@@ -273,7 +272,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
     return (
         <>
-            <Form className={TabContent} as={Row}>
+            <Row className={TabContent}>
                 <ListGroup as={Col}>
                     <ListGroup.Item>
                         <ToggleButton
@@ -339,7 +338,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         </ToggleButton>
                     </ListGroup.Item>
 
-                    <ListGroup.Item as={Row}>
+                    <ListGroup.Item>
                         {displayType === DISPLAY_TYPE.Medicine &&
                         <MedListGroup
                             activeMed={activeMed}
@@ -452,7 +451,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         />
                     }
                 </ListGroup>
-            </Form>
+            </Row>
 
             {/* MedicineEdit Modal*/}
             {showMedicineEdit &&
