@@ -1,5 +1,5 @@
 import {Variant} from "react-bootstrap/types";
-import {DrugLogRecord, MedicineRecord, ResidentRecord} from "types/RecordTypes";
+import {DrugLogRecord, MedicineRecord, PillboxItemRecord, ResidentRecord} from "types/RecordTypes";
 
 interface IKey {
     [key: string]: any
@@ -475,27 +475,51 @@ export enum BsColors {
     yellow = "#ffc107"
 }
 
+/**
+ * Given the pillboxId get the date string from local storage
+ * @param {number} pillboxId
+ */
 export const getPillboxLogDateString = (pillboxId: number) => {
     const key = 'pillbox-history-' + pillboxId;
     const pbh = window.localStorage.getItem(key);
     return pbh ? JSON.parse(pbh) : null;
 }
 
+/**
+ * Given the pillboxId save the current date and time to local storage
+ * @param {number} pillboxId
+ */
 export const setPillboxLogDate = (pillboxId: number) => {
     const now = JSON.stringify(new Date());
     window.localStorage.setItem('pillbox-history-' + pillboxId, now);
     return getPillboxLogDateString(pillboxId);
 }
 
+/**
+ * Given the pillboxId return true if the pillbox Log date (from local storage) is today otherwise return false
+ * @param {number}  pillboxId
+ */
 export const isPillboxLogToday = (pillboxId: number) => {
     const pbh = getPillboxLogDate(pillboxId);
     return pbh ? isToday(new Date(pbh)) : false;
 }
 
-export const getPillboxLogDate = (pillboxId: number) => {
+/**
+ * Given the pillboxId return the pillbox log date from local storage as a Date object or null if not found
+ * @param {number} pillboxId
+ */
+export const getPillboxLogDate = (pillboxId: number): Date|null => {
     const logDate = getPillboxLogDateString(pillboxId);
-    if (logDate) {
-        return new Date(logDate);
-    }
-    return null;
+    if (logDate) return new Date(logDate); else return null;
+}
+
+/**
+ * Given the pillboxId return an array of PillboxItemRecord[] where the Quantity is > 0
+ * @param {number} pillboxId
+ * @param {PillboxItemRecord} pillboxItemList
+ */
+export const getDrugsInThePillbox = (pillboxId: number, pillboxItemList: PillboxItemRecord[]) => {
+    return pillboxItemList.filter(p => {
+        return p.PillboxId === pillboxId && pillboxItemList.some(pbi => p.Id === pbi.Id && pbi.Quantity > 0)
+    })
 }
