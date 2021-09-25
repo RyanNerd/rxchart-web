@@ -274,8 +274,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     return (
         <>
             <Form className={TabContent} as={Row}>
-                <Col lg="4">
-                    <Row>
+                <ListGroup as={Col}>
+                    <ListGroup.Item>
                         <ToggleButton
                             key="med-list-group-med-btn"
                             id="med-list-group-med-radio-btn"
@@ -337,9 +337,9 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         >
                             <span className="ml-2">Print</span>
                         </ToggleButton>
-                    </Row>
+                    </ListGroup.Item>
 
-                    <Row>
+                    <ListGroup.Item as={Row}>
                         {displayType === DISPLAY_TYPE.Medicine &&
                         <MedListGroup
                             activeMed={activeMed}
@@ -390,10 +390,10 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             logPillbox={() => handleLogPillbox()}
                         />
                         }
-                    </Row>
-                </Col>
+                    </ListGroup.Item>
+                </ListGroup>
 
-                <ListGroup as={Col} className="mx-5">
+                <ListGroup as={Col}>
                     {/* todo: convert this to DrugLogCard??? */}
                     {displayType === DISPLAY_TYPE.Medicine &&
                     <ListGroup.Item style={{textAlign: "center"}}>
@@ -428,7 +428,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
                     {/* todo: convert this to OtcLogCard??? */}
                     {displayType === DISPLAY_TYPE.OTC &&
-                    <ListGroup.Item style={{overflow: "auto"}}>
+                    <ListGroup.Item>
                         <h5 className="mb-2" style={{textAlign: "center"}}>OTC History</h5>
                         <DrugLogGrid
                             includeCheckout={false}

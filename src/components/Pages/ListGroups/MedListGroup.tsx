@@ -63,14 +63,14 @@ const MedListGroup = (props: IProps): JSX.Element => {
     pillboxList.forEach(p => {
         const pillboxId = p.Id as number;
         if (!isPillboxLogToday(pillboxId)) {
-            itemList.push({id: -(pillboxId), description: p.Name});
+            itemList.push({id: -(pillboxId), description: p.Name}); // Pillbox have negative id
             pbCnt++;
         }
     });
     if (pbCnt > 0) {
         itemList.push({id: 0, description: "divider"});
     }
-    medicineList.forEach(m => itemList.push({id: m.Id as number, description: m.Drug}));
+    medicineList.forEach(m => itemList.push({id: m.Id as number, description: m.Drug + ' ' + m.Strength}));
 
     // Update the barcode image if the barcode has changed
     useEffect(() => {
@@ -82,14 +82,6 @@ const MedListGroup = (props: IProps): JSX.Element => {
     }, [barCode, canvasUpdated, canvasId]);
 
     const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
-
-    /**
-     * For display purposes cut off long drug names
-     */
-    const shortenedDrugName = () => {
-        const drug = activeMed?.Drug || '';
-        return drug.length > 14 ? drug.substr(0, 14) + '...' : drug;
-    }
 
     return (
         <ListGroup>
@@ -151,7 +143,7 @@ const MedListGroup = (props: IProps): JSX.Element => {
                             variant={lastTakenVariant}
                             onClick={(e: React.MouseEvent<HTMLElement>) => addDrugLog(e)}
                         >
-                            + Log {shortenedDrugName()}
+                            + Log {activeMed?.Drug}
                         </Button>
 
                         <LogButtons

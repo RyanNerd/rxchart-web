@@ -40,14 +40,6 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
     const lastTaken = (activeOtc && activeOtc.Id) ? calculateLastTaken(activeOtc.Id, drugLogList) : null;
     const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
 
-    /**
-     * For display purposes cut off long drug names
-     */
-    const shortenedDrugName = () => {
-        const drug = activeOtc.Drug || '';
-        return drug.length > 25 ? drug.substr(0, 25) + '...' : drug;
-    }
-
     // Filter the otcList by the search textbox value
     useEffect(() => {
         if (searchText.length > 0) {
@@ -131,7 +123,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                         size="sm"
                         variant={lastTakenVariant}
                     >
-                        + Log {shortenedDrugName()}
+                        + Log {activeOtc.Drug + ' ' + activeOtc.Strength}
                     </Button>
 
                     <LogButtons
@@ -140,20 +132,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                         onLogAmount={(n) => logOtcDrugAmount(n)}
                     />
                 </FormGroup>
-                {activeOtc.Directions &&
-                <ShadowBox>
-                    <span><b>Directions: </b> {activeOtc.Directions}</span>
-                </ShadowBox>
-                }
             </ListGroup.Item>
-
-            {activeOtc.OtherNames &&
-            <ListGroup.Item>
-                <ShadowBox>
-                    <span><b>Other Names: </b> {activeOtc.OtherNames}</span>
-                </ShadowBox>
-            </ListGroup.Item>
-            }
 
             <ListGroup.Item disabled={disabled}>
                 <div style={{height: "450px", overflow: "auto"}}>
@@ -195,6 +174,22 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                     </Table>
                 </div>
             </ListGroup.Item>
+
+            {activeOtc.Directions &&
+                <ListGroup.Item>
+                    <ShadowBox>
+                        <span><b>Directions: </b> {activeOtc.Directions}</span>
+                    </ShadowBox>
+                </ListGroup.Item>
+            }
+
+            {activeOtc.OtherNames &&
+                <ListGroup.Item>
+                    <ShadowBox>
+                        <span><b>Other Names: </b> {activeOtc.OtherNames}</span>
+                    </ShadowBox>
+                </ListGroup.Item>
+            }
         </ListGroup>
     )
 }
