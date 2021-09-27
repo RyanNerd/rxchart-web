@@ -73,7 +73,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [activeOtc, setActiveOtc] = useState<MedicineRecord | null>(null);
     const [activePillbox, setActivePillbox] = useState<PillboxRecord | null>(null);
 
-    const prevOtcList = usePrevious(otcList);
     const prevPillboxList = usePrevious(pillboxList);
     const prevClient = usePrevious(props.activeResident);
 
@@ -164,13 +163,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             setCheckoutDisabled(true);
         }
     }, [drugLogList])
-
-    // Set activeOtc state to the first element of the otcList when the otcList changes
-    useEffect(() => {
-        if (prevOtcList !== otcList) {
-            setActiveOtc(otcList.length > 0 ? otcList[0] : null);
-        }
-    }, [otcList, prevOtcList]);
 
     // Set activePillbox to the first element of pillboxList when the pillboxList changes
     useEffect(() => {
@@ -388,7 +380,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         />
                         }
 
-                        {displayType === DISPLAY_TYPE.OTC && activeOtc &&
+                        {displayType === DISPLAY_TYPE.OTC &&
                         <OtcListGroup
                             disabled={otcList.length === 0}
                             editOtcMedicine={(r) => setShowMedicineEdit(r)}
@@ -400,7 +392,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                                 addEditOtcLog();
                             }}
                             otcList={otcList}
-                            setActiveOtcDrug={(d) => setActiveOtc(d)}
+                            otcSelected={(d) => setActiveOtc(d)}
                         />
                         }
 

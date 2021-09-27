@@ -8,14 +8,14 @@ import ShadowBox from "../../Buttons/ShadowBox";
 import MedicineDetail from "../Grids/MedicineDetail";
 
 interface IProps {
-    activeOtc: MedicineRecord
+    activeOtc: MedicineRecord | null
     disabled?: boolean
     drugLogList: DrugLogRecord[]
     editOtcMedicine: (m: MedicineRecord) => void
     logOtcDrug: (e: React.MouseEvent<HTMLElement>) => void
     logOtcDrugAmount: (n: number) => void
     otcList: MedicineRecord[]
-    setActiveOtcDrug: (d: MedicineRecord) => void
+    otcSelected: (d: MedicineRecord) => void
 }
 
 /**
@@ -31,13 +31,13 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
         logOtcDrug,
         logOtcDrugAmount,
         otcList,
-        setActiveOtcDrug
+        otcSelected
     } = props;
 
     const [filteredOtcList, setFilteredOtcList] = useState(otcList);
     const [searchIsValid, setSearchIsValid] = useState<boolean | null>(null);
     const [searchText, setSearchText] = useState('');
-    const lastTaken = (activeOtc && activeOtc.Id) ? calculateLastTaken(activeOtc.Id, drugLogList) : null;
+    const lastTaken = activeOtc?.Id ? calculateLastTaken(activeOtc.Id, drugLogList) : null;
     const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
     const searchRef = useRef<HTMLInputElement>(null);
 
@@ -128,15 +128,17 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                 </FormGroup>
                 <FormGroup>
                     <Button
+                        disabled={!activeOtc}
                         className="mr-2"
                         onClick={(e) => logOtcDrug(e)}
                         size="sm"
                         variant={lastTakenVariant}
                     >
-                        + Log {activeOtc.Drug + ' ' + activeOtc.Strength}
+                        + Log {activeOtc?.Drug + ' ' + activeOtc?.Strength}
                     </Button>
 
                     <LogButtons
+                        disabled={!activeOtc}
                         lastTaken={lastTaken}
                         lastTakenVariant={lastTakenVariant}
                         onLogAmount={(n) => logOtcDrugAmount(n)}
@@ -177,7 +179,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                                     e.preventDefault();
                                     setSearchText(d.Drug);
                                     searchRef?.current?.focus();
-                                    setActiveOtcDrug(d);
+                                    otcSelected(d);
                                 }}
                             />)
                         }
@@ -186,7 +188,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                 </div>
             </ListGroup.Item>
 
-            {activeOtc.Directions &&
+            {activeOtc?.Directions && activeOtc.Drug === searchText &&
                 <ListGroup.Item
                     style={{
                         paddingTop: "0.25rem",
@@ -201,7 +203,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                 </ListGroup.Item>
             }
 
-            {activeOtc.OtherNames &&
+            {activeOtc?.OtherNames && activeOtc.Drug === searchText &&
                 <ListGroup.Item
                     style={{
                         paddingTop: "0.25rem",
