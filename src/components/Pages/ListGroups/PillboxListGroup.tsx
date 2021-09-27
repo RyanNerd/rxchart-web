@@ -1,4 +1,4 @@
-import {Alert, Button, Card, Dropdown, DropdownButton} from "react-bootstrap";
+import {Alert, Button, ButtonGroup, Card, Dropdown, DropdownButton} from "react-bootstrap";
 import ListGroup from "react-bootstrap/ListGroup";
 import React, {useGlobal, useState} from 'reactn';
 import {newPillboxRecord, PillboxItemRecord, PillboxRecord} from "types/RecordTypes";
@@ -113,12 +113,22 @@ const PillboxListGroup = (props: IProps) => {
 
                 <ListGroup.Item>
                     {activePillbox ?
-                        (<DropdownButton
-                            title={activePillbox.Name}
-                            onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
-                        >
-                            {pillboxList.map(PillboxItem)}
-                        </DropdownButton>) : (
+                        (
+                            <ButtonGroup>
+                                <Button
+                                    className="mr-2"
+                                    variant="secondary"
+                                >
+                                    PILLBOX:
+                                </Button>
+                                <DropdownButton
+                                title={activePillbox.Name}
+                                onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
+                            >
+                                {pillboxList.map(PillboxItem)}
+                            </DropdownButton>
+                        </ButtonGroup>
+                            ) : (
                             <Card className="mt-2">
                                 <Card.Body>
                                     There are no Pillboxes. Click on the + Pillbox button to add one.
@@ -131,13 +141,14 @@ const PillboxListGroup = (props: IProps) => {
                 {activePillbox?.Id &&
                     <ListGroup.Item>
                         <Button
+                            className="float-right"
                             disabled={getDrugsInThePillbox(activePillbox.Id, pillboxItemList).length === 0 ||
                                 isPillboxLogToday(activePillbox.Id)}
                             variant={getDrugsInThePillbox(activePillbox.Id, pillboxItemList).length === 0 ||
                                 isPillboxLogToday(activePillbox.Id) ? "outline-info" : "info"}
                             onClick={() => logPillbox()}
                         >
-                            Log Pillbox {activePillbox.Name}
+                            + Log Pillbox {activePillbox.Name}
                         </Button>
                     </ListGroup.Item>
                 }
