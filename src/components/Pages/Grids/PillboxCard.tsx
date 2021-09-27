@@ -18,9 +18,7 @@ const PillboxCard = (props: IProp) => {
         activePillbox
     } = props;
 
-    // TODO: Move this as a call back to the parent
     const [, setPillboxItemObserver] = useGlobal('__pillboxItem');
-
     const pillboxName = activePillbox.Name;
     const pillboxNotes = activePillbox.Notes || '';
     const pillboxId = activePillbox?.Id;
@@ -45,10 +43,11 @@ const PillboxCard = (props: IProp) => {
                     <span style={{color: BsColors.success, fontWeight: "bold"}}> Drugs</span>
                     {" in the pillbox: "}
                     <span style={{
-                        color: pillboxItemCount > 0 ? BsColors.success : BsColors.gray,
-                        fontWeight: pillboxItemCount > 0 ? "bold" : undefined
-                    }}>
-                                {pillboxItemCount}
+                            color: pillboxItemCount > 0 ? BsColors.success : BsColors.gray,
+                            fontWeight: pillboxItemCount > 0 ? "bold" : undefined
+                        }}
+                    >
+                        {pillboxItemCount}
                     </span>
                 </h5>
             </Card.Title>
