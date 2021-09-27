@@ -118,6 +118,7 @@ const PillboxListGroup = (props: IProps) => {
                                 <Button
                                     className="mr-2"
                                     variant="secondary"
+                                    style={{cursor: "default"}}
                                 >
                                     PILLBOX:
                                 </Button>
