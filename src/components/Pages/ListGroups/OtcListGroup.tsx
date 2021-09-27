@@ -1,6 +1,6 @@
 import {Button, Form, FormGroup, InputGroup, ListGroup} from "react-bootstrap";
 import Table from "react-bootstrap/Table";
-import React, {useEffect, useState} from "reactn";
+import React, {useEffect, useRef, useState} from "reactn";
 import {DrugLogRecord, MedicineRecord, newMedicineRecord} from "types/RecordTypes";
 import {calculateLastTaken, getLastTakenVariant} from "utility/common";
 import LogButtons from "../../Buttons/LogButtons";
@@ -39,6 +39,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
     const [searchText, setSearchText] = useState('');
     const lastTaken = (activeOtc && activeOtc.Id) ? calculateLastTaken(activeOtc.Id, drugLogList) : null;
     const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
+    const searchRef = useRef<HTMLInputElement>(null);
 
     // Filter the otcList by the search textbox value
     useEffect(() => {
@@ -81,6 +82,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                             <Form.Control
                                 autoFocus
                                 className="mr-2"
+                                ref={searchRef}
                                 id="otc-page-search-text"
                                 isValid={searchIsValid || false}
                                 onChange={(e) => setSearchText(e.target.value)}
@@ -143,7 +145,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
             </ListGroup.Item>
 
             <ListGroup.Item disabled={disabled}>
-                <div style={{height: "450px", overflow: "auto"}}>
+                <div style={{height: searchIsValid ? undefined : "450px", overflow: "auto"}}>
                     <Table
                         bordered
                         hover
@@ -172,8 +174,9 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                                 drug={drug}
                                 key={'otc' + drug.Id}
                                 onSelect={(e, d) => {
-                                    // todo: Change <MedicineDetail> so that e doesn't get passed to parent (uneeded)
                                     e.preventDefault();
+                                    setSearchText(d.Drug);
+                                    searchRef?.current?.focus();
                                     setActiveOtcDrug(d);
                                 }}
                             />)
