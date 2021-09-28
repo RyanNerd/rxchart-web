@@ -410,7 +410,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 </ListGroup>
 
                 <ListGroup as={Col}>
-                    {/* todo: convert this to DrugLogCard??? */}
                     {displayType === DISPLAY_TYPE.Medicine &&
                     <ListGroup.Item style={{textAlign: "center"}}>
                         <Button
@@ -439,7 +438,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     </ListGroup.Item>
                     }
 
-                    {/* todo: convert this to OtcLogCard??? */}
                     {displayType === DISPLAY_TYPE.OTC &&
                     <ListGroup.Item>
                         <h5 className="mb-2" style={{textAlign: "center"}}>OTC History</h5>

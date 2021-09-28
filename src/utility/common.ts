@@ -405,15 +405,18 @@ export interface SortObject {
     [index: string]: SortDirection
 }
 
+interface IArrayGeneric {
+    [index: string]: any
+}
+
 /**
  * Sorts an array of objects by column/property.
- * @todo Figure out how to make this generic
  * @link https://www.golangprograms.com/javascript-sort-multi-dimensional-array-on-specific-columns.html
  * @param {[{}]} array - The array of objects.
  * @param {[index: string]:any} sortObject e.g. { age: 'desc', name: 'asc' }
  * @returns {[]} The sorted array.
  */
-export const multiSort = (array: [], sortObject: SortObject): [] => {
+export const multiSort = (array: IArrayGeneric, sortObject: SortObject): [] => {
     const sortKeys = Object.keys(sortObject);
 
     /**
@@ -433,7 +436,7 @@ export const multiSort = (array: [], sortObject: SortObject): [] => {
         return a > b ? direction : -1 * direction;
     };
 
-    return array.sort((a, b) => {
+    return array.sort((a: { [x: string]: number; }, b: { [x: string]: number; }) => {
         let sorted = 0;
         let index = 0;
 

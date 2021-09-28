@@ -51,8 +51,6 @@ const getPillboxItems = (medicineList: MedicineRecord[], pillboxItemList: Pillbo
         }
     });
 
-    // @fixme: Not generic
-    // @ts-ignore multiSort isn't generic so it currently pitches a fit
     return multiSort(pillBuild, {Quantity: SortDirection.asc, Drug: SortDirection.desc});
 }
 
