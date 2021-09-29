@@ -1,8 +1,11 @@
-import {Alert, Button, Form, Row} from "react-bootstrap";
+import Alert from "react-bootstrap/Alert";
+import Button from "react-bootstrap/Button";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import {newResidentRecord, ResidentRecord} from "types/RecordTypes";
 import {clientFullName} from 'utility/common';
-import TooltipButton from "../Buttons/TooltipButton";
 import ResidentGrid from './Grids/ResidentGrid';
 import ClientRoster from "./Modals/ClientRoster";
 import Confirm from "./Modals/Confirm";
@@ -27,7 +30,6 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     const [residentToDelete, setResidentToDelete] = useState<ResidentRecord | null>(null);
     const [searchIsValid, setSearchIsValid] = useState(false);
     const [searchText, setSearchText] = useState('');
-    const [showClientPrint, setShowClientPrint] = useState<ResidentRecord | null>(null);
     const [showClientRoster, setShowClientRoster] = useState(false);
     const [showDeleteResident, setShowDeleteResident] = useState(false);
     const [showResidentEdit, setShowResidentEdit] = useState<ResidentRecord | null>(null);
@@ -72,10 +74,10 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
 
     /**
      * Fires when user clicks on the select button or if the user is trying to add an existing active client
-     * @param {ResidentRecord} resident
+     * @param {ResidentRecord} client
      */
-    const handleOnSelected = (resident: ResidentRecord) => {
-        setActiveResident(resident)
+    const handleOnSelected = (client: ResidentRecord) => {
+        setActiveResident(client)
         .then(() => setSearchText(''))
         .then(() => onSelected())
         .catch((err) => setErrorDetails(err))
@@ -83,18 +85,16 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
 
     return (
         <Form className="tab-content">
-            <Row>
-                <TooltipButton
+            <Row as={ButtonGroup}>
+                <Button
                     className="mr-2"
-                    placement="top"
-                    tooltip="Add New Resident"
                     onClick={(e: React.MouseEvent<HTMLElement>) => {
                         e.preventDefault();
                         setShowResidentEdit({...newResidentRecord});
                     }}
                 >
                     + Resident
-                </TooltipButton>
+                </Button>
 
                 <Form.Control
                     id="medicine-page-search-text"
@@ -128,18 +128,6 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                         clientList={residentList}
                     />
                 }
-
-                {showClientPrint !== null &&
-                    <
-                        ClientRoster
-                            onUnload={()=>{
-                                setShowClientPrint(null);
-                                handleOnSelected(showClientPrint);
-                            }}
-                            clientList={[showClientPrint]}
-                    />
-                }
-
             </Row>
 
             <Row className="mt-3">
@@ -197,26 +185,14 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                                 handleOnSelected(existing);
                                 return;
                             }
-                            setClient({
-                                action: "update",
-                                payload: client,
-                                cb: (c) => {
-                                    setActiveResident(c as ResidentRecord)
-                                        .then(() => setShowClientPrint(c as ResidentRecord));
-                                }
-                            })
-                            .then();
-                        } else {
-                            // Update the client
-                            setClient({
-                                action: "update",
-                                payload: client,
-                                cb: (c) => {
-                                    handleOnSelected(c as ResidentRecord);
-                                }
-                            })
-                            .then();
                         }
+
+                        // Update the client
+                        setClient({
+                            action: "update",
+                            payload: client,
+                            cb: (c) => handleOnSelected(c as ResidentRecord)
+                        })
                     }
                 }}
             />

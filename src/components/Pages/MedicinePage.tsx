@@ -1,8 +1,10 @@
-import {Alert, Toast, ToggleButton} from "react-bootstrap";
+import Alert from "react-bootstrap/Alert"
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import ListGroup from "react-bootstrap/ListGroup";
 import Row from 'react-bootstrap/Row';
+import Toast from "react-bootstrap/Toast"
+import ToggleButton from "react-bootstrap/ToggleButton"
 import React, {useEffect, useGlobal, useState} from 'reactn';
 import {DrugLogRecord, MedicineRecord, PillboxRecord, ResidentRecord} from "types/RecordTypes";
 import {
@@ -146,9 +148,13 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     useEffect(() => {
         // We are using medicineList === null as an indicator of if the medicine list has changed and needs new
         if (medicineList !== null) {
-            setActiveMed(medicineList.length > 0 ? medicineList[0] : null);
+            if (activeMed && medicineList.find(m => m.Id === activeMed.Id)) {
+                // NOP
+            } else {
+                setActiveMed(medicineList.length > 0 ? medicineList[0] : null);
+            }
         }
-    }, [medicineList])
+    }, [medicineList, activeMed, setActiveMed])
 
     // Disable or Enable Print Checkout button based on if there are any drugs marked as to be checked out
     useEffect(() => {
@@ -431,8 +437,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             drugLog={drugLogList}
                             drugId={activeMed.Id}
                             columns={['Created', 'Updated', 'Notes', 'Out', 'In']}
-                            onEdit={(r) => addEditDrugLog(r)}
-                            onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
+                            onEdit={r => addEditDrugLog(r)}
+                            onDelete={r => setShowDeleteDrugLogRecord(r)}
                         />
                         }
                     </ListGroup.Item>
@@ -446,8 +452,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             drugLog={otcLogList}
                             medicineList={otcList}
                             columns={['Drug', 'Created', 'Updated', 'Notes']}
-                            onEdit={(r) => addEditOtcLog(r)}
-                            onDelete={(e, r) => setShowDeleteDrugLogRecord(r)}
+                            onEdit={r => addEditOtcLog(r)}
+                            onDelete={r => setShowDeleteDrugLogRecord(r)}
                         />
                     </ListGroup.Item>
                     }

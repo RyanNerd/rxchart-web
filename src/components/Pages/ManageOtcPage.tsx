@@ -1,4 +1,4 @@
-import {Alert} from "react-bootstrap";
+import Alert from "react-bootstrap/Alert";
 import Table from "react-bootstrap/Table";
 import React, {useGlobal, useState} from 'reactn';
 import {MedicineRecord, newMedicineRecord} from "types/RecordTypes";
@@ -10,19 +10,35 @@ import MedicineEdit from "./Modals/MedicineEdit";
 /**
  * ManageOtcPage
  * Page for Displaying, editing and adding OTC drugs
+ * @todo Add a search filter textbox
  * @returns {JSX.Element}
  */
 const ManageOtcPage = (): JSX.Element | null => {
-    const [, setOtcMedicine] = useGlobal('__otcMedicine');
+    const [, setErrorDetails] = useGlobal('__errorDetails');
     const [activeTabKey] = useGlobal('activeTabKey');
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
-    const [otcList] = useGlobal('otcList');
+    const [mm] = useGlobal('medicineManager');
+    const [otcList, setOtcList] = useGlobal('otcList');
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
 
     // If this tab isn't active then don't render
     if (activeTabKey !== 'manage-otc') {
         return null;
+    }
+
+    /**
+     * Given a MedicineRecord Update or Insert the record and rehydrate the global otcList
+     * @param {MedicineRecord} med
+     */
+    const saveOtcMedicine = async (med: MedicineRecord) => {
+        const m = await mm.updateMedicine(med);
+
+        // Rehydrate the global otcList
+        const ol = await mm.loadOtcList();
+        await setOtcList(ol);
+
+        return m;
     }
 
     /**
@@ -50,6 +66,7 @@ const ManageOtcPage = (): JSX.Element | null => {
             </TooltipButton>
 
             <Table
+                style={{height: "730px", overflowY: "scroll", display: "block"}}
                 striped
                 bordered
                 hover
@@ -70,7 +87,7 @@ const ManageOtcPage = (): JSX.Element | null => {
                     <th>
                         Barcode
                     </th>
-                    <th></th>
+                    <th style={{textAlign: 'center', verticalAlign: "middle"}}>Delete</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -84,13 +101,13 @@ const ManageOtcPage = (): JSX.Element | null => {
                             'Barcode'
                         ]}
                         key={'otc' + drug.Id}
-                        onDelete={(e, medicineRecord) => {
-                            e.preventDefault();
+                        onDelete={(medicineRecord) => {
                             setMedicineInfo({...medicineRecord});
                             setShowDeleteMedicine(true);
                         }
                         }
                         onEdit={onEdit}
+                        isOTC={true}
                     />)
                 }
                 </tbody>
@@ -102,7 +119,9 @@ const ManageOtcPage = (): JSX.Element | null => {
                 show={showMedicineEdit}
                 onClose={(r) => {
                     setShowMedicineEdit(false);
-                    setOtcMedicine({action: 'update', payload: r});
+                    if (r) {
+                        saveOtcMedicine(r);
+                    }
                 }}
                 drugInfo={medicineInfo}
             />
@@ -115,7 +134,15 @@ const ManageOtcPage = (): JSX.Element | null => {
                 buttonvariant="danger"
                 onSelect={(a) => {
                     setShowDeleteMedicine(false);
-                    setOtcMedicine(a ? {action: 'delete', payload: medicineInfo?.Id as number} : null);
+                    mm.deleteMedicine(medicineInfo?.Id as number).then(d => {
+                        if (d) {
+                            mm.loadOtcList().then(ol => {
+                                setOtcList(ol)
+                            })
+                        } else {
+                            setErrorDetails('Unable to Delete OTC medicine. Id: ' + medicineInfo.Id);
+                        }
+                    })
                 }}
             >
                 <Confirm.Header>

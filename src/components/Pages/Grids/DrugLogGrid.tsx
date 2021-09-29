@@ -19,7 +19,7 @@ interface IProps extends TableProps {
     drugLog?: DrugLogRecord[]
     includeCheckout?: boolean
     medicineList?: MedicineRecord[]
-    onDelete?: (e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) => void
+    onDelete?: (r: DrugLogRecord) => void
     onEdit?: (r: DrugLogRecord) => void
     [key: string]: any
 }
@@ -179,7 +179,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                         size="sm"
                         id={"drug-grid-delete-btn-" + drug.Id}
                         variant="outline-danger"
-                        onClick={e => onDelete(e, drug)}
+                        onClick={e => onDelete(drug)}
                     >
                         <span role="img" aria-label="delete">🗑️</span>
                     </Button>

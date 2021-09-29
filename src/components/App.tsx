@@ -1,4 +1,4 @@
-import {ButtonGroup} from "react-bootstrap";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
 import React, {useEffect, useGlobal, useState} from 'reactn';
 import {ResidentRecord} from "types/RecordTypes";
 import {ReactComponent as RxIcon} from "../icons/prescription.svg";
@@ -8,8 +8,6 @@ import AuthObserver from "../observers/AuthObserver";
 import ClientObserver from "../observers/ClientObserver";
 import DrugLogObserver from "../observers/DrugLogObserver";
 import ErrorDetailsObserver from "../observers/ErrorDetailsObserver";
-import MedicineObserver from "../observers/MedicineObserver";
-import OtcMedicineObserver from "../observers/OtcMedicineObserver";
 import PillboxItemObserver from "../observers/PillboxItemObserver";
 import PillboxObserver from "../observers/PillboxObserver";
 import ClientButton from "./Buttons/ClientButton";
@@ -79,10 +77,8 @@ const App = () => {
     DrugLogObserver(mm, activeClient);      // Watching: __drugLog
     ErrorDetailsObserver();                 // Watching: __errorDetails
     AuthObserver();                         // Watching: __auth
-    MedicineObserver(mm, activeClient);     // Watching: __medicine
     PillboxObserver(mm, activeClient);      // Watching: __pillbox
     PillboxItemObserver(mm, activeClient);  // Watching: __pillboxItem
-    OtcMedicineObserver(mm);                // Watching: __otcMedicine
 
     // When copyText is populated copy it to the clipboard
     useEffect(() => {

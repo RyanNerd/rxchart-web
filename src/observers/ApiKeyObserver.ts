@@ -1,5 +1,6 @@
 import {Authenticated} from "providers/AuthenticationProvider";
 import {useEffect, useGlobal} from "reactn";
+import {MedicineRecord} from "types/RecordTypes";
 import {asyncWrapper} from "utility/common";
 import {IProviders} from "utility/getInitialState";
 
@@ -13,8 +14,10 @@ import {IProviders} from "utility/getInitialState";
 const ApiKeyObserver = (providers: IProviders, signIn: Authenticated) => {
     const [, setActiveTabKey] = useGlobal('activeTabKey');
     const [, setClient] = useGlobal('__client');
-    const [, setOtcMedicine] = useGlobal('__otcMedicine');
     const [, setErrorDetails] = useGlobal('__errorDetails');
+    const [, setOtcList] = useGlobal('otcList');
+    const [mm] = useGlobal('medicineManager');
+
     const apiKey = signIn.apiKey;
 
     useEffect(() => {
@@ -29,9 +32,9 @@ const ApiKeyObserver = (providers: IProviders, signIn: Authenticated) => {
                 // Load ALL Resident records up front and save them in the global store.
                 const [e] = await asyncWrapper(setClient({action: "load", payload: null}));
                 if (e) await setErrorDetails(e); else {
-                    // Load ALL OTC medications once we're logged in.
-                    const [e] = await asyncWrapper(setOtcMedicine({action: "load", payload: null}));
-                    if (e) await setErrorDetails(e); else {
+                    const [err, r] = await asyncWrapper(mm.loadOtcList());
+                    if (err) await setErrorDetails(err); else {
+                        await setOtcList(r as MedicineRecord[]);
                         // Activate the Resident tab
                         const [e] = await asyncWrapper(setActiveTabKey('resident'));
                         if (e) await setErrorDetails(e);
@@ -44,7 +47,7 @@ const ApiKeyObserver = (providers: IProviders, signIn: Authenticated) => {
         if (apiKey) {
             setProviderApiKey(apiKey);
         }
-    }, [apiKey, providers, setActiveTabKey, setClient, setOtcMedicine, setErrorDetails])
+    }, [apiKey, providers, setActiveTabKey, setClient, setErrorDetails, mm, setOtcList])
 }
 
 export default ApiKeyObserver;

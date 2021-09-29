@@ -8,7 +8,8 @@ import usePrevious from "../hooks/usePrevious";
  * @param {ResidentRecord|null} activeResident
  */
 const ActiveResidentObserver = (activeResident: ResidentRecord | null) => {
-    const [, setMedicine] = useGlobal('__medicine');
+    const [mm] = useGlobal('medicineManager');
+    const [, setMedicineList] = useGlobal('medicineList');
     const [, setDrugLog] = useGlobal('__drugLog');
     const [, setPillbox] = useGlobal('__pillbox');
     const [, setPillboxItem] = useGlobal('__pillboxItem');
@@ -20,13 +21,13 @@ const ActiveResidentObserver = (activeResident: ResidentRecord | null) => {
             // Trigger the refresh of medicineList, drugLogList, PillboxList, and PillboxItemList
             const clientId = activeResident?.Id || null;
             if (clientId) {
-                setMedicine({action: "load", payload: clientId});
+                mm.loadMedicineList(clientId).then(ml => setMedicineList(ml));
                 setDrugLog({action: "load", payload: clientId});
                 setPillbox({action: "load", payload: clientId});
                 setPillboxItem({action: "load", payload: clientId});
             }
         }
-    }, [activeResident, prevActiveResident, setDrugLog, setMedicine, setPillbox, setPillboxItem])
+    }, [activeResident, prevActiveResident, setDrugLog, mm, setMedicineList, setPillbox, setPillboxItem])
 }
 
 export default ActiveResidentObserver;

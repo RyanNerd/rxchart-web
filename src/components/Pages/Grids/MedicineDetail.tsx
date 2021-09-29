@@ -6,17 +6,19 @@ import {MedicineRecord} from "types/RecordTypes";
 interface IProps {
     columns?: string[]
     drug: MedicineRecord
-    onDelete?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
+    onDelete?: (r: MedicineRecord) => void
     onEdit?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
     onSelect?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
     onLogDrug?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
     activeDrug?: MedicineRecord | null
+    isOTC?: boolean
 }
 
 /**
  * MedicineDetail table row
  * @param {IProps} props
  * @return {JSX.Element}
+ * todo: remove all the e: React.MouseEvent cb params
  */
 const MedicineDetail = (props: IProps): JSX.Element => {
     const {
@@ -26,7 +28,8 @@ const MedicineDetail = (props: IProps): JSX.Element => {
         onEdit,
         onSelect,
         onLogDrug,
-        activeDrug
+        activeDrug,
+        isOTC = false
     } = props;
 
     const isSelected = onSelect && activeDrug && activeDrug.Id === drug.Id;
@@ -93,10 +96,14 @@ const MedicineDetail = (props: IProps): JSX.Element => {
                 <Button
                     size="sm"
                     id={"medicine-grid-delete-btn-" + drug.Id}
-                    variant="outline-danger"
-                    onClick={(e) => onDelete(e, drug)}
+                    variant={isOTC ? "outline-danger" : "outline-warning"}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        onDelete(drug);
+                    }}
+                    disabled={!drug.Active}
                 >
-                    <span role="img" aria-label="delete">🗑️</span>
+                    <span role="img" aria-label="delete">{isOTC ? "🗑️" : "🚫"}</span>
                 </Button>
             </td>
             }

@@ -32,11 +32,6 @@ declare module 'reactn/default' {
         } | null
         drugLogList: DrugLogRecord[]
         __errorDetails: any
-        __medicine: {
-            action: 'load' | 'update' | 'delete',
-            payload: null | MedicineRecord | number,
-            cb?: (mr: MedicineRecord[] | MedicineRecord) => void
-        } | null
         __pillbox: {
             action: 'load' | 'update' | 'delete',
             payload: null | PillboxRecord | number,
@@ -52,11 +47,6 @@ declare module 'reactn/default' {
         pillboxItemList: PillboxItemRecord[]
         medicineManager: IMedicineManager
         otcList: MedicineRecord[]
-        __otcMedicine: {
-            action: 'load' | 'update' | 'delete',
-            payload: null | MedicineRecord | number,
-            cb?: (m: MedicineRecord | MedicineRecord[]) => void
-        } | null
         providers: IProviders
         residentList: ResidentRecord[]
         residentManager: IResidentManager
