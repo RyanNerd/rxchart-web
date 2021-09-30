@@ -27,7 +27,7 @@ const PillboxItemObserver = (mm: IMedicineManager, activeClient: ResidentRecord 
                                 }
                                 setPillboxItemObserver(null);
                             } else {
-                                mm.loadPillboxItem(clientId)
+                                mm.loadPillboxItemList(clientId)
                                 .then((pillboxItems) => {
                                     setPillboxItemList(pillboxItems);
                                     if (pillboxItemObserver.cb) {

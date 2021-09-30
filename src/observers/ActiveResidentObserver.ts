@@ -10,24 +10,55 @@ import usePrevious from "../hooks/usePrevious";
 const ActiveResidentObserver = (activeResident: ResidentRecord | null) => {
     const [mm] = useGlobal('medicineManager');
     const [, setMedicineList] = useGlobal('medicineList');
-    const [, setDrugLog] = useGlobal('__drugLog');
-    const [, setPillbox] = useGlobal('__pillbox');
-    const [, setPillboxItem] = useGlobal('__pillboxItem');
+    const [, setDrugLogList] = useGlobal('drugLogList');
+    const [, setPillboxList] = useGlobal('pillboxList');
+    const [, setPillboxItemList] = useGlobal('pillboxItemList');
+    const [, setErrorDetails] = useGlobal('__errorDetails');
     const prevActiveResident = usePrevious(activeResident);
 
     // Compare the current activeResident with the previous and refresh some global values if they're different
     useEffect(() => {
+        /**
+         * Asynchronously load all the lists for the activeResident (client)
+         * @param {number} clientId
+         * @return {null|any} Returns an error variable from catch if there were any errors, otherwise null is returned
+         */
+        const refreshDrugs = async (clientId: number) => {
+            try {
+                const ml = await mm.loadMedicineList(clientId);
+                await setMedicineList(ml);
+                const dl = await mm.loadDrugLog(clientId);
+                await setDrugLogList(dl);
+                const pbl = await mm.loadPillboxList(clientId);
+                await setPillboxList(pbl);
+                const pbItemList = await mm.loadPillboxItemList(clientId);
+                await setPillboxItemList(pbItemList);
+            } catch (e) {
+                return e;
+            }
+            return null;
+        }
+
         if (prevActiveResident !== activeResident) {
-            // Trigger the refresh of medicineList, drugLogList, PillboxList, and PillboxItemList
             const clientId = activeResident?.Id || null;
+            // If we have a new client then refresh all the lists.
             if (clientId) {
-                mm.loadMedicineList(clientId).then(ml => setMedicineList(ml));
-                setDrugLog({action: "load", payload: clientId});
-                setPillbox({action: "load", payload: clientId});
-                setPillboxItem({action: "load", payload: clientId});
+                const err = refreshDrugs(clientId);
+                if (err) {
+                    setErrorDetails(err);
+                }
             }
         }
-    }, [activeResident, prevActiveResident, setDrugLog, mm, setMedicineList, setPillbox, setPillboxItem])
+    }, [
+        activeResident,
+        prevActiveResident,
+        mm,
+        setMedicineList,
+        setDrugLogList,
+        setPillboxList,
+        setPillboxItemList,
+        setErrorDetails
+    ])
 }
 
 export default ActiveResidentObserver;

@@ -6,7 +6,6 @@ import ActiveResidentObserver from "../observers/ActiveResidentObserver";
 import ApiKeyObserver from "../observers/ApiKeyObserver";
 import AuthObserver from "../observers/AuthObserver";
 import ClientObserver from "../observers/ClientObserver";
-import DrugLogObserver from "../observers/DrugLogObserver";
 import ErrorDetailsObserver from "../observers/ErrorDetailsObserver";
 import PillboxItemObserver from "../observers/PillboxItemObserver";
 import PillboxObserver from "../observers/PillboxObserver";
@@ -74,7 +73,6 @@ const App = () => {
     ActiveResidentObserver(activeClient);   // Watching: __activeResident
     ApiKeyObserver(providers, signIn);      // Watching: apiKey
     ClientObserver();                       // Watching: __client
-    DrugLogObserver(mm, activeClient);      // Watching: __drugLog
     ErrorDetailsObserver();                 // Watching: __errorDetails
     AuthObserver();                         // Watching: __auth
     PillboxObserver(mm, activeClient);      // Watching: __pillbox

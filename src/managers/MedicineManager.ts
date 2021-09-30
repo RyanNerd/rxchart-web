@@ -13,7 +13,7 @@ export interface IMedicineManager {
     loadDrugLog: (residentId: number) => Promise<DrugLogRecord[]>
     loadMedicineList: (residentId: number) => Promise<MedicineRecord[]>
     loadPillboxList: (residentId: number) => Promise<PillboxRecord[]>
-    loadPillboxItem: (clientId: number) => Promise<PillboxItemRecord[]>
+    loadPillboxItemList: (clientId: number) => Promise<PillboxItemRecord[]>
     loadOtcList: () => Promise<MedicineRecord[]>
     updateDrugLog: (drugLogRecord: DrugLogRecord) => Promise<DrugLogRecord>
     updateMedicine: (medicine: MedicineRecord) => Promise<MedicineRecord>
@@ -192,7 +192,7 @@ const MedicineManager = (
         loadPillboxList: async (residentId: number): Promise<PillboxRecord[]> => {
             return await _loadPillboxList(residentId);
         },
-        loadPillboxItem: async (residentId: number): Promise<PillboxItemRecord[]> => {
+        loadPillboxItemList: async (residentId: number): Promise<PillboxItemRecord[]> => {
             return await _loadPillboxItem(residentId);
         },
         loadOtcList: async (): Promise<MedicineRecord[]> => {

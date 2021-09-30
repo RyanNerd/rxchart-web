@@ -25,11 +25,6 @@ declare module 'reactn/default' {
         } | null
         count: number
         development: boolean
-        __drugLog: {
-            action: 'load'|'update'|'delete',
-            payload?: null | DrugLogRecord | DrugLogRecord[] | number,
-            cb?: (dl: DrugLogRecord[] | DrugLogRecord) => void
-        } | null
         drugLogList: DrugLogRecord[]
         __errorDetails: any
         __pillbox: {
