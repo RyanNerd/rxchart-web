@@ -10,7 +10,6 @@ import MedicineEdit from "./Modals/MedicineEdit";
 /**
  * ManageOtcPage
  * Page for Displaying, editing and adding OTC drugs
- * @todo Add a search filter textbox
  * @returns {JSX.Element}
  */
 const ManageOtcPage = (): JSX.Element | null => {
@@ -43,11 +42,9 @@ const ManageOtcPage = (): JSX.Element | null => {
 
     /**
      * Fires when the Edit button is clicked
-     * @param {MouseEvent} e
      * @param {MedicineRecord | null} medicine
      */
-    const onEdit = (e: React.MouseEvent<HTMLElement>, medicine?: MedicineRecord | null) => {
-        e.preventDefault();
+    const onEdit = (medicine?: MedicineRecord | null) => {
         const medicineInfo = (medicine) ? {...medicine} : {...newMedicineRecord, OTC: true};
         setMedicineInfo(medicineInfo);
         setShowMedicineEdit(true);
@@ -60,7 +57,7 @@ const ManageOtcPage = (): JSX.Element | null => {
                 tooltip="Manually Add New OTC"
                 size="sm"
                 variant="info"
-                onClick={(e: React.MouseEvent<HTMLElement>) => onEdit(e, null)}
+                onClick={() => onEdit(null)}
             >
                 + OTC
             </TooltipButton>
@@ -134,15 +131,17 @@ const ManageOtcPage = (): JSX.Element | null => {
                 buttonvariant="danger"
                 onSelect={(a) => {
                     setShowDeleteMedicine(false);
-                    mm.deleteMedicine(medicineInfo?.Id as number).then(d => {
-                        if (d) {
-                            mm.loadOtcList().then(ol => {
-                                setOtcList(ol)
-                            })
-                        } else {
-                            setErrorDetails('Unable to Delete OTC medicine. Id: ' + medicineInfo.Id);
-                        }
-                    })
+                    if (a) {
+                        mm.deleteMedicine(medicineInfo?.Id as number).then(d => {
+                            if (d) {
+                                mm.loadOtcList().then(ol => {
+                                    setOtcList(ol)
+                                })
+                            } else {
+                                setErrorDetails('Unable to Delete OTC medicine. Id: ' + medicineInfo.Id);
+                            }
+                        })
+                    }
                 }}
             >
                 <Confirm.Header>

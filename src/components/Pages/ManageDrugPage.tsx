@@ -90,11 +90,9 @@ const ManageDrugPage = (): JSX.Element | null => {
 
     /**
      * Fires when the Edit button is clicked
-     * @param {React.MouseEvent<HTMLElement>} e
      * @param {MedicineRecord | null} medicine
      */
-    const onEdit = (e: React.MouseEvent<HTMLElement>, medicine: MedicineRecord | null) => {
-        e.preventDefault();
+    const onEdit = (medicine: MedicineRecord | null) => {
         const medicineInfo = (medicine) ? {...medicine} : {
             ...newMedicineRecord,
             OTC: false,
@@ -109,12 +107,9 @@ const ManageDrugPage = (): JSX.Element | null => {
 
     /**
      * Handle when user clicks on the + Log Drug from the Medicine Detail table
-     * @param e {React.MouseEvent<HTMLElement>}
      * @param r {MedicineRecord}
      */
-    const handleLogDrug = (e: React.MouseEvent<HTMLElement, MouseEvent>, r: MedicineRecord) => {
-        e.preventDefault();
-
+    const handleLogDrug = (r: MedicineRecord) => {
         // Search todayDrugLogList to see if a record already exists.
         const drugLogRecords = todayDrugLogList.filter((dl) => {
             return dl.MedicineId === r.Id;
@@ -151,7 +146,7 @@ const ManageDrugPage = (): JSX.Element | null => {
                         tooltip="Manually Add New Medicine"
                         size="sm"
                         variant="info"
-                        onClick={(e: React.MouseEvent<HTMLElement>) => onEdit(e, null)}
+                        onClick={() => onEdit(null)}
                     >
                         + Medicine
                     </TooltipButton>
@@ -219,7 +214,7 @@ const ManageDrugPage = (): JSX.Element | null => {
                                     })
                                 }}
                                 onEdit={onEdit}
-                                onLogDrug={(e, r) => handleLogDrug(e, r)}
+                                onLogDrug={(r) => handleLogDrug(r)}
                             />
                         )}
                         </tbody>

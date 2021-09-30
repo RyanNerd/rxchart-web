@@ -7,9 +7,9 @@ interface IProps {
     columns?: string[]
     drug: MedicineRecord
     onDelete?: (r: MedicineRecord) => void
-    onEdit?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
-    onSelect?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
-    onLogDrug?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
+    onEdit?: (r: MedicineRecord) => void
+    onSelect?: (r: MedicineRecord) => void
+    onLogDrug?: (r: MedicineRecord) => void
     activeDrug?: MedicineRecord | null
     isOTC?: boolean
 }
@@ -18,7 +18,6 @@ interface IProps {
  * MedicineDetail table row
  * @param {IProps} props
  * @return {JSX.Element}
- * todo: remove all the e: React.MouseEvent cb params
  */
 const MedicineDetail = (props: IProps): JSX.Element => {
     const {
@@ -44,7 +43,7 @@ const MedicineDetail = (props: IProps): JSX.Element => {
                 < Button
                     size="sm"
                     id={"medicine-edit-btn-row" + drug.Id}
-                    onClick={(e) => onEdit(e, drug)}
+                    onClick={() => onEdit(drug)}
                 >
                     Edit
                 </Button>
@@ -57,7 +56,7 @@ const MedicineDetail = (props: IProps): JSX.Element => {
                         variant="info"
                         size="sm"
                         id={"med-checkout-btn-row" + drug.Id}
-                        onClick={(e) => onLogDrug(e, drug)}
+                        onClick={() => onLogDrug(drug)}
                         >
                         + Log Drug
                     </Button>
@@ -71,7 +70,7 @@ const MedicineDetail = (props: IProps): JSX.Element => {
                     name="resident-list"
                     variant="outline-info"
                     checked={isSelected || false}
-                    onClick={(e) => onSelect(e, drug)}
+                    onClick={() => onSelect(drug)}
                     value={drug.Id as number}
                 />
             </td>

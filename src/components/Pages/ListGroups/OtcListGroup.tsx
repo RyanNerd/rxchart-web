@@ -182,8 +182,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                                 ]}
                                 drug={drug}
                                 key={'otc' + drug.Id}
-                                onSelect={(e, d) => {
-                                    e.preventDefault();
+                                onSelect={(d) => {
                                     setSearchText(d.Drug);
                                     searchRef?.current?.focus();
                                     otcSelected(d);
