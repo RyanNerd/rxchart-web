@@ -1,4 +1,5 @@
-import {Button, ListGroup} from "react-bootstrap";
+import Button from "react-bootstrap/Button";
+import ListGroup from "react-bootstrap/ListGroup";
 import React, {useGlobal} from 'reactn';
 import {clientFullName, getCheckoutList, getFormattedDate} from "utility/common";
 import DrugLogGrid from "../Pages/Grids/DrugLogGrid";

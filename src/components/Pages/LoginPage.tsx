@@ -1,5 +1,5 @@
-import {Container} from 'react-bootstrap';
 import Alert from 'react-bootstrap/Alert';
+import Container from 'react-bootstrap/Container';
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import {ReactComponent as LockIcon} from '../../icons/lock.svg';
 import RxIcon from '../../icons/prescription.svg';

@@ -1,4 +1,4 @@
-import {Card} from "react-bootstrap";
+import Card from "react-bootstrap/Card";
 import React, {useGlobal} from "reactn";
 import {MedicineRecord, PillboxItemRecord, PillboxRecord} from "types/RecordTypes";
 import {BsColors} from "utility/common";

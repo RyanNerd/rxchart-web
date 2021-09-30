@@ -1,12 +1,12 @@
-import {Button} from "react-bootstrap";
-import ListGroup from "react-bootstrap/ListGroup";
+import Button from 'react-bootstrap/Button';
+import ListGroup from 'react-bootstrap/ListGroup';
 import React, {useEffect} from 'reactn';
-import {MedicineRecord, newMedicineRecord, PillboxRecord} from "types/RecordTypes";
-import {getLastTakenVariant, isPillboxLogToday, randomString} from "utility/common";
-import {drawBarcode} from "utility/drawBarcode";
-import LogButtons from "../../Buttons/LogButtons";
-import ShadowBox from "../../Buttons/ShadowBox";
-import MedDropdown from "./MedDropdown";
+import {MedicineRecord, newMedicineRecord, PillboxRecord} from 'types/RecordTypes';
+import {getLastTakenVariant, isPillboxLogToday, randomString} from 'utility/common';
+import {drawBarcode} from 'utility/drawBarcode';
+import LogButtons from '../../Buttons/LogButtons';
+import ShadowBox from '../../Buttons/ShadowBox';
+import MedDropdown from './MedDropdown';
 
 interface IProps {
     activeMed: MedicineRecord | null

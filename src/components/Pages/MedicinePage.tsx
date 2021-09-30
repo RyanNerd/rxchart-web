@@ -393,10 +393,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             activeOtc={activeOtc}
                             drugLogList={drugLogList}
                             logOtcDrugAmount={(n) => handleLogOtcDrugAmount(n)}
-                            logOtcDrug={(e) => {
-                                e.preventDefault();
-                                addEditOtcLog();
-                            }}
+                            logOtcDrug={() => addEditOtcLog()}
                             otcList={otcList}
                             otcSelected={(d) => setActiveOtc(d)}
                         />

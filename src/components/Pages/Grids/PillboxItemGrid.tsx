@@ -1,10 +1,11 @@
-import {ButtonGroup, Dropdown} from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import Dropdown from 'react-bootstrap/Dropdown'
 import Table, {TableProps} from 'react-bootstrap/Table';
 import React from 'reactn';
-import {PillboxItemRecord} from "types/RecordTypes";
-import {BsColors, randomString} from "utility/common";
-import {PillRowType} from "./getPillboxItems";
+import {PillboxItemRecord} from 'types/RecordTypes';
+import {BsColors, randomString} from 'utility/common';
+import {PillRowType} from './getPillboxItems';
 
 interface IProps extends TableProps {
     [key: string]: any

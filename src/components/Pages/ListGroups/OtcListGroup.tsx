@@ -1,4 +1,8 @@
-import {Button, Form, FormGroup, InputGroup, ListGroup} from "react-bootstrap";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import FormGroup from "react-bootstrap/FormGroup";
+import InputGroup from "react-bootstrap/InputGroup";
+import ListGroup from "react-bootstrap/ListGroup";
 import Table from "react-bootstrap/Table";
 import React, {useEffect, useRef, useState} from "reactn";
 import {DrugLogRecord, MedicineRecord, newMedicineRecord} from "types/RecordTypes";
@@ -12,10 +16,10 @@ interface IProps {
     disabled?: boolean
     drugLogList: DrugLogRecord[]
     editOtcMedicine: (m: MedicineRecord) => void
-    logOtcDrug: (e: React.MouseEvent<HTMLElement>) => void
+    logOtcDrug: () => void
     logOtcDrugAmount: (n: number) => void
     otcList: MedicineRecord[]
-    otcSelected: (d: MedicineRecord) => void
+    otcSelected: (d: MedicineRecord | null) => void
 }
 
 /**
@@ -51,14 +55,8 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                 const search = searchText.toLowerCase();
                 return drug.includes(search) || barcode.includes(search) || other.includes(search);
             })
-
-            if (filter && filter.length > 0) {
-                setSearchIsValid(true);
-                setFilteredOtcList(filter);
-            } else {
-                setSearchIsValid(false);
-                setFilteredOtcList([]);
-            }
+            setSearchIsValid(filter?.length > 0);
+            setFilteredOtcList(filter?.length > 0 ? filter : []);
         } else {
             setSearchIsValid(false);
             setFilteredOtcList(otcList);
@@ -90,6 +88,12 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                                     if (e.key === 'Enter') {
                                         e.preventDefault();
                                     }
+                                }}
+                                onClick={(e: React.MouseEvent<HTMLElement>) => {
+                                    e.preventDefault();
+                                    setSearchText('');
+                                    setSearchIsValid(null);
+                                    otcSelected(null);
                                 }}
                                 placeholder="Search OTC medicine"
                                 size="sm"
@@ -130,11 +134,14 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                     <Button
                         disabled={!activeOtc}
                         className="mr-2"
-                        onClick={(e) => logOtcDrug(e)}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            logOtcDrug();
+                        }}
                         size="sm"
                         variant={lastTakenVariant}
                     >
-                        + Log {activeOtc?.Drug + ' ' + activeOtc?.Strength}
+                        + Log {activeOtc ? activeOtc.Drug + ' ' + activeOtc.Strength : ""}
                     </Button>
 
                     <LogButtons

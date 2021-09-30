@@ -1,11 +1,16 @@
-import {Alert, Button, ButtonGroup, Card, Dropdown, DropdownButton} from "react-bootstrap";
-import ListGroup from "react-bootstrap/ListGroup";
+import Alert from "react-bootstrap/Alert";
+import Button from 'react-bootstrap/Button'
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import Card from 'react-bootstrap/Card'
+import Dropdown from 'react-bootstrap/Dropdown'
+import DropdownButton from 'react-bootstrap/DropdownButton'
+import ListGroup from 'react-bootstrap/ListGroup';
 import React, {useGlobal, useState} from 'reactn';
-import {newPillboxRecord, PillboxItemRecord, PillboxRecord} from "types/RecordTypes";
-import {getDrugsInThePillbox, getPillboxLogDate, isPillboxLogToday} from "utility/common";
-import TooltipButton from "../../Buttons/TooltipButton";
-import ConfirmDialogModal from "../Modals/ConfirmDialogModal";
-import PillboxEdit from "../Modals/PillboxEdit";
+import {newPillboxRecord, PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
+import {getDrugsInThePillbox, getPillboxLogDate, isPillboxLogToday} from 'utility/common';
+import TooltipButton from '../../Buttons/TooltipButton';
+import ConfirmDialogModal from '../Modals/ConfirmDialogModal';
+import PillboxEdit from '../Modals/PillboxEdit';
 
 interface IProps {
     pillboxList: PillboxRecord[]
