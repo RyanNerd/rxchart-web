@@ -7,7 +7,6 @@ import ApiKeyObserver from "../observers/ApiKeyObserver";
 import AuthObserver from "../observers/AuthObserver";
 import ClientObserver from "../observers/ClientObserver";
 import ErrorDetailsObserver from "../observers/ErrorDetailsObserver";
-import PillboxObserver from "../observers/PillboxObserver";
 import ClientButton from "./Buttons/ClientButton";
 import ClientDobButton from "./Buttons/ClientDobButton";
 import LandingPage from "./Pages/LandingPage";
@@ -25,7 +24,6 @@ const App = () => {
     const [activeClient, setActiveClient] = useGlobal('activeResident');
     const [, setActiveTabKey] = useGlobal('activeTabKey');
     const [development] = useGlobal('development');
-    const [mm] = useGlobal('medicineManager');
     const [providers] = useGlobal('providers');
     const [showClientEdit, setShowClientEdit] = useState(false);
     const [showClientRoster, setShowClientRoster] = useState(false);
@@ -74,12 +72,20 @@ const App = () => {
     ClientObserver();                       // Watching: __client
     ErrorDetailsObserver();                 // Watching: __errorDetails
     AuthObserver();                         // Watching: __auth
-    PillboxObserver(mm, activeClient);      // Watching: __pillbox
 
     // When copyText is populated copy it to the clipboard
     useEffect(() => {
+        /**
+         * Use async/await to write to the clipboard
+         * @param {string} t
+         */
+        const updateClipboard = async (t: string) => {
+            await navigator.clipboard.writeText(t);
+            setCopyText('');
+        }
+
         if (copyText !== '') {
-            navigator.clipboard.writeText(copyText).then((()=>setCopyText('')));
+            updateClipboard(copyText);
         }
     }, [copyText]);
 

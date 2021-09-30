@@ -13,7 +13,6 @@ import ConfirmDialogModal from '../Modals/ConfirmDialogModal';
 import PillboxEdit from '../Modals/PillboxEdit';
 
 interface IProps {
-    pillboxList: PillboxRecord[]
     activePillbox: PillboxRecord | null
     onSelect: (n: number) => void
     clientId: number
@@ -28,7 +27,6 @@ interface IProps {
  */
 const PillboxListGroup = (props: IProps) => {
     const {
-        pillboxList,
         activePillbox,
         onSelect,
         clientId,
@@ -36,9 +34,34 @@ const PillboxListGroup = (props: IProps) => {
         logPillbox
     } = props;
 
-    const [, setPillbox] = useGlobal('__pillbox');
+    const [mm] = useGlobal('medicineManager');
+    const [pillboxList, setPillboxList] = useGlobal('pillboxList');
     const [showPillboxDeleteConfirm, setShowPillboxDeleteConfirm] = useState(false);
     const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord | null>(null);
+
+    /**
+     * Add or update a pillbox record.
+     * @param {PillboxRecord} pillbox
+     */
+    const savePillbox = async (pillbox: PillboxRecord) => {
+        const pb = await mm.updatePillbox(pillbox);
+        if (pb) {
+            const pbl = await mm.loadPillboxList(clientId);
+            await setPillboxList(pbl);
+        }
+    }
+
+    /**
+     * Delete an existing pillbox.
+     * @param {number} pillboxId
+     */
+    const deletePillbox = async (pillboxId: number) =>{
+        const d = await mm.deletePillbox(pillboxId);
+        if (d) {
+            const pbl = await mm.loadPillboxList(clientId);
+            await setPillboxList(pbl);
+        }
+    }
 
     /**
      * Pillbox Dropdown Item component
@@ -188,7 +211,7 @@ const PillboxListGroup = (props: IProps) => {
                     onClose={
                         (r) => {
                             setPillboxInfo(null);
-                            if (r) setPillbox({action: "update", payload: r});
+                            if (r) savePillbox(r);
                         }
                     }
                     pillboxInfo={pillboxInfo}
@@ -211,8 +234,8 @@ const PillboxListGroup = (props: IProps) => {
                         variant="danger"
                         onClick={(e) => {
                             e.preventDefault();
-                            setShowPillboxDeleteConfirm(false)
-                            setPillbox({action: 'delete', payload: activePillbox?.Id as number});
+                            setShowPillboxDeleteConfirm(false);
+                            deletePillbox(activePillbox?.Id as number);
                         }}
                     >
                         Delete

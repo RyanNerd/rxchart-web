@@ -403,7 +403,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
                         {displayType === DISPLAY_TYPE.Pillbox &&
                         <PillboxListGroup
-                            pillboxList={pillboxList}
                             activePillbox={activePillbox}
                             onSelect={id => setActivePillbox(pillboxList.find(pb => pb.Id === id) as PillboxRecord)}
                             clientId={clientId}
