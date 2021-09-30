@@ -31,7 +31,7 @@ const ClientButton = (props: IProps) => {
 
     const clientName = (
         <span style={{fontStyle: development ? "italic" : "bold"}}>
-            {clientFullName(clientRecord)}
+            {clientFullName(clientRecord, true)}
         </span>
     );
 

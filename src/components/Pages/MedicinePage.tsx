@@ -1,3 +1,4 @@
+import CheckoutListGroup from "components/Pages/ListGroups/CheckoutListGroup";
 import Alert from "react-bootstrap/Alert"
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -301,6 +302,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         }}
                     >
                         <ToggleButton
+                            className="d-print-none"
                             key="med-list-group-med-btn"
                             id="med-list-group-med-radio-btn"
                             type="radio"
@@ -317,7 +319,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         <ToggleButton
                             key="med-list-group-otc-btn"
                             id="med-list-group-otc-radio-btn"
-                            className="ml-2"
+                            className="ml-2 d-print-none"
                             disabled={otcList?.length === 0}
                             type="radio"
                             size="sm"
@@ -333,7 +335,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         <ToggleButton
                             key="med-list-group-pill-btn"
                             id="med-list-group-pill-radio-btn"
-                            className="ml-2"
+                            className="ml-2 d-print-none"
                             disabled={medicineList.length < 5}
                             size="sm"
                             type="radio"
@@ -349,7 +351,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         <ToggleButton
                             key="med-list-group-print-btn"
                             id="med-list-group-print-radio-btn"
-                            className="ml-2"
+                            className="ml-2 d-print-none"
                             size="sm"
                             type="radio"
                             disabled={checkoutDisabled}
@@ -359,7 +361,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             checked={displayType === DISPLAY_TYPE.Print}
                             onChange={() => setDisplayType(DISPLAY_TYPE.Print)}
                         >
-                            <span className="ml-2">Print</span>
+                            <span className="ml-2">Print Medicine Checkout</span>
                         </ToggleButton>
                     </ListGroup.Item>
 
@@ -409,60 +411,70 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             logPillbox={() => handleLogPillbox()}
                         />
                         }
-                    </ListGroup.Item>
-                </ListGroup>
 
-                <ListGroup as={Col}>
-                    {displayType === DISPLAY_TYPE.Medicine &&
-                    <ListGroup.Item style={{textAlign: "center"}}>
-                        <Button
-                            size="lg"
-                            className="hover-underline-animation"
-                            variant="link"
-                            target="_blank"
-                            href={"https://goodrx.com/" + activeMed?.Drug}
-                        >
-                            {activeMed?.Drug}
-                        </Button>
-
-                        <LastTakenButton
-                            lastTaken={activeMed?.Id ? calculateLastTaken(activeMed.Id, drugLogList) : null}
-                        />
-
-                        {activeMed?.Id &&
-                        <DrugLogGrid
-                            drugLog={drugLogList}
-                            drugId={activeMed.Id}
-                            columns={['Created', 'Updated', 'Notes', 'Out', 'In']}
-                            onEdit={r => addEditDrugLog(r)}
-                            onDelete={r => setShowDeleteDrugLogRecord(r)}
-                        />
+                        {displayType === DISPLAY_TYPE.Print && activeClient &&
+                            <CheckoutListGroup
+                                drugLogList={drugLogList}
+                                medicineList={medicineList}
+                                activeClient={activeClient}
+                            />
                         }
                     </ListGroup.Item>
-                    }
-
-                    {displayType === DISPLAY_TYPE.OTC &&
-                    <ListGroup.Item>
-                        <h5 className="mb-2" style={{textAlign: "center"}}>OTC History</h5>
-                        <DrugLogGrid
-                            includeCheckout={false}
-                            drugLog={otcLogList}
-                            medicineList={otcList}
-                            columns={['Drug', 'Created', 'Updated', 'Notes']}
-                            onEdit={r => addEditOtcLog(r)}
-                            onDelete={r => setShowDeleteDrugLogRecord(r)}
-                        />
-                    </ListGroup.Item>
-                    }
-
-                    {displayType === DISPLAY_TYPE.Pillbox && activePillbox && activePillbox.Id &&
-                        <PillboxCard
-                            medicineList={medicineList}
-                            pillboxItemList={pillboxItemList}
-                            activePillbox={activePillbox}
-                        />
-                    }
                 </ListGroup>
+
+                {displayType !== DISPLAY_TYPE.Print &&
+                    <ListGroup as={Col}>
+                        {displayType === DISPLAY_TYPE.Medicine &&
+                            <ListGroup.Item style={{textAlign: "center"}}>
+                                <Button
+                                    size="lg"
+                                    className="hover-underline-animation"
+                                    variant="link"
+                                    target="_blank"
+                                    href={"https://goodrx.com/" + activeMed?.Drug}
+                                >
+                                    {activeMed?.Drug}
+                                </Button>
+
+                                <LastTakenButton
+                                    lastTaken={activeMed?.Id ? calculateLastTaken(activeMed.Id, drugLogList) : null}
+                                />
+
+                                {activeMed?.Id &&
+                                    <DrugLogGrid
+                                        drugLog={drugLogList}
+                                        drugId={activeMed.Id}
+                                        columns={['Created', 'Updated', 'Notes', 'Out', 'In']}
+                                        onEdit={r => addEditDrugLog(r)}
+                                        onDelete={r => setShowDeleteDrugLogRecord(r)}
+                                    />
+                                }
+                            </ListGroup.Item>
+                        }
+
+                        {displayType === DISPLAY_TYPE.OTC &&
+                            <ListGroup.Item>
+                                <h5 className="mb-2" style={{textAlign: "center"}}>OTC History</h5>
+                                <DrugLogGrid
+                                    includeCheckout={false}
+                                    drugLog={otcLogList}
+                                    medicineList={otcList}
+                                    columns={['Drug', 'Created', 'Updated', 'Notes']}
+                                    onEdit={r => addEditOtcLog(r)}
+                                    onDelete={r => setShowDeleteDrugLogRecord(r)}
+                                />
+                            </ListGroup.Item>
+                        }
+
+                        {displayType === DISPLAY_TYPE.Pillbox && activePillbox && activePillbox.Id &&
+                            <PillboxCard
+                                medicineList={medicineList}
+                                pillboxItemList={pillboxItemList}
+                                activePillbox={activePillbox}
+                            />
+                        }
+                    </ListGroup>
+                }
             </Row>
 
             {/* MedicineEdit Modal*/}
