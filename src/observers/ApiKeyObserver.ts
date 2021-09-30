@@ -1,6 +1,6 @@
 import {Authenticated} from "providers/AuthenticationProvider";
 import {useEffect, useGlobal} from "reactn";
-import {MedicineRecord} from "types/RecordTypes";
+import {MedicineRecord, ResidentRecord} from "types/RecordTypes";
 import {asyncWrapper} from "utility/common";
 import {IProviders} from "utility/getInitialState";
 
@@ -13,11 +13,11 @@ import {IProviders} from "utility/getInitialState";
  */
 const ApiKeyObserver = (providers: IProviders, signIn: Authenticated) => {
     const [, setActiveTabKey] = useGlobal('activeTabKey');
-    const [, setClient] = useGlobal('__client');
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [, setOtcList] = useGlobal('otcList');
+    const [, setResidentList] = useGlobal('residentList');
     const [mm] = useGlobal('medicineManager');
-
+    const [rm] = useGlobal('residentManager');
     const apiKey = signIn.apiKey;
 
     useEffect(() => {
@@ -30,14 +30,14 @@ const ApiKeyObserver = (providers: IProviders, signIn: Authenticated) => {
             const [e] = await asyncWrapper(providers.setApi(apiKey));
             if (e) await setErrorDetails(e); else {
                 // Load ALL Resident records up front and save them in the global store.
-                const [e] = await asyncWrapper(setClient({action: "load", payload: null}));
-                if (e) await setErrorDetails(e); else {
-                    const [err, r] = await asyncWrapper(mm.loadOtcList());
-                    if (err) await setErrorDetails(err); else {
-                        await setOtcList(r as MedicineRecord[]);
+                const [errLoadClients, clients] = await asyncWrapper(rm.loadResidentList());
+                if (errLoadClients) await setErrorDetails(errLoadClients); else {
+                    await setResidentList(clients as ResidentRecord[]);
+                    const [errLoadOtc, otcMeds] = await asyncWrapper(mm.loadOtcList());
+                    if (errLoadOtc) await setErrorDetails(errLoadOtc); else {
+                        await setOtcList(otcMeds as MedicineRecord[]);
                         // Activate the Resident tab
-                        const [e] = await asyncWrapper(setActiveTabKey('resident'));
-                        if (e) await setErrorDetails(e);
+                        await setActiveTabKey('resident');
                     }
                 }
             }
@@ -47,7 +47,7 @@ const ApiKeyObserver = (providers: IProviders, signIn: Authenticated) => {
         if (apiKey) {
             setProviderApiKey(apiKey);
         }
-    }, [apiKey, providers, setActiveTabKey, setClient, setErrorDetails, mm, setOtcList])
+    }, [apiKey, providers, setActiveTabKey, setErrorDetails, mm, rm, setOtcList, setResidentList])
 }
 
 export default ApiKeyObserver;

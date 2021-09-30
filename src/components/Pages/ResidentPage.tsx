@@ -21,13 +21,12 @@ interface IProps {
  * @return {JSX.Element | null}
  */
 const ResidentPage = (props: IProps): JSX.Element | null => {
-    const [, setClient] = useGlobal('__client');
-    const [, setErrorDetails] = useGlobal('__errorDetails');
     const [activeResident, setActiveResident] = useGlobal('activeResident');
     const [activeTabKey] = useGlobal('activeTabKey');
-    const [residentList] = useGlobal('residentList');
+    const [residentList, setResidentList] = useGlobal('residentList');
     const [filteredResidents, setFilteredResidents] = useState<ResidentRecord[]>(residentList);
     const [residentToDelete, setResidentToDelete] = useState<ResidentRecord | null>(null);
+    const [rm] = useGlobal('residentManager');
     const [searchIsValid, setSearchIsValid] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [showClientRoster, setShowClientRoster] = useState(false);
@@ -77,10 +76,30 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
      * @param {ResidentRecord} client
      */
     const handleOnSelected = (client: ResidentRecord) => {
-        setActiveResident(client)
-        .then(() => setSearchText(''))
-        .then(() => onSelected())
-        .catch((err) => setErrorDetails(err))
+        const activateClient = async (clientRec: ResidentRecord) => {
+            await setActiveResident(clientRec);
+            await setSearchText('');
+            onSelected();
+        }
+        activateClient(client);
+    }
+
+    const saveClient = async (client: ResidentRecord) => {
+        const r = await rm.updateResident(client);
+        if (r) {
+            const rl = await rm.loadResidentList();
+            await setResidentList(rl);
+            handleOnSelected(r);
+        }
+    }
+
+    const deleteClient = async (clientId: number) => {
+        const d = await rm.deleteResident(clientId);
+        if (d) {
+            const rl = await rm.loadResidentList();
+            await setResidentList(rl);
+            await setActiveResident(null);
+        }
     }
 
     return (
@@ -134,19 +153,13 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                 <ResidentGrid
                     activeResident={activeResident}
                     residentList={filteredResidents}
-                    onDelete={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
-                        e.preventDefault();
+                    onDelete={(resident: ResidentRecord) => {
+                        // TODO: Combine these?
                         setResidentToDelete(resident);
                         setShowDeleteResident(true);
                     }}
-                    onEdit={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
-                        e.preventDefault();
-                        setShowResidentEdit({...resident});
-                    }}
-                    onSelected={(e: React.MouseEvent<HTMLElement>, r: ResidentRecord) => {
-                        e.preventDefault();
-                        handleOnSelected(r)
-                    }}
+                    onEdit={(resident: ResidentRecord) => setShowResidentEdit({...resident})}
+                    onSelected={r => handleOnSelected(r)}
                 />
             </Row>
 
@@ -186,13 +199,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                                 return;
                             }
                         }
-
-                        // Update the client
-                        setClient({
-                            action: "update",
-                            payload: client,
-                            cb: (c) => handleOnSelected(c as ResidentRecord)
-                        })
+                        saveClient(client);
                     }
                 }}
             />
@@ -203,10 +210,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                 onSelect={(a) => {
                     setShowDeleteResident(false);
                     if (a && residentToDelete) {
-                        setClient({action: "delete", payload: residentToDelete?.Id as number})
-                        .then(() => {
-                            setSearchText('');
-                        })
+                        deleteClient(residentToDelete?.Id as number);
                     }
                 }}
             >

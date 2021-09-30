@@ -34,19 +34,15 @@ const ActiveResidentObserver = (activeResident: ResidentRecord | null) => {
                 const pbItemList = await mm.loadPillboxItemList(clientId);
                 await setPillboxItemList(pbItemList);
             } catch (e) {
-                return e;
+                await setErrorDetails(e);
             }
-            return null;
         }
 
         if (prevActiveResident !== activeResident) {
             const clientId = activeResident?.Id || null;
             // If we have a new client then refresh all the lists.
             if (clientId) {
-                const err = refreshDrugs(clientId);
-                if (err) {
-                    setErrorDetails(err);
-                }
+                refreshDrugs(clientId);
             }
         }
     }, [
