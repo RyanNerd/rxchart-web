@@ -64,7 +64,6 @@ const getInitialState = () => {
         __errorDetails: errorDetail,
         signIn: {apiKey: null, organization: null, success: null},
         __pillbox: null,
-        __pillboxItem: null,
         pillboxList: [] as PillboxRecord[],
         pillboxItemList: [] as PillboxItemRecord[],
         medicineList: [] as MedicineRecord[],

@@ -32,11 +32,6 @@ declare module 'reactn/default' {
             payload: null | PillboxRecord | number,
             cb?: (pb: PillboxRecord[] | PillboxRecord) => void
         } | null
-        __pillboxItem: {
-            action: 'load' | 'update' | 'delete',
-            payload: null | PillboxItemRecord | number,
-            cb?: (pbi: PillboxItemRecord[] | PillboxItemRecord) => void
-        } | null
         medicineList: MedicineRecord[]
         pillboxList: PillboxRecord[]
         pillboxItemList: PillboxItemRecord[]

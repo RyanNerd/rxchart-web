@@ -7,7 +7,6 @@ import ApiKeyObserver from "../observers/ApiKeyObserver";
 import AuthObserver from "../observers/AuthObserver";
 import ClientObserver from "../observers/ClientObserver";
 import ErrorDetailsObserver from "../observers/ErrorDetailsObserver";
-import PillboxItemObserver from "../observers/PillboxItemObserver";
 import PillboxObserver from "../observers/PillboxObserver";
 import ClientButton from "./Buttons/ClientButton";
 import ClientDobButton from "./Buttons/ClientDobButton";
@@ -76,7 +75,6 @@ const App = () => {
     ErrorDetailsObserver();                 // Watching: __errorDetails
     AuthObserver();                         // Watching: __auth
     PillboxObserver(mm, activeClient);      // Watching: __pillbox
-    PillboxItemObserver(mm, activeClient);  // Watching: __pillboxItem
 
     // When copyText is populated copy it to the clipboard
     useEffect(() => {

@@ -469,7 +469,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         {displayType === DISPLAY_TYPE.Pillbox && activePillbox && activePillbox.Id &&
                             <PillboxCard
                                 medicineList={medicineList}
-                                pillboxItemList={pillboxItemList}
                                 activePillbox={activePillbox}
                             />
                         }

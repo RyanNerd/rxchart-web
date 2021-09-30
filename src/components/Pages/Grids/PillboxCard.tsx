@@ -7,24 +7,36 @@ import PillboxItemGrid from "./PillboxItemGrid";
 
 interface IProp {
     medicineList: MedicineRecord[]
-    pillboxItemList: PillboxItemRecord[]
     activePillbox: PillboxRecord
 }
 
 const PillboxCard = (props: IProp) => {
     const {
         medicineList,
-        pillboxItemList,
         activePillbox
     } = props;
 
-    const [, setPillboxItemObserver] = useGlobal('__pillboxItem');
+    const [pillboxItemList, setPillboxItemList] = useGlobal('pillboxItemList');
+    const [mm] = useGlobal('medicineManager');
+    const clientId = activePillbox.ResidentId;
     const pillboxName = activePillbox.Name;
     const pillboxNotes = activePillbox.Notes || '';
     const pillboxId = activePillbox?.Id;
     const pillboxGridItems = pillboxId ?
         getPillboxItems(medicineList, pillboxItemList, pillboxId) : [] as PillRowType[];
     const pillboxItemCount = pillboxGridItems.filter(pgi => pgi.Quantity !== null && pgi.Quantity > 0).length;
+
+    /**
+     * Add or update a pillboxItem record
+     * @param {PillboxItemRecord} pbi
+     */
+    const savePillboxItem = async (pbi: PillboxItemRecord) => {
+        const updatedPbi = await mm.updatePillboxItem(pbi);
+        if (updatedPbi) {
+            const pbItemList = await mm.loadPillboxItemList(clientId as number);
+            await setPillboxItemList(pbItemList);
+        }
+    }
 
     return (
         <Card>
@@ -54,7 +66,7 @@ const PillboxCard = (props: IProp) => {
             <Card.Body>
                 <PillboxItemGrid
                     pillboxGridItems={pillboxGridItems}
-                    onEdit={r => setPillboxItemObserver({action: "update", payload: r})}
+                    onEdit={r => savePillboxItem(r)}
                 />
             </Card.Body>
             {pillboxNotes.length > 0 &&
