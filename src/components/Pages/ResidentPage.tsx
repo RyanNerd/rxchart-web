@@ -3,7 +3,7 @@ import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
-import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
+import React, {useEffect, useGlobal, useState} from 'reactn';
 import {newResidentRecord, ResidentRecord} from "types/RecordTypes";
 import {clientFullName} from 'utility/common';
 import ResidentGrid from './Grids/ResidentGrid';
@@ -25,22 +25,13 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     const [activeTabKey] = useGlobal('activeTabKey');
     const [residentList, setResidentList] = useGlobal('residentList');
     const [filteredResidents, setFilteredResidents] = useState<ResidentRecord[]>(residentList);
-    const [residentToDelete, setResidentToDelete] = useState<ResidentRecord | null>(null);
     const [rm] = useGlobal('residentManager');
     const [searchIsValid, setSearchIsValid] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [showClientRoster, setShowClientRoster] = useState(false);
-    const [showDeleteResident, setShowDeleteResident] = useState(false);
+    const [showDeleteResident, setShowDeleteResident] = useState<null|ResidentRecord>(null);
     const [showResidentEdit, setShowResidentEdit] = useState<ResidentRecord | null>(null);
-    const focusRef = useRef<HTMLInputElement>(null);
     const onSelected = props.residentSelected;
-
-    // Set focus to the search textbox when this tab is active
-    useEffect(() => {
-        if (activeTabKey === 'resident') {
-            focusRef?.current?.focus();
-        }
-    }, [activeTabKey, focusRef])
 
     // Filter the resident list by the search textbox value
     useEffect(() => {
@@ -116,6 +107,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                 </Button>
 
                 <Form.Control
+                    autoFocus
                     id="medicine-page-search-text"
                     style={{width: "220px"}}
                     isValid={searchIsValid}
@@ -128,7 +120,6 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                     }}
                     onChange={(e) => setSearchText(e.target.value)}
                     placeholder="Search resident"
-                    ref={focusRef}
                 />
 
                 <Button
@@ -153,11 +144,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                 <ResidentGrid
                     activeResident={activeResident}
                     residentList={filteredResidents}
-                    onDelete={(resident: ResidentRecord) => {
-                        // TODO: Combine these?
-                        setResidentToDelete(resident);
-                        setShowDeleteResident(true);
-                    }}
+                    onDelete={(resident: ResidentRecord) => setShowDeleteResident(resident)}
                     onEdit={(resident: ResidentRecord) => setShowResidentEdit({...resident})}
                     onSelected={r => handleOnSelected(r)}
                 />
@@ -204,19 +191,19 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                 }}
             />
 
-            {residentToDelete &&
+            {showDeleteResident &&
             <Confirm.Modal
                 show={showDeleteResident}
                 onSelect={(a) => {
-                    setShowDeleteResident(false);
-                    if (a && residentToDelete) {
-                        deleteClient(residentToDelete?.Id as number);
+                    setShowDeleteResident(null);
+                    if (a) {
+                        deleteClient(showDeleteResident?.Id as number);
                     }
                 }}
             >
                 <Confirm.Header>
                     <Confirm.Title>
-                        {"Deactivate " + clientFullName(residentToDelete)}
+                        {"Deactivate " + clientFullName(showDeleteResident)}
                     </Confirm.Title>
                 </Confirm.Header>
                 <Confirm.Body>
