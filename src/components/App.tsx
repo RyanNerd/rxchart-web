@@ -157,7 +157,6 @@ const App = () => {
                 residentInfo={activeClient as ResidentRecord}
                 show={activeClient !== null && showClientEdit}
                 onClose={(client) => {
-                    // todo: combine these?
                     setShowClientEdit(false);
                     if (client) saveClient(client);
                 }}

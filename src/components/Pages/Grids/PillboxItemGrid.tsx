@@ -51,7 +51,6 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
             >
                 <td
                     style={{verticalAlign: "middle", fontStyle, fontWeight, color}}
-                    onClick={() => alert('clickty' + pill.Id)}
                 >
                     {pill.Drug}
                 </td>
@@ -99,6 +98,7 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
                             className="ml-2"
                             size="sm"
                             variant={isInPillbox ? 'success' : 'info'}
+                            onClick={(e)=> e.stopPropagation()}
                         >
                             {pill.Quantity || "0"}
                         </Button>

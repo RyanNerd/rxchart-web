@@ -5,17 +5,19 @@ import Card from 'react-bootstrap/Card'
 import Dropdown from 'react-bootstrap/Dropdown'
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import ListGroup from 'react-bootstrap/ListGroup';
-import React, {useGlobal, useState} from 'reactn';
+import React, {useState} from 'reactn';
 import {newPillboxRecord, PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
 import {getDrugsInThePillbox, getPillboxLogDate, isPillboxLogToday} from 'utility/common';
-import TooltipButton from '../../Buttons/TooltipButton';
 import ConfirmDialogModal from '../Modals/ConfirmDialogModal';
 import PillboxEdit from '../Modals/PillboxEdit';
 
 interface IProps {
     activePillbox: PillboxRecord | null
     onSelect: (n: number) => void
+    onEdit: (pb: PillboxRecord) => void
+    onDelete: (id: number) => void
     clientId: number
+    pillboxList: PillboxRecord[]
     pillboxItemList: PillboxItemRecord[]
     logPillbox: () => void
 }
@@ -29,39 +31,20 @@ const PillboxListGroup = (props: IProps) => {
     const {
         activePillbox,
         onSelect,
+        onEdit,
+        onDelete,
         clientId,
+        pillboxList,
         pillboxItemList,
         logPillbox
     } = props;
 
-    const [mm] = useGlobal('medicineManager');
-    const [pillboxList, setPillboxList] = useGlobal('pillboxList');
+    if (pillboxList.length > 0 && !activePillbox) {
+        onSelect(pillboxList[0].Id as number);
+    }
+
     const [showPillboxDeleteConfirm, setShowPillboxDeleteConfirm] = useState(false);
     const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord | null>(null);
-
-    /**
-     * Add or update a pillbox record.
-     * @param {PillboxRecord} pillbox
-     */
-    const savePillbox = async (pillbox: PillboxRecord) => {
-        const pb = await mm.updatePillbox(pillbox);
-        if (pb) {
-            const pbl = await mm.loadPillboxList(clientId);
-            await setPillboxList(pbl);
-        }
-    }
-
-    /**
-     * Delete an existing pillbox.
-     * @param {number} pillboxId
-     */
-    const deletePillbox = async (pillboxId: number) =>{
-        const d = await mm.deletePillbox(pillboxId);
-        if (d) {
-            const pbl = await mm.loadPillboxList(clientId);
-            await setPillboxList(pbl);
-        }
-    }
 
     /**
      * Pillbox Dropdown Item component
@@ -97,20 +80,18 @@ const PillboxListGroup = (props: IProps) => {
         <>
             <ListGroup>
                 <ListGroup.Item>
-                    <TooltipButton
+                    <Button
                         onClick={(e) => {
                             e.preventDefault();
                             const pillboxRecord = {...newPillboxRecord};
                             pillboxRecord.ResidentId = clientId;
                             setPillboxInfo(pillboxRecord);
                         }}
-                        placement="top"
                         size="sm"
-                        tooltip="Add new Pillbox"
                         variant="info"
                     >
                         + Pillbox
-                    </TooltipButton>
+                    </Button>
 
                     {activePillbox &&
                         <>
@@ -140,7 +121,7 @@ const PillboxListGroup = (props: IProps) => {
                 </ListGroup.Item>
 
                 <ListGroup.Item>
-                    {activePillbox ?
+                    {pillboxList.length > 0 ?
                         (
                             <ButtonGroup>
                                 <Button
@@ -151,7 +132,7 @@ const PillboxListGroup = (props: IProps) => {
                                     PILLBOX:
                                 </Button>
                                 <DropdownButton
-                                title={activePillbox.Name}
+                                title={activePillbox?.Name}
                                 onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
                             >
                                 {pillboxList.map(PillboxItem)}
@@ -190,7 +171,7 @@ const PillboxListGroup = (props: IProps) => {
                             variant="danger"
                         >
                             <Alert.Heading>
-                                Pillbox <b>{activePillbox.Name}</b> logged earier today at {" "}
+                                Pillbox <b>{activePillbox.Name}</b> logged earlier today at {" "}
                                 {activePillbox.Id ? getPillboxLogTime(activePillbox.Id) : null}
                             </Alert.Heading>
                             <Button
@@ -211,7 +192,7 @@ const PillboxListGroup = (props: IProps) => {
                     onClose={
                         (r) => {
                             setPillboxInfo(null);
-                            if (r) savePillbox(r);
+                            if (r) onEdit(r);
                         }
                     }
                     pillboxInfo={pillboxInfo}
@@ -235,7 +216,7 @@ const PillboxListGroup = (props: IProps) => {
                         onClick={(e) => {
                             e.preventDefault();
                             setShowPillboxDeleteConfirm(false);
-                            deletePillbox(activePillbox?.Id as number);
+                            onDelete(activePillbox?.Id as number);
                         }}
                     >
                         Delete

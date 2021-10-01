@@ -48,72 +48,28 @@ interface IProps {
  */
 const MedicinePage = (props: IProps): JSX.Element | null => {
     const [, setErrorDetails] = useGlobal('__errorDetails');
-    const [mm] = useGlobal('medicineManager');
-
-    // Internal state
     const [activeClient, setActiveClient] = useState(props.activeResident);
-    const [clientId, setClientId] = useState<number | null>(activeClient?.Id || null);
-    const [activeTabKey, setActiveTabKey] = useState(props.activeTabKey);
-    const [checkoutDisabled, setCheckoutDisabled] = useState(!activeClient);
-
-    // Modal show/hide states
-    const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
-    const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
-    const [showMedicineEdit, setShowMedicineEdit] = useState<MedicineRecord | null>(null);
-
-    // Lists
-    const [drugLogList, setDrugLogList] = useGlobal('drugLogList');
-    const [globalMedicineList, setGlobalMedicineList] = useGlobal('medicineList');
-    const [medicineList, setMedicineList] = useState<MedicineRecord[]|null>(null);
-    const [otcList, setOtcList] = useGlobal('otcList');
-    const [otcLogList, setOtcLogList] = useState<DrugLogRecord[]>([]);
-    const [pillboxItemList] = useGlobal('pillboxItemList');
-    const [pillboxList] = useGlobal('pillboxList');
-
-    // Display state (DISPLAY_TYPE) and activeXXXX defaults
-    const [displayType, setDisplayType] = useState<DISPLAY_TYPE>(DISPLAY_TYPE.Medicine);
     const [activeMed, setActiveMed] = useState<MedicineRecord | null>(null);
     const [activeOtc, setActiveOtc] = useState<MedicineRecord | null>(null);
     const [activePillbox, setActivePillbox] = useState<PillboxRecord | null>(null);
-
-    const prevPillboxList = usePrevious(pillboxList);
-    const prevClient = usePrevious(props.activeResident);
-
+    const [activeTabKey, setActiveTabKey] = useState(props.activeTabKey);
+    const [checkoutDisabled, setCheckoutDisabled] = useState(!activeClient);
+    const [clientId, setClientId] = useState<number | null>(activeClient?.Id || null);
+    const [displayType, setDisplayType] = useState<DISPLAY_TYPE>(DISPLAY_TYPE.Medicine);
+    const [drugLogList, setDrugLogList] = useGlobal('drugLogList');
+    const [globalMedicineList, setGlobalMedicineList] = useGlobal('medicineList');
+    const [medicineList, setMedicineList] = useState<MedicineRecord[]|null>(null);
+    const [mm] = useGlobal('medicineManager');
+    const [otcList, setOtcList] = useGlobal('otcList');
+    const [otcLogList, setOtcLogList] = useState<DrugLogRecord[]>([]);
+    const [pillboxItemList] = useGlobal('pillboxItemList');
+    const [pillboxList, setPillboxList] = useGlobal('pillboxList');
+    const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
+    const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
+    const [showMedicineEdit, setShowMedicineEdit] = useState<MedicineRecord | null>(null);
     const [toast, setToast] = useState<null|DrugLogRecord>(null);
 
-    /**
-     * Given a DrugLogRecord Update or Insert the record and rehydrate the drugLogList
-     * @param {DrugLogRecord} drugLog
-     * @param clientId
-     */
-    const saveDrugLog = async (drugLog: DrugLogRecord, clientId: number): Promise<DrugLogRecord> => {
-        const r = await mm.updateDrugLog(drugLog);
-        // Rehydrate the drugLogList
-        const drugs = await mm.loadDrugLog(clientId);
-        await setDrugLogList(drugs);
-        return r;
-    }
-
-    /**
-     * Given a MedicineRecord Update or Insert the record and rehydrate the globalMedicineList
-     * @param {MedicineRecord} med
-     * @param {number} clientId
-     */
-    const saveMedicine = async (med: MedicineRecord, clientId: number) => {
-        const m = await mm.updateMedicine(med);
-
-        // Rehydrate the global medicineList
-        const ml = await mm.loadMedicineList(clientId);
-        await setGlobalMedicineList(ml);
-
-        // If the updated record is OTC we need to refresh the otcList as well.
-        if (m.OTC) {
-            // Rehydrate the global otcList
-            const ol = await mm.loadOtcList();
-            await setOtcList(ol);
-        }
-        return m;
-    }
+    const prevClient = usePrevious(props.activeResident);
 
     // Refresh activeClient when the activeResident global changes.
     useEffect(() => {
@@ -147,6 +103,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
     // Set the default activeMed
     useEffect(() => {
+        // TODO: There's got to be a better way. Right???
         // We are using medicineList === null as an indicator of if the medicine list has changed and needs new
         if (medicineList !== null) {
             if (activeMed && medicineList.find(m => m.Id === activeMed.Id)) {
@@ -171,16 +128,68 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         }
     }, [drugLogList])
 
-    // Set activePillbox to the first element of pillboxList when the pillboxList changes
-    useEffect(() => {
-        if (prevPillboxList !== pillboxList) {
-            setActivePillbox(pillboxList.length > 0 ? pillboxList[0] : null);
-        }
-    }, [pillboxList, prevPillboxList]);
-
     // If there isn't an activeResident or this isn't the active tab then do not render
     if (!clientId || !medicineList || activeTabKey !== 'medicine') {
         return null;
+    }
+
+    /**
+     * Given a MedicineRecord Update or Insert the record and rehydrate the globalMedicineList
+     * @param {MedicineRecord} med
+     */
+    const saveMedicine = async (med: MedicineRecord) => {
+        const m = await mm.updateMedicine(med);
+
+        // If the updated record is OTC we need to refresh the otcList as well.
+        if (m.OTC) {
+            // Rehydrate the global otcList
+            const ol = await mm.loadOtcList();
+            await setOtcList(ol);
+            setActiveOtc(m);
+        } else {
+            // Rehydrate the global medicineList
+            const ml = await mm.loadMedicineList(clientId);
+            await setGlobalMedicineList(ml);
+            setActiveMed(m);
+        }
+    }
+
+    /**
+     * Given a DrugLogRecord Update or Insert the record and rehydrate the drugLogList
+     * @param {DrugLogRecord} drugLog
+     */
+    const saveDrugLog = async (drugLog: DrugLogRecord): Promise<DrugLogRecord> => {
+        const r = await mm.updateDrugLog(drugLog);
+        // Rehydrate the drugLogList
+        const drugs = await mm.loadDrugLog(clientId);
+        await setDrugLogList(drugs);
+        return r;
+    }
+
+    /**
+     * Add or update a pillbox record.
+     * @param {PillboxRecord} pillbox
+     */
+    const savePillbox = async (pillbox: PillboxRecord) => {
+        const pb = await mm.updatePillbox(pillbox);
+        if (pb) {
+            const pbl = await mm.loadPillboxList(clientId);
+            await setPillboxList(pbl);
+            await setActivePillbox(pb);
+        }
+    }
+
+    /**
+     * Delete an existing pillbox.
+     * @param {number} pillboxId
+     */
+    const deletePillbox = async (pillboxId: number) =>{
+        const d = await mm.deletePillbox(pillboxId);
+        if (d) {
+            const pbl = await mm.loadPillboxList(clientId);
+            await setPillboxList(pbl);
+            await setActivePillbox(pbl.length > 0 ? pbl[0] : null);
+        }
     }
 
     /**
@@ -225,7 +234,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             In: null,
             Out: null
         };
-        saveDrugLog(drugLogInfo, clientId).then(r => setToast(r));
+        saveDrugLog(drugLogInfo).then(r => setToast(r));
     }
 
     /**
@@ -244,7 +253,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 In: null,
                 Out: null
             };
-            saveDrugLog(drugLogInfo, clientId).then(r => setToast(r));
+            saveDrugLog(drugLogInfo).then(r => setToast(r));
         }
     }
 
@@ -261,6 +270,16 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      * Handle when the user clicks on Log Pillbox
      */
     const handleLogPillbox = () => {
+        const updatePillboxLog = async (dli: DrugLogRecord) => {
+            const dLog = await mm.updateDrugLog(dli);
+            setToast(dLog);
+        }
+
+        const refreshDrugLog = async () => {
+            const drugLogs = await mm.loadDrugLog(clientId);
+            await setDrugLogList(drugLogs);
+        }
+
         // Get all the pillboxItems for the activePillbox that have a Quantity > 0
         const pbi = pillboxItemList.filter(p => p.PillboxId === activePillbox?.Id && p.Quantity > 0);
 
@@ -274,19 +293,10 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 Notes: notes,
                 In: null,
                 Out: null
-            };
-
-            mm.updateDrugLog(drugLogInfo).then(r =>setToast(r));
-        })
-
-        // Save the date and time to local storage.
-        setPillboxLogDate(activePillbox?.Id as number);
-
-        // Now that all the pills in the pillbox are logged rehydrate the drugLogList
-        mm.loadDrugLog(clientId).then(drugs => setDrugLogList(drugs));
-
-        // Change  to DISPLAY_TYPE.Medicine
-        setDisplayType(DISPLAY_TYPE.Medicine);
+            } as DrugLogRecord;
+            updatePillboxLog(drugLogInfo).then(() => setPillboxLogDate(activePillbox?.Id as number))
+        });
+        refreshDrugLog().then(() => setDisplayType(DISPLAY_TYPE.Medicine))
     }
 
     return (
@@ -404,8 +414,11 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         {displayType === DISPLAY_TYPE.Pillbox &&
                         <PillboxListGroup
                             activePillbox={activePillbox}
-                            onSelect={id => setActivePillbox(pillboxList.find(pb => pb.Id === id) as PillboxRecord)}
+                            onSelect={id => setActivePillbox(pillboxList.find(pb => pb.Id === id) || null)}
+                            onEdit={r => savePillbox(r)}
+                            onDelete={id => deletePillbox(id)}
                             clientId={clientId}
+                            pillboxList={pillboxList}
                             pillboxItemList={pillboxItemList}
                             logPillbox={() => handleLogPillbox()}
                         />
@@ -481,16 +494,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 show={true}
                 onClose={(r: MedicineRecord | null) => {
                     setShowMedicineEdit(null);
-                    if (r) {
-                        saveMedicine(r, clientId)
-                        .then(m => {
-                            if (m.OTC) {
-                                setActiveOtc(m);
-                            } else {
-                                setActiveMed(m);
-                            }
-                        })
-                    }
+                    if (r) saveMedicine(r);
                 }}
                 drugInfo={showMedicineEdit}
             />
@@ -505,9 +509,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 onHide={() => setShowDrugLog(null)}
                 onClose={(drugLogRecord) => {
                     setShowDrugLog(null);
-                    if (drugLogRecord) {
-                        saveDrugLog(drugLogRecord, clientId).then(r => setToast(r))
-                    }
+                    if (drugLogRecord) saveDrugLog(drugLogRecord).then(r => setToast(r));
                 }}
             />
             }
@@ -552,7 +554,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     style={{
                         position: "absolute",
                         top: 0,
-                        right: 0
+                        right: 0,
+                        backgroundColor: "#ff3231"
                     }}
                     onClose={()=>setToast(null)}
                     show={true}
@@ -560,11 +563,10 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     autohide
                 >
                     <Toast.Header>
-                        Updating Drug History
+                        <b>Updating Drug History</b>
                     </Toast.Header>
-
                     <Toast.Body>
-                        Added/Updated {drugName(toast.MedicineId)}
+                        Updated {drugName(toast.MedicineId)}
                     </Toast.Body>
                 </Toast>
             }
