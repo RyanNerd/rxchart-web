@@ -67,6 +67,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
     const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
     const [showMedicineEdit, setShowMedicineEdit] = useState<MedicineRecord | null>(null);
+    const [isBusy, setIsBusy] = useState(false);
     const [toast, setToast] = useState<null|DrugLogRecord>(null);
 
     const prevClient = usePrevious(props.activeResident);
@@ -103,8 +104,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
     // Set the default activeMed
     useEffect(() => {
-        // TODO: There's got to be a better way. Right???
-        // We are using medicineList === null as an indicator of if the medicine list has changed and needs new
+        // We are using medicineList === null as an indicator of if the medicine list has changed
         if (medicineList !== null) {
             if (activeMed && medicineList.find(m => m.Id === activeMed.Id)) {
                 // NOP
@@ -270,6 +270,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      * Handle when the user clicks on Log Pillbox
      */
     const handleLogPillbox = () => {
+        setIsBusy(true);
         const updatePillboxLog = async (dli: DrugLogRecord) => {
             const dLog = await mm.updateDrugLog(dli);
             setToast(dLog);
@@ -296,7 +297,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             } as DrugLogRecord;
             updatePillboxLog(drugLogInfo).then(() => setPillboxLogDate(activePillbox?.Id as number))
         });
-        refreshDrugLog().then(() => setDisplayType(DISPLAY_TYPE.Medicine))
+        refreshDrugLog().then(() => setIsBusy(false))
     }
 
     return (
@@ -414,6 +415,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         {displayType === DISPLAY_TYPE.Pillbox &&
                         <PillboxListGroup
                             activePillbox={activePillbox}
+                            disabled={isBusy}
                             onSelect={id => setActivePillbox(pillboxList.find(pb => pb.Id === id) || null)}
                             onEdit={r => savePillbox(r)}
                             onDelete={id => deletePillbox(id)}

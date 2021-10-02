@@ -1,11 +1,13 @@
+import DisabledSpinner from "components/Pages/ListGroups/DisabledSpinner";
 import Alert from "react-bootstrap/Alert";
+import Badge from "react-bootstrap/Badge";
 import Button from 'react-bootstrap/Button'
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Card from 'react-bootstrap/Card'
 import Dropdown from 'react-bootstrap/Dropdown'
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import ListGroup from 'react-bootstrap/ListGroup';
-import React, {useState} from 'reactn';
+import React, {useEffect, useState} from 'reactn';
 import {newPillboxRecord, PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
 import {getDrugsInThePillbox, getPillboxLogDate, isPillboxLogToday} from 'utility/common';
 import ConfirmDialogModal from '../Modals/ConfirmDialogModal';
@@ -13,6 +15,7 @@ import PillboxEdit from '../Modals/PillboxEdit';
 
 interface IProps {
     activePillbox: PillboxRecord | null
+    disabled?: boolean
     onSelect: (n: number) => void
     onEdit: (pb: PillboxRecord) => void
     onDelete: (id: number) => void
@@ -30,6 +33,7 @@ interface IProps {
 const PillboxListGroup = (props: IProps) => {
     const {
         activePillbox,
+        disabled = false,
         onSelect,
         onEdit,
         onDelete,
@@ -43,6 +47,7 @@ const PillboxListGroup = (props: IProps) => {
         onSelect(pillboxList[0].Id as number);
     }
 
+    const [showAlert, setShowAlert] = useState(false);
     const [showPillboxDeleteConfirm, setShowPillboxDeleteConfirm] = useState(false);
     const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord | null>(null);
 
@@ -72,6 +77,14 @@ const PillboxListGroup = (props: IProps) => {
         return logDate ? logDate.toLocaleTimeString() : '';
     }
 
+    useEffect(() => {
+        setShowAlert((activePillbox?.Id && isPillboxLogToday(activePillbox.Id)) || false);
+    }, [activePillbox]);
+
+    const title = (disabled ? <DisabledSpinner>{activePillbox?.Name}</DisabledSpinner> : activePillbox?.Name);
+    const logTime = activePillbox?.Id && isPillboxLogToday(activePillbox.Id) ?
+        getPillboxLogTime(activePillbox.Id) : null;
+
     /**
      * Work-around so React 17 can be used
      * @link https://github.com/react-bootstrap/react-bootstrap/issues/5409#issuecomment-718699584
@@ -81,6 +94,7 @@ const PillboxListGroup = (props: IProps) => {
             <ListGroup>
                 <ListGroup.Item>
                     <Button
+                        disabled={disabled}
                         onClick={(e) => {
                             e.preventDefault();
                             const pillboxRecord = {...newPillboxRecord};
@@ -96,6 +110,7 @@ const PillboxListGroup = (props: IProps) => {
                     {activePillbox &&
                         <>
                             <Button
+                                disabled={disabled}
                                 className="ml-2"
                                 onClick={(e) => {
                                     e.preventDefault();
@@ -109,6 +124,7 @@ const PillboxListGroup = (props: IProps) => {
                                 Edit {activePillbox.Name}
                             </Button>
                             <Button
+                                disabled={disabled}
                                 className="ml-2"
                                 onClick={() => setShowPillboxDeleteConfirm(true)}
                                 size="sm"
@@ -132,13 +148,40 @@ const PillboxListGroup = (props: IProps) => {
                                     PILLBOX:
                                 </Button>
                                 <DropdownButton
-                                title={activePillbox?.Name}
-                                onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
-                            >
-                                {pillboxList.map(PillboxItem)}
-                            </DropdownButton>
-                        </ButtonGroup>
-                            ) : (
+                                    title={title}
+                                    onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
+                                    disabled={disabled}
+                                >
+                                    {pillboxList.map(PillboxItem)}
+                                </DropdownButton>
+
+                                {activePillbox?.Id &&
+                                <Button
+                                    className="ml-5"
+                                    disabled={
+                                        disabled ||
+                                        getDrugsInThePillbox(activePillbox.Id, pillboxItemList).length === 0 ||
+                                        showAlert
+                                    }
+                                    variant={getDrugsInThePillbox(activePillbox.Id, pillboxItemList).length === 0 ||
+                                    logTime ? "outline-warning" : "info"}
+                                    onClick={() => {logPillbox();
+                                        setShowAlert(true);
+                                    }}
+                                >
+                                    {/* tslint:disable-next-line:max-line-length */}
+                                    + Log Pillbox <b>{activePillbox.Name}</b> {logTime &&
+                                        <Badge
+                                            variant="danger"
+                                            className="ml-2"
+                                        >
+                                            {"Logged: " + logTime}
+                                        </Badge>
+                                    }
+                                </Button>
+                                }
+                            </ButtonGroup>
+                        ) : (
                             <Card className="mt-2">
                                 <Card.Body>
                                     There are no Pillboxes. Click on the + Pillbox button to add one.
@@ -148,40 +191,18 @@ const PillboxListGroup = (props: IProps) => {
                     }
                 </ListGroup.Item>
 
-                {activePillbox?.Id &&
-                    <ListGroup.Item>
-                        <Button
-                            className="float-right"
-                            disabled={getDrugsInThePillbox(activePillbox.Id, pillboxItemList).length === 0 ||
-                                isPillboxLogToday(activePillbox.Id)}
-                            variant={getDrugsInThePillbox(activePillbox.Id, pillboxItemList).length === 0 ||
-                                isPillboxLogToday(activePillbox.Id) ? "outline-info" : "info"}
-                            onClick={() => logPillbox()}
-                        >
-                            + Log Pillbox {activePillbox.Name}
-                        </Button>
-                    </ListGroup.Item>
-                }
-
-                {activePillbox?.Id &&
-                    getDrugsInThePillbox(activePillbox.Id, pillboxItemList).length > 0 &&
-                    isPillboxLogToday(activePillbox.Id) &&
+                {showAlert &&
                     <ListGroup.Item>
                         <Alert
+                            className="mb-0"
                             variant="danger"
+                            dismissible
+                            onClose={() => setShowAlert(false)}
                         >
                             <Alert.Heading>
-                                Pillbox <b>{activePillbox.Name}</b> logged earlier today at {" "}
-                                {activePillbox.Id ? getPillboxLogTime(activePillbox.Id) : null}
+                                Pillbox <b>{activePillbox?.Name}</b> logged today at {" "} {logTime}
                             </Alert.Heading>
-                            <Button
-                                variant="danger"
-                                onClick={() => logPillbox()}
-                            >
-                                Log Pillbox <b>{activePillbox?.Name}</b> Anyway?
-                            </Button>
                         </Alert>
-
                     </ListGroup.Item>
                 }
             </ListGroup>
