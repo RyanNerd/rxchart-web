@@ -8,6 +8,7 @@ import Dropdown from 'react-bootstrap/Dropdown'
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import ListGroup from 'react-bootstrap/ListGroup';
 import React, {useEffect, useState} from 'reactn';
+import {ReactChild} from "react";
 import {newPillboxRecord, PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
 import {getDrugsInThePillbox, getPillboxLogDate, isPillboxLogToday} from 'utility/common';
 import ConfirmDialogModal from '../Modals/ConfirmDialogModal';
@@ -23,6 +24,7 @@ interface IProps {
     pillboxList: PillboxRecord[]
     pillboxItemList: PillboxItemRecord[]
     logPillbox: () => void
+    children?: ReactChild
 }
 
 /**
@@ -40,7 +42,8 @@ const PillboxListGroup = (props: IProps) => {
         clientId,
         pillboxList,
         pillboxItemList,
-        logPillbox
+        logPillbox,
+        children
     } = props;
 
     if (pillboxList.length > 0 && !activePillbox) {
@@ -81,6 +84,7 @@ const PillboxListGroup = (props: IProps) => {
         setShowAlert((activePillbox?.Id && isPillboxLogToday(activePillbox.Id)) || false);
     }, [activePillbox]);
 
+    const drugsInThePillbox = activePillbox?.Id ? getDrugsInThePillbox(activePillbox.Id, pillboxItemList) : [];
     const title = (disabled ? <DisabledSpinner>{activePillbox?.Name}</DisabledSpinner> : activePillbox?.Name);
     const logTime = activePillbox?.Id && isPillboxLogToday(activePillbox.Id) ?
         getPillboxLogTime(activePillbox.Id) : null;
@@ -160,16 +164,14 @@ const PillboxListGroup = (props: IProps) => {
                                     className="ml-5"
                                     disabled={
                                         disabled ||
-                                        getDrugsInThePillbox(activePillbox.Id, pillboxItemList).length === 0 ||
+                                        drugsInThePillbox.length === 0 ||
                                         showAlert
                                     }
-                                    variant={getDrugsInThePillbox(activePillbox.Id, pillboxItemList).length === 0 ||
-                                    logTime ? "outline-warning" : "info"}
+                                    variant={drugsInThePillbox.length === 0 || logTime ? "outline-warning" : "info"}
                                     onClick={() => {logPillbox();
                                         setShowAlert(true);
                                     }}
                                 >
-                                    {/* tslint:disable-next-line:max-line-length */}
                                     + Log Pillbox <b>{activePillbox.Name}</b> {logTime &&
                                         <Badge
                                             variant="danger"
@@ -204,6 +206,12 @@ const PillboxListGroup = (props: IProps) => {
                             </Alert.Heading>
                         </Alert>
                     </ListGroup.Item>
+                }
+
+                {logTime && children &&
+                <ListGroup.Item>
+                    {children}
+                </ListGroup.Item>
                 }
             </ListGroup>
 

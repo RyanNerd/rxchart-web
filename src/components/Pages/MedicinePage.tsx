@@ -1,3 +1,5 @@
+import getPillboxItems, {PillRowType} from "components/Pages/Grids/getPillboxItems";
+import PillboxLogGrid, {TPillboxLogItem} from "components/Pages/Grids/PillboxLogGrid";
 import CheckoutListGroup from "components/Pages/ListGroups/CheckoutListGroup";
 import Alert from "react-bootstrap/Alert"
 import Button from 'react-bootstrap/Button';
@@ -13,7 +15,7 @@ import {
     getCheckoutList,
     getDrugName,
     getFormattedDate,
-    getMedicineRecord,
+    getMedicineRecord, isToday,
     setPillboxLogDate
 } from "utility/common";
 import usePrevious from "../../hooks/usePrevious";
@@ -300,6 +302,30 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         refreshDrugLog().then(() => setIsBusy(false))
     }
 
+    /**
+     * Using some fuzzy logic get the drugs logged that are in the pillbox
+     * todo: Should this be moved to PillboxLogGrid and pass needed props?
+     * todo: Fuzzy logic for the time??
+     */
+    const getTodayPillboxLog = () => {
+        const pillboxItems = (activePillbox?.Id ?
+            getPillboxItems(medicineList, pillboxItemList, activePillbox.Id) as PillRowType[]
+            :
+            [] as PillRowType[]).filter(i => i.Quantity);
+        const todayPillboxLogList = drugLogList.filter((dlr) => {
+            return dlr.Updated && isToday(dlr.Updated) && dlr.Notes.includes('pb:');
+        });
+        const log: TPillboxLogItem[] = [];
+        pillboxItems.forEach(pbi => {
+            const pl = todayPillboxLogList.find(tl => tl.MedicineId === pbi.MedicineId);
+            const note = pl?.Notes || '';
+            const update = pl?.Updated;
+            const item = {...pbi, Notes: note, Updated: update};
+            log.push(item);
+        })
+        return log;
+    }
+
     return (
         <>
             <Row className={TabContent}>
@@ -423,7 +449,9 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             pillboxList={pillboxList}
                             pillboxItemList={pillboxItemList}
                             logPillbox={() => handleLogPillbox()}
-                        />
+                        >
+                            <PillboxLogGrid pillboxLogList={getTodayPillboxLog()}/>
+                        </PillboxListGroup>
                         }
 
                         {displayType === DISPLAY_TYPE.Print && activeClient &&
