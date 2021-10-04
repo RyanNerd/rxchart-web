@@ -9,7 +9,6 @@ import {PillRowType} from './getPillboxItems';
 
 interface IProps extends TableProps {
     [key: string]: any
-
     onEdit: (r: PillboxItemRecord) => void
     pillboxGridItems: PillRowType[]
 }

@@ -20,7 +20,6 @@ const PillboxCard = (props: IProp) => {
     const [mm] = useGlobal('medicineManager');
     const clientId = activePillbox.ResidentId;
     const pillboxName = activePillbox.Name;
-    const pillboxNotes = activePillbox.Notes || '';
     const pillboxId = activePillbox?.Id;
     const pillboxGridItems = pillboxId ?
         getPillboxItems(medicineList, pillboxItemList, pillboxId) : [] as PillRowType[];
@@ -40,42 +39,44 @@ const PillboxCard = (props: IProp) => {
 
     return (
         <Card>
-            <Card.Title>
-                <h5 className="mt-3 ml-2 user-select-none">
-                            <span style={{
-                                color: BsColors.white,
-                                backgroundColor: BsColors.primary,
-                                padding: ".5rem 1rem",
-                                boxSizing: "border-box",
-                                borderRadius: ".25rem"
-                            }}
-                            >
-                                {pillboxName.trim()}
-                            </span>
-                    <span style={{color: BsColors.success, fontWeight: "bold"}}> Drugs</span>
+            <Card.Title
+                className="mb-0"
+            >
+                <h6
+                    className="mt-3 mb-0 ml-2 user-select-none"
+                >
+                    <span
+                        style={{
+                            color: BsColors.white,
+                            backgroundColor: BsColors.primary,
+                            padding: ".5rem 1rem",
+                            boxSizing: "border-box",
+                            borderRadius: ".25rem"
+                        }}
+                    >
+                        {pillboxName.trim()}
+                    </span>
+                    <span
+                        style={{color: BsColors.success, fontWeight: "bold"}}> Drugs
+                    </span>
                     {" in the pillbox: "}
-                    <span style={{
+                    <span
+                        style={{
                             color: pillboxItemCount > 0 ? BsColors.success : BsColors.gray,
                             fontWeight: pillboxItemCount > 0 ? "bold" : undefined
                         }}
                     >
                         {pillboxItemCount}
                     </span>
-                </h5>
+                </h6>
             </Card.Title>
             <Card.Body>
                 <PillboxItemGrid
+                    className="mt-0"
                     pillboxGridItems={pillboxGridItems}
                     onEdit={r => savePillboxItem(r)}
                 />
             </Card.Body>
-            {pillboxNotes.length > 0 &&
-            <Card.Footer>
-                <p>
-                    {pillboxNotes}
-                </p>
-            </Card.Footer>
-            }
         </Card>
     )
 }

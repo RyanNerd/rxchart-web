@@ -208,6 +208,12 @@ const PillboxListGroup = (props: IProps) => {
                     </ListGroup.Item>
                 }
 
+                {activePillbox?.Notes &&
+                    <ListGroup.Item>
+                        {activePillbox.Notes}
+                    </ListGroup.Item>
+                }
+
                 {logTime && children &&
                 <ListGroup.Item>
                     {children}
