@@ -1,5 +1,4 @@
-import getPillboxItems, {PillRowType} from "components/Pages/Grids/getPillboxItems";
-import PillboxLogGrid, {TPillboxLogItem} from "components/Pages/Grids/PillboxLogGrid";
+import PillboxLogGrid from "components/Pages/Grids/PillboxLogGrid";
 import CheckoutListGroup from "components/Pages/ListGroups/CheckoutListGroup";
 import Alert from "react-bootstrap/Alert"
 import Button from 'react-bootstrap/Button';
@@ -15,8 +14,11 @@ import {
     getCheckoutList,
     getDrugName,
     getFormattedDate,
-    getMedicineRecord, isToday,
-    setPillboxLogDate
+    getMedicineRecord,
+    isToday,
+    multiSort,
+    setPillboxLogDate,
+    SortDirection
 } from "utility/common";
 import usePrevious from "../../hooks/usePrevious";
 import TabContent from "../../styles/common.css";
@@ -29,6 +31,14 @@ import PillboxListGroup from "./ListGroups/PillboxListGroup";
 import Confirm from './Modals/Confirm';
 import DrugLogEdit from "./Modals/DrugLogEdit";
 import MedicineEdit from "./Modals/MedicineEdit";
+
+export type TPillboxLog = {
+    Drug: string | undefined;
+    Strength: string | null | undefined;
+    Quantity: number;
+    Notes: any;
+    Updated: Date | null | undefined;
+}
 
 // Display states
 enum DISPLAY_TYPE {
@@ -71,6 +81,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [showMedicineEdit, setShowMedicineEdit] = useState<MedicineRecord | null>(null);
     const [isBusy, setIsBusy] = useState(false);
     const [toast, setToast] = useState<null|DrugLogRecord>(null);
+    const [pillboxDrugLog, setPillboxDrugLog] = useState<TPillboxLog[]>([]);
 
     const prevClient = usePrevious(props.activeResident);
 
@@ -129,6 +140,44 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             setCheckoutDisabled(true);
         }
     }, [drugLogList])
+
+    // Refresh the pillboxDrugLog[]
+    useEffect(() => {
+        if (activePillbox) {
+            const pillboxMedLog = [] as TPillboxLog[];
+            pillboxItemList.forEach(pbi => {
+                if (pbi.PillboxId === activePillbox.Id && pbi.Quantity) {
+                    const pbl = drugLogList.find(
+                        dl => dl.Updated &&
+                              dl.MedicineId === pbi.MedicineId &&
+                              isToday(dl.Updated) &&
+                              dl.Notes.includes('pb:')
+                    );
+                    if (pbl) {
+                        const med = medicineList?.find(m => m.Id === pbl.MedicineId);
+                        pillboxMedLog.push(
+                            {
+                                Drug: med?.Drug,
+                                Strength: med?.Strength,
+                                Quantity: pbi.Quantity,
+                                Notes: pbl.Notes,
+                                Updated: pbl.Updated
+                            }
+                        )
+                    }
+                }
+            })
+            setPillboxDrugLog(
+                multiSort(
+                    pillboxMedLog,
+                    {
+                        Quantity: SortDirection.asc,
+                        Drug: SortDirection.desc
+                    }
+                )
+            );
+        }
+    }, [medicineList, pillboxItemList, activePillbox, drugLogList])
 
     // If there isn't an activeResident or this isn't the active tab then do not render
     if (!clientId || !medicineList || activeTabKey !== 'medicine') {
@@ -302,30 +351,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         refreshDrugLog().then(() => setIsBusy(false))
     }
 
-    /**
-     * Using some fuzzy logic get the drugs logged that are in the pillbox
-     * todo: Should this be moved to PillboxLogGrid and pass needed props?
-     * todo: Fuzzy logic for the time??
-     */
-    const getTodayPillboxLog = () => {
-        const pillboxItems = (activePillbox?.Id ?
-            getPillboxItems(medicineList, pillboxItemList, activePillbox.Id) as PillRowType[]
-            :
-            [] as PillRowType[]).filter(i => i.Quantity);
-        const todayPillboxLogList = drugLogList.filter((dlr) => {
-            return dlr.Updated && isToday(dlr.Updated) && dlr.Notes.includes('pb:');
-        });
-        const log: TPillboxLogItem[] = [];
-        pillboxItems.forEach(pbi => {
-            const pl = todayPillboxLogList.find(tl => tl.MedicineId === pbi.MedicineId);
-            const note = pl?.Notes || '';
-            const update = pl?.Updated;
-            const item = {...pbi, Notes: note, Updated: update};
-            log.push(item);
-        })
-        return log;
-    }
-
     return (
         <>
             <Row className={TabContent}>
@@ -450,7 +475,9 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             pillboxItemList={pillboxItemList}
                             logPillbox={() => handleLogPillbox()}
                         >
-                            <PillboxLogGrid pillboxLogList={getTodayPillboxLog()}/>
+                            <PillboxLogGrid
+                                pillboxLogList={pillboxDrugLog}
+                            />
                         </PillboxListGroup>
                         }
 

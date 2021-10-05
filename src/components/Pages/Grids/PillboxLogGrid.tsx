@@ -1,19 +1,10 @@
+import {TPillboxLog} from "components/Pages/MedicinePage";
 import Table from "react-bootstrap/Table";
 import React from 'reactn';
-
-export type TPillboxLogItem = {
-    Notes: string;
-    Updated: Date | null | undefined;
-    Drug: string; Id: number | null;
-    MedicineId: number;
-    PillboxId: number;
-    Quantity: number | null;
-    ResidentId: number;
-    Strength: string | null;
-}
+import {BsColors} from "utility/common";
 
 interface IProps {
-    pillboxLogList: TPillboxLogItem[]
+    pillboxLogList: TPillboxLog[];
 }
 
 /**
@@ -43,7 +34,7 @@ const PillboxLogGrid = (props: IProps) => {
                         minute: '2-digit'
                     }) : '';
                 return (
-                    <tr>
+                    <tr style={{fontWeight: "bold", color: BsColors.success}}>
                         <td>
                             {tpbl.Drug} {" "} {tpbl.Strength}
                         </td>

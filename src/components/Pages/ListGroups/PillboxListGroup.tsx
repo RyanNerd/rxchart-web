@@ -201,7 +201,9 @@ const PillboxListGroup = (props: IProps) => {
                             dismissible
                             onClose={() => setShowAlert(false)}
                         >
-                            <Alert.Heading>
+                            <Alert.Heading
+                                className="mb-0"
+                            >
                                 Pillbox <b>{activePillbox?.Name}</b> logged today at {" "} {logTime}
                             </Alert.Heading>
                         </Alert>
@@ -209,7 +211,14 @@ const PillboxListGroup = (props: IProps) => {
                 }
 
                 {activePillbox?.Notes &&
-                    <ListGroup.Item>
+                    <ListGroup.Item
+                        style={{
+                            paddingTop: "0.25rem",
+                            paddingRight: "1.25rem",
+                            paddingBottom: "0.25rem",
+                            paddingLeft: "1.25rem"
+                        }}
+                    >
                         {activePillbox.Notes}
                     </ListGroup.Item>
                 }
