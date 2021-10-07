@@ -42,7 +42,7 @@ const ManageDrugPage = (): JSX.Element | null => {
     const saveDrugLog = async (drugLog: DrugLogRecord, clientId: number): Promise<DrugLogRecord> => {
         const r = await mm.updateDrugLog(drugLog);
         // Rehydrate the drugLogList
-        const drugs = await mm.loadDrugLog(clientId);
+        const drugs = await mm.loadDrugLog(clientId, 5);
         await setDrugLogList(drugs);
         return r;
     }
@@ -208,7 +208,7 @@ const ManageDrugPage = (): JSX.Element | null => {
                                     saveMedicine(med, activeResident?.Id as number)
                                     .then(m => {
                                         if (!m.Active) {
-                                            mm.loadDrugLog(activeResident?.Id as number)
+                                            mm.loadDrugLog(activeResident?.Id as number, 5)
                                             .then(dl => setDrugLogList(dl))
                                         }
                                     })
@@ -286,7 +286,7 @@ const ManageDrugPage = (): JSX.Element | null => {
                                 mm.deleteDrugLog(showDrugLogDeleteConfirm?.Id as number)
                                 .then(ok => {
                                     if (ok) {
-                                        mm.loadDrugLog(activeResident?.Id as number)
+                                        mm.loadDrugLog(activeResident?.Id as number, 5)
                                             .then(drugs => setDrugLogList(drugs));
                                     } else {
                                         setErrorDetails('DrugLog delete failed for Id: ' + showDrugLogDeleteConfirm.Id);
@@ -342,7 +342,7 @@ const ManageDrugPage = (): JSX.Element | null => {
                                 const m = {...medicineInfo};
                                 m.Active = false;
                                 saveMedicine(m, activeResident?.Id as number)
-                                    .then(() => mm.loadDrugLog(activeResident?.Id as number));
+                                    .then(() => mm.loadDrugLog(activeResident?.Id as number, 5));
                                 setShowDeleteMedicine(false);
                             }}
                         >

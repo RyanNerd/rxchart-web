@@ -10,7 +10,7 @@ export interface IMedicineManager {
     deleteMedicine: (medicineId: number) => Promise<boolean>
     deletePillbox: (pillboxId: number) => Promise<boolean>
     deletePillboxItem: (pillboxItemId: number) => Promise<boolean>
-    loadDrugLog: (residentId: number) => Promise<DrugLogRecord[]>
+    loadDrugLog: (residentId: number, days?: number) => Promise<DrugLogRecord[]>
     loadMedicineList: (residentId: number) => Promise<MedicineRecord[]>
     loadPillboxList: (residentId: number) => Promise<PillboxRecord[]>
     loadPillboxItemList: (clientId: number) => Promise<PillboxItemRecord[]>
@@ -72,13 +72,25 @@ const MedicineManager = (
 
     /**
      * Returns all the MedHistory records for the given ResidentId as a promise
-     * @param {number} residentId
+     * @param {number} residentId The client Id
+     * @param {number} days number of days old to fetch
      */
-    const _loadDrugLog = async (residentId: number) => {
-        const searchCriteria = {
-            where: [['ResidentId', '=', residentId]],
-            orderBy: [['Created', 'desc']]
-        };
+    const _loadDrugLog = async (residentId: number, days: number | undefined) => {
+        let searchCriteria;
+        if (days) {
+            const d = new Date();
+            d.setDate(d.getDate() - days);
+            searchCriteria = {
+                where: [['ResidentId', '=', residentId], ['Updated', '>' , d]],
+                orderBy: [['Created', 'desc']]
+            };
+        } else {
+            searchCriteria = {
+                where: [['ResidentId', '=', residentId]],
+                orderBy: [['Created', 'desc']]
+            };
+        }
+
         const [e, r] = await asyncWrapper(medHistoryProvider.search(searchCriteria));
         if (e) throw e; else return r as Promise<DrugLogRecord[]>;
     }
@@ -183,8 +195,8 @@ const MedicineManager = (
         deletePillboxItem: async (pillboxItemId: number): Promise<boolean> => {
             return await _deletePillboxItem(pillboxItemId);
         },
-        loadDrugLog: async (residentId: number): Promise<DrugLogRecord[]> => {
-            return await _loadDrugLog(residentId);
+        loadDrugLog: async (residentId: number, days?: number): Promise<DrugLogRecord[]> => {
+            return await _loadDrugLog(residentId, days);
         },
         loadMedicineList: async (residentId: number): Promise<MedicineRecord[]> => {
             return await _loadMedicineList(residentId);

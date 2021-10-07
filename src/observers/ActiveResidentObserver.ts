@@ -27,7 +27,7 @@ const ActiveResidentObserver = (activeResident: ResidentRecord | null) => {
             try {
                 const ml = await mm.loadMedicineList(clientId);
                 await setMedicineList(ml);
-                const dl = await mm.loadDrugLog(clientId);
+                const dl = await mm.loadDrugLog(clientId, 5);
                 await setDrugLogList(dl);
                 const pbl = await mm.loadPillboxList(clientId);
                 await setPillboxList(pbl);

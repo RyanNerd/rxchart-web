@@ -212,7 +212,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const saveDrugLog = async (drugLog: DrugLogRecord): Promise<DrugLogRecord> => {
         const r = await mm.updateDrugLog(drugLog);
         // Rehydrate the drugLogList
-        const drugs = await mm.loadDrugLog(clientId);
+        const drugs = await mm.loadDrugLog(clientId, 5);
         await setDrugLogList(drugs);
         return r;
     }
@@ -328,7 +328,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         }
 
         const refreshDrugLog = async () => {
-            const drugLogs = await mm.loadDrugLog(clientId);
+            const drugLogs = await mm.loadDrugLog(clientId, 5);
             await setDrugLogList(drugLogs);
         }
 
@@ -579,7 +579,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     setShowDeleteDrugLogRecord(null);
                     if (a) mm.deleteDrugLog(showDeleteDrugLogRecord?.Id as number).then(ok => {
                         if (ok) {
-                            mm.loadDrugLog(clientId).then(drugs => setDrugLogList(drugs));
+                            mm.loadDrugLog(clientId, 5).then(drugs => setDrugLogList(drugs));
                         } else {
                             setErrorDetails('DrugLog delete failed for Id: ' + showDeleteDrugLogRecord.Id);
                         }
