@@ -1,6 +1,12 @@
-import React, {useState, useEffect} from 'react';
+import {useState, useEffect} from 'react';
 
-const useStickyState = (defaultValue: any, key: string) => {
+/**
+ * Works like useState but values persist to local storage
+ * @link https://www.joshwcomeau.com/snippets/react-hooks/use-sticky-state/
+ * @param {string} key
+ * @param {any} defaultValue
+ */
+const useStickyState = (key: string, defaultValue: any) => {
     const [value, setValue] = useState(() => {
         const stickyValue = window.localStorage.getItem(key);
         return stickyValue !== null

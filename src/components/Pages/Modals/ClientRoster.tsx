@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'reactn';
 import NewImprovedWindow from "react-new-improved-window";
-import {ResidentRecord} from "../../../types/RecordTypes";
+import React, {useEffect, useState} from 'reactn';
+import {ResidentRecord} from "types/RecordTypes";
 
 interface IProps {
     onUnload: () => void

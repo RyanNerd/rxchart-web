@@ -1,15 +1,15 @@
 import Button from 'react-bootstrap/Button';
-import React from 'reactn';
 import Table from 'react-bootstrap/Table';
 import ToggleButton from 'react-bootstrap/ToggleButton';
-import {clientDOB, getFormattedDate, getMDY} from "../../../utility/common";
-import {ResidentRecord} from "../../../types/RecordTypes";
+import React from 'reactn';
+import {ResidentRecord} from "types/RecordTypes";
+import {clientDOB, getFormattedDate, getMDY} from "utility/common";
 
 interface IProps {
     activeResident: ResidentRecord | null
-    onDelete?: (e: React.MouseEvent<HTMLElement>, r: ResidentRecord) => void
-    onEdit?: (e: React.MouseEvent<HTMLElement>, r: ResidentRecord) => void
-    onSelected?: (e: React.MouseEvent<HTMLElement>, r: ResidentRecord) => void
+    onDelete?: (r: ResidentRecord) => void
+    onEdit?: (r: ResidentRecord) => void
+    onSelected?: (r: ResidentRecord) => void
     residentList: ResidentRecord[]
 }
 
@@ -57,7 +57,7 @@ const ResidentGrid = (props: IProps): JSX.Element => {
                         name="resident-list"
                         variant="outline-info"
                         checked={isSelected || false}
-                        onClick={(e) => onSelected(e, resident)}
+                        onClick={() => onSelected(resident)}
                         value={resident.Id as number}
                     />
                 </td>
@@ -75,7 +75,7 @@ const ResidentGrid = (props: IProps): JSX.Element => {
                     <Button
                         size="sm"
                         id={"resident-grid-edit-btn-" + resident.Id}
-                        onClick={(e) => onEdit(e, resident)}
+                        onClick={() => onEdit(resident)}
                     >
                         Edit
                     </Button>
@@ -88,7 +88,7 @@ const ResidentGrid = (props: IProps): JSX.Element => {
                         size="sm"
                         id={"resident-grid-delete-btn-" + resident.Id}
                         variant="outline-danger"
-                        onClick={(e) => onDelete(e, resident)}
+                        onClick={() => onDelete(resident)}
                     >
                         <span role="img" aria-label="delete">🗑️</span>
                     </Button>

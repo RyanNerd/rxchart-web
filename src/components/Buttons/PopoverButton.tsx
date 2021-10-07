@@ -1,8 +1,8 @@
-import React from "reactn";
 import Button, {ButtonProps} from "react-bootstrap/Button";
-import OverlayTrigger, {OverlayTriggerProps} from "react-bootstrap/OverlayTrigger";
 import {OverlayChildren, Placement} from "react-bootstrap/Overlay";
+import OverlayTrigger, {OverlayTriggerProps} from "react-bootstrap/OverlayTrigger";
 import {Variant} from "react-bootstrap/types";
+import React from "reactn";
 
 // @ts-ignore
 interface IProps extends ButtonProps, OverlayTriggerProps {

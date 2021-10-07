@@ -1,7 +1,8 @@
+import Dropdown from "react-bootstrap/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
 import React from "reactn";
-import {clientFullName} from "../../utility/common";
-import {ResidentRecord} from "../../types/RecordTypes";
-import {Dropdown, DropdownButton} from "react-bootstrap";
+import {ResidentRecord} from "types/RecordTypes";
+import {clientFullName} from "utility/common";
 
 // @ts-ignore Some props are completely incompatible and even the type `any` doesn't make TS happy
 interface IProps {
@@ -30,7 +31,7 @@ const ClientButton = (props: IProps) => {
 
     const clientName = (
         <span style={{fontStyle: development ? "italic" : "bold"}}>
-            {clientFullName(clientRecord)}
+            {clientFullName(clientRecord, true)}
         </span>
     );
 

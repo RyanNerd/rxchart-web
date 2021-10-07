@@ -1,10 +1,10 @@
+import {IAuthManager} from "managers/AuthManager";
+import {IMedicineManager} from "managers/MedicineManager";
+import {IResidentManager} from "managers/ResidentManager";
+import {Authenticated} from "providers/AuthenticationProvider";
 import 'reactn';
-import {DrugLogRecord, MedicineRecord, ResidentRecord} from './types/RecordTypes';
-import {IResidentManager} from "./managers/ResidentManager";
-import {IMedicineManager} from "./managers/MedicineManager";
-import {IAuthManager} from "./managers/AuthManager";
-import {IProviders} from "./utility/getInitialState";
-import {Authenticated} from "./providers/AuthenticationProvider";
+import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord, ResidentRecord} from 'types/RecordTypes';
+import {IProviders} from "utility/getInitialState";
 
 declare module 'reactn/default' {
     export interface Reducers {
@@ -18,21 +18,15 @@ declare module 'reactn/default' {
         activeResident: ResidentRecord | null
         activeTabKey: string
                 authManager: IAuthManager
-        __client: {
-            action: 'load' | 'update' | 'delete'
-            cb?: (c: ResidentRecord | ResidentRecord[] | undefined) => void
-            payload: null | ResidentRecord | number
-        } | null
         count: number
         development: boolean
-        __drugLog: {action: 'load'|'update'|'delete', payload?: null | DrugLogRecord | DrugLogRecord[] | number} | null
         drugLogList: DrugLogRecord[]
         __errorDetails: any
-        __medicine: {action: 'load' | 'update' | 'delete', payload: null | MedicineRecord | number} | null
         medicineList: MedicineRecord[]
+        pillboxList: PillboxRecord[]
+        pillboxItemList: PillboxItemRecord[]
         medicineManager: IMedicineManager
         otcList: MedicineRecord[]
-        __otcMedicine: {action: 'load' | 'update' | 'delete', payload: null | MedicineRecord | number} | null
         providers: IProviders
         residentList: ResidentRecord[]
         residentManager: IResidentManager

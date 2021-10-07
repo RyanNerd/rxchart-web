@@ -1,5 +1,5 @@
-import {ResidentRecord} from '../types/RecordTypes';
 import Frak from "frak/lib/components/Frak";
+import {ResidentRecord} from 'types/RecordTypes';
 
 export interface IResidentProvider {
     setApiKey: (apiKey: string) => void

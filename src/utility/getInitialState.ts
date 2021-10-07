@@ -1,18 +1,22 @@
+import {State} from "reactn/default";
+import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord, ResidentRecord} from "types/RecordTypes";
+import AuthManager from "../managers/AuthManager";
+import MedicineManager from "../managers/MedicineManager";
+import ResidentManager from "../managers/ResidentManager";
 import AuthenticationProvider, {IAuthenticationProvider} from "../providers/AuthenticationProvider";
 import MedHistoryProvider, {IMedHistoryProvider} from "../providers/MedHistoryProvider";
-import MedicineMananger from "../managers/MedicineManager";
 import MedicineProvider, {IMedicineProvider} from "../providers/MedicineProvider";
-import ResidentManager from "../managers/ResidentManager";
+import PillboxItemProvider, {IPillboxItemProvider} from "../providers/PillboxItemProvider";
+import PillboxProvider, {IPillboxProvider} from "../providers/PillboxProvider";
 import ResidentProvider, {IResidentProvider} from "../providers/ResidentProvider";
-import {DrugLogRecord, MedicineRecord, ResidentRecord} from "../types/RecordTypes";
-import {State} from "reactn/default";
-import AuthManager from "../managers/AuthManager";
 
 export interface IProviders {
     authenticationProvider: IAuthenticationProvider
     residentProvider: IResidentProvider
     medicineProvider: IMedicineProvider
     medHistoryProvider: IMedHistoryProvider
+    pillboxProvider: IPillboxProvider
+    pillboxItemProvider: IPillboxItemProvider
     setApi: (apiKey: string) => Promise<void>
 }
 
@@ -33,6 +37,9 @@ const getInitialState = () => {
         medHistoryProvider: MedHistoryProvider(baseUrl),
         medicineProvider: MedicineProvider(baseUrl),
         residentProvider: ResidentProvider(baseUrl),
+        pillboxProvider: PillboxProvider(baseUrl),
+        pillboxItemProvider: PillboxItemProvider(baseUrl),
+
         /**
          * Helper function that sets the API key for ALL providers
          * @param {string} apiKey
@@ -41,6 +48,8 @@ const getInitialState = () => {
             providers.medHistoryProvider.setApiKey(apiKey);
             providers.medicineProvider.setApiKey(apiKey);
             providers.residentProvider.setApiKey(apiKey);
+            providers.pillboxProvider.setApiKey(apiKey);
+            providers.pillboxItemProvider.setApiKey(apiKey);
         }
     } as IProviders;
 
@@ -49,17 +58,20 @@ const getInitialState = () => {
         activeTabKey: 'login',
         __auth: null,
         authManager: AuthManager(providers.authenticationProvider),
-        __client: null,
         development: process.env.REACT_APP_DEVELOPMENT === 'true',
-        __drugLog: null,
         drugLogList: [] as DrugLogRecord[],
         __errorDetails: errorDetail,
         signIn: {apiKey: null, organization: null, success: null},
-        __medicine: null,
+        pillboxList: [] as PillboxRecord[],
+        pillboxItemList: [] as PillboxItemRecord[],
         medicineList: [] as MedicineRecord[],
-        medicineManager: MedicineMananger(providers.medicineProvider, providers.medHistoryProvider),
+        medicineManager: MedicineManager(
+            providers.medicineProvider,
+            providers.medHistoryProvider,
+            providers.pillboxProvider,
+            providers.pillboxItemProvider
+        ),
         otcList: [] as MedicineRecord[],
-        __otcMedicine: null,
         providers,
         residentList: [] as ResidentRecord[],
         residentManager: ResidentManager(providers.residentProvider)

@@ -1,10 +1,10 @@
-import React from "reactn";
 import Button, {ButtonProps} from "react-bootstrap/Button";
-import OverlayTrigger, {OverlayTriggerProps} from "react-bootstrap/OverlayTrigger";
 import {Placement} from "react-bootstrap/Overlay";
-import {Variant} from "react-bootstrap/types";
+import OverlayTrigger, {OverlayTriggerProps} from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
-import {randomString} from "../../utility/common";
+import {Variant} from "react-bootstrap/types";
+import React from "reactn";
+import {randomString} from "utility/common";
 
 // @ts-ignore Some props are completely incompatible and even the type `any` doesn't make TS happy
 interface IProps extends ButtonProps, OverlayTriggerProps {

@@ -1,6 +1,6 @@
-import {IResidentProvider} from "../providers/ResidentProvider";
-import {ResidentRecord} from "../types/RecordTypes";
-import {asyncWrapper} from "../utility/common";
+import {IResidentProvider} from "providers/ResidentProvider";
+import {ResidentRecord} from "types/RecordTypes";
+import {asyncWrapper} from "utility/common";
 
 export interface IResidentManager {
     deleteResident: (residentId: number) => Promise<boolean>

@@ -1,7 +1,7 @@
-import React from 'reactn';
 import Button from 'react-bootstrap/Button';
 import Table, {TableProps} from 'react-bootstrap/Table';
-import {DrugLogRecord, MedicineRecord} from "../../../types/RecordTypes";
+import React from 'reactn';
+import {DrugLogRecord, MedicineRecord} from "types/RecordTypes";
 import {
     calculateLastTaken,
     getBsColor,
@@ -9,7 +9,7 @@ import {
     getLastTakenVariant,
     getObjectByProperty,
     isToday
-} from "../../../utility/common";
+} from "utility/common";
 
 interface IProps extends TableProps {
     checkoutOnly?: boolean
@@ -19,8 +19,8 @@ interface IProps extends TableProps {
     drugLog?: DrugLogRecord[]
     includeCheckout?: boolean
     medicineList?: MedicineRecord[]
-    onDelete?: (e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) => void
-    onEdit?: (e: React.MouseEvent<HTMLElement>, r: DrugLogRecord) => void
+    onDelete?: (r: DrugLogRecord) => void
+    onEdit?: (r: DrugLogRecord) => void
     [key: string]: any
 }
 
@@ -109,7 +109,10 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                 <td style={{textAlign: 'center', verticalAlign: "middle"}}>
                     <Button
                         size="sm"
-                        onClick={e => onEdit(e, drug)}
+                        onClick={e => {
+                            e.preventDefault();
+                            onEdit(drug);
+                        }}
                     >
                         Edit
                     </Button>
@@ -176,7 +179,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                         size="sm"
                         id={"drug-grid-delete-btn-" + drug.Id}
                         variant="outline-danger"
-                        onClick={e => onDelete(e, drug)}
+                        onClick={e => onDelete(drug)}
                     >
                         <span role="img" aria-label="delete">🗑️</span>
                     </Button>

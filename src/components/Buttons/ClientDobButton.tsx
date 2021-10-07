@@ -1,9 +1,9 @@
-import React from "reactn";
-
-import {Badge, Dropdown, DropdownButton} from "react-bootstrap";
-
-import {clientDOB} from "../../utility/common";
-import {ResidentRecord} from "../../types/RecordTypes";
+import Badge from 'react-bootstrap/Badge';
+import Dropdown from 'react-bootstrap/Dropdown'
+import DropdownButton from 'react-bootstrap/DropdownButton';
+import React from 'reactn';
+import {ResidentRecord} from 'types/RecordTypes';
+import {clientDOB} from 'utility/common';
 
 // @ts-ignore Some props are completely incompatible and even the type `any` doesn't make TS happy
 interface IProps {

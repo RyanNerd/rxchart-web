@@ -1,18 +1,18 @@
-import React, {useEffect, useGlobal, useState} from 'reactn';
-
+import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
-import {Alert, Form, Row} from "react-bootstrap";
-
-import ConfirmDialogModal from "./Modals/ConfirmDialogModal";
-import DrugLogEdit from "./Modals/DrugLogEdit";
-import DrugLogGrid from "./Grids/DrugLogGrid";
-import MedicineDetail from "./Grids/MedicineDetail";
-import MedicineEdit from "./Modals/MedicineEdit";
+import React, {useEffect, useGlobal, useState} from 'reactn';
+import {DrugLogRecord, MedicineRecord, newDrugLogRecord, newMedicineRecord} from "types/RecordTypes";
+import {getDrugName, isToday} from "utility/common";
 import TabContent from "../../styles/common.css";
 import TooltipButton from "../Buttons/TooltipButton";
-import {DrugLogRecord, MedicineRecord, newDrugLogRecord, newMedicineRecord} from "../../types/RecordTypes";
-import {getDrugName, isToday} from "../../utility/common";
+import DrugLogGrid from "./Grids/DrugLogGrid";
+import MedicineDetail from "./Grids/MedicineDetail";
+import ConfirmDialogModal from "./Modals/ConfirmDialogModal";
+import DrugLogEdit from "./Modals/DrugLogEdit";
+import MedicineEdit from "./Modals/MedicineEdit";
 
 /**
  * ManageDrugPage
@@ -20,19 +20,53 @@ import {getDrugName, isToday} from "../../utility/common";
  * @returns {JSX.Element}
  */
 const ManageDrugPage = (): JSX.Element | null => {
-    const [, setMedicine] = useGlobal('__medicine');
-    const [, setDrugLog] = useGlobal('__drugLog');
+    const [mm] = useGlobal('medicineManager');
     const [activeResident] = useGlobal('activeResident');
+    const [, setErrorDetails] = useGlobal('__errorDetails');
     const [activeTabKey, setActiveTabKey] = useGlobal('activeTabKey');
-    const [drugLogList] = useGlobal('drugLogList');
+    const [drugLogList, setDrugLogList] = useGlobal('drugLogList');
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
-    const [medicineList] = useGlobal('medicineList');
-    const [otcList] = useGlobal('otcList');
+    const [medicineList, setMedicineList] = useGlobal('medicineList');
+    const [otcList, setOtcList] = useGlobal('otcList');
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const [showDrugLogDeleteConfirm, setShowDrugLogDeleteConfirm] = useState<DrugLogRecord | null>(null);
     const [showCheckoutModal, setShowCheckoutModal] = useState<DrugLogRecord | null>(null);
     const [todayDrugLogList, setTodayDrugLogList] = useState<DrugLogRecord[]>([]);
+
+    /**
+     * Given a DrugLogRecord Update or Insert the record and rehydrate the drugLogList
+     * @param {DrugLogRecord} drugLog
+     * @param clientId
+     */
+    const saveDrugLog = async (drugLog: DrugLogRecord, clientId: number): Promise<DrugLogRecord> => {
+        const r = await mm.updateDrugLog(drugLog);
+        // Rehydrate the drugLogList
+        const drugs = await mm.loadDrugLog(clientId, 5);
+        await setDrugLogList(drugs);
+        return r;
+    }
+
+    /**
+     * Given a MedicineRecord Update or Insert the record and rehydrate the globalMedicineList
+     * @param {MedicineRecord} med
+     * @param {number} clientId
+     */
+    const saveMedicine = async (med: MedicineRecord, clientId: number) => {
+        const m = await mm.updateMedicine(med);
+
+        // Rehydrate the global medicineList
+        const ml = await mm.loadMedicineList(clientId);
+        await setMedicineList(ml);
+
+        // If the updated record is OTC we need to refresh the otcList as well.
+        if (m.OTC) {
+            // Rehydrate the global otcList
+            const ol = await mm.loadOtcList();
+            await setOtcList(ol);
+        }
+        return m;
+    }
 
     /**
      * Return true if there are any drugLog records that have Out > 0
@@ -43,10 +77,11 @@ const ManageDrugPage = (): JSX.Element | null => {
     useEffect(() => {
         const logList = drugLogList.filter((dr) => {
             const updated = dr && dr.Updated;
-            return updated && isToday(updated);
+            const active = medicineList.find(m => (m.Id === dr.MedicineId) && m.Active);
+            return updated && active && isToday(updated);
         });
         setTodayDrugLogList(logList);
-    }, [drugLogList]);
+    }, [drugLogList, medicineList]);
 
     // If this tab isn't active then don't render
     if (activeTabKey !== 'manage') {
@@ -55,11 +90,9 @@ const ManageDrugPage = (): JSX.Element | null => {
 
     /**
      * Fires when the Edit button is clicked
-     * @param {React.MouseEvent<HTMLElement>} e
      * @param {MedicineRecord | null} medicine
      */
-    const onEdit = (e: React.MouseEvent<HTMLElement>, medicine: MedicineRecord | null) => {
-        e.preventDefault();
+    const onEdit = (medicine: MedicineRecord | null) => {
         const medicineInfo = (medicine) ? {...medicine} : {
             ...newMedicineRecord,
             OTC: false,
@@ -74,12 +107,9 @@ const ManageDrugPage = (): JSX.Element | null => {
 
     /**
      * Handle when user clicks on the + Log Drug from the Medicine Detail table
-     * @param e {React.MouseEvent<HTMLElement>}
      * @param r {MedicineRecord}
      */
-    const handleLogDrug = (e: React.MouseEvent<HTMLElement, MouseEvent>, r: MedicineRecord) => {
-        e.preventDefault();
-
+    const handleLogDrug = (r: MedicineRecord) => {
         // Search todayDrugLogList to see if a record already exists.
         const drugLogRecords = todayDrugLogList.filter((dl) => {
             return dl.MedicineId === r.Id;
@@ -88,7 +118,7 @@ const ManageDrugPage = (): JSX.Element | null => {
         // Set drugLog to either the existing drugLogRecord or create a new one to be inserted.
         const drugLog = drugLogRecords.length > 0 ? drugLogRecords[0] : {...newDrugLogRecord};
 
-        // If new ResidentId will be 0 so we need to set fields up correctly for the insert.
+        // If new ResidentId will be 0, so we need to set fields up correctly for the insert.
         if (drugLog.ResidentId === 0) {
             drugLog.ResidentId = r.ResidentId as number;
             drugLog.MedicineId = r.Id as number;
@@ -116,7 +146,7 @@ const ManageDrugPage = (): JSX.Element | null => {
                         tooltip="Manually Add New Medicine"
                         size="sm"
                         variant="info"
-                        onClick={(e: React.MouseEvent<HTMLElement>) => onEdit(e, null)}
+                        onClick={() => onEdit(null)}
                     >
                         + Medicine
                     </TooltipButton>
@@ -162,8 +192,9 @@ const ManageDrugPage = (): JSX.Element | null => {
                             <th>
                                 Barcode
                             </th>
-                            <th></th>
-                            {/* Delete */}
+                            <th style={{textAlign: 'center', verticalAlign: "middle"}}>
+                                Deactivate
+                            </th>
                         </tr>
                         </thead>
                         <tbody>
@@ -171,13 +202,19 @@ const ManageDrugPage = (): JSX.Element | null => {
                             <MedicineDetail
                                 drug={drug}
                                 key={'med-' + drug.Id}
-                                onDelete={(e, medicineRecord) => {
-                                    e.preventDefault();
-                                    setMedicineInfo({...medicineRecord});
-                                    setShowDeleteMedicine(true);
+                                onDelete={(medicineRecord) => {
+                                    const med = {...medicineRecord};
+                                    med.Active = false;
+                                    saveMedicine(med, activeResident?.Id as number)
+                                    .then(m => {
+                                        if (!m.Active) {
+                                            mm.loadDrugLog(activeResident?.Id as number, 5)
+                                            .then(dl => setDrugLogList(dl))
+                                        }
+                                    })
                                 }}
                                 onEdit={onEdit}
-                                onLogDrug={(e, r) => handleLogDrug(e, r)}
+                                onLogDrug={(r) => handleLogDrug(r)}
                             />
                         )}
                         </tbody>
@@ -185,18 +222,16 @@ const ManageDrugPage = (): JSX.Element | null => {
                 </Row>
 
                 {todayDrugLogList && todayDrugLogList.length > 0 &&
-                <Row style={{height: "220px", overflowY: "scroll"}} className="mt-2">
+                <Row className="mt-2">
                     <DrugLogGrid
-                        onEdit={(e, r) => {
+                        style={{height: "180px", overflowY: "scroll"}}
+                        onEdit={(r) => {
                             if (r) {
                                 setShowCheckoutModal(r);
                             }
                         }}
-                        onDelete={(e, r) => {
-                            e.preventDefault();
-                            setShowDrugLogDeleteConfirm(r);
-                        }}
-                        medicineList={medicineList.concat(otcList)}
+                        onDelete={r => setShowDrugLogDeleteConfirm(r)}
+                        medicineList={medicineList.concat(otcList).filter(m => m.Active)}
                         includeCheckout={true}
                         drugLog={todayDrugLogList}
                         columns={['Drug', 'Created', 'Updated', 'Notes', 'Out', 'In']}
@@ -210,107 +245,123 @@ const ManageDrugPage = (): JSX.Element | null => {
                 show={showMedicineEdit}
                 onClose={(r) => {
                     setShowMedicineEdit(false);
-                    setMedicine({action: 'update', payload: r});
+                    if (r && activeResident?.Id) {
+                        saveMedicine(r, activeResident?.Id) // Toast?
+                    }
                 }}
                 drugInfo={medicineInfo}
             />
             }
 
-            <DrugLogEdit
-                drugName={drugName(showCheckoutModal?.MedicineId as number) || "[unknown]"}
-                drugLogInfo={showCheckoutModal as DrugLogRecord}
-                onClose={(dl) => {
-                    setShowCheckoutModal(null);
-                    setDrugLog({action: "update", payload: dl});
-                }}
-                onHide={() => setShowCheckoutModal(null)}
-                show={showCheckoutModal !== null}
-            />
+            {showCheckoutModal && activeResident?.Id &&
+                <DrugLogEdit
+                    drugName={drugName(showCheckoutModal.MedicineId) || "[unknown]"}
+                    drugLogInfo={showCheckoutModal}
+                    onClose={(dl) => {
+                        setShowCheckoutModal(null);
+                        if (dl) {
+                            saveDrugLog(dl, activeResident.Id as number) // TOAST?
+                        }
+                    }}
+                    onHide={() => setShowCheckoutModal(null)}
+                    show={true}
+                />
+            }
 
-            <ConfirmDialogModal
-                centered
-                show={showDrugLogDeleteConfirm !== null}
-                title={<h3>Delete Drug Log Entry</h3>}
-                body={
-                    <Alert variant="danger">
-                        {"Delete " + drugName(showDrugLogDeleteConfirm?.MedicineId as number) + " from the drug log?"}
-                    </Alert>
-                }
-                yesButton={
-                    <Button
-                        variant="danger"
-                        onClick={(e) =>
-                        {
-                            e.preventDefault();
-                            const drugLogRecord = showDrugLogDeleteConfirm as DrugLogRecord;
-                            const drugLogId = drugLogRecord.Id as number;
-                            setDrugLog({action: "delete", payload: drugLogId});
-                            setShowDrugLogDeleteConfirm(null);
-                        }}
-                    >
-                        Delete
-                    </Button>
-                }
-                noButton={
-                    <Button
-                        variant="secondary"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            setShowDrugLogDeleteConfirm(null);
-                        }}
-                    >
-                        Cancel
-                    </Button>
-                }
-            />
+            {showDrugLogDeleteConfirm &&
+                <ConfirmDialogModal
+                    centered
+                    show={true}
+                    title={<h3>Delete Drug Log Entry</h3>}
+                    body={
+                        <Alert variant="danger">
+                            {"Delete " + drugName(showDrugLogDeleteConfirm?.MedicineId as number) + " from the drug log?"}
+                        </Alert>
+                    }
+                    yesButton={
+                        <Button
+                            variant="danger"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                mm.deleteDrugLog(showDrugLogDeleteConfirm?.Id as number)
+                                .then(ok => {
+                                    if (ok) {
+                                        mm.loadDrugLog(activeResident?.Id as number, 5)
+                                            .then(drugs => setDrugLogList(drugs));
+                                    } else {
+                                        setErrorDetails('DrugLog delete failed for Id: ' + showDrugLogDeleteConfirm.Id);
+                                    }
+                                })
+                                setShowDrugLogDeleteConfirm(null);
+                            }}
+                        >
+                            Delete
+                        </Button>
+                    }
+                    noButton={
+                        <Button
+                            variant="secondary"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                setShowDrugLogDeleteConfirm(null);
+                            }}
+                        >
+                            Cancel
+                        </Button>
+                    }
+                />
+            }
 
-            <ConfirmDialogModal
-                centered
-                size="lg"
-                show={medicineInfo !== null && showDeleteMedicine}
-                title={
-                    <Alert
-                        variant="danger"
-                    >
-                        <span><b>DANGER</b>: Delete Medication <b>{medicineInfo?.Drug}</b></span>
-                    </Alert>
-                }
-                body={
-                    <Alert
-                        variant="danger"
-                    >
-                        <p>
-                            Deleting <b>{medicineInfo?.Drug}</b> will destroy <b>ALL</b> drug log history for this drug!
-                        </p>
-                        <p>
-                            <b>This can not be undone!</b>
-                        </p>
-                    </Alert>
-                }
-                yesButton={
-                    <Button
-                        variant="danger"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            setMedicine({action: "delete", payload: medicineInfo?.Id as number});
-                            setShowDeleteMedicine(false);
-                        }}
-                    >
-                        {"Delete " + medicineInfo?.Drug}
-                    </Button>
-                }
-                noButton={
-                    <Button
-                        onClick={(e) => {
-                            e.preventDefault();
-                            setShowDeleteMedicine(false);
-                        }}
-                        variant="secondary"
-                    >
-                        Cancel
-                    </Button>
-                }
-            />
+            {showDeleteMedicine && medicineInfo &&
+                <ConfirmDialogModal
+                    centered
+                    size="lg"
+                    show={true}
+                    title={
+                        <Alert
+                            variant="warning"
+                        >
+                            <span><b>WARNING</b>: Deactivate Medication <b>{medicineInfo.Drug}</b></span>
+                        </Alert>
+                    }
+                    body={
+                        <Alert
+                            variant="warning"
+                        >
+                            <p>
+                                {/* tslint:disable-next-line:max-line-length */}
+                                Deactivating <b>{medicineInfo?.Drug}</b> will no longer display drug log history for this drug
+                            </p>
+                        </Alert>
+                    }
+                    yesButton={
+                        <Button
+                            variant="warning"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                const m = {...medicineInfo};
+                                m.Active = false;
+                                saveMedicine(m, activeResident?.Id as number)
+                                    .then(() => mm.loadDrugLog(activeResident?.Id as number, 5));
+                                setShowDeleteMedicine(false);
+                            }}
+                        >
+                            {"Deactivate " + medicineInfo?.Drug}
+                        </Button>
+                    }
+                    noButton={
+                        <Button
+                            onClick={(e) => {
+                                e.preventDefault();
+                                setShowDeleteMedicine(false);
+                            }}
+                            variant="secondary"
+                        >
+                            Cancel
+                        </Button>
+                    }
+                />
+            }
         </Form>
     );
 }

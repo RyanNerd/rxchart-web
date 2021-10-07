@@ -1,16 +1,17 @@
 import Button from "react-bootstrap/Button";
-import React from "reactn";
-import {MedicineRecord} from "../../../types/RecordTypes";
 import ToggleButton from "react-bootstrap/ToggleButton";
+import React from "reactn";
+import {MedicineRecord} from "types/RecordTypes";
 
 interface IProps {
     columns?: string[]
     drug: MedicineRecord
-    onDelete?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
-    onEdit?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
-    onSelect?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
-    onLogDrug?: (e: React.MouseEvent<HTMLElement>, r: MedicineRecord) => void
+    onDelete?: (r: MedicineRecord) => void
+    onEdit?: (r: MedicineRecord) => void
+    onSelect?: (r: MedicineRecord) => void
+    onLogDrug?: (r: MedicineRecord) => void
     activeDrug?: MedicineRecord | null
+    isOTC?: boolean
 }
 
 /**
@@ -26,7 +27,8 @@ const MedicineDetail = (props: IProps): JSX.Element => {
         onEdit,
         onSelect,
         onLogDrug,
-        activeDrug
+        activeDrug,
+        isOTC = false
     } = props;
 
     const isSelected = onSelect && activeDrug && activeDrug.Id === drug.Id;
@@ -34,13 +36,14 @@ const MedicineDetail = (props: IProps): JSX.Element => {
     return (
         <tr
             id={'med-detail-grid-row-' + drug.Id}
+            style={{fontWeight: isSelected ? 'bold' : undefined}}
         >
             {onEdit &&
             <td style={{textAlign: "center", verticalAlign: "middle"}}>
                 < Button
                     size="sm"
                     id={"medicine-edit-btn-row" + drug.Id}
-                    onClick={(e) => onEdit(e, drug)}
+                    onClick={() => onEdit(drug)}
                 >
                     Edit
                 </Button>
@@ -53,7 +56,7 @@ const MedicineDetail = (props: IProps): JSX.Element => {
                         variant="info"
                         size="sm"
                         id={"med-checkout-btn-row" + drug.Id}
-                        onClick={(e) => onLogDrug(e, drug)}
+                        onClick={() => onLogDrug(drug)}
                         >
                         + Log Drug
                     </Button>
@@ -67,7 +70,7 @@ const MedicineDetail = (props: IProps): JSX.Element => {
                     name="resident-list"
                     variant="outline-info"
                     checked={isSelected || false}
-                    onClick={(e) => onSelect(e, drug)}
+                    onClick={() => onSelect(drug)}
                     value={drug.Id as number}
                 />
             </td>
@@ -92,10 +95,14 @@ const MedicineDetail = (props: IProps): JSX.Element => {
                 <Button
                     size="sm"
                     id={"medicine-grid-delete-btn-" + drug.Id}
-                    variant="outline-danger"
-                    onClick={(e) => onDelete(e, drug)}
+                    variant={isOTC ? "outline-danger" : "outline-warning"}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        onDelete(drug);
+                    }}
+                    disabled={!drug.Active}
                 >
-                    <span role="img" aria-label="delete">🗑️</span>
+                    <span role="img" aria-label="delete">{isOTC ? "🗑️" : "🚫"}</span>
                 </Button>
             </td>
             }

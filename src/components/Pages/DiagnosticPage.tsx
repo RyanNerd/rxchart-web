@@ -1,6 +1,8 @@
+import Alert from "react-bootstrap/Alert";
+import Button, {ButtonProps} from "react-bootstrap/Button";
+import Card from "react-bootstrap/Card";
 import React, {useEffect, useGlobal, useMemo, useState} from 'reactn';
-import {Alert, Button, ButtonProps, Card} from "react-bootstrap";
-import {randomString} from "../../utility/common";
+import {randomString} from "utility/common";
 
 interface IKey {
     [key: string]: string
@@ -65,7 +67,7 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
     }, [error])
 
     /**
-     * Use memoization so we don't have 3000 re-renders when an error occurs.
+     * Use memoization, so we don't have 3000 re-renders when an error occurs.
      */
     finalContent = useMemo(() => {
         /**

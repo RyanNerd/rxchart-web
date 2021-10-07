@@ -1,14 +1,15 @@
-import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
-
-import {Alert, Button, Form, Row} from "react-bootstrap";
-
+import Alert from "react-bootstrap/Alert";
+import Button from "react-bootstrap/Button";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
+import React, {useEffect, useGlobal, useLayoutEffect, useRef, useState} from 'reactn';
+import {newResidentRecord, ResidentRecord} from "types/RecordTypes";
+import {clientFullName} from 'utility/common';
+import ResidentGrid from './Grids/ResidentGrid';
 import ClientRoster from "./Modals/ClientRoster";
 import Confirm from "./Modals/Confirm";
 import ResidentEdit from './Modals/ResidentEdit';
-import ResidentGrid from './Grids/ResidentGrid';
-import TooltipButton from "../Buttons/TooltipButton";
-import {clientFullName} from '../../utility/common';
-import {newResidentRecord, ResidentRecord} from "../../types/RecordTypes";
 
 interface IProps {
     residentSelected: () => void
@@ -20,28 +21,18 @@ interface IProps {
  * @return {JSX.Element | null}
  */
 const ResidentPage = (props: IProps): JSX.Element | null => {
-    const [, setClient] = useGlobal('__client');
-    const [, setErrorDetails] = useGlobal('__errorDetails');
     const [activeResident, setActiveResident] = useGlobal('activeResident');
     const [activeTabKey] = useGlobal('activeTabKey');
-    const [residentList] = useGlobal('residentList');
+    const [residentList, setResidentList] = useGlobal('residentList');
     const [filteredResidents, setFilteredResidents] = useState<ResidentRecord[]>(residentList);
-    const [residentToDelete, setResidentToDelete] = useState<ResidentRecord | null>(null);
+    const [rm] = useGlobal('residentManager');
     const [searchIsValid, setSearchIsValid] = useState(false);
     const [searchText, setSearchText] = useState('');
-    const [showClientPrint, setShowClientPrint] = useState<ResidentRecord | null>(null);
     const [showClientRoster, setShowClientRoster] = useState(false);
-    const [showDeleteResident, setShowDeleteResident] = useState(false);
+    const [showDeleteResident, setShowDeleteResident] = useState<null|ResidentRecord>(null);
     const [showResidentEdit, setShowResidentEdit] = useState<ResidentRecord | null>(null);
-    const focusRef = useRef<HTMLInputElement>(null);
     const onSelected = props.residentSelected;
-
-    // Set focus to the search textbox when this tab is active
-    useEffect(() => {
-        if (activeTabKey === 'resident') {
-            focusRef?.current?.focus();
-        }
-    }, [activeTabKey, focusRef])
+    const focusRef = useRef<HTMLInputElement>(null);
 
     // Filter the resident list by the search textbox value
     useEffect(() => {
@@ -67,6 +58,10 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
         }
     }, [residentList, searchText])
 
+    useLayoutEffect(() => {
+        focusRef?.current?.focus();
+    })
+
     // Don't render if this tab isn't active.
     if (activeTabKey !== 'resident') {
         return null;
@@ -74,34 +69,54 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
 
     /**
      * Fires when user clicks on the select button or if the user is trying to add an existing active client
-     * @param {ResidentRecord} resident
+     * @param {ResidentRecord} client
      */
-    const handleOnSelected = (resident: ResidentRecord) => {
-        setActiveResident(resident)
-        .then(() => setSearchText(''))
-        .then(() => onSelected())
-        .catch((err) => setErrorDetails(err))
+    const handleOnSelected = (client: ResidentRecord) => {
+        const activateClient = async (clientRec: ResidentRecord) => {
+            await setActiveResident(clientRec);
+            await setSearchText('');
+            onSelected();
+        }
+        activateClient(client);
+    }
+
+    const saveClient = async (client: ResidentRecord) => {
+        const r = await rm.updateResident(client);
+        if (r) {
+            const rl = await rm.loadResidentList();
+            await setResidentList(rl);
+            handleOnSelected(r);
+        }
+    }
+
+    const deleteClient = async (clientId: number) => {
+        const d = await rm.deleteResident(clientId);
+        if (d) {
+            const rl = await rm.loadResidentList();
+            await setResidentList(rl);
+            await setActiveResident(null);
+        }
     }
 
     return (
         <Form className="tab-content">
-            <Row>
-                <TooltipButton
+            <Row as={ButtonGroup}>
+                <Button
                     className="mr-2"
-                    placement="top"
-                    tooltip="Add New Resident"
                     onClick={(e: React.MouseEvent<HTMLElement>) => {
                         e.preventDefault();
                         setShowResidentEdit({...newResidentRecord});
                     }}
                 >
                     + Resident
-                </TooltipButton>
+                </Button>
 
                 <Form.Control
+                    autoFocus
                     id="medicine-page-search-text"
                     style={{width: "220px"}}
                     isValid={searchIsValid}
+                    ref={focusRef}
                     type="search"
                     value={searchText}
                     onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
@@ -111,7 +126,6 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                     }}
                     onChange={(e) => setSearchText(e.target.value)}
                     placeholder="Search resident"
-                    ref={focusRef}
                 />
 
                 <Button
@@ -130,37 +144,15 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                         clientList={residentList}
                     />
                 }
-
-                {showClientPrint !== null &&
-                    <
-                        ClientRoster
-                            onUnload={()=>{
-                                setShowClientPrint(null);
-                                handleOnSelected(showClientPrint);
-                            }}
-                            clientList={[showClientPrint]}
-                    />
-                }
-
             </Row>
 
             <Row className="mt-3">
                 <ResidentGrid
                     activeResident={activeResident}
                     residentList={filteredResidents}
-                    onDelete={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
-                        e.preventDefault();
-                        setResidentToDelete(resident);
-                        setShowDeleteResident(true);
-                    }}
-                    onEdit={(e: React.MouseEvent<HTMLElement>, resident: ResidentRecord) => {
-                        e.preventDefault();
-                        setShowResidentEdit({...resident});
-                    }}
-                    onSelected={(e: React.MouseEvent<HTMLElement>, r: ResidentRecord) => {
-                        e.preventDefault();
-                        handleOnSelected(r)
-                    }}
+                    onDelete={(resident: ResidentRecord) => setShowDeleteResident(resident)}
+                    onEdit={(resident: ResidentRecord) => setShowResidentEdit({...resident})}
+                    onSelected={r => handleOnSelected(r)}
                 />
             </Row>
 
@@ -199,46 +191,25 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                                 handleOnSelected(existing);
                                 return;
                             }
-                            setClient({
-                                action: "update",
-                                payload: client,
-                                cb: (c) => {
-                                    setActiveResident(c as ResidentRecord)
-                                        .then(() => setShowClientPrint(c as ResidentRecord));
-                                }
-                            })
-                            .then();
-                        } else {
-                            // Update the client
-                            setClient({
-                                action: "update",
-                                payload: client,
-                                cb: (c) => {
-                                    handleOnSelected(c as ResidentRecord);
-                                }
-                            })
-                            .then();
                         }
+                        saveClient(client);
                     }
                 }}
             />
 
-            {residentToDelete &&
+            {showDeleteResident &&
             <Confirm.Modal
                 show={showDeleteResident}
                 onSelect={(a) => {
-                    setShowDeleteResident(false);
-                    if (a && residentToDelete) {
-                        setClient({action: "delete", payload: residentToDelete?.Id as number})
-                        .then(() => {
-                            setSearchText('');
-                        })
+                    setShowDeleteResident(null);
+                    if (a) {
+                        deleteClient(showDeleteResident?.Id as number);
                     }
                 }}
             >
                 <Confirm.Header>
                     <Confirm.Title>
-                        {"Deactivate " + clientFullName(residentToDelete)}
+                        {"Deactivate " + clientFullName(showDeleteResident)}
                     </Confirm.Title>
                 </Confirm.Header>
                 <Confirm.Body>

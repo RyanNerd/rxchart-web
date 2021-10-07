@@ -1,6 +1,5 @@
 import {Variant} from "react-bootstrap/types";
-
-import {DrugLogRecord, MedicineRecord, ResidentRecord} from "../types/RecordTypes";
+import {DrugLogRecord, MedicineRecord, PillboxItemRecord, ResidentRecord} from "types/RecordTypes";
 
 interface IKey {
     [key: string]: any
@@ -39,10 +38,11 @@ export const dateToString = (month: string, day: string, year: string, leadingZe
  * Given a ResidentRecord return the first and last name of the client in the format: first last
  * If the client Nickname field is populated then the format is: first last "nickname"
  * @param {ResidentRecord} resident
+ * @param includeNickname
  */
-export const clientFullName = (resident: ResidentRecord): string => {
+export const clientFullName = (resident: ResidentRecord, includeNickname: boolean = false): string => {
     const clientName = resident.FirstName.trim() + ' ' + resident.LastName.trim();
-    if (resident?.Nickname && resident?.Nickname.trim().length > 0) {
+    if (includeNickname && (resident?.Nickname && resident?.Nickname.trim().length > 0)) {
         return clientName + ' "' + resident.Nickname.trim() + '"';
     } else {
         return clientName;
@@ -373,9 +373,9 @@ export const isYearValid = (year: string, isDOB: boolean): boolean => {
  * A functional wrapper around async/await
  * @link https://dev.to/dewaldels/javascript-async-await-wrapper-22ao
  * @param {Promise<any>} fn
- * @return {[error: any, data: any]}
+ * @return {[any | null, any | null]}
  */
-export const asyncWrapper = async (fn: Promise<any>) => {
+export const asyncWrapper = async <T>(fn: Promise<T>) => {
     try {
         const data = await fn;
         return [null, data];
@@ -394,4 +394,136 @@ export const promiseWrapper = async (fn: Promise<any>) => {
     const success = (r: any) => [null, r];
     const fail = (e: any) => [e, null];
     return Promise.resolve().then(await fn).then(success).catch(fail);
+}
+
+export enum SortDirection {
+    desc = 1,
+    asc = -1,
+    skip = 0
+}
+
+export interface SortObject {
+    [index: string]: SortDirection
+}
+
+interface IArrayGeneric {
+    [index: string]: any
+}
+
+/**
+ * Sorts an array of objects by column/property.
+ * @link https://www.golangprograms.com/javascript-sort-multi-dimensional-array-on-specific-columns.html
+ * @param {[{}]} array - The array of objects.
+ * @param {[index: string]:any} sortObject e.g. { age: 'desc', name: 'asc' }
+ * @returns {[]} The sorted array.
+ */
+export const multiSort = (array: IArrayGeneric, sortObject: SortObject): [] => {
+    const sortKeys = Object.keys(sortObject);
+
+    /**
+     * Determine the sort direction by comparing sort key values
+     * @param {number} a
+     * @param {number} b
+     * @param {number} direction
+     * @return {number}
+     */
+    const keySort = (a: number, b: number, direction: SortDirection): number => {
+        // If the values are the same, do not switch positions.
+        if (a === b) {
+            return 0;
+        }
+
+        // If b > a, multiply by -1 to get the reverse direction.
+        return a > b ? direction : -1 * direction;
+    };
+
+    return array.sort((a: { [x: string]: number; }, b: { [x: string]: number; }) => {
+        let sorted = 0;
+        let index = 0;
+
+        // Loop until sorted (-1 or 1) or until the sort keys have been processed.
+        while (sorted === 0 && index < sortKeys.length) {
+            const key = sortKeys[index];
+            const direction = sortObject[key];
+            sorted = keySort(a[key], b[key], direction);
+            index++;
+        }
+        return sorted;
+    });
+}
+
+/**
+ * Bootstrap default colors as an enum
+ */
+export enum BsColors {
+    blue = "#007bff",
+    cyan = "#17a2b8",
+    danger = "#dc3545",
+    dark = "#343a40",
+    gray = "#6c757d",
+    grayDark = "#343a40",
+    green = "#28a745",
+    indigo = "#6610f2",
+    info = "#17a2b8",
+    light = "#f8f9fa",
+    orange = "#fd7e14",
+    pink = "#e83e8c",
+    primary = "#007bff",
+    purple = "#6f42c1",
+    red = "#dc3545",
+    secondary = "#6c757d",
+    success = "#28a745",
+    teal = "#20c997",
+    warning = "#ffc107",
+    white = "#fff",
+    yellow = "#ffc107"
+}
+
+/**
+ * Given the pillboxId get the date string from local storage
+ * @param {number} pillboxId
+ */
+export const getPillboxLogDateString = (pillboxId: number) => {
+    const key = 'pillbox-history-' + pillboxId;
+    const pbh = window.localStorage.getItem(key);
+    return pbh ? JSON.parse(pbh) : null;
+}
+
+/**
+ * Given the pillboxId save the current date and time to local storage
+ * @param {number} pillboxId
+ */
+export const setPillboxLogDate = (pillboxId: number) => {
+    const now = JSON.stringify(new Date());
+    window.localStorage.setItem('pillbox-history-' + pillboxId, now);
+    return getPillboxLogDateString(pillboxId);
+}
+
+/**
+ * Given the pillboxId return true if the pillbox Log date (from local storage) is today otherwise return false
+ * @param {number}  pillboxId
+ */
+export const isPillboxLogToday = (pillboxId: number) => {
+    const pbh = getPillboxLogDate(pillboxId);
+    return pbh ? isToday(new Date(pbh)) : false;
+}
+
+/**
+ * Given the pillboxId return the pillbox log date from local storage as a Date object or null if not found
+ * @param {number} pillboxId
+ */
+export const getPillboxLogDate = (pillboxId: number): Date|null => {
+    const logDate = getPillboxLogDateString(pillboxId);
+    if (logDate) return new Date(logDate); else return null;
+}
+
+/**
+ * Given the pillboxId return an array of PillboxItemRecord[] where the Quantity is > 0
+ * @param {number} pillboxId
+ * @param {PillboxItemRecord} pillboxItemList
+ */
+export const getDrugsInThePillbox = (pillboxId: number, pillboxItemList: PillboxItemRecord[]) => {
+    return pillboxItemList.filter(p => {
+        return p.PillboxId === pillboxId && pillboxItemList.some(pbi => p.Id === pbi.Id && pbi.Quantity > 0)
+    })
 }

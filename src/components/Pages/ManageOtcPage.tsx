@@ -1,11 +1,11 @@
-import Confirm from "./Modals/Confirm";
-import MedicineDetail from "./Grids/MedicineDetail";
-import MedicineEdit from "./Modals/MedicineEdit";
-import React, {useGlobal, useState} from 'reactn';
+import Alert from "react-bootstrap/Alert";
 import Table from "react-bootstrap/Table";
+import React, {useGlobal, useState} from 'reactn';
+import {MedicineRecord, newMedicineRecord} from "types/RecordTypes";
 import TooltipButton from "../Buttons/TooltipButton";
-import {Alert} from "react-bootstrap";
-import {MedicineRecord, newMedicineRecord} from "../../types/RecordTypes";
+import MedicineDetail from "./Grids/MedicineDetail";
+import Confirm from "./Modals/Confirm";
+import MedicineEdit from "./Modals/MedicineEdit";
 
 /**
  * ManageOtcPage
@@ -13,10 +13,11 @@ import {MedicineRecord, newMedicineRecord} from "../../types/RecordTypes";
  * @returns {JSX.Element}
  */
 const ManageOtcPage = (): JSX.Element | null => {
-    const [, setOtcMedicine] = useGlobal('__otcMedicine');
+    const [, setErrorDetails] = useGlobal('__errorDetails');
     const [activeTabKey] = useGlobal('activeTabKey');
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
-    const [otcList] = useGlobal('otcList');
+    const [mm] = useGlobal('medicineManager');
+    const [otcList, setOtcList] = useGlobal('otcList');
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
 
@@ -26,12 +27,24 @@ const ManageOtcPage = (): JSX.Element | null => {
     }
 
     /**
+     * Given a MedicineRecord Update or Insert the record and rehydrate the global otcList
+     * @param {MedicineRecord} med
+     */
+    const saveOtcMedicine = async (med: MedicineRecord) => {
+        const m = await mm.updateMedicine(med);
+
+        // Rehydrate the global otcList
+        const ol = await mm.loadOtcList();
+        await setOtcList(ol);
+
+        return m;
+    }
+
+    /**
      * Fires when the Edit button is clicked
-     * @param {MouseEvent} e
      * @param {MedicineRecord | null} medicine
      */
-    const onEdit = (e: React.MouseEvent<HTMLElement>, medicine?: MedicineRecord | null) => {
-        e.preventDefault();
+    const onEdit = (medicine?: MedicineRecord | null) => {
         const medicineInfo = (medicine) ? {...medicine} : {...newMedicineRecord, OTC: true};
         setMedicineInfo(medicineInfo);
         setShowMedicineEdit(true);
@@ -44,12 +57,13 @@ const ManageOtcPage = (): JSX.Element | null => {
                 tooltip="Manually Add New OTC"
                 size="sm"
                 variant="info"
-                onClick={(e: React.MouseEvent<HTMLElement>) => onEdit(e, null)}
+                onClick={() => onEdit(null)}
             >
                 + OTC
             </TooltipButton>
 
             <Table
+                style={{height: "730px", overflowY: "scroll", display: "block"}}
                 striped
                 bordered
                 hover
@@ -70,7 +84,7 @@ const ManageOtcPage = (): JSX.Element | null => {
                     <th>
                         Barcode
                     </th>
-                    <th></th>
+                    <th style={{textAlign: 'center', verticalAlign: "middle"}}>Delete</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -84,13 +98,13 @@ const ManageOtcPage = (): JSX.Element | null => {
                             'Barcode'
                         ]}
                         key={'otc' + drug.Id}
-                        onDelete={(e, medicineRecord) => {
-                            e.preventDefault();
+                        onDelete={(medicineRecord) => {
                             setMedicineInfo({...medicineRecord});
                             setShowDeleteMedicine(true);
                         }
                         }
                         onEdit={onEdit}
+                        isOTC={true}
                     />)
                 }
                 </tbody>
@@ -102,7 +116,9 @@ const ManageOtcPage = (): JSX.Element | null => {
                 show={showMedicineEdit}
                 onClose={(r) => {
                     setShowMedicineEdit(false);
-                    setOtcMedicine({action: 'update', payload: r});
+                    if (r) {
+                        saveOtcMedicine(r);
+                    }
                 }}
                 drugInfo={medicineInfo}
             />
@@ -115,7 +131,17 @@ const ManageOtcPage = (): JSX.Element | null => {
                 buttonvariant="danger"
                 onSelect={(a) => {
                     setShowDeleteMedicine(false);
-                    setOtcMedicine(a ? {action: 'delete', payload: medicineInfo?.Id as number} : null);
+                    if (a) {
+                        mm.deleteMedicine(medicineInfo?.Id as number).then(d => {
+                            if (d) {
+                                mm.loadOtcList().then(ol => {
+                                    setOtcList(ol)
+                                })
+                            } else {
+                                setErrorDetails('Unable to Delete OTC medicine. Id: ' + medicineInfo.Id);
+                            }
+                        })
+                    }
                 }}
             >
                 <Confirm.Header>

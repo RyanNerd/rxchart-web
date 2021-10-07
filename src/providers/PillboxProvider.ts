@@ -1,25 +1,25 @@
 import Frak from "frak/lib/components/Frak";
-import {MedicineRecord} from 'types/RecordTypes';
+import {PillboxRecord} from 'types/RecordTypes';
 
-export interface IMedicineProvider {
+export interface IPillboxProvider {
     setApiKey: (apiKey: string) => void
-    search: (options: object) => Promise<MedicineRecord[]>
-    read: (id: number | string) => Promise<MedicineRecord>
-    post: (drugInfo: MedicineRecord) => Promise<MedicineRecord>
+    search: (options: object) => Promise<PillboxRecord[]>
+    read: (id: number | string) => Promise<PillboxRecord>
+    post: (drugInfo: PillboxRecord) => Promise<PillboxRecord>
     delete: (drugId: string | number) => Promise<DeleteResponse>
 }
 
 type DeleteResponse = { success: boolean };
 type RecordResponse = {
-    data: MedicineRecord[] | MedicineRecord;
+    data: PillboxRecord[] | PillboxRecord;
     status: number;
     success: boolean;
 };
 
 /**
- * MedicineProvider API connector
+ * PillboxProvider API connector
  */
-const MedicineProvider = (baseUrl: string): IMedicineProvider => {
+const PillboxProvider = (baseUrl: string): IPillboxProvider => {
     const _baseUrl = baseUrl;
     const _frak = Frak();
     let _apiKey = null as string | null;
@@ -35,17 +35,17 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
         /**
          * Search Interface
          * @param {object} options
-         * @returns {Promise<MedicineRecord[]>}
+         * @returns {Promise<PillboxRecord[]>}
          */
-        search: async (options: object): Promise<MedicineRecord[]> => {
-            const uri = _baseUrl + 'medicine/search?api_key=' + _apiKey;
+        search: async (options: object): Promise<PillboxRecord[]> => {
+            const uri = _baseUrl + 'pillbox/search?api_key=' + _apiKey;
             try {
                 const response = await _frak.post<RecordResponse>(uri, options);
                 if (response.success) {
-                    return response.data as MedicineRecord[];
+                    return response.data as PillboxRecord[];
                 } else {
                     if (response.status === 404) {
-                        return [] as MedicineRecord[];
+                        return [] as PillboxRecord[];
                     }
                     throw response;
                 }
@@ -57,14 +57,14 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
         /**
          * Read interface
          * @param {string | number} id
-         * @returns {Promise<MedicineRecord>}
+         * @returns {Promise<PillboxRecord>}
          */
-        read: async (id: number | string): Promise<MedicineRecord> => {
-            const uri = _baseUrl + 'medicine/' + id + '?api_key=' + _apiKey;
+        read: async (id: number | string): Promise<PillboxRecord> => {
+            const uri = _baseUrl + 'pillbox/' + id + '?api_key=' + _apiKey;
             try {
                 const response = await _frak.get<RecordResponse>(uri);
                 if (response.success) {
-                    return response.data as MedicineRecord;
+                    return response.data as PillboxRecord;
                 } else {
                     throw response;
                 }
@@ -75,15 +75,15 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
 
         /**
          * Post interface
-         * @param {MedicineRecord} drugInfo
-         * @returns {Promise<MedicineRecord>}
+         * @param {PillboxRecord} drugInfo
+         * @returns {Promise<PillboxRecord>}
          */
-        post: async (drugInfo: MedicineRecord): Promise<MedicineRecord> => {
-            const uri = _baseUrl + 'medicine?api_key=' + _apiKey;
+        post: async (drugInfo: PillboxRecord): Promise<PillboxRecord> => {
+            const uri = _baseUrl + 'pillbox?api_key=' + _apiKey;
             try {
                 const response = await _frak.post<RecordResponse>(uri, drugInfo);
                 if (response.success) {
-                    return response.data as MedicineRecord;
+                    return response.data as PillboxRecord;
                 } else {
                     throw response;
                 }
@@ -98,7 +98,7 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
          * @returns {Promise<DeleteResponse>}
          */
         delete: async (drugId: string | number): Promise<DeleteResponse> => {
-            const uri = _baseUrl + 'medicine/' + drugId + '?api_key=' + _apiKey;
+            const uri = _baseUrl + 'pillbox/' + drugId + '?api_key=' + _apiKey;
             try {
                 const response = await _frak.delete<RecordResponse>(uri);
                 if (response.success) {
@@ -113,4 +113,4 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
     }
 }
 
-export default MedicineProvider;
+export default PillboxProvider;

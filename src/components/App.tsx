@@ -1,23 +1,17 @@
-import React, {useGlobal, useState, useEffect} from 'reactn';
-
-import {ButtonGroup} from "react-bootstrap";
-
-import About from "./Pages/Modals/About";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import React, {useEffect, useGlobal, useState} from 'reactn';
+import {ResidentRecord} from "types/RecordTypes";
+import {ReactComponent as RxIcon} from "../icons/prescription.svg";
 import ActiveResidentObserver from "../observers/ActiveResidentObserver";
 import ApiKeyObserver from "../observers/ApiKeyObserver";
 import AuthObserver from "../observers/AuthObserver";
+import ErrorDetailsObserver from "../observers/ErrorDetailsObserver";
 import ClientButton from "./Buttons/ClientButton";
 import ClientDobButton from "./Buttons/ClientDobButton";
-import ClientObserver from "../observers/ClientObserver";
-import ClientRoster from "./Pages/Modals/ClientRoster";
-import DrugLogObserver from "../observers/DrugLogObserver";
-import ErrorDetailsObserver from "../observers/ErrorDetailsObserver";
 import LandingPage from "./Pages/LandingPage";
-import MedicineObserver from "../observers/MedicineObserver";
-import OtcMedicineObserver from "../observers/OtcMedicineObserver";
+import About from "./Pages/Modals/About";
+import ClientRoster from "./Pages/Modals/ClientRoster";
 import ResidentEdit from "./Pages/Modals/ResidentEdit";
-import {ReactComponent as RxIcon} from "../icons/prescription.svg";
-import {ResidentRecord} from "../types/RecordTypes";
 
 /**
  * Main Entry Component
@@ -25,11 +19,9 @@ import {ResidentRecord} from "../types/RecordTypes";
  * @returns {JSX.Element}
  */
 const App = () => {
-    const [, setClient] = useGlobal('__client');
     const [activeClient, setActiveClient] = useGlobal('activeResident');
     const [, setActiveTabKey] = useGlobal('activeTabKey');
     const [development] = useGlobal('development');
-    const [mm] = useGlobal('medicineManager');
     const [providers] = useGlobal('providers');
     const [showClientEdit, setShowClientEdit] = useState(false);
     const [showClientRoster, setShowClientRoster] = useState(false);
@@ -37,55 +29,43 @@ const App = () => {
     const [signIn] = useGlobal('signIn');
     const [hmisName, setHmisName] = useState('');
     const [copyText, setCopyText] = useState('');
+    const [rm] = useGlobal('residentManager');
+    const [, setResidentList] = useGlobal('residentList');
 
     /**
      * Initialize all the observers
-     * Observers are a type of hybrid middleware similar to Publish/Subscribe with intelligent Agents
-     * Below we are "Subscribing" the observers.
-     * The observers themselves are "Intelligent Agents" that use a global state variable as a "sensor" to
-     * determine what actions need to be taken based on the current state of the machine.
-     * @see https://en.wikipedia.org/wiki/Middleware_(distributed_applications)#Types
-     *
-     * Observers are like functions but instead of accepting arguments they use React's hook mechanisms
-     * to observe changes to a single global state variable. The observer decides the actions to take based on the
-     * values of the global state variable. The global variable for an observer is an object with
-     * the signature of {action: string, payload: any, cb?: ()=>void } with the action string property indicating what
-     * action the observer should perform; the payload property contains any information the observer needs to act on.
-     * Optionally there may be a call back signature which can be used to update the invoking process with state change.
-     * For example the ClientObserver is watching for changes to the global `__client` variable. If the client variable
-     * isn't null then the observer expects the client variable to be an object with the action property set to one
-     * of three values: 'load', 'update', or 'delete'
-     * If the action is 'load' then the observer will load all client records into the global variable residentList.
-     * If the action is 'update' then the observer will add or update the given client record by what is in the payload.
-     * If the action is 'delete' then the observer will delete the client record indicated by the primary key value in
-     * the payload property.
-     * Advantages:
-     * - Simplicity: Set the observed global variable action and payload then automatically the observer will
-     *               act accordingly.
-     * - Declarative: Observers are pure functions implemented via React hooks.
-     * - Robust: Due to the declarative nature unexpected side effects & state mutations are minimized.
-     * Disadvantages:
-     * - Abstraction: Instead of importing an observer, a client sets the observed global variable. Unlike importing
-     *                a function which would have a signature it isn't always obvious what action strings and payload
-     *                values are acceptable.
-     * - Flow: Observers react to state changes to the watched global variable so code is executed similar to events
-     *         when the state changes the code executes as opposed to line-by-line linear processing.
-     * - Not OOP: Observers are pure functions lacking the advantages (and disadvantages) of object oriented
-     *            architecture.
      */
     ActiveResidentObserver(activeClient);   // Watching: __activeResident
     ApiKeyObserver(providers, signIn);      // Watching: apiKey
-    ClientObserver();                       // Watching: __client
-    DrugLogObserver(mm, activeClient);      // Watching: __drugLog
     ErrorDetailsObserver();                 // Watching: __errorDetails
     AuthObserver();                         // Watching: __auth
-    MedicineObserver(mm, activeClient);     // Watching: __medicine
-    OtcMedicineObserver(mm);                // Watching: __otcMedicine
+
+    /**
+     * Update Resident record
+     * @param {ResidentRecord} client
+     */
+    const saveClient = async (client: ResidentRecord) => {
+        const r = await rm.updateResident(client);
+        if (r) {
+            const rl = await rm.loadResidentList();
+            await setResidentList(rl);
+            await setActiveClient(r);
+        }
+    }
 
     // When copyText is populated copy it to the clipboard
     useEffect(() => {
+        /**
+         * Use async/await to write to the clipboard
+         * @param {string} t
+         */
+        const updateClipboard = async (t: string) => {
+            await navigator.clipboard.writeText(t);
+            setCopyText('');
+        }
+
         if (copyText !== '') {
-            navigator.clipboard.writeText(copyText).then((()=>setCopyText('')));
+            updateClipboard(copyText);
         }
     }, [copyText]);
 
@@ -161,7 +141,9 @@ const App = () => {
             }
 
             <div style={{marginLeft: "15px"}}>
-                <LandingPage/>
+                <React.StrictMode>
+                    <LandingPage/>
+                </React.StrictMode>
             </div>
 
             {showClientRoster && activeClient &&
@@ -176,13 +158,7 @@ const App = () => {
                 show={activeClient !== null && showClientEdit}
                 onClose={(client) => {
                     setShowClientEdit(false);
-                    setClient(
-                        client ? {
-                            action: "update",
-                            payload: client,
-                            cb: (c) => setActiveClient(c as ResidentRecord)
-                        } : null
-                    );
+                    if (client) saveClient(client);
                 }}
             />
 

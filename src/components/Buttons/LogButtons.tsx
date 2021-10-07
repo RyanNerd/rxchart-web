@@ -1,11 +1,10 @@
-import React from "reactn";
 import Button from "react-bootstrap/Button";
+import React from "reactn";
 
 interface IProps {
     lastTaken: number | null | undefined
     lastTakenVariant: string
     onLogAmount: (n: number) => void
-    drugName: string
     disabled?: boolean
     buttonTitle?: string
 }
@@ -16,7 +15,6 @@ const LogButtons = (props: IProps) => {
         lastTakenVariant,
         onLogAmount,
         disabled = false,
-        drugName,
         buttonTitle = 'Log'
     } = props;
 
@@ -34,7 +32,7 @@ const LogButtons = (props: IProps) => {
                     onLogAmount(1);
                 }}
             >
-                {buttonTitle} 1 {drugName}
+                {buttonTitle} 1
             </Button>
 
             <Button

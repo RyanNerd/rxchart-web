@@ -1,6 +1,5 @@
 import React from 'react';
-
-import {Spinner, SpinnerProps} from "react-bootstrap";
+import Spinner, {SpinnerProps} from "react-bootstrap/Spinner";
 
 // @ts-ignore Allow the animation prop to be optional as we default it to "border" by default
 interface IProps extends SpinnerProps {
