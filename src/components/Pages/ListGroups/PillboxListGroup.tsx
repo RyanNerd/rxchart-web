@@ -1,4 +1,5 @@
 import DisabledSpinner from "components/Pages/ListGroups/DisabledSpinner";
+import {ReactChild} from "react";
 import Alert from "react-bootstrap/Alert";
 import Badge from "react-bootstrap/Badge";
 import Button from 'react-bootstrap/Button'
@@ -8,7 +9,6 @@ import Dropdown from 'react-bootstrap/Dropdown'
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import ListGroup from 'react-bootstrap/ListGroup';
 import React, {useEffect, useState} from 'reactn';
-import {ReactChild} from "react";
 import {newPillboxRecord, PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
 import {getDrugsInThePillbox, getPillboxLogDate, isPillboxLogToday} from 'utility/common';
 import ConfirmDialogModal from '../Modals/ConfirmDialogModal';
@@ -172,6 +172,7 @@ const PillboxListGroup = (props: IProps) => {
                                         setShowAlert(true);
                                     }}
                                 >
+                                    {disabled && <DisabledSpinner/>}
                                     + Log Pillbox <b>{activePillbox.Name}</b> {logTime &&
                                         <Badge
                                             variant="danger"

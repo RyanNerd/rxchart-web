@@ -1,3 +1,4 @@
+import DisabledSpinner from "components/Pages/ListGroups/DisabledSpinner";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import FormGroup from "react-bootstrap/FormGroup";
@@ -80,6 +81,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                             <Form.Control
                                 autoFocus
                                 className="mr-2"
+                                disabled={disabled}
                                 ref={searchRef}
                                 id="otc-page-search-text"
                                 isValid={searchIsValid || false}
@@ -104,6 +106,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                         </InputGroup.Prepend>
                         <InputGroup.Append style={{zIndex: 0}}>
                             <Button
+                                disabled={disabled}
                                 className="mr-1"
                                 onClick={(e) => {
                                     e.preventDefault();
@@ -117,6 +120,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
 
                             {activeOtc &&
                             <Button
+                                disabled={disabled}
                                 onClick={(e) => {
                                     e.preventDefault();
                                     editOtcMedicine({...activeOtc} as MedicineRecord);
@@ -132,7 +136,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                 </FormGroup>
                 <FormGroup>
                     <Button
-                        disabled={!activeOtc}
+                        disabled={!activeOtc || disabled}
                         className="mr-2"
                         onClick={(e) => {
                             e.preventDefault();
@@ -141,11 +145,14 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                         size="sm"
                         variant={lastTakenVariant}
                     >
-                        + Log {activeOtc ? activeOtc.Drug + ' ' + activeOtc.Strength : ""}
+                        <span>
+                            {disabled && <DisabledSpinner/>}
+                            + Log {activeOtc ? activeOtc.Drug + ' ' + activeOtc.Strength : ""}
+                        </span>
                     </Button>
 
                     <LogButtons
-                        disabled={!activeOtc}
+                        disabled={!activeOtc || disabled}
                         lastTaken={lastTaken}
                         lastTakenVariant={lastTakenVariant}
                         onLogAmount={(n) => logOtcDrugAmount(n)}

@@ -211,10 +211,12 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      * @param {DrugLogRecord} drugLog
      */
     const saveDrugLog = async (drugLog: DrugLogRecord): Promise<DrugLogRecord> => {
+        await setIsBusy(true);
         const r = await mm.updateDrugLog(drugLog);
         // Rehydrate the drugLogList
         const drugs = await mm.loadDrugLog(clientId, 5);
         await setDrugLogList(drugs);
+        await setIsBusy(false);
         return r;
     }
 
@@ -433,6 +435,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     <ListGroup.Item>
                         {displayType === DISPLAY_TYPE.Medicine &&
                         <MedListGroup
+                            disabled={isBusy}
                             activeMed={activeMed}
                             addDrugLog={() => addEditDrugLog()}
                             clientId={clientId}
@@ -455,7 +458,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
                         {displayType === DISPLAY_TYPE.OTC &&
                         <OtcListGroup
-                            disabled={otcList.length === 0}
+                            disabled={otcList.length === 0 || isBusy}
                             editOtcMedicine={(r) => setShowMedicineEdit(r)}
                             activeOtc={activeOtc}
                             drugLogList={drugLogList}
