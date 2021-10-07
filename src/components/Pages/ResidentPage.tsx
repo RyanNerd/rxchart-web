@@ -3,7 +3,7 @@ import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
-import React, {useEffect, useGlobal, useState} from 'reactn';
+import React, {useEffect, useGlobal, useLayoutEffect, useRef, useState} from 'reactn';
 import {newResidentRecord, ResidentRecord} from "types/RecordTypes";
 import {clientFullName} from 'utility/common';
 import ResidentGrid from './Grids/ResidentGrid';
@@ -32,6 +32,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     const [showDeleteResident, setShowDeleteResident] = useState<null|ResidentRecord>(null);
     const [showResidentEdit, setShowResidentEdit] = useState<ResidentRecord | null>(null);
     const onSelected = props.residentSelected;
+    const focusRef = useRef<HTMLInputElement>(null);
 
     // Filter the resident list by the search textbox value
     useEffect(() => {
@@ -56,6 +57,10 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
             setFilteredResidents(residentList);
         }
     }, [residentList, searchText])
+
+    useLayoutEffect(() => {
+        focusRef?.current?.focus();
+    })
 
     // Don't render if this tab isn't active.
     if (activeTabKey !== 'resident') {
@@ -111,6 +116,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                     id="medicine-page-search-text"
                     style={{width: "220px"}}
                     isValid={searchIsValid}
+                    ref={focusRef}
                     type="search"
                     value={searchText}
                     onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
