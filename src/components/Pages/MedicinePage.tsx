@@ -10,6 +10,7 @@ import ToggleButton from "react-bootstrap/ToggleButton"
 import React, {useEffect, useGlobal, useState} from 'reactn';
 import {DrugLogRecord, MedicineRecord, PillboxRecord, ResidentRecord} from "types/RecordTypes";
 import {
+    BsColors,
     calculateLastTaken,
     getCheckoutList,
     getDrugName,
@@ -80,7 +81,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
     const [showMedicineEdit, setShowMedicineEdit] = useState<MedicineRecord | null>(null);
     const [isBusy, setIsBusy] = useState(false);
-    const [toast, setToast] = useState<null|DrugLogRecord>(null);
+    const [toast, setToast] = useState<null|DrugLogRecord[]>(null);
     const [pillboxDrugLog, setPillboxDrugLog] = useState<TPillboxLog[]>([]);
 
     const prevClient = usePrevious(props.activeResident);
@@ -285,7 +286,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             In: null,
             Out: null
         };
-        saveDrugLog(drugLogInfo).then(r => setToast(r));
+        saveDrugLog(drugLogInfo).then(r => setToast([r]));
     }
 
     /**
@@ -304,7 +305,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 In: null,
                 Out: null
             };
-            saveDrugLog(drugLogInfo).then(r => setToast(r));
+            saveDrugLog(drugLogInfo).then(r => setToast([r]));
         }
     }
 
@@ -322,9 +323,11 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      */
     const handleLogPillbox = () => {
         setIsBusy(true);
+        const toastQ = [] as DrugLogRecord[];
         const updatePillboxLog = async (dli: DrugLogRecord) => {
             const dLog = await mm.updateDrugLog(dli);
-            setToast(dLog);
+            toastQ.push(dLog);
+            // setToast(dLog);
         }
 
         const refreshDrugLog = async () => {
@@ -348,7 +351,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             } as DrugLogRecord;
             updatePillboxLog(drugLogInfo).then(() => setPillboxLogDate(activePillbox?.Id as number))
         });
-        refreshDrugLog().then(() => setIsBusy(false))
+        refreshDrugLog().then(() => setIsBusy(false)).then(() => setToast(toastQ))
     }
 
     return (
@@ -566,7 +569,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 onHide={() => setShowDrugLog(null)}
                 onClose={(drugLogRecord) => {
                     setShowDrugLog(null);
-                    if (drugLogRecord) saveDrugLog(drugLogRecord).then(r => setToast(r));
+                    if (drugLogRecord) saveDrugLog(drugLogRecord).then(r => setToast([r]));
                 }}
             />
             }
@@ -606,27 +609,35 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             </Confirm.Modal>
             }
 
-            {toast &&
-                <Toast
-                    style={{
-                        position: "absolute",
-                        top: 0,
-                        right: 0,
-                        backgroundColor: "#ff3231"
-                    }}
-                    onClose={()=>setToast(null)}
-                    show={true}
-                    delay={3000}
-                    autohide
-                >
-                    <Toast.Header>
-                        <b>Updating Drug History</b>
-                    </Toast.Header>
-                    <Toast.Body>
-                        Updated {drugName(toast.MedicineId)}
-                    </Toast.Body>
-                </Toast>
-            }
+            <Toast
+                style={{
+                    position: "absolute",
+                    top: 0.95,
+                    right: 0.95,
+                    color: "#fff",
+                    backgroundColor: BsColors.success
+                }}
+                onClose={() => setToast(null)}
+                show={!!(toast && toast.length > 0)}
+                delay={toast && toast.length > 1 ? 5000 : 3000}
+                autohide
+                className="p-1"
+            >
+                <Toast.Header>
+                    <b>Updating Drug History</b>
+                </Toast.Header>
+                <Toast.Body>
+                    <ul>
+                        {toast?.map(
+                            (r) => {
+                                return (
+                                    <li>{drugName(r.MedicineId)} {" "} {r.Notes}</li>
+                                )
+                            })
+                        }
+                    </ul>
+                </Toast.Body>
+            </Toast>
         </>
     );
 }
