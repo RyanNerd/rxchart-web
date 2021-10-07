@@ -7,7 +7,7 @@ import ListGroup from "react-bootstrap/ListGroup";
 import Row from 'react-bootstrap/Row';
 import Toast from "react-bootstrap/Toast"
 import ToggleButton from "react-bootstrap/ToggleButton"
-import React, {useEffect, useGlobal, useState} from 'reactn';
+import React, {useEffect, useGlobal, useCallback, useState} from 'reactn';
 import {DrugLogRecord, MedicineRecord, PillboxRecord, ResidentRecord} from "types/RecordTypes";
 import {
     BsColors,
@@ -21,7 +21,6 @@ import {
     setPillboxLogDate,
     SortDirection
 } from "utility/common";
-import usePrevious from "../../hooks/usePrevious";
 import TabContent from "../../styles/common.css";
 import LastTakenButton from "../Buttons/LastTakenButton";
 import DrugLogGrid from "./Grids/DrugLogGrid";
@@ -84,21 +83,16 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [toast, setToast] = useState<null|DrugLogRecord[]>(null);
     const [pillboxDrugLog, setPillboxDrugLog] = useState<TPillboxLog[]>([]);
 
-    const prevClient = usePrevious(props.activeResident);
-
     // Refresh activeClient when the activeResident global changes.
-    useEffect(() => {
-        if (prevClient !== props.activeResident) {
-            // setDrugLogList(props.drugLogList);
+    useCallback(() => {
+        if (props.activeResident) {
             setActiveClient(props.activeResident);
-
-            // Set the clientId
             setClientId(props.activeResident?.Id ? props.activeResident.Id : null);
         }
-    }, [props, prevClient]);
+    }, [props.activeResident]);
 
     // activeTabKey refresh from prop
-    useEffect(() => {
+    useCallback(() => {
         setActiveTabKey(props.activeTabKey);
     }, [props.activeTabKey]);
 

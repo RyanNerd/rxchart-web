@@ -1,6 +1,6 @@
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import React, {useEffect, useGlobal, useState} from 'reactn';
+import React, {useGlobal, useLayoutEffect, useMemo, useState} from 'reactn';
 import {getCheckoutList} from "utility/common";
 import DiagnosticPage from "./DiagnosticPage";
 import DrugHistoryPage from "./DrugHistoryPage";
@@ -32,7 +32,7 @@ const LandingPage = () => {
     }
 
     // Enable or disable the Print Medicine Checkout button
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (drugLogList.length > 0) {
             const checkoutList = getCheckoutList(drugLogList);
             setCheckoutDisabled(checkoutList.length <= 0)
@@ -40,6 +40,18 @@ const LandingPage = () => {
             setCheckoutDisabled(true);
         }
     }, [drugLogList])
+
+    /**
+     * Memoized MedicinePage to reduce number of re-renders
+     */
+    const medicinePage = useMemo(() => {
+        return (
+            <MedicinePage
+                activeTabKey={activeTabKey}
+                activeResident={activeResident}
+            />
+        )
+    }, [activeTabKey, activeResident])
 
     return (
         <Tabs
@@ -68,10 +80,7 @@ const LandingPage = () => {
                 title={<span className={activeTabKey === 'medicine' ? 'bld' : ''}>Rx</span>}>
                 {activeResident && activeTabKey === "medicine" &&
                 <Tab.Content>
-                    <MedicinePage
-                        activeTabKey={activeTabKey}
-                        activeResident={activeResident}
-                    />
+                    {medicinePage}
                 </Tab.Content>
                 }
             </Tab>
