@@ -7,7 +7,7 @@ import React, {useGlobal, useState} from 'reactn';
 import {DrugLogRecord, MedicineRecord, newDrugLogRecord, newMedicineRecord} from "types/RecordTypes";
 import {getDrugName, isToday} from "utility/common";
 import TabContent from "../../styles/common.css";
-import TooltipButton from "../Buttons/TooltipButton";
+import TooltipButton from "./Buttons/TooltipButton";
 import DrugLogEdit from "./Modals/DrugLogEdit";
 import MedicineEdit from "./Modals/MedicineEdit";
 

@@ -69,6 +69,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
         }
 
         // Figure out medicine field values
+        const isOtc = drugColumnLookup(drug.MedicineId, 'OTC');
         let drugName = drugColumnLookup(drug.MedicineId, 'Drug');
         const medicineNotes = drugColumnLookup(drug.MedicineId, 'Notes');
         const medicineDirections = drugColumnLookup(drug.MedicineId, 'Directions');
@@ -114,7 +115,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
 
                 {columns.includes('Drug') &&
                 <td style={{verticalAlign: "middle", fontWeight}}>
-                    <span>{drugName}</span> <span>{drugStrength}</span>
+                    <span>{drugName}</span> <span>{drugStrength}</span> <span>{isOtc ? " (OTC)" : ""}</span>
                 </td>
                 }
                 {columns.includes('Created') &&

@@ -1,3 +1,4 @@
+import DrugHistory from "components/Pages/DrugHistory";
 import PillboxLogGrid from "components/Pages/Grids/PillboxLogGrid";
 import CheckoutListGroup from "components/Pages/ListGroups/CheckoutListGroup";
 import DrugLogToast from "components/Pages/Toasts/DrugLogToast";
@@ -21,7 +22,7 @@ import {
     SortDirection
 } from "utility/common";
 import TabContent from "../../styles/common.css";
-import LastTakenButton from "../Buttons/LastTakenButton";
+import LastTakenButton from "./Buttons/LastTakenButton";
 import DrugLogGrid from "./Grids/DrugLogGrid";
 import PillboxCard from "./Grids/PillboxCard";
 import MedListGroup from "./ListGroups/MedListGroup";
@@ -44,6 +45,7 @@ enum DISPLAY_TYPE {
     Medicine = "med",
     OTC = "otc",
     Pillbox = "pillbox",
+    History = "history",
     Print = "print"
 }
 
@@ -408,6 +410,21 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     </ToggleButton>
 
                     <ToggleButton
+                        key="med-list-group-history-btn"
+                        id="med-list-group-history-radio-btn"
+                        className="ml-2 d-print-none"
+                        disabled={drugLogList.length === 0}
+                        size="sm"
+                        type="radio"
+                        variant="outline-success"
+                        value={DISPLAY_TYPE.History}
+                        checked={displayType === DISPLAY_TYPE.History}
+                        onChange={() => setDisplayType(DISPLAY_TYPE.History)}
+                    >
+                        <span className="ml-2">History</span>
+                    </ToggleButton>
+
+                    <ToggleButton
                         key="med-list-group-print-btn"
                         id="med-list-group-print-radio-btn"
                         className="ml-2 d-print-none"
@@ -420,7 +437,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         checked={displayType === DISPLAY_TYPE.Print}
                         onChange={() => setDisplayType(DISPLAY_TYPE.Print)}
                     >
-                        <span className="ml-2">Print Medicine Checkout</span>
+                        <span className="ml-2">Print Med Checkout</span>
                     </ToggleButton>
                 </ListGroup.Item>
 
@@ -479,6 +496,19 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     </PillboxListGroup>
                     }
 
+                    {displayType === DISPLAY_TYPE.History && activeClient &&
+                        <ListGroup>
+                            <ListGroup.Item>
+                                <DrugHistory
+                                    activeClient={activeClient}
+                                    condensed={false}
+                                    drugLogList={drugLogList}
+                                    medicineList={medicineList.concat(otcList)}
+                                />
+                            </ListGroup.Item>
+                        </ListGroup>
+                    }
+
                     {displayType === DISPLAY_TYPE.Print && activeClient &&
                         <CheckoutListGroup
                             drugLogList={drugLogList}
@@ -489,7 +519,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 </ListGroup.Item>
             </ListGroup>
 
-            {displayType !== DISPLAY_TYPE.Print &&
+            {(displayType !== DISPLAY_TYPE.Print && displayType !== DISPLAY_TYPE.History) &&
                 <ListGroup as={Col}>
                     {displayType === DISPLAY_TYPE.Medicine &&
                         <ListGroup.Item style={{textAlign: "center"}}>
