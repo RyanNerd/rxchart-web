@@ -25,7 +25,7 @@ const DrugHistoryPage = (): JSX.Element | null => {
     return (
         <>
             <Button
-                className="d-print-none mb-3"
+                className="d-print-none mr-3 mb-1"
                 onClick={() => window.print()}
                 variant="primary"
                 size="sm"
@@ -35,16 +35,16 @@ const DrugHistoryPage = (): JSX.Element | null => {
 
             {activeClient &&
                 <span
-                    className="ml-3 mb-3"
                     style={{
-                        fontSize: "20px",
+                        fontSize: "25px",
                         fontWeight: "bold"
                     }}
                 >
-                    {clientFullName(activeClient) + ' DOB:' + clientDOB(activeClient)}
+                    {clientFullName(activeClient) + ' DOB: ' + clientDOB(activeClient)}
                 </span>
             }
 
+            <div className="mt-3">
             <DrugLogGrid
                 condensed="true"
                 columns={['Drug', 'Created', 'Updated', 'Notes', 'Details', 'Out']}
@@ -52,6 +52,7 @@ const DrugHistoryPage = (): JSX.Element | null => {
                 medicineList={allMeds}
                 drugId={null}
             />
+            </div>
         </>
     );
 }
