@@ -232,7 +232,6 @@ const ManageDrugPage = (): JSX.Element | null => {
                         }}
                         onDelete={r => setShowDrugLogDeleteConfirm(r)}
                         medicineList={medicineList.concat(otcList).filter(m => m.Active)}
-                        includeCheckout={true}
                         drugLog={todayDrugLogList}
                         columns={['Drug', 'Created', 'Updated', 'Notes', 'Out', 'In']}
                     />
