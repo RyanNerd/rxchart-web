@@ -47,10 +47,9 @@ const DrugHistoryPage = (): JSX.Element | null => {
 
             <DrugLogGrid
                 condensed="true"
-                columns={['Drug', 'Created', 'Updated', 'Notes', 'Details']}
+                columns={['Drug', 'Created', 'Updated', 'Notes', 'Details', 'Out']}
                 drugLog={drugLogList}
                 medicineList={allMeds}
-                includeCheckout={false}
                 drugId={null}
             />
         </>

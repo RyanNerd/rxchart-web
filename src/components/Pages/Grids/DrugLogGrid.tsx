@@ -17,7 +17,6 @@ interface IProps extends TableProps {
     condensed?: string
     drugId?: number | null
     drugLog?: DrugLogRecord[]
-    includeCheckout?: boolean
     medicineList?: MedicineRecord[]
     onDelete?: (r: DrugLogRecord) => void
     onEdit?: (r: DrugLogRecord) => void
@@ -35,7 +34,6 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
         condensed = "false",
         drugId,
         drugLog = [],
-        includeCheckout = true,
         medicineList = [],
         onDelete,
         onEdit
@@ -93,11 +91,6 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
         const variant = getLastTakenVariant(lastTaken);
         const variantColor = getBsColor(variant);
         const fontWeight = isToday(updatedDate) ? 'bold' : undefined;
-
-        // If includeCheckout is false then suppress any rows where drug.Out >0 or drug.In > 0
-        if (!includeCheckout && ((drug.Out && drug.Out >= 0) || (drug.In && drug.In >= 0) )) {
-            return null;
-        }
 
         return (
             <tr
@@ -179,7 +172,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                         size="sm"
                         id={"drug-grid-delete-btn-" + drug.Id}
                         variant="outline-danger"
-                        onClick={e => onDelete(drug)}
+                        onClick={() => onDelete(drug)}
                     >
                         <span role="img" aria-label="delete">🗑️</span>
                     </Button>

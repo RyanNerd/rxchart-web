@@ -525,7 +525,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             <ListGroup.Item>
                                 <h5 className="mb-2" style={{textAlign: "center"}}>OTC History</h5>
                                 <DrugLogGrid
-                                    includeCheckout={false}
                                     drugLog={otcLogList}
                                     medicineList={otcList}
                                     columns={['Drug', 'Created', 'Updated', 'Notes']}
@@ -616,7 +615,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 }}
                 onClose={() => setToast(null)}
                 show={!!(toast && toast.length > 0)}
-                delay={toast && toast.length > 1 ? 5000 : 3000}
+                delay={toast && toast.length > 1 ? 5000 : 2000}
                 autohide
                 className="p-1"
             >
