@@ -50,3 +50,8 @@ a.hover-underline-animation:hover, a.hover-underline-animation:visited, a.hover-
 li.no-marker::marker {
     content: none;
 }
+
+li.rx-icon::marker {
+    content: "💊 ";
+    color: chartreuse;
+}

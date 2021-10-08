@@ -26,7 +26,7 @@ const LandingPage = () => {
 
     // We need to get a ref to the outer (class nav nav-tabs) div element to prevent printing it.
     // React-bootstrap adds this with no id attribute or other method of obtaining a ref, so we need to use
-    // the old fashioned method of element retrieval to get a ref and add the d-print-none class
+    // the old-fashioned method of element retrieval to get a ref and add the d-print-none class
     const navBarElement = document.getElementsByClassName('nav nav-tabs');
     if (navBarElement?.length > 0) {
         navBarElement[0].classList.add('d-print-none');

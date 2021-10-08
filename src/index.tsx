@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import App from './components/App';
+import App from 'components/App/App';
 import getInitialState from "./utility/getInitialState";
 import React, {setGlobal} from "reactn";
 import ReactDOM from 'react-dom';

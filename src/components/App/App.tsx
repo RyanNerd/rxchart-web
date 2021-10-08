@@ -1,8 +1,8 @@
-import ClientHeader from "components/ClientHeader";
-import Header from "components/Header";
-import Main from "components/Main";
+import ClientHeader from "components/App/ClientHeader";
+import Header from "components/App/Header";
+import Main from "components/App/Main";
 import React from 'reactn';
-import LandingPage from "./Pages/LandingPage";
+import LandingPage from "components/Pages/LandingPage";
 
 /**
  * Main Entry Component
