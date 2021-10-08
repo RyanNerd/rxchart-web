@@ -19,7 +19,6 @@ declare module 'reactn/default' {
         activeTabKey: string
                 authManager: IAuthManager
         count: number
-        development: boolean
         drugLogList: DrugLogRecord[]
         __errorDetails: any
         medicineList: MedicineRecord[]

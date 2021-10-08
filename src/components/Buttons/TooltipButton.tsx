@@ -1,3 +1,4 @@
+import {ReactNode} from "react";
 import Button, {ButtonProps} from "react-bootstrap/Button";
 import {Placement} from "react-bootstrap/Overlay";
 import OverlayTrigger, {OverlayTriggerProps} from "react-bootstrap/OverlayTrigger";
@@ -9,7 +10,7 @@ import {randomString} from "utility/common";
 // @ts-ignore Some props are completely incompatible and even the type `any` doesn't make TS happy
 interface IProps extends ButtonProps, OverlayTriggerProps {
     target?: any
-    children: any
+    children: ReactNode | undefined
     disabled?: boolean
     placement?: Placement
     tooltip?: string | React.ReactNode

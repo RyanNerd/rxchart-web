@@ -9,7 +9,6 @@ import {clientDOB} from 'utility/common';
 interface IProps {
     className?: any
     clientRecord: ResidentRecord
-    development: boolean
     onSelect?: (choice: string) => void
     disabled?: boolean
 }
@@ -22,10 +21,11 @@ interface IProps {
 const ClientDobButton = (props: IProps) => {
     const {
         clientRecord,
-        development = true,
         className,
         disabled
     } = props;
+
+    const development = process.env.REACT_APP_DEVELOPMENT === 'true';
 
     const clientDobComponent = (
         <span style={{fontStyle: development ? "italic" : "bold"}}>

@@ -1,21 +1,19 @@
-import {Authenticated} from "providers/AuthenticationProvider";
 import {useEffect, useGlobal} from "reactn";
 import {MedicineRecord, ResidentRecord} from "types/RecordTypes";
 import {asyncWrapper} from "utility/common";
-import {IProviders} from "utility/getInitialState";
 
 /**
  * Watch for changes to the global __apiKey
  * when populated it indicates a successful login and triggers
  * a refresh of the residentList and otcList globals, and sets the active tab page to the ResidentPage tab
- * @param {IProviders} providers
- * @param {Authenticated} signIn
  */
-const ApiKeyObserver = (providers: IProviders, signIn: Authenticated) => {
+const ApiKeyObserver = () => {
+    const [providers] = useGlobal('providers');
     const [, setActiveTabKey] = useGlobal('activeTabKey');
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [, setOtcList] = useGlobal('otcList');
     const [, setResidentList] = useGlobal('residentList');
+    const [signIn] = useGlobal('signIn');
     const [mm] = useGlobal('medicineManager');
     const [rm] = useGlobal('residentManager');
     const apiKey = signIn.apiKey;
