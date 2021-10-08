@@ -1,13 +1,12 @@
 import {useEffect, useGlobal} from "reactn";
-import {ResidentRecord} from "types/RecordTypes";
 import usePrevious from "../hooks/usePrevious";
 
 /**
  * Watch for changes to the global activeResident
  * when populated it triggers a refresh of the medicineList global
- * @param {ResidentRecord|null} activeResident
  */
-const ActiveResidentObserver = (activeResident: ResidentRecord | null) => {
+const ActiveResidentObserver = () => {
+    const [activeResident] = useGlobal('activeResident');
     const [mm] = useGlobal('medicineManager');
     const [, setMedicineList] = useGlobal('medicineList');
     const [, setDrugLogList] = useGlobal('drugLogList');

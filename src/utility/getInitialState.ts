@@ -58,7 +58,6 @@ const getInitialState = () => {
         activeTabKey: 'login',
         __auth: null,
         authManager: AuthManager(providers.authenticationProvider),
-        development: process.env.REACT_APP_DEVELOPMENT === 'true',
         drugLogList: [] as DrugLogRecord[],
         __errorDetails: errorDetail,
         signIn: {apiKey: null, organization: null, success: null},

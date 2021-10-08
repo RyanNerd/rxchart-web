@@ -8,7 +8,6 @@ import {clientFullName} from "utility/common";
 interface IProps {
     className?: any
     clientRecord: ResidentRecord
-    development: boolean
     onSelect?: (choice: string) => void
     disabled?: boolean
     [key: string]: any
@@ -17,11 +16,12 @@ interface IProps {
 const ClientButton = (props: IProps) => {
     const {
         clientRecord,
-        development = true,
         onSelect,
         className,
         disabled
     } = props;
+
+    const development = process.env.REACT_APP_DEVELOPMENT === 'true';
 
     const handleClick = (choice: string) => {
         if (onSelect) {

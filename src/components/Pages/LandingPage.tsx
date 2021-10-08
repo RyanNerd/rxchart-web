@@ -1,3 +1,4 @@
+import {TabContent} from "react-bootstrap";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import React, {useGlobal, useLayoutEffect, useMemo, useState} from 'reactn';
@@ -52,6 +53,16 @@ const LandingPage = () => {
             />
         )
     }, [activeTabKey, activeResident])
+
+    const checkoutPage = useMemo(() => {
+        return (
+            <MedicineCheckoutPage
+                drugLogList={drugLogList}
+                activeTabKey={activeTabKey}
+                activeClient={activeResident}
+            />
+        )
+    }, [drugLogList, activeTabKey, activeResident])
 
     return (
         <Tabs
@@ -110,7 +121,11 @@ const LandingPage = () => {
                 eventKey="medicine-checkout"
                 title="Medicine Checkout"
             >
-                <MedicineCheckoutPage/>
+                {activeResident && activeResident && apiKey &&
+                    <TabContent>
+                        {checkoutPage}
+                    </TabContent>
+                }
             </Tab>
 
             <Tab

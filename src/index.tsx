@@ -22,7 +22,7 @@ const InitError = () => {
 
 setGlobal(getInitialState())
 .then((initialState) => {
-    if (initialState.development) {
+    if (process.env.REACT_APP_DEVELOPMENT === 'true') {
         console.log('RxChart Started', initialState);
     } else {
         console.log('RxChart Started');

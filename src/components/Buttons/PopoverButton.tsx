@@ -1,3 +1,4 @@
+import {ReactNode} from "react";
 import Button, {ButtonProps} from "react-bootstrap/Button";
 import {OverlayChildren, Placement} from "react-bootstrap/Overlay";
 import OverlayTrigger, {OverlayTriggerProps} from "react-bootstrap/OverlayTrigger";
@@ -7,7 +8,7 @@ import React from "reactn";
 // @ts-ignore
 interface IProps extends ButtonProps, OverlayTriggerProps {
     target?: any
-    children: any
+    children: ReactNode | undefined
     disabled?: boolean
     placement?: Placement
     overlay?: OverlayChildren
