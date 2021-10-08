@@ -1,5 +1,5 @@
-import ClientButton from "components/Buttons/ClientButton";
-import ClientDobButton from "components/Buttons/ClientDobButton";
+import ClientButton from "components/Pages/Buttons/ClientButton";
+import ClientDobButton from "components/Pages/Buttons/ClientDobButton";
 import ClientRoster from "components/Pages/Modals/ClientRoster";
 import ResidentEdit from "components/Pages/Modals/ResidentEdit";
 import ButtonGroup from "react-bootstrap/ButtonGroup";

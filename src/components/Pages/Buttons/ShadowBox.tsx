@@ -1,6 +1,6 @@
 import {ReactNode} from "react";
 import React from "reactn";
-import './../../styles/shadowbox.css'
+import 'styles/shadowbox.css'
 
 interface IProps {
     children: ReactNode | undefined;

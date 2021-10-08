@@ -4,8 +4,8 @@ import React, {useEffect} from 'reactn';
 import {MedicineRecord, newMedicineRecord, PillboxRecord} from 'types/RecordTypes';
 import {getLastTakenVariant, isPillboxLogToday, randomString} from 'utility/common';
 import {drawBarcode} from 'utility/drawBarcode';
-import LogButtons from '../../Buttons/LogButtons';
-import ShadowBox from '../../Buttons/ShadowBox';
+import LogButtons from '../Buttons/LogButtons';
+import ShadowBox from '../Buttons/ShadowBox';
 import MedDropdown from './MedDropdown';
 
 interface IProps {

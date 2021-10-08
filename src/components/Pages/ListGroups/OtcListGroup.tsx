@@ -8,8 +8,8 @@ import Table from "react-bootstrap/Table";
 import React, {useEffect, useRef, useState} from "reactn";
 import {DrugLogRecord, MedicineRecord, newMedicineRecord} from "types/RecordTypes";
 import {calculateLastTaken, getLastTakenVariant} from "utility/common";
-import LogButtons from "../../Buttons/LogButtons";
-import ShadowBox from "../../Buttons/ShadowBox";
+import LogButtons from "../Buttons/LogButtons";
+import ShadowBox from "../Buttons/ShadowBox";
 import MedicineDetail from "../Grids/MedicineDetail";
 
 interface IProps {

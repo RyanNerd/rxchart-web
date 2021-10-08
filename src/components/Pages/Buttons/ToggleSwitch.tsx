@@ -1,5 +1,5 @@
 import React, {useState} from 'reactn';
-import './../../styles/toggle.css';
+import 'styles/toggle.css';
 
 interface IProps {
     id: string
