@@ -78,6 +78,9 @@ const MedicineDetail = (props: IProps): JSX.Element => {
             {columns.includes('Drug') &&
             <td style={{verticalAlign: "middle"}}>{drug.Drug}</td>
             }
+            {columns.includes('Other') &&
+                <td style={{verticalAlign: "middle"}}>{drug.OtherNames}</td>
+            }
             {columns.includes('Strength') &&
             <td style={{verticalAlign: "middle"}}>{drug.Strength}</td>
             }
