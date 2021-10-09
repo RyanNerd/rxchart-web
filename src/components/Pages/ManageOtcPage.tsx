@@ -1,6 +1,9 @@
 import Alert from "react-bootstrap/Alert";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
-import React, {useGlobal, useState} from 'reactn';
+import React, {useEffect, useGlobal, useLayoutEffect, useRef, useState} from 'reactn';
 import {MedicineRecord, newMedicineRecord} from "types/RecordTypes";
 import TooltipButton from "./Buttons/TooltipButton";
 import MedicineDetail from "./Grids/MedicineDetail";
@@ -18,8 +21,38 @@ const ManageOtcPage = (): JSX.Element | null => {
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [mm] = useGlobal('medicineManager');
     const [otcList, setOtcList] = useGlobal('otcList');
+    const [filteredOtcList, setFilteredOtcList] = useState<MedicineRecord[]>(otcList);
+    const [searchIsValid, setSearchIsValid] = useState(false);
+    const [searchText, setSearchText] = useState('');
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
+    const focusRef = useRef<HTMLInputElement>(null);
+
+    // Set focus to the Search textbox when this page becomes active
+    useLayoutEffect(() => {
+        focusRef?.current?.focus();
+    })
+
+    // Search filter side effect
+    useEffect(() => {
+        if (searchText.length > 0) {
+            const filter = otcList.filter(o => {
+                return o.Drug.toLowerCase().includes(searchText.toLowerCase()) ||
+                    o.OtherNames?.toLowerCase().includes(searchText.toLowerCase())
+            })
+
+            if (filter.length > 0) {
+                setFilteredOtcList(filter);
+                setSearchIsValid(true);
+            } else {
+                setSearchIsValid(false);
+                setFilteredOtcList([]);
+            }
+        } else {
+            setSearchIsValid(false);
+            setFilteredOtcList(otcList);
+        }
+    }, [otcList, searchText])
 
     // If this tab isn't active then don't render
     if (activeTabKey !== 'manage-otc') {
@@ -52,28 +85,54 @@ const ManageOtcPage = (): JSX.Element | null => {
 
     return (
         <>
-            <TooltipButton
+            <ButtonGroup
                 className="mb-2"
-                tooltip="Manually Add New OTC"
-                size="sm"
-                variant="info"
-                onClick={() => onEdit(null)}
+                as={Row}
             >
-                + OTC
-            </TooltipButton>
+                <TooltipButton
+                    tooltip="Manually Add New OTC"
+                    size="sm"
+                    variant="info"
+                    onClick={() => onEdit(null)}
+                >
+                    + OTC
+                </TooltipButton>
 
+                <Form.Control
+                    autoFocus
+                    className="ml-2"
+                    id="medicine-page-search-text"
+                    style={{width: "220px"}}
+                    isValid={searchIsValid}
+                    ref={focusRef}
+                    type="search"
+                    value={searchText}
+                    onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                        }
+                    }}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    placeholder="Search OTC"
+                />
+            </ButtonGroup>
+
+            <Row>
             <Table
-                style={{height: "730px", overflowY: "scroll", display: "block"}}
+                style={{height: "730px", overflowY: "scroll", display: "inline-block"}}
                 striped
                 bordered
                 hover
-                size="sm"
+                size="lg"
             >
                 <thead>
                 <tr>
                     <th></th>
                     <th>
                         Drug
+                    </th>
+                    <th>
+                        Other Names
                     </th>
                     <th>
                         Strength
@@ -88,11 +147,12 @@ const ManageOtcPage = (): JSX.Element | null => {
                 </tr>
                 </thead>
                 <tbody>
-                {otcList.map((drug: MedicineRecord) =>
+                {filteredOtcList.map((drug: MedicineRecord) =>
                     <MedicineDetail
                         drug={drug}
                         columns={[
                             'Drug',
+                            'Other',
                             'Strength',
                             'Directions',
                             'Barcode'
@@ -109,6 +169,7 @@ const ManageOtcPage = (): JSX.Element | null => {
                 }
                 </tbody>
             </Table>
+            </Row>
 
             {showMedicineEdit && medicineInfo &&
             /* MedicineEdit Modal */
