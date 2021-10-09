@@ -1,16 +1,15 @@
+import OtcListGroupGrid from "components/Pages/Grids/OtcListGroupGrid";
 import DisabledSpinner from "components/Pages/ListGroups/DisabledSpinner";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import FormGroup from "react-bootstrap/FormGroup";
 import InputGroup from "react-bootstrap/InputGroup";
 import ListGroup from "react-bootstrap/ListGroup";
-import Table from "react-bootstrap/Table";
 import React, {useEffect, useRef, useState} from "reactn";
 import {DrugLogRecord, MedicineRecord, newMedicineRecord} from "types/RecordTypes";
 import {calculateLastTaken, getLastTakenVariant} from "utility/common";
 import LogButtons from "../Buttons/LogButtons";
 import ShadowBox from "../Buttons/ShadowBox";
-import MedicineDetail from "../Grids/MedicineDetail";
 
 interface IProps {
     activeOtc: MedicineRecord | null
@@ -162,46 +161,15 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
 
             <ListGroup.Item disabled={disabled}>
                 <div style={{height: searchIsValid ? undefined : "450px", overflow: "auto"}}>
-                    <Table
-                        bordered
-                        hover
-                        size="sm"
-                        striped
-                    >
-                        <thead>
-                        <tr>
-                            <th/>
-                            <th>
-                                Drug
-                            </th>
-                            <th>
-                                Other Names
-                            </th>
-                            <th>
-                                Strength
-                            </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {filteredOtcList.map((drug: MedicineRecord) =>
-                            <MedicineDetail
-                                activeDrug={activeOtc}
-                                columns={[
-                                    'Drug',
-                                    'Other',
-                                    'Strength'
-                                ]}
-                                drug={drug}
-                                key={'otc' + drug.Id}
-                                onSelect={(d) => {
-                                    setSearchText(d.Drug);
-                                    searchRef?.current?.focus();
-                                    otcSelected(d);
-                                }}
-                            />)
-                        }
-                        </tbody>
-                    </Table>
+                    <OtcListGroupGrid
+                        activeDrug={activeOtc}
+                        onSelect={(d) => {
+                            setSearchText(d.Drug);
+                            searchRef?.current?.focus();
+                            otcSelected(d);
+                        }}
+                        otcList={filteredOtcList}
+                    />
                 </div>
             </ListGroup.Item>
 
