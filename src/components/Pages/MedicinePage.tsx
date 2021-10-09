@@ -1,4 +1,4 @@
-import DrugHistory from "components/Pages/DrugHistory";
+import DrugLogHistory from "components/Pages/DrugLogHistory";
 import PillboxLogGrid from "components/Pages/Grids/PillboxLogGrid";
 import CheckoutListGroup from "components/Pages/ListGroups/CheckoutListGroup";
 import DrugLogToast from "components/Pages/Toasts/DrugLogToast";
@@ -394,6 +394,21 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     </ToggleButton>
 
                     <ToggleButton
+                        key="med-list-group-history-btn"
+                        id="med-list-group-history-radio-btn"
+                        className="ml-2 d-print-none"
+                        disabled={drugLogList.length === 0}
+                        size="sm"
+                        type="radio"
+                        variant="outline-success"
+                        value={DISPLAY_TYPE.History}
+                        checked={displayType === DISPLAY_TYPE.History}
+                        onChange={() => setDisplayType(DISPLAY_TYPE.History)}
+                    >
+                        <span className="ml-2">History</span>
+                    </ToggleButton>
+
+                    <ToggleButton
                         key="med-list-group-pill-btn"
                         id="med-list-group-pill-radio-btn"
                         className="ml-2 d-print-none"
@@ -407,21 +422,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         onChange={() => setDisplayType(DISPLAY_TYPE.Pillbox)}
                     >
                         <span className="ml-2">Pillbox</span>
-                    </ToggleButton>
-
-                    <ToggleButton
-                        key="med-list-group-history-btn"
-                        id="med-list-group-history-radio-btn"
-                        className="ml-2 d-print-none"
-                        disabled={drugLogList.length === 0}
-                        size="sm"
-                        type="radio"
-                        variant="outline-success"
-                        value={DISPLAY_TYPE.History}
-                        checked={displayType === DISPLAY_TYPE.History}
-                        onChange={() => setDisplayType(DISPLAY_TYPE.History)}
-                    >
-                        <span className="ml-2">History</span>
                     </ToggleButton>
 
                     <ToggleButton
@@ -499,11 +499,12 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     {displayType === DISPLAY_TYPE.History && activeClient &&
                         <ListGroup>
                             <ListGroup.Item>
-                                <DrugHistory
+                                <DrugLogHistory
                                     activeClient={activeClient}
-                                    condensed={false}
                                     drugLogList={drugLogList}
                                     medicineList={medicineList.concat(otcList)}
+                                    onEdit={(d) => addEditDrugLog(d)}
+                                    onDelete={d => setShowDeleteDrugLogRecord(d)}
                                 />
                             </ListGroup.Item>
                         </ListGroup>
