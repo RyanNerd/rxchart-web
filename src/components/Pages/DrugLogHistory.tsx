@@ -1,4 +1,4 @@
-import DrugLogGrid from "components/Pages/Grids/DrugLogGrid";
+import DrugLogHistoryGrid from "components/Pages/Grids/DrugLogHistoryGrid";
 import Button from "react-bootstrap/Button";
 import React from "reactn";
 import {DrugLogRecord, MedicineRecord, ResidentRecord} from "types/RecordTypes";
@@ -8,15 +8,17 @@ interface IProps {
     activeClient: ResidentRecord
     drugLogList: DrugLogRecord[]
     medicineList: MedicineRecord[]
-    condensed?: boolean
+    onEdit: (d: DrugLogRecord) => void
+    onDelete: (d: DrugLogRecord) => void
 }
 
-const DrugHistory = (props: IProps) => {
+const DrugLogHistory = (props: IProps) => {
     const {
         activeClient,
-        condensed = true,
         drugLogList,
-        medicineList
+        medicineList,
+        onDelete,
+        onEdit
     } = props;
 
     return (
@@ -42,16 +44,15 @@ const DrugHistory = (props: IProps) => {
             }
 
             <div className="mt-3">
-                <DrugLogGrid
-                    condensed={condensed ? "true" : "false"}
-                    columns={['Drug', 'Created', 'Updated', 'Notes', 'Details', 'Out']}
+                <DrugLogHistoryGrid
                     drugLog={drugLogList}
                     medicineList={medicineList}
-                    drugId={null}
+                    onDelete={d => onDelete(d)}
+                    onEdit={d => onEdit(d)}
                 />
             </div>
         </>
     )
 }
 
-export default DrugHistory;
+export default DrugLogHistory;

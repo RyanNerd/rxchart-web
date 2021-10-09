@@ -2,10 +2,8 @@ import {TabContent} from "react-bootstrap";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import React, {useGlobal, useLayoutEffect, useMemo, useState} from 'reactn';
-import {ResidentRecord} from "types/RecordTypes";
 import {getCheckoutList} from "utility/common";
 import DiagnosticPage from "./DiagnosticPage";
-import DrugHistoryPage from "./DrugHistoryPage";
 import LoginPage from './LoginPage';
 import ManageDrugPage from "./ManageDrugPage";
 import ManageOtcPage from "./ManageOtcPage";
@@ -54,19 +52,6 @@ const LandingPage = () => {
             />
         )
     }, [activeTabKey, activeResident])
-
-    /**
-     * Memoized DrugHistoryPage to reduce number of re-renders
-     */
-    const drugHistoryPage = useMemo(() => {
-        return (
-            <DrugHistoryPage
-                activeClient={activeResident as ResidentRecord}
-                activeTabKey={activeTabKey}
-                drugLogList={drugLogList}
-            />
-        )
-    }, [activeResident, activeTabKey, drugLogList])
 
     /**
      * Memoized MedicineCheckoutPage
@@ -126,15 +111,7 @@ const LandingPage = () => {
             >
                 <ManageOtcPage/>
             </Tab>
-            <Tab
-                disabled={!apiKey || !activeResident}
-                eventKey="history"
-                title={<span className={activeTabKey === 'history' ? 'bld' : ''}>Drug History</span>}
-            >
-                <TabContent>
-                    {drugHistoryPage}
-                </TabContent>
-            </Tab>
+
             <Tab
                 disabled={!apiKey || checkoutDisabled || !activeResident}
                 eventKey="medicine-checkout"
