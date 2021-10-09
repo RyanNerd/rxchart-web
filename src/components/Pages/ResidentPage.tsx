@@ -199,7 +199,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
 
             {showDeleteResident &&
             <Confirm.Modal
-                show={showDeleteResident}
+                show={true}
                 onSelect={(a) => {
                     setShowDeleteResident(null);
                     if (a) {

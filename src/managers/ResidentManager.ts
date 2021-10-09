@@ -28,7 +28,9 @@ const ResidentManager = (residentProvider: IResidentProvider): IResidentManager 
      */
     const _deleteResident = async (residentId: number) => {
         const [e, r] = await asyncWrapper(residentProvider.delete(residentId));
-        if (e) throw e; else return r.success as Promise<boolean>;
+        if (e) throw e; else { // @ts-ignore
+            return r.success as Promise<boolean>;
+        }
     }
 
     /**

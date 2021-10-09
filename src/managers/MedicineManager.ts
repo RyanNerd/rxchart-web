@@ -40,7 +40,9 @@ const MedicineManager = (
      */
     const _deleteDrugLog = async (drugLogId: number) => {
         const [e, r] = await asyncWrapper(medHistoryProvider.delete(drugLogId));
-        if (e) throw e; else return r.success;
+        if (e) throw e; else { // @ts-ignore
+            return r.success;
+        }
     }
 
     /**
@@ -49,7 +51,9 @@ const MedicineManager = (
      */
     const _deleteMedicine = async (medicineId: number) => {
         const [e, r] = await asyncWrapper(medicineProvider.delete(medicineId));
-        if (e) throw e; else return r.success;
+        if (e) throw e; else { // @ts-ignore
+            return r.success;
+        }
     }
 
     /**
@@ -58,7 +62,9 @@ const MedicineManager = (
      */
     const _deletePillbox = async (pillboxId: number) => {
         const [e, r] = await asyncWrapper(pillboxProvider.delete(pillboxId));
-        if (e) throw e; else return r.success;
+        if (e) throw e; else { // @ts-ignore
+            return r.success;
+        }
     }
 
     /**
@@ -67,7 +73,9 @@ const MedicineManager = (
      */
     const _deletePillboxItem = async (pillboxItemId: number) => {
         const [e, r] = await asyncWrapper(pillboxProvider.delete(pillboxItemId));
-        if (e) throw e; else return r.success;
+        if (e) throw e; else { // @ts-ignore
+            return r.success;
+        }
     }
 
     /**

@@ -22,6 +22,7 @@ const AuthManager = (authenticationProvider: IAuthenticationProvider): IAuthMana
     }
 
     return {
+        // @ts-ignore
         authenticate: async (username: string, password: string) => {
             return await _authenticate(username, password);
         }
