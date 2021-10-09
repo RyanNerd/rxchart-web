@@ -1,12 +1,11 @@
+import ManageOtcGrid from "components/Pages/Grids/ManageOtcGrid";
 import Alert from "react-bootstrap/Alert";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
-import Table from "react-bootstrap/Table";
 import React, {useEffect, useGlobal, useLayoutEffect, useRef, useState} from 'reactn';
 import {MedicineRecord, newMedicineRecord} from "types/RecordTypes";
 import TooltipButton from "./Buttons/TooltipButton";
-import MedicineDetail from "./Grids/MedicineDetail";
 import Confirm from "./Modals/Confirm";
 import MedicineEdit from "./Modals/MedicineEdit";
 
@@ -118,57 +117,14 @@ const ManageOtcPage = (): JSX.Element | null => {
             </ButtonGroup>
 
             <Row>
-            <Table
-                style={{height: "730px", overflowY: "scroll", display: "inline-block"}}
-                striped
-                bordered
-                hover
-                size="lg"
-            >
-                <thead>
-                <tr>
-                    <th></th>
-                    <th>
-                        Drug
-                    </th>
-                    <th>
-                        Other Names
-                    </th>
-                    <th>
-                        Strength
-                    </th>
-                    <th>
-                        Directions
-                    </th>
-                    <th>
-                        Barcode
-                    </th>
-                    <th style={{textAlign: 'center', verticalAlign: "middle"}}>Delete</th>
-                </tr>
-                </thead>
-                <tbody>
-                {filteredOtcList.map((drug: MedicineRecord) =>
-                    <MedicineDetail
-                        drug={drug}
-                        columns={[
-                            'Drug',
-                            'Other',
-                            'Strength',
-                            'Directions',
-                            'Barcode'
-                        ]}
-                        key={'otc' + drug.Id}
-                        onDelete={(medicineRecord) => {
-                            setMedicineInfo({...medicineRecord});
-                            setShowDeleteMedicine(true);
-                        }
-                        }
-                        onEdit={onEdit}
-                        isOTC={true}
-                    />)
-                }
-                </tbody>
-            </Table>
+                <ManageOtcGrid
+                    onDelete={(medicineRecord) => {
+                        setMedicineInfo({...medicineRecord});
+                        setShowDeleteMedicine(true);
+                    }}
+                    onEdit={onEdit}
+                    otcList={filteredOtcList}
+                />
             </Row>
 
             {showMedicineEdit && medicineInfo &&
