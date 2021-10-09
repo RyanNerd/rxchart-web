@@ -175,6 +175,9 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                                 Drug
                             </th>
                             <th>
+                                Other Names
+                            </th>
+                            <th>
                                 Strength
                             </th>
                         </tr>
@@ -185,6 +188,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                                 activeDrug={activeOtc}
                                 columns={[
                                     'Drug',
+                                    'Other',
                                     'Strength'
                                 ]}
                                 drug={drug}
