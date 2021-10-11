@@ -490,9 +490,11 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         pillboxItemList={pillboxItemList}
                         logPillbox={() => handleLogPillbox()}
                     >
-                        <PillboxLogGrid
-                            pillboxLogList={pillboxDrugLog}
-                        />
+                        {(pillboxDrugLog.length > 0) &&
+                            <PillboxLogGrid
+                                pillboxLogList={pillboxDrugLog}
+                            />
+                        }
                     </PillboxListGroup>
                     }
 
