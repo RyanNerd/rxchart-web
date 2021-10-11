@@ -3,29 +3,30 @@ import Button, {ButtonProps} from "react-bootstrap/Button";
 import {Placement} from "react-bootstrap/Overlay";
 import OverlayTrigger, {OverlayTriggerProps} from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
-import {Variant} from "react-bootstrap/types";
 import React from "reactn";
+import {Modify} from "types/Modify";
 import {randomString} from "utility/common";
 
-// @ts-ignore Some props are completely incompatible and even the type `any` doesn't make TS happy
-interface IProps extends ButtonProps, OverlayTriggerProps {
-    target?: any
-    children: ReactNode | undefined
-    disabled?: boolean
-    placement?: Placement
-    tooltip?: string | React.ReactNode
-    tooltipId?: string
-    variant?: Variant
-    overlay?: any
+interface IButtonProps extends ButtonProps {
     [key: string]: any
 }
+
+interface IOverlayProps extends OverlayTriggerProps {
+    placement: Placement
+    [key: string]: any
+}
+
+type TProps = Modify<IButtonProps | IOverlayProps, {
+    children?: ReactNode | undefined
+    placement?: Placement
+}>
 
 /**
  * Button with a tooltip overlay
  * @param {IProps} props
  * @returns {JSX.Element}
  */
-const TooltipButton = (props: IProps): JSX.Element => {
+const TooltipButton = (props: TProps): JSX.Element => {
     const {
         placement = 'top',
         tooltip,
@@ -59,7 +60,7 @@ const TooltipButton = (props: IProps): JSX.Element => {
         >
             {button}
         </OverlayTrigger>
-    );
+    )
 }
 
 export default TooltipButton;

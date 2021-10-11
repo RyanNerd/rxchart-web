@@ -4,7 +4,6 @@ import React from "reactn";
 import {ResidentRecord} from "types/RecordTypes";
 import {clientFullName} from "utility/common";
 
-// @ts-ignore Some props are completely incompatible and even the type `any` doesn't make TS happy
 interface IProps {
     className?: any
     clientRecord: ResidentRecord

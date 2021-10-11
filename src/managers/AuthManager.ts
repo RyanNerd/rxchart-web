@@ -17,12 +17,12 @@ const AuthManager = (authenticationProvider: IAuthenticationProvider): IAuthMana
      * @return Promise<Authenticated | void>
      */
     const _authenticate = async (username: string, password: string) => {
-        const [e, r] = await asyncWrapper(authenticationProvider.post({username, password}));
+        const [e, r] =
+            await asyncWrapper(authenticationProvider.post({username, password})) as [any, Promise<Authenticated>];
         if (e) throw e; else return r;
     }
 
     return {
-        // @ts-ignore
         authenticate: async (username: string, password: string) => {
             return await _authenticate(username, password);
         }

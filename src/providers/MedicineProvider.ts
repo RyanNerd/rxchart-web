@@ -9,7 +9,7 @@ export interface IMedicineProvider {
     delete: (drugId: string | number) => Promise<DeleteResponse>
 }
 
-type DeleteResponse = { success: boolean };
+export type DeleteResponse = { success: boolean };
 type RecordResponse = {
     data: MedicineRecord[] | MedicineRecord;
     status: number;

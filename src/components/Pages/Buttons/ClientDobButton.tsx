@@ -1,28 +1,28 @@
 import Badge from 'react-bootstrap/Badge';
 import Dropdown from 'react-bootstrap/Dropdown'
-import DropdownButton from 'react-bootstrap/DropdownButton';
+import DropdownButton, {DropdownButtonProps} from 'react-bootstrap/DropdownButton';
 import React from 'reactn';
+import {Modify} from "types/Modify";
 import {ResidentRecord} from 'types/RecordTypes';
 import {clientDOB} from 'utility/common';
 
-// @ts-ignore Some props are completely incompatible and even the type `any` doesn't make TS happy
-interface IProps {
-    className?: any
-    clientRecord: ResidentRecord
-    onSelect?: (choice: string) => void
-    disabled?: boolean
+interface IProps extends DropdownButtonProps {
+    [key: string]: any
 }
+
+type TProps = Modify<IProps, {
+    clientRecord: ResidentRecord
+}>
 
 /**
  * ClientDobButton is a dropdown button that displays the date of birth of the given client record
  * The dropdown shows the client notes if they have any.
  * @param {IProps} props
  */
-const ClientDobButton = (props: IProps) => {
+const ClientDobButton = (props: TProps) => {
     const {
+        disabled = false,
         clientRecord,
-        className,
-        disabled
     } = props;
 
     const development = process.env.REACT_APP_DEVELOPMENT === 'true';
@@ -41,7 +41,7 @@ const ClientDobButton = (props: IProps) => {
      */
     return (
         <DropdownButton
-            className={className}
+            {...props}
             disabled={disabled || clientRecord.Notes == null || clientRecord?.Notes?.trim().length === 0}
             id="client-dob-dropdown-button"
             onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}

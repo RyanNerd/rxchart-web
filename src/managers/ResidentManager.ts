@@ -2,6 +2,8 @@ import {IResidentProvider} from "providers/ResidentProvider";
 import {ResidentRecord} from "types/RecordTypes";
 import {asyncWrapper} from "utility/common";
 
+type DeleteResponse = { success: boolean };
+
 export interface IResidentManager {
     deleteResident: (residentId: number) => Promise<boolean>
     loadResidentList: () => Promise<ResidentRecord[]>
@@ -18,8 +20,8 @@ const ResidentManager = (residentProvider: IResidentProvider): IResidentManager 
      * @param {ResidentRecord} residentRecord
      */
     const _updateResident = async (residentRecord: ResidentRecord): Promise<ResidentRecord> => {
-        const [e, r] = await asyncWrapper(residentProvider.post(residentRecord));
-        if (e) throw e; else return r as Promise<ResidentRecord>;
+        const [e, r] = await asyncWrapper(residentProvider.post(residentRecord)) as [unknown, Promise<ResidentRecord>];
+        if (e) throw e; else return r;
     }
 
     /**
@@ -27,10 +29,8 @@ const ResidentManager = (residentProvider: IResidentProvider): IResidentManager 
      * @param {number} residentId
      */
     const _deleteResident = async (residentId: number) => {
-        const [e, r] = await asyncWrapper(residentProvider.delete(residentId));
-        if (e) throw e; else { // @ts-ignore
-            return r.success as Promise<boolean>;
-        }
+        const [e, r] = await asyncWrapper(residentProvider.delete(residentId)) as [unknown, Promise<DeleteResponse>];
+        if (e) throw e; else return (await r).success;
     }
 
     /**
@@ -43,8 +43,9 @@ const ResidentManager = (residentProvider: IResidentProvider): IResidentManager 
                 ['FirstName', 'asc']
             ]
         };
-        const [e, r] = await asyncWrapper(residentProvider.search(searchCriteria));
-        if (e) throw e; else return r as Promise<ResidentRecord[]>;
+        const [e, r] = await
+            asyncWrapper(residentProvider.search(searchCriteria)) as [unknown, Promise<ResidentRecord[]>];
+        if (e) throw e; else return r;
     }
 
     return {
