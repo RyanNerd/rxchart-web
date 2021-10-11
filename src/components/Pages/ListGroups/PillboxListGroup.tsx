@@ -3,11 +3,10 @@ import {ReactChild} from "react";
 import Alert from "react-bootstrap/Alert";
 import Badge from "react-bootstrap/Badge";
 import Button from 'react-bootstrap/Button'
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Card from 'react-bootstrap/Card'
-import Dropdown from 'react-bootstrap/Dropdown'
-import DropdownButton from 'react-bootstrap/DropdownButton'
 import ListGroup from 'react-bootstrap/ListGroup';
+import ToggleButton from "react-bootstrap/ToggleButton";
 import React, {useEffect, useState} from 'reactn';
 import {newPillboxRecord, PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
 import {getDrugsInThePillbox, getPillboxLogDate, isPillboxLogToday} from 'utility/common';
@@ -24,7 +23,7 @@ interface IProps {
     pillboxList: PillboxRecord[]
     pillboxItemList: PillboxItemRecord[]
     logPillbox: () => void
-    children?: ReactChild
+    children?: ReactChild | boolean
 }
 
 /**
@@ -55,23 +54,6 @@ const PillboxListGroup = (props: IProps) => {
     const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord | null>(null);
 
     /**
-     * Pillbox Dropdown Item component
-     * @param {PillboxRecord} pillboxRecord
-     */
-    const PillboxItem = (pillboxRecord: PillboxRecord): JSX.Element => {
-        const key = 'pillbox-lg-item-' + pillboxRecord?.Id?.toString();
-        return (
-            <Dropdown.Item
-                key={key}
-                active={pillboxRecord.Id === activePillbox?.Id}
-                onSelect={() => onSelect(pillboxRecord.Id as number)}
-            >
-                {pillboxRecord.Name}
-            </Dropdown.Item>
-        )
-    }
-
-    /**
      * Return the pillbox Log Date as a nicely formatted time string
      * @param {number} pillboxId
      */
@@ -85,18 +67,62 @@ const PillboxListGroup = (props: IProps) => {
     }, [activePillbox]);
 
     const drugsInThePillbox = activePillbox?.Id ? getDrugsInThePillbox(activePillbox.Id, pillboxItemList) : [];
-    const title = (disabled ? <DisabledSpinner>{activePillbox?.Name}</DisabledSpinner> : activePillbox?.Name);
     const logTime = activePillbox?.Id && isPillboxLogToday(activePillbox.Id) ?
         getPillboxLogTime(activePillbox.Id) : null;
 
+    const listboxItemStyle={
+        paddingTop: "0.25rem",
+            paddingRight: "1.25rem",
+            paddingBottom: "0.20rem",
+            paddingLeft: "1.25rem"
+    }
+
     /**
-     * Work-around so React 17 can be used
-     * @link https://github.com/react-bootstrap/react-bootstrap/issues/5409#issuecomment-718699584
+     * Pillbox List Item Radio Button
+     * @param pb
+     * @constructor
      */
+    const PillboxListItem = (pb: PillboxRecord) => {
+        return (
+            <ListGroup.Item
+                style={listboxItemStyle}
+            >
+                <ToggleButton
+                    className="mr-2"
+                    disabled={disabled}
+                    key="xxx-list-group-med-btn"
+                    id="xxx-list-group-med-radio-btn"
+                    type="radio"
+                    name="radio-xxx-list-group"
+                    variant="outline-primary"
+                    size="sm"
+                    value={pb.Id as number}
+                    checked={activePillbox?.Id === pb.Id}
+                    onChange={() => onSelect(pb.Id as number)}
+                >
+                    {disabled && <DisabledSpinner/>}
+                    <span className="ml-2">PILLBOX: <b>{pb.Name}</b></span>
+
+                </ToggleButton>
+                {activePillbox?.Id === pb.Id && children && logTime &&
+                <ListGroup>
+                    <ListGroup.Item
+                        style={listboxItemStyle}
+                    >
+                        {children}
+                    </ListGroup.Item>
+                </ListGroup>
+                }
+            </ListGroup.Item>
+        )
+    }
+
     return (
         <>
             <ListGroup>
-                <ListGroup.Item>
+                <ListGroup.Item
+                    style={listboxItemStyle}
+                >
                     <Button
                         disabled={disabled}
                         onClick={(e) => {
@@ -112,7 +138,7 @@ const PillboxListGroup = (props: IProps) => {
                     </Button>
 
                     {activePillbox &&
-                        <>
+                        <ButtonGroup>
                             <Button
                                 disabled={disabled}
                                 className="ml-2"
@@ -123,7 +149,7 @@ const PillboxListGroup = (props: IProps) => {
                                     setPillboxInfo(pillboxRecord);
                                 }}
                                 size="sm"
-                                variant="primary"
+                                variant="info"
                             >
                                 Edit {activePillbox.Name}
                             </Button>
@@ -136,66 +162,52 @@ const PillboxListGroup = (props: IProps) => {
                             >
                                 <span role="img" aria-label="delete">🗑️</span>{" "}Delete {activePillbox.Name}
                             </Button>
-                        </>
-                    }
-                </ListGroup.Item>
-
-                <ListGroup.Item>
-                    {pillboxList.length > 0 ?
-                        (
-                            <ButtonGroup>
-                                <Button
-                                    className="mr-2"
-                                    variant="secondary"
-                                    style={{cursor: "default"}}
-                                >
-                                    PILLBOX:
-                                </Button>
-                                <DropdownButton
-                                    title={title}
-                                    onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
-                                    disabled={disabled}
-                                >
-                                    {pillboxList.map(PillboxItem)}
-                                </DropdownButton>
-
-                                {activePillbox?.Id &&
-                                <Button
-                                    className="ml-5"
-                                    disabled={
-                                        disabled ||
-                                        drugsInThePillbox.length === 0 ||
-                                        showAlert
-                                    }
-                                    variant={drugsInThePillbox.length === 0 || logTime ? "outline-warning" : "info"}
-                                    onClick={() => {logPillbox();
-                                        setShowAlert(true);
-                                    }}
-                                >
-                                    {disabled && <DisabledSpinner/>}
-                                    + Log Pillbox <b>{activePillbox.Name}</b> {logTime &&
-                                        <Badge
-                                            variant="danger"
-                                            className="ml-2"
-                                        >
-                                            {"Logged: " + logTime}
-                                        </Badge>
-                                    }
-                                </Button>
+                            <Button
+                                className="ml-5"
+                                disabled={
+                                    disabled ||
+                                    drugsInThePillbox.length === 0 ||
+                                    showAlert
                                 }
-                            </ButtonGroup>
-                        ) : (
-                            <Card className="mt-2">
-                                <Card.Body>
-                                    There are no Pillboxes. Click on the + Pillbox button to add one.
-                                </Card.Body>
-                            </Card>
-                        )
+                                variant={drugsInThePillbox.length === 0 || logTime ? "outline-warning" : "primary"}
+                                size="sm"
+                                onClick={() => {
+                                    logPillbox();
+                                    setShowAlert(true);
+                                }}
+                            >
+                                {disabled && <DisabledSpinner/>}
+                                + Log Pillbox <b>{activePillbox.Name}</b>
+                                {logTime &&
+                                    <Badge
+                                        variant="danger"
+                                        className="ml-2"
+                                    >
+                                        {"Logged: " + logTime}
+                                    </Badge>
+                                }
+                            </Button>
+                        </ButtonGroup>
                     }
                 </ListGroup.Item>
+
+                {pillboxList.length > 0 ? (
+                    pillboxList.map(PillboxListItem)
+                    ) : (
+                        <Card
+                            className="mt-2"
+                        >
+                            <Card.Body>
+                                There are no Pillboxes. Click on the <b>+ Pillbox</b> button to add one.
+                            </Card.Body>
+                        </Card>
+                    )
+                }
 
                 {showAlert &&
-                    <ListGroup.Item>
+                    <ListGroup.Item
+                        style={listboxItemStyle}
+                    >
                         <Alert
                             className="mb-0"
                             variant="danger"
@@ -213,21 +225,10 @@ const PillboxListGroup = (props: IProps) => {
 
                 {activePillbox?.Notes &&
                     <ListGroup.Item
-                        style={{
-                            paddingTop: "0.25rem",
-                            paddingRight: "1.25rem",
-                            paddingBottom: "0.25rem",
-                            paddingLeft: "1.25rem"
-                        }}
+                        style={listboxItemStyle}
                     >
                         {activePillbox.Notes}
                     </ListGroup.Item>
-                }
-
-                {logTime && children &&
-                <ListGroup.Item>
-                    {children}
-                </ListGroup.Item>
                 }
             </ListGroup>
 
