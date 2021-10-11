@@ -499,7 +499,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     }
 
                     {displayType === DISPLAY_TYPE.History && activeClient &&
-                        <ListGroup>
+                        <ListGroup className="d-print-flex">
                             <ListGroup.Item>
                                 <DrugLogHistory
                                     activeClient={activeClient}
