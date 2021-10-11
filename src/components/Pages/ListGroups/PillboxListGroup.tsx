@@ -78,42 +78,27 @@ const PillboxListGroup = (props: IProps) => {
     }
 
     /**
-     * Pillbox List Item Radio Button
-     * @param pb
-     * @constructor
+     * Pillbox RadioButton component
+     * @param {PillboxRecord} pb
      */
-    const PillboxListItem = (pb: PillboxRecord) => {
+    const PillboxRadioButton = (pb: PillboxRecord) => {
         return (
-            <ListGroup.Item
-                style={listboxItemStyle}
+            <ToggleButton
+                className="mr-2"
+                disabled={disabled}
+                key={pb.Id}
+                id={`pb-list-group-radio-btn-${pb.Id}`}
+                type="radio"
+                name="radio-pb-list-group"
+                variant="outline-primary"
+                size="sm"
+                value={pb.Id as number}
+                checked={activePillbox?.Id === pb.Id}
+                onChange={() => onSelect(pb.Id as number)}
             >
-                <ToggleButton
-                    className="mr-2"
-                    disabled={disabled}
-                    key="xxx-list-group-med-btn"
-                    id="xxx-list-group-med-radio-btn"
-                    type="radio"
-                    name="radio-xxx-list-group"
-                    variant="outline-primary"
-                    size="sm"
-                    value={pb.Id as number}
-                    checked={activePillbox?.Id === pb.Id}
-                    onChange={() => onSelect(pb.Id as number)}
-                >
-                    {disabled && <DisabledSpinner/>}
-                    <span className="ml-2">PILLBOX: <b>{pb.Name}</b></span>
-
-                </ToggleButton>
-                {activePillbox?.Id === pb.Id && children && logTime &&
-                <ListGroup>
-                    <ListGroup.Item
-                        style={listboxItemStyle}
-                    >
-                        {children}
-                    </ListGroup.Item>
-                </ListGroup>
-                }
-            </ListGroup.Item>
+                {disabled && <DisabledSpinner/>}
+                <span className="ml-2">PILLBOX: <b>{pb.Name}</b></span>
+            </ToggleButton>
         )
     }
 
@@ -123,6 +108,7 @@ const PillboxListGroup = (props: IProps) => {
                 <ListGroup.Item
                     style={listboxItemStyle}
                 >
+                    <ButtonGroup>
                     <Button
                         disabled={disabled}
                         onClick={(e) => {
@@ -138,7 +124,7 @@ const PillboxListGroup = (props: IProps) => {
                     </Button>
 
                     {activePillbox &&
-                        <ButtonGroup>
+                        <>
                             <Button
                                 disabled={disabled}
                                 className="ml-2"
@@ -187,12 +173,17 @@ const PillboxListGroup = (props: IProps) => {
                                     </Badge>
                                 }
                             </Button>
-                        </ButtonGroup>
+                        </>
                     }
+                    </ButtonGroup>
                 </ListGroup.Item>
 
                 {pillboxList.length > 0 ? (
-                    pillboxList.map(PillboxListItem)
+                    <ListGroup.Item>
+                        <ButtonGroup vertical>
+                            {pillboxList.map(PillboxRadioButton)}
+                        </ButtonGroup>
+                    </ListGroup.Item>
                     ) : (
                         <Card
                             className="mt-2"
@@ -202,6 +193,14 @@ const PillboxListGroup = (props: IProps) => {
                             </Card.Body>
                         </Card>
                     )
+                }
+
+                {children && logTime &&
+                    <ListGroup.Item
+                        style={listboxItemStyle}
+                    >
+                        {children}
+                    </ListGroup.Item>
                 }
 
                 {showAlert &&
