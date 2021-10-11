@@ -28,12 +28,14 @@ const ApiKeyObserver = () => {
             const [e] = await asyncWrapper(providers.setApi(apiKey));
             if (e) await setErrorDetails(e); else {
                 // Load ALL Resident records up front and save them in the global store.
-                const [errLoadClients, clients] = await asyncWrapper(rm.loadResidentList());
+                const [errLoadClients, clients] = await
+                    asyncWrapper(rm.loadResidentList()) as [unknown,  Promise<ResidentRecord[]>];
                 if (errLoadClients) await setErrorDetails(errLoadClients); else {
-                    await setResidentList(clients as ResidentRecord[]);
-                    const [errLoadOtc, otcMeds] = await asyncWrapper(mm.loadOtcList());
+                    await setResidentList(await clients);
+                    const [errLoadOtc, otcMeds] = await
+                        asyncWrapper(mm.loadOtcList()) as [unknown,  Promise<MedicineRecord[]>];
                     if (errLoadOtc) await setErrorDetails(errLoadOtc); else {
-                        await setOtcList(otcMeds as MedicineRecord[]);
+                        await setOtcList(await otcMeds);
                         // Activate the Resident tab
                         await setActiveTabKey('resident');
                     }

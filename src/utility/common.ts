@@ -373,7 +373,7 @@ export const isYearValid = (year: string, isDOB: boolean): boolean => {
  * A functional wrapper around async/await
  * @link https://dev.to/dewaldels/javascript-async-await-wrapper-22ao
  * @param {Promise<any>} fn
- * @return {[any | null, any | null]}
+ * @return {[null , <T>] | [any, null}}
  */
 export const asyncWrapper = async <T>(fn: Promise<T>) => {
     try {
