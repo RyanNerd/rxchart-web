@@ -1,3 +1,4 @@
+import {ReactNode} from "react";
 import Badge from 'react-bootstrap/Badge';
 import Dropdown from 'react-bootstrap/Dropdown'
 import DropdownButton, {DropdownButtonProps} from 'react-bootstrap/DropdownButton';
@@ -8,10 +9,12 @@ import {clientDOB} from 'utility/common';
 
 interface IProps extends DropdownButtonProps {
     [key: string]: any
+    title: ReactNode
 }
 
 type TProps = Modify<IProps, {
     clientRecord: ResidentRecord
+    title?: ReactNode | undefined
 }>
 
 /**
@@ -23,15 +26,12 @@ const ClientDobButton = (props: TProps) => {
     const {
         disabled = false,
         clientRecord,
+        title =  (
+            <span style={{fontStyle:  process.env.REACT_APP_DEVELOPMENT === 'true' ? "italic" : "bold"}}>
+                {clientRecord.Notes && <Badge variant="light">🔔</Badge>}{" "}{clientDOB(clientRecord)}
+            </span>
+        )
     } = props;
-
-    const development = process.env.REACT_APP_DEVELOPMENT === 'true';
-
-    const clientDobComponent = (
-        <span style={{fontStyle: development ? "italic" : "bold"}}>
-            {clientRecord.Notes && <Badge variant="light">🔔</Badge>}{" "}{clientDOB(clientRecord)}
-        </span>
-    );
 
     /**
      * CSS Style override for getting the Dropdown.ItemText to display correctly
@@ -45,7 +45,7 @@ const ClientDobButton = (props: TProps) => {
             disabled={disabled || clientRecord.Notes == null || clientRecord?.Notes?.trim().length === 0}
             id="client-dob-dropdown-button"
             onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
-            title={clientDobComponent}
+            title={title}
             variant="outline-secondary"
         >
             <Dropdown.Item

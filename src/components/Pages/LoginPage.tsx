@@ -1,6 +1,10 @@
+import {Authenticated} from "providers/AuthenticationProvider";
 import Alert from 'react-bootstrap/Alert';
 import Container from 'react-bootstrap/Container';
-import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
+import React, {setGlobal, useEffect, useGlobal, useLayoutEffect, useRef, useState} from 'reactn';
+import {MedicineRecord, ResidentRecord} from "types/RecordTypes";
+import {asyncWrapper} from "utility/common";
+import getInitialState from "utility/getInitialState";
 import {ReactComponent as LockIcon} from '../../icons/lock.svg';
 import RxIcon from '../../icons/prescription.svg';
 import {ReactComponent as UserIcon} from '../../icons/user.svg';
@@ -12,22 +16,27 @@ import About from "./Modals/About";
  * @returns {JSX.Element}
  */
 const LoginPage = (): JSX.Element | null => {
-    const [, setAuth] = useGlobal('__auth');
     const [, setErrorDetails] = useGlobal('__errorDetails');
-    const [activeTabKey] = useGlobal('activeTabKey');
+    const [, setOtcList] = useGlobal('otcList');
+    const [, setResidentList] = useGlobal('residentList');
+    const [activeTabKey, setActiveTabKey] = useGlobal('activeTabKey');
+    const [am] = useGlobal('authManager');
     const [canLogin, setCanLogin] = useState(false);
+    const [mm] = useGlobal('medicineManager');
     const [password, setPassword] = useState('');
+    const [providers] = useGlobal('providers');
+    const [rm] = useGlobal('residentManager');
     const [showAboutPage, setShowAboutPage] = useState(false);
     const [signIn, setSignIn] = useGlobal('signIn');
     const [username, setUsername] = useState('');
+
+    // const apiKey = signIn.apiKey;
     const focusRef = useRef<HTMLInputElement>(null);
 
     // Set focus to the search input when this page is selected.
-    useEffect(() => {
-        if (activeTabKey === 'login' && focusRef && focusRef.current) {
-            focusRef.current.focus();
-        }
-    }, [activeTabKey, focusRef]);
+    useLayoutEffect(() => {
+        focusRef?.current?.focus();
+    }, [focusRef]);
 
     useEffect(() => {
         if ((!username || username.length === 0) || (!password || password.length === 0)) {
@@ -42,10 +51,52 @@ const LoginPage = (): JSX.Element | null => {
         return null;
     }
 
-    const authenticate = () => {
-        setAuth({action: 'login', payload: {username, password}});
+    /**
+     * Perform the authentication by calling the web service to validate the username and password.
+     */
+    const authenticate = async () => {
+        const [e, auth] = await asyncWrapper(am.authenticate(username, password)) as [unknown, Promise<Authenticated>];
+        if (e) await setErrorDetails(e); else {
+            const [eAuth, result] = await asyncWrapper(auth) as [unknown, Authenticated];
+            if (eAuth) await setErrorDetails(eAuth); else {
+                if (result.success && result.apiKey) {
+                    const [e] = await asyncWrapper(providers.setApi(result.apiKey));
+                    if (e) await setErrorDetails(e); else {
+                        // Load ALL Resident records up front and save them in the global store.
+                        const [errLoadClients, clients] = await
+                            asyncWrapper(rm.loadResidentList()) as [unknown, Promise<ResidentRecord[]>];
+                        if (errLoadClients) await setErrorDetails(errLoadClients); else {
+                            await setResidentList(await clients);
+                            const [errLoadOtc, otcMeds] = await
+                                asyncWrapper(mm.loadOtcList()) as [unknown, Promise<MedicineRecord[]>];
+                            if (errLoadOtc) await setErrorDetails(errLoadOtc); else {
+                                await setOtcList(await otcMeds);
+                                await setSignIn(result);
+                                await setActiveTabKey('resident');
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
+    /**
+     * Handle when the user clicks the Log Out button
+     */
+    const signOff = async () => {
+        try {
+            await setGlobal(getInitialState());
+            console.log('logout successful');
+        } catch (e) {
+            await setErrorDetails(e);
+        }
+    }
+
+    /**
+     * The signOn component
+     */
     const signOn = (
         <Container className="neu-main">
             <div className="neu-content">
@@ -57,6 +108,7 @@ const LoginPage = (): JSX.Element | null => {
                         style={{marginTop: "12px"}}
                     />
                     <input
+                        autoFocus
                         type="text"
                         placeholder="Username"
                         value={username}
@@ -113,6 +165,9 @@ const LoginPage = (): JSX.Element | null => {
         </Container>
     )
 
+    /**
+     * The logOff component
+     */
     const logOff = (
         <Container className="neu-main">
             <div className="neu-content">
@@ -127,7 +182,7 @@ const LoginPage = (): JSX.Element | null => {
                             console.log('Testing Diagnostics');
                             setErrorDetails(new Error('Testing error handler'));
                         } else {
-                            setAuth({action: 'logout', payload: null});
+                            signOff();
                         }
                     }}
                 >
