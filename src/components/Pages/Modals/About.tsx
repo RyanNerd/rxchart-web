@@ -5,39 +5,25 @@ import Modal from "react-bootstrap/Modal";
 import ModalBody from "react-bootstrap/ModalBody";
 import ModalFooter from "react-bootstrap/ModalFooter";
 import ModalHeader from "react-bootstrap/ModalHeader";
-import React, {useEffect, useState} from 'reactn';
+import React from "reactn";
 
 interface IProps {
     show: boolean
-    onHide: () => void
+    onClose: () => void
 }
 
 const About = (props: IProps) => {
     const {
         show,
-        onHide
+        onClose
     } = props;
 
-    const [showModal, setShowModal] = useState(show);
     const version = process.env.REACT_APP_VERSION; // @see: https://stackoverflow.com/a/50822003/4323201
-
-    /**
-     * Handle when the modal closes
-     */
-    const handleClose = () => {
-        setShowModal(false);
-        onHide();
-    }
-
-    // Observer on the show prop
-    useEffect(() => {
-        setShowModal(show);
-    }, [show]);
 
     return (
         <Modal
-            show={showModal}
-            onHide={() => handleClose()}
+            show={show}
+            onClose={()=> onClose()}
             centered
             backdrop="static"
         >
@@ -106,7 +92,7 @@ const About = (props: IProps) => {
 
             <ModalFooter>
                 <Button
-                    onClick={()=>handleClose()}
+                    onClick={() => onClose()}
                 >
                     Close
                 </Button>

@@ -143,7 +143,7 @@ const LoginPage = (): JSX.Element | null => {
 
             <About
                 show={showAboutPage}
-                onHide={() => setShowAboutPage(false)}
+                onClose={() => setShowAboutPage(false)}
             />
         </>
     )

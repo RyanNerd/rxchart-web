@@ -27,7 +27,7 @@ const Header = () => {
 
             <About
                 show={showAboutPage}
-                onHide={() => setShowAboutPage(false)}
+                onClose={() => setShowAboutPage(false)}
             />
         </>
     )
