@@ -1,10 +1,11 @@
-import {ReactElement, ReactNode} from "react";
+import {ReactElement, ReactNode} from "reactn/default";
 import Button, {ButtonProps} from "react-bootstrap/Button";
 import {OverlayChildren, Placement} from "react-bootstrap/Overlay";
 import OverlayTrigger, {OverlayTriggerProps, OverlayTriggerRenderProps} from "react-bootstrap/OverlayTrigger";
 import {Variant} from "react-bootstrap/types";
 import React from "reactn";
 
+// @ts-ignore  -- fixme: See ClientDobButton as an example of using modify
 interface IProps extends ButtonProps, OverlayTriggerProps {
     target?: any
     children: ReactElement | ((props: OverlayTriggerRenderProps) => ReactNode)

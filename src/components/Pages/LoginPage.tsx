@@ -35,8 +35,8 @@ const LoginPage = (): JSX.Element | null => {
 
     // Set focus to the search input when this page is selected.
     useLayoutEffect(() => {
-        focusRef?.current?.focus();
-    }, [focusRef]);
+        if (activeTabKey === 'login') focusRef?.current?.focus();
+    }, [focusRef, activeTabKey]);
 
     useEffect(() => {
         if ((!username || username.length === 0) || (!password || password.length === 0)) {

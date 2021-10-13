@@ -1,4 +1,4 @@
-import {ReactNode} from "react";
+import {ReactNode} from "reactn/default";
 import React from "reactn";
 import 'styles/shadowbox.css'
 

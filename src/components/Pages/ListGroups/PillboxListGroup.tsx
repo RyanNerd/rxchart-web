@@ -1,5 +1,5 @@
 import DisabledSpinner from "components/Pages/ListGroups/DisabledSpinner";
-import {ReactChild} from "react";
+import {ReactChild} from "reactn/default";
 import Alert from "react-bootstrap/Alert";
 import Badge from "react-bootstrap/Badge";
 import Button from 'react-bootstrap/Button'

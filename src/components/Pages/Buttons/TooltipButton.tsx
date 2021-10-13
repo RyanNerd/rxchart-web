@@ -1,4 +1,4 @@
-import {ReactNode} from "react";
+import {ReactNode} from "reactn/default";
 import Button, {ButtonProps} from "react-bootstrap/Button";
 import {Placement} from "react-bootstrap/Overlay";
 import OverlayTrigger, {OverlayTriggerProps} from "react-bootstrap/OverlayTrigger";

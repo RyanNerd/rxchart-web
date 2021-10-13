@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect} from 'reactn';
 
 /**
  * Works like useState but values persist to local storage

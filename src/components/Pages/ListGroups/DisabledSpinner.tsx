@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'reactn';
 import Spinner, {SpinnerProps} from "react-bootstrap/Spinner";
 import {Modify} from "types/Modify";
 

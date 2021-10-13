@@ -1,6 +1,6 @@
 import ActiveResidentObserver from "observers/ActiveResidentObserver";
 import ErrorDetailsObserver from "observers/ErrorDetailsObserver";
-import {ReactNode} from "react";
+import {ReactNode} from "reactn/default";
 import React from "reactn";
 
 interface IProps {

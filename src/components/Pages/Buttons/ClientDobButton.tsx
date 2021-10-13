@@ -1,4 +1,4 @@
-import {ReactNode} from "react";
+import {ReactNode} from "reactn/default";
 import Badge from 'react-bootstrap/Badge';
 import Dropdown from 'react-bootstrap/Dropdown'
 import DropdownButton, {DropdownButtonProps} from 'react-bootstrap/DropdownButton';
