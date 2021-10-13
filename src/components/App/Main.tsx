@@ -1,6 +1,4 @@
 import ActiveResidentObserver from "observers/ActiveResidentObserver";
-import ApiKeyObserver from "observers/ApiKeyObserver";
-import AuthObserver from "observers/AuthObserver";
 import ErrorDetailsObserver from "observers/ErrorDetailsObserver";
 import {ReactNode} from "react";
 import React from "reactn";
@@ -19,9 +17,7 @@ const Main = (props: IProps) => {
      * Initialize all the observers
      */
     ActiveResidentObserver();   // Watching: __activeResident
-    ApiKeyObserver();           // Watching: apiKey
     ErrorDetailsObserver();     // Watching: __errorDetails
-    AuthObserver();             // Watching: __auth
 
     const {
         children

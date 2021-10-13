@@ -56,7 +56,6 @@ const getInitialState = () => {
     return {
         activeResident: null,
         activeTabKey: 'login',
-        __auth: null,
         authManager: AuthManager(providers.authenticationProvider),
         drugLogList: [] as DrugLogRecord[],
         __errorDetails: errorDetail,
