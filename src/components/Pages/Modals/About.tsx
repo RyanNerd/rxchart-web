@@ -23,7 +23,8 @@ const About = (props: IProps) => {
     return (
         <Modal
             show={show}
-            onClose={()=> onClose()}
+            onClose={() => onClose()}
+            onHide={() => onClose()}
             centered
             backdrop="static"
         >
