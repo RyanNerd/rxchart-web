@@ -7,6 +7,7 @@ import {drawBarcode} from 'utility/drawBarcode';
 import LogButtons from '../Buttons/LogButtons';
 import ShadowBox from '../Buttons/ShadowBox';
 import MedDropdown from './MedDropdown';
+import {IDropdownItem} from "../ListGroups/MedDropdown";
 
 interface IProps {
     activeMed: MedicineRecord | null
@@ -21,11 +22,6 @@ interface IProps {
     medicineList: MedicineRecord[]
     pillboxList: PillboxRecord[]
     lastTaken: number | null
-}
-
-export interface IMedDropdownItem {
-    id: number, // zero indicates a divider
-    description: string
 }
 
 /**
@@ -57,27 +53,28 @@ const MedListGroup = (props: IProps): JSX.Element => {
     const fillDateType = (fillDateText) ? new Date(fillDateText) : null;
     const fillDateOptions = {month: '2-digit', day: '2-digit', year: 'numeric'} as Intl.DateTimeFormatOptions;
     const fillDate = (fillDateType) ? fillDateType.toLocaleString('en-US', fillDateOptions) : null;
-    const itemList = [] as IMedDropdownItem[];
+    const itemList = [] as IDropdownItem[];
 
     // Build the itemList with any pillboxes and meds from medicineList
     let pbCnt = 0;
     pillboxList.forEach(p => {
         const pillboxId = p.Id as number;
         if (!isPillboxLogToday(pillboxId)) {
-            itemList.push({id: -(pillboxId), description: p.Name}); // Pillbox have negative id
+            itemList.push({id: -(pillboxId), description: p.Name, subtext: null}); // Pillbox have negative id
             pbCnt++;
         }
     });
     if (pbCnt > 0) {
-        itemList.push({id: 0, description: "divider"});
+        itemList.push({id: 0, description: "divider", subtext: null});
     }
     medicineList.forEach(m => {
         const strength = m.Strength || '';
-        const other = m.OtherNames?.length > 0 ? `(${m.OtherNames})` : '';
-        const description = m.Drug +  ' ' + strength + ' ' + other;
+        const other = m.OtherNames?.length > 0 ? `(${m.OtherNames})` : null;
+        const description = m.Drug +  ' ' + strength;
         itemList.push({
             id: m.Id as number,
-            description
+            description,
+            subtext: other
         })
     });
 
@@ -173,9 +170,7 @@ const MedListGroup = (props: IProps): JSX.Element => {
                         <ListGroup.Item
                             style={listboxItemStyle}
                         >
-                            <ShadowBox>
                                 <b>Other Names: </b>{activeMed.OtherNames}
-                            </ShadowBox>
                         </ListGroup.Item>
                     }
 
