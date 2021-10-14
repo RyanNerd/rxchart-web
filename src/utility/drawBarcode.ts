@@ -19,7 +19,7 @@ export const drawBarcode = (barCode: string, canvasId: string): HTMLCanvasElemen
             });
         }
     } catch (e) {
-        // This is a non critical error so we just log it to the console.
+        // This is a non-critical error, so we just log it to the console.
         console.log('barcode image render error', e);
     }
 };

@@ -83,7 +83,7 @@ const LoginPage = (): JSX.Element | null => {
     }
 
     /**
-     * Handle when the user clicks the Log Out button
+     * Handle when the user clicks the "Logout" button
      */
     const signOff = async () => {
         try {
@@ -186,7 +186,7 @@ const LoginPage = (): JSX.Element | null => {
                         }
                     }}
                 >
-                    Log Out
+                    Logout
                 </button>
             </div>
         </Container>

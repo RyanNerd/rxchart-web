@@ -1,6 +1,6 @@
 ## RxChart Web Client
 
-Web client that tracks client's medicine intake. Currently used at a homeless shelter,
+Web client that tracks client's medicine intake. Currently, used at a homeless shelter,
 but can be used by any organization within the [LICENSE agreement](LICENSE.txt).
 
 This should be used in conjunction with [RxChart Back-End Service](https://github.com/RyanNerd/rxchart-app)
