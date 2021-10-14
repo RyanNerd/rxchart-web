@@ -34,7 +34,6 @@ const DisabledSpinner = (props: TProps) => {
                 role={role}
                 aria-hidden="true"
             >
-                {false && children}
             </Spinner> { } {children}
         </>
     )

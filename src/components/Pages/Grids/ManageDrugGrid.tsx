@@ -35,7 +35,7 @@ const ManageDrugGrid = (props: IProps): JSX.Element => {
 
         return (
             <tr
-                id={'manaage-drug-grid-row-' + drug.Id}
+                id={'manage-drug-grid-row-' + drug.Id}
                 style={{fontStyle: !drug.Active ? 'italic' : 'normal'}}
             >
                 <td style={{textAlign: "center", verticalAlign: "middle"}}>

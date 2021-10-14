@@ -14,7 +14,7 @@ interface IProps extends ModalProps {
 
 /**
  * Confirmation Modal "inheriting" from the Modal component
- * Uses React's "dot notation"
+ * Uses Reacts "dot notation"
  */
 const Confirm = {
     /**

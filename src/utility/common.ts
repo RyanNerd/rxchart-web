@@ -238,7 +238,7 @@ export const getObjectByProperty = <T>(objectList: IKey, propName: string, searc
  * Given the MedicineId, and medicineList return the name of the drug
  * @param {number} medicineId
  * @param {MedicineRecord[]} medicineList
- * @retirm {string | undefined}
+ * @return {string | undefined}
  */
 export const getDrugName = (medicineId: number, medicineList: MedicineRecord[]): string | undefined => {
     return getMedicineRecord(medicineId, medicineList)?.Drug;
@@ -252,25 +252,6 @@ export const getDrugName = (medicineId: number, medicineList: MedicineRecord[]):
  */
 export const getMedicineRecord = (medicineId: number, medicineList: MedicineRecord[]): MedicineRecord | undefined => {
     return getObjectByProperty<MedicineRecord>(medicineList, 'Id', medicineId);
-}
-
-/**
- * Given the searchText and activeDrug determine if the search is valid and return true if so, otherwise false.
- * @param {string} searchText
- * @param {MedicineRecord} drug
- * @returns {boolean}
- */
-export const isSearchValid = (searchText: string, drug: MedicineRecord): boolean => {
-    const textLen = searchText ? searchText.length : 0;
-    let searched;
-    const c = searchText.substr(0, 1);
-    // Is the first character a digit? If so, search the Barcode otherwise search the Drug name
-    if (c >= '0' && c <= '9') {
-        searched = drug.Barcode;
-    } else {
-        searched = drug.Drug;
-    }
-    return searched?.substr(0, textLen).toLowerCase() === searchText.substr(0, textLen).toLowerCase();
 }
 
 /**
@@ -383,17 +364,6 @@ export const asyncWrapper = async <T>(fn: Promise<T>) => {
     catch (error) {
         return [error, null];
     }
-}
-
-/**
- * A functional wrapper around Promises
- * @link https://github.com/JFDI-Consulting/attempt#or-for-old-style-promise-handling
- * @param {Promise<any>} fn
- */
-export const promiseWrapper = async (fn: Promise<any>) => {
-    const success = (r: any) => [null, r];
-    const fail = (e: any) => [e, null];
-    return Promise.resolve().then(await fn).then(success).catch(fail);
 }
 
 export enum SortDirection {
