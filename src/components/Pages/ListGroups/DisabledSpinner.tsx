@@ -20,7 +20,6 @@ const DisabledSpinner = (props: TProps) => {
         animation="border",
         children,
         size="sm",
-        as="span",
         role="status"
     } = {...props}
 
@@ -30,11 +29,12 @@ const DisabledSpinner = (props: TProps) => {
                 {...props}
                 animation={animation}
                 size={size}
-                as={as}
                 role={role}
                 aria-hidden="true"
+                as="span"
             >
-            </Spinner> { } {children}
+                {""}
+            </Spinner> {children}
         </>
     )
 }

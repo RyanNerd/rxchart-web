@@ -3,9 +3,10 @@ import DropdownButton from "react-bootstrap/DropdownButton";
 import React from 'reactn';
 import DisabledSpinner from "./DisabledSpinner";
 
-interface IDropdownItem {
+export interface IDropdownItem {
     id: number, // zero indicated a divider
     description: string
+    subtext: string | null
 }
 
 interface IProps {
@@ -54,7 +55,14 @@ const MedDropdown = (props: IProps): JSX.Element | null => {
                 active={i.id === activeId}
                 onSelect={() => onSelect(i.id)}
             >
-                {i.description}
+                <span>
+                    <span style={{display: "block"}}>{i.description}</span>
+                    {i.subtext &&
+                        <span style={{fontSize: "12px", display: "block"}}>
+                        {i.subtext}
+                    </span>
+                    }
+                </span>
             </Dropdown.Item>
         );
     };
