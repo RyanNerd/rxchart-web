@@ -70,11 +70,11 @@ const PillboxListGroup = (props: IProps) => {
     const logTime = activePillbox?.Id && isPillboxLogToday(activePillbox.Id) ?
         getPillboxLogTime(activePillbox.Id) : null;
 
-    const listboxItemStyle={
+    const listboxItemStyle = {
         paddingTop: "0.25rem",
-            paddingRight: "1.25rem",
-            paddingBottom: "0.20rem",
-            paddingLeft: "1.25rem"
+        paddingRight: "1.25rem",
+        paddingBottom: "0.20rem",
+        paddingLeft: "1.25rem"
     }
 
     /**

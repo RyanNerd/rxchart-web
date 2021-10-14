@@ -8,7 +8,7 @@ import Col from 'react-bootstrap/Col';
 import ListGroup from "react-bootstrap/ListGroup";
 import Row from 'react-bootstrap/Row';
 import ToggleButton from "react-bootstrap/ToggleButton"
-import React, {useEffect, useGlobal, useState} from 'reactn';
+import React, {useEffect, useGlobal, useLayoutEffect, useState} from 'reactn';
 import {DrugLogRecord, MedicineRecord, PillboxRecord, ResidentRecord} from "types/RecordTypes";
 import {
     calculateLastTaken,
@@ -124,7 +124,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     }, [medicineList, activeMed, setActiveMed])
 
     // Disable or Enable Print Checkout button based on if there are any drugs marked as to be checked out
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (drugLogList?.length > 0) {
             const checkoutList = getCheckoutList(drugLogList);
             if (checkoutList.length > 0) {
@@ -324,9 +324,9 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         const updatePillboxLog = async (dli: DrugLogRecord) => {
             const dLog = await mm.updateDrugLog(dli);
             toastQ.push(dLog);
-            // setToast(dLog);
         }
 
+        // Rehydrate the drugLogList global
         const refreshDrugLog = async () => {
             const drugLogs = await mm.loadDrugLog(clientId, 5);
             await setDrugLogList(drugLogs);
@@ -544,7 +544,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                                 <DrugLogGrid
                                     drugLog={drugLogList}
                                     drugId={activeMed.Id}
-                                    columns={['Created', 'Updated', 'Notes', 'Out', 'In']}
+                                    columns={['Taken', 'Notes', 'Out', 'In']}
                                     onEdit={r => addEditDrugLog(r)}
                                     onDelete={r => setShowDeleteDrugLogRecord(r)}
                                 />
