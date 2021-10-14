@@ -1,6 +1,6 @@
 import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
-import React, {useEffect} from 'reactn';
+import React, {useLayoutEffect} from 'reactn';
 import {MedicineRecord, newMedicineRecord, PillboxRecord} from 'types/RecordTypes';
 import {getLastTakenVariant, isPillboxLogToday, randomString} from 'utility/common';
 import {drawBarcode} from 'utility/drawBarcode';
@@ -73,7 +73,8 @@ const MedListGroup = (props: IProps): JSX.Element => {
     }
     medicineList.forEach(m => {
         const strength = m.Strength || '';
-        const description = m.Drug + ' ' + strength;
+        const other = m.OtherNames?.length > 0 ? `(${m.OtherNames})` : '';
+        const description = m.Drug +  ' ' + strength + ' ' + other;
         itemList.push({
             id: m.Id as number,
             description
@@ -81,7 +82,7 @@ const MedListGroup = (props: IProps): JSX.Element => {
     });
 
     // Update the barcode image if the barcode has changed
-    useEffect(() => {
+    useLayoutEffect(() => {
         // Only try to create a barcode canvas IF there is actually a barcode value.
         const canvas = barCode ? drawBarcode(barCode, canvasId) : null;
         if (canvasUpdated && canvas) {
@@ -90,6 +91,13 @@ const MedListGroup = (props: IProps): JSX.Element => {
     }, [barCode, canvasUpdated, canvasId]);
 
     const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
+
+    const listboxItemStyle = {
+        paddingTop: "0.25rem",
+        paddingRight: "1.25rem",
+        paddingBottom: "0.20rem",
+        paddingLeft: "1.25rem"
+    }
 
     return (
         <ListGroup>
@@ -161,8 +169,20 @@ const MedListGroup = (props: IProps): JSX.Element => {
                         />
                     </ListGroup.Item>
 
+                    {activeMed.OtherNames &&
+                        <ListGroup.Item
+                            style={listboxItemStyle}
+                        >
+                            <ShadowBox>
+                                <b>Other Names: </b>{activeMed.OtherNames}
+                            </ShadowBox>
+                        </ListGroup.Item>
+                    }
+
                     {directions &&
-                        <ListGroup.Item>
+                        <ListGroup.Item
+                            style={listboxItemStyle}
+                        >
                             <ShadowBox>
                                 <b>Directions: </b>{activeMed.Directions}
                             </ShadowBox>
@@ -170,7 +190,9 @@ const MedListGroup = (props: IProps): JSX.Element => {
                     }
 
                     {notes &&
-                        <ListGroup.Item>
+                        <ListGroup.Item
+                            style={listboxItemStyle}
+                        >
                             <ShadowBox>
                                 <b>Notes: </b>{activeMed.Notes}
                             </ShadowBox>
@@ -178,7 +200,9 @@ const MedListGroup = (props: IProps): JSX.Element => {
                     }
 
                     {fillDate &&
-                        <ListGroup.Item>
+                        <ListGroup.Item
+                            style={listboxItemStyle}
+                        >
                             <ShadowBox>
                                 <b>Fill Date: </b>{fillDate}
                             </ShadowBox>
