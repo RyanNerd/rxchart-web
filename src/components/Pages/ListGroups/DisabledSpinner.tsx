@@ -18,24 +18,19 @@ type TProps  = Modify<IProps, {
 const DisabledSpinner = (props: TProps) => {
     const {
         animation="border",
-        children,
         size="sm",
         role="status"
     } = {...props}
 
     return (
-        <>
-            <Spinner
-                {...props}
-                animation={animation}
-                size={size}
-                role={role}
-                aria-hidden="true"
-                as="span"
-            >
-                {""}
-            </Spinner> {children}
-        </>
+        <Spinner
+            {...props}
+            animation={animation}
+            size={size}
+            role={role}
+            aria-hidden="true"
+            as="span"
+        />
     )
 }
 

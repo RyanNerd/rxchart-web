@@ -76,7 +76,7 @@ const MedDropdown = (props: IProps): JSX.Element | null => {
             disabled={disabled}
             onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
             size="sm"
-            title={disabled ? <DisabledSpinner>{title}</DisabledSpinner> : title}
+            title={disabled ? (<><DisabledSpinner/>{" "}{title}</>) : (title)}
             variant="primary"
         >
             {itemList.map(MedDropdownItems)}
