@@ -1,4 +1,4 @@
-import DrugLogHistory from "components/Pages/DrugLogHistory";
+import DrugLogHistory from "components/Pages/Grids/DrugLogHistory";
 import PillboxLogGrid from "components/Pages/Grids/PillboxLogGrid";
 import CheckoutListGroup from "components/Pages/ListGroups/CheckoutListGroup";
 import DrugLogToast from "components/Pages/Toasts/DrugLogToast";
@@ -8,7 +8,7 @@ import Col from 'react-bootstrap/Col';
 import ListGroup from "react-bootstrap/ListGroup";
 import Row from 'react-bootstrap/Row';
 import ToggleButton from "react-bootstrap/ToggleButton"
-import React, {useEffect, useGlobal, useLayoutEffect, useState} from 'reactn';
+import React, {useEffect, useGlobal, useState} from 'reactn';
 import {DrugLogRecord, MedicineRecord, PillboxRecord, ResidentRecord} from "types/RecordTypes";
 import {
     calculateLastTaken,
@@ -124,7 +124,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     }, [medicineList, activeMed, setActiveMed])
 
     // Disable or Enable Print Checkout button based on if there are any drugs marked as to be checked out
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (drugLogList?.length > 0) {
             const checkoutList = getCheckoutList(drugLogList);
             if (checkoutList.length > 0) {
@@ -175,10 +175,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         }
     }, [medicineList, pillboxItemList, activePillbox, drugLogList])
 
-    // If there isn't an activeResident or this isn't the active tab then do not render
-    if (!clientId || !medicineList || activeTabKey !== 'medicine') {
-        return null;
-    }
+    // If there isn't an active client, or medicineList isn't populated, or this isn't the active tab then do not render
+    if (!clientId || !medicineList || activeTabKey !== 'medicine') return null;
 
     /**
      * Given a MedicineRecord Update or Insert the record and rehydrate the globalMedicineList
@@ -351,7 +349,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         refreshDrugLog().then(() => setIsBusy(false)).then(() => setToast(toastQ))
     }
 
-    return <>
+    return (
+    <>
         <Row className={TabContent}>
             <ListGroup as={Col}>
                 <ListGroup.Item
@@ -643,6 +642,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             onClose={() => setToast(null)}
         />
     </>
+    )
 }
 
 export default MedicinePage;

@@ -1,6 +1,6 @@
 import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
-import React, {useLayoutEffect} from 'reactn';
+import React, {useEffect} from 'reactn';
 import {MedicineRecord, newMedicineRecord, PillboxRecord} from 'types/RecordTypes';
 import {getLastTakenVariant, isPillboxLogToday, randomString} from 'utility/common';
 import {drawBarcode} from 'utility/drawBarcode';
@@ -79,7 +79,7 @@ const MedListGroup = (props: IProps): JSX.Element => {
     });
 
     // Update the barcode image if the barcode has changed
-    useLayoutEffect(() => {
+    useEffect(() => {
         // Only try to create a barcode canvas IF there is actually a barcode value.
         const canvas = barCode ? drawBarcode(barCode, canvasId) : null;
         if (canvasUpdated && canvas) {

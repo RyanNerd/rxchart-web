@@ -15,7 +15,7 @@ import MedicineEdit from "./Modals/MedicineEdit";
 /**
  * ManageDrugPage
  * Page for Displaying, editing and adding Medicine
- * @returns {JSX.Element}
+ * @returns {JSX.Element | null}
  */
 const ManageDrugPage = (): JSX.Element | null => {
     const [activeResident] = useGlobal('activeResident');
@@ -29,10 +29,13 @@ const ManageDrugPage = (): JSX.Element | null => {
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const [toast, setToast] = useState<DrugLogRecord[] | null>(null);
 
+    // If this tab isn't active then don't render
+    if (activeTabKey !== 'manage') return null;
+
     /**
      * Given a DrugLogRecord Update or Insert the record and rehydrate the drugLogList
      * @param {DrugLogRecord} drugLog
-     * @param clientId
+     * @param {number} clientId
      */
     const saveDrugLog = async (drugLog: DrugLogRecord, clientId: number): Promise<DrugLogRecord> => {
         const r = await mm.updateDrugLog(drugLog);
@@ -48,8 +51,6 @@ const ManageDrugPage = (): JSX.Element | null => {
      */
     const saveMedicine = async (med: MedicineRecord, clientId: number) => {
         const m = await mm.updateMedicine(med);
-
-        // Rehydrate the global medicineList
         const ml = await mm.loadMedicineList(clientId);
         await setMedicineList(ml);
 
@@ -66,24 +67,10 @@ const ManageDrugPage = (): JSX.Element | null => {
      */
     const getMedicineWithCheckout = () => {
         return medicineList.filter(m => {
-                return drugLogList.some(dl => {
-                    const updated = dl?.Updated;
-                    return dl.MedicineId === m.Id &&
-                        dl.Out &&
-                        updated && isToday(updated)
-                }) && m.Active
-            }
-        )
-    }
-
-    /**
-     * Return true if there are any drugLog records that have Out > 0
-     */
-    const hasCheckout = getMedicineWithCheckout().length > 0;
-
-    // If this tab isn't active then don't render
-    if (activeTabKey !== 'manage') {
-        return null;
+            return drugLogList.some(dl => {
+                return dl.MedicineId === m.Id && dl?.Updated && dl.Out && isToday(dl.Updated);
+            }) && m.Active
+        })
     }
 
     /**
@@ -127,6 +114,9 @@ const ManageDrugPage = (): JSX.Element | null => {
     const drugName = (medicineId: number): string | undefined => {
         return getDrugName(medicineId, medicineList.concat(otcList));
     }
+
+    // True if there are any drugLog records that have Out > 0
+    const hasCheckout = getMedicineWithCheckout().length > 0;
 
     return (
         <Form className={TabContent}>
@@ -174,14 +164,11 @@ const ManageDrugPage = (): JSX.Element | null => {
             </Row>
 
             {showMedicineEdit && medicineInfo &&
-                /* MedicineEdit Modal */
                 <MedicineEdit
                     show={showMedicineEdit}
-                    onClose={(r) => {
+                    onClose={(m) => {
                         setShowMedicineEdit(false);
-                        if (r && activeResident?.Id) {
-                            saveMedicine(r, activeResident?.Id) // Toast?
-                        }
+                        if (m) saveMedicine(m, activeResident?.Id as number);
                     }}
                     drugInfo={medicineInfo}
                 />

@@ -1,7 +1,7 @@
 import {TabContent} from "react-bootstrap";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import React, {useGlobal, useLayoutEffect, useMemo, useState} from 'reactn';
+import React, {useGlobal, useEffect, useMemo, useState} from 'reactn';
 import {getCheckoutList} from "utility/common";
 import DiagnosticPage from "./DiagnosticPage";
 import LoginPage from './LoginPage';
@@ -27,12 +27,10 @@ const LandingPage = () => {
     // React-bootstrap adds this with no id attribute or other method of obtaining a ref, so we need to use
     // the old-fashioned method of element retrieval to get a ref and add the d-print-none class
     const navBarElement = document.getElementsByClassName('nav nav-tabs');
-    if (navBarElement?.length > 0) {
-        navBarElement[0].classList.add('d-print-none');
-    }
+    if (navBarElement?.length > 0) navBarElement[0].classList.add('d-print-none');
 
     // Enable or disable the Print Medicine Checkout button
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (drugLogList.length > 0) {
             const checkoutList = getCheckoutList(drugLogList);
             setCheckoutDisabled(checkoutList.length <= 0)
