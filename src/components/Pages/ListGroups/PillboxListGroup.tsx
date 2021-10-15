@@ -96,8 +96,12 @@ const PillboxListGroup = (props: IProps) => {
                 checked={activePillbox?.Id === pb.Id}
                 onChange={() => onSelect(pb.Id as number)}
             >
-                {disabled && <DisabledSpinner/>}
-                <span className="ml-2">PILLBOX: <b>{pb.Name}</b></span>
+                <span
+                    className="ml-2"
+                >
+                    {disabled && <><DisabledSpinner/>{" "}</>}
+                    PILLBOX: <b>{pb.Name}</b>
+                </span>
             </ToggleButton>
         )
     }
@@ -162,7 +166,7 @@ const PillboxListGroup = (props: IProps) => {
                                     setShowAlert(true);
                                 }}
                             >
-                                {disabled && <DisabledSpinner/>}
+                                {disabled && <><DisabledSpinner/>{" "}</>}
                                 + Log Pillbox <b>{activePillbox.Name}</b>
                                 {logTime &&
                                     <Badge

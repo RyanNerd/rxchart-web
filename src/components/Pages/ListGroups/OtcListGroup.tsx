@@ -145,7 +145,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                         variant={lastTakenVariant}
                     >
                         <span>
-                            {disabled && <DisabledSpinner/>}
+                            {disabled && <><DisabledSpinner/>{" "}</>}
                             + Log {activeOtc ? activeOtc.Drug + ' ' + activeOtc.Strength : ""}
                         </span>
                     </Button>
