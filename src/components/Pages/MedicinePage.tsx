@@ -1,7 +1,8 @@
-import DrugLogHistory from "components/Pages/Grids/DrugLogHistory";
+import MedDrugLogHistory from "components/Pages/Grids/MedDrugLogHistory";
 import PillboxLogGrid from "components/Pages/Grids/PillboxLogGrid";
 import CheckoutListGroup from "components/Pages/ListGroups/CheckoutListGroup";
 import DrugLogToast from "components/Pages/Toasts/DrugLogToast";
+import {SetStateAction} from "react";
 import Alert from "react-bootstrap/Alert"
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -72,7 +73,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [drugLogList, setDrugLogList] = useGlobal('drugLogList');
     const [globalMedicineList, setGlobalMedicineList] = useGlobal('medicineList');
     const [isBusy, setIsBusy] = useState(false);
-    const [medicineList, setMedicineList] = useState<MedicineRecord[]|null>(null);
+    const [medicineList, setMedicineList] = useState<MedicineRecord[] | null>(null);
     const [mm] = useGlobal('medicineManager');
     const [otcList, setOtcList] = useGlobal('otcList');
     const [otcLogList, setOtcLogList] = useState<DrugLogRecord[]>([]);
@@ -82,7 +83,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
     const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
     const [showMedicineEdit, setShowMedicineEdit] = useState<MedicineRecord | null>(null);
-    const [toast, setToast] = useState<null|DrugLogRecord[]>(null);
+    const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
 
     // Refresh activeClient when the activeResident global changes.
     useEffect(() => {
@@ -102,8 +103,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         // We only want to list the OTC drugs on this page that the resident has taken.
         // @link https://stackoverflow.com/questions/31005396/filter-array-of-objects-with-another-array-of-objects
         setOtcLogList(drugLogList.filter((drug: DrugLogRecord) => {
-            return otcList.some((m) => {return m.Id === drug?.MedicineId;});
-        }));
+            return otcList.some((m) => {return m.Id === drug?.MedicineId});
+        }))
     }, [drugLogList, otcList])
 
     // Refresh of medicineList from globalMedicineList;
@@ -147,7 +148,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         dl => dl.Updated &&
                               dl.MedicineId === pbi.MedicineId &&
                               isToday(dl.Updated) &&
-                              dl.Notes.includes('pb:')
+                              dl.Notes?.includes('pb:')
                     );
                     if (pbl) {
                         const med = medicineList?.find(m => m.Id === pbl.MedicineId);
@@ -230,7 +231,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      * Delete an existing pillbox.
      * @param {number} pillboxId
      */
-    const deletePillbox = async (pillboxId: number) =>{
+    const deletePillbox = async (pillboxId: number) => {
         const d = await mm.deletePillbox(pillboxId);
         if (d) {
             const pbl = await mm.loadPillboxList(clientId);
@@ -350,162 +351,162 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     }
 
     return (
-    <>
-        <Row className={TabContent}>
-            <ListGroup as={Col}>
-                <ListGroup.Item
-                    style={{
-                        paddingTop: "0.45rem",
-                        paddingRight: "1.25rem",
-                        paddingBottom: 0,
-                        paddingLeft: "1.25rem"
-                    }}
-                >
-                    <ToggleButton
-                        className="d-print-none"
-                        key="med-list-group-med-btn"
-                        id="med-list-group-med-radio-btn"
-                        type="radio"
-                        size="sm"
-                        variant="outline-success"
-                        name="radio-med-list-group"
-                        value={DISPLAY_TYPE.Medicine}
-                        checked={displayType === DISPLAY_TYPE.Medicine}
-                        onChange={() => setDisplayType(DISPLAY_TYPE.Medicine)}
-                    >
-                        <span className="ml-2">Medicine</span>
-                    </ToggleButton>
-
-                    <ToggleButton
-                        key="med-list-group-otc-btn"
-                        id="med-list-group-otc-radio-btn"
-                        className="ml-2 d-print-none"
-                        disabled={otcList?.length === 0}
-                        type="radio"
-                        size="sm"
-                        variant="outline-success"
-                        name="radio-med-list-group"
-                        value={DISPLAY_TYPE.OTC}
-                        checked={displayType === DISPLAY_TYPE.OTC}
-                        onChange={() => setDisplayType(DISPLAY_TYPE.OTC)}
-                    >
-                        <span className="ml-2">OTC</span>
-                    </ToggleButton>
-
-                    <ToggleButton
-                        key="med-list-group-history-btn"
-                        id="med-list-group-history-radio-btn"
-                        className="ml-2 d-print-none"
-                        disabled={drugLogList.length === 0}
-                        size="sm"
-                        type="radio"
-                        variant="outline-success"
-                        value={DISPLAY_TYPE.History}
-                        checked={displayType === DISPLAY_TYPE.History}
-                        onChange={() => setDisplayType(DISPLAY_TYPE.History)}
-                    >
-                        <span className="ml-2">History</span>
-                    </ToggleButton>
-
-                    <ToggleButton
-                        key="med-list-group-pill-btn"
-                        id="med-list-group-pill-radio-btn"
-                        className="ml-2 d-print-none"
-                        disabled={medicineList.length < 5}
-                        size="sm"
-                        type="radio"
-                        variant="outline-success"
-                        name="radio-med-list-group"
-                        value={DISPLAY_TYPE.Pillbox}
-                        checked={displayType === DISPLAY_TYPE.Pillbox}
-                        onChange={() => setDisplayType(DISPLAY_TYPE.Pillbox)}
-                    >
-                        <span className="ml-2">Pillbox</span>
-                    </ToggleButton>
-
-                    <ToggleButton
-                        key="med-list-group-print-btn"
-                        id="med-list-group-print-radio-btn"
-                        className="ml-2 d-print-none"
-                        size="sm"
-                        type="radio"
-                        disabled={checkoutDisabled}
-                        variant="outline-success"
-                        name="radio-print-list-group"
-                        value={DISPLAY_TYPE.Print}
-                        checked={displayType === DISPLAY_TYPE.Print}
-                        onChange={() => setDisplayType(DISPLAY_TYPE.Print)}
-                    >
-                        <span className="ml-2">Print Med Checkout</span>
-                    </ToggleButton>
-                </ListGroup.Item>
-
-                <ListGroup.Item>
-                    {displayType === DISPLAY_TYPE.Medicine &&
-                    <MedListGroup
-                        disabled={isBusy}
-                        activeMed={activeMed}
-                        addDrugLog={() => addEditDrugLog()}
-                        clientId={clientId}
-                        editMedicine={(m) => setShowMedicineEdit(m)}
-                        canvasId="med-barcode"
-                        itemChanged={id => {
-                            if (id < 0) {
-                                setActivePillbox(pillboxList.find(p => p.Id === Math.abs(id)) ||null);
-                                setDisplayType(DISPLAY_TYPE.Pillbox);
-                            } else {
-                                setActiveMed(medicineList.find(m => m.Id === id) || null);
-                            }
+        <>
+            <Row className={TabContent}>
+                <ListGroup as={Col}>
+                    <ListGroup.Item
+                        style={{
+                            paddingTop: "0.45rem",
+                            paddingRight: "1.25rem",
+                            paddingBottom: 0,
+                            paddingLeft: "1.25rem"
                         }}
-                        lastTaken={activeMed?.Id ? calculateLastTaken(activeMed.Id, drugLogList) : null}
-                        logDrug={n => handleLogDrugAmount(n)}
-                        pillboxList={pillboxList}
-                        medicineList={medicineList}
-                    />
-                    }
-
-                    {displayType === DISPLAY_TYPE.OTC &&
-                    <OtcListGroup
-                        disabled={otcList.length === 0 || isBusy}
-                        editOtcMedicine={(r) => setShowMedicineEdit(r)}
-                        activeOtc={activeOtc}
-                        drugLogList={drugLogList}
-                        logOtcDrugAmount={(n) => handleLogOtcDrugAmount(n)}
-                        logOtcDrug={() => addEditOtcLog()}
-                        otcList={otcList}
-                        otcSelected={(d) => setActiveOtc(d)}
-                    />
-                    }
-
-                    {displayType === DISPLAY_TYPE.Pillbox &&
-                    <PillboxListGroup
-                        activePillbox={activePillbox}
-                        disabled={isBusy}
-                        onSelect={id => setActivePillbox(pillboxList.find(pb => pb.Id === id) || null)}
-                        onEdit={r => savePillbox(r)}
-                        onDelete={id => deletePillbox(id)}
-                        clientId={clientId}
-                        pillboxList={pillboxList}
-                        pillboxItemList={pillboxItemList}
-                        logPillbox={() => handleLogPillbox()}
                     >
-                        {(pillboxDrugLog.length > 0) &&
-                            <PillboxLogGrid
-                                pillboxLogList={pillboxDrugLog}
+                        <ToggleButton
+                            className="d-print-none"
+                            key="med-list-group-med-btn"
+                            id="med-list-group-med-radio-btn"
+                            type="radio"
+                            size="sm"
+                            variant="outline-success"
+                            name="radio-med-list-group"
+                            value={DISPLAY_TYPE.Medicine}
+                            checked={displayType === DISPLAY_TYPE.Medicine}
+                            onChange={() => setDisplayType(DISPLAY_TYPE.Medicine)}
+                        >
+                            <span className="ml-2">Medicine</span>
+                        </ToggleButton>
+
+                        <ToggleButton
+                            key="med-list-group-otc-btn"
+                            id="med-list-group-otc-radio-btn"
+                            className="ml-2 d-print-none"
+                            disabled={otcList?.length === 0}
+                            type="radio"
+                            size="sm"
+                            variant="outline-success"
+                            name="radio-med-list-group"
+                            value={DISPLAY_TYPE.OTC}
+                            checked={displayType === DISPLAY_TYPE.OTC}
+                            onChange={() => setDisplayType(DISPLAY_TYPE.OTC)}
+                        >
+                            <span className="ml-2">OTC</span>
+                        </ToggleButton>
+
+                        <ToggleButton
+                            key="med-list-group-history-btn"
+                            id="med-list-group-history-radio-btn"
+                            className="ml-2 d-print-none"
+                            disabled={drugLogList.length === 0}
+                            size="sm"
+                            type="radio"
+                            variant="outline-success"
+                            value={DISPLAY_TYPE.History}
+                            checked={displayType === DISPLAY_TYPE.History}
+                            onChange={() => setDisplayType(DISPLAY_TYPE.History)}
+                        >
+                            <span className="ml-2">History</span>
+                        </ToggleButton>
+
+                        <ToggleButton
+                            key="med-list-group-pill-btn"
+                            id="med-list-group-pill-radio-btn"
+                            className="ml-2 d-print-none"
+                            disabled={medicineList.length < 5}
+                            size="sm"
+                            type="radio"
+                            variant="outline-success"
+                            name="radio-med-list-group"
+                            value={DISPLAY_TYPE.Pillbox}
+                            checked={displayType === DISPLAY_TYPE.Pillbox}
+                            onChange={() => setDisplayType(DISPLAY_TYPE.Pillbox)}
+                        >
+                            <span className="ml-2">Pillbox</span>
+                        </ToggleButton>
+
+                        <ToggleButton
+                            key="med-list-group-print-btn"
+                            id="med-list-group-print-radio-btn"
+                            className="ml-2 d-print-none"
+                            size="sm"
+                            type="radio"
+                            disabled={checkoutDisabled}
+                            variant="outline-success"
+                            name="radio-print-list-group"
+                            value={DISPLAY_TYPE.Print}
+                            checked={displayType === DISPLAY_TYPE.Print}
+                            onChange={() => setDisplayType(DISPLAY_TYPE.Print)}
+                        >
+                            <span className="ml-2">Print Med Checkout</span>
+                        </ToggleButton>
+                    </ListGroup.Item>
+
+                    <ListGroup.Item>
+                        {displayType === DISPLAY_TYPE.Medicine &&
+                            <MedListGroup
+                                disabled={isBusy}
+                                activeMed={activeMed}
+                                addDrugLog={() => addEditDrugLog()}
+                                clientId={clientId}
+                                editMedicine={(m) => setShowMedicineEdit(m)}
+                                canvasId="med-barcode"
+                                itemChanged={id => {
+                                    if (id < 0) {
+                                        setActivePillbox(pillboxList.find(p => p.Id === Math.abs(id)) || null);
+                                        setDisplayType(DISPLAY_TYPE.Pillbox);
+                                    } else {
+                                        setActiveMed(medicineList.find(m => m.Id === id) || null);
+                                    }
+                                }}
+                                lastTaken={activeMed?.Id ? calculateLastTaken(activeMed.Id, drugLogList) : null}
+                                logDrug={n => handleLogDrugAmount(n)}
+                                pillboxList={pillboxList}
+                                medicineList={medicineList}
                             />
                         }
-                    </PillboxListGroup>
-                    }
 
-                    {displayType === DISPLAY_TYPE.History && activeClient &&
-                        <ListGroup className="d-print-flex">
-                            <ListGroup.Item>
-                                <DrugLogHistory
+                        {displayType === DISPLAY_TYPE.OTC &&
+                            <OtcListGroup
+                                disabled={otcList.length === 0 || isBusy}
+                                editOtcMedicine={(r) => setShowMedicineEdit(r)}
+                                activeOtc={activeOtc}
+                                drugLogList={drugLogList}
+                                logOtcDrugAmount={(n) => handleLogOtcDrugAmount(n)}
+                                logOtcDrug={() => addEditOtcLog()}
+                                otcList={otcList}
+                                otcSelected={(d) => setActiveOtc(d)}
+                            />
+                        }
+
+                        {displayType === DISPLAY_TYPE.Pillbox &&
+                            <PillboxListGroup
+                                activePillbox={activePillbox}
+                                disabled={isBusy}
+                                onSelect={id => setActivePillbox(pillboxList.find(pb => pb.Id === id) || null)}
+                                onEdit={r => savePillbox(r)}
+                                onDelete={id => deletePillbox(id)}
+                                clientId={clientId}
+                                pillboxList={pillboxList}
+                                pillboxItemList={pillboxItemList}
+                                logPillbox={() => handleLogPillbox()}
+                            >
+                                {(pillboxDrugLog.length > 0) &&
+                                    <PillboxLogGrid
+                                        pillboxLogList={pillboxDrugLog}
+                                    />
+                                }
+                            </PillboxListGroup>
+                        }
+
+                        {displayType === DISPLAY_TYPE.History && activeClient &&
+                            <ListGroup className="d-print-flex">
+                                <ListGroup.Item>
+                                <MedDrugLogHistory
                                     activeClient={activeClient}
                                     drugLogList={drugLogList}
                                     medicineList={medicineList.concat(otcList)}
-                                    onEdit={(d) => addEditDrugLog(d)}
-                                    onDelete={d => setShowDeleteDrugLogRecord(d)}
+                                    onEdit={(d: DrugLogRecord|undefined) => addEditDrugLog(d)}
+                                    onDelete={(d: SetStateAction<DrugLogRecord|null>) => setShowDeleteDrugLogRecord(d)}
                                 />
                             </ListGroup.Item>
                         </ListGroup>

@@ -16,7 +16,7 @@ interface IProps {
  * Drug Log History Table
  * @param  {IProps} props
  */
-const DrugLogHistory = (props: IProps) => {
+const MedDrugLogHistory = (props: IProps) => {
     const {
         activeClient,
         drugLogList,
@@ -94,4 +94,4 @@ const DrugLogHistory = (props: IProps) => {
     )
 }
 
-export default DrugLogHistory;
+export default MedDrugLogHistory;
