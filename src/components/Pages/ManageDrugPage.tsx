@@ -1,4 +1,5 @@
 import ManageDrugGrid from "components/Pages/Grids/ManageDrugGrid";
+import DrugLogToast from "components/Pages/Toasts/DrugLogToast";
 import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -26,6 +27,7 @@ const ManageDrugPage = (): JSX.Element | null => {
     const [otcList, setOtcList] = useGlobal('otcList');
     const [showCheckoutModal, setShowCheckoutModal] = useState<DrugLogRecord | null>(null);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
+    const [toast, setToast] = useState<DrugLogRecord[] | null>(null);
 
     /**
      * Given a DrugLogRecord Update or Insert the record and rehydrate the drugLogList
@@ -34,7 +36,6 @@ const ManageDrugPage = (): JSX.Element | null => {
      */
     const saveDrugLog = async (drugLog: DrugLogRecord, clientId: number): Promise<DrugLogRecord> => {
         const r = await mm.updateDrugLog(drugLog);
-        // Rehydrate the drugLogList
         const drugs = await mm.loadDrugLog(clientId, 5);
         await setDrugLogList(drugs);
         return r;
@@ -52,15 +53,17 @@ const ManageDrugPage = (): JSX.Element | null => {
         const ml = await mm.loadMedicineList(clientId);
         await setMedicineList(ml);
 
-        // If the updated record is OTC we need to refresh the otcList as well.
+        // If the updated record is OTC we need to refresh the otcList.
         if (m.OTC) {
-            // Rehydrate the global otcList
             const ol = await mm.loadOtcList();
             await setOtcList(ol);
         }
         return m;
     }
 
+    /**
+     * Return a MedicineRecord[] array of all medicines that have Out populated and was logged today
+     */
     const getMedicineWithCheckout = () => {
         return medicineList.filter(m => {
                 return drugLogList.some(dl => {
@@ -190,14 +193,19 @@ const ManageDrugPage = (): JSX.Element | null => {
                     drugLogInfo={showCheckoutModal}
                     onClose={(dl) => {
                         setShowCheckoutModal(null);
-                        if (dl) {
-                            saveDrugLog(dl, activeResident.Id as number) // TOAST?
-                        }
+                        if (dl) saveDrugLog(dl, activeResident.Id as number).then(r => setToast([r]));
                     }}
                     onHide={() => setShowCheckoutModal(null)}
                     show={true}
                 />
             }
+
+            <DrugLogToast
+                toast={toast as DrugLogRecord[]}
+                medicineList={medicineList.concat(otcList)}
+                show={toast !== null}
+                onClose={() => setToast(null)}
+            />
         </Form>
     )
 }
