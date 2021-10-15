@@ -37,7 +37,7 @@ export type TPillboxLog = {
     Drug: string | undefined;
     Strength: string | null | undefined;
     Quantity: number;
-    Notes: any;
+    Notes: string | null;
     Updated: Date | null | undefined;
 }
 

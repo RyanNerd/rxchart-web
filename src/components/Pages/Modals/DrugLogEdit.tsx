@@ -37,14 +37,19 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
 
     // Observer for drugInfo
     useEffect(() => {
-        setDrugLogInfo(props.drugLogInfo)
+        const drugLogRecord = props.drugLogInfo;
+        // If props.drugLogInfo.Notes is null or empty then make it an empty string
+        if (!drugLogRecord.Notes) {
+            drugLogRecord.Notes = '';
+        }
+        setDrugLogInfo(drugLogRecord);
     }, [props.drugLogInfo]);
 
     // Disable the Save button if Notes are empty.
     useEffect(() => {
         const canSave = (drugLogInfo &&
             (
-                (drugLogInfo.Notes?.length > 0) ||
+                (drugLogInfo.Notes && drugLogInfo.Notes.length > 0) ||
                 (drugLogInfo.In && drugLogInfo.In > 0) ||
                 (drugLogInfo.Out && drugLogInfo.Out> 0)
             )
@@ -124,7 +129,7 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
                             <Form.Control
                                 as="textarea"
                                 ref={textInput}
-                                value={drugLogInfo.Notes}
+                                value={drugLogInfo.Notes as string}
                                 name="Notes"
                                 onChange={(e) => handleOnChange(e)}
                             />
