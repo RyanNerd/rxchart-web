@@ -1,7 +1,7 @@
 import {Authenticated} from "providers/AuthenticationProvider";
 import Alert from 'react-bootstrap/Alert';
 import Container from 'react-bootstrap/Container';
-import React, {setGlobal, useEffect, useGlobal, useLayoutEffect, useRef, useState} from 'reactn';
+import React, {setGlobal, useEffect, useGlobal, useRef, useState} from 'reactn';
 import {MedicineRecord, ResidentRecord} from "types/RecordTypes";
 import {asyncWrapper} from "utility/common";
 import getInitialState from "utility/getInitialState";
@@ -13,7 +13,7 @@ import About from "./Modals/About";
 
 /**
  *  Sign in page
- * @returns {JSX.Element}
+ * @returns {JSX.Element | null}
  */
 const LoginPage = (): JSX.Element | null => {
     const [, setErrorDetails] = useGlobal('__errorDetails');
@@ -29,15 +29,14 @@ const LoginPage = (): JSX.Element | null => {
     const [showAboutPage, setShowAboutPage] = useState(false);
     const [signIn, setSignIn] = useGlobal('signIn');
     const [username, setUsername] = useState('');
-
-    // const apiKey = signIn.apiKey;
     const focusRef = useRef<HTMLInputElement>(null);
 
     // Set focus to the search input when this page is selected.
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (activeTabKey === 'login') focusRef?.current?.focus();
     }, [focusRef, activeTabKey]);
 
+    // Determine if the user is allowed to log in or not
     useEffect(() => {
         if ((!username || username.length === 0) || (!password || password.length === 0)) {
             setCanLogin(false);
@@ -47,9 +46,7 @@ const LoginPage = (): JSX.Element | null => {
     }, [password, username]);
 
     // Prevent render if this tab isn't active
-    if (activeTabKey !== 'login') {
-        return null;
-    }
+    if (activeTabKey !== 'login') return null;
 
     /**
      * Perform the authentication by calling the web service to validate the username and password.
@@ -137,10 +134,7 @@ const LoginPage = (): JSX.Element | null => {
                 <button
                     className="neu-button"
                     disabled={!canLogin || (signIn.success !== null && !signIn.success)}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        authenticate();
-                    }}
+                    onClick={() => authenticate()}
                 >
                     Login
                 </button>
@@ -148,9 +142,7 @@ const LoginPage = (): JSX.Element | null => {
                 <Alert
                     variant="warning"
                     show={signIn.success !== null && !signIn.success}
-                    onClose={() => {
-                        setSignIn({apiKey: null, success: null, organization: null});
-                    }}
+                    onClose={() => setSignIn({apiKey: null, success: null, organization: null})}
                     className="mt-4"
                     dismissible
                 >

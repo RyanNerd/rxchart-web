@@ -3,7 +3,7 @@ import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
-import React, {useEffect, useGlobal, useLayoutEffect, useRef, useState} from 'reactn';
+import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import {newResidentRecord, ResidentRecord} from "types/RecordTypes";
 import {clientFullName} from 'utility/common';
 import ResidentGrid from './Grids/ResidentGrid';
@@ -31,7 +31,6 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     const [showClientRoster, setShowClientRoster] = useState(false);
     const [showDeleteResident, setShowDeleteResident] = useState<null|ResidentRecord>(null);
     const [showResidentEdit, setShowResidentEdit] = useState<ResidentRecord | null>(null);
-    const onSelected = props.residentSelected;
     const focusRef = useRef<HTMLInputElement>(null);
 
     // Filter the resident list by the search textbox value
@@ -58,14 +57,14 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
         }
     }, [residentList, searchText])
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         focusRef?.current?.focus();
     })
 
     // Don't render if this tab isn't active.
-    if (activeTabKey !== 'resident') {
-        return null;
-    }
+    if (activeTabKey !== 'resident') return null;
+
+    const onSelected = props.residentSelected;
 
     /**
      * Fires when user clicks on the select button or if the user is trying to add an existing active client
@@ -80,15 +79,21 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
         activateClient(client);
     }
 
+    /**
+     * Given the ResidentRecord update/insert the record, rehydrate the residentList global
+     * @param {ResidentRecord} client
+     */
     const saveClient = async (client: ResidentRecord) => {
         const r = await rm.updateResident(client);
-        if (r) {
-            const rl = await rm.loadResidentList();
-            await setResidentList(rl);
-            handleOnSelected(r);
-        }
+        const rl = await rm.loadResidentList();
+        await setResidentList(rl);
+        return r;
     }
 
+    /**
+     * Given the client Id number deactivate (soft-delete) the client
+     * @param {number} clientId
+     */
     const deleteClient = async (clientId: number) => {
         const d = await rm.deleteResident(clientId);
         if (d) {
@@ -192,7 +197,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                                 return;
                             }
                         }
-                        saveClient(client);
+                        saveClient(client).then(c => handleOnSelected(c))
                     }
                 }}
             />
@@ -202,9 +207,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                 show={true}
                 onSelect={(a) => {
                     setShowDeleteResident(null);
-                    if (a) {
-                        deleteClient(showDeleteResident?.Id as number);
-                    }
+                    if (a) deleteClient(showDeleteResident?.Id as number);
                 }}
             >
                 <Confirm.Header>

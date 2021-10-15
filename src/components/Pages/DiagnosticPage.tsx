@@ -263,9 +263,7 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
             setContent(card);
         }
 
-        if (!error) {
-            return null;
-        }
+        if (!error) return null;
 
         try {
             console.log('Error:', error);

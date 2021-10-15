@@ -3,9 +3,9 @@ import React, {useGlobal} from 'reactn';
 import {DrugLogRecord, ResidentRecord} from "types/RecordTypes";
 
 interface IProps {
-    drugLogList: DrugLogRecord[]
-    activeTabKey: string
     activeClient: ResidentRecord | null
+    activeTabKey: string
+    drugLogList: DrugLogRecord[]
 }
 
 /**
@@ -14,19 +14,16 @@ interface IProps {
  * @return {JSX.Element | null}
  */
 const MedicineCheckoutPage = (props: IProps) => {
-    const [medicineList] = useGlobal('medicineList');
-
     const {
         drugLogList,
         activeTabKey,
         activeClient
     } = props
 
+    const [medicineList] = useGlobal('medicineList');
+
     // Prevent render if the active tab isn't medicine-checkout or there are no drugLogList or medicineList records.
-    if (activeTabKey !== 'medicine-checkout' ||
-            !activeClient ||
-            !drugLogList || drugLogList.length <=0 ||
-            !medicineList || medicineList.length <= 0) {
+    if (activeTabKey !== 'medicine-checkout' || !activeClient || drugLogList.length ===0 || medicineList.length === 0) {
         return null;
     }
 

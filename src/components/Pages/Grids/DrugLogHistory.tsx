@@ -1,6 +1,6 @@
 import DrugLogHistoryGrid from "components/Pages/Grids/DrugLogHistoryGrid";
 import Button from "react-bootstrap/Button";
-import React, {useLayoutEffect, useState} from "reactn";
+import React, {useEffect, useState} from "reactn";
 import {DrugLogRecord, MedicineRecord, ResidentRecord} from "types/RecordTypes";
 import {clientDOB, clientFullName} from "utility/common";
 
@@ -27,7 +27,7 @@ const DrugLogHistory = (props: IProps) => {
 
     const [printing, setPrinting] = useState(false);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (printing) {
             window.print();
 

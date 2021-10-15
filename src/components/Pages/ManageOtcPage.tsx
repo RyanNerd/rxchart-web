@@ -3,7 +3,7 @@ import Alert from "react-bootstrap/Alert";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
-import React, {useEffect, useGlobal, useLayoutEffect, useRef, useState} from 'reactn';
+import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import {MedicineRecord, newMedicineRecord} from "types/RecordTypes";
 import TooltipButton from "./Buttons/TooltipButton";
 import Confirm from "./Modals/Confirm";
@@ -12,7 +12,7 @@ import MedicineEdit from "./Modals/MedicineEdit";
 /**
  * ManageOtcPage
  * Page for Displaying, editing and adding OTC drugs
- * @returns {JSX.Element}
+ * @returns {JSX.Element | null}
  */
 const ManageOtcPage = (): JSX.Element | null => {
     const [, setErrorDetails] = useGlobal('__errorDetails');
@@ -28,7 +28,7 @@ const ManageOtcPage = (): JSX.Element | null => {
     const focusRef = useRef<HTMLInputElement>(null);
 
     // Set focus to the Search textbox when this page becomes active
-    useLayoutEffect(() => {
+    useEffect(() => {
         focusRef?.current?.focus();
     })
 
@@ -54,9 +54,7 @@ const ManageOtcPage = (): JSX.Element | null => {
     }, [otcList, searchText])
 
     // If this tab isn't active then don't render
-    if (activeTabKey !== 'manage-otc') {
-        return null;
-    }
+    if (activeTabKey !== 'manage-otc') return null;
 
     /**
      * Given a MedicineRecord Update or Insert the record and rehydrate the global otcList
@@ -64,11 +62,8 @@ const ManageOtcPage = (): JSX.Element | null => {
      */
     const saveOtcMedicine = async (med: MedicineRecord) => {
         const m = await mm.updateMedicine(med);
-
-        // Rehydrate the global otcList
         const ol = await mm.loadOtcList();
         await setOtcList(ol);
-
         return m;
     }
 
