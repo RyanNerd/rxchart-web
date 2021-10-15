@@ -73,6 +73,8 @@ const LoginPage = (): JSX.Element | null => {
                             }
                         }
                     }
+                } else {
+                    await setSignIn(result);
                 }
             }
         }
@@ -142,7 +144,10 @@ const LoginPage = (): JSX.Element | null => {
                 <Alert
                     variant="warning"
                     show={signIn.success !== null && !signIn.success}
-                    onClose={() => setSignIn({apiKey: null, success: null, organization: null})}
+                    onClose={() => {
+                        setSignIn({apiKey: null, success: null, organization: null});
+                        focusRef?.current?.focus();
+                    }}
                     className="mt-4"
                     dismissible
                 >
