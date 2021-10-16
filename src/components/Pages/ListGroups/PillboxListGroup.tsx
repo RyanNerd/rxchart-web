@@ -339,7 +339,11 @@ const PillboxListGroup = (props: IProps) => {
                             <Alert.Heading
                                 className="mb-0"
                             >
-                                Pillbox <b>{activePillbox?.Name}</b> logged today at {" "} {logTime}
+                                Pillbox <b
+                                    style={{textTransform: "uppercase"}}
+                            >
+                                {activePillbox?.Name}
+                            </b> logged today at {" "} {logTime}
                             </Alert.Heading>
                         </Alert>
                     </ListGroup.Item>
