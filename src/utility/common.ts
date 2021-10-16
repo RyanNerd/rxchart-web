@@ -425,7 +425,7 @@ export const multiSort = (array: IArrayGeneric, sortObject: SortObject): [] => {
 /**
  * Bootstrap default colors as an enum
  */
-export enum BsColors {
+export enum BsColor {
     blue = "#007bff",
     cyan = "#17a2b8",
     danger = "#dc3545",

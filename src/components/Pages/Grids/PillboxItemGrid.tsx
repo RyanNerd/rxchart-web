@@ -4,7 +4,7 @@ import Dropdown from 'react-bootstrap/Dropdown'
 import Table, {TableProps} from 'react-bootstrap/Table';
 import React from 'reactn';
 import {PillboxItemRecord} from 'types/RecordTypes';
-import {BsColors, randomString} from 'utility/common';
+import {BsColor, randomString} from 'utility/common';
 import {PillRowType} from './getPillboxItems';
 
 interface IProps extends TableProps {
@@ -36,7 +36,7 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
      */
     const PillRow = (pill: PillRowType): JSX.Element | null => {
         const isInPillbox = !!(pill.Quantity && pill.Quantity > 0);
-        const color = isInPillbox ? BsColors.success : undefined;
+        const color = isInPillbox ? BsColor.success : undefined;
         const domId = pill.Id ? pill.Id : randomString();
         const fontStyle = isInPillbox ? undefined : 'italic';
         const fontWeight = isInPillbox ? 'bold' : undefined;
