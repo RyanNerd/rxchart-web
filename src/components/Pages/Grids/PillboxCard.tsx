@@ -1,7 +1,7 @@
 import Card from "react-bootstrap/Card";
 import React, {useGlobal} from "reactn";
 import {MedicineRecord, PillboxItemRecord, PillboxRecord} from "types/RecordTypes";
-import {BsColors} from "utility/common";
+import {BsColor} from "utility/common";
 import getPillboxItems, {PillRowType} from "./getPillboxItems";
 import PillboxItemGrid from "./PillboxItemGrid";
 
@@ -47,22 +47,23 @@ const PillboxCard = (props: IProp) => {
                 >
                     <span
                         style={{
-                            color: BsColors.white,
-                            backgroundColor: BsColors.primary,
+                            color: BsColor.white,
+                            backgroundColor: BsColor.primary,
                             padding: ".5rem 1rem",
                             boxSizing: "border-box",
-                            borderRadius: ".25rem"
+                            borderRadius: ".25rem",
+                            textTransform: "uppercase"
                         }}
                     >
                         {pillboxName.trim()}
                     </span>
                     <span
-                        style={{color: BsColors.success, fontWeight: "bold"}}> Drugs
+                        style={{color: BsColor.success, fontWeight: "bold"}}> Drugs
                     </span>
                     {" in the pillbox: "}
                     <span
                         style={{
-                            color: pillboxItemCount > 0 ? BsColors.success : BsColors.gray,
+                            color: pillboxItemCount > 0 ? BsColor.success : BsColor.gray,
                             fontWeight: pillboxItemCount > 0 ? "bold" : undefined
                         }}
                     >

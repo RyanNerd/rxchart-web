@@ -482,6 +482,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             <PillboxListGroup
                                 activePillbox={activePillbox}
                                 disabled={isBusy}
+                                medicineList={medicineList}
                                 onSelect={id => setActivePillbox(pillboxList.find(pb => pb.Id === id) || null)}
                                 onEdit={r => savePillbox(r)}
                                 onDelete={id => deletePillbox(id)}

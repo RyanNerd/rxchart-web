@@ -1,7 +1,7 @@
 import Toast from "react-bootstrap/Toast";
 import React from "reactn";
 import {DrugLogRecord, MedicineRecord} from "types/RecordTypes";
-import {BsColors, getDrugName} from "utility/common";
+import {BsColor, getDrugName} from "utility/common";
 
 interface IProps {
     toast: DrugLogRecord[]
@@ -25,7 +25,7 @@ const DrugLogToast = (props: IProps) => {
             top: 0.95,
             right: 0.95,
             color: "#fff",
-            backgroundColor: BsColors.success
+            backgroundColor: BsColor.success
         }}
         onClose={() => onClose()}
         show={show}
