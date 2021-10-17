@@ -13,6 +13,7 @@ import ResidentEdit from './Modals/ResidentEdit';
 
 interface IProps {
     residentSelected: () => void
+    activeTabKey: string
 }
 
 /**
@@ -22,7 +23,6 @@ interface IProps {
  */
 const ResidentPage = (props: IProps): JSX.Element | null => {
     const [activeResident, setActiveResident] = useGlobal('activeResident');
-    const [activeTabKey] = useGlobal('activeTabKey');
     const [residentList, setResidentList] = useGlobal('residentList');
     const [filteredResidents, setFilteredResidents] = useState<ResidentRecord[]>(residentList);
     const [rm] = useGlobal('residentManager');
@@ -62,7 +62,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     })
 
     // Don't render if this tab isn't active.
-    if (activeTabKey !== 'resident') return null;
+    if (props.activeTabKey !== 'resident') return null;
 
     const onSelected = props.residentSelected;
 

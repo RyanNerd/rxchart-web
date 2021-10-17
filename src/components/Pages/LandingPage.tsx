@@ -1,13 +1,11 @@
-import {TabContent} from "react-bootstrap";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import React, {useGlobal, useEffect, useMemo, useState} from 'reactn';
-import {getCheckoutList} from "utility/common";
+import React, {useGlobal, useMemo} from 'reactn';
+import {ReactNode} from "reactn/default";
 import DiagnosticPage from "./DiagnosticPage";
 import LoginPage from './LoginPage';
 import ManageDrugPage from "./ManageDrugPage";
 import ManageOtcPage from "./ManageOtcPage";
-import MedicineCheckoutPage from "./MedicineCheckoutPage";
 import MedicinePage from "./MedicinePage";
 import ResidentPage from "./ResidentPage";
 
@@ -20,24 +18,12 @@ const LandingPage = () => {
     const [signIn] = useGlobal('signIn');
     const apiKey = signIn.apiKey;
     const [errorDetails] = useGlobal('__errorDetails');
-    const [checkoutDisabled, setCheckoutDisabled] = useState(!activeResident);
-    const [drugLogList] = useGlobal('drugLogList');
 
     // We need to get a ref to the outer (class nav nav-tabs) div element to prevent printing it.
     // React-bootstrap adds this with no id attribute or other method of obtaining a ref, so we need to use
     // the old-fashioned method of element retrieval to get a ref and add the d-print-none class
     const navBarElement = document.getElementsByClassName('nav nav-tabs');
     if (navBarElement?.length > 0) navBarElement[0].classList.add('d-print-none');
-
-    // Enable or disable the Print Medicine Checkout button
-    useEffect(() => {
-        if (drugLogList.length > 0) {
-            const checkoutList = getCheckoutList(drugLogList);
-            setCheckoutDisabled(checkoutList.length <= 0)
-        } else {
-            setCheckoutDisabled(true);
-        }
-    }, [drugLogList])
 
     /**
      * Memoized MedicinePage to reduce number of re-renders
@@ -51,18 +37,40 @@ const LandingPage = () => {
         )
     }, [activeTabKey, activeResident])
 
-    /**
-     * Memoized MedicineCheckoutPage
-     */
-    const checkoutPage = useMemo(() => {
+    const manageDrugPage = useMemo(() => {
         return (
-            <MedicineCheckoutPage
-                drugLogList={drugLogList}
+            <ManageDrugPage
                 activeTabKey={activeTabKey}
-                activeClient={activeResident}
             />
         )
-    }, [drugLogList, activeTabKey, activeResident])
+    }, [activeTabKey])
+
+    const clientPage = useMemo(() => {
+        return (
+            <ResidentPage
+                activeTabKey={activeTabKey}
+                residentSelected={() => setActiveTabKey('medicine')}
+            />)
+    }, [activeTabKey, setActiveTabKey])
+
+    const manageOtcPage = useMemo(() => {
+        return (
+            <ManageOtcPage
+                activeTabKey={activeTabKey}
+            />
+        )
+    }, [activeTabKey])
+
+
+    /**
+     * Tab Title component to format tab appearance
+     * @param {tabKey: string, children: ReactNode} props
+     */
+    const Title = (props: {activeKey: string, children: ReactNode}) => {
+        return (
+            <span className={activeTabKey === props.activeKey ? 'bld' : undefined}>{props.children}</span>
+        )
+    }
 
     return (
         <Tabs
@@ -73,22 +81,22 @@ const LandingPage = () => {
             <Tab
                 disabled={errorDetails}
                 eventKey="login"
-                title={<span className={activeTabKey === 'login' ? 'bld' : ''}>{apiKey ? 'Logout' : 'Login'}</span>}
+                title={<Title activeKey="login">{apiKey ? "Logout" : "Login"}</Title>}
             >
                 <LoginPage/>
             </Tab>
             <Tab
                 disabled={!apiKey}
                 eventKey="resident"
-                title={<span className={activeTabKey === 'resident' ? 'bld' : ''}>Clients</span>}>
-                <ResidentPage
-                    residentSelected={() => setActiveTabKey('medicine')}
-                />
+                title={<Title activeKey="resident">Clients</Title>}>
+                <Tab.Content>
+                    {clientPage}
+                </Tab.Content>
             </Tab>
             <Tab
                 disabled={!apiKey || !activeResident}
                 eventKey="medicine"
-                title={<span className={activeTabKey === 'medicine' ? 'bld' : ''}>Rx</span>}>
+                title={<Title activeKey="medicine">Rx</Title>}>
                 {activeResident && activeTabKey === "medicine" &&
                 <Tab.Content>
                     {medicinePage}
@@ -98,40 +106,29 @@ const LandingPage = () => {
             <Tab
                 disabled={!apiKey || !activeResident}
                 eventKey="manage"
-                title={<span className={activeTabKey === 'manage' ? 'bld' : ''}>Manage Rx</span>}
+                title={<Title activeKey="manage">Manage Rx</Title>}
             >
-                <ManageDrugPage/>
+                <Tab.Content>
+                    {manageDrugPage}
+                </Tab.Content>
             </Tab>
             <Tab
                 disabled={!apiKey}
                 eventKey="manage-otc"
-                title={<span className={activeTabKey === 'manage-otc' ? 'bld' : ''}>Manage OTC</span>}
+                title={<Title activeKey="manage-otc">Manage OTC</Title>}
             >
-                <ManageOtcPage/>
+                <Tab.Content>
+                    {manageOtcPage}
+                </Tab.Content>
             </Tab>
-
-            <Tab
-                disabled={!apiKey || checkoutDisabled || !activeResident}
-                eventKey="medicine-checkout"
-                title="Medicine Checkout"
-            >
-                {activeResident && activeResident && apiKey &&
-                    <TabContent>
-                        {checkoutPage}
-                    </TabContent>
-                }
-            </Tab>
-
             <Tab
                 disabled={!errorDetails}
                 eventKey="error"
-                title={<span className={activeTabKey === 'error' ? 'bld' : ''}>Diagnostics</span>}
+                title={<Title activeKey="error">Diagnostics</Title>}
             >
                 <DiagnosticPage
                     error={errorDetails}
-                    dismissErrorAlert={() => {
-                        window.location.reload();
-                    }}
+                    dismissErrorAlert={() => window.location.reload()}
                 />
             </Tab>
         </Tabs>

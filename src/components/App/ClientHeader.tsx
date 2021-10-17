@@ -71,8 +71,8 @@ const ClientHeader = () => {
 
     return (
         <>
-            <h1
-                className="d-print-none auto-center"
+            <h3
+                className="d-print-none auto-center mb-0"
                 style={{textAlign: "center"}}
             >
                 <ButtonGroup>
@@ -104,7 +104,7 @@ const ClientHeader = () => {
                         clientRecord={activeClient}
                     />
                 </ButtonGroup>
-            </h1>
+            </h3>
 
             {showClientRoster && activeClient &&
                 <ClientRoster

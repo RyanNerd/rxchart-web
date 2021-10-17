@@ -1,5 +1,6 @@
 import DrugLogGrid from "components/Pages/Grids/DrugLogGrid";
 import Button from "react-bootstrap/Button";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
 import ListGroup from "react-bootstrap/ListGroup";
 import React from "reactn";
 import {DrugLogRecord, MedicineRecord, ResidentRecord} from "types/RecordTypes";
@@ -9,12 +10,14 @@ interface IProps {
     drugLogList: DrugLogRecord[]
     medicineList: MedicineRecord[]
     activeClient: ResidentRecord
+    onClose?: () => void
 }
 const CheckoutListGroup = (props: IProps) => {
     const {
         drugLogList,
         medicineList,
-        activeClient
+        activeClient,
+        onClose
     } = props;
 
     const clientName = activeClient ? clientFullName(activeClient) : '';
@@ -25,14 +28,35 @@ const CheckoutListGroup = (props: IProps) => {
     return (
         <ListGroup>
             <ListGroup.Item>
+                <ButtonGroup>
                 <Button
+                    size="sm"
                     className="mb-2 d-print-none"
                     onClick={() => {
                         window.print();
+
+                        if (onClose) {
+                            // Kludge to block JS events until the print dialog goes away (only works in Chrome)
+                            // see: https://stackoverflow.com/a/24325151/4323201
+                            setTimeout(() => {
+                                onClose();
+                            }, 100);
+                        }
                     }}
                 >
                     Print
                 </Button>
+
+                {onClose &&
+                <Button
+                    className="mb-2 d-print-none ml-2"
+                    size="sm"
+                    onClick={() => onClose()}
+                >
+                    Close
+                </Button>
+                }
+                </ButtonGroup>
 
                 <p>
                     {clientName} as a resident of Switchpoint, I declare that I am leaving for the day and verify that I
