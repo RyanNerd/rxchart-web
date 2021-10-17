@@ -60,7 +60,11 @@ const MedListGroup = (props: IProps): JSX.Element => {
     pillboxList.forEach(p => {
         const pillboxId = p.Id as number;
         if (!isPillboxLogToday(pillboxId)) {
-            itemList.push({id: -(pillboxId), description: p.Name, subtext: null}); // Pillbox have negative id
+            itemList.push({
+                id: -(pillboxId),
+                description: p.Name.toUpperCase(),
+                subtext: null
+            }); // Pillbox have negative id
             pbCnt++;
         }
     });
