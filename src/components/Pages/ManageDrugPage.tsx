@@ -7,7 +7,7 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import React, {useGlobal, useState} from 'reactn';
 import {DrugLogRecord, MedicineRecord, newDrugLogRecord, newMedicineRecord} from "types/RecordTypes";
-import {getDrugName, isToday} from "utility/common";
+import {getCheckoutList, getDrugName} from "utility/common";
 import TabContent from "../../styles/common.css";
 import TooltipButton from "./Buttons/TooltipButton";
 import DrugLogEdit from "./Modals/DrugLogEdit";
@@ -113,17 +113,14 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
         return getDrugName(medicineId, medicineList.concat(otcList));
     }
 
+    const checkoutList = getCheckoutList(drugLogList);
+
     /**
      * Return a MedicineRecord[] array of all medicines that have Out populated and was logged today
      */
     const medicineWithCheckout = medicineList.filter(m => {
-            return drugLogList.some(dl => {
-            return dl.MedicineId === m.Id && dl?.Updated && dl.Out && isToday(dl.Updated);
-        }) && m.Active
+        return checkoutList.find(c => c.MedicineId === m.Id)
     })
-
-    // True if there are any drugLog records that have Out > 0
-    const hasCheckout = medicineWithCheckout.length > 0;
 
     return (
         <Form className={TabContent}>
@@ -142,11 +139,13 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                     className="ml-3"
                     size="sm"
                     variant="info"
-                    disabled={!hasCheckout || showCheckoutPrint}
+                    disabled={checkoutList.length === 0 || showCheckoutPrint}
                     onClick={() =>setShowCheckoutPrint(true)}
 
                 >
-                    Print Medicine Checkout {hasCheckout && <Badge>❎</Badge>}
+                    Print Medicine Checkout {
+                    checkoutList.length && <Badge variant="secondary">{checkoutList.length}</Badge>
+                }
                 </Button>
             </Row>
 
@@ -154,7 +153,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                 <Row className="mt-2">
                 <CheckoutListGroup
                     onClose={() => setShowCheckoutPrint(false)}
-                    drugLogList={drugLogList}
+                    checkoutList={checkoutList}
                     medicineList={medicineList}
                     activeClient={activeClient}
                 />

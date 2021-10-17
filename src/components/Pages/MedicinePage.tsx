@@ -4,6 +4,7 @@ import CheckoutListGroup from "components/Pages/ListGroups/CheckoutListGroup";
 import DrugLogToast from "components/Pages/Toasts/DrugLogToast";
 import {SetStateAction} from "react";
 import Alert from "react-bootstrap/Alert"
+import Badge from "react-bootstrap/Badge";
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import ListGroup from "react-bootstrap/ListGroup";
@@ -67,7 +68,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [activeOtc, setActiveOtc] = useState<MedicineRecord | null>(null);
     const [activePillbox, setActivePillbox] = useState<PillboxRecord | null>(null);
     const [activeTabKey, setActiveTabKey] = useState(props.activeTabKey);
-    const [checkoutDisabled, setCheckoutDisabled] = useState(!activeClient);
+    const [checkoutList, setCheckoutList] = useState<DrugLogRecord[]>([]);
     const [clientId, setClientId] = useState<number | null>(activeClient?.Id || null);
     const [displayType, setDisplayType] = useState<DISPLAY_TYPE>(DISPLAY_TYPE.Medicine);
     const [drugLogList, setDrugLogList] = useGlobal('drugLogList');
@@ -126,15 +127,10 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
     // Disable or Enable Print Checkout button based on if there are any drugs marked as to be checked out
     useEffect(() => {
-        if (drugLogList?.length > 0) {
-            const checkoutList = getCheckoutList(drugLogList);
-            if (checkoutList.length > 0) {
-                setCheckoutDisabled(false);
-            } else {
-                setCheckoutDisabled(true);
-            }
+        if (drugLogList) {
+            setCheckoutList(getCheckoutList(drugLogList));
         } else {
-            setCheckoutDisabled(true);
+            setCheckoutList([]);
         }
     }, [drugLogList])
 
@@ -430,14 +426,18 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             className="ml-2 d-print-none"
                             size="sm"
                             type="radio"
-                            disabled={checkoutDisabled}
+                            disabled={checkoutList.length === 0}
                             variant="outline-success"
                             name="radio-print-list-group"
                             value={DISPLAY_TYPE.Print}
                             checked={displayType === DISPLAY_TYPE.Print}
                             onChange={() => setDisplayType(DISPLAY_TYPE.Print)}
                         >
-                            <span className="ml-2">Print Med Checkout</span>
+                            <span className="ml-2">
+                                Print Med Checkout {
+                                checkoutList.length > 0 && <Badge variant="secondary">{checkoutList.length}</Badge>
+                            }
+                            </span>
                         </ToggleButton>
                     </ListGroup.Item>
 
@@ -515,7 +515,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
                     {displayType === DISPLAY_TYPE.Print && activeClient &&
                         <CheckoutListGroup
-                            drugLogList={drugLogList}
+                            checkoutList={checkoutList}
                             medicineList={medicineList}
                             activeClient={activeClient}
                         />
