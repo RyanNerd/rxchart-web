@@ -163,7 +163,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
             {!showCheckoutPrint &&
                 <Row className="mt-2 d-print-none">
                     <ManageDrugGrid
-                        checkoutMeds={medicineWithCheckout}
+                        checkoutList={medicineWithCheckout}
                         onDelete={(mr => {
                             const med = {...mr};
                             med.Active = false;

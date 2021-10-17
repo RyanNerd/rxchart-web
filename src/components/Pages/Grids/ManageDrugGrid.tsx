@@ -9,7 +9,7 @@ interface IProps {
     onEdit: (r: MedicineRecord) => void
     onLogDrug: (r: MedicineRecord) => void
     medicineList: MedicineRecord[]
-    checkoutMeds: MedicineRecord[]
+    checkoutList: MedicineRecord[]
 }
 
 /**
@@ -19,7 +19,7 @@ interface IProps {
  */
 const ManageDrugGrid = (props: IProps): JSX.Element => {
     const {
-        checkoutMeds,
+        checkoutList,
         onDelete,
         onEdit,
         onLogDrug,
@@ -31,7 +31,7 @@ const ManageDrugGrid = (props: IProps): JSX.Element => {
      * @param {MedicineRecord} drug
      */
     const TableRow = (drug: MedicineRecord) => {
-        const hasCheckout = checkoutMeds.find(m => m.Id === drug.Id);
+        const hasCheckout = checkoutList.find(m => m.Id === drug.Id);
 
         return (
             <tr
@@ -44,7 +44,7 @@ const ManageDrugGrid = (props: IProps): JSX.Element => {
                         id={"manage-drug-grid-edit-btn-" + drug.Id}
                         onClick={() => onEdit(drug)}
                     >
-                        Edit {hasCheckout && <Badge> ❎</Badge>}
+                        Edit
                     </Button>
                 </td>
 
@@ -63,7 +63,7 @@ const ManageDrugGrid = (props: IProps): JSX.Element => {
                 <td
                     style={{verticalAlign: "middle"}}
                 >
-                    {drug.Drug}
+                    <span>{hasCheckout && <Badge>❎</Badge>} {drug.Drug}</span>
                 </td>
 
                 <td

@@ -113,6 +113,11 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         setMedicineList(globalMedicineList.filter(m => m.Active));
     }, [globalMedicineList]);
 
+    // Update the checkoutList when drugLogList changes
+    useEffect(() => {
+        setCheckoutList(getCheckoutList(drugLogList));
+    }, [drugLogList])
+
     // Set the default activeMed
     useEffect(() => {
         // We are using medicineList === null as an indicator of if the medicine list has changed
@@ -124,15 +129,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             }
         }
     }, [medicineList, activeMed, setActiveMed])
-
-    // Disable or Enable Print Checkout button based on if there are any drugs marked as to be checked out
-    useEffect(() => {
-        if (drugLogList) {
-            setCheckoutList(getCheckoutList(drugLogList));
-        } else {
-            setCheckoutList([]);
-        }
-    }, [drugLogList])
 
     // Refresh the pillboxDrugLog[]
     useEffect(() => {
