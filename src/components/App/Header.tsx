@@ -11,7 +11,7 @@ const Header = () => {
 
     return (
         <>
-            <h3 style={{textAlign: "center"}} className="d-print-none">℞Chart{}
+            <h4 style={{textAlign: "center"}} className="d-print-none mb-0">℞Chart{}
                 <RxIcon
                     style={{cursor: "pointer", pointerEvents: "all"}}
                     onClick={() => setShowAboutPage(true)}
@@ -23,7 +23,7 @@ const Header = () => {
                 >
                     {signIn.organization}
                 </span>
-            </h3>
+            </h4>
 
             <About
                 show={showAboutPage}

@@ -9,14 +9,17 @@ import TooltipButton from "./Buttons/TooltipButton";
 import Confirm from "./Modals/Confirm";
 import MedicineEdit from "./Modals/MedicineEdit";
 
+interface IProps {
+    activeTabKey: string
+}
+
 /**
  * ManageOtcPage
  * Page for Displaying, editing and adding OTC drugs
  * @returns {JSX.Element | null}
  */
-const ManageOtcPage = (): JSX.Element | null => {
+const ManageOtcPage = (props: IProps): JSX.Element | null => {
     const [, setErrorDetails] = useGlobal('__errorDetails');
-    const [activeTabKey] = useGlobal('activeTabKey');
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [mm] = useGlobal('medicineManager');
     const [otcList, setOtcList] = useGlobal('otcList');
@@ -54,7 +57,7 @@ const ManageOtcPage = (): JSX.Element | null => {
     }, [otcList, searchText])
 
     // If this tab isn't active then don't render
-    if (activeTabKey !== 'manage-otc') return null;
+    if (props.activeTabKey !== 'manage-otc') return null;
 
     /**
      * Given a MedicineRecord Update or Insert the record and rehydrate the global otcList
