@@ -1,4 +1,3 @@
-import {Variant} from "react-bootstrap/types";
 import {DrugLogRecord, MedicineRecord, PillboxItemRecord, ResidentRecord} from "types/RecordTypes";
 
 interface IKey {
@@ -85,80 +84,68 @@ export const calculateLastTaken = (drugId: number, drugLogList: DrugLogRecord[])
 /**
  * Determine the variant string given the lastTaken hours value.
  * @param {number | null} lastTaken
- * @return {Variant}
  */
-export const getLastTakenVariant = (lastTaken: number | null): Variant => {
-    let variant;
+export const getLastTakenVariant = (lastTaken: number | null) => {
+    if (lastTaken && lastTaken >= 8) return 'light';
     switch (lastTaken) {
         case null:
-            variant = 'primary';
-            break;
+            return 'primary';
         case 0:
-            variant = 'danger';
-            break;
+            return 'danger';
         case 1:
-            variant = 'danger';
-            break;
+            return 'danger';
         case 2:
-            variant = 'danger';
-            break;
+            return 'danger';
         case 3:
-            variant = 'warning';
-            break;
+            return 'warning';
         case 4:
-            variant = 'warning';
-            break;
+            return 'warning';
         case 5:
-            variant = 'warning';
-            break;
+            return 'warning';
         case 6:
-            variant = 'info';
-            break;
+            return 'info';
         case 7:
-            variant = 'info';
-            break;
-        default:
-            variant = 'primary';
+            return 'info';
     }
-    return (lastTaken && lastTaken >= 8) ? 'light' : variant;
+    return 'light';
 }
 
 /**
- * Given the variant string return the corresponding hexcolor string
- * @param {Variant} variant
+ * Bootstrap default colors as an enum
  */
-export const getBsColor = (variant: Variant): string => {
-    const lcVariant = variant.toLowerCase();
-    let hexColor;
-    switch (lcVariant) {
-        case 'primary':
-            hexColor = '#0275D8';
-            break;
-        case 'success':
-            hexColor = '#5CB85C';
-            break;
-        case 'info':
-            hexColor = '#5BC0DE';
-            break;
-        case 'warning':
-            hexColor = '#F0AD4E';
-            break;
-        case 'danger':
-            hexColor = '#D9534F';
-            break;
-        case 'inverse':
-            hexColor = '#292B2C';
-            break;
-        case 'faded':
-            hexColor = '#F7F7F7';
-            break;
-        case 'light':
-            hexColor = '#888888'; // Custom color
-            break
-        default:
-            throw new Error('variant ' + variant + ' is invalid.');
-    }
-    return hexColor;
+export enum BsColor {
+    blue = "#007bff",
+    cyan = "#17a2b8",
+    danger = "#dc3545",
+    dark = "#343a40",
+    gray = "#6c757d",
+    grayDark = "#343a40",
+    grayLight = "#888888", // Custom
+    green = "#28a745",
+    indigo = "#6610f2",
+    info = "#17a2b8",
+    light = grayLight, // Override: "#f8f9fa"
+    orange = "#fd7e14",
+    pink = "#e83e8c",
+    primary = "#007bff",
+    purple = "#6f42c1",
+    red = "#dc3545",
+    secondary = "#6c757d",
+    success = "#28a745",
+    teal = "#20c997",
+    warning = "#ffc107",
+    white = "#fff",
+    yellow = "#ffc107"
+}
+
+type T_BS_Colors = keyof typeof BsColor;
+
+/**
+ * Given the variant string return the corresponding hexcolor string
+ * @param {T_BS_Colors} variant
+ */
+export const getBsColor = (variant: T_BS_Colors) => {
+    return BsColor[variant];
 }
 
 /**
@@ -420,33 +407,6 @@ export const multiSort = (array: IArrayGeneric, sortObject: SortObject): [] => {
         }
         return sorted;
     });
-}
-
-/**
- * Bootstrap default colors as an enum
- */
-export enum BsColor {
-    blue = "#007bff",
-    cyan = "#17a2b8",
-    danger = "#dc3545",
-    dark = "#343a40",
-    gray = "#6c757d",
-    grayDark = "#343a40",
-    green = "#28a745",
-    indigo = "#6610f2",
-    info = "#17a2b8",
-    light = "#f8f9fa",
-    orange = "#fd7e14",
-    pink = "#e83e8c",
-    primary = "#007bff",
-    purple = "#6f42c1",
-    red = "#dc3545",
-    secondary = "#6c757d",
-    success = "#28a745",
-    teal = "#20c997",
-    warning = "#ffc107",
-    white = "#fff",
-    yellow = "#ffc107"
 }
 
 /**
