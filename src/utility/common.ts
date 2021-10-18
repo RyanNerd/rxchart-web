@@ -83,42 +83,11 @@ export const calculateLastTaken = (drugId: number, drugLogList: DrugLogRecord[])
 };
 
 /**
- * Bootstrap default colors as an enum
- */
-export enum BsColor {
-    blue = "#007bff",
-    cyan = "#17a2b8",
-    danger = "#dc3545",
-    dark = "#343a40",
-    faded = "#F7F7F7",
-    gray = "#6c757d",
-    grayDark = "#343a40",
-    green = "#28a745",
-    indigo = "#6610f2",
-    info = "#17a2b8",
-    inverse = "#292B2C",
-    light = "#f8f9fa",
-    orange = "#fd7e14",
-    pink = "#e83e8c",
-    primary = "#007bff",
-    purple = "#6f42c1",
-    red = "#dc3545",
-    secondary = "#6c757d",
-    success = "#28a745",
-    teal = "#20c997",
-    warning = "#ffc107",
-    white = "#fff",
-    yellow = "#ffc107"
-}
-
-export type T_BS_Colors = keyof typeof BsColor;
-
-/**
  * Determine the variant string given the lastTaken hours value.
  * @param {number | null} lastTaken
  * @return {Variant}
  */
-export const getLastTakenVariant = (lastTaken: number | null): Variant | T_BS_Colors => {
+export const getLastTakenVariant = (lastTaken: number | null): Variant => {
     let variant;
     switch (lastTaken) {
         case null:
@@ -158,8 +127,38 @@ export const getLastTakenVariant = (lastTaken: number | null): Variant | T_BS_Co
  * Given the variant string return the corresponding hexcolor string
  * @param {Variant} variant
  */
-export const getBsColor = (variant: T_BS_Colors): string => {
-    return BsColor[variant];
+export const getBsColor = (variant: Variant): string => {
+    const lcVariant = variant.toLowerCase();
+    let hexColor;
+    switch (lcVariant) {
+        case 'primary':
+            hexColor = '#0275D8';
+            break;
+        case 'success':
+            hexColor = '#5CB85C';
+            break;
+        case 'info':
+            hexColor = '#5BC0DE';
+            break;
+        case 'warning':
+            hexColor = '#F0AD4E';
+            break;
+        case 'danger':
+            hexColor = '#D9534F';
+            break;
+        case 'inverse':
+            hexColor = '#292B2C';
+            break;
+        case 'faded':
+            hexColor = '#F7F7F7';
+            break;
+        case 'light':
+            hexColor = '#888888'; // Custom color
+            break
+        default:
+            throw new Error('variant ' + variant + ' is invalid.');
+    }
+    return hexColor;
 }
 
 /**
@@ -421,6 +420,33 @@ export const multiSort = (array: IArrayGeneric, sortObject: SortObject): [] => {
         }
         return sorted;
     });
+}
+
+/**
+ * Bootstrap default colors as an enum
+ */
+export enum BsColor {
+    blue = "#007bff",
+    cyan = "#17a2b8",
+    danger = "#dc3545",
+    dark = "#343a40",
+    gray = "#6c757d",
+    grayDark = "#343a40",
+    green = "#28a745",
+    indigo = "#6610f2",
+    info = "#17a2b8",
+    light = "#f8f9fa",
+    orange = "#fd7e14",
+    pink = "#e83e8c",
+    primary = "#007bff",
+    purple = "#6f42c1",
+    red = "#dc3545",
+    secondary = "#6c757d",
+    success = "#28a745",
+    teal = "#20c997",
+    warning = "#ffc107",
+    white = "#fff",
+    yellow = "#ffc107"
 }
 
 /**

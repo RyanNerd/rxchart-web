@@ -8,7 +8,7 @@ import {
     getFormattedDate,
     getLastTakenVariant,
     getObjectByProperty,
-    isToday, T_BS_Colors
+    isToday
 } from "utility/common";
 
 interface IProps {
@@ -78,7 +78,7 @@ const DrugLogHistoryGrid = (props: IProps): JSX.Element => {
         const drugStrength = drugColumnLookup(medicineId, 'Strength');
         const updatedDate = new Date(drug.Updated || '');
         const lastTaken = calculateLastTaken(medicineId, [drug]);
-        const variant = getLastTakenVariant(lastTaken) as T_BS_Colors;
+        const variant = getLastTakenVariant(lastTaken);
         const variantColor = getBsColor(variant);
         const fontWeight = isToday(updatedDate) ? 'bold' : undefined;
 
