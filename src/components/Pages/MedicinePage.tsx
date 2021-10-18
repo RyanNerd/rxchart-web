@@ -323,8 +323,11 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             await setDrugLogList(drugLogs);
         }
 
-        // Get all the pillboxItems for the activePillbox that have a Quantity > 0
-        const pbi = pillboxItemList.filter(p => p.PillboxId === activePillbox?.Id && p.Quantity > 0);
+        // Get all the pillboxItems for the activePillbox that have a Quantity > 0 and Medicine.Active
+        const pbi = pillboxItemList.filter(
+            p => p.PillboxId === activePillbox?.Id &&
+                 p.Quantity > 0 &&
+                 medicineList.find(m => p.MedicineId === m.Id));
 
         // Iterate through the pillbox items and log the drug as taken
         pbi.forEach(pbi => {
