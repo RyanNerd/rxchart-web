@@ -501,7 +501,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                                 <MedDrugLogHistory
                                     activeClient={activeClient}
                                     drugLogList={drugLogList}
-                                    medicineList={medicineList.concat(otcList)}
+                                    medicineList={globalMedicineList.concat(otcList)}
                                     onEdit={(d: DrugLogRecord|undefined) => addEditDrugLog(d)}
                                     onDelete={(d: SetStateAction<DrugLogRecord|null>) => setShowDeleteDrugLogRecord(d)}
                                 />
