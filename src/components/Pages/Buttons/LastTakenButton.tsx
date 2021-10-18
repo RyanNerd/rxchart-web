@@ -25,7 +25,7 @@ const LastTakenButton = (props: IProps): JSX.Element | null => {
             size="sm"
             disabled
             style={{cursor: "default"}}
-            variant={(lastTaken && lastTaken > 6) ? 'light' : getLastTakenVariant(lastTaken)}
+            variant={getLastTakenVariant(lastTaken)}
         >
             {/* Display in BOLD if taken 3 or fewer hours ago */}
             {lastTaken && lastTaken <= 3 ?
