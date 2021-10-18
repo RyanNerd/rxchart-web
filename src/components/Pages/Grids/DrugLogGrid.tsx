@@ -8,7 +8,7 @@ import {
     getFormattedDate,
     getLastTakenVariant,
     getObjectByProperty,
-    isToday
+    isToday, T_BS_Colors
 } from "utility/common";
 
 interface IProps extends TableProps {
@@ -89,7 +89,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
         const createdDate = new Date(drug.Created || '');
         const updatedDate = new Date(drug.Updated || '');
         const lastTaken = calculateLastTaken(medicineId, [drug]);
-        const variant = getLastTakenVariant(lastTaken);
+        const variant = getLastTakenVariant(lastTaken) as T_BS_Colors;
         const variantColor = getBsColor(variant);
         const fontWeight = isToday(updatedDate) ? 'bold' : undefined;
 
