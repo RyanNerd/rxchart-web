@@ -14,7 +14,7 @@ import {MedicineRecord, newPillboxRecord, PillboxItemRecord, PillboxRecord} from
 import {
     BsColor,
     getDrugName,
-    getDrugsInThePillbox,
+    getDrugsInThePillbox, getMedicineRecord,
     getPillboxLogDate,
     isPillboxLogToday,
     multiSort,
@@ -39,6 +39,7 @@ interface IProps {
 
 interface IPillboxLineItem {
     Drug: string
+    Strength: string
     Qty: number
 }
 
@@ -87,11 +88,15 @@ const PillboxListGroup = (props: IProps) => {
     const drugsInThePillbox = activePillbox?.Id ? getDrugsInThePillbox(activePillbox.Id, pillboxItemList) : [];
     const pillboxLineItems: IPillboxLineItem[] = [];
     drugsInThePillbox.forEach(d => {
-        const drugName = getDrugName(d.MedicineId, medicineList) || "[unknown]";
-        const qty = d.Quantity
-        pillboxLineItems.push(
-            {Drug: drugName, Qty: qty}
-        );
+        const drugName = getDrugName(d.MedicineId, medicineList);
+        if (drugName) {
+            const qty = d.Quantity;
+            const medicine = getMedicineRecord(d.MedicineId, medicineList);
+            const strength = medicine?.Strength || '';
+            pillboxLineItems.push(
+                {Drug: drugName, Strength: strength, Qty: qty}
+            );
+        }
     })
 
     // logTime will be the date/time that the activePillbox was logged today, otherwise null if not logged
@@ -142,7 +147,7 @@ const PillboxListGroup = (props: IProps) => {
     const PillboxLineItem = (i: IPillboxLineItem) => {
         return (
             <li className="rx-icon">
-                {"("} {i.Qty} {") "} {i.Drug}
+                {"("} {i.Qty} {") "} {i.Drug} {" "} {i.Strength}
             </li>
         )
     }
