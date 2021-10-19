@@ -28,19 +28,19 @@ const PillboxLogGrid = (props: IProps) => {
                 <th>Time</th>
             </tr>
             <tbody>
-            {pillboxLogList.map(tpbl => {
-                const updated = tpbl.Updated ?
-                    new Date(tpbl.Updated).toLocaleString('en-US', {
+            {pillboxLogList.map(log => {
+                const updated = log.Updated ?
+                    new Date(log.Updated).toLocaleString('en-US', {
                         hour: '2-digit',
                         minute: '2-digit'
                     }) : '';
                 return (
                     <tr style={{fontWeight: "bold", color: BsColor.success}}>
                         <td>
-                            {tpbl.Drug} {" "} {tpbl.Strength}
+                            {log.Drug} {" "} {log.Strength}
                         </td>
                         <td>
-                            {tpbl.Notes}
+                            {log.Notes}
                         </td>
                         <td>
                             {updated}

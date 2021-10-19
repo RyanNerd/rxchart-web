@@ -142,7 +142,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                     verticalAlign: "middle",
                     fontWeight
                 }}>
-                    <b>{drug.Notes}</b>
+                    {drug.PillboxItemId && <span>{"💊 "}</span>} <b>{drug.Notes}</b>
                 </td>
                 {columns.includes('Out') &&
                     <td style={{

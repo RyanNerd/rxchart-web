@@ -11,7 +11,7 @@ import ListGroup from "react-bootstrap/ListGroup";
 import Row from 'react-bootstrap/Row';
 import ToggleButton from "react-bootstrap/ToggleButton"
 import React, {useEffect, useGlobal, useState} from 'reactn';
-import {DrugLogRecord, MedicineRecord, PillboxRecord, ResidentRecord} from "types/RecordTypes";
+import {DrugLogRecord, MedicineRecord, newDrugLogRecord, PillboxRecord, ResidentRecord} from "types/RecordTypes";
 import {
     calculateLastTaken,
     getCheckoutList,
@@ -136,35 +136,26 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             const pillboxMedLog = [] as TPillboxLog[];
             pillboxItemList.forEach(pbi => {
                 if (pbi.PillboxId === activePillbox.Id && pbi.Quantity) {
-                    const pbl = drugLogList.find(
-                        dl => dl.Updated &&
-                              dl.MedicineId === pbi.MedicineId &&
-                              isToday(dl.Updated) &&
-                              dl.Notes?.includes('pb:')
+                    const pbl = drugLogList.find(dl =>
+                         dl.PillboxItemId === pbi.Id &&
+                         dl.MedicineId === pbi.MedicineId &&
+                         dl.Updated && isToday(dl.Updated)
                     );
+
                     if (pbl) {
                         const med = medicineList?.find(m => m.Id === pbl.MedicineId);
-                        pillboxMedLog.push(
-                            {
-                                Drug: med?.Drug,
-                                Strength: med?.Strength,
-                                Quantity: pbi.Quantity,
-                                Notes: pbl.Notes,
-                                Updated: pbl.Updated
-                            }
-                        )
+                        pillboxMedLog.push({
+                            Drug: med?.Drug,
+                            Strength: med?.Strength,
+                            Quantity: pbi.Quantity,
+                            Notes: pbl.Notes,
+                            Updated: pbl.Updated
+                        });
                     }
                 }
             })
-            setPillboxDrugLog(
-                multiSort(
-                    pillboxMedLog,
-                    {
-                        Quantity: SortDirection.asc,
-                        Drug: SortDirection.desc
-                    }
-                )
-            );
+
+            setPillboxDrugLog(multiSort(pillboxMedLog, {Quantity: SortDirection.asc, Drug: SortDirection.desc}));
         }
     }, [medicineList, pillboxItemList, activePillbox, drugLogList])
 
@@ -265,15 +256,10 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      * @param {number} amount
      */
     const handleLogDrugAmount = (amount: number) => {
-        const notes = amount.toString();
-        const drugLogInfo = {
-            Id: null,
-            ResidentId: clientId,
-            MedicineId: activeMed?.Id as number,
-            Notes: notes,
-            In: null,
-            Out: null
-        };
+        const drugLogInfo = {...newDrugLogRecord}
+        drugLogInfo.ResidentId = clientId;
+        drugLogInfo.MedicineId = activeMed?.Id as number;
+        drugLogInfo.Notes = amount.toString();
         saveDrugLog(drugLogInfo).then(r => setToast([r]));
     }
 
@@ -284,15 +270,10 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const handleLogOtcDrugAmount = (amount: number) => {
         const drugId = activeOtc?.Id as number;
         if (drugId) {
-            const notes = amount.toString();
-            const drugLogInfo = {
-                Id: null,
-                ResidentId: clientId,
-                MedicineId: drugId,
-                Notes: notes,
-                In: null,
-                Out: null
-            };
+            const drugLogInfo = {...newDrugLogRecord};
+            drugLogInfo.ResidentId = clientId
+            drugLogInfo.MedicineId = drugId;
+            drugLogInfo.Notes = amount.toString();
             saveDrugLog(drugLogInfo).then(r => setToast([r]));
         }
     }
@@ -338,15 +319,11 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
         // Iterate through the pillbox items
         pbi.forEach(i => {
-            const drugLogInfo = {
-                Id: null,
-                ResidentId: clientId,
-                MedicineId: i.MedicineId,
-                Notes: 'pb: ' + i.Quantity,
-                In: null,
-                Out: null
-            } as DrugLogRecord;
-            // Insert the drug log for the pillbox item
+            const drugLogInfo = {...newDrugLogRecord};
+            drugLogInfo.ResidentId = clientId;
+            drugLogInfo.MedicineId = i.MedicineId;
+            drugLogInfo.PillboxItemId = i.Id;
+            drugLogInfo.Notes = i.Quantity.toString();
             updatePillboxLog(drugLogInfo).then(dlr => toastQ.push(dlr));
         });
 

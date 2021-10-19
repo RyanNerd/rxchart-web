@@ -17,10 +17,11 @@ export type ResidentRecord = {
 export type DrugLogRecord = {
     Created?: string | null
     Id: null | number
+    In: null | number
     MedicineId: number
     Notes: null | string
-    In: null | number
     Out: null | number
+    PillboxItemId: number | null
     ResidentId: number
     Updated?: null | Date
     [key: string]: any
@@ -61,6 +62,7 @@ export const newDrugLogRecord = {
     Notes: "",
     In: null,
     Out: null,
+    PillboxItemId: null,
     ResidentId: 0
 } as DrugLogRecord;
 

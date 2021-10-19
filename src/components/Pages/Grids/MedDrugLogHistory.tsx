@@ -1,5 +1,6 @@
 import DrugLogHistoryGrid from "components/Pages/Grids/DrugLogHistoryGrid";
 import Button from "react-bootstrap/Button";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
 import React, {useEffect, useState} from "reactn";
 import {DrugLogRecord, MedicineRecord, ResidentRecord} from "types/RecordTypes";
 import {clientDOB, clientFullName} from "utility/common";
@@ -39,48 +40,45 @@ const MedDrugLogHistory = (props: IProps) => {
         }
     }, [printing])
 
+    const hasPillboxItems = drugLogList.some(d => d.PillboxItemId);
+
     return (
         <>
+            <ButtonGroup className="d-print-none mr-3 mb-1">
             <Button
-                className="d-print-none mr-3 mb-1"
                 onClick={() => setPrinting(true)}
                 variant="primary"
                 size="sm"
             >
                 Print
             </Button>
+                {hasPillboxItems && <span className="ml-3">💊 indicates drug logged from a Pillbox</span>}
+            </ButtonGroup>
 
             {activeClient && printing &&
-                 <ul
+                <ul
                     style={{listStyleType: "none"}}
-                 >
-                     <li
-                         style={{
-                             fontSize: "20px",
-                             fontWeight: "bold",
-                         }}
-                     >
-                         {clientFullName(activeClient) + ' DOB: ' + clientDOB(activeClient)}
-                     </li>
+                >
+                    <li
+                        style={{
+                            fontSize: "20px",
+                            fontWeight: "bold",
+                        }}
+                    >
+                        {clientFullName(activeClient) + ' DOB: ' + clientDOB(activeClient)}
+                    </li>
 
-                     <span
+                    <span
                         style={{fontSize: "12px"}}
-                     >
+                    >
                      <li>
-                         <b>LEGEND:</b>
+                         <b>LEGEND:</b> {hasPillboxItems && <><span>💊: </span> <i>Pillbox</i></>}
+                         <span> Out:</span> <i>Taken out of shelter</i>
+                         <span> In:</span> <i>Returned to shelter</i>
                      </li>
-                     <li>
-                         <span style ={{color: "blue"}}>pb: <i>Pillbox</i></span>
-                     </li>
-                     <li>
-                         <span style ={{color: "blue"}}>Out: <i>Taken out of shelter</i></span>
-                     </li>
-                     <li>
-                         <span style ={{color: "blue"}}>In: <i>Returned to shelter</i></span>
-                     </li>
-                     </span>
-                 </ul>
-           }
+                    </span>
+                </ul>
+            }
 
             <div className="mt-3">
                 <DrugLogHistoryGrid
