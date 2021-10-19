@@ -21,6 +21,7 @@ const PillboxLogGrid = (props: IProps) => {
             size="sm"
             striped
         >
+            <th style={{textAlign: 'center', verticalAlign: "middle"}} colSpan={3}>Pillbox Log History</th>
             <tr>
                 <th>Drug</th>
                 <th>Notes/Amount</th>

@@ -127,13 +127,11 @@ const PillboxListGroup = (props: IProps) => {
                 value={pb.Id as number}
                 checked={activePillbox?.Id === pb.Id}
                 onChange={() => onSelect(pb.Id as number)}
-                style={{textAlign: "justify", textTransform: "uppercase"}}
+                style={{textAlign: "justify"}}
             >
-                <span
-                    className="ml-2"
-                >
+                <span className="ml-2">
                     {disabled && <><DisabledSpinner/>{" "}</>}
-                    PILLBOX: <b>{pb.Name}</b>
+                    Pillbox: <b style={{textTransform: "uppercase"}}>{pb.Name}</b>
                 </span>
             </ToggleButton>
         )
@@ -142,7 +140,6 @@ const PillboxListGroup = (props: IProps) => {
     /**
      * Line Item component for pills in the pillbox
      * @param {Drug: string; Qty: number; } i
-     * @constructor
      */
     const PillboxLineItem = (i: IPillboxLineItem) => {
         return (
@@ -212,12 +209,42 @@ const PillboxListGroup = (props: IProps) => {
         )
     }
 
+    /**
+     * The + Log Pillbox button component
+     */
+    const LogPillboxButton = () => {
+        return (
+            <Button
+                disabled={
+                    disabled ||
+                    drugsInThePillbox.length === 0 ||
+                    showAlert
+                }
+                variant={drugsInThePillbox.length === 0 || logTime ? "outline-warning" : "primary"}
+                size="sm"
+                onClick={() => {
+                    logPillbox();
+                    setShowAlert(true);
+                }}
+            >
+                {disabled && <><DisabledSpinner/>{" "}</>}
+                + Log Pillbox <b style={{textTransform: "uppercase"}}>{activePillbox?.Name}</b>
+                {logTime &&
+                    <Badge
+                        variant="danger"
+                        className="ml-2"
+                    >
+                        {"Logged: " + logTime}
+                    </Badge>
+                }
+            </Button>
+        )
+    }
+
     return (
         <>
             <ListGroup>
-                <ListGroup.Item
-                    style={listboxItemStyle}
-                >
+                <ListGroup.Item>
                     <ButtonGroup>
                         <Button
                             disabled={disabled}
@@ -250,7 +277,7 @@ const PillboxListGroup = (props: IProps) => {
                                 </Button>
                                 <Button
                                     disabled={disabled}
-                                    className="ml-2"
+                                    className="ml-2 mr-5"
                                     onClick={() => setShowPillboxDeleteConfirm(true)}
                                     size="sm"
                                     variant="danger"
@@ -268,31 +295,7 @@ const PillboxListGroup = (props: IProps) => {
                                         {activePillbox.Name}
                                     </span>
                                 </Button>
-                                <Button
-                                    className="ml-5"
-                                    disabled={
-                                        disabled ||
-                                        drugsInThePillbox.length === 0 ||
-                                        showAlert
-                                    }
-                                    variant={drugsInThePillbox.length === 0 || logTime ? "outline-warning" : "primary"}
-                                    size="sm"
-                                    onClick={() => {
-                                        logPillbox();
-                                        setShowAlert(true);
-                                    }}
-                                >
-                                    {disabled && <><DisabledSpinner/>{" "}</>}
-                                    + Log Pillbox <b style={{textTransform: "uppercase"}}>{activePillbox.Name}</b>
-                                    {logTime &&
-                                        <Badge
-                                            variant="danger"
-                                            className="ml-2"
-                                        >
-                                            {"Logged: " + logTime}
-                                        </Badge>
-                                    }
-                                </Button>
+                                {drugsInThePillbox.length > 0 && <LogPillboxButton/>}
                             </>
                         }
                     </ButtonGroup>
@@ -301,15 +304,15 @@ const PillboxListGroup = (props: IProps) => {
                 {pillboxList.length > 0 ?
                     (
                         <ListGroup.Item>
-                            <Row>
-                                <Col>
+                            <Row noGutters>
+                                <Col xl={5}>
                                     <ButtonGroup vertical>
                                         {pillboxList.map(PillboxRadioButton)}
                                     </ButtonGroup>
                                 </Col>
 
-                                <Col>
-                                    {PillboxContentCard()}
+                                <Col xl={7}>
+                                    <PillboxContentCard/>
                                 </Col>
                             </Row>
                         </ListGroup.Item>
@@ -321,7 +324,8 @@ const PillboxListGroup = (props: IProps) => {
                                 There are no Pillboxes. Click on the <b>+ Pillbox</b> button to add one.
                             </Card.Body>
                         </Card>
-                    )}
+                    )
+                }
 
                 {children && logTime &&
                     <ListGroup.Item
@@ -345,7 +349,7 @@ const PillboxListGroup = (props: IProps) => {
                                 className="mb-0"
                             >
                                 Pillbox <b
-                                    style={{textTransform: "uppercase"}}
+                                style={{textTransform: "uppercase"}}
                             >
                                 {activePillbox?.Name}
                             </b> logged today at {" "} {logTime}
@@ -363,11 +367,10 @@ const PillboxListGroup = (props: IProps) => {
                 }
             </ListGroup>
 
-            {/*Add/Edit Pillbox Modal*/}
             {pillboxInfo &&
                 <PillboxEdit
                     onClose={
-                        (r) => {
+                        r => {
                             setPillboxInfo(null);
                             if (r) onEdit(r);
                         }
@@ -377,7 +380,6 @@ const PillboxListGroup = (props: IProps) => {
                 />
             }
 
-            {/*Delete Pillbox Modal*/}
             <ConfirmDialogModal
                 centered
                 show={showPillboxDeleteConfirm}
