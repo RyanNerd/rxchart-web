@@ -4,8 +4,8 @@
   "private": false,
   "dependencies": {
     "@types/bwip-js": "^2.1.1",
-    "@types/node": "^16.10.3",
-    "@types/react": "^17.0.27",
+    "@types/node": "^16.11.1",
+    "@types/react": "^17.0.30",
     "@types/react-dom": "^17.0.9",
     "bootstrap": "^4.6.0",
     "bwip-js": "^3.0.4",
@@ -16,7 +16,7 @@
     "react-new-improved-window": "^0.2.4",
     "react-scripts": "^4.0.3",
     "reactn": "^2.2.7",
-    "typescript": "^4.4.3"
+    "typescript": "^4.4.4"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -45,5 +45,17 @@
     "tslint": "^6.1.3",
     "tslint-config-prettier": "^1.18.0",
     "tslint-react-hooks": "^2.2.2"
+  },
+  "prettier": {
+    "$schema": "http://json.schemastore.org/prettierrc",
+    "printWidth": 120,
+    "trailingComma": "none",
+    "bracketSameLine": false,
+    "jsxBracketSameLine": false,
+    "singleQuote": true,
+    "tabWidth": 4,
+    "bracketSpacing": false,
+    "endOfLine": "lf",
+    "arrowParens:": "always"
   }
 }
