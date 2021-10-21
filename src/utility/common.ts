@@ -1,7 +1,7 @@
-import {DrugLogRecord, MedicineRecord, PillboxItemRecord, ResidentRecord} from "types/RecordTypes";
+import {DrugLogRecord, MedicineRecord, ResidentRecord} from 'types/RecordTypes';
 
 interface IKey {
-    [key: string]: any
+    [key: string]: any;
 }
 
 /**
@@ -24,14 +24,14 @@ export const clientDOB = (resident: ResidentRecord): string => {
 export const dateToString = (month: string, day: string, year: string, leadingZeros?: boolean): string => {
     const padZero = (num: string) => {
         return ('00' + parseInt(num)).slice(-2);
-    }
+    };
 
     if (leadingZeros) {
         return padZero(month) + '/' + padZero(day) + '/' + year;
     } else {
         return month + '/' + day + '/' + year;
     }
-}
+};
 
 /**
  * Given a ResidentRecord return the first and last name of the client in the format: first last
@@ -41,7 +41,7 @@ export const dateToString = (month: string, day: string, year: string, leadingZe
  */
 export const clientFullName = (resident: ResidentRecord, includeNickname: boolean = false): string => {
     const clientName = resident.FirstName.trim() + ' ' + resident.LastName.trim();
-    if (includeNickname && (resident?.Nickname && resident?.Nickname.trim().length > 0)) {
+    if (includeNickname && resident?.Nickname && resident?.Nickname.trim().length > 0) {
         return clientName + ' "' + resident.Nickname.trim() + '"';
     } else {
         return clientName;
@@ -53,8 +53,7 @@ export const clientFullName = (resident: ResidentRecord, includeNickname: boolea
  * @return {string}
  */
 export const randomString = (): string => {
-    return Math.random().toString(36).substring(2, 15) +
-        Math.random().toString(36).substring(2, 15)
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 };
 
 /**
@@ -68,12 +67,12 @@ export const calculateLastTaken = (drugId: number, drugLogList: DrugLogRecord[])
         return null;
     }
     let diff;
-    const filteredDrugs = drugLogList.filter(drug => drug && drug.MedicineId === drugId);
+    const filteredDrugs = drugLogList.filter((drug) => drug && drug.MedicineId === drugId);
     const latestDrug = filteredDrugs && filteredDrugs.length > 0 ? filteredDrugs[0] : null;
     if (latestDrug) {
         const date = new Date(latestDrug.Created || '');
-        const latestDrugDate = Math.round((date).getTime() / 1000);
-        const now = Math.round((new Date()).getTime() / 1000);
+        const latestDrugDate = Math.round(date.getTime() / 1000);
+        const now = Math.round(new Date().getTime() / 1000);
         diff = Math.round((now - latestDrugDate) / 3600);
     } else {
         diff = null;
@@ -108,34 +107,34 @@ export const getLastTakenVariant = (lastTaken: number | null) => {
             return 'info';
     }
     return 'light';
-}
+};
 
 /**
  * Bootstrap default colors as an enum
  */
 export enum BsColor {
-    blue = "#007bff",
-    cyan = "#17a2b8",
-    danger = "#dc3545",
-    dark = "#343a40",
-    gray = "#6c757d",
-    grayDark = "#343a40",
-    grayLight = "#888888", // Custom
-    green = "#28a745",
-    indigo = "#6610f2",
-    info = "#17a2b8",
+    blue = '#007bff',
+    cyan = '#17a2b8',
+    danger = '#dc3545',
+    dark = '#343a40',
+    gray = '#6c757d',
+    grayDark = '#343a40',
+    grayLight = '#888888', // Custom
+    green = '#28a745',
+    indigo = '#6610f2',
+    info = '#17a2b8',
     light = grayLight, // Override: "#f8f9fa"
-    orange = "#fd7e14",
-    pink = "#e83e8c",
-    primary = "#007bff",
-    purple = "#6f42c1",
-    red = "#dc3545",
-    secondary = "#6c757d",
-    success = "#28a745",
-    teal = "#20c997",
-    warning = "#ffc107",
-    white = "#fff",
-    yellow = "#ffc107"
+    orange = '#fd7e14',
+    pink = '#e83e8c',
+    primary = '#007bff',
+    purple = '#6f42c1',
+    red = '#dc3545',
+    secondary = '#6c757d',
+    success = '#28a745',
+    teal = '#20c997',
+    warning = '#ffc107',
+    white = '#fff',
+    yellow = '#ffc107'
 }
 
 type T_BS_Colors = keyof typeof BsColor;
@@ -146,7 +145,7 @@ type T_BS_Colors = keyof typeof BsColor;
  */
 export const getBsColor = (variant: T_BS_Colors) => {
     return BsColor[variant];
-}
+};
 
 /**
  * Given a date object return true if the date is today.
@@ -164,20 +163,20 @@ export const isToday = (dateIn: Date): boolean => {
     const nowFull = now.toLocaleString('en-US', options);
     const dateFull = date.toLocaleString('en-US', options);
     return nowFull === dateFull;
-}
+};
 
 /**
  * Return an object containing the day, month, and year as numbers and a date indicating now or a given date
  * @param {Date} inDate
  * @return {month: number, day: number, year: number, now: Date}
  */
-export const getMDY = (inDate?: Date): { month: number, day: number, year: number, now: Date } => {
+export const getMDY = (inDate?: Date): {month: number; day: number; year: number; now: Date} => {
     const now = inDate ? new Date(inDate) : new Date();
     const day = now.getDate();
     const month = now.getMonth() + 1;
     const year = now.getFullYear();
     return {month, day, year, now};
-}
+};
 
 /**
  * Given a string or Date object return the formatted string of the date: mm/dd/yyyy, hh:mm AM
@@ -185,7 +184,7 @@ export const getMDY = (inDate?: Date): { month: number, day: number, year: numbe
  * @return {string}
  */
 export const getFormattedDate = (date: Date | string): string => {
-    const dt = (typeof date === 'string') ? new Date(date) : date;
+    const dt = typeof date === 'string' ? new Date(date) : date;
     return dt.toLocaleString('en-US', {
         month: '2-digit',
         day: '2-digit',
@@ -194,7 +193,7 @@ export const getFormattedDate = (date: Date | string): string => {
         minute: '2-digit',
         hour12: true
     } as Intl.DateTimeFormatOptions);
-}
+};
 
 /**
  * Given a date return true if the date is in the future, false otherwise.
@@ -208,7 +207,7 @@ export const isDateFuture = (dateIn: Date): boolean => {
     const nowString = nowMDY.year.toString() + ('00' + nowMDY.month).slice(-2) + ('00' + nowMDY.day).slice(-2);
     const dateString = dateMDY.year.toString() + ('00' + dateMDY.month).slice(-2) + ('00' + dateMDY.day).slice(-2);
     return parseInt(dateString) > parseInt(nowString);
-}
+};
 
 /**
  * Return an object in an array that matches the object.propName === searchValue
@@ -218,8 +217,8 @@ export const isDateFuture = (dateIn: Date): boolean => {
  * @return {Object | undefined}
  */
 export const getObjectByProperty = <T>(objectList: IKey, propName: string, searchValue: any): T | undefined => {
-    return objectList.find((obj: IKey) => (obj[propName] === searchValue));
-}
+    return objectList.find((obj: IKey) => obj[propName] === searchValue);
+};
 
 /**
  * Given the MedicineId, and medicineList return the name of the drug
@@ -229,7 +228,7 @@ export const getObjectByProperty = <T>(objectList: IKey, propName: string, searc
  */
 export const getDrugName = (medicineId: number, medicineList: MedicineRecord[]): string | undefined => {
     return getMedicineRecord(medicineId, medicineList)?.Drug;
-}
+};
 
 /**
  * Given the Id of the Medicine return the medicine record
@@ -239,7 +238,7 @@ export const getDrugName = (medicineId: number, medicineList: MedicineRecord[]):
  */
 export const getMedicineRecord = (medicineId: number, medicineList: MedicineRecord[]): MedicineRecord | undefined => {
     return getObjectByProperty<MedicineRecord>(medicineList, 'Id', medicineId);
-}
+};
 
 /**
  * Returns a string of a drug that soft matches in the given drugList if found, otherwise returns a null;
@@ -254,21 +253,20 @@ export const searchDrugs = (searchText: string, drugList: MedicineRecord[]) => {
         const c = searchText.substr(0, 1);
         // Is the first character a digit? If so, search the Barcode otherwise search the Drug name
         if (c >= '0' && c <= '9') {
-            drugMatch = drugList.filter(drug =>
-                (drug.Barcode?.substr(0, textLen).toLowerCase() === searchText.toLowerCase())
+            drugMatch = drugList.filter(
+                (drug) => drug.Barcode?.substr(0, textLen).toLowerCase() === searchText.toLowerCase()
             );
         } else {
-            drugMatch =
-                drugList.filter(drug =>
-                    (drug.Drug.substr(0, textLen).toLowerCase() === searchText.toLowerCase())
-                );
+            drugMatch = drugList.filter(
+                (drug) => drug.Drug.substr(0, textLen).toLowerCase() === searchText.toLowerCase()
+            );
         }
         if (drugMatch && drugMatch.length > 0) {
             return drugMatch[0];
         }
     }
     return null;
-}
+};
 
 /**
  * Given the drugLogList this returns a filtered list of drugLogList records that are populated with In or Out
@@ -279,10 +277,10 @@ export const getCheckoutList = (drugLogList: DrugLogRecord[]) => {
     return drugLogList.filter((drug) => {
         const isThisDay = (drug: DrugLogRecord) => {
             return drug && drug.Updated && isToday(new Date(drug.Updated));
-        }
+        };
         return ((drug.Out && drug.Out > 0) || (drug.In && drug.In > 0)) && isThisDay(drug);
     });
-}
+};
 
 /**
  * Given the day and month returns false if the month and day pair isn't a valid day date, otherwise returns true.
@@ -294,22 +292,22 @@ export const isDayValid = (day: string, month: string): boolean => {
     let maxDay = 28;
     const nMonth = parseInt(month);
     const nDay = parseInt(day);
-    if (nMonth === 1
-        || nMonth === 3
-        || nMonth === 5
-        || nMonth === 7
-        || nMonth === 8
-        || nMonth === 10
-        || nMonth === 11
-        || nMonth === 12) {
+    if (
+        nMonth === 1 ||
+        nMonth === 3 ||
+        nMonth === 5 ||
+        nMonth === 7 ||
+        nMonth === 8 ||
+        nMonth === 10 ||
+        nMonth === 11 ||
+        nMonth === 12
+    ) {
         maxDay = 31;
     }
-    if (nMonth === 4
-        || nMonth === 6
-        || nMonth === 9) {
+    if (nMonth === 4 || nMonth === 6 || nMonth === 9) {
         maxDay = 30;
     }
-    return (nDay >= 1 && nDay <= maxDay);
+    return nDay >= 1 && nDay <= maxDay;
 };
 
 /**
@@ -318,7 +316,7 @@ export const isDayValid = (day: string, month: string): boolean => {
  * @returns {boolean}
  */
 export const isMonthValid = (month: string): boolean => {
-    return (parseInt(month) >= 1 && parseInt(month) <= 12);
+    return parseInt(month) >= 1 && parseInt(month) <= 12;
 };
 
 /**
@@ -332,9 +330,9 @@ export const isYearValid = (year: string, isDOB: boolean): boolean => {
     if (isDOB) {
         const today = new Date();
         const todayYear = today.getFullYear();
-        return (nYear <= todayYear && nYear >= todayYear - 125);
+        return nYear <= todayYear && nYear >= todayYear - 125;
     }
-    return (nYear >= 1900 && nYear <= 9999);
+    return nYear >= 1900 && nYear <= 9999;
 };
 
 /**
@@ -347,11 +345,10 @@ export const asyncWrapper = async <T>(fn: Promise<T>) => {
     try {
         const data = await fn;
         return [null, data];
-    }
-    catch (error) {
+    } catch (error) {
         return [error, null];
     }
-}
+};
 
 export enum SortDirection {
     desc = 1,
@@ -360,11 +357,11 @@ export enum SortDirection {
 }
 
 export interface SortObject {
-    [index: string]: SortDirection
+    [index: string]: SortDirection;
 }
 
 interface IArrayGeneric {
-    [index: string]: any
+    [index: string]: any;
 }
 
 /**
@@ -394,7 +391,7 @@ export const multiSort = (array: IArrayGeneric, sortObject: SortObject): [] => {
         return a > b ? direction : -1 * direction;
     };
 
-    return array.sort((a: { [x: string]: number; }, b: { [x: string]: number; }) => {
+    return array.sort((a: {[x: string]: number}, b: {[x: string]: number}) => {
         let sorted = 0;
         let index = 0;
 
@@ -407,53 +404,4 @@ export const multiSort = (array: IArrayGeneric, sortObject: SortObject): [] => {
         }
         return sorted;
     });
-}
-
-/**
- * Given the pillboxId get the date string from local storage
- * @param {number} pillboxId
- */
-export const getPillboxLogDateString = (pillboxId: number) => {
-    const key = 'pillbox-history-' + pillboxId;
-    const pbh = window.localStorage.getItem(key);
-    return pbh ? JSON.parse(pbh) : null;
-}
-
-/**
- * Given the pillboxId save the current date and time to local storage
- * @param {number} pillboxId
- */
-export const setPillboxLogDate = (pillboxId: number) => {
-    const now = JSON.stringify(new Date());
-    window.localStorage.setItem('pillbox-history-' + pillboxId, now);
-    return getPillboxLogDateString(pillboxId);
-}
-
-/**
- * Given the pillboxId return true if the pillbox Log date (from local storage) is today otherwise return false
- * @param {number}  pillboxId
- */
-export const isPillboxLogToday = (pillboxId: number) => {
-    const pbh = getPillboxLogDate(pillboxId);
-    return pbh ? isToday(new Date(pbh)) : false;
-}
-
-/**
- * Given the pillboxId return the pillbox log date from local storage as a Date object or null if not found
- * @param {number} pillboxId
- */
-export const getPillboxLogDate = (pillboxId: number): Date|null => {
-    const logDate = getPillboxLogDateString(pillboxId);
-    if (logDate) return new Date(logDate); else return null;
-}
-
-/**
- * Given the pillboxId return an array of PillboxItemRecord[] where the Quantity is > 0
- * @param {number} pillboxId
- * @param {PillboxItemRecord} pillboxItemList
- */
-export const getDrugsInThePillbox = (pillboxId: number, pillboxItemList: PillboxItemRecord[]) => {
-    return pillboxItemList.filter(p => {
-        return p.PillboxId === pillboxId && pillboxItemList.some(pbi => p.Id === pbi.Id && pbi.Quantity > 0)
-    })
-}
+};

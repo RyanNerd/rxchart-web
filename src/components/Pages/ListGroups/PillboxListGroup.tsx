@@ -1,46 +1,39 @@
-import DisabledSpinner from "components/Pages/ListGroups/DisabledSpinner";
-import Alert from "react-bootstrap/Alert";
-import Badge from "react-bootstrap/Badge";
-import Button from 'react-bootstrap/Button'
-import ButtonGroup from "react-bootstrap/ButtonGroup";
-import Card from 'react-bootstrap/Card'
-import Col from "react-bootstrap/Col";
+import PillboxLogGrid from 'components/Pages/Grids/PillboxLogGrid';
+import DisabledSpinner from 'components/Pages/ListGroups/DisabledSpinner';
+import {TPillboxLog} from 'components/Pages/MedicinePage';
+import Alert from 'react-bootstrap/Alert';
+import Badge from 'react-bootstrap/Badge';
+import Button from 'react-bootstrap/Button';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import Card from 'react-bootstrap/Card';
+import Col from 'react-bootstrap/Col';
 import ListGroup from 'react-bootstrap/ListGroup';
-import Row from "react-bootstrap/Row";
-import ToggleButton from "react-bootstrap/ToggleButton";
+import Row from 'react-bootstrap/Row';
+import ToggleButton from 'react-bootstrap/ToggleButton';
 import React, {useEffect, useState} from 'reactn';
-import {ReactChild} from "reactn/default";
 import {MedicineRecord, newPillboxRecord, PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
-import {
-    BsColor,
-    getDrugName,
-    getDrugsInThePillbox, getMedicineRecord,
-    getPillboxLogDate,
-    isPillboxLogToday,
-    multiSort,
-    SortDirection
-} from 'utility/common';
+import {BsColor, getDrugName, getMedicineRecord, multiSort, SortDirection} from 'utility/common';
 import ConfirmDialogModal from '../Modals/ConfirmDialogModal';
 import PillboxEdit from '../Modals/PillboxEdit';
 
 interface IProps {
-    activePillbox: PillboxRecord | null
-    children?: ReactChild | boolean
-    clientId: number
-    disabled?: boolean
-    logPillbox: () => void
-    medicineList: MedicineRecord[]
-    onDelete: (id: number) => void
-    onEdit: (pb: PillboxRecord) => void
-    onSelect: (n: number) => void
-    pillboxItemList: PillboxItemRecord[]
-    pillboxList: PillboxRecord[]
+    activePillbox: PillboxRecord | null;
+    clientId: number;
+    disabled?: boolean;
+    logPillbox: () => void;
+    medicineList: MedicineRecord[];
+    onDelete: (id: number) => void;
+    onEdit: (pb: PillboxRecord) => void;
+    onSelect: (n: number) => void;
+    pillboxItemList: PillboxItemRecord[];
+    pillboxList: PillboxRecord[];
+    pillboxLogList: TPillboxLog[];
 }
 
 interface IPillboxLineItem {
-    Drug: string
-    Strength: string
-    Qty: number
+    Drug: string;
+    Strength: string;
+    Qty: number;
 }
 
 /**
@@ -50,7 +43,6 @@ interface IPillboxLineItem {
 const PillboxListGroup = (props: IProps) => {
     const {
         activePillbox,
-        children,
         clientId,
         disabled = false,
         logPillbox,
@@ -59,7 +51,8 @@ const PillboxListGroup = (props: IProps) => {
         onEdit,
         onSelect,
         pillboxItemList,
-        pillboxList
+        pillboxList,
+        pillboxLogList
     } = props;
 
     // If there is at least one pillbox (but no active pillbox) then force the first pillbox as the active pillbox
@@ -69,46 +62,50 @@ const PillboxListGroup = (props: IProps) => {
     const [showPillboxDeleteConfirm, setShowPillboxDeleteConfirm] = useState(false);
     const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord | null>(null);
 
-    /**
-     * Return the pillbox Log Date as a nicely formatted time string
-     * @param {number} pillboxId
-     * @return {string}
-     */
-    const getPillboxLogTime = (pillboxId: number): string => {
-        const logDate = getPillboxLogDate(pillboxId);
-        return logDate ? logDate.toLocaleTimeString() : '';
-    }
+    const firstLoggedPillbox = pillboxLogList.find((p) => p.Updated)?.Updated;
+    const logTime = firstLoggedPillbox
+        ? new Date(firstLoggedPillbox).toLocaleString('en-US', {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: true
+          } as Intl.DateTimeFormatOptions)
+        : null;
 
     // When the activePillbox has already been logged today then setShowAlert to true
     useEffect(() => {
-        setShowAlert((activePillbox?.Id && isPillboxLogToday(activePillbox.Id)) || false);
-    }, [activePillbox]);
+        setShowAlert(logTime !== null);
+    }, [activePillbox, logTime]);
+
+    /**
+     * Return an array of PillboxItemRecord[] where the Quantity is > 0
+     */
+    const getDrugsInThePillbox = () => {
+        return pillboxItemList.filter((p) => {
+            return (
+                p.PillboxId === activePillbox?.Id && pillboxItemList.some((pbi) => p.Id === pbi.Id && pbi.Quantity > 0)
+            );
+        });
+    };
 
     // Build out the pillbox line items content
-    const drugsInThePillbox = activePillbox?.Id ? getDrugsInThePillbox(activePillbox.Id, pillboxItemList) : [];
+    const drugsInThePillbox = activePillbox?.Id ? getDrugsInThePillbox() : [];
     const pillboxLineItems: IPillboxLineItem[] = [];
-    drugsInThePillbox.forEach(d => {
+    drugsInThePillbox.forEach((d) => {
         const drugName = getDrugName(d.MedicineId, medicineList);
         if (drugName) {
             const qty = d.Quantity;
             const medicine = getMedicineRecord(d.MedicineId, medicineList);
             const strength = medicine?.Strength || '';
-            pillboxLineItems.push(
-                {Drug: drugName, Strength: strength, Qty: qty}
-            );
+            pillboxLineItems.push({Drug: drugName, Strength: strength, Qty: qty});
         }
-    })
-
-    // logTime will be the date/time that the activePillbox was logged today, otherwise null if not logged
-    const logTime = activePillbox?.Id && isPillboxLogToday(activePillbox.Id) ?
-        getPillboxLogTime(activePillbox.Id) : null;
+    });
 
     const listboxItemStyle = {
-        paddingTop: "0.25rem",
-        paddingRight: "1.25rem",
-        paddingBottom: "0.20rem",
-        paddingLeft: "1.25rem"
-    }
+        paddingTop: '0.25rem',
+        paddingRight: '1.25rem',
+        paddingBottom: '0.20rem',
+        paddingLeft: '1.25rem'
+    };
 
     /**
      * Pillbox RadioButton component
@@ -127,15 +124,19 @@ const PillboxListGroup = (props: IProps) => {
                 value={pb.Id as number}
                 checked={activePillbox?.Id === pb.Id}
                 onChange={() => onSelect(pb.Id as number)}
-                style={{textAlign: "justify"}}
+                style={{textAlign: 'justify'}}
             >
                 <span className="ml-2">
-                    {disabled && <><DisabledSpinner/>{" "}</>}
-                    Pillbox: <b style={{textTransform: "uppercase"}}>{pb.Name}</b>
+                    {disabled && (
+                        <>
+                            <DisabledSpinner />{' '}
+                        </>
+                    )}
+                    Pillbox: <b style={{textTransform: 'uppercase'}}>{pb.Name}</b>
                 </span>
             </ToggleButton>
-        )
-    }
+        );
+    };
 
     /**
      * Line Item component for pills in the pillbox
@@ -144,10 +145,10 @@ const PillboxListGroup = (props: IProps) => {
     const PillboxLineItem = (i: IPillboxLineItem) => {
         return (
             <li className="rx-icon">
-                {"("} {i.Qty} {") "} {i.Drug} {" "} {i.Strength}
+                {'('} {i.Qty} {') '} {i.Drug} {i.Strength}
             </li>
-        )
-    }
+        );
+    };
 
     /**
      * PillboxContentCard component
@@ -155,16 +156,9 @@ const PillboxListGroup = (props: IProps) => {
     const PillboxContentCard = () => {
         return (
             <Card>
-                <Card.Title
-                    className="mb-0"
-                >
-                    <h3
-                        className="ml-2 mt-1"
-                        style={{color: BsColor.blue, textTransform: "uppercase"}}
-                    >
-                        <b>
-                            {activePillbox?.Name}
-                        </b>
+                <Card.Title className="mb-0">
+                    <h3 className="ml-2 mt-1" style={{color: BsColor.blue, textTransform: 'uppercase'}}>
+                        <b>{activePillbox?.Name}</b>
                     </h3>
                 </Card.Title>
                 <Card.Body
@@ -174,40 +168,32 @@ const PillboxListGroup = (props: IProps) => {
                     }}
                 >
                     <ul>
-                        {pillboxLineItems.length > 0 ?
-                            (<>
-                                    {multiSort(pillboxLineItems, {Drug: SortDirection.desc}).map(PillboxLineItem)}
-                                </>
-                            ) : (
-                                <>
-                                    <li
-                                        style={{listStyleType: "none"}}
-                                    >
-                                        <b>{"The "}
-                                            <span
-                                                style={{color: BsColor.blue, textTransform: "uppercase"}}
-                                            >
+                        {pillboxLineItems.length > 0 ? (
+                            <>{multiSort(pillboxLineItems, {Drug: SortDirection.desc}).map(PillboxLineItem)}</>
+                        ) : (
+                            <>
+                                <li style={{listStyleType: 'none'}}>
+                                    <b>
+                                        {'The '}
+                                        <span style={{color: BsColor.blue, textTransform: 'uppercase'}}>
                                             {activePillbox?.Name}
-                                        </span> {" Pillbox is empty"}
-                                        </b>
-                                    </li>
-                                    <li
-                                        style={{listStyleType: "none", color: BsColor.blue}}
-                                    >
-                                        <hr/>
-                                    </li>
-                                    <li
-                                        style={{listStyleType: "none"}}
-                                    >
-                                        {"Select the number of pills in the pillbox for each medicine ===>"}
-                                    </li>
-                                </>
-                            )}
+                                        </span>{' '}
+                                        {' Pillbox is empty'}
+                                    </b>
+                                </li>
+                                <li style={{listStyleType: 'none', color: BsColor.blue}}>
+                                    <hr />
+                                </li>
+                                <li style={{listStyleType: 'none'}}>
+                                    {'Select the number of pills in the pillbox for each medicine ===>'}
+                                </li>
+                            </>
+                        )}
                     </ul>
                 </Card.Body>
             </Card>
-        )
-    }
+        );
+    };
 
     /**
      * The + Log Pillbox button component
@@ -215,31 +201,28 @@ const PillboxListGroup = (props: IProps) => {
     const LogPillboxButton = () => {
         return (
             <Button
-                disabled={
-                    disabled ||
-                    drugsInThePillbox.length === 0 ||
-                    showAlert
-                }
-                variant={drugsInThePillbox.length === 0 || logTime ? "outline-warning" : "primary"}
+                disabled={disabled || drugsInThePillbox.length === 0 || showAlert}
+                variant={drugsInThePillbox.length === 0 || logTime ? 'outline-warning' : 'primary'}
                 size="sm"
                 onClick={() => {
                     logPillbox();
                     setShowAlert(true);
                 }}
             >
-                {disabled && <><DisabledSpinner/>{" "}</>}
-                + Log Pillbox <b style={{textTransform: "uppercase"}}>{activePillbox?.Name}</b>
-                {logTime &&
-                    <Badge
-                        variant="danger"
-                        className="ml-2"
-                    >
-                        {"Logged: " + logTime}
+                {disabled && (
+                    <>
+                        <DisabledSpinner />{' '}
+                    </>
+                )}
+                + Log Pillbox <b style={{textTransform: 'uppercase'}}>{activePillbox?.Name}</b>
+                {logTime && (
+                    <Badge variant="danger" className="ml-2">
+                        {'Logged: ' + logTime}
                     </Badge>
-                }
+                )}
             </Button>
-        )
-    }
+        );
+    };
 
     return (
         <>
@@ -259,7 +242,7 @@ const PillboxListGroup = (props: IProps) => {
                             + Pillbox
                         </Button>
 
-                        {activePillbox &&
+                        {activePillbox && (
                             <>
                                 <Button
                                     disabled={disabled}
@@ -273,7 +256,7 @@ const PillboxListGroup = (props: IProps) => {
                                     size="sm"
                                     variant="info"
                                 >
-                                    Edit <span style={{textTransform: "uppercase"}}>{activePillbox.Name}</span>
+                                    Edit <span style={{textTransform: 'uppercase'}}>{activePillbox.Name}</span>
                                 </Button>
                                 <Button
                                     disabled={disabled}
@@ -282,113 +265,75 @@ const PillboxListGroup = (props: IProps) => {
                                     size="sm"
                                     variant="danger"
                                 >
-                                    <span
-                                        role="img"
-                                        aria-label="delete"
-                                        style={{textTransform: "uppercase"}}
-                                    >
+                                    <span role="img" aria-label="delete" style={{textTransform: 'uppercase'}}>
                                         🗑️
-                                    </span>{" "}Delete{" "}
-                                    <span
-                                        style={{textTransform: "uppercase"}}
-                                    >
-                                        {activePillbox.Name}
-                                    </span>
+                                    </span>{' '}
+                                    Delete <span style={{textTransform: 'uppercase'}}>{activePillbox.Name}</span>
                                 </Button>
-                                {drugsInThePillbox.length > 0 && <LogPillboxButton/>}
+                                {drugsInThePillbox.length > 0 && <LogPillboxButton />}
                             </>
-                        }
+                        )}
                     </ButtonGroup>
                 </ListGroup.Item>
 
-                {pillboxList.length > 0 ?
-                    (
-                        <ListGroup.Item>
-                            <Row noGutters>
-                                <Col xl={5}>
-                                    <ButtonGroup vertical>
-                                        {pillboxList.map(PillboxRadioButton)}
-                                    </ButtonGroup>
-                                </Col>
+                {pillboxList.length > 0 ? (
+                    <ListGroup.Item>
+                        <Row noGutters>
+                            <Col xl={5}>
+                                <ButtonGroup vertical>{pillboxList.map(PillboxRadioButton)}</ButtonGroup>
+                            </Col>
 
-                                <Col xl={7}>
-                                    <PillboxContentCard/>
-                                </Col>
-                            </Row>
-                        </ListGroup.Item>
-                    ) : (
-                        <Card
-                            className="mt-2"
-                        >
-                            <Card.Body>
-                                There are no Pillboxes. Click on the <b>+ Pillbox</b> button to add one.
-                            </Card.Body>
-                        </Card>
-                    )
-                }
-
-                {children && logTime &&
-                    <ListGroup.Item
-                        style={listboxItemStyle}
-                    >
-                        {children}
+                            <Col xl={7}>
+                                <PillboxContentCard />
+                            </Col>
+                        </Row>
                     </ListGroup.Item>
-                }
+                ) : (
+                    <Card className="mt-2">
+                        <Card.Body>
+                            There are no Pillboxes. Click on the <b>+ Pillbox</b> button to add one.
+                        </Card.Body>
+                    </Card>
+                )}
 
-                {showAlert &&
-                    <ListGroup.Item
-                        style={listboxItemStyle}
-                    >
-                        <Alert
-                            className="mb-0"
-                            variant="danger"
-                            dismissible
-                            onClose={() => setShowAlert(false)}
-                        >
-                            <Alert.Heading
-                                className="mb-0"
-                            >
-                                Pillbox <b
-                                style={{textTransform: "uppercase"}}
-                            >
-                                {activePillbox?.Name}
-                            </b> logged today at {" "} {logTime}
+                {pillboxLogList.length > 0 && (
+                    <ListGroup.Item style={listboxItemStyle}>
+                        <PillboxLogGrid pillboxLogList={pillboxLogList} />
+                    </ListGroup.Item>
+                )}
+
+                {showAlert && (
+                    <ListGroup.Item style={listboxItemStyle}>
+                        <Alert className="mb-0" variant="danger" dismissible onClose={() => setShowAlert(false)}>
+                            <Alert.Heading className="mb-0">
+                                Pillbox <b style={{textTransform: 'uppercase'}}>{activePillbox?.Name}</b> logged today
+                                at {logTime}
                             </Alert.Heading>
                         </Alert>
                     </ListGroup.Item>
-                }
+                )}
 
-                {activePillbox?.Notes &&
-                    <ListGroup.Item
-                        style={listboxItemStyle}
-                    >
-                        {activePillbox.Notes}
-                    </ListGroup.Item>
-                }
+                {activePillbox?.Notes && (
+                    <ListGroup.Item style={listboxItemStyle}>{activePillbox.Notes}</ListGroup.Item>
+                )}
             </ListGroup>
 
-            {pillboxInfo &&
+            {pillboxInfo && (
                 <PillboxEdit
-                    onClose={
-                        r => {
-                            setPillboxInfo(null);
-                            if (r) onEdit(r);
-                        }
-                    }
+                    onClose={(r) => {
+                        setPillboxInfo(null);
+                        if (r) onEdit(r);
+                    }}
                     pillboxInfo={pillboxInfo}
                     show={true}
                 />
-            }
+            )}
 
             <ConfirmDialogModal
                 centered
                 show={showPillboxDeleteConfirm}
                 title={<h3>Delete Pillbox {activePillbox?.Name}</h3>}
-                body={
-                    <Alert variant="danger">
-                        {"Delete Pillbox: " + activePillbox?.Name}
-                    </Alert>
-                }
+                body={<Alert variant="danger">{'Delete Pillbox: ' + activePillbox?.Name}</Alert>}
                 yesButton={
                     <Button
                         variant="danger"
@@ -414,7 +359,7 @@ const PillboxListGroup = (props: IProps) => {
                 }
             />
         </>
-    )
-}
+    );
+};
 
 export default PillboxListGroup;
