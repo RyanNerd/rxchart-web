@@ -1,20 +1,20 @@
-import ManageDrugGrid from "components/Pages/Grids/ManageDrugGrid";
-import CheckoutListGroup from "components/Pages/ListGroups/CheckoutListGroup";
-import DrugLogToast from "components/Pages/Toasts/DrugLogToast";
-import Badge from "react-bootstrap/Badge";
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
+import ManageDrugGrid from 'components/Pages/Grids/ManageDrugGrid';
+import CheckoutListGroup from 'components/Pages/ListGroups/CheckoutListGroup';
+import DrugLogToast from 'components/Pages/Toasts/DrugLogToast';
+import Badge from 'react-bootstrap/Badge';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
 import React, {useGlobal, useState} from 'reactn';
-import {DrugLogRecord, MedicineRecord, newDrugLogRecord, newMedicineRecord} from "types/RecordTypes";
-import {getCheckoutList, getDrugName} from "utility/common";
-import TabContent from "../../styles/common.css";
-import TooltipButton from "./Buttons/TooltipButton";
-import DrugLogEdit from "./Modals/DrugLogEdit";
-import MedicineEdit from "./Modals/MedicineEdit";
+import {DrugLogRecord, MedicineRecord, newDrugLogRecord, newMedicineRecord} from 'types/RecordTypes';
+import {getCheckoutList, getDrugName} from 'utility/common';
+import TabContent from '../../styles/common.css';
+import TooltipButton from './Buttons/TooltipButton';
+import DrugLogEdit from './Modals/DrugLogEdit';
+import MedicineEdit from './Modals/MedicineEdit';
 
 interface IProps {
-    activeTabKey: string
+    activeTabKey: string;
 }
 
 /**
@@ -29,14 +29,13 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
     const [medicineList, setMedicineList] = useGlobal('medicineList');
     const [mm] = useGlobal('medicineManager');
     const [otcList, setOtcList] = useGlobal('otcList');
+    const [pillboxItemList, setPillboxItemList] = useGlobal('pillboxItemList');
     const [showCheckoutModal, setShowCheckoutModal] = useState<DrugLogRecord | null>(null);
     const [showCheckoutPrint, setShowCheckoutPrint] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const [toast, setToast] = useState<DrugLogRecord[] | null>(null);
 
-    const {
-        activeTabKey
-    } = props;
+    const {activeTabKey} = props;
 
     // If this tab isn't active then don't render
     if (activeTabKey !== 'manage') return null;
@@ -51,7 +50,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
         const drugs = await mm.loadDrugLog(clientId, 5);
         await setDrugLogList(drugs);
         return r;
-    }
+    };
 
     /**
      * Given a MedicineRecord Update or Insert the record and rehydrate the globalMedicineList
@@ -59,6 +58,24 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
      * @param {number} clientId
      */
     const saveMedicine = async (med: MedicineRecord, clientId: number) => {
+        /**
+         * Remove all the PillboxItems when a medicine is marked as inactive
+         * @param {number} medicineId
+         */
+        const removeInactivePillboxItems = async (medicineId: number) => {
+            let delCount = 0;
+            pillboxItemList.forEach((pbi) => {
+                const removePillboxItems = async () => {
+                    if (pbi.MedicineId === medicineId) {
+                        await mm.deletePillboxItem(pbi.Id as number);
+                        delCount++;
+                    }
+                };
+                removePillboxItems();
+            });
+            return delCount;
+        };
+
         const m = await mm.updateMedicine(med);
         const ml = await mm.loadMedicineList(clientId);
         await setMedicineList(ml);
@@ -68,25 +85,42 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
             const ol = await mm.loadOtcList();
             await setOtcList(ol);
         }
+
+        // If the medicine has been set to inactive then refresh the drug log and remove from any pillboxItems
+        if (!m.Active) {
+            const dl = await mm.loadDrugLog(activeClient?.Id as number, 5);
+            await setDrugLogList(dl);
+
+            if (!m.Active) {
+                removeInactivePillboxItems(m.Id as number).then((delCount) => {
+                    if (delCount > 0) {
+                        mm.loadPillboxItemList(activeClient?.Id as number).then((pbil) => setPillboxItemList(pbil));
+                    }
+                });
+            }
+        }
+
         return m;
-    }
+    };
 
     /**
      * Fires when the Edit button is clicked
      * @param {MedicineRecord | null} medicine
      */
     const onEdit = (medicine: MedicineRecord | null) => {
-        const medicineInfo = (medicine) ? {...medicine} : {
-            ...newMedicineRecord,
-            OTC: false,
-            ResidentId: activeClient?.Id,
-            FillDateDay: "",
-            FillDateMonth: "",
-            FillDateYear: ""
-        };
+        const medicineInfo = medicine
+            ? {...medicine}
+            : {
+                  ...newMedicineRecord,
+                  OTC: false,
+                  ResidentId: activeClient?.Id,
+                  FillDateDay: '',
+                  FillDateMonth: '',
+                  FillDateYear: ''
+              };
         setMedicineInfo(medicineInfo);
         setShowMedicineEdit(true);
-    }
+    };
 
     /**
      * Handle when user clicks on the + Log Drug from the Medicine Detail table
@@ -102,7 +136,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
             drugLog.MedicineId = r.Id as number;
         }
         setShowCheckoutModal(drugLog);
-    }
+    };
 
     /**
      * Convenience function to get drug name
@@ -111,16 +145,16 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
      */
     const drugName = (medicineId: number): string | undefined => {
         return getDrugName(medicineId, medicineList.concat(otcList));
-    }
+    };
 
     const checkoutList = getCheckoutList(drugLogList);
 
     /**
      * Return a MedicineRecord[] array of all medicines that have Out populated and was logged today
      */
-    const medicineWithCheckout = medicineList.filter(m => {
-        return checkoutList.find(c => c.MedicineId === m.Id)
-    })
+    const medicineWithCheckout = medicineList.filter((m) => {
+        return checkoutList.find((c) => c.MedicineId === m.Id);
+    });
 
     return (
         <Form className={TabContent}>
@@ -140,49 +174,41 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                     size="sm"
                     variant="info"
                     disabled={checkoutList.length === 0 || showCheckoutPrint}
-                    onClick={() =>setShowCheckoutPrint(true)}
-
+                    onClick={() => setShowCheckoutPrint(true)}
                 >
-                    Print Medicine Checkout {
-                    checkoutList.length && <Badge variant="secondary">{checkoutList.length}</Badge>
-                }
+                    Print Medicine Checkout{' '}
+                    {checkoutList.length && <Badge variant="secondary">{checkoutList.length}</Badge>}
                 </Button>
             </Row>
 
-            {showCheckoutPrint && activeClient &&
+            {showCheckoutPrint && activeClient && (
                 <Row className="mt-2">
-                <CheckoutListGroup
-                    onClose={() => setShowCheckoutPrint(false)}
-                    checkoutList={checkoutList}
-                    medicineList={medicineList}
-                    activeClient={activeClient}
-                />
+                    <CheckoutListGroup
+                        onClose={() => setShowCheckoutPrint(false)}
+                        checkoutList={checkoutList}
+                        medicineList={medicineList}
+                        activeClient={activeClient}
+                    />
                 </Row>
-            }
+            )}
 
-            {!showCheckoutPrint &&
+            {!showCheckoutPrint && (
                 <Row className="mt-2 d-print-none">
                     <ManageDrugGrid
                         checkoutList={medicineWithCheckout}
-                        onDelete={(mr => {
+                        onDelete={(mr) => {
                             const med = {...mr};
                             med.Active = false;
-                            saveMedicine(med, activeClient?.Id as number)
-                                .then(m => {
-                                    if (!m.Active) {
-                                        mm.loadDrugLog(activeClient?.Id as number, 5)
-                                            .then(dl => setDrugLogList(dl))
-                                    }
-                                })
-                        })}
+                            saveMedicine(med, activeClient?.Id as number);
+                        }}
                         onEdit={(m) => onEdit(m)}
                         onLogDrug={(d) => handleLogDrug(d)}
                         medicineList={medicineList}
                     />
                 </Row>
-            }
+            )}
 
-            {showMedicineEdit && medicineInfo &&
+            {showMedicineEdit && medicineInfo && (
                 <MedicineEdit
                     show={showMedicineEdit}
                     onClose={(m) => {
@@ -191,20 +217,20 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                     }}
                     drugInfo={medicineInfo}
                 />
-            }
+            )}
 
-            {showCheckoutModal && activeClient?.Id &&
+            {showCheckoutModal && activeClient?.Id && (
                 <DrugLogEdit
-                    drugName={drugName(showCheckoutModal.MedicineId) || "[unknown]"}
+                    drugName={drugName(showCheckoutModal.MedicineId) || '[unknown]'}
                     drugLogInfo={showCheckoutModal}
                     onClose={(dl) => {
                         setShowCheckoutModal(null);
-                        if (dl) saveDrugLog(dl, activeClient.Id as number).then(r => setToast([r]));
+                        if (dl) saveDrugLog(dl, activeClient.Id as number).then((r) => setToast([r]));
                     }}
                     onHide={() => setShowCheckoutModal(null)}
                     show={true}
                 />
-            }
+            )}
 
             <DrugLogToast
                 toast={toast as DrugLogRecord[]}
@@ -213,7 +239,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                 onClose={() => setToast(null)}
             />
         </Form>
-    )
-}
+    );
+};
 
 export default ManageDrugPage;

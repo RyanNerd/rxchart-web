@@ -1,19 +1,26 @@
-import Frak from "frak/lib/components/Frak";
-import {PillboxRecord} from 'types/RecordTypes';
+import Frak from 'frak/lib/components/Frak';
+import {DrugLogRecord, PillboxRecord} from 'types/RecordTypes';
 
 export interface IPillboxProvider {
-    setApiKey: (apiKey: string) => void
-    search: (options: object) => Promise<PillboxRecord[]>
-    read: (id: number | string) => Promise<PillboxRecord>
-    post: (drugInfo: PillboxRecord) => Promise<PillboxRecord>
-    delete: (drugId: string | number) => Promise<DeleteResponse>
+    setApiKey: (apiKey: string) => void;
+    search: (options: object) => Promise<PillboxRecord[]>;
+    read: (id: number | string) => Promise<PillboxRecord>;
+    post: (drugInfo: PillboxRecord) => Promise<PillboxRecord>;
+    delete: (drugId: string | number) => Promise<DeleteResponse>;
+    log: (pillboxId: number) => Promise<DrugLogRecord[]>;
 }
 
-type DeleteResponse = { success: boolean };
+type DeleteResponse = {success: boolean};
 type RecordResponse = {
     data: PillboxRecord[] | PillboxRecord;
     status: number;
     success: boolean;
+};
+
+type LogResponse = {
+    success: boolean;
+    status: number;
+    data: DrugLogRecord[];
 };
 
 /**
@@ -93,6 +100,25 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
         },
 
         /**
+         * Post interface
+         * @returns {Promise<PillboxRecord>}
+         * @param pillboxId
+         */
+        log: async (pillboxId: number): Promise<DrugLogRecord[]> => {
+            const uri = _baseUrl + 'pillbox/log?api_key=' + _apiKey;
+            try {
+                const response = await _frak.post<LogResponse>(uri, {pillbox_id: pillboxId});
+                if (response.success) {
+                    return response.data;
+                } else {
+                    throw response;
+                }
+            } catch (err) {
+                throw err;
+            }
+        },
+
+        /**
          * Delete interface
          * @param {string | number} drugId
          * @returns {Promise<DeleteResponse>}
@@ -110,7 +136,7 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
                 throw err;
             }
         }
-    }
-}
+    };
+};
 
 export default PillboxProvider;

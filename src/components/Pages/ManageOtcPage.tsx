@@ -1,16 +1,16 @@
-import ManageOtcGrid from "components/Pages/Grids/ManageOtcGrid";
-import Alert from "react-bootstrap/Alert";
-import ButtonGroup from "react-bootstrap/ButtonGroup";
-import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
+import ManageOtcGrid from 'components/Pages/Grids/ManageOtcGrid';
+import Alert from 'react-bootstrap/Alert';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
-import {MedicineRecord, newMedicineRecord} from "types/RecordTypes";
-import TooltipButton from "./Buttons/TooltipButton";
-import Confirm from "./Modals/Confirm";
-import MedicineEdit from "./Modals/MedicineEdit";
+import {MedicineRecord, newMedicineRecord} from 'types/RecordTypes';
+import TooltipButton from './Buttons/TooltipButton';
+import Confirm from './Modals/Confirm';
+import MedicineEdit from './Modals/MedicineEdit';
 
 interface IProps {
-    activeTabKey: string
+    activeTabKey: string;
 }
 
 /**
@@ -33,15 +33,17 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
     // Set focus to the Search textbox when this page becomes active
     useEffect(() => {
         focusRef?.current?.focus();
-    })
+    });
 
     // Search filter side effect
     useEffect(() => {
         if (searchText.length > 0) {
-            const filter = otcList.filter(o => {
-                return o.Drug.toLowerCase().includes(searchText.toLowerCase()) ||
+            const filter = otcList.filter((o) => {
+                return (
+                    o.Drug.toLowerCase().includes(searchText.toLowerCase()) ||
                     o.OtherNames?.toLowerCase().includes(searchText.toLowerCase())
-            })
+                );
+            });
 
             if (filter.length > 0) {
                 setFilteredOtcList(filter);
@@ -54,7 +56,7 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
             setSearchIsValid(false);
             setFilteredOtcList(otcList);
         }
-    }, [otcList, searchText])
+    }, [otcList, searchText]);
 
     // If this tab isn't active then don't render
     if (props.activeTabKey !== 'manage-otc') return null;
@@ -68,30 +70,22 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
         const ol = await mm.loadOtcList();
         await setOtcList(ol);
         return m;
-    }
+    };
 
     /**
      * Fires when the Edit button is clicked
      * @param {MedicineRecord | null} medicine
      */
     const onEdit = (medicine?: MedicineRecord | null) => {
-        const medicineInfo = (medicine) ? {...medicine} : {...newMedicineRecord, OTC: true};
+        const medicineInfo = medicine ? {...medicine} : {...newMedicineRecord, OTC: true};
         setMedicineInfo(medicineInfo);
         setShowMedicineEdit(true);
-    }
+    };
 
     return (
         <>
-            <ButtonGroup
-                className="mb-2"
-                as={Row}
-            >
-                <TooltipButton
-                    tooltip="Manually Add New OTC"
-                    size="sm"
-                    variant="info"
-                    onClick={() => onEdit(null)}
-                >
+            <ButtonGroup className="mb-2" as={Row}>
+                <TooltipButton tooltip="Manually Add New OTC" size="sm" variant="info" onClick={() => onEdit(null)}>
                     + OTC
                 </TooltipButton>
 
@@ -99,7 +93,7 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
                     autoFocus
                     className="ml-2"
                     id="medicine-page-search-text"
-                    style={{width: "220px"}}
+                    style={{width: '220px'}}
                     isValid={searchIsValid}
                     ref={focusRef}
                     type="search"
@@ -125,63 +119,57 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
                 />
             </Row>
 
-            {showMedicineEdit && medicineInfo &&
-            /* MedicineEdit Modal */
-            <MedicineEdit
-                show={showMedicineEdit}
-                onClose={(r) => {
-                    setShowMedicineEdit(false);
-                    if (r) {
-                        saveOtcMedicine(r);
-                    }
-                }}
-                drugInfo={medicineInfo}
-            />
-            }
+            {showMedicineEdit && medicineInfo && (
+                /* MedicineEdit Modal */
+                <MedicineEdit
+                    show={showMedicineEdit}
+                    onClose={(r) => {
+                        setShowMedicineEdit(false);
+                        if (r) {
+                            saveOtcMedicine(r);
+                        }
+                    }}
+                    drugInfo={medicineInfo}
+                />
+            )}
 
-            {medicineInfo && showDeleteMedicine &&
-            <Confirm.Modal
-                size="lg"
-                show={showDeleteMedicine}
-                buttonvariant="danger"
-                onSelect={(a) => {
-                    setShowDeleteMedicine(false);
-                    if (a) {
-                        mm.deleteMedicine(medicineInfo?.Id as number).then(d => {
-                            if (d) {
-                                mm.loadOtcList().then(ol => {
-                                    setOtcList(ol)
-                                })
-                            } else {
-                                setErrorDetails('Unable to Delete OTC medicine. Id: ' + medicineInfo.Id);
-                            }
-                        })
-                    }
-                }}
-            >
-                <Confirm.Header>
-                    <Confirm.Title>
-                        {"Delete " + medicineInfo.Drug}
-                    </Confirm.Title>
-                </Confirm.Header>
-                <Confirm.Body>
-                    <Alert
-                        variant="danger"
-                        style={{textAlign: "center"}}
-                    >
+            {medicineInfo && showDeleteMedicine && (
+                <Confirm.Modal
+                    size="lg"
+                    show={showDeleteMedicine}
+                    buttonvariant="danger"
+                    onSelect={(a) => {
+                        setShowDeleteMedicine(false);
+                        if (a) {
+                            mm.deleteMedicine(medicineInfo?.Id as number).then((d) => {
+                                if (d) {
+                                    mm.loadOtcList().then((ol) => setOtcList(ol));
+                                } else {
+                                    setErrorDetails('Unable to Delete OTC medicine. Id: ' + medicineInfo.Id);
+                                }
+                            });
+                        }
+                    }}
+                >
+                    <Confirm.Header>
+                        <Confirm.Title>{'Delete ' + medicineInfo.Drug}</Confirm.Title>
+                    </Confirm.Header>
+                    <Confirm.Body>
+                        <Alert variant="danger" style={{textAlign: 'center'}}>
                             <span>
                                 This will delete the OTC medicine <b>{medicineInfo.Drug}</b> for <i>ALL</i> residents
                             </span>
-                        <span> and <b>ALL</b> history for this drug!</span>
-                    </Alert>
-                    <Alert variant="warning">
-                        Are you sure?
-                    </Alert>
-                </Confirm.Body>
-            </Confirm.Modal>
-            }
+                            <span>
+                                {' '}
+                                and <b>ALL</b> history for this drug!
+                            </span>
+                        </Alert>
+                        <Alert variant="warning">Are you sure?</Alert>
+                    </Confirm.Body>
+                </Confirm.Modal>
+            )}
         </>
     );
-}
+};
 
 export default ManageOtcPage;

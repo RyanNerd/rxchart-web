@@ -1,5 +1,6 @@
 import MedDrugLogHistory from 'components/Pages/Grids/MedDrugLogHistory';
 import CheckoutListGroup from 'components/Pages/ListGroups/CheckoutListGroup';
+import {IDropdownItem} from 'components/Pages/ListGroups/MedDropdown';
 import DrugLogToast from 'components/Pages/Toasts/DrugLogToast';
 import {SetStateAction} from 'react';
 import Alert from 'react-bootstrap/Alert';
@@ -33,6 +34,7 @@ import DrugLogEdit from './Modals/DrugLogEdit';
 import MedicineEdit from './Modals/MedicineEdit';
 
 export type TPillboxLog = {
+    Active: boolean;
     Drug: string | undefined;
     Strength: string | null | undefined;
     Quantity: number;
@@ -147,8 +149,9 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     );
 
                     if (pbl) {
-                        const med = medicineList?.find((m) => m.Id === pbl.MedicineId);
+                        const med = globalMedicineList?.find((m) => m.Id === pbl.MedicineId);
                         pillboxMedLog.push({
+                            Active: !!med?.Active,
                             Drug: med?.Drug,
                             Strength: med?.Strength,
                             Quantity: pbi.Quantity,
@@ -300,45 +303,67 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      */
     const handleLogPillbox = () => {
         /**
-         * Given a DrugLogRecord asynchronously insert or update the backend database
-         * @param {DrugLogRecord} dlr
+         * Log all the pillbox items, refresh the drugLogList, and toast the logged drugs
+         * @param pillboxId
          */
-        const updatePillboxLog = async (dlr: DrugLogRecord) => {
-            return await mm.updateDrugLog(dlr);
+        const logPillbox = async (pillboxId: number) => {
+            const toastQ = [] as DrugLogRecord[];
+
+            // Log drugs in the pillbox
+            const loggedPillboxDrugs = await mm.logPillbox(pillboxId);
+
+            // If there are any logged Pillbox drugs then refresh the drugLogList global and toast the success.
+            if (loggedPillboxDrugs.length > 0) {
+                const drugLogs = await mm.loadDrugLog(clientId, 5);
+                await setDrugLogList(drugLogs);
+                loggedPillboxDrugs.forEach((ld) => toastQ.push(ld));
+                setToast(toastQ);
+            }
         };
 
-        /**
-         * Rehydrate the drugLogList global
-         */
-        const refreshDrugLog = async () => {
-            const drugLogs = await mm.loadDrugLog(clientId, 5);
-            return await setDrugLogList(drugLogs);
-        };
-
+        // Tell the UI that we're busy. Then log the pillbox contents and when done tell the UI we're no longer busy.
         setIsBusy(true);
-        const toastQ = [] as DrugLogRecord[];
+        logPillbox(activePillbox?.Id as number).then(() => setIsBusy(false));
+    };
 
-        // Get all the pillboxItems for the activePillbox that have a Quantity > 0 and Medicine.Active
-        const pbi = pillboxItemList.filter(
-            (p) =>
-                p.PillboxId === activePillbox?.Id && p.Quantity > 0 && medicineList.find((m) => p.MedicineId === m.Id)
-        );
+    /**
+     * Builds and returns the dropdown items for the Medicine dropdown
+     * @return {IDropdownItem[]}
+     */
+    const buildItemList = () => {
+        const itemList = [] as IDropdownItem[];
 
-        // Iterate through the pillbox items
-        pbi.forEach((i) => {
-            const drugLogInfo = {...newDrugLogRecord};
-            drugLogInfo.ResidentId = clientId;
-            drugLogInfo.MedicineId = i.MedicineId;
-            drugLogInfo.PillboxItemId = i.Id;
-            drugLogInfo.Notes = i.Quantity.toString();
-            updatePillboxLog(drugLogInfo).then((dlr) => toastQ.push(dlr));
+        // Build the itemList with any pillboxes and meds from medicineList
+        let pbCnt = 0;
+        pillboxList.forEach((p) => {
+            const pbItems = pillboxItemList.filter((pbi) => pbi.PillboxId === p.Id);
+            const loggedPillboxItems = drugLogList.filter(
+                (d) => d.Updated && isToday(d.Updated) && pbItems.find((pbi) => pbi.Id === d.PillboxItemId)
+            );
+
+            if (loggedPillboxItems.length === 0) {
+                itemList.push({
+                    id: -(p.Id as number),
+                    description: p.Name.toUpperCase(),
+                    subtext: null
+                }); // Pillbox have negative id
+                pbCnt++;
+            }
         });
-
-        // Refresh the drugLogList global, save the log date, show the toast, and set the busy status to false
-        refreshDrugLog().then(() => {
-            setToast(toastQ);
-            setIsBusy(false);
+        if (pbCnt > 0) {
+            itemList.push({id: 0, description: 'divider', subtext: null});
+        }
+        medicineList.forEach((m) => {
+            const strength = m.Strength || '';
+            const other = m.OtherNames?.length > 0 ? `(${m.OtherNames})` : null;
+            const description = m.Drug + ' ' + strength;
+            itemList.push({
+                id: m.Id as number,
+                description,
+                subtext: other
+            });
         });
+        return itemList;
     };
 
     return (
@@ -452,10 +477,9 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                                         setActiveMed(medicineList.find((m) => m.Id === id) || null);
                                     }
                                 }}
+                                itemList={buildItemList()}
                                 lastTaken={activeMed?.Id ? calculateLastTaken(activeMed.Id, drugLogList) : null}
                                 logDrug={(n) => handleLogDrugAmount(n)}
-                                pillboxList={pillboxList}
-                                medicineList={medicineList}
                             />
                         )}
 

@@ -32,10 +32,13 @@ const PillboxLogGrid = (props: IProps) => {
                               minute: '2-digit'
                           })
                         : '';
+                    const strikeThrough = log.Active ? undefined : 'line-through';
                     return (
                         <tr style={{fontWeight: 'bold', color: BsColor.success}}>
                             <td>
-                                {log.Drug} {log.Strength}
+                                <span style={{textDecoration: strikeThrough}}>
+                                    {log.Drug} {log.Strength}
+                                </span>
                             </td>
                             <td>
                                 {'💊 '} {log.Notes}
