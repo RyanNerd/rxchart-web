@@ -1,7 +1,7 @@
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import React from 'reactn';
-import {DrugLogRecord, MedicineRecord} from "types/RecordTypes";
+import {DrugLogRecord, MedicineRecord} from 'types/RecordTypes';
 import {
     calculateLastTaken,
     getBsColor,
@@ -9,13 +9,13 @@ import {
     getLastTakenVariant,
     getObjectByProperty,
     isToday
-} from "utility/common";
+} from 'utility/common';
 
 interface IProps {
-    drugLog: DrugLogRecord[]
-    medicineList: MedicineRecord[]
-    onDelete: (r: DrugLogRecord) => void
-    onEdit: (r: DrugLogRecord) => void
+    drugLog: DrugLogRecord[];
+    medicineList: MedicineRecord[];
+    onDelete: (r: DrugLogRecord) => void;
+    onEdit: (r: DrugLogRecord) => void;
 }
 
 /**
@@ -24,12 +24,7 @@ interface IProps {
  * @return {JSX.Element}
  */
 const DrugLogHistoryGrid = (props: IProps): JSX.Element => {
-    const {
-        drugLog = [],
-        medicineList = [],
-        onDelete,
-        onEdit
-    } = props;
+    const {drugLog = [], medicineList = [], onDelete, onEdit} = props;
 
     /**
      * Returns the value of the drug column for the given drugId
@@ -45,7 +40,7 @@ const DrugLogHistoryGrid = (props: IProps): JSX.Element => {
             }
         }
         return null;
-    }
+    };
 
     /**
      * Child component for the table for each drug that has been logged.
@@ -61,14 +56,10 @@ const DrugLogHistoryGrid = (props: IProps): JSX.Element => {
         // Figure out medicine field values
         const isOtc = drugColumnLookup(drug.MedicineId, 'OTC');
         let drugName = drugColumnLookup(drug.MedicineId, 'Drug');
+        const drugActive = medicineList.find((m) => m.Id === drug.MedicineId && m.Active);
         const medicineNotes = drugColumnLookup(drug.MedicineId, 'Notes');
         const medicineDirections = drugColumnLookup(drug.MedicineId, 'Directions');
-        const drugDetails =
-            medicineNotes && medicineNotes.trim().length >0
-                ?
-                medicineNotes
-                :
-                medicineDirections || '';
+        const drugDetails = medicineNotes && medicineNotes.trim().length > 0 ? medicineNotes : medicineDirections || '';
 
         if (!drugName || drugName.length === 0) {
             drugName = 'UNKNOWN - Medicine removed!';
@@ -81,124 +72,119 @@ const DrugLogHistoryGrid = (props: IProps): JSX.Element => {
         const variant = getLastTakenVariant(lastTaken);
         const variantColor = getBsColor(variant);
         const fontWeight = isToday(updatedDate) ? 'bold' : undefined;
+        const strikeThrough = drugActive ? undefined : 'line-through';
 
         return (
             <tr
                 key={'druglog-history-grid-row-' + drug.Id}
                 id={'druglog-history-grid-row-' + drug.Id}
-                style={{color: variantColor}}
+                style={{color: variantColor, textDecoration: strikeThrough}}
             >
-                <td style={{textAlign: 'center', verticalAlign: "middle"}}>
-                    <Button
-                        className="d-print-none"
-                        size="sm"
-                        onClick={() => onEdit(drug)}
-                    >
+                <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
+                    <Button className="d-print-none" size="sm" onClick={() => onEdit(drug)}>
                         Edit
                     </Button>
                 </td>
 
-                <td style={{verticalAlign: "middle", fontWeight}}>
-                    <span>{drugName}</span> <span>{drugStrength}</span> <span>{isOtc ? " (OTC)" : ""}</span>
+                <td style={{verticalAlign: 'middle', fontWeight}}>
+                    <span style={{color: variantColor, fontStyle: strikeThrough ? 'italic' : undefined}}>
+                        {drugName}
+                    </span>{' '}
+                    <span>{drugStrength}</span> <span>{isOtc ? ' (OTC)' : ''}</span>
                 </td>
 
-                <td style={{
-                    textAlign: 'center',
-                    verticalAlign: "middle",
-                    fontWeight
-                }}>
+                <td
+                    style={{
+                        textAlign: 'center',
+                        verticalAlign: 'middle',
+                        fontWeight
+                    }}
+                >
                     {getFormattedDate(updatedDate)}
                 </td>
 
-                <td style={{
-                    textAlign: 'center',
-                    verticalAlign: "middle",
-                    fontWeight
-                }}>
-                    {drug.PillboxItemId && <span>{"💊 "}</span>} <b>{drug.Notes}</b>
+                <td
+                    style={{
+                        textAlign: 'center',
+                        verticalAlign: 'middle',
+                        fontWeight
+                    }}
+                >
+                    {drug.PillboxItemId && <span>{'💊 '}</span>} <b>{drug.Notes}</b>
                 </td>
 
-                <td style={{
-                    textAlign: 'center',
-                    verticalAlign: "middle",
-                    fontWeight
-                }}>
+                <td
+                    style={{
+                        textAlign: 'center',
+                        verticalAlign: 'middle',
+                        fontWeight
+                    }}
+                >
                     <b>{drug.Out}</b>
                 </td>
 
-                <td style={{
-                    textAlign: 'center',
-                    verticalAlign: "middle",
-                    fontWeight
-                }}>
+                <td
+                    style={{
+                        textAlign: 'center',
+                        verticalAlign: 'middle',
+                        fontWeight
+                    }}
+                >
                     <b>{drug.In}</b>
                 </td>
 
-                <td>
-                    {drugDetails}
-                </td>
+                <td>{drugDetails}</td>
 
-                <td style={{textAlign: 'center', verticalAlign: "middle"}}>
+                <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                     <Button
                         className="d-print-none"
                         size="sm"
-                        id={"drug-grid-delete-btn-" + drug.Id}
+                        id={'drug-grid-delete-btn-' + drug.Id}
                         variant="outline-danger"
                         onClick={() => onDelete(drug)}
                     >
-                        <span role="img" aria-label="delete">🗑️</span>
+                        <span role="img" aria-label="delete">
+                            🗑️
+                        </span>
                     </Button>
                 </td>
-
             </tr>
-        )
-    }
+        );
+    };
 
     return (
-        <Table
-            style={{wordWrap: "break-word"}}
-            striped
-            bordered
-            hover
-            size="sm"
-        >
+        <Table style={{wordWrap: 'break-word'}} striped bordered hover size="sm">
             <thead>
                 <tr>
                     <th></th>
 
-                    <th>
-                        Drug
-                    </th>
+                    <th>Drug</th>
 
-                    <th style={{textAlign: 'center', verticalAlign: "middle"}}>
+                    <th style={{textAlign: 'center', verticalAlign: 'middle'}}>
                         <span>Taken</span>
                     </th>
 
-                    <th style={{textAlign: 'center', verticalAlign: "middle"}}>
+                    <th style={{textAlign: 'center', verticalAlign: 'middle'}}>
                         <span>Amount/Notes</span>
                     </th>
 
-                    <th style={{textAlign: 'center', verticalAlign: "middle"}}>
+                    <th style={{textAlign: 'center', verticalAlign: 'middle'}}>
                         <span>Out</span>
                     </th>
 
-                    <th style={{textAlign: 'center', verticalAlign: "middle"}}>
+                    <th style={{textAlign: 'center', verticalAlign: 'middle'}}>
                         <span>In</span>
                     </th>
 
-                    <th>
-                        Details
-                    </th>
+                    <th>Details</th>
 
                     <th></th>
                 </tr>
             </thead>
 
-            <tbody>
-                {drugLog.map(DrugRow)}
-            </tbody>
+            <tbody>{drugLog.map(DrugRow)}</tbody>
         </Table>
-    )
-}
+    );
+};
 
 export default DrugLogHistoryGrid;

@@ -1,24 +1,25 @@
-import {IMedHistoryProvider} from "providers/MedHistoryProvider";
-import {DeleteResponse, IMedicineProvider} from "providers/MedicineProvider";
-import {IPillboxItemProvider} from "providers/PillboxItemProvider";
-import {IPillboxProvider} from "providers/PillboxProvider";
-import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord} from "types/RecordTypes";
-import {asyncWrapper} from "utility/common";
+import {IMedHistoryProvider} from 'providers/MedHistoryProvider';
+import {DeleteResponse, IMedicineProvider} from 'providers/MedicineProvider';
+import {IPillboxItemProvider} from 'providers/PillboxItemProvider';
+import {IPillboxProvider} from 'providers/PillboxProvider';
+import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
+import {asyncWrapper} from 'utility/common';
 
 export interface IMedicineManager {
-    deleteDrugLog: (drugLogId: number) => Promise<boolean>
-    deleteMedicine: (medicineId: number) => Promise<boolean>
-    deletePillbox: (pillboxId: number) => Promise<boolean>
-    deletePillboxItem: (pillboxItemId: number) => Promise<boolean>
-    loadDrugLog: (residentId: number, days?: number) => Promise<DrugLogRecord[]>
-    loadMedicineList: (residentId: number) => Promise<MedicineRecord[]>
-    loadPillboxList: (residentId: number) => Promise<PillboxRecord[]>
-    loadPillboxItemList: (clientId: number) => Promise<PillboxItemRecord[]>
-    loadOtcList: () => Promise<MedicineRecord[]>
-    updateDrugLog: (drugLogRecord: DrugLogRecord) => Promise<DrugLogRecord>
-    updateMedicine: (medicine: MedicineRecord) => Promise<MedicineRecord>
-    updatePillbox: (pillbox: PillboxRecord) => Promise<PillboxRecord>
-    updatePillboxItem: (pillboxItemRecord: PillboxItemRecord) => Promise<PillboxItemRecord>
+    deleteDrugLog: (drugLogId: number) => Promise<boolean>;
+    deleteMedicine: (medicineId: number) => Promise<boolean>;
+    deletePillbox: (pillboxId: number) => Promise<boolean>;
+    deletePillboxItem: (pillboxItemId: number) => Promise<boolean>;
+    loadDrugLog: (residentId: number, days?: number) => Promise<DrugLogRecord[]>;
+    loadMedicineList: (residentId: number) => Promise<MedicineRecord[]>;
+    loadPillboxList: (residentId: number) => Promise<PillboxRecord[]>;
+    loadPillboxItemList: (clientId: number) => Promise<PillboxItemRecord[]>;
+    loadOtcList: () => Promise<MedicineRecord[]>;
+    logPillbox: (pillboxId: number) => Promise<DrugLogRecord[]>;
+    updateDrugLog: (drugLogRecord: DrugLogRecord) => Promise<DrugLogRecord>;
+    updateMedicine: (medicine: MedicineRecord) => Promise<MedicineRecord>;
+    updatePillbox: (pillbox: PillboxRecord) => Promise<PillboxRecord>;
+    updatePillboxItem: (pillboxItemRecord: PillboxItemRecord) => Promise<PillboxItemRecord>;
 }
 
 /**
@@ -39,37 +40,43 @@ const MedicineManager = (
      * @param {number} drugLogId
      */
     const _deleteDrugLog = async (drugLogId: number) => {
-        const [e, r] = await asyncWrapper(medHistoryProvider.delete(drugLogId)) as [unknown, Promise<DeleteResponse>];
-        if (e) throw e; else return (await r).success;
-
-    }
+        const [e, r] = (await asyncWrapper(medHistoryProvider.delete(drugLogId))) as [unknown, Promise<DeleteResponse>];
+        if (e) throw e;
+        else return (await r).success;
+    };
 
     /**
      * Delete a Medicine record given the Id.
      * @param {number} medicineId
      */
     const _deleteMedicine = async (medicineId: number) => {
-        const [e, r] = await asyncWrapper(medicineProvider.delete(medicineId)) as [unknown, Promise<DeleteResponse>];
-        if (e) throw e; else return (await r).success;
-    }
+        const [e, r] = (await asyncWrapper(medicineProvider.delete(medicineId))) as [unknown, Promise<DeleteResponse>];
+        if (e) throw e;
+        else return (await r).success;
+    };
 
     /**
      * Delete a Pillbox record given the Id.
      * @param {number} pillboxId
      */
     const _deletePillbox = async (pillboxId: number) => {
-        const [e, r] = await asyncWrapper(pillboxProvider.delete(pillboxId)) as [unknown, Promise<DeleteResponse>];
-        if (e) throw e; else return (await r).success;
-    }
+        const [e, r] = (await asyncWrapper(pillboxProvider.delete(pillboxId))) as [unknown, Promise<DeleteResponse>];
+        if (e) throw e;
+        else return (await r).success;
+    };
 
     /**
      * Delete a PillboxItem record given the Id.
      * @param {number} pillboxItemId
      */
     const _deletePillboxItem = async (pillboxItemId: number) => {
-        const [e, r] = await asyncWrapper(pillboxProvider.delete(pillboxItemId)) as [unknown, Promise<DeleteResponse>];
-        if (e) throw e; else return (await r).success;
-    }
+        const [e, r] = (await asyncWrapper(pillboxProvider.delete(pillboxItemId))) as [
+            unknown,
+            Promise<DeleteResponse>
+        ];
+        if (e) throw e;
+        else return (await r).success;
+    };
 
     /**
      * Returns all the MedHistory records for the given ResidentId as a promise
@@ -82,7 +89,10 @@ const MedicineManager = (
             const d = new Date();
             d.setDate(d.getDate() - days);
             searchCriteria = {
-                where: [['ResidentId', '=', residentId], ['Updated', '>' , d]],
+                where: [
+                    ['ResidentId', '=', residentId],
+                    ['Updated', '>', d]
+                ],
                 orderBy: [['Created', 'desc']]
             };
         } else {
@@ -91,10 +101,13 @@ const MedicineManager = (
                 orderBy: [['Created', 'desc']]
             };
         }
-        const [e, r] = await
-            asyncWrapper(medHistoryProvider.search(searchCriteria)) as [unknown, Promise<DrugLogRecord[]>];
-        if (e) throw e; else return r;
-    }
+        const [e, r] = (await asyncWrapper(medHistoryProvider.search(searchCriteria))) as [
+            unknown,
+            Promise<DrugLogRecord[]>
+        ];
+        if (e) throw e;
+        else return r;
+    };
 
     /**
      * Returns all the PillboxItem records for the given clientId as a promise
@@ -105,10 +118,13 @@ const MedicineManager = (
             where: [['ResidentId', '=', clientId]],
             orderBy: [['Created', 'desc']]
         };
-        const [e, r] = await
-            asyncWrapper(pillboxItemProvider.search(searchCriteria)) as [unknown, Promise<PillboxItemRecord[]>];
-        if (e) throw e; else return r;
-    }
+        const [e, r] = (await asyncWrapper(pillboxItemProvider.search(searchCriteria))) as [
+            unknown,
+            Promise<PillboxItemRecord[]>
+        ];
+        if (e) throw e;
+        else return r;
+    };
 
     /**
      * Returns all the Medicine records for the given ResidentId as a promise
@@ -119,10 +135,13 @@ const MedicineManager = (
             where: [['ResidentId', '=', residentId]],
             orderBy: [['Drug', 'asc']]
         };
-        const [e, r] = await
-            asyncWrapper(medicineProvider.search(searchCriteria)) as [unknown,  Promise<MedicineRecord[]>];
-        if (e) throw e; else return r;
-    }
+        const [e, r] = (await asyncWrapper(medicineProvider.search(searchCriteria))) as [
+            unknown,
+            Promise<MedicineRecord[]>
+        ];
+        if (e) throw e;
+        else return r;
+    };
 
     /**
      * Returns all the Pillbox records for the given ResidentId as a promise
@@ -133,10 +152,13 @@ const MedicineManager = (
             where: [['ResidentId', '=', residentId]],
             orderBy: [['Name', 'asc']]
         };
-        const [e, r] = await
-            asyncWrapper(pillboxProvider.search(searchCriteria)) as [unknown, Promise<PillboxRecord[]>];
-        if (e) throw e; else return r;
-    }
+        const [e, r] = (await asyncWrapper(pillboxProvider.search(searchCriteria))) as [
+            unknown,
+            Promise<PillboxRecord[]>
+        ];
+        if (e) throw e;
+        else return r;
+    };
 
     /**
      * Returns all the OTC medicines as a promise
@@ -144,49 +166,64 @@ const MedicineManager = (
     const _loadOtcList = async () => {
         const searchCriteria = {
             where: [['OTC', '=', true]],
-            orderBy: [['Drug','asc']]
+            orderBy: [['Drug', 'asc']]
         };
-        const [e, r] = await
-            asyncWrapper(medicineProvider.search(searchCriteria)) as [unknown,  Promise<MedicineRecord[]>];
-        if (e) throw e; else return r;
-    }
+        const [e, r] = (await asyncWrapper(medicineProvider.search(searchCriteria))) as [
+            unknown,
+            Promise<MedicineRecord[]>
+        ];
+        if (e) throw e;
+        else return r;
+    };
 
     /**
      * Add or update a MedHistory record
      * @param {DrugLogRecord} drugLogInfo
      */
     const _updateDrugLog = async (drugLogInfo: DrugLogRecord) => {
-        const [e, r] = await asyncWrapper(medHistoryProvider.post(drugLogInfo)) as [unknown, Promise<DrugLogRecord>]
-        if (e) throw e; else return r;
-    }
+        const [e, r] = (await asyncWrapper(medHistoryProvider.post(drugLogInfo))) as [unknown, Promise<DrugLogRecord>];
+        if (e) throw e;
+        else return r;
+    };
 
     /**
      * Adds or updates a Medicine record.
      * @param {MedicineRecord} drugInfo
      */
     const _updateMedicine = async (drugInfo: MedicineRecord) => {
-        const [e, r] = await asyncWrapper(medicineProvider.post(drugInfo)) as [unknown, Promise<MedicineRecord>];
-        if (e) throw e; else return r;
-    }
+        const [e, r] = (await asyncWrapper(medicineProvider.post(drugInfo))) as [unknown, Promise<MedicineRecord>];
+        if (e) throw e;
+        else return r;
+    };
 
     /**
      * Adds or updates a Pillbox record.
      * @param {PillboxRecord} pillInfo
      */
     const _updatePillbox = async (pillInfo: PillboxRecord) => {
-        const [e, r] = await asyncWrapper(pillboxProvider.post(pillInfo)) as [unknown, Promise<PillboxRecord>];
-        if (e) throw e; else return r;
-    }
+        const [e, r] = (await asyncWrapper(pillboxProvider.post(pillInfo))) as [unknown, Promise<PillboxRecord>];
+        if (e) throw e;
+        else return r;
+    };
 
     /**
      * Adds or updates a PillboxItem record.
      * @param {PillboxItemRecord} pillboxItemInfo
      */
     const _updatePillboxItem = async (pillboxItemInfo: PillboxItemRecord) => {
-        const [e, r] = await
-            asyncWrapper(pillboxItemProvider.post(pillboxItemInfo)) as [unknown, Promise<PillboxItemRecord>];
-        if (e) throw e; else return r;
-    }
+        const [e, r] = (await asyncWrapper(pillboxItemProvider.post(pillboxItemInfo))) as [
+            unknown,
+            Promise<PillboxItemRecord>
+        ];
+        if (e) throw e;
+        else return r;
+    };
+
+    const _logPillbox = async (pillboxId: number) => {
+        const [e, r] = (await asyncWrapper(pillboxProvider.log(pillboxId))) as [unknown, Promise<DrugLogRecord[]>];
+        if (e) throw e;
+        else return r;
+    };
 
     return {
         deleteDrugLog: async (drugLogId: number): Promise<boolean> => {
@@ -227,8 +264,11 @@ const MedicineManager = (
         },
         updatePillboxItem: async (pillboxItem: PillboxItemRecord): Promise<PillboxItemRecord> => {
             return await _updatePillboxItem(pillboxItem);
+        },
+        logPillbox: async (pillboxId: number): Promise<DrugLogRecord[]> => {
+            return await _logPillbox(pillboxId);
         }
-    }
-}
+    };
+};
 
 export default MedicineManager;

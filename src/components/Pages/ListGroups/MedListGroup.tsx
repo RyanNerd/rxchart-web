@@ -1,7 +1,7 @@
 import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
 import React, {useEffect} from 'reactn';
-import {MedicineRecord, newMedicineRecord, PillboxRecord} from 'types/RecordTypes';
+import {MedicineRecord, newMedicineRecord} from 'types/RecordTypes';
 import {getLastTakenVariant, randomString} from 'utility/common';
 import {drawBarcode} from 'utility/drawBarcode';
 import LogButtons from '../Buttons/LogButtons';
@@ -16,11 +16,10 @@ interface IProps {
     editMedicine: (m: MedicineRecord) => void;
     logDrug: (n: number) => void;
     itemChanged: (i: number) => void;
+    itemList: IDropdownItem[];
     canvasUpdated?: (c: HTMLCanvasElement) => void;
     canvasId?: string;
     disabled?: boolean;
-    medicineList: MedicineRecord[];
-    pillboxList: PillboxRecord[];
     lastTaken: number | null;
 }
 
@@ -37,11 +36,10 @@ const MedListGroup = (props: IProps): JSX.Element => {
         editMedicine,
         logDrug,
         itemChanged,
+        itemList,
         canvasUpdated,
         canvasId = randomString(),
         disabled = false,
-        medicineList,
-        pillboxList,
         lastTaken = null
     } = props;
 
@@ -54,31 +52,6 @@ const MedListGroup = (props: IProps): JSX.Element => {
     const fillDateType = fillDateText ? new Date(fillDateText) : null;
     const fillDateOptions = {month: '2-digit', day: '2-digit', year: 'numeric'} as Intl.DateTimeFormatOptions;
     const fillDate = fillDateType ? fillDateType.toLocaleString('en-US', fillDateOptions) : null;
-    const itemList = [] as IDropdownItem[];
-
-    // Build the itemList with any pillboxes and meds from medicineList
-    let pbCnt = 0;
-    pillboxList.forEach((p) => {
-        itemList.push({
-            id: -(p.Id as number),
-            description: p.Name.toUpperCase(),
-            subtext: null
-        }); // Pillbox have negative id
-        pbCnt++;
-    });
-    if (pbCnt > 0) {
-        itemList.push({id: 0, description: 'divider', subtext: null});
-    }
-    medicineList.forEach((m) => {
-        const strength = m.Strength || '';
-        const other = m.OtherNames?.length > 0 ? `(${m.OtherNames})` : null;
-        const description = m.Drug + ' ' + strength;
-        itemList.push({
-            id: m.Id as number,
-            description,
-            subtext: other
-        });
-    });
 
     // Update the barcode image if the barcode has changed
     useEffect(() => {
