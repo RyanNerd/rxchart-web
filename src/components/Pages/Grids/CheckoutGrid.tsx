@@ -11,9 +11,9 @@ import {
 } from 'utility/common';
 
 interface IProps extends TableProps {
-    drugId?: number | null;
-    drugLog?: DrugLogRecord[];
-    medicineList?: MedicineRecord[];
+    drugId: number | null;
+    drugLog: DrugLogRecord[];
+    medicineList: MedicineRecord[];
 }
 
 /**
