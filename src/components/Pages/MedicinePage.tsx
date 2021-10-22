@@ -618,7 +618,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 />
             )}
 
-            {/*Confirm Delete of Drug Log*/}
+            {/* Confirm Delete of Drug Log*/}
             {showDeleteDrugLogRecord && (
                 <Confirm.Modal
                     size="lg"

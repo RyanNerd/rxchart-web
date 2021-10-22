@@ -1,21 +1,25 @@
-import {ReactNode} from "reactn/default";
+import {ReactNode} from 'reactn/default';
 import Badge from 'react-bootstrap/Badge';
-import Dropdown from 'react-bootstrap/Dropdown'
+import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton, {DropdownButtonProps} from 'react-bootstrap/DropdownButton';
 import React from 'reactn';
-import {Modify} from "types/Modify";
+import {Modify} from 'types/Modify';
 import {ResidentRecord} from 'types/RecordTypes';
 import {clientDOB} from 'utility/common';
 
 interface IProps extends DropdownButtonProps {
-    [key: string]: any
-    title: ReactNode
+    [key: string]: unknown;
+    title: ReactNode;
 }
 
-type TProps = Modify<IProps, {
-    clientRecord: ResidentRecord
-    title?: ReactNode | undefined
-}>
+type TProps = Modify<
+    IProps,
+    {
+        clientRecord: ResidentRecord;
+        title?: ReactNode | undefined;
+        disabled?: boolean;
+    }
+>;
 
 /**
  * ClientDobButton is a dropdown button that displays the date of birth of the given client record
@@ -26,9 +30,9 @@ const ClientDobButton = (props: TProps) => {
     const {
         disabled = false,
         clientRecord,
-        title =  (
-            <span style={{fontStyle:  process.env.REACT_APP_DEVELOPMENT === 'true' ? "italic" : "bold"}}>
-                {clientRecord.Notes && <Badge variant="light">🔔</Badge>}{" "}{clientDOB(clientRecord)}
+        title = (
+            <span style={{fontStyle: process.env.REACT_APP_DEVELOPMENT === 'true' ? 'italic' : 'bold'}}>
+                {clientRecord.Notes && <Badge variant="light">🔔</Badge>} {clientDOB(clientRecord)}
             </span>
         )
     } = props;
@@ -48,18 +52,14 @@ const ClientDobButton = (props: TProps) => {
             title={title}
             variant="outline-secondary"
         >
-            <Dropdown.Item
-                style={{whiteSpace: "normal", width: "300px"}}
-            >
+            <Dropdown.Item style={{whiteSpace: 'normal', width: '300px'}}>
                 <Dropdown.Header>
                     <h5>Notes</h5>
                 </Dropdown.Header>
-                <Dropdown.ItemText>
-                    {clientRecord.Notes}
-                </Dropdown.ItemText>
+                <Dropdown.ItemText>{clientRecord.Notes}</Dropdown.ItemText>
             </Dropdown.Item>
         </DropdownButton>
-    )
-}
+    );
+};
 
 export default ClientDobButton;

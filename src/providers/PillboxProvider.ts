@@ -3,7 +3,7 @@ import {DrugLogRecord, PillboxRecord} from 'types/RecordTypes';
 
 export interface IPillboxProvider {
     setApiKey: (apiKey: string) => void;
-    search: (options: object) => Promise<PillboxRecord[]>;
+    search: (options: Record<string, unknown>) => Promise<PillboxRecord[]>;
     read: (id: number | string) => Promise<PillboxRecord>;
     post: (drugInfo: PillboxRecord) => Promise<PillboxRecord>;
     delete: (drugId: string | number) => Promise<DeleteResponse>;
@@ -44,20 +44,16 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
          * @param {object} options
          * @returns {Promise<PillboxRecord[]>}
          */
-        search: async (options: object): Promise<PillboxRecord[]> => {
+        search: async (options: Record<string, unknown>): Promise<PillboxRecord[]> => {
             const uri = _baseUrl + 'pillbox/search?api_key=' + _apiKey;
-            try {
-                const response = await _frak.post<RecordResponse>(uri, options);
-                if (response.success) {
-                    return response.data as PillboxRecord[];
-                } else {
-                    if (response.status === 404) {
-                        return [] as PillboxRecord[];
-                    }
-                    throw response;
+            const response = await _frak.post<RecordResponse>(uri, options);
+            if (response.success) {
+                return response.data as PillboxRecord[];
+            } else {
+                if (response.status === 404) {
+                    return [] as PillboxRecord[];
                 }
-            } catch (err) {
-                throw err;
+                throw response;
             }
         },
 
@@ -68,15 +64,12 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
          */
         read: async (id: number | string): Promise<PillboxRecord> => {
             const uri = _baseUrl + 'pillbox/' + id + '?api_key=' + _apiKey;
-            try {
-                const response = await _frak.get<RecordResponse>(uri);
-                if (response.success) {
-                    return response.data as PillboxRecord;
-                } else {
-                    throw response;
-                }
-            } catch (err) {
-                throw err;
+
+            const response = await _frak.get<RecordResponse>(uri);
+            if (response.success) {
+                return response.data as PillboxRecord;
+            } else {
+                throw response;
             }
         },
 
@@ -87,15 +80,12 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
          */
         post: async (drugInfo: PillboxRecord): Promise<PillboxRecord> => {
             const uri = _baseUrl + 'pillbox?api_key=' + _apiKey;
-            try {
-                const response = await _frak.post<RecordResponse>(uri, drugInfo);
-                if (response.success) {
-                    return response.data as PillboxRecord;
-                } else {
-                    throw response;
-                }
-            } catch (err) {
-                throw err;
+
+            const response = await _frak.post<RecordResponse>(uri, drugInfo);
+            if (response.success) {
+                return response.data as PillboxRecord;
+            } else {
+                throw response;
             }
         },
 
@@ -106,15 +96,12 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
          */
         log: async (pillboxId: number): Promise<DrugLogRecord[]> => {
             const uri = _baseUrl + 'pillbox/log?api_key=' + _apiKey;
-            try {
-                const response = await _frak.post<LogResponse>(uri, {pillbox_id: pillboxId});
-                if (response.success) {
-                    return response.data;
-                } else {
-                    throw response;
-                }
-            } catch (err) {
-                throw err;
+
+            const response = await _frak.post<LogResponse>(uri, {pillbox_id: pillboxId});
+            if (response.success) {
+                return response.data;
+            } else {
+                throw response;
             }
         },
 
@@ -125,15 +112,11 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
          */
         delete: async (drugId: string | number): Promise<DeleteResponse> => {
             const uri = _baseUrl + 'pillbox/' + drugId + '?api_key=' + _apiKey;
-            try {
-                const response = await _frak.delete<RecordResponse>(uri);
-                if (response.success) {
-                    return response;
-                } else {
-                    throw response;
-                }
-            } catch (err) {
-                throw err;
+            const response = await _frak.delete<RecordResponse>(uri);
+            if (response.success) {
+                return response;
+            } else {
+                throw response;
             }
         }
     };

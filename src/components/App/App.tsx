@@ -1,8 +1,8 @@
-import ClientHeader from "components/App/ClientHeader";
-import Header from "components/App/Header";
-import Main from "components/App/Main";
+import ClientHeader from 'components/App/ClientHeader';
+import Header from 'components/App/Header';
+import Main from 'components/App/Main';
 import React from 'reactn';
-import LandingPage from "components/Pages/LandingPage";
+import LandingPage from 'components/Pages/LandingPage';
 
 /**
  * Main Entry Component
@@ -13,15 +13,15 @@ const App = () => {
     return (
         <React.StrictMode>
             <Main>
-                <Header/>
-                <ClientHeader/>
+                <Header />
+                <ClientHeader />
 
-                <div style={{marginLeft: "15px"}}>
-                    <LandingPage/>
+                <div style={{marginLeft: '15px'}}>
+                    <LandingPage />
                 </div>
-           </Main>
-       </React.StrictMode>
+            </Main>
+        </React.StrictMode>
     );
-}
+};
 
 export default App;

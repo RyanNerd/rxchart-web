@@ -1,26 +1,26 @@
-import Alert from "react-bootstrap/Alert";
-import Button, {ButtonProps} from "react-bootstrap/Button";
-import Card from "react-bootstrap/Card";
+import Alert from 'react-bootstrap/Alert';
+import Button, {ButtonProps} from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
 import React, {useEffect, useGlobal, useMemo, useState} from 'reactn';
-import {randomString} from "utility/common";
+import {randomString} from 'utility/common';
 
 interface IKey {
-    [key: string]: string
+    [key: string]: string;
 }
 
 interface IProps {
-    error: any
-    dismissErrorAlert: () => void
+    error: unknown;
+    dismissErrorAlert: () => void;
 }
 
 interface IWillow {
-    authenticated: boolean
-    message: string[] | null
-    missing?: { invalid?: IKey }
-    status: number
-    timestamp: number
-    success: boolean
-    data?: null | any[]
+    authenticated: boolean;
+    message: string[] | null;
+    missing?: {invalid?: IKey};
+    status: number;
+    timestamp: number;
+    success: boolean;
+    data?: null | unknown[];
 }
 
 /**
@@ -40,8 +40,8 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
      * @param {string} html
      * @return {object}
      */
-    const createMarkup = (html: string): { __html: string } => {
-        return {__html: html}
+    const createMarkup = (html: string): {__html: string} => {
+        return {__html: html};
     };
 
     /**
@@ -50,7 +50,7 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
      */
     const getText = async (response: Response) => {
         return await response.text();
-    }
+    };
 
     // Observer to show / hide the Diagnostics tab title
     useEffect(() => {
@@ -64,251 +64,248 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
                 el.style.color = 'white';
             }
         }
-    }, [error])
+    }, [error]);
 
     /**
      * Use memoization, so we don't have 3000 re-renders when an error occurs.
      */
-    finalContent = useMemo(() => {
-        /**
-         * Button that closes the error and lets users sign back in
-         * @param {ButtonProps} props
-         */
-        const CloseErrorButton = (props: ButtonProps) => {
-            return (
-                <Button
-                    variant="primary"
-                    onClick={() => {
-                        setContent(null);
-                        dismissError();
-                    }}
-                    {...props}
-                >
-                    Close error and sign back in
-                </Button>)
-        }
-
-        /**
-         * Alert composition component
-         * @param {React.ReactNode} heading
-         * @param {React.ReactNode} body
-         */
-        const _alert = (heading: React.ReactNode, body: React.ReactNode) => {
-            return (
-                <Alert
-                    variant="danger"
-                    dismissible
-                    onClose={() => {
-                        setContent(null);
-                        dismissError();
-                    }}
-                >
-                    <Alert.Heading>
-                        {heading}
-                    </Alert.Heading>
-                    {body}
-                </Alert>
-            )
-        }
-
-        /**
-         * Handler for when error is an instance of Error
-         * @param {Error} err
-         */
-        const handleNativeError = (err: Error) => {
-            const message = err.message;
-            const name = err.name;
-            const stack = err?.stack;
-            const body = (
-                <>
-                    <p>{message}</p>
-                    {stack &&
-                    <>
-                        <p></p>
-                        <p>{stack}</p>
-                    </>
-                    }
-                </>
-            )
-            setContent(_alert('Error (' + name + ')', body));
-        }
-
-        /**
-         * Handler for when the error contains HTML that needs to be rendered.
-         * @param {string} html
-         */
-        const handleHtmlError = (html: string) => {
-            const card = (
-                <Card>
-                    <Card.Header>
-                        <span className="mr-1">Error Details</span>
-                        <CloseErrorButton className="float-right"/>
-                    </Card.Header>
-                    <Card.Body>
-                        <div dangerouslySetInnerHTML={createMarkup(html)}/>
-                    </Card.Body>
-                    <Card.Footer>
-                        <CloseErrorButton/>
-                    </Card.Footer>
-                </Card>
-            )
-            setContent(card);
-        }
-
-        /**
-         * Handler for when the error is an instance of Response
-         * @param {Response} response
-         */
-        const handleResponseError = async (response: Response) => {
-            if (!response.bodyUsed) {
-                return await getText(response)
-                .then((text) => {
-                    const headers = response.headers;
-                    const contentType = headers.get('content_type');
-                    if (contentType?.toLowerCase().includes('html') || text.toLowerCase().includes('html')) {
-                        handleHtmlError(text);
-                    } else {
-                        setContent(_alert('Fetch Response Error',
-                            <>
-                                <p>Status: {response.status}</p>
-                                <p>Status Text: {response.statusText}</p>
-                                <p>Text: {text}</p>
-                            </>)
-                        );
-                    }
-                })
-            }
-        }
-
-        /**
-         * Handler for when the error is a Willow API error
-         * @param {IWillow} error
-         */
-        const handleWillowError = (error: IWillow) => {
-            const invalid = error.missing && error.missing.invalid ? error.missing.invalid : false;
-            const invalidMessages = [];
-            if (invalid) {
-                for (const key in invalid) {
-                    if (invalid.hasOwnProperty(key)) {
-                        const value = invalid[key];
-                        invalidMessages.push({'key': key, 'value': value});
-                    }
-                }
-            }
-            const card = (
-                <Card>
-                    <Card.Header>
-                        <span className="mr-1">
-                            API Error
-                        </span>
-                        <CloseErrorButton className="float-right"/>
-                    </Card.Header>
-                    <Card.Body>
-                        <h6>Messages</h6>
-                        <ul key={randomString()}>
-                            {error?.message?.map((value: string) => {
-                                const uniqueId = randomString();
-                                return (
-                                    <React.Fragment key={'msg-' + uniqueId}>
-                                <li>
-                                    {value}
-                                </li>
-                                </React.Fragment>
-                                )
-                            })}
-                        </ul>
-
-                        <h6>Fields</h6>
-                        <ul key={randomString()}>
-                            {invalidMessages.map((message: { key: string, value: any }) => {
-                                const uniqueId = randomString();
-                                return (
-                                    <React.Fragment key={'dp-invalid-' + uniqueId}>
-                                        <li>
-                                            Field: {message.key}
-                                        </li>
-                                        <li>
-                                            Details: {message.value}
-                                        </li>
-                                    </React.Fragment>
-                                )
-                            })}
-                        </ul>
-
-                        <hr/>
-
-                        <ul>
-                            <li>
-                                authenticated: {error.authenticated ? 'yes' : 'no'}
-                            </li>
-                            <li>
-                                status: {error.status}
-                            </li>
-                            <li>
-                                success: {error.success ? 'true' : 'false'}
-                            </li>
-                            <li>
-                                timestamp: {error.timestamp}
-                            </li>
-                            <li>
-                                data: {error.data ? error.data : 'None'}
-                            </li>
-                        </ul>
-                    </Card.Body>
-                    <Card.Footer>
-                        <CloseErrorButton/>
-                    </Card.Footer>
-                </Card>
-            )
-            setContent(card);
-        }
-
-        if (!error) return null;
-
-        try {
-            console.log('Error:', error);
-            console.log('typeof error', typeof error);
-
-            if (content) {
-                return content;
-            }
+    // eslint-disable-next-line prefer-const
+    finalContent =
+        useMemo(() => {
+            /**
+             * Button that closes the error and lets users sign back in
+             * @param {ButtonProps} props
+             */
+            const CloseErrorButton = (props: ButtonProps) => {
+                return (
+                    <Button
+                        variant="primary"
+                        onClick={() => {
+                            setContent(null);
+                            dismissError();
+                        }}
+                        {...props}
+                    >
+                        Close error and sign back in
+                    </Button>
+                );
+            };
 
             /**
-             * Duck 🦆 typing to figure out what type error is
+             * Alert composition component
+             * @param {React.ReactNode} heading
+             * @param {React.ReactNode} body
              */
-            if (error instanceof Object) {
-                if (error.hasOwnProperty('message') &&
-                    error.hasOwnProperty('status') &&
-                    error.hasOwnProperty('timestamp') &&
-                    error.hasOwnProperty('success')) {
-                    handleWillowError(error);
+            const _alert = (heading: React.ReactNode, body: React.ReactNode) => {
+                return (
+                    <Alert
+                        variant="danger"
+                        dismissible
+                        onClose={() => {
+                            setContent(null);
+                            dismissError();
+                        }}
+                    >
+                        <Alert.Heading>{heading}</Alert.Heading>
+                        {body}
+                    </Alert>
+                );
+            };
+
+            /**
+             * Handler for when error is an instance of Error
+             * @param {Error} err
+             */
+            const handleNativeError = (err: Error) => {
+                const message = err.message;
+                const name = err.name;
+                const stack = err?.stack;
+                const body = (
+                    <>
+                        <p>{message}</p>
+                        {stack && (
+                            <>
+                                <p></p>
+                                <p>{stack}</p>
+                            </>
+                        )}
+                    </>
+                );
+                setContent(_alert('Error (' + name + ')', body));
+            };
+
+            /**
+             * Handler for when the error contains HTML that needs to be rendered.
+             * @param {string} html
+             */
+            const handleHtmlError = (html: string) => {
+                const card = (
+                    <Card>
+                        <Card.Header>
+                            <span className="mr-1">Error Details</span>
+                            <CloseErrorButton className="float-right" />
+                        </Card.Header>
+                        <Card.Body>
+                            <div dangerouslySetInnerHTML={createMarkup(html)} />
+                        </Card.Body>
+                        <Card.Footer>
+                            <CloseErrorButton />
+                        </Card.Footer>
+                    </Card>
+                );
+                setContent(card);
+            };
+
+            /**
+             * Handler for when the error is an instance of Response
+             * @param {Response} response
+             */
+            const handleResponseError = async (response: Response) => {
+                if (!response.bodyUsed) {
+                    return await getText(response).then((text) => {
+                        const headers = response.headers;
+                        const contentType = headers.get('content_type');
+                        if (contentType?.toLowerCase().includes('html') || text.toLowerCase().includes('html')) {
+                            handleHtmlError(text);
+                        } else {
+                            setContent(
+                                _alert(
+                                    'Fetch Response Error',
+                                    <>
+                                        <p>Status: {response.status}</p>
+                                        <p>Status Text: {response.statusText}</p>
+                                        <p>Text: {text}</p>
+                                    </>
+                                )
+                            );
+                        }
+                    });
                 }
-            }
-            if (error instanceof Response) {
-                handleResponseError(error);
-            }
-            if (error instanceof Error) {
-                handleNativeError(error);
-            }
-            if (typeof error === 'string') {
-                if (error.toLowerCase().includes('html')) {
-                    return handleHtmlError(error);
-                } else {
-                    return handleNativeError(new Error(error));
+            };
+
+            /**
+             * Handler for when the error is a Willow API error
+             * @param {IWillow} error
+             */
+            const handleWillowError = (error: IWillow) => {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                const invalid = error.missing && error.missing.invalid ? error.missing.invalid : false;
+                const invalidMessages = [];
+                if (invalid) {
+                    for (const key in invalid) {
+                        if ({}.hasOwnProperty.call(invalid, key)) {
+                            const value = invalid[key];
+                            invalidMessages.push({key, value});
+                        }
+                    }
                 }
+                const card = (
+                    <Card>
+                        <Card.Header>
+                            <span className="mr-1">API Error</span>
+                            <CloseErrorButton className="float-right" />
+                        </Card.Header>
+                        <Card.Body>
+                            <h6>Messages</h6>
+                            <ul key={randomString()}>
+                                {error?.message?.map((value: string) => {
+                                    const uniqueId = randomString();
+                                    return (
+                                        <React.Fragment key={'msg-' + uniqueId}>
+                                            <li>{value}</li>
+                                        </React.Fragment>
+                                    );
+                                })}
+                            </ul>
+
+                            <h6>Fields</h6>
+                            <ul key={randomString()}>
+                                {invalidMessages.map((message: {key: string; value: unknown}) => {
+                                    const uniqueId = randomString();
+                                    return (
+                                        <React.Fragment key={'dp-invalid-' + uniqueId}>
+                                            <li>Field: {message.key}</li>
+                                            <li>Details: {message.value}</li>
+                                        </React.Fragment>
+                                    );
+                                })}
+                            </ul>
+
+                            <hr />
+
+                            <ul>
+                                <li>authenticated: {error.authenticated ? 'yes' : 'no'}</li>
+                                <li>status: {error.status}</li>
+                                <li>success: {error.success ? 'true' : 'false'}</li>
+                                <li>timestamp: {error.timestamp}</li>
+                                <li>data: {error.data ? error.data : 'None'}</li>
+                            </ul>
+                        </Card.Body>
+                        <Card.Footer>
+                            <CloseErrorButton />
+                        </Card.Footer>
+                    </Card>
+                );
+                setContent(card);
+            };
+
+            if (!error) return null;
+
+            try {
+                console.log('Error:', error);
+                console.log('typeof error', typeof error);
+
+                if (content) {
+                    return content;
+                }
+
+                /**
+                 * Duck 🦆 typing to figure out what type error is
+                 */
+                if (error instanceof Object) {
+                    if (
+                        // eslint-disable-next-line no-prototype-builtins
+                        error.hasOwnProperty('message') &&
+                        // eslint-disable-next-line no-prototype-builtins
+                        error.hasOwnProperty('status') &&
+                        // eslint-disable-next-line no-prototype-builtins
+                        error.hasOwnProperty('timestamp') &&
+                        // eslint-disable-next-line no-prototype-builtins
+                        error.hasOwnProperty('success')
+                    ) {
+                        handleWillowError(error as IWillow);
+                    }
+                }
+                if (error instanceof Response) {
+                    handleResponseError(error);
+                }
+                if (error instanceof Error) {
+                    handleNativeError(error);
+                }
+                if (typeof error === 'string') {
+                    if (error.toLowerCase().includes('html')) {
+                        return handleHtmlError(error);
+                    } else {
+                        return handleNativeError(new Error(error));
+                    }
+                }
+                return _alert(<b>Unknown Error</b>, 'Check console log.');
+            } catch (e) {
+                return (
+                    <>
+                        <p>Error in DiagnosticsPage</p>
+                    </>
+                );
             }
-            return (_alert(<b>Unknown Error</b>, 'Check console log.'));
-        } catch (e) {
-            return (<><p>Error in DiagnosticsPage</p></>);
-        }
-    }, [error, content, dismissError]) || null;
+        }, [error, content, dismissError]) || null;
 
     // If this tab isn't active then don't render
     if (activeTabKey !== 'error') {
         return null;
     }
 
-    return <>{finalContent}</>
-}
+    return <>{finalContent}</>;
+};
 
 export default DiagnosticPage;

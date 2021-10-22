@@ -1,15 +1,16 @@
-import Button from "react-bootstrap/Button";
+import Button from 'react-bootstrap/Button';
 import Modal, {ModalProps} from 'react-bootstrap/Modal';
-import {ButtonVariant} from "react-bootstrap/types";
+import {ButtonVariant} from 'react-bootstrap/types';
 import React, {useEffect, useState} from 'reactn';
+import {ReactNode} from 'reactn/default';
 
 interface IChildren {
-    children: any // ReactChildren | ReactChild | JSX.Element[] | JSX.Element | string
+    children: ReactNode;
 }
 
 interface IProps extends ModalProps {
-    buttonvariant?: ButtonVariant
-    onSelect: (a: boolean) => void
+    buttonvariant?: ButtonVariant;
+    onSelect: (a: boolean) => void;
 }
 
 /**
@@ -23,17 +24,12 @@ const Confirm = {
      * @return Modal
      */
     Modal: (props: IProps): JSX.Element => {
-        const {
-            backdrop = 'static',
-            buttonvariant = 'primary',
-            onSelect,
-            size = 'sm'
-        } = {...props};
+        const {backdrop = 'static', buttonvariant = 'primary', onSelect, size = 'sm'} = {...props};
         const [show, setShow] = useState(props.show);
 
         // Observer for show
         useEffect(() => {
-            setShow(props.show)
+            setShow(props.show);
         }, [show, props.show]);
 
         /**
@@ -45,36 +41,24 @@ const Confirm = {
             e.preventDefault();
             setShow(false);
             if (props.onHide) {
-                props.onHide()
+                props.onHide();
             }
             onSelect(answer);
-        }
+        };
 
         return (
-            <Modal
-                {...props}
-                show={show}
-                size={size}
-                backdrop={backdrop}
-                centered
-            >
+            <Modal {...props} show={show} size={size} backdrop={backdrop} centered>
                 {props.children}
                 <Modal.Footer>
-                    <Button
-                        onClick={(e) => onAnswer(e, true)}
-                        variant={buttonvariant}
-                    >
+                    <Button onClick={(e) => onAnswer(e, true)} variant={buttonvariant}>
                         Yes
                     </Button>
-                    <Button
-                        onClick={(e) => onAnswer(e, false)}
-                        variant="secondary"
-                    >
+                    <Button onClick={(e) => onAnswer(e, false)} variant="secondary">
                         No
                     </Button>
                 </Modal.Footer>
             </Modal>
-        )
+        );
     },
 
     /**
@@ -82,11 +66,7 @@ const Confirm = {
      * @param {IChildren} props
      */
     Header: (props: IChildren) => {
-        return (
-            <div className="modal-header">
-                {props.children}
-            </div>
-        )
+        return <div className="modal-header">{props.children}</div>;
     },
 
     /**
@@ -94,11 +74,7 @@ const Confirm = {
      * @param {IChildren} props
      */
     Title: (props: IChildren) => {
-        return (
-            <h5 className="modal-title">
-                {props.children}
-            </h5>
-        )
+        return <h5 className="modal-title">{props.children}</h5>;
     },
 
     /**
@@ -106,12 +82,8 @@ const Confirm = {
      * @param {IChildren} props
      */
     Body: (props: IChildren) => {
-        return (
-            <div className="modal-body">
-                {props.children}
-            </div>
-        )
+        return <div className="modal-body">{props.children}</div>;
     }
-}
+};
 
 export default Confirm;
