@@ -164,7 +164,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
             setPillboxDrugLog(multiSort(pillboxMedLog, {Quantity: SortDirection.asc, Drug: SortDirection.desc}));
         }
-    }, [medicineList, pillboxItemList, activePillbox, drugLogList]);
+    }, [medicineList, pillboxItemList, activePillbox, drugLogList, globalMedicineList]);
 
     // If there isn't an active client, or medicineList isn't populated, or this isn't the active tab then do not render
     if (!clientId || !medicineList || activeTabKey !== 'medicine') return null;
