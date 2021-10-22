@@ -1,39 +1,40 @@
-// tslint:disable:max-line-length
-import {IAuthManager} from "managers/AuthManager";
-import {IMedicineManager} from "managers/MedicineManager";
-import {IResidentManager} from "managers/ResidentManager";
-import {Authenticated} from "providers/AuthenticationProvider";
+/* eslint-disable max-len */
+import {IAuthManager} from 'managers/AuthManager';
+import {IMedicineManager} from 'managers/MedicineManager';
+import {IResidentManager} from 'managers/ResidentManager';
+import {Authenticated} from 'providers/AuthenticationProvider';
 import 'reactn';
 import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord, ResidentRecord} from 'types/RecordTypes';
-import {IProviders} from "utility/getInitialState";
-
+import {IProviders} from 'utility/getInitialState';
+/* eslint @typescript-eslint/no-explicit-any: off */
 declare module 'reactn/default' {
     export interface Reducers {
-        append: (global: State, dispatch: Dispatch, ...strings: any[]) => Pick<State, 'value'>
-        doNothing: (global: State, dispatch: Dispatch) => null
-        increment: (global: State, dispatch: Dispatch, i: number) => Pick<State, 'count'>
+        append: (global: State, dispatch: Dispatch, ...strings: any[]) => Pick<State, 'value'>;
+        doNothing: (global: State, dispatch: Dispatch) => null;
+        increment: (global: State, dispatch: Dispatch, i: number) => Pick<State, 'count'>;
     }
 
     export interface State {
-        activeResident: ResidentRecord | null
-        activeTabKey: string
-        authManager: IAuthManager
-        count: number
-        drugLogList: DrugLogRecord[]
-        __errorDetails: any
-        medicineList: MedicineRecord[]
-        pillboxList: PillboxRecord[]
-        pillboxItemList: PillboxItemRecord[]
-        medicineManager: IMedicineManager
-        otcList: MedicineRecord[]
-        providers: IProviders
-        residentList: ResidentRecord[]
-        residentManager: IResidentManager
-        signIn: Authenticated
-        value: string
+        activeResident: ResidentRecord | null;
+        activeTabKey: string;
+        authManager: IAuthManager;
+        count: number;
+        drugLogList: DrugLogRecord[];
+        __errorDetails: any;
+        medicineList: MedicineRecord[];
+        pillboxList: PillboxRecord[];
+        pillboxItemList: PillboxItemRecord[];
+        medicineManager: IMedicineManager;
+        otcList: MedicineRecord[];
+        providers: IProviders;
+        residentList: ResidentRecord[];
+        residentManager: IResidentManager;
+        signIn: Authenticated;
+        value: string;
     }
 
     export type ReactText = string | number;
+    // eslint-disable-next-line @typescript-eslint/ban-types
     export type ReactFragment = {} | ReactNodeArray;
     export type ReactChild = ReactElement | ReactText;
     export type ReactNode = ReactChild | ReactFragment | ReactPortal | boolean | null | undefined;
@@ -48,7 +49,10 @@ declare module 'reactn/default' {
          * @param thisArg If provided, it will be used as the this value for each invocation of
          * predicate. If it is not provided, undefined is used instead.
          */
-        find<S extends T>(predicate: (this: void, value: T, index: number, obj: T[]) => value is S, thisArg?: any): S | undefined;
+        find<S extends T>(
+            predicate: (this: void, value: T, index: number, obj: T[]) => value is S,
+            thisArg?: any
+        ): S | undefined;
         find(predicate: (value: T, index: number, obj: T[]) => unknown, thisArg?: any): T | undefined;
 
         /**
@@ -85,17 +89,23 @@ declare module 'reactn/default' {
     }
 
     export interface ReactChildren {
-        map<T, C>(children: C | ReadonlyArray<C>, fn: (child: C, index: number) => T):
-            C extends null | undefined ? C : Exclude<T, boolean | null | undefined>[];
+        map<T, C>(
+            children: C | ReadonlyArray<C>,
+            fn: (child: C, index: number) => T
+        ): C extends null | undefined ? C : Exclude<T, boolean | null | undefined>[];
         forEach<C>(children: C | ReadonlyArray<C>, fn: (child: C, index: number) => void): void;
         count(children: any): number;
         only<C>(children: C): C extends any[] ? never : C;
         toArray(children: ReactNode | ReactNode[]): Exclude<ReactNode, boolean | null | undefined>[];
     }
 
-    interface Component<P = {}, S = {}, SS = any> extends ComponentLifecycle<P, S, SS> { }
-    interface ReactNodeArray extends Array<ReactNode> {}
-    export interface ReactElement<P = any, T extends string | JSXElementConstructor<any> = string | JSXElementConstructor<any>> {
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    type Component<P = {}, S = {}, SS = any> = ComponentLifecycle<P, S, SS>;
+    type ReactNodeArray = Array<ReactNode>;
+    export interface ReactElement<
+        P = any,
+        T extends string | JSXElementConstructor<any> = string | JSXElementConstructor<any>
+    > {
         type: T;
         props: P;
         key: Key | null;
@@ -106,8 +116,8 @@ declare module 'reactn/default' {
     }
 
     //
-// Error Interfaces
-// ----------------------------------------------------------------------
+    // Error Interfaces
+    // ----------------------------------------------------------------------
     interface ErrorInfo {
         /**
          * Captures which component contained the exception, and its ancestors.
@@ -115,7 +125,7 @@ declare module 'reactn/default' {
         componentStack: string;
     }
 
-// This should be "infer SS" but can't use it yet
+    // This should be "infer SS" but can't use it yet
     interface NewLifecycle<P, S, SS> {
         /**
          * Runs before React applies the result of `render` to the document, and

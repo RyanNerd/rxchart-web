@@ -32,7 +32,7 @@ const CheckoutGrid = (props: IProps): JSX.Element => {
      * @param {string} columnName
      * @returns {string | null}
      */
-    const drugColumnLookup = (medicineId: number, columnName: string): string | null => {
+    const drugColumnLookup = (medicineId: number, columnName: string): unknown => {
         if (medicineId) {
             const medicine = getObjectByProperty<MedicineRecord>(medicineList, 'Id', medicineId);
             if (medicine) {
@@ -55,14 +55,14 @@ const CheckoutGrid = (props: IProps): JSX.Element => {
 
         // Figure out medicine field values
         const isOtc = drugColumnLookup(drug.MedicineId, 'OTC');
-        let drugName = drugColumnLookup(drug.MedicineId, 'Drug');
+        let drugName = drugColumnLookup(drug.MedicineId, 'Drug') as string | null;
 
         if (!drugName || drugName.length === 0) {
             drugName = 'UNKNOWN - Medicine removed!';
         }
 
         const medicineId = drug.MedicineId;
-        const drugStrength = drugColumnLookup(medicineId, 'Strength');
+        const drugStrength = drugColumnLookup(medicineId, 'Strength') as string | null;
         const updatedDate = new Date(drug.Updated || '');
         const lastTaken = calculateLastTaken(medicineId, [drug]);
         const variant = getLastTakenVariant(lastTaken);

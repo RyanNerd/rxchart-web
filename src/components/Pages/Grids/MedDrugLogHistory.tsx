@@ -1,16 +1,16 @@
-import DrugLogHistoryGrid from "components/Pages/Grids/DrugLogHistoryGrid";
-import Button from "react-bootstrap/Button";
-import ButtonGroup from "react-bootstrap/ButtonGroup";
-import React, {useEffect, useState} from "reactn";
-import {DrugLogRecord, MedicineRecord, ResidentRecord} from "types/RecordTypes";
-import {clientDOB, clientFullName} from "utility/common";
+import DrugLogHistoryGrid from 'components/Pages/Grids/DrugLogHistoryGrid';
+import Button from 'react-bootstrap/Button';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import React, {useEffect, useState} from 'reactn';
+import {DrugLogRecord, MedicineRecord, ResidentRecord} from 'types/RecordTypes';
+import {clientDOB, clientFullName} from 'utility/common';
 
 interface IProps {
-    activeClient: ResidentRecord
-    drugLogList: DrugLogRecord[]
-    medicineList: MedicineRecord[]
-    onEdit: (d: DrugLogRecord) => void
-    onDelete: (d: DrugLogRecord) => void
+    activeClient: ResidentRecord;
+    drugLogList: DrugLogRecord[];
+    medicineList: MedicineRecord[];
+    onEdit: (d: DrugLogRecord) => void;
+    onDelete: (d: DrugLogRecord) => void;
 }
 
 /**
@@ -18,13 +18,7 @@ interface IProps {
  * @param  {IProps} props
  */
 const MedDrugLogHistory = (props: IProps) => {
-    const {
-        activeClient,
-        drugLogList,
-        medicineList,
-        onDelete,
-        onEdit
-    } = props;
+    const {activeClient, drugLogList, medicineList, onDelete, onEdit} = props;
 
     const [printing, setPrinting] = useState(false);
 
@@ -38,58 +32,55 @@ const MedDrugLogHistory = (props: IProps) => {
                 setPrinting(false);
             }, 100);
         }
-    }, [printing])
+    }, [printing]);
 
-    const hasPillboxItems = drugLogList.some(d => d.PillboxItemId);
+    const hasPillboxItems = drugLogList.some((d) => d.PillboxItemId);
 
     return (
         <>
             <ButtonGroup className="d-print-none mr-3 mb-1">
-            <Button
-                onClick={() => setPrinting(true)}
-                variant="primary"
-                size="sm"
-            >
-                Print
-            </Button>
+                <Button onClick={() => setPrinting(true)} variant="primary" size="sm">
+                    Print
+                </Button>
                 {hasPillboxItems && <span className="ml-3">💊 indicates drug logged from a Pillbox</span>}
             </ButtonGroup>
 
-            {activeClient && printing &&
-                <ul
-                    style={{listStyleType: "none"}}
-                >
+            {activeClient && printing && (
+                <ul style={{listStyleType: 'none'}}>
                     <li
                         style={{
-                            fontSize: "20px",
-                            fontWeight: "bold",
+                            fontSize: '20px',
+                            fontWeight: 'bold'
                         }}
                     >
                         {clientFullName(activeClient) + ' DOB: ' + clientDOB(activeClient)}
                     </li>
 
-                    <span
-                        style={{fontSize: "12px"}}
-                    >
-                     <li>
-                         <b>LEGEND:</b> {hasPillboxItems && <><span>💊: </span> <i>Pillbox</i></>}
-                         <span> Out:</span> <i>Taken out of shelter</i>
-                         <span> In:</span> <i>Returned to shelter</i>
-                     </li>
+                    <span style={{fontSize: '12px'}}>
+                        <li>
+                            <b>LEGEND:</b>{' '}
+                            {hasPillboxItems && (
+                                <>
+                                    <span>💊: </span> <i>Pillbox</i>
+                                </>
+                            )}
+                            <span> Out:</span> <i>Taken out of shelter</i>
+                            <span> In:</span> <i>Returned to shelter</i>
+                        </li>
                     </span>
                 </ul>
-            }
+            )}
 
             <div className="mt-3">
                 <DrugLogHistoryGrid
                     drugLog={drugLogList}
                     medicineList={medicineList}
-                    onDelete={d => onDelete(d)}
-                    onEdit={d => onEdit(d)}
+                    onDelete={(d) => onDelete(d)}
+                    onEdit={(d) => onEdit(d)}
                 />
             </div>
         </>
-    )
-}
+    );
+};
 
 export default MedDrugLogHistory;

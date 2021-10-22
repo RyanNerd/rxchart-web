@@ -1,18 +1,18 @@
-import {Authenticated} from "providers/AuthenticationProvider";
+import {Authenticated} from 'providers/AuthenticationProvider';
 import Alert from 'react-bootstrap/Alert';
 import Container from 'react-bootstrap/Container';
 import React, {setGlobal, useEffect, useGlobal, useRef, useState} from 'reactn';
-import {MedicineRecord, ResidentRecord} from "types/RecordTypes";
-import {asyncWrapper} from "utility/common";
-import getInitialState from "utility/getInitialState";
+import {MedicineRecord, ResidentRecord} from 'types/RecordTypes';
+import {asyncWrapper} from 'utility/common';
+import getInitialState from 'utility/getInitialState';
 import {ReactComponent as LockIcon} from '../../icons/lock.svg';
 import RxIcon from '../../icons/prescription.svg';
 import {ReactComponent as UserIcon} from '../../icons/user.svg';
 import '../../styles/neumorphism.css';
-import About from "./Modals/About";
+import About from './Modals/About';
 
 /**
- *  Sign in page
+ * Sign in page
  * @returns {JSX.Element | null}
  */
 const LoginPage = (): JSX.Element | null => {
@@ -38,7 +38,7 @@ const LoginPage = (): JSX.Element | null => {
 
     // Determine if the user is allowed to log in or not
     useEffect(() => {
-        if ((!username || username.length === 0) || (!password || password.length === 0)) {
+        if (!username || username.length === 0 || !password || password.length === 0) {
             setCanLogin(false);
         } else {
             setCanLogin(true);
@@ -52,21 +52,33 @@ const LoginPage = (): JSX.Element | null => {
      * Perform the authentication by calling the web service to validate the username and password.
      */
     const authenticate = async () => {
-        const [e, auth] = await asyncWrapper(am.authenticate(username, password)) as [unknown, Promise<Authenticated>];
-        if (e) await setErrorDetails(e); else {
-            const [eAuth, result] = await asyncWrapper(auth) as [unknown, Authenticated];
-            if (eAuth) await setErrorDetails(eAuth); else {
+        const [e, auth] = (await asyncWrapper(am.authenticate(username, password))) as [
+            unknown,
+            Promise<Authenticated>
+        ];
+        if (e) await setErrorDetails(e);
+        else {
+            const [eAuth, result] = (await asyncWrapper(auth)) as [unknown, Authenticated];
+            if (eAuth) await setErrorDetails(eAuth);
+            else {
                 if (result.success && result.apiKey) {
                     const [e] = await asyncWrapper(providers.setApi(result.apiKey));
-                    if (e) await setErrorDetails(e); else {
+                    if (e) await setErrorDetails(e);
+                    else {
                         // Load ALL Resident records up front and save them in the global store.
-                        const [errLoadClients, clients] = await
-                            asyncWrapper(rm.loadResidentList()) as [unknown, Promise<ResidentRecord[]>];
-                        if (errLoadClients) await setErrorDetails(errLoadClients); else {
+                        const [errLoadClients, clients] = (await asyncWrapper(rm.loadResidentList())) as [
+                            unknown,
+                            Promise<ResidentRecord[]>
+                        ];
+                        if (errLoadClients) await setErrorDetails(errLoadClients);
+                        else {
                             await setResidentList(await clients);
-                            const [errLoadOtc, otcMeds] = await
-                                asyncWrapper(mm.loadOtcList()) as [unknown, Promise<MedicineRecord[]>];
-                            if (errLoadOtc) await setErrorDetails(errLoadOtc); else {
+                            const [errLoadOtc, otcMeds] = (await asyncWrapper(mm.loadOtcList())) as [
+                                unknown,
+                                Promise<MedicineRecord[]>
+                            ];
+                            if (errLoadOtc) await setErrorDetails(errLoadOtc);
+                            else {
                                 await setOtcList(await otcMeds);
                                 await setSignIn(result);
                                 await setActiveTabKey('resident');
@@ -78,8 +90,7 @@ const LoginPage = (): JSX.Element | null => {
                 }
             }
         }
-
-    }
+    };
 
     /**
      * Handle when the user clicks the "Logout" button
@@ -91,7 +102,7 @@ const LoginPage = (): JSX.Element | null => {
         } catch (e) {
             await setErrorDetails(e);
         }
-    }
+    };
 
     /**
      * The signOn component
@@ -99,13 +110,10 @@ const LoginPage = (): JSX.Element | null => {
     const signOn = (
         <Container className="neu-main">
             <div className="neu-content">
-                <img alt="logo" src={RxIcon} onClick={() => setShowAboutPage(true)}/>
+                <img alt="logo" src={RxIcon} onClick={() => setShowAboutPage(true)} />
                 <div className="text">℞Chart</div>
                 <div className="neu-field">
-                    <UserIcon
-                        className="ml-4"
-                        style={{marginTop: "12px"}}
-                    />
+                    <UserIcon className="ml-4" style={{marginTop: '12px'}} />
                     <input
                         autoFocus
                         type="text"
@@ -118,7 +126,7 @@ const LoginPage = (): JSX.Element | null => {
                     />
                 </div>
                 <div className="neu-field">
-                    <LockIcon className="ml-4" style={{marginTop: "12px"}}/>
+                    <LockIcon className="ml-4" style={{marginTop: '12px'}} />
                     <input
                         type="password"
                         placeholder="Password"
@@ -154,13 +162,11 @@ const LoginPage = (): JSX.Element | null => {
                     <Alert.Heading>
                         <strong>Invalid Credentials</strong>
                     </Alert.Heading>
-                    <p>
-                        Invalid Username or Password
-                    </p>
+                    <p>Invalid Username or Password</p>
                 </Alert>
             </div>
         </Container>
-    )
+    );
 
     /**
      * The logOff component
@@ -168,7 +174,7 @@ const LoginPage = (): JSX.Element | null => {
     const logOff = (
         <Container className="neu-main">
             <div className="neu-content">
-                <img alt="logo" src={RxIcon} onClick={() => setShowAboutPage(true)}/>
+                <img alt="logo" src={RxIcon} onClick={() => setShowAboutPage(true)} />
                 <div className="text">℞Chart</div>
 
                 <button
@@ -187,18 +193,15 @@ const LoginPage = (): JSX.Element | null => {
                 </button>
             </div>
         </Container>
-    )
+    );
 
     return (
         <>
-            {signIn.apiKey === null || signIn.apiKey.length === 0 ? (signOn) : (logOff)}
+            {signIn.apiKey === null || signIn.apiKey.length === 0 ? signOn : logOff}
 
-            <About
-                show={showAboutPage}
-                onClose={() => setShowAboutPage(false)}
-            />
+            <About show={showAboutPage} onClose={() => setShowAboutPage(false)} />
         </>
-    )
-}
+    );
+};
 
 export default LoginPage;

@@ -1,27 +1,27 @@
-import Frak from "frak/lib/components/Frak";
+import Frak from 'frak/lib/components/Frak';
 
 export interface IAuthenticationProvider {
-    post: (credentials: AuthCredentials) => Promise<Authenticated>
+    post: (credentials: AuthCredentials) => Promise<Authenticated>;
 }
 
 type AuthResponse = {
-    success: boolean,
+    success: boolean;
     data: {
-        apiKey: string,
-        organization: string
-    } | null
-}
+        apiKey: string;
+        organization: string;
+    } | null;
+};
 
 export type Authenticated = {
-    success: boolean | null,
-    apiKey: string | null,
-    organization: string | null
-}
+    success: boolean | null;
+    apiKey: string | null;
+    organization: string | null;
+};
 
 type AuthCredentials = {
-    username: string,
-    password: string
-}
+    username: string;
+    password: string;
+};
 
 /**
  * Authentication Provider API Connector
@@ -38,18 +38,14 @@ const AuthenticationProvider = (url: string): IAuthenticationProvider => {
          */
         post: async (credentials: AuthCredentials): Promise<Authenticated> => {
             const uri = _baseUrl + 'authenticate';
-            try {
-                const response = await _frak.post<AuthResponse>(uri, credentials);
-                const success = response.success;
-                const data = response.data ? response.data : undefined;
-                const apiKey = (success && data?.apiKey) ? data.apiKey : '';
-                const organization = (success && data?.organization) ? data.organization : '';
-                return {success, organization, apiKey};
-            } catch (err) {
-                throw err;
-            }
+            const response = await _frak.post<AuthResponse>(uri, credentials);
+            const success = response.success;
+            const data = response.data ? response.data : undefined;
+            const apiKey = success && data?.apiKey ? data.apiKey : '';
+            const organization = success && data?.organization ? data.organization : '';
+            return {success, organization, apiKey};
         }
-    }
-}
+    };
+};
 
 export default AuthenticationProvider;

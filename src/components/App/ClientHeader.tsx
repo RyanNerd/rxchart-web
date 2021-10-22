@@ -1,10 +1,10 @@
-import ClientButton from "components/Pages/Buttons/ClientButton";
-import ClientDobButton from "components/Pages/Buttons/ClientDobButton";
-import ClientRoster from "components/Pages/Modals/ClientRoster";
-import ResidentEdit from "components/Pages/Modals/ResidentEdit";
-import ButtonGroup from "react-bootstrap/ButtonGroup";
-import React, {useEffect, useGlobal, useState} from "reactn";
-import {ResidentRecord} from "types/RecordTypes";
+import ClientButton from 'components/Pages/Buttons/ClientButton';
+import ClientDobButton from 'components/Pages/Buttons/ClientDobButton';
+import ClientRoster from 'components/Pages/Modals/ClientRoster';
+import ResidentEdit from 'components/Pages/Modals/ResidentEdit';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import React, {useEffect, useGlobal, useState} from 'reactn';
+import {ResidentRecord} from 'types/RecordTypes';
 
 /**
  * Dropdown Buttons for the activeClient
@@ -28,7 +28,7 @@ const ClientHeader = () => {
         const updateClipboard = async (t: string) => {
             await navigator.clipboard.writeText(t);
             setCopyText('');
-        }
+        };
 
         if (copyText !== '') {
             updateClipboard(copyText);
@@ -49,7 +49,7 @@ const ClientHeader = () => {
                 setHmisName('');
             }, 500);
         }
-    }, [hmisName])
+    }, [hmisName]);
 
     /**
      * Update Resident record
@@ -62,7 +62,7 @@ const ClientHeader = () => {
             await setResidentList(rl);
             await setActiveClient(r);
         }
-    }
+    };
 
     // No point in rendering if there's not an active client
     if (!activeClient) {
@@ -71,10 +71,7 @@ const ClientHeader = () => {
 
     return (
         <>
-            <h3
-                className="d-print-none auto-center mb-0"
-                style={{textAlign: "center"}}
-            >
+            <h3 className="d-print-none auto-center mb-0" style={{textAlign: 'center'}}>
                 <ButtonGroup>
                     <ClientButton
                         className="mr-2"
@@ -100,18 +97,13 @@ const ClientHeader = () => {
                         }}
                     />
 
-                    <ClientDobButton
-                        clientRecord={activeClient}
-                    />
+                    <ClientDobButton clientRecord={activeClient} />
                 </ButtonGroup>
             </h3>
 
-            {showClientRoster && activeClient &&
-                <ClientRoster
-                    onUnload={() => setShowClientRoster(false)}
-                    clientList={[activeClient]}
-                />
-            }
+            {showClientRoster && activeClient && (
+                <ClientRoster onUnload={() => setShowClientRoster(false)} clientList={[activeClient]} />
+            )}
 
             <ResidentEdit
                 residentInfo={activeClient as ResidentRecord}
@@ -122,7 +114,7 @@ const ClientHeader = () => {
                 }}
             />
         </>
-    )
-}
+    );
+};
 
 export default ClientHeader;

@@ -1,7 +1,7 @@
-import Frak from "frak/lib/components/Frak";
+import Frak from 'frak/lib/components/Frak';
 import {PillboxItemRecord} from 'types/RecordTypes';
 
-type DeleteResponse = { success: boolean };
+type DeleteResponse = {success: boolean};
 type RecordResponse = {
     data: PillboxItemRecord[] | PillboxItemRecord;
     status: number;
@@ -9,11 +9,11 @@ type RecordResponse = {
 };
 
 export interface IPillboxItemProvider {
-    delete: (drugId: string | number) => Promise<DeleteResponse>
-    post: (pillboxItemInfo: PillboxItemRecord) => Promise<PillboxItemRecord>
-    read: (id: string | number) => Promise<PillboxItemRecord>
-    search: (options: object) => Promise<PillboxItemRecord[]>
-    setApiKey: (apiKey: string) => void
+    delete: (drugId: string | number) => Promise<DeleteResponse>;
+    post: (pillboxItemInfo: PillboxItemRecord) => Promise<PillboxItemRecord>;
+    read: (id: string | number) => Promise<PillboxItemRecord>;
+    search: (options: Record<string, unknown>) => Promise<PillboxItemRecord[]>;
+    setApiKey: (apiKey: string) => void;
 }
 
 /**
@@ -22,7 +22,7 @@ export interface IPillboxItemProvider {
 const PillboxItemProvider = (baseurl: string): IPillboxItemProvider => {
     const _baseUrl = baseurl;
     const _frak = Frak();
-    let _apiKey = null as string | null
+    let _apiKey = null as string | null;
     return {
         /**
          * Set the apiKey
@@ -38,21 +38,17 @@ const PillboxItemProvider = (baseurl: string): IPillboxItemProvider => {
          * @param {object} options
          * @returns {Promise<PillboxItemRecord[]>}
          */
-        search: async (options: object): Promise<PillboxItemRecord[]> => {
+        search: async (options: Record<string, unknown>): Promise<PillboxItemRecord[]> => {
             const uri = _baseUrl + 'pillbox-item/search?api_key=' + _apiKey;
-            try {
-                const response = await _frak.post<RecordResponse>(uri, options);
-                if (response.success) {
-                    return response.data as PillboxItemRecord[];
+            const response = await _frak.post<RecordResponse>(uri, options);
+            if (response.success) {
+                return response.data as PillboxItemRecord[];
+            } else {
+                if (response.status === 404) {
+                    return [] as PillboxItemRecord[];
                 } else {
-                    if (response.status === 404) {
-                        return [] as PillboxItemRecord[];
-                    } else {
-                        throw response;
-                    }
+                    throw response;
                 }
-            } catch (err) {
-                throw err;
             }
         },
 
@@ -63,15 +59,11 @@ const PillboxItemProvider = (baseurl: string): IPillboxItemProvider => {
          */
         read: async (id: string | number): Promise<PillboxItemRecord> => {
             const uri = _baseUrl + 'pillbox-item/' + id + '?api_key=' + _apiKey;
-            try {
-                const response = await _frak.get<RecordResponse>(uri);
-                if (response.success) {
-                    return response.data as PillboxItemRecord;
-                } else {
-                    throw response;
-                }
-            } catch (err) {
-                throw err;
+            const response = await _frak.get<RecordResponse>(uri);
+            if (response.success) {
+                return response.data as PillboxItemRecord;
+            } else {
+                throw response;
             }
         },
 
@@ -82,15 +74,11 @@ const PillboxItemProvider = (baseurl: string): IPillboxItemProvider => {
          */
         post: async (pillboxItemInfo: PillboxItemRecord): Promise<PillboxItemRecord> => {
             const uri = _baseUrl + 'pillbox-item?api_key=' + _apiKey;
-            try {
-                const response = await _frak.post<RecordResponse>(uri, pillboxItemInfo);
-                if (response.success) {
-                    return response.data as PillboxItemRecord;
-                } else {
-                    throw response;
-                }
-            } catch (err) {
-                throw err;
+            const response = await _frak.post<RecordResponse>(uri, pillboxItemInfo);
+            if (response.success) {
+                return response.data as PillboxItemRecord;
+            } else {
+                throw response;
             }
         },
 
@@ -101,18 +89,14 @@ const PillboxItemProvider = (baseurl: string): IPillboxItemProvider => {
          */
         delete: async (drugId: string | number): Promise<DeleteResponse> => {
             const uri = _baseUrl + 'pillbox-item/' + drugId + '?api_key=' + _apiKey;
-            try {
-                const response = await _frak.delete<RecordResponse>(uri);
-                if (response.success) {
-                    return response;
-                } else {
-                    throw response;
-                }
-            } catch (err) {
-                throw err;
+            const response = await _frak.delete<RecordResponse>(uri);
+            if (response.success) {
+                return response;
+            } else {
+                throw response;
             }
         }
-    }
-}
+    };
+};
 
 export default PillboxItemProvider;

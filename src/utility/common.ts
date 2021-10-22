@@ -1,6 +1,7 @@
 import {DrugLogRecord, MedicineRecord, ResidentRecord} from 'types/RecordTypes';
 
 interface IKey {
+    /* eslint @typescript-eslint/no-explicit-any: off */
     [key: string]: any;
 }
 
@@ -39,7 +40,7 @@ export const dateToString = (month: string, day: string, year: string, leadingZe
  * @param {ResidentRecord} resident
  * @param includeNickname
  */
-export const clientFullName = (resident: ResidentRecord, includeNickname: boolean = false): string => {
+export const clientFullName = (resident: ResidentRecord, includeNickname = false): string => {
     const clientName = resident.FirstName.trim() + ' ' + resident.LastName.trim();
     if (includeNickname && resident?.Nickname && resident?.Nickname.trim().length > 0) {
         return clientName + ' "' + resident.Nickname.trim() + '"';

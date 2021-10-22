@@ -1,15 +1,15 @@
-import Frak from "frak/lib/components/Frak";
+import Frak from 'frak/lib/components/Frak';
 import {MedicineRecord} from 'types/RecordTypes';
 
 export interface IMedicineProvider {
-    setApiKey: (apiKey: string) => void
-    search: (options: object) => Promise<MedicineRecord[]>
-    read: (id: number | string) => Promise<MedicineRecord>
-    post: (drugInfo: MedicineRecord) => Promise<MedicineRecord>
-    delete: (drugId: string | number) => Promise<DeleteResponse>
+    setApiKey: (apiKey: string) => void;
+    search: (options: Record<string, unknown>) => Promise<MedicineRecord[]>;
+    read: (id: number | string) => Promise<MedicineRecord>;
+    post: (drugInfo: MedicineRecord) => Promise<MedicineRecord>;
+    delete: (drugId: string | number) => Promise<DeleteResponse>;
 }
 
-export type DeleteResponse = { success: boolean };
+export type DeleteResponse = {success: boolean};
 type RecordResponse = {
     data: MedicineRecord[] | MedicineRecord;
     status: number;
@@ -37,20 +37,16 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
          * @param {object} options
          * @returns {Promise<MedicineRecord[]>}
          */
-        search: async (options: object): Promise<MedicineRecord[]> => {
+        search: async (options: Record<string, unknown>): Promise<MedicineRecord[]> => {
             const uri = _baseUrl + 'medicine/search?api_key=' + _apiKey;
-            try {
-                const response = await _frak.post<RecordResponse>(uri, options);
-                if (response.success) {
-                    return response.data as MedicineRecord[];
-                } else {
-                    if (response.status === 404) {
-                        return [] as MedicineRecord[];
-                    }
-                    throw response;
+            const response = await _frak.post<RecordResponse>(uri, options);
+            if (response.success) {
+                return response.data as MedicineRecord[];
+            } else {
+                if (response.status === 404) {
+                    return [] as MedicineRecord[];
                 }
-            } catch (err) {
-                throw err;
+                throw response;
             }
         },
 
@@ -61,15 +57,11 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
          */
         read: async (id: number | string): Promise<MedicineRecord> => {
             const uri = _baseUrl + 'medicine/' + id + '?api_key=' + _apiKey;
-            try {
-                const response = await _frak.get<RecordResponse>(uri);
-                if (response.success) {
-                    return response.data as MedicineRecord;
-                } else {
-                    throw response;
-                }
-            } catch (err) {
-                throw err;
+            const response = await _frak.get<RecordResponse>(uri);
+            if (response.success) {
+                return response.data as MedicineRecord;
+            } else {
+                throw response;
             }
         },
 
@@ -80,15 +72,11 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
          */
         post: async (drugInfo: MedicineRecord): Promise<MedicineRecord> => {
             const uri = _baseUrl + 'medicine?api_key=' + _apiKey;
-            try {
-                const response = await _frak.post<RecordResponse>(uri, drugInfo);
-                if (response.success) {
-                    return response.data as MedicineRecord;
-                } else {
-                    throw response;
-                }
-            } catch (err) {
-                throw err;
+            const response = await _frak.post<RecordResponse>(uri, drugInfo);
+            if (response.success) {
+                return response.data as MedicineRecord;
+            } else {
+                throw response;
             }
         },
 
@@ -99,18 +87,14 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
          */
         delete: async (drugId: string | number): Promise<DeleteResponse> => {
             const uri = _baseUrl + 'medicine/' + drugId + '?api_key=' + _apiKey;
-            try {
-                const response = await _frak.delete<RecordResponse>(uri);
-                if (response.success) {
-                    return response;
-                } else {
-                    throw response;
-                }
-            } catch (err) {
-                throw err;
+            const response = await _frak.delete<RecordResponse>(uri);
+            if (response.success) {
+                return response;
+            } else {
+                throw response;
             }
         }
-    }
-}
+    };
+};
 
 export default MedicineProvider;
