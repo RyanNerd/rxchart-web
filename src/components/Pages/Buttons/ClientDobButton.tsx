@@ -27,11 +27,12 @@ type TProps = Modify<
  * @param {IProps} props
  */
 const ClientDobButton = (props: TProps) => {
+    const isDev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
     const {
         disabled = false,
         clientRecord,
         title = (
-            <span style={{fontStyle: process.env.REACT_APP_DEVELOPMENT === 'true' ? 'italic' : 'bold'}}>
+            <span style={{fontStyle: isDev ? 'italic' : 'bold'}}>
                 {clientRecord.Notes && <Badge variant="light">🔔</Badge>} {clientDOB(clientRecord)}
             </span>
         )
@@ -50,7 +51,7 @@ const ClientDobButton = (props: TProps) => {
             id="client-dob-dropdown-button"
             onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
             title={title}
-            variant="outline-secondary"
+            variant={isDev ? 'outline-danger' : 'outline-secondary'}
         >
             <Dropdown.Item style={{whiteSpace: 'normal', width: '300px'}}>
                 <Dropdown.Header>
