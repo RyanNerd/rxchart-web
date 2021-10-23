@@ -15,7 +15,7 @@ interface IProps {
 const ClientButton = (props: IProps) => {
     const {clientRecord, onSelect, className, disabled} = props;
 
-    const development = process.env.REACT_APP_DEVELOPMENT === 'true';
+    const development = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
 
     const handleClick = (choice: string) => {
         if (onSelect) {

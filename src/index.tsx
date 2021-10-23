@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import App from 'components/App/App';
-import getInitialState from "./utility/getInitialState";
-import React, {setGlobal} from "reactn";
+import getInitialState from './utility/getInitialState';
+import React, {setGlobal} from 'reactn';
 import ReactDOM from 'react-dom';
 
 /**
@@ -10,29 +10,24 @@ import ReactDOM from 'react-dom';
 const InitError = () => {
     return (
         <>
-            <h3 style={{textAlign: "center"}}>
-                Something went wrong.
-            </h3>
-            <h2 style={{textAlign: "center"}}>
-                Check the console log for details.
-            </h2>
+            <h3 style={{textAlign: 'center'}}>Something went wrong.</h3>
+            <h2 style={{textAlign: 'center'}}>Check the console log for details.</h2>
         </>
-    )
-}
+    );
+};
 
 setGlobal(getInitialState())
-.then((initialState) => {
-    if (process.env.REACT_APP_DEVELOPMENT === 'true') {
-        console.log('RxChart Started', initialState);
-    } else {
-        console.log('RxChart Started');
-    }
-})
-.then(() => {
-    ReactDOM.render(<App/>, document.getElementById('root'));
-})
-.catch((err) => {
+    .then((initialState) => {
+        if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+            console.log('RxChart Started', initialState);
+        } else {
+            console.log('RxChart Started');
+        }
+    })
+    .then(() => {
+        ReactDOM.render(<App />, document.getElementById('root'));
+    })
+    .catch((err) => {
         console.log('Something went wrong', err);
-        ReactDOM.render(<InitError/>, document.getElementById('root'));
-    }
-);
+        ReactDOM.render(<InitError />, document.getElementById('root'));
+    });

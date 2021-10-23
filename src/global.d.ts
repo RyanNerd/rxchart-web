@@ -4,6 +4,7 @@ import {IMedicineManager} from 'managers/MedicineManager';
 import {IResidentManager} from 'managers/ResidentManager';
 import {Authenticated} from 'providers/AuthenticationProvider';
 import 'reactn';
+import type {ComponentClass, FunctionComponent} from 'react';
 import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord, ResidentRecord} from 'types/RecordTypes';
 import {IProviders} from 'utility/getInitialState';
 /* eslint @typescript-eslint/no-explicit-any: off */
@@ -38,7 +39,8 @@ declare module 'reactn/default' {
     export type ReactFragment = {} | ReactNodeArray;
     export type ReactChild = ReactElement | ReactText;
     export type ReactNode = ReactChild | ReactFragment | ReactPortal | boolean | null | undefined;
-
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    type ComponentType<P = {}> = ComponentClass<P> | FunctionComponent<P>;
     interface Array<T> {
         /**
          * Returns the value of the first element in the array where predicate is true, and undefined
