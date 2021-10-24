@@ -1,6 +1,6 @@
 {
   "name": "rxchart",
-  "version": "0.8.24",
+  "version": "0.8.25",
   "private": false,
   "dependencies": {
     "@types/bwip-js": "^2.1.1",
