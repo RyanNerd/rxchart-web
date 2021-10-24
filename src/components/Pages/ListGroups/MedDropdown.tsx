@@ -1,67 +1,52 @@
-import Dropdown from "react-bootstrap/Dropdown";
-import DropdownButton from "react-bootstrap/DropdownButton";
+import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
 import React from 'reactn';
-import DisabledSpinner from "./DisabledSpinner";
+import DisabledSpinner from './DisabledSpinner';
 
 export interface IDropdownItem {
-    id: number, // zero indicated a divider
-    description: string
-    subtext: string | null
+    id: number; // zero indicated a divider
+    description: string;
+    subtext: string | null;
 }
 
 interface IProps {
-    disabled?: boolean
-    activeId: number // Negative indicates the record is a pillbox
-    itemList: IDropdownItem[]
-    onSelect: (s: number) => void
+    disabled?: boolean;
+    activeId: number; // Negative indicates the record is a pillbox
+    itemList: IDropdownItem[];
+    onSelect: (s: number) => void;
 }
 
 /**
  * Med Dropdown
- * @param {IProps} props
+ * @param {IProps} props The props for the component
  * @returns {JSX.Element | null}
  */
 const MedDropdown = (props: IProps): JSX.Element | null => {
-    const {
-        disabled = false,
-        activeId,
-        itemList,
-        onSelect
-    } = props;
+    const {disabled = false, activeId, itemList, onSelect} = props;
 
     // Do not render unless we have the required props.
     if (!itemList || itemList.length === 0) {
         return null;
     }
 
-    const title = itemList.find(i => i.id === activeId)?.description;
+    const title = itemList.find((i) => i.id === activeId)?.description;
 
     /**
      * Dropdown Items component
      *
-     * @param {IDropdownItem} i
+     * @param {IDropdownItem} i The DropDownItem object
      * @returns {JSX.Element}
      */
     const MedDropdownItems = (i: IDropdownItem): JSX.Element => {
         if (i.id === 0) {
-            return (
-                <Dropdown.Divider/>
-            )
+            return <Dropdown.Divider />;
         }
 
         return (
-            <Dropdown.Item
-                key={i.id.toString()}
-                active={i.id === activeId}
-                onSelect={() => onSelect(i.id)}
-            >
+            <Dropdown.Item key={i.id.toString()} active={i.id === activeId} onSelect={() => onSelect(i.id)}>
                 <span>
-                    <span style={{display: "block"}}>{i.description}</span>
-                    {i.subtext &&
-                        <span style={{fontSize: "12px", display: "block"}}>
-                        {i.subtext}
-                    </span>
-                    }
+                    <span style={{display: 'block'}}>{i.description}</span>
+                    {i.subtext && <span style={{fontSize: '12px', display: 'block'}}>{i.subtext}</span>}
                 </span>
             </Dropdown.Item>
         );
@@ -69,6 +54,7 @@ const MedDropdown = (props: IProps): JSX.Element | null => {
 
     /**
      * Work-around so React 17 can be used
+     * @param {React.MouseEvent<HTMLElement>} e Mouse event object
      * @link https://github.com/react-bootstrap/react-bootstrap/issues/5409#issuecomment-718699584
      */
     return (
@@ -76,12 +62,20 @@ const MedDropdown = (props: IProps): JSX.Element | null => {
             disabled={disabled}
             onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
             size="sm"
-            title={disabled ? (<><DisabledSpinner/>{" "}{title}</>) : (title)}
+            title={
+                disabled ? (
+                    <>
+                        <DisabledSpinner /> {title}
+                    </>
+                ) : (
+                    title
+                )
+            }
             variant="primary"
         >
             {itemList.map(MedDropdownItems)}
         </DropdownButton>
-    )
-}
+    );
+};
 
 export default MedDropdown;

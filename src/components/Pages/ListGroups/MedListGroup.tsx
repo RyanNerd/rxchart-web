@@ -25,8 +25,8 @@ interface IProps {
 
 /**
  * MedListGroup
- * @param {IProps} props
- * @return {JSX.Element}
+ * @param {IProps} props The props for the component
+ * @returns {JSX.Element}
  */
 const MedListGroup = (props: IProps): JSX.Element => {
     const {

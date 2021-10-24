@@ -2,6 +2,7 @@ import Alert from 'react-bootstrap/Alert';
 import Button, {ButtonProps} from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import React, {useEffect, useGlobal, useMemo, useState} from 'reactn';
+import {ReactNode} from 'reactn/default';
 import {randomString} from 'utility/common';
 
 interface IKey {
@@ -25,8 +26,8 @@ interface IWillow {
 
 /**
  * DiagnosticPage
- * @param {IProps} props
- * @return {JSX.Element | null}
+ * @param {IProps} props The props for this component
+ * @returns {JSX.Element | null}
  */
 const DiagnosticPage = (props: IProps): JSX.Element | null => {
     const [activeTabKey] = useGlobal('activeTabKey');
@@ -37,8 +38,8 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
 
     /**
      * Function to create the unsafe HTML object
-     * @param {string} html
-     * @return {object}
+     * @param {string} html The HTML text to be safely rendered
+     * @returns {object}
      */
     const createMarkup = (html: string): {__html: string} => {
         return {__html: html};
@@ -46,7 +47,7 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
 
     /**
      * Get the text from a Response object.
-     * @param {Response} response
+     * @param {Response} response The response object from a fetch call
      */
     const getText = async (response: Response) => {
         return await response.text();
@@ -74,7 +75,7 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
         useMemo(() => {
             /**
              * Button that closes the error and lets users sign back in
-             * @param {ButtonProps} props
+             * @param {ButtonProps} props The props for this component
              */
             const CloseErrorButton = (props: ButtonProps) => {
                 return (
@@ -93,8 +94,8 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
 
             /**
              * Alert composition component
-             * @param {React.ReactNode} heading
-             * @param {React.ReactNode} body
+             * @param {ReactNode} heading The heading component for the alert
+             * @param {ReactNode} body The body component for the alert
              */
             const _alert = (heading: React.ReactNode, body: React.ReactNode) => {
                 return (
@@ -114,7 +115,7 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
 
             /**
              * Handler for when error is an instance of Error
-             * @param {Error} err
+             * @param {Error} err Error object
              */
             const handleNativeError = (err: Error) => {
                 const message = err.message;
@@ -136,7 +137,7 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
 
             /**
              * Handler for when the error contains HTML that needs to be rendered.
-             * @param {string} html
+             * @param {string} html The HTML to be rendered
              */
             const handleHtmlError = (html: string) => {
                 const card = (
@@ -158,7 +159,7 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
 
             /**
              * Handler for when the error is an instance of Response
-             * @param {Response} response
+             * @param {Response} response The response object from a fetch
              */
             const handleResponseError = async (response: Response) => {
                 if (!response.bodyUsed) {
@@ -185,7 +186,7 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
 
             /**
              * Handler for when the error is a Willow API error
-             * @param {IWillow} error
+             * @param {IWillow} error Willow type API error
              */
             const handleWillowError = (error: IWillow) => {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

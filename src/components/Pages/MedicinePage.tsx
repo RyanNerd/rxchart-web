@@ -57,9 +57,9 @@ interface IProps {
 }
 
 /**
- * MedicinePage
- * UI for logging prescription medications
- * @return {JSX.Element | null}
+ * MedicinePage - UI for logging prescription medications
+ * @param props Props for the component
+ * @returns {JSX.Element | null}
  */
 const MedicinePage = (props: IProps): JSX.Element | null => {
     const [, setErrorDetails] = useGlobal('__errorDetails');
@@ -171,7 +171,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
     /**
      * Given a MedicineRecord Update or Insert the record and rehydrate the globalMedicineList
-     * @param {MedicineRecord} med
+     * @param {MedicineRecord} med Medicine record object
      */
     const saveMedicine = async (med: MedicineRecord) => {
         const m = await mm.updateMedicine(med);
@@ -192,7 +192,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
     /**
      * Given a DrugLogRecord Update or Insert the record and rehydrate the drugLogList
-     * @param {DrugLogRecord} drugLog
+     * @param {DrugLogRecord} drugLog Druglog record object
      */
     const saveDrugLog = async (drugLog: DrugLogRecord): Promise<DrugLogRecord> => {
         await setIsBusy(true);
@@ -206,7 +206,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
     /**
      * Add or update a pillbox record.
-     * @param {PillboxRecord} pillbox
+     * @param {PillboxRecord} pillbox Pillbox record object
      */
     const savePillbox = async (pillbox: PillboxRecord) => {
         const pb = await mm.updatePillbox(pillbox);
@@ -219,7 +219,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
     /**
      * Delete an existing pillbox.
-     * @param {number} pillboxId
+     * @param {number} pillboxId The PK for the Pillbox table
      */
     const deletePillbox = async (pillboxId: number) => {
         const d = await mm.deletePillbox(pillboxId);
@@ -232,7 +232,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
     /**
      * Fires when user clicks on +Log or the drug log edit button
-     * @param {DrugLogRecord} drugLogInfo
+     * @param {DrugLogRecord} drugLogInfo The drugLog record object
      */
     const addEditDrugLog = (drugLogInfo?: DrugLogRecord) => {
         const drugLogRecord = drugLogInfo
@@ -248,7 +248,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
     /**
      * Fires when user clicks on +Log or the drug log edit button for OTC drugs
-     * @param {DrugLogRecord} drugLogInfo
+     * @param {DrugLogRecord} drugLogInfo The drugLog record object
      */
     const addEditOtcLog = (drugLogInfo?: DrugLogRecord) => {
         const drugLogRecord = drugLogInfo
@@ -264,7 +264,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
     /**
      * Fires when the Log 1...4 buttons are clicked.
-     * @param {number} amount
+     * @param {number} amount The number of pills (medication) taken
      */
     const handleLogDrugAmount = (amount: number) => {
         const drugLogInfo = {...newDrugLogRecord};
@@ -276,7 +276,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
     /**
      * Fires when the Log 1 or Log 2, etc. buttons are clicked for OTC drugs
-     * @param {number} amount
+     * @param {number} amount The number of pills (medication) taken
      */
     const handleLogOtcDrugAmount = (amount: number) => {
         const drugId = activeOtc?.Id as number;
@@ -291,8 +291,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
     /**
      * Convenience function to get drug name
-     * @param {number} medicineId
-     * @return {string | undefined}
+     * @param {number} medicineId The PK of the Medicine table
+     * @returns {string | undefined}
      */
     const drugName = (medicineId: number): string | undefined => {
         return getDrugName(medicineId, medicineList.concat(otcList));
@@ -304,7 +304,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const handleLogPillbox = () => {
         /**
          * Log all the pillbox items, refresh the drugLogList, and toast the logged drugs
-         * @param pillboxId
+         * @param pillboxId The PK of the Pillbox table
          */
         const logPillbox = async (pillboxId: number) => {
             const toastQ = [] as DrugLogRecord[];
@@ -328,7 +328,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
     /**
      * Builds and returns the dropdown items for the Medicine dropdown
-     * @return {IDropdownItem[]}
+     * @returns {IDropdownItem[]}
      */
     const buildItemList = () => {
         const itemList = [] as IDropdownItem[];

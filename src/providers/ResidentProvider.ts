@@ -19,6 +19,7 @@ type RecordResponse = {
 
 /**
  * ResidentProvider API service connector
+ * @param {string} url The url to use
  */
 const ResidentProvider = (url: string): IResidentProvider => {
     const _baseUrl = url;
@@ -27,7 +28,7 @@ const ResidentProvider = (url: string): IResidentProvider => {
     return {
         /**
          * Set the apiKey
-         * @param {string} apiKey
+         * @param {string} apiKey The API key to use
          */
         setApiKey: (apiKey: string) => {
             _apiKey = apiKey;
@@ -35,7 +36,7 @@ const ResidentProvider = (url: string): IResidentProvider => {
 
         /**
          * Search Interface
-         * @param {object} options
+         * @param {object} options Multishaped object for the fetch request
          * @returns {Promise<ResidentRecord[]>}
          */
         search: async (options: Record<string, unknown>): Promise<ResidentRecord[]> => {
@@ -54,7 +55,7 @@ const ResidentProvider = (url: string): IResidentProvider => {
 
         /**
          * Restore Interface
-         * @param {restore_id: number} residentId
+         * @param {restore_id: number} residentId PK of the Resident table
          * @returns {Promise<ResidentRecord>}
          */
         restore: async (residentId: number): Promise<ResidentRecord> => {
@@ -70,7 +71,7 @@ const ResidentProvider = (url: string): IResidentProvider => {
 
         /**
          * Read Interface
-         * @param {number} id
+         * @param {number} id PK of the Resident table
          * @returns {Promise<Response>}
          */
         read: async (id: number): Promise<ResidentRecord> => {
@@ -85,7 +86,7 @@ const ResidentProvider = (url: string): IResidentProvider => {
 
         /**
          * Post interface
-         * @param {ResidentRecord} residentInfo
+         * @param {ResidentRecord} residentInfo The client object
          * @returns {Promise<ResidentRecord>}
          */
         post: async (residentInfo: ResidentRecord): Promise<ResidentRecord> => {
@@ -100,7 +101,7 @@ const ResidentProvider = (url: string): IResidentProvider => {
 
         /**
          * Delete interface
-         * @param {number} residentId
+         * @param {number} residentId PK of the Resident table
          * @returns {Promise<DeleteResponse>}
          */
         delete: async (residentId: number): Promise<DeleteResponse> => {

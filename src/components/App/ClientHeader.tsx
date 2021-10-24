@@ -23,7 +23,7 @@ const ClientHeader = () => {
     useEffect(() => {
         /**
          * Use async/await to write to the clipboard
-         * @param {string} t
+         * @param {string} t The text string to write to the clipboard
          */
         const updateClipboard = async (t: string) => {
             await navigator.clipboard.writeText(t);
@@ -53,7 +53,7 @@ const ClientHeader = () => {
 
     /**
      * Update Resident record
-     * @param {ResidentRecord} client
+     * @param {ResidentRecord} client Resident record object
      */
     const saveClient = async (client: ResidentRecord) => {
         const r = await rm.updateResident(client);

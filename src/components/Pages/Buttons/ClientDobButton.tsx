@@ -24,7 +24,7 @@ type TProps = Modify<
 /**
  * ClientDobButton is a dropdown button that displays the date of birth of the given client record
  * The dropdown shows the client notes if they have any.
- * @param {IProps} props
+ * @param {IProps} props The props for this component
  */
 const ClientDobButton = (props: TProps) => {
     const isDev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
@@ -40,6 +40,7 @@ const ClientDobButton = (props: TProps) => {
 
     /**
      * CSS Style override for getting the Dropdown.ItemText to display correctly
+     * @param {React.MouseEvent<HTMLElement>} e Mouse event object
      * @link https://stackoverflow.com/a/17887494/4323201
      * Work-around so React 17 can be used
      * @link https://github.com/react-bootstrap/react-bootstrap/issues/5409#issuecomment-718699584

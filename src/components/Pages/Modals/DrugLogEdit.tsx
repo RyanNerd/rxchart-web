@@ -1,23 +1,23 @@
-import Button from "react-bootstrap/Button";
-import Col from "react-bootstrap/Col";
-import Form from "react-bootstrap/Form";
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import Row from "react-bootstrap/Row";
+import Row from 'react-bootstrap/Row';
 import React, {useEffect, useRef, useState} from 'reactn';
-import {DrugLogRecord} from "types/RecordTypes";
+import {DrugLogRecord} from 'types/RecordTypes';
 
 interface IProps {
-    drugLogInfo: DrugLogRecord
-    drugName: string
-    onClose: (drugLogInfo: DrugLogRecord | null) => void
-    onHide: () => void
-    otc?: boolean
-    show: boolean
+    drugLogInfo: DrugLogRecord;
+    drugName: string;
+    onClose: (drugLogInfo: DrugLogRecord | null) => void;
+    onHide: () => void;
+    otc?: boolean;
+    show: boolean;
 }
 
 /**
  * Edit Modal for DrugLog
- * @param {IProps} props
+ * @param {IProps} props Props for the component
  * @returns {JSX.Element | null}
  */
 const DrugLogEdit = (props: IProps): JSX.Element | null => {
@@ -32,7 +32,7 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
 
     // Observer for show
     useEffect(() => {
-        setShow(props.show)
+        setShow(props.show);
     }, [props.show]);
 
     // Observer for drugInfo
@@ -47,13 +47,12 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
 
     // Disable the Save button if Notes are empty.
     useEffect(() => {
-        const canSave = (drugLogInfo &&
-            (
-                (drugLogInfo.Notes && drugLogInfo.Notes.length > 0) ||
-                (drugLogInfo.In && drugLogInfo.In > 0) ||
-                (drugLogInfo.Out && drugLogInfo.Out> 0)
-            )
-        ) || false;
+        const canSave =
+            (drugLogInfo &&
+                ((drugLogInfo.Notes && drugLogInfo.Notes.length > 0) ||
+                    (drugLogInfo.In && drugLogInfo.In > 0) ||
+                    (drugLogInfo.Out && drugLogInfo.Out > 0))) ||
+            false;
         setCanSave(canSave);
     }, [drugLogInfo]);
 
@@ -79,12 +78,12 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
             }
             setDrugLogInfo({...drugLogInfo});
         }
-    }
+    };
 
     /**
      * Fires when the user clicks on Save or Cancel
-     * @param {React.MouseEvent<HTMLElement>} e
-     * @param {boolean} shouldSave
+     * @param {React.MouseEvent<HTMLElement>} e Mouse event object
+     * @param {boolean} shouldSave True if the user clicked save, otherwise false
      */
     const handleHide = (e: React.MouseEvent<HTMLElement>, shouldSave: boolean) => {
         e.preventDefault();
@@ -95,7 +94,7 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
             onClose(null);
         }
         setShow(false);
-    }
+    };
 
     // Short circuit render if there is no drugLogInfo.
     if (!drugLogInfo) {
@@ -136,57 +135,50 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
                         </Col>
                     </Form.Group>
 
-                    {!otc &&
-                    <>
-                        <Form.Group as={Row} controlId="checkout-out">
-                            <Form.Label column md="4">
-                                Out
-                            </Form.Label>
-                            <Col md="8">
-                                <Form.Control
-                                    type="number"
-                                    value={drugLogInfo.Out || undefined}
-                                    name="Out"
-                                    onChange={(e) => handleOnChange(e, true)}
-                                />
-                            </Col>
-                        </Form.Group>
+                    {!otc && (
+                        <>
+                            <Form.Group as={Row} controlId="checkout-out">
+                                <Form.Label column md="4">
+                                    Out
+                                </Form.Label>
+                                <Col md="8">
+                                    <Form.Control
+                                        type="number"
+                                        value={drugLogInfo.Out || undefined}
+                                        name="Out"
+                                        onChange={(e) => handleOnChange(e, true)}
+                                    />
+                                </Col>
+                            </Form.Group>
 
-                        <Form.Group as={Row} controlId="checkout-in">
-                            <Form.Label column md="4">
-                                In
-                            </Form.Label>
-                            <Col md="8">
-                                <Form.Control
-                                    type="number"
-                                    value={drugLogInfo.In || undefined}
-                                    name="In"
-                                    onChange={(e) => handleOnChange(e, true)}
-                                />
-                            </Col>
-                        </Form.Group>
-                    </>
-                    }
+                            <Form.Group as={Row} controlId="checkout-in">
+                                <Form.Label column md="4">
+                                    In
+                                </Form.Label>
+                                <Col md="8">
+                                    <Form.Control
+                                        type="number"
+                                        value={drugLogInfo.In || undefined}
+                                        name="In"
+                                        onChange={(e) => handleOnChange(e, true)}
+                                    />
+                                </Col>
+                            </Form.Group>
+                        </>
+                    )}
                 </Form>
             </Modal.Body>
 
             <Modal.Footer>
-                <Button
-                    onClick={(e) => handleHide(e, false)}
-                    variant="secondary"
-                >
+                <Button onClick={(e) => handleHide(e, false)} variant="secondary">
                     Cancel
                 </Button>
-                <Button
-                    disabled={!canSave}
-                    onClick={(e) => handleHide(e, true)}
-                    variant="primary"
-                >
+                <Button disabled={!canSave} onClick={(e) => handleHide(e, true)} variant="primary">
                     Save changes
                 </Button>
             </Modal.Footer>
         </Modal>
     );
-}
+};
 
 export default DrugLogEdit;

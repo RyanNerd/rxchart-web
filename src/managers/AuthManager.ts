@@ -7,14 +7,14 @@ export interface IAuthManager {
 
 /**
  * Authorization Manager
- * @param {AuthManager} authenticationProvider
+ * @param {AuthManager} authenticationProvider The Authentication provider "class" object
  */
 const AuthManager = (authenticationProvider: IAuthenticationProvider): IAuthManager => {
     /**
      * Authentication API call
-     * @param {string} username
-     * @param {string} password
-     * @return Promise<Authenticated | void>
+     * @param {string} username The username to authenticate
+     * @param {string} password The password to authenticate
+     * @returns Promise<Authenticated | void>
      */
     const _authenticate = async (username: string, password: string) => {
         const [e, r] = (await asyncWrapper(authenticationProvider.post({username, password}))) as [

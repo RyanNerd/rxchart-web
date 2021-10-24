@@ -13,7 +13,7 @@ interface IProps {
 
 /**
  * Pillbox Popover displaying pillbox name
- * @param {IProps} props
+ * @param {IProps} props The props for this component
  */
 const PillPopover = (props: IProps) => {
     const {id, pillboxItemId, pillboxList, pillboxItemList, onPillClick} = props;

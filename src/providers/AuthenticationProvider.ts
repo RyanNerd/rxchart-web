@@ -25,7 +25,7 @@ type AuthCredentials = {
 
 /**
  * Authentication Provider API Connector
- * @param {string} url
+ * @param {string} url The URL to use
  */
 const AuthenticationProvider = (url: string): IAuthenticationProvider => {
     const _baseUrl = url;
@@ -33,7 +33,7 @@ const AuthenticationProvider = (url: string): IAuthenticationProvider => {
     return {
         /**
          * Post interface for authentication
-         * @param {AuthCredentials} credentials
+         * @param {AuthCredentials} credentials The AuthCredentials object {username: string, password: string}
          * @returns {Promise<Authenticated>}
          */
         post: async (credentials: AuthCredentials): Promise<Authenticated> => {

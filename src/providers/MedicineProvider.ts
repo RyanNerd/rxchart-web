@@ -18,6 +18,7 @@ type RecordResponse = {
 
 /**
  * MedicineProvider API connector
+ * @param baseUrl The base URL to use (derived from the .env file)
  */
 const MedicineProvider = (baseUrl: string): IMedicineProvider => {
     const _baseUrl = baseUrl;
@@ -26,7 +27,7 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
     return {
         /**
          * Set the apiKey
-         * @param {string} apiKey
+         * @param {string} apiKey The API key to use
          */
         setApiKey: (apiKey: string) => {
             _apiKey = apiKey;
@@ -34,7 +35,7 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
 
         /**
          * Search Interface
-         * @param {object} options
+         * @param {object} options A multi-shaped options object when the fetch is performed
          * @returns {Promise<MedicineRecord[]>}
          */
         search: async (options: Record<string, unknown>): Promise<MedicineRecord[]> => {
@@ -52,7 +53,7 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
 
         /**
          * Read interface
-         * @param {string | number} id
+         * @param {string | number} id The PK of the Medicine table
          * @returns {Promise<MedicineRecord>}
          */
         read: async (id: number | string): Promise<MedicineRecord> => {
@@ -67,12 +68,12 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
 
         /**
          * Post interface
-         * @param {MedicineRecord} drugInfo
+         * @param {MedicineRecord} medInfo The Medicine record object
          * @returns {Promise<MedicineRecord>}
          */
-        post: async (drugInfo: MedicineRecord): Promise<MedicineRecord> => {
+        post: async (medInfo: MedicineRecord): Promise<MedicineRecord> => {
             const uri = _baseUrl + 'medicine?api_key=' + _apiKey;
-            const response = await _frak.post<RecordResponse>(uri, drugInfo);
+            const response = await _frak.post<RecordResponse>(uri, medInfo);
             if (response.success) {
                 return response.data as MedicineRecord;
             } else {
@@ -82,11 +83,11 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
 
         /**
          * Delete interface
-         * @param {string | number} drugId
+         * @param {string | number} medId The PK of the Medicine table
          * @returns {Promise<DeleteResponse>}
          */
-        delete: async (drugId: string | number): Promise<DeleteResponse> => {
-            const uri = _baseUrl + 'medicine/' + drugId + '?api_key=' + _apiKey;
+        delete: async (medId: string | number): Promise<DeleteResponse> => {
+            const uri = _baseUrl + 'medicine/' + medId + '?api_key=' + _apiKey;
             const response = await _frak.delete<RecordResponse>(uri);
             if (response.success) {
                 return response;

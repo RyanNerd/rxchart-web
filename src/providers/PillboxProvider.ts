@@ -25,6 +25,7 @@ type LogResponse = {
 
 /**
  * PillboxProvider API connector
+ * @param baseUrl The base URL to use (determined from the .env file)
  */
 const PillboxProvider = (baseUrl: string): IPillboxProvider => {
     const _baseUrl = baseUrl;
@@ -33,7 +34,7 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
     return {
         /**
          * Set the apiKey
-         * @param {string} apiKey
+         * @param {string} apiKey The API key to use
          */
         setApiKey: (apiKey: string) => {
             _apiKey = apiKey;
@@ -41,7 +42,7 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
 
         /**
          * Search Interface
-         * @param {object} options
+         * @param {object} options A multi-shaped object indicating the options to use to fetch
          * @returns {Promise<PillboxRecord[]>}
          */
         search: async (options: Record<string, unknown>): Promise<PillboxRecord[]> => {
@@ -59,7 +60,7 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
 
         /**
          * Read interface
-         * @param {string | number} id
+         * @param {string | number} id The PK of the Pillbox table
          * @returns {Promise<PillboxRecord>}
          */
         read: async (id: number | string): Promise<PillboxRecord> => {
@@ -75,13 +76,13 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
 
         /**
          * Post interface
-         * @param {PillboxRecord} drugInfo
+         * @param {PillboxRecord} pillboxInfo The Pillbox record
          * @returns {Promise<PillboxRecord>}
          */
-        post: async (drugInfo: PillboxRecord): Promise<PillboxRecord> => {
+        post: async (pillboxInfo: PillboxRecord): Promise<PillboxRecord> => {
             const uri = _baseUrl + 'pillbox?api_key=' + _apiKey;
 
-            const response = await _frak.post<RecordResponse>(uri, drugInfo);
+            const response = await _frak.post<RecordResponse>(uri, pillboxInfo);
             if (response.success) {
                 return response.data as PillboxRecord;
             } else {
@@ -92,7 +93,7 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
         /**
          * Post interface
          * @returns {Promise<PillboxRecord>}
-         * @param pillboxId
+         * @param pillboxId The PK of the Pillbox table
          */
         log: async (pillboxId: number): Promise<DrugLogRecord[]> => {
             const uri = _baseUrl + 'pillbox/log?api_key=' + _apiKey;
@@ -107,11 +108,11 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
 
         /**
          * Delete interface
-         * @param {string | number} drugId
+         * @param {string | number} pillboxId The PK for the Pillbox table
          * @returns {Promise<DeleteResponse>}
          */
-        delete: async (drugId: string | number): Promise<DeleteResponse> => {
-            const uri = _baseUrl + 'pillbox/' + drugId + '?api_key=' + _apiKey;
+        delete: async (pillboxId: string | number): Promise<DeleteResponse> => {
+            const uri = _baseUrl + 'pillbox/' + pillboxId + '?api_key=' + _apiKey;
             const response = await _frak.delete<RecordResponse>(uri);
             if (response.success) {
                 return response;

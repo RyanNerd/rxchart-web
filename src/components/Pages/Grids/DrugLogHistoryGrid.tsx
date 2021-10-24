@@ -24,16 +24,16 @@ interface IProps {
 
 /**
  * DrugLogHistoryGrid
- * @param {IProps} props
- * @return {JSX.Element}
+ * @param {IProps} props The props for this component
+ * @returns {JSX.Element}
  */
 const DrugLogHistoryGrid = (props: IProps): JSX.Element => {
     const {drugLog = [], medicineList = [], onDelete, onEdit, pillboxList, pillboxItemList, onPillClick} = props;
 
     /**
      * Returns the value of the drug column for the given drugId
-     * @param {number} medicineId
-     * @param {string} columnName
+     * @param {number} medicineId The PK of the Medicine table
+     * @param {string} columnName The name of the column to look up
      * @returns {string | null}
      */
     const drugColumnLookup = (medicineId: number, columnName: string): unknown => {
@@ -48,7 +48,7 @@ const DrugLogHistoryGrid = (props: IProps): JSX.Element => {
 
     /**
      * Child component for the table for each drug that has been logged.
-     * @param {DrugLogRecord} drug
+     * @param {DrugLogRecord} drug The drugLog record object
      * @returns {JSX.Element | null}
      */
     const DrugRow = (drug: DrugLogRecord): JSX.Element | null => {

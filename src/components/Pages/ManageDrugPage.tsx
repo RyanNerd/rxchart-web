@@ -18,8 +18,8 @@ interface IProps {
 }
 
 /**
- * ManageDrugPage
- * Page for Displaying, editing and adding Medicine
+ * ManageDrugPage - UI for Displaying, editing and adding Medicine
+ * @param props The props for the component
  * @returns {JSX.Element | null}
  */
 const ManageDrugPage = (props: IProps): JSX.Element | null => {
@@ -42,8 +42,8 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
 
     /**
      * Given a DrugLogRecord Update or Insert the record and rehydrate the drugLogList
-     * @param {DrugLogRecord} drugLog
-     * @param {number} clientId
+     * @param {DrugLogRecord} drugLog The drugLog record object
+     * @param {number} clientId The PK of the Resident table
      */
     const saveDrugLog = async (drugLog: DrugLogRecord, clientId: number): Promise<DrugLogRecord> => {
         const r = await mm.updateDrugLog(drugLog);
@@ -54,13 +54,13 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
 
     /**
      * Given a MedicineRecord Update or Insert the record and rehydrate the globalMedicineList
-     * @param {MedicineRecord} med
-     * @param {number} clientId
+     * @param {MedicineRecord} med The medicine record object
+     * @param {number} clientId The PK of the Resident table
      */
     const saveMedicine = async (med: MedicineRecord, clientId: number) => {
         /**
          * Remove all the PillboxItems when a medicine is marked as inactive
-         * @param {number} medicineId
+         * @param {number} medicineId The PK of the Medicine table
          */
         const removeInactivePillboxItems = async (medicineId: number) => {
             let delCount = 0;
@@ -105,7 +105,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
 
     /**
      * Fires when the Edit button is clicked
-     * @param {MedicineRecord | null} medicine
+     * @param {MedicineRecord | null} medicine The medicine record object, or null for a new record
      */
     const onEdit = (medicine: MedicineRecord | null) => {
         const medicineInfo = medicine
@@ -140,8 +140,8 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
 
     /**
      * Convenience function to get drug name
-     * @param {number} medicineId
-     * @return {string | undefined}
+     * @param {number} medicineId The PK of the Medicine table
+     * @returns {string | undefined}
      */
     const drugName = (medicineId: number): string | undefined => {
         return getDrugName(medicineId, medicineList.concat(otcList));

@@ -15,7 +15,7 @@ interface IProps {
 
 /**
  * ResidentGrid component
- * @param {IProps} props
+ * @param {IProps} props The props for this component
  * @returns {JSX.Element}
  */
 const ResidentGrid = (props: IProps): JSX.Element => {

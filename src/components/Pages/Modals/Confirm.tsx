@@ -20,8 +20,8 @@ interface IProps extends ModalProps {
 const Confirm = {
     /**
      * Confirm.Modal component
-     * @param {IProps} props
-     * @return Modal
+     * @param {IProps} props Props for the component
+     * @returns Modal
      */
     Modal: (props: IProps): JSX.Element => {
         const {backdrop = 'static', buttonvariant = 'primary', onSelect, size = 'sm'} = {...props};
@@ -34,8 +34,8 @@ const Confirm = {
 
         /**
          * Handle button click event.
-         * @param {React.MouseEvent} e
-         * @param answer
+         * @param {React.MouseEvent} e Mouse event object
+         * @param {boolean} answer True if user clicked the confirm/yes button, otherwise false
          */
         const onAnswer = (e: React.MouseEvent<HTMLElement>, answer: boolean) => {
             e.preventDefault();
@@ -63,7 +63,7 @@ const Confirm = {
 
     /**
      * Confirm.Header component
-     * @param {IChildren} props
+     * @param {IChildren} props React children props
      */
     Header: (props: IChildren) => {
         return <div className="modal-header">{props.children}</div>;
@@ -71,7 +71,7 @@ const Confirm = {
 
     /**
      * Confirm.Title component
-     * @param {IChildren} props
+     * @param {IChildren} props React children props
      */
     Title: (props: IChildren) => {
         return <h5 className="modal-title">{props.children}</h5>;
@@ -79,7 +79,7 @@ const Confirm = {
 
     /**
      * Confirm.Body component
-     * @param {IChildren} props
+     * @param {IChildren} props React children props
      */
     Body: (props: IChildren) => {
         return <div className="modal-body">{props.children}</div>;

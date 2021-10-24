@@ -14,8 +14,8 @@ interface IProps {
 }
 
 /**
- * ManageOtcPage
- * Page for Displaying, editing and adding OTC drugs
+ * ManageOtcPage - UI for Displaying, editing and adding OTC drugs
+ * @param props The props for the component
  * @returns {JSX.Element | null}
  */
 const ManageOtcPage = (props: IProps): JSX.Element | null => {
@@ -63,7 +63,7 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
 
     /**
      * Given a MedicineRecord Update or Insert the record and rehydrate the global otcList
-     * @param {MedicineRecord} med
+     * @param {MedicineRecord} med The medicine record object
      */
     const saveOtcMedicine = async (med: MedicineRecord) => {
         const m = await mm.updateMedicine(med);
@@ -74,7 +74,7 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
 
     /**
      * Fires when the Edit button is clicked
-     * @param {MedicineRecord | null} medicine
+     * @param {MedicineRecord | null} medicine The medicine record object for update, null indicates a new record
      */
     const onEdit = (medicine?: MedicineRecord | null) => {
         const medicineInfo = medicine ? {...medicine} : {...newMedicineRecord, OTC: true};

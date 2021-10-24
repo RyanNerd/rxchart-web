@@ -1,25 +1,26 @@
-import Alert from "react-bootstrap/Alert";
-import Button from "react-bootstrap/Button";
-import ButtonGroup from "react-bootstrap/ButtonGroup";
-import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
+import Alert from 'react-bootstrap/Alert';
+import Button from 'react-bootstrap/Button';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
-import {newResidentRecord, ResidentRecord} from "types/RecordTypes";
+import {newResidentRecord, ResidentRecord} from 'types/RecordTypes';
 import {clientFullName} from 'utility/common';
 import ResidentGrid from './Grids/ResidentGrid';
-import ClientRoster from "./Modals/ClientRoster";
-import Confirm from "./Modals/Confirm";
+import ClientRoster from './Modals/ClientRoster';
+import Confirm from './Modals/Confirm';
 import ResidentEdit from './Modals/ResidentEdit';
 
 interface IProps {
-    residentSelected: () => void
-    activeTabKey: string
+    residentSelected: () => void;
+    activeTabKey: string;
 }
 
 /**
  * Display Resident Grid
  * Allow user to edit and add Residents
- * @return {JSX.Element | null}
+ * @param {IProps} props Props for the component
+ * @returns {JSX.Element | null}
  */
 const ResidentPage = (props: IProps): JSX.Element | null => {
     const [activeResident, setActiveResident] = useGlobal('activeResident');
@@ -29,7 +30,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     const [searchIsValid, setSearchIsValid] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [showClientRoster, setShowClientRoster] = useState(false);
-    const [showDeleteResident, setShowDeleteResident] = useState<null|ResidentRecord>(null);
+    const [showDeleteResident, setShowDeleteResident] = useState<null | ResidentRecord>(null);
     const [showResidentEdit, setShowResidentEdit] = useState<ResidentRecord | null>(null);
     const focusRef = useRef<HTMLInputElement>(null);
 
@@ -42,7 +43,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                 const nickname = residentRecord.Nickname ? residentRecord.Nickname.toLowerCase() : '';
                 const search = searchText.toLowerCase();
                 return lastName.includes(search) || firstName.includes(search) || nickname.includes(search);
-            })
+            });
 
             if (filter && filter.length > 0) {
                 setSearchIsValid(true);
@@ -55,11 +56,11 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
             setSearchIsValid(false);
             setFilteredResidents(residentList);
         }
-    }, [residentList, searchText])
+    }, [residentList, searchText]);
 
     useEffect(() => {
         focusRef?.current?.focus();
-    })
+    });
 
     // Don't render if this tab isn't active.
     if (props.activeTabKey !== 'resident') return null;
@@ -68,31 +69,31 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
 
     /**
      * Fires when user clicks on the select button or if the user is trying to add an existing active client
-     * @param {ResidentRecord} client
+     * @param {ResidentRecord} client The client record object
      */
     const handleOnSelected = (client: ResidentRecord) => {
         const activateClient = async (clientRec: ResidentRecord) => {
             await setActiveResident(clientRec);
             await setSearchText('');
             onSelected();
-        }
+        };
         activateClient(client);
-    }
+    };
 
     /**
      * Given the ResidentRecord update/insert the record, rehydrate the residentList global
-     * @param {ResidentRecord} client
+     * @param {ResidentRecord} client The client record object
      */
     const saveClient = async (client: ResidentRecord) => {
         const r = await rm.updateResident(client);
         const rl = await rm.loadResidentList();
         await setResidentList(rl);
         return r;
-    }
+    };
 
     /**
      * Given the client Id number deactivate (soft-delete) the client
-     * @param {number} clientId
+     * @param {number} clientId The PK of the Resident table
      */
     const deleteClient = async (clientId: number) => {
         const d = await rm.deleteResident(clientId);
@@ -101,7 +102,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
             await setResidentList(rl);
             await setActiveResident(null);
         }
-    }
+    };
 
     return (
         <Form className="tab-content">
@@ -119,7 +120,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                 <Form.Control
                     autoFocus
                     id="medicine-page-search-text"
-                    style={{width: "220px"}}
+                    style={{width: '220px'}}
                     isValid={searchIsValid}
                     ref={focusRef}
                     type="search"
@@ -139,16 +140,14 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                     onClick={(e) => {
                         e.preventDefault();
                         setShowClientRoster(true);
-                    }}>
+                    }}
+                >
                     Print Client Roster
                 </Button>
 
-                {showClientRoster &&
-                    <ClientRoster
-                        onUnload={() => setShowClientRoster(false)}
-                        clientList={residentList}
-                    />
-                }
+                {showClientRoster && (
+                    <ClientRoster onUnload={() => setShowClientRoster(false)} clientList={residentList} />
+                )}
             </Row>
 
             <Row className="mt-3">
@@ -157,7 +156,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                     residentList={filteredResidents}
                     onDelete={(resident: ResidentRecord) => setShowDeleteResident(resident)}
                     onEdit={(resident: ResidentRecord) => setShowResidentEdit({...resident})}
-                    onSelected={r => handleOnSelected(r)}
+                    onSelected={(r) => handleOnSelected(r)}
                 />
             </Row>
 
@@ -173,22 +172,23 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                         // Are we adding a new record?
                         if (client.Id === null) {
                             // Search residentList for any existing clients to prevent adding dupes
-                            const existing = residentList.find(r =>
-                                r.FirstName.trim().toLowerCase() === client.FirstName.trim().toLowerCase() &&
-                                r.LastName.trim().toLowerCase() === client.LastName.trim().toLowerCase() &&
-                                (typeof r.DOB_DAY === 'string' ?
-                                    parseInt(r.DOB_DAY) : r.DOB_DAY) ===
-                                (typeof client.DOB_DAY === 'string' ?
-                                    parseInt(client.DOB_DAY) : client.DOB_DAY) &&
-                                (typeof r.DOB_MONTH === 'string' ?
-                                    parseInt(r.DOB_MONTH) : r.DOB_MONTH) ===
-                                (typeof client.DOB_MONTH === 'string' ?
-                                    parseInt(client.DOB_MONTH) : client.DOB_MONTH) &&
-                                (typeof r.DOB_YEAR === 'string' ?
-                                    parseInt(r.DOB_YEAR) : r.DOB_YEAR) ===
-                                (typeof client.DOB_YEAR === 'string' ?
-                                    parseInt(client.DOB_YEAR) : client.DOB_YEAR)
-                            )
+                            const existing = residentList.find(
+                                (r) =>
+                                    r.FirstName.trim().toLowerCase() === client.FirstName.trim().toLowerCase() &&
+                                    r.LastName.trim().toLowerCase() === client.LastName.trim().toLowerCase() &&
+                                    (typeof r.DOB_DAY === 'string' ? parseInt(r.DOB_DAY) : r.DOB_DAY) ===
+                                        (typeof client.DOB_DAY === 'string'
+                                            ? parseInt(client.DOB_DAY)
+                                            : client.DOB_DAY) &&
+                                    (typeof r.DOB_MONTH === 'string' ? parseInt(r.DOB_MONTH) : r.DOB_MONTH) ===
+                                        (typeof client.DOB_MONTH === 'string'
+                                            ? parseInt(client.DOB_MONTH)
+                                            : client.DOB_MONTH) &&
+                                    (typeof r.DOB_YEAR === 'string' ? parseInt(r.DOB_YEAR) : r.DOB_YEAR) ===
+                                        (typeof client.DOB_YEAR === 'string'
+                                            ? parseInt(client.DOB_YEAR)
+                                            : client.DOB_YEAR)
+                            );
 
                             // Is user trying to add an existing active client?
                             // If so then make the exiting client the active instead.
@@ -197,33 +197,29 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                                 return;
                             }
                         }
-                        saveClient(client).then(c => handleOnSelected(c))
+                        saveClient(client).then((c) => handleOnSelected(c));
                     }
                 }}
             />
 
-            {showDeleteResident &&
-            <Confirm.Modal
-                show={true}
-                onSelect={(a) => {
-                    setShowDeleteResident(null);
-                    if (a) deleteClient(showDeleteResident?.Id as number);
-                }}
-            >
-                <Confirm.Header>
-                    <Confirm.Title>
-                        {"Deactivate " + clientFullName(showDeleteResident)}
-                    </Confirm.Title>
-                </Confirm.Header>
-                <Confirm.Body>
-                    <Alert variant="danger">
-                        Are you sure?
-                    </Alert>
-                </Confirm.Body>
-            </Confirm.Modal>
-            }
+            {showDeleteResident && (
+                <Confirm.Modal
+                    show={true}
+                    onSelect={(a) => {
+                        setShowDeleteResident(null);
+                        if (a) deleteClient(showDeleteResident?.Id as number);
+                    }}
+                >
+                    <Confirm.Header>
+                        <Confirm.Title>{'Deactivate ' + clientFullName(showDeleteResident)}</Confirm.Title>
+                    </Confirm.Header>
+                    <Confirm.Body>
+                        <Alert variant="danger">Are you sure?</Alert>
+                    </Confirm.Body>
+                </Confirm.Modal>
+            )}
         </Form>
-    )
-}
+    );
+};
 
 export default ResidentPage;

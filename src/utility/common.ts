@@ -7,8 +7,8 @@ interface IKey {
 
 /**
  * Given a ResidentRecord return the resident's DOB as a string.
- * @param {ResidentRecord} resident
- * @return {string}
+ * @param {ResidentRecord} resident The client record
+ * @returns {string}
  */
 export const clientDOB = (resident: ResidentRecord): string => {
     return dateToString(resident.DOB_MONTH.toString(), resident.DOB_DAY.toString(), resident.DOB_YEAR.toString(), true);
@@ -20,7 +20,7 @@ export const clientDOB = (resident: ResidentRecord): string => {
  * @param day {string}
  * @param year {string}
  * @param leadingZeros {?boolean}
- * @return {string}
+ * @returns {string}
  */
 export const dateToString = (month: string, day: string, year: string, leadingZeros?: boolean): string => {
     const padZero = (num: string) => {
@@ -37,8 +37,8 @@ export const dateToString = (month: string, day: string, year: string, leadingZe
 /**
  * Given a ResidentRecord return the first and last name of the client in the format: first last
  * If the client Nickname field is populated then the format is: first last "nickname"
- * @param {ResidentRecord} resident
- * @param includeNickname
+ * @param {ResidentRecord} resident The client record
+ * @param includeNickname True if the nickname should be returned in quotes, no display of the nickname otherwise
  */
 export const clientFullName = (resident: ResidentRecord, includeNickname = false): string => {
     const clientName = resident.FirstName.trim() + ' ' + resident.LastName.trim();
@@ -51,7 +51,7 @@ export const clientFullName = (resident: ResidentRecord, includeNickname = false
 
 /**
  * Return a random string.
- * @return {string}
+ * @returns {string}
  */
 export const randomString = (): string => {
     return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -59,8 +59,8 @@ export const randomString = (): string => {
 
 /**
  * Return in hours how long it has been since a drug was last taken.
- * @param {number} drugId
- * @param {DrugLogRecord[]} drugLogList
+ * @param {number} drugId The PK of the Medicine table
+ * @param {DrugLogRecord[]} drugLogList Array of drugs logged for the client
  * @returns {null | number}
  */
 export const calculateLastTaken = (drugId: number, drugLogList: DrugLogRecord[]): number | null => {
@@ -83,7 +83,7 @@ export const calculateLastTaken = (drugId: number, drugLogList: DrugLogRecord[])
 
 /**
  * Determine the variant string given the lastTaken hours value.
- * @param {number | null} lastTaken
+ * @param {number | null} lastTaken The number of hours since the client took the drug, or null for 8+ hours
  */
 export const getLastTakenVariant = (lastTaken: number | null) => {
     if (lastTaken && lastTaken >= 8) return 'light';
@@ -142,7 +142,7 @@ type T_BS_Colors = keyof typeof BsColor;
 
 /**
  * Given the variant string return the corresponding hexcolor string
- * @param {T_BS_Colors} variant
+ * @param {T_BS_Colors} variant Reverse lookup for the BsColor enum
  */
 export const getBsColor = (variant: T_BS_Colors) => {
     return BsColor[variant];
@@ -150,8 +150,8 @@ export const getBsColor = (variant: T_BS_Colors) => {
 
 /**
  * Given a date object return true if the date is today.
- * @param {Date} dateIn
- * @return {boolean}
+ * @param {Date} dateIn Date object to check
+ * @returns {boolean}
  */
 export const isToday = (dateIn: Date): boolean => {
     const date = new Date(dateIn);
@@ -168,8 +168,8 @@ export const isToday = (dateIn: Date): boolean => {
 
 /**
  * Return an object containing the day, month, and year as numbers and a date indicating now or a given date
- * @param {Date} inDate
- * @return {month: number, day: number, year: number, now: Date}
+ * @param {Date} inDate Date object to convert
+ * @returns {month: number, day: number, year: number, now: Date}
  */
 export const getMDY = (inDate?: Date): {month: number; day: number; year: number; now: Date} => {
     const now = inDate ? new Date(inDate) : new Date();
@@ -181,8 +181,8 @@ export const getMDY = (inDate?: Date): {month: number; day: number; year: number
 
 /**
  * Given a string or Date object return the formatted string of the date: mm/dd/yyyy, hh:mm AM
- * @param {Date | string} date
- * @return {string}
+ * @param {Date | string} date The date to parse and format
+ * @returns {string}
  */
 export const getFormattedDate = (date: Date | string): string => {
     const dt = typeof date === 'string' ? new Date(date) : date;
@@ -198,8 +198,8 @@ export const getFormattedDate = (date: Date | string): string => {
 
 /**
  * Given a date return true if the date is in the future, false otherwise.
- * @param {Date} dateIn
- * @return {boolean}
+ * @param {Date} dateIn The date to check
+ * @returns {boolean}
  */
 export const isDateFuture = (dateIn: Date): boolean => {
     const nowMDY = getMDY();
@@ -212,10 +212,10 @@ export const isDateFuture = (dateIn: Date): boolean => {
 
 /**
  * Return an object in an array that matches the object.propName === searchValue
- * @param {IKey} objectList
- * @param {string} propName
- * @param {any} searchValue
- * @return {Object | undefined}
+ * @param {IKey} objectList Any array of {object}
+ * @param {string} propName The property name to search for
+ * @param {any} searchValue The value to search for
+ * @returns {Object | undefined}
  */
 export const getObjectByProperty = <T>(objectList: IKey, propName: string, searchValue: any): T | undefined => {
     return objectList.find((obj: IKey) => obj[propName] === searchValue);
@@ -223,9 +223,9 @@ export const getObjectByProperty = <T>(objectList: IKey, propName: string, searc
 
 /**
  * Given the MedicineId, and medicineList return the name of the drug
- * @param {number} medicineId
- * @param {MedicineRecord[]} medicineList
- * @return {string | undefined}
+ * @param {number} medicineId PK of the Medicine table
+ * @param {MedicineRecord[]} medicineList Array of medicines
+ * @returns {string | undefined}
  */
 export const getDrugName = (medicineId: number, medicineList: MedicineRecord[]): string | undefined => {
     return getMedicineRecord(medicineId, medicineList)?.Drug;
@@ -233,9 +233,9 @@ export const getDrugName = (medicineId: number, medicineList: MedicineRecord[]):
 
 /**
  * Given the Id of the Medicine return the medicine record
- * @param {number} medicineId
- * @param {MedicineRecord[]} medicineList
- * @return {MedicineRecord | undefined}
+ * @param {number} medicineId PK of the Medicine table
+ * @param {MedicineRecord[]} medicineList Array of medicines
+ * @returns {MedicineRecord | undefined}
  */
 export const getMedicineRecord = (medicineId: number, medicineList: MedicineRecord[]): MedicineRecord | undefined => {
     return getObjectByProperty<MedicineRecord>(medicineList, 'Id', medicineId);
@@ -243,8 +243,8 @@ export const getMedicineRecord = (medicineId: number, medicineList: MedicineReco
 
 /**
  * Returns a string of a drug that soft matches in the given drugList if found, otherwise returns a null;
- * @param {string} searchText
- * @param {array<{Barcode: string, Drug: string}>} drugList
+ * @param {string} searchText The text to search for
+ * @param {MedicineRecord[]} drugList Array of medicines
  * @returns {null | string}
  */
 export const searchDrugs = (searchText: string, drugList: MedicineRecord[]) => {
@@ -272,7 +272,7 @@ export const searchDrugs = (searchText: string, drugList: MedicineRecord[]) => {
 /**
  * Given the drugLogList this returns a filtered list of drugLogList records that are populated with In or Out
  * for today's date.
- * @param {DrugLogRecord[]} drugLogList
+ * @param {DrugLogRecord[]} drugLogList An array of drugs taken
  */
 export const getCheckoutList = (drugLogList: DrugLogRecord[]) => {
     return drugLogList.filter((drug) => {
@@ -285,9 +285,9 @@ export const getCheckoutList = (drugLogList: DrugLogRecord[]) => {
 
 /**
  * Given the day and month returns false if the month and day pair isn't a valid day date, otherwise returns true.
- * @param {string} day
- * @param {string} month
- * @return {boolean}
+ * @param {string} day The day as a string type for the month to check
+ * @param {string} month The month as a string type of the month to check
+ * @returns {boolean}
  */
 export const isDayValid = (day: string, month: string): boolean => {
     let maxDay = 28;
@@ -313,7 +313,7 @@ export const isDayValid = (day: string, month: string): boolean => {
 
 /**
  * Given a month numeric return 'is-invalid' if the number isn't between 1 and 12, otherwise return ''.
- * @param {string} month
+ * @param {string} month The month as a string type to check
  * @returns {boolean}
  */
 export const isMonthValid = (month: string): boolean => {
@@ -322,9 +322,9 @@ export const isMonthValid = (month: string): boolean => {
 
 /**
  * Returns 'is-invalid' if the year is not valid using the isDOB flag to determine the valid range.
- * @param {string} year
- * @param {boolean} isDOB
- * @return {boolean}
+ * @param {string} year The year as a string type to check
+ * @param {boolean} isDOB True if the year is considered to be the date of birth year
+ * @returns {boolean}
  */
 export const isYearValid = (year: string, isDOB: boolean): boolean => {
     const nYear = parseInt(year);
@@ -339,8 +339,8 @@ export const isYearValid = (year: string, isDOB: boolean): boolean => {
 /**
  * A functional wrapper around async/await
  * @link https://dev.to/dewaldels/javascript-async-await-wrapper-22ao
- * @param {Promise<any>} fn
- * @return {[null , <T>] | [any, null}}
+ * @param {Promise<any>} fn Function to be wrapped
+ * @returns {[null , <T>] | [any, null}}
  */
 export const asyncWrapper = async <T>(fn: Promise<T>) => {
     try {
@@ -377,10 +377,10 @@ export const multiSort = (array: IArrayGeneric, sortObject: SortObject): [] => {
 
     /**
      * Determine the sort direction by comparing sort key values
-     * @param {number} a
-     * @param {number} b
-     * @param {number} direction
-     * @return {number}
+     * @param {number} a Comparison number a
+     * @param {number} b Comparison number b
+     * @param {SortDirection} direction The SortDirection enum value
+     * @returns {number}
      */
     const keySort = (a: number, b: number, direction: SortDirection): number => {
         // If the values are the same, do not switch positions.

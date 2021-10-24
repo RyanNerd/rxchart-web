@@ -18,6 +18,7 @@ export interface IPillboxItemProvider {
 
 /**
  * PillboxItemProvider API Connector
+ * @param baseurl The base URL to use (derived from the .env file)
  */
 const PillboxItemProvider = (baseurl: string): IPillboxItemProvider => {
     const _baseUrl = baseurl;
@@ -26,7 +27,7 @@ const PillboxItemProvider = (baseurl: string): IPillboxItemProvider => {
     return {
         /**
          * Set the apiKey
-         * @param {string} apiKey
+         * @param {string} apiKey The API key to use
          */
         setApiKey: (apiKey: string) => {
             _apiKey = apiKey;
@@ -35,7 +36,7 @@ const PillboxItemProvider = (baseurl: string): IPillboxItemProvider => {
         /**
          * Search Interface
          * @see https://www.notion.so/Willow-Framework-Users-Guide-bf56317580884ccd95ed8d3889f83c72
-         * @param {object} options
+         * @param {object} options Multi-shaped object of options when the fetch is performed
          * @returns {Promise<PillboxItemRecord[]>}
          */
         search: async (options: Record<string, unknown>): Promise<PillboxItemRecord[]> => {
@@ -54,7 +55,7 @@ const PillboxItemProvider = (baseurl: string): IPillboxItemProvider => {
 
         /**
          * Read interface
-         * @param {string | number} id
+         * @param {string | number} id The PK of the PillboxItem table
          * @returns {Promise<PillboxItemRecord[]>}
          */
         read: async (id: string | number): Promise<PillboxItemRecord> => {
@@ -69,7 +70,7 @@ const PillboxItemProvider = (baseurl: string): IPillboxItemProvider => {
 
         /**
          * Post interface
-         * @param {PillboxItemRecord} pillboxItemInfo
+         * @param {PillboxItemRecord} pillboxItemInfo The Pillbox record object
          * @returns {Promise<PillboxItemRecord>}
          */
         post: async (pillboxItemInfo: PillboxItemRecord): Promise<PillboxItemRecord> => {
@@ -84,11 +85,11 @@ const PillboxItemProvider = (baseurl: string): IPillboxItemProvider => {
 
         /**
          * Delete interface
-         * @param {string | number} drugId
-         * @return {Promise<DeleteResponse>}
+         * @param {string | number} pillboxItemId The PK of the PillboxItem table
+         * @returns {Promise<DeleteResponse>}
          */
-        delete: async (drugId: string | number): Promise<DeleteResponse> => {
-            const uri = _baseUrl + 'pillbox-item/' + drugId + '?api_key=' + _apiKey;
+        delete: async (pillboxItemId: string | number): Promise<DeleteResponse> => {
+            const uri = _baseUrl + 'pillbox-item/' + pillboxItemId + '?api_key=' + _apiKey;
             const response = await _frak.delete<RecordResponse>(uri);
             if (response.success) {
                 return response;

@@ -16,6 +16,10 @@ interface IProps extends ModalProps {
     [key: string]: unknown;
 }
 
+interface IAnswerProps {
+    a: boolean;
+}
+
 /**
  * ConfirmDialogModal - Uses composition instead of inheritance
  * @param props {IProps}
@@ -45,9 +49,9 @@ const ConfirmDialogModal = (props: IProps) => {
 
     /**
      * Generic AnswerButton
-     * @param props {boolean}
+     * @param {IAnswerProps} props Answer props for the button
      */
-    const AnswerButton = (props: {a: boolean}) => {
+    const AnswerButton = (props: IAnswerProps) => {
         return (
             <Button onClick={(e) => handleClick(e, props.a)} variant={props.a ? 'primary' : 'secondary'}>
                 {props.a ? 'Yes' : 'No'}

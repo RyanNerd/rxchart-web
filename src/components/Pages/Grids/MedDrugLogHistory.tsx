@@ -18,7 +18,7 @@ interface IProps {
 
 /**
  * Drug Log History Table
- * @param  {IProps} props
+ * @param {IProps} props The props for this component
  */
 const MedDrugLogHistory = (props: IProps) => {
     const {activeClient, drugLogList, medicineList, onDelete, onEdit, pillboxList, pillboxItemList, onPillClick} =

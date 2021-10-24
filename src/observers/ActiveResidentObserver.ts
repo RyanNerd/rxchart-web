@@ -1,5 +1,5 @@
-import {useEffect, useGlobal} from "reactn";
-import usePrevious from "../hooks/usePrevious";
+import {useEffect, useGlobal} from 'reactn';
+import usePrevious from '../hooks/usePrevious';
 
 /**
  * Watch for changes to the global activeResident
@@ -19,8 +19,8 @@ const ActiveResidentObserver = () => {
     useEffect(() => {
         /**
          * Asynchronously load all the lists for the activeResident (client)
-         * @param {number} clientId
-         * @return {null|any} Returns an error variable from catch if there were any errors, otherwise null is returned
+         * @param {number} clientId The PK to the Resident table
+         * @returns {null|any} Returns an error variable from catch if there were any errors, otherwise null is returned
          */
         const refreshDrugs = async (clientId: number) => {
             try {
@@ -35,7 +35,7 @@ const ActiveResidentObserver = () => {
             } catch (e) {
                 await setErrorDetails(e);
             }
-        }
+        };
 
         if (prevActiveResident !== activeResident) {
             const clientId = activeResident?.Id || null;
@@ -53,7 +53,7 @@ const ActiveResidentObserver = () => {
         setPillboxList,
         setPillboxItemList,
         setErrorDetails
-    ])
-}
+    ]);
+};
 
 export default ActiveResidentObserver;

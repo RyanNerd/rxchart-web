@@ -23,7 +23,8 @@ module.exports = {
         jsdoc: {
             structuredTags: {
                 JSX: {type: true}
-            }
+            },
+            definedTags: ['note', 'record', 'link']
         }
     },
     extends: [
@@ -70,8 +71,26 @@ module.exports = {
         'jsdoc/check-indentation': 'error',
         'jsdoc/newline-after-description': 'off',
         'jsdoc/no-undefined-types': 1,
+        'jsdoc/check-line-alignment': 1,
+        'jsdoc/check-param-names': 1,
+        'jsdoc/check-property-names': 1,
+        'jsdoc/check-syntax': 1,
+        'jsdoc/check-tag-names': ['error', {definedTags: ['link']}],
+        'jsdoc/check-types': 1,
+        'jsdoc/check-values': 1,
         'linebreak-style': 'off',
         'max-classes-per-file': ['error', 1],
+        'jsdoc/empty-tags': 1,
+        'jsdoc/implements-on-classes': 1,
+        'jsdoc/multiline-blocks': 1,
+        'jsdoc/no-bad-blocks': 1,
+        'jsdoc/no-defaults': 1,
+        'jsdoc/no-multi-asterisks': 1,
+        'jsdoc/require-asterisk-prefix': 1,
+        'jsdoc/require-description': 1,
+        'jsdoc/require-jsdoc': 1,
+        'jsdoc/require-param': 1,
+        'jsdoc/require-param-description': 1,
         'max-len': [
             'error',
             {

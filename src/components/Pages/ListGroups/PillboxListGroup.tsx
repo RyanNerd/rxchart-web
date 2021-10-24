@@ -38,7 +38,7 @@ interface IPillboxLineItem {
 
 /**
  * Pillbox ListGroup
- * @param {IProps} props
+ * @param {IProps} props The props for the component
  */
 const PillboxListGroup = (props: IProps) => {
     const {
@@ -109,7 +109,7 @@ const PillboxListGroup = (props: IProps) => {
 
     /**
      * Pillbox RadioButton component
-     * @param {PillboxRecord} pb
+     * @param {PillboxRecord} pb The pillbox record object
      */
     const PillboxRadioButton = (pb: PillboxRecord) => {
         return (
@@ -140,7 +140,7 @@ const PillboxListGroup = (props: IProps) => {
 
     /**
      * Line Item component for pills in the pillbox
-     * @param {Drug: string; Qty: number; } i
+     * @param {IPillboxLineItem} i The pillbox line item
      */
     const PillboxLineItem = (i: IPillboxLineItem) => {
         return (

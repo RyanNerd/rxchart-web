@@ -18,6 +18,7 @@ export interface IMedHistoryProvider {
 
 /**
  * MedHistoryProvider API Connector
+ * @param baseurl The base URL to use (derived from the .env file)
  */
 const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
     const _baseUrl = baseurl;
@@ -26,7 +27,7 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
     return {
         /**
          * Set the apiKey
-         * @param {string} apiKey
+         * @param {string} apiKey The API key
          */
         setApiKey: (apiKey: string) => {
             _apiKey = apiKey;
@@ -35,7 +36,7 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
         /**
          * Search Interface
          * @see https://www.notion.so/Willow-Framework-Users-Guide-bf56317580884ccd95ed8d3889f83c72
-         * @param {object} options
+         * @param {object} options A multi-shaped object used when the fetch is performed
          * @returns {Promise<DrugLogRecord[]>}
          */
         search: async (options: Record<string, unknown>): Promise<DrugLogRecord[]> => {
@@ -54,7 +55,7 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
 
         /**
          * Read interface
-         * @param {string | number} id
+         * @param {string | number} id The PK of the MedHistory table
          * @returns {Promise<DrugLogRecord[]>}
          */
         read: async (id: string | number): Promise<DrugLogRecord> => {
@@ -69,7 +70,7 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
 
         /**
          * Post interface
-         * @param {DrugLogRecord} drugInfo
+         * @param {DrugLogRecord} drugInfo The MedHistory (drugLog) record
          * @returns {Promise<DrugLogRecord>}
          */
         post: async (drugInfo: DrugLogRecord): Promise<DrugLogRecord> => {
@@ -84,8 +85,8 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
 
         /**
          * Delete interface
-         * @param {string | number} drugId
-         * @return {Promise<DeleteResponse>}
+         * @param {string | number} drugId The PK for the MedHistory table
+         * @returns {Promise<DeleteResponse>}
          */
         delete: async (drugId: string | number): Promise<DeleteResponse> => {
             const uri = _baseUrl + 'medhistory/' + drugId + '?api_key=' + _apiKey;

@@ -1,22 +1,22 @@
-import Alert from "react-bootstrap/Alert";
-import Button from "react-bootstrap/Button";
-import Col from "react-bootstrap/Col";
-import Form from "react-bootstrap/Form";
+import Alert from 'react-bootstrap/Alert';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import Row from "react-bootstrap/Row";
+import Row from 'react-bootstrap/Row';
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
-import {MedicineRecord} from "types/RecordTypes";
-import {clientFullName, isDateFuture, isDayValid, isMonthValid, isYearValid} from "utility/common";
+import {MedicineRecord} from 'types/RecordTypes';
+import {clientFullName, isDateFuture, isDayValid, isMonthValid, isYearValid} from 'utility/common';
 
 interface IProps {
-    drugInfo: MedicineRecord
-    onClose: (r: MedicineRecord | null) => void
-    show: boolean
+    drugInfo: MedicineRecord;
+    onClose: (r: MedicineRecord | null) => void;
+    show: boolean;
 }
 
 /**
  * Edit Modal for Medicine
- * @param {IProps} props
+ * @param {IProps} props Props for the component
  * @returns {JSX.Element | null}
  */
 const MedicineEdit = (props: IProps): JSX.Element | null => {
@@ -29,7 +29,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
 
     // Observer for show
     useEffect(() => {
-        setShow(props.show)
+        setShow(props.show);
     }, [props.show]);
 
     // Observer/mutator for drugInfo
@@ -70,19 +70,19 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
      * Returns true if the Fill Date fields have a valid fill date or if the fill date is empty.
      */
     const isFillDateValid = () => {
-        const fillDateMonth  = drugInfo.FillDateMonth;
+        const fillDateMonth = drugInfo.FillDateMonth;
         const fillDateDay = drugInfo.FillDateDay;
         const fillDateYear = drugInfo.FillDateYear;
 
         // Check if any of the FillDate fields are populated then all need to be populated or all blank
         let cnt = 0;
-        if (fillDateMonth !== "") {
+        if (fillDateMonth !== '') {
             cnt++;
         }
-        if (fillDateDay !== "") {
+        if (fillDateDay !== '') {
             cnt++;
         }
-        if (fillDateYear !== "") {
+        if (fillDateYear !== '') {
             cnt++;
         }
 
@@ -90,7 +90,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
         if (cnt === 3) {
             const fillDate = new Date(
                 parseInt(fillDateYear as string),
-                parseInt(fillDateMonth as string)-1,
+                parseInt(fillDateMonth as string) - 1,
                 parseInt(fillDateDay as string)
             );
 
@@ -99,12 +99,12 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
             }
         }
 
-        return (cnt === 0 || cnt === 3);
-    }
+        return cnt === 0 || cnt === 3;
+    };
 
     /**
      * Fires when a text field or checkbox is changing.
-     * @param {React.ChangeEvent<HTMLElement>} e
+     * @param {React.ChangeEvent<HTMLElement>} e Change event object
      */
     const handleOnChange = (e: React.ChangeEvent<HTMLElement>) => {
         const target = e.target as HTMLInputElement;
@@ -112,12 +112,12 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
         const name = target.name;
         drugInfo[name] = value;
         setDrugInfo({...drugInfo});
-    }
+    };
 
     /**
      * Fires when the user clicks on save or cancel
-     * @param {React.MouseEvent<HTMLElement>} e
-     * @param {boolean} shouldSave
+     * @param {React.MouseEvent<HTMLElement>} e Mouse event object
+     * @param {boolean} shouldSave True if user clicked the save button, otherwise false
      */
     const handleHide = (e: React.MouseEvent<HTMLElement>, shouldSave: boolean) => {
         e.preventDefault();
@@ -127,46 +127,50 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
             props.onClose(null);
         }
         setShow(false);
-    }
+    };
 
     // Short circuit render if there is no drugInfo record.
     if (!drugInfo) {
         return null;
     }
 
-    const drugTitleType = drugInfo.Id ? 'Edit ' : 'Add ' as string;
+    const drugTitleType = drugInfo.Id ? 'Edit ' : ('Add ' as string);
     const drugName = drugInfo.Id ? drugInfo.Drug : 'new drug';
     const fullName = activeResident && clientFullName(activeResident);
 
-    const modalTitle = otc ?
-        (
-            <Modal.Title>
-                {drugTitleType} OTC <b style={{color: "blue"}}><i>{drugName}</i></b>
-            </Modal.Title>
-        ) : (
-            <Modal.Title>
-                {drugTitleType} <b style={{color: "blue"}}><i>{drugName}</i></b>
-                <span> for </span><b style={{backgroundColor: "yellow"}}>{fullName}</b>
-            </Modal.Title>
-        );
+    const modalTitle = otc ? (
+        <Modal.Title>
+            {drugTitleType} OTC{' '}
+            <b style={{color: 'blue'}}>
+                <i>{drugName}</i>
+            </b>
+        </Modal.Title>
+    ) : (
+        <Modal.Title>
+            {drugTitleType}{' '}
+            <b style={{color: 'blue'}}>
+                <i>{drugName}</i>
+            </b>
+            <span> for </span>
+            <b style={{backgroundColor: 'yellow'}}>{fullName}</b>
+        </Modal.Title>
+    );
 
-    const otcAlert = otc && drugInfo.Id !== null ?
-        (
+    const otcAlert =
+        otc && drugInfo.Id !== null ? (
             <Form.Group as={Row} controlId="otc-alert">
-                <Form.Label
-                    column sm="2"
-                    style={{userSelect: "none"}}
-                >
-                    <span style={{color: "red"}}><b>OTC Warning</b></span>
+                <Form.Label column sm="2" style={{userSelect: 'none'}}>
+                    <span style={{color: 'red'}}>
+                        <b>OTC Warning</b>
+                    </span>
                 </Form.Label>
 
                 <Col sm="9">
-                    <Alert
-                        variant="danger"
-                    >
-                                <span style={{color: "red"}}>
-                                    <b>CAUTION:</b>
-                                </span> Changes to this OTC medicine will affect <b>ALL</b> clients!
+                    <Alert variant="danger">
+                        <span style={{color: 'red'}}>
+                            <b>CAUTION:</b>
+                        </span>{' '}
+                        Changes to this OTC medicine will affect <b>ALL</b> clients!
                     </Alert>
                 </Col>
             </Form.Group>
@@ -175,23 +179,15 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
         );
 
     return (
-        <Modal
-            backdrop="static"
-            centered
-            onEntered={() => textInput?.current?.focus()}
-            show={show}
-            size="lg"
-        >
-            <Modal.Header closeButton>
-                {modalTitle}
-            </Modal.Header>
+        <Modal backdrop="static" centered onEntered={() => textInput?.current?.focus()} show={show} size="lg">
+            <Modal.Header closeButton>{modalTitle}</Modal.Header>
 
             <Modal.Body>
                 <Form>
                     {otcAlert}
 
                     <Form.Group as={Row}>
-                        <Form.Label column sm="2" style={{userSelect: "none"}}>
+                        <Form.Label column sm="2" style={{userSelect: 'none'}}>
                             Drug Name
                         </Form.Label>
 
@@ -205,12 +201,10 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                                 onChange={(e) => handleOnChange(e)}
                                 required
                             />
-                            <div className="invalid-feedback">
-                                Drug Name cannot be blank.
-                            </div>
+                            <div className="invalid-feedback">Drug Name cannot be blank.</div>
                         </Col>
 
-                        <Form.Label column sm="1" style={{userSelect: "none"}}>
+                        <Form.Label column sm="1" style={{userSelect: 'none'}}>
                             Strength
                         </Form.Label>
 
@@ -226,7 +220,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                     </Form.Group>
 
                     <Form.Group as={Row}>
-                        <Form.Label column sm="2" style={{userSelect: "none"}}>
+                        <Form.Label column sm="2" style={{userSelect: 'none'}}>
                             Other Names
                         </Form.Label>
 
@@ -241,34 +235,33 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                         </Col>
                     </Form.Group>
 
-                    {!drugInfo.OTC &&
-                    <Form.Group as={Row}>
-                        <Col sm="3">
-                            <Form.Label style={{userSelect: "none"}}>
-                                Active
-                            </Form.Label>
-                        </Col>
-                        <Col sm="2">
-                            <Form.Check
-                                style={{transform: "scale(2)"}}
-                                onChange={(e) => handleOnChange(e)}
-                                checked={drugInfo.Active}
-                                name="Active"
-                                tabIndex={-1}
-                            />
-                        </Col>
-                        <Col sm="6">
-                            {!drugInfo.Active &&
-                            <>
-                            <span style={{fontWeight: "bold"}}>{drugInfo.Drug}</span> will not appear in the dropdown
-                            </>
-                            }
-                        </Col>
-                    </Form.Group>
-                    }
+                    {!drugInfo.OTC && (
+                        <Form.Group as={Row}>
+                            <Col sm="3">
+                                <Form.Label style={{userSelect: 'none'}}>Active</Form.Label>
+                            </Col>
+                            <Col sm="2">
+                                <Form.Check
+                                    style={{transform: 'scale(2)'}}
+                                    onChange={(e) => handleOnChange(e)}
+                                    checked={drugInfo.Active}
+                                    name="Active"
+                                    tabIndex={-1}
+                                />
+                            </Col>
+                            <Col sm="6">
+                                {!drugInfo.Active && (
+                                    <>
+                                        <span style={{fontWeight: 'bold'}}>{drugInfo.Drug}</span> will not appear in the
+                                        dropdown
+                                    </>
+                                )}
+                            </Col>
+                        </Form.Group>
+                    )}
 
                     <Form.Group as={Row} controlId="drug-Directions">
-                        <Form.Label column sm="2" style={{userSelect: "none"}}>
+                        <Form.Label column sm="2" style={{userSelect: 'none'}}>
                             Directions
                         </Form.Label>
 
@@ -284,26 +277,26 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                         </Col>
                     </Form.Group>
 
-                    {!otc &&
-                    <Form.Group as={Row} controlId="otc-drug-Notes">
-                        <Form.Label column sm="2" style={{userSelect: "none"}}>
-                            Notes
-                        </Form.Label>
+                    {!otc && (
+                        <Form.Group as={Row} controlId="otc-drug-Notes">
+                            <Form.Label column sm="2" style={{userSelect: 'none'}}>
+                                Notes
+                            </Form.Label>
 
-                        <Col sm="9">
-                            <Form.Control
-                                as="textarea"
-                                rows={3}
-                                value={(drugInfo && drugInfo.Notes) || ''}
-                                name="Notes"
-                                onChange={(e) => handleOnChange(e)}
-                            />
-                        </Col>
-                    </Form.Group>
-                    }
+                            <Col sm="9">
+                                <Form.Control
+                                    as="textarea"
+                                    rows={3}
+                                    value={(drugInfo && drugInfo.Notes) || ''}
+                                    name="Notes"
+                                    onChange={(e) => handleOnChange(e)}
+                                />
+                            </Col>
+                        </Form.Group>
+                    )}
 
                     <Form.Group as={Row} controlId="drug-barcode">
-                        <Form.Label column sm="2" style={{userSelect: "none"}}>
+                        <Form.Label column sm="2" style={{userSelect: 'none'}}>
                             Barcode
                         </Form.Label>
 
@@ -317,109 +310,91 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                         </Col>
                     </Form.Group>
 
-                    {!otc && drugInfo &&
-                    <Form.Group as={Row}>
-                        <Form.Label
-                            column sm="2"
-                            style={{userSelect: "none"}}
-                        >
-                            <span className={(isFillDateValid() ? '' : 'is-invalid')}>Fill Date</span>
-                            <div className="invalid-feedback">
-                                Invalid Fill Date
-                            </div>
-                        </Form.Label>
-                        <Form.Label column sm="1" style={{userSelect: "none"}}>
-                            Month
-                        </Form.Label>
-                        <Col sm="2">
-                            <Form.Control
-                                className={
-                                    drugInfo.FillDateMonth?.length === 0 ?
-                                        ""
-                                        :
-                                        (
-                                            isMonthValid(drugInfo.FillDateMonth as string) ? '' : 'is-invalid'
-                                        )
-                                }
-                                type="text"
-                                value={drugInfo.FillDateMonth}
-                                name="FillDateMonth"
-                                onChange={(e) => handleOnChange(e)}>
-                            </Form.Control>
-                            <div className="invalid-feedback">
-                                Invalid Month
-                            </div>
-                        </Col>
-                        <Form.Label column sm="1" style={{userSelect: "none"}}>
-                            Day
-                        </Form.Label>
-                        <Col sm="2">
-                            <Form.Control
-                                className={
-                                    drugInfo.FillDateDay === "" ?
-                                        ""
-                                        :
-                                        (isDayValid(
-                                            drugInfo.FillDateDay as string,
-                                            drugInfo.FillDateMonth as string
-                                        ) ? '' : 'is-invalid')
-                                }
-                                type="text"
-                                value={drugInfo.FillDateDay}
-                                name="FillDateDay"
-                                onChange={(e) => handleOnChange(e)}
-                            />
-                            <div className="invalid-feedback">
-                                Invalid Day
-                            </div>
-                        </Col>
-                        <Form.Label column sm="1" style={{userSelect: "none"}}>
-                            Year
-                        </Form.Label>
-                        <Col sm={2}>
-                            <Form.Control
-                                className={
-                                    drugInfo.FillDateYear === "" ?
-                                        ""
-                                        :
-                                        (
-                                            isYearValid(
-                                                drugInfo.FillDateYear as string,
-                                                false
-                                            ) ? '' : 'is-invalid'
-                                        )
-                                }
-                                type="text"
-                                value={drugInfo.FillDateYear}
-                                name="FillDateYear"
-                                onChange={(e) => handleOnChange(e)}
-                            />
-                            <div className="invalid-feedback">
-                                Invalid Year
-                            </div>
-                        </Col>
-                    </Form.Group>
-                    }
+                    {!otc && drugInfo && (
+                        <Form.Group as={Row}>
+                            <Form.Label column sm="2" style={{userSelect: 'none'}}>
+                                <span className={isFillDateValid() ? '' : 'is-invalid'}>Fill Date</span>
+                                <div className="invalid-feedback">Invalid Fill Date</div>
+                            </Form.Label>
+                            <Form.Label column sm="1" style={{userSelect: 'none'}}>
+                                Month
+                            </Form.Label>
+                            <Col sm="2">
+                                <Form.Control
+                                    className={
+                                        drugInfo.FillDateMonth?.length === 0
+                                            ? ''
+                                            : isMonthValid(drugInfo.FillDateMonth as string)
+                                            ? ''
+                                            : 'is-invalid'
+                                    }
+                                    type="text"
+                                    value={drugInfo.FillDateMonth}
+                                    name="FillDateMonth"
+                                    onChange={(e) => handleOnChange(e)}
+                                ></Form.Control>
+                                <div className="invalid-feedback">Invalid Month</div>
+                            </Col>
+                            <Form.Label column sm="1" style={{userSelect: 'none'}}>
+                                Day
+                            </Form.Label>
+                            <Col sm="2">
+                                <Form.Control
+                                    className={
+                                        drugInfo.FillDateDay === ''
+                                            ? ''
+                                            : isDayValid(
+                                                  drugInfo.FillDateDay as string,
+                                                  drugInfo.FillDateMonth as string
+                                              )
+                                            ? ''
+                                            : 'is-invalid'
+                                    }
+                                    type="text"
+                                    value={drugInfo.FillDateDay}
+                                    name="FillDateDay"
+                                    onChange={(e) => handleOnChange(e)}
+                                />
+                                <div className="invalid-feedback">Invalid Day</div>
+                            </Col>
+                            <Form.Label column sm="1" style={{userSelect: 'none'}}>
+                                Year
+                            </Form.Label>
+                            <Col sm={2}>
+                                <Form.Control
+                                    className={
+                                        drugInfo.FillDateYear === ''
+                                            ? ''
+                                            : isYearValid(drugInfo.FillDateYear as string, false)
+                                            ? ''
+                                            : 'is-invalid'
+                                    }
+                                    type="text"
+                                    value={drugInfo.FillDateYear}
+                                    name="FillDateYear"
+                                    onChange={(e) => handleOnChange(e)}
+                                />
+                                <div className="invalid-feedback">Invalid Year</div>
+                            </Col>
+                        </Form.Group>
+                    )}
                 </Form>
             </Modal.Body>
 
             <Modal.Footer>
-                <Button
-                    onClick={(e) => handleHide(e, false)}
-                    variant="secondary"
-                >
+                <Button onClick={(e) => handleHide(e, false)} variant="secondary">
                     Cancel
                 </Button>
                 <Button
                     disabled={!canSave}
                     onClick={(e) => handleHide(e, true)}
-                    variant={otc && drugTitleType === 'Edit ' ? "danger" : "primary"}
+                    variant={otc && drugTitleType === 'Edit ' ? 'danger' : 'primary'}
                 >
                     Save changes
                 </Button>
             </Modal.Footer>
         </Modal>
     );
-}
+};
 
 export default MedicineEdit;

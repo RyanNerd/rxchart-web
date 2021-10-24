@@ -14,15 +14,15 @@ interface IProps {
 
 /**
  * ManageDrug Table
- * @param {IProps} props
- * @return {JSX.Element}
+ * @param {IProps} props The props for this component
+ * @returns {JSX.Element}
  */
 const ManageDrugGrid = (props: IProps): JSX.Element => {
     const {checkoutList, onDelete, onEdit, onLogDrug, medicineList} = props;
 
     /**
      * Table row component for each medicine record
-     * @param {MedicineRecord} drug
+     * @param {MedicineRecord} drug Medicine record object
      */
     const TableRow = (drug: MedicineRecord) => {
         const hasCheckout = checkoutList.find((m) => m.Id === drug.Id);

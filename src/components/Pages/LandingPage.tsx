@@ -1,13 +1,18 @@
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import React, {useGlobal, useMemo} from 'reactn';
-import {ReactNode} from "reactn/default";
-import DiagnosticPage from "./DiagnosticPage";
+import {ReactNode} from 'reactn/default';
+import DiagnosticPage from './DiagnosticPage';
 import LoginPage from './LoginPage';
-import ManageDrugPage from "./ManageDrugPage";
-import ManageOtcPage from "./ManageOtcPage";
-import MedicinePage from "./MedicinePage";
-import ResidentPage from "./ResidentPage";
+import ManageDrugPage from './ManageDrugPage';
+import ManageOtcPage from './ManageOtcPage';
+import MedicinePage from './MedicinePage';
+import ResidentPage from './ResidentPage';
+
+interface ITitleProps {
+    activeKey: string;
+    children: ReactNode;
+}
 
 /**
  * Landing Page - Tab Page Menu UI
@@ -29,110 +34,63 @@ const LandingPage = () => {
      * Memoized MedicinePage to reduce number of re-renders
      */
     const medicinePage = useMemo(() => {
-        return (
-            <MedicinePage
-                activeTabKey={activeTabKey}
-                activeResident={activeResident}
-            />
-        )
-    }, [activeTabKey, activeResident])
+        return <MedicinePage activeTabKey={activeTabKey} activeResident={activeResident} />;
+    }, [activeTabKey, activeResident]);
 
     const manageDrugPage = useMemo(() => {
-        return (
-            <ManageDrugPage
-                activeTabKey={activeTabKey}
-            />
-        )
-    }, [activeTabKey])
+        return <ManageDrugPage activeTabKey={activeTabKey} />;
+    }, [activeTabKey]);
 
     const clientPage = useMemo(() => {
-        return (
-            <ResidentPage
-                activeTabKey={activeTabKey}
-                residentSelected={() => setActiveTabKey('medicine')}
-            />)
-    }, [activeTabKey, setActiveTabKey])
+        return <ResidentPage activeTabKey={activeTabKey} residentSelected={() => setActiveTabKey('medicine')} />;
+    }, [activeTabKey, setActiveTabKey]);
 
     const manageOtcPage = useMemo(() => {
-        return (
-            <ManageOtcPage
-                activeTabKey={activeTabKey}
-            />
-        )
-    }, [activeTabKey])
-
+        return <ManageOtcPage activeTabKey={activeTabKey} />;
+    }, [activeTabKey]);
 
     /**
      * Tab Title component to format tab appearance
-     * @param {tabKey: string, children: ReactNode} props
+     * @param {ITitleProps} props The props for this component
      */
-    const Title = (props: {activeKey: string, children: ReactNode}) => {
-        return (
-            <span className={activeTabKey === props.activeKey ? 'bld' : undefined}>{props.children}</span>
-        )
-    }
+    const Title = (props: ITitleProps) => {
+        return <span className={activeTabKey === props.activeKey ? 'bld' : undefined}>{props.children}</span>;
+    };
 
     return (
-        <Tabs
-            id="landing-page-tabs"
-            activeKey={activeTabKey}
-            onSelect={(key) => setActiveTabKey(key || 'login')}
-        >
+        <Tabs id="landing-page-tabs" activeKey={activeTabKey} onSelect={(key) => setActiveTabKey(key || 'login')}>
             <Tab
                 disabled={errorDetails}
                 eventKey="login"
-                title={<Title activeKey="login">{apiKey ? "Logout" : "Login"}</Title>}
+                title={<Title activeKey="login">{apiKey ? 'Logout' : 'Login'}</Title>}
             >
-                <LoginPage/>
+                <LoginPage />
             </Tab>
-            <Tab
-                disabled={!apiKey}
-                eventKey="resident"
-                title={<Title activeKey="resident">Clients</Title>}>
-                <Tab.Content>
-                    {clientPage}
-                </Tab.Content>
+            <Tab disabled={!apiKey} eventKey="resident" title={<Title activeKey="resident">Clients</Title>}>
+                <Tab.Content>{clientPage}</Tab.Content>
             </Tab>
             <Tab
                 disabled={!apiKey || !activeResident}
                 eventKey="medicine"
-                title={<Title activeKey="medicine">Rx</Title>}>
-                {activeResident && activeTabKey === "medicine" &&
-                <Tab.Content>
-                    {medicinePage}
-                </Tab.Content>
-                }
+                title={<Title activeKey="medicine">Rx</Title>}
+            >
+                {activeResident && activeTabKey === 'medicine' && <Tab.Content>{medicinePage}</Tab.Content>}
             </Tab>
             <Tab
                 disabled={!apiKey || !activeResident}
                 eventKey="manage"
                 title={<Title activeKey="manage">Manage Rx</Title>}
             >
-                <Tab.Content>
-                    {manageDrugPage}
-                </Tab.Content>
+                <Tab.Content>{manageDrugPage}</Tab.Content>
             </Tab>
-            <Tab
-                disabled={!apiKey}
-                eventKey="manage-otc"
-                title={<Title activeKey="manage-otc">Manage OTC</Title>}
-            >
-                <Tab.Content>
-                    {manageOtcPage}
-                </Tab.Content>
+            <Tab disabled={!apiKey} eventKey="manage-otc" title={<Title activeKey="manage-otc">Manage OTC</Title>}>
+                <Tab.Content>{manageOtcPage}</Tab.Content>
             </Tab>
-            <Tab
-                disabled={!errorDetails}
-                eventKey="error"
-                title={<Title activeKey="error">Diagnostics</Title>}
-            >
-                <DiagnosticPage
-                    error={errorDetails}
-                    dismissErrorAlert={() => window.location.reload()}
-                />
+            <Tab disabled={!errorDetails} eventKey="error" title={<Title activeKey="error">Diagnostics</Title>}>
+                <DiagnosticPage error={errorDetails} dismissErrorAlert={() => window.location.reload()} />
             </Tab>
         </Tabs>
     );
-}
+};
 
 export default LandingPage;

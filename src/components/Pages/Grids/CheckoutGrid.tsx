@@ -18,8 +18,8 @@ interface IProps extends TableProps {
 
 /**
  * Checkout Grid
- * @param {IProps} props
- * @return {JSX.Element}
+ * @param {IProps} props The props for this component
+ * @returns {JSX.Element}
  */
 const CheckoutGrid = (props: IProps): JSX.Element => {
     const {drugId, drugLog = [], medicineList = []} = props;
@@ -28,8 +28,8 @@ const CheckoutGrid = (props: IProps): JSX.Element => {
 
     /**
      * Returns the value of the drug column for the given drugId
-     * @param {number} medicineId
-     * @param {string} columnName
+     * @param {number} medicineId The PK of the Medicine table
+     * @param {string} columnName The name of the column to search
      * @returns {string | null}
      */
     const drugColumnLookup = (medicineId: number, columnName: string): unknown => {
@@ -44,7 +44,7 @@ const CheckoutGrid = (props: IProps): JSX.Element => {
 
     /**
      * Child component for the table for each drug that has been logged.
-     * @param {DrugLogRecord} drug
+     * @param {DrugLogRecord} drug The drugLog record object
      * @returns {JSX.Element | null}
      */
     const DrugRow = (drug: DrugLogRecord): JSX.Element | null => {

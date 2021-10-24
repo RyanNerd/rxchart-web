@@ -1,23 +1,23 @@
-import {State} from "reactn/default";
-import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord, ResidentRecord} from "types/RecordTypes";
-import AuthManager from "../managers/AuthManager";
-import MedicineManager from "../managers/MedicineManager";
-import ResidentManager from "../managers/ResidentManager";
-import AuthenticationProvider, {IAuthenticationProvider} from "../providers/AuthenticationProvider";
-import MedHistoryProvider, {IMedHistoryProvider} from "../providers/MedHistoryProvider";
-import MedicineProvider, {IMedicineProvider} from "../providers/MedicineProvider";
-import PillboxItemProvider, {IPillboxItemProvider} from "../providers/PillboxItemProvider";
-import PillboxProvider, {IPillboxProvider} from "../providers/PillboxProvider";
-import ResidentProvider, {IResidentProvider} from "../providers/ResidentProvider";
+import {State} from 'reactn/default';
+import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord, ResidentRecord} from 'types/RecordTypes';
+import AuthManager from '../managers/AuthManager';
+import MedicineManager from '../managers/MedicineManager';
+import ResidentManager from '../managers/ResidentManager';
+import AuthenticationProvider, {IAuthenticationProvider} from '../providers/AuthenticationProvider';
+import MedHistoryProvider, {IMedHistoryProvider} from '../providers/MedHistoryProvider';
+import MedicineProvider, {IMedicineProvider} from '../providers/MedicineProvider';
+import PillboxItemProvider, {IPillboxItemProvider} from '../providers/PillboxItemProvider';
+import PillboxProvider, {IPillboxProvider} from '../providers/PillboxProvider';
+import ResidentProvider, {IResidentProvider} from '../providers/ResidentProvider';
 
 export interface IProviders {
-    authenticationProvider: IAuthenticationProvider
-    residentProvider: IResidentProvider
-    medicineProvider: IMedicineProvider
-    medHistoryProvider: IMedHistoryProvider
-    pillboxProvider: IPillboxProvider
-    pillboxItemProvider: IPillboxItemProvider
-    setApi: (apiKey: string) => Promise<void>
+    authenticationProvider: IAuthenticationProvider;
+    residentProvider: IResidentProvider;
+    medicineProvider: IMedicineProvider;
+    medHistoryProvider: IMedHistoryProvider;
+    pillboxProvider: IPillboxProvider;
+    pillboxItemProvider: IPillboxItemProvider;
+    setApi: (apiKey: string) => Promise<void>;
 }
 
 /**
@@ -42,9 +42,9 @@ const getInitialState = () => {
 
         /**
          * Helper function that sets the API key for ALL providers
-         * @param {string} apiKey
+         * @param {string} apiKey The API key as returned from the web service
          */
-        setApi: async (apiKey: string): Promise<void>  => {
+        setApi: async (apiKey: string): Promise<void> => {
             providers.medHistoryProvider.setApiKey(apiKey);
             providers.medicineProvider.setApiKey(apiKey);
             providers.residentProvider.setApiKey(apiKey);
@@ -74,6 +74,6 @@ const getInitialState = () => {
         residentList: [] as ResidentRecord[],
         residentManager: ResidentManager(providers.residentProvider)
     } as State;
-}
+};
 
 export default getInitialState;

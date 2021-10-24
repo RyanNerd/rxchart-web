@@ -9,7 +9,7 @@ interface IProps {
 
 /**
  * Table showing Drug Notes/Amount and time of logged pillbox drugs
- * @param {IProps} props
+ * @param {IProps} props The props for this component
  */
 const PillboxLogGrid = (props: IProps) => {
     const pillboxLogList = props.pillboxLogList;

@@ -1,21 +1,21 @@
-import Button from "react-bootstrap/Button";
-import Col from "react-bootstrap/Col";
-import Form from "react-bootstrap/Form";
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import Row from "react-bootstrap/Row";
+import Row from 'react-bootstrap/Row';
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
-import {PillboxRecord} from "types/RecordTypes";
-import {clientFullName} from "utility/common";
+import {PillboxRecord} from 'types/RecordTypes';
+import {clientFullName} from 'utility/common';
 
 interface IProps {
-    pillboxInfo: PillboxRecord
-    onClose: (r: PillboxRecord | null) => void
-    show: boolean
+    pillboxInfo: PillboxRecord;
+    onClose: (r: PillboxRecord | null) => void;
+    show: boolean;
 }
 
 /**
  * Edit Modal for Pillbox
- * @param {IProps} props
+ * @param {IProps} props Props for the component
  * @returns {JSX.Element | null}
  */
 const PillboxEdit = (props: IProps): JSX.Element | null => {
@@ -27,7 +27,7 @@ const PillboxEdit = (props: IProps): JSX.Element | null => {
 
     // Observer for show
     useEffect(() => {
-        setShow(props.show)
+        setShow(props.show);
     }, [props.show]);
 
     // Observer/mutator for pillboxInfo
@@ -51,7 +51,7 @@ const PillboxEdit = (props: IProps): JSX.Element | null => {
 
     /**
      * Fires when a text field or checkbox is changing.
-     * @param {React.ChangeEvent<HTMLElement>} e
+     * @param {React.ChangeEvent<HTMLElement>} e Change event object
      */
     const handleOnChange = (e: React.ChangeEvent<HTMLElement>) => {
         const target = e.target as HTMLInputElement;
@@ -59,12 +59,12 @@ const PillboxEdit = (props: IProps): JSX.Element | null => {
         const name = target.name;
         pillboxInfo[name] = value;
         setPillboxInfo({...pillboxInfo});
-    }
+    };
 
     /**
      * Fires when the user clicks on save or cancel
-     * @param {React.MouseEvent<HTMLElement>} e
-     * @param {boolean} shouldSave
+     * @param {React.MouseEvent<HTMLElement>} e Mouse event object
+     * @param {boolean} shouldSave True if the user clicked the save button, otherwise false
      */
     const handleHide = (e: React.MouseEvent<HTMLElement>, shouldSave: boolean) => {
         e.preventDefault();
@@ -74,35 +74,33 @@ const PillboxEdit = (props: IProps): JSX.Element | null => {
             props.onClose(null);
         }
         setShow(false);
-    }
+    };
 
     // Short circuit render if there is no drugInfo record.
     if (!pillboxInfo) {
         return null;
     }
 
-    const titleType = pillboxInfo.Id ? 'Edit Pillbox ' : 'Add Pillbox ' as string;
+    const titleType = pillboxInfo.Id ? 'Edit Pillbox ' : ('Add Pillbox ' as string);
     const fullName = activeResident && clientFullName(activeResident);
 
     return (
-        <Modal
-            backdrop="static"
-            centered
-            onEntered={() => textInput?.current?.focus()}
-            show={show}
-            size="lg"
-        >
+        <Modal backdrop="static" centered onEntered={() => textInput?.current?.focus()} show={show} size="lg">
             <Modal.Header closeButton>
                 <Modal.Title>
-                    {titleType} <b style={{color: "blue"}}><i>{pillboxInfo.Name}</i></b>
-                    <span> for </span><b style={{backgroundColor: "yellow"}}>{fullName}</b>
+                    {titleType}{' '}
+                    <b style={{color: 'blue'}}>
+                        <i>{pillboxInfo.Name}</i>
+                    </b>
+                    <span> for </span>
+                    <b style={{backgroundColor: 'yellow'}}>{fullName}</b>
                 </Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
                 <Form>
                     <Form.Group as={Row} controlId="pillbox-modal-name">
-                        <Form.Label column sm="2" style={{userSelect: "none"}}>
+                        <Form.Label column sm="2" style={{userSelect: 'none'}}>
                             Pillbox Name
                         </Form.Label>
 
@@ -116,14 +114,12 @@ const PillboxEdit = (props: IProps): JSX.Element | null => {
                                 onChange={(e) => handleOnChange(e)}
                                 required
                             />
-                            <div className="invalid-feedback">
-                                Pillbox Name field cannot be blank.
-                            </div>
+                            <div className="invalid-feedback">Pillbox Name field cannot be blank.</div>
                         </Col>
                     </Form.Group>
 
                     <Form.Group as={Row} controlId="pillbox-modal-notes">
-                        <Form.Label column sm="2" style={{userSelect: "none"}}>
+                        <Form.Label column sm="2" style={{userSelect: 'none'}}>
                             Notes
                         </Form.Label>
 
@@ -141,22 +137,15 @@ const PillboxEdit = (props: IProps): JSX.Element | null => {
             </Modal.Body>
 
             <Modal.Footer>
-                <Button
-                    onClick={(e) => handleHide(e, false)}
-                    variant="secondary"
-                >
+                <Button onClick={(e) => handleHide(e, false)} variant="secondary">
                     Cancel
                 </Button>
-                <Button
-                    disabled={!canSave}
-                    onClick={(e) => handleHide(e, true)}
-                    variant={"primary"}
-                >
+                <Button disabled={!canSave} onClick={(e) => handleHide(e, true)} variant={'primary'}>
                     Save changes
                 </Button>
             </Modal.Footer>
         </Modal>
     );
-}
+};
 
 export default PillboxEdit;

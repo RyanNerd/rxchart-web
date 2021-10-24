@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/require-param */
 import {Authenticated} from 'providers/AuthenticationProvider';
 import Alert from 'react-bootstrap/Alert';
 import Container from 'react-bootstrap/Container';

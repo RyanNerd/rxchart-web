@@ -11,8 +11,8 @@ interface IProps {
 
 /**
  * ManageOtc Table
- * @param {IProps} props
- * @return {JSX.Element}
+ * @param {IProps} props The props for this component
+ * @returns {JSX.Element}
  */
 const ManageOtcGrid = (props: IProps): JSX.Element => {
     const {onDelete, onEdit, otcList} = props;
