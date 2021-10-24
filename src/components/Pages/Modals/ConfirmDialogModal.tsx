@@ -22,7 +22,7 @@ interface IAnswerProps {
 
 /**
  * ConfirmDialogModal - Uses composition instead of inheritance
- * @param props {IProps}
+ * @param {IProps} props The props for this component
  */
 const ConfirmDialogModal = (props: IProps) => {
     const {onAnswer, show, body, title, yesButton, noButton} = {...props};
@@ -36,8 +36,8 @@ const ConfirmDialogModal = (props: IProps) => {
 
     /**
      * Handle when user clicks on the yes / no button
-     * @param e {React.MouseEvent<HTMLElement>}
-     * @param a {Boolean}
+     * @param {React.MouseEvent<HTMLElement>} e Mouse event object
+     * @param {boolean} a True if the user clicked on the Confirm/Yes button
      */
     const handleClick = (e: React.MouseEvent<HTMLElement>, a: boolean) => {
         e.preventDefault();

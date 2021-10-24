@@ -19,7 +19,7 @@ interface IProps {
 
 /**
  * ManageDrugPage - UI for Displaying, editing and adding Medicine
- * @param props The props for the component
+ * @param {IProps} props The props for the component
  * @returns {JSX.Element | null}
  */
 const ManageDrugPage = (props: IProps): JSX.Element | null => {
@@ -124,7 +124,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
 
     /**
      * Handle when user clicks on the + Log Drug from the Medicine Detail table
-     * @param r {MedicineRecord}
+     * @param {MedicineRecord} r Medicine record object
      */
     const handleLogDrug = (r: MedicineRecord) => {
         // Set drugLog to either the existing drugLogRecord or create a new one to be inserted.

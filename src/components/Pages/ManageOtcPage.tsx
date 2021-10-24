@@ -15,7 +15,7 @@ interface IProps {
 
 /**
  * ManageOtcPage - UI for Displaying, editing and adding OTC drugs
- * @param props The props for the component
+ * @param {IProps} props The props for the component
  * @returns {JSX.Element | null}
  */
 const ManageOtcPage = (props: IProps): JSX.Element | null => {

@@ -18,7 +18,7 @@ type RecordResponse = {
 
 /**
  * MedicineProvider API connector
- * @param baseUrl The base URL to use (derived from the .env file)
+ * @param {string} baseUrl The base URL to use (derived from the .env file)
  */
 const MedicineProvider = (baseUrl: string): IMedicineProvider => {
     const _baseUrl = baseUrl;

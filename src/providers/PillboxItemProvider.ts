@@ -18,7 +18,7 @@ export interface IPillboxItemProvider {
 
 /**
  * PillboxItemProvider API Connector
- * @param baseurl The base URL to use (derived from the .env file)
+ * @param {string} baseurl The base URL to use (derived from the .env file)
  */
 const PillboxItemProvider = (baseurl: string): IPillboxItemProvider => {
     const _baseUrl = baseurl;

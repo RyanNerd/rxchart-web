@@ -58,8 +58,8 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
 
     /**
      * Fires when a text field or checkbox is changing.
-     * @param e {React.KeyboardEvent<HTMLElement>}
-     * @param isNumber {boolean}
+     * @param {React.KeyboardEvent<HTMLElement>} e Keyboard event object
+     * @param {boolean} isNumber True if the expected input is numeric
      */
     const handleOnChange = (e: React.ChangeEvent<HTMLElement>, isNumber?: boolean) => {
         const target = e.target as HTMLInputElement;

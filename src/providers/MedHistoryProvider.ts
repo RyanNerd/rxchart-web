@@ -18,7 +18,7 @@ export interface IMedHistoryProvider {
 
 /**
  * MedHistoryProvider API Connector
- * @param baseurl The base URL to use (derived from the .env file)
+ * @param {string} baseurl The base URL to use (derived from the .env file)
  */
 const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
     const _baseUrl = baseurl;

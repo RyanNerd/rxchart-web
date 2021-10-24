@@ -58,7 +58,7 @@ interface IProps {
 
 /**
  * MedicinePage - UI for logging prescription medications
- * @param props Props for the component
+ * @param {IProps} props The props for this component
  * @returns {JSX.Element | null}
  */
 const MedicinePage = (props: IProps): JSX.Element | null => {
@@ -304,7 +304,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const handleLogPillbox = () => {
         /**
          * Log all the pillbox items, refresh the drugLogList, and toast the logged drugs
-         * @param pillboxId The PK of the Pillbox table
+         * @param {number} pillboxId The PK of the Pillbox table
          */
         const logPillbox = async (pillboxId: number) => {
             const toastQ = [] as DrugLogRecord[];

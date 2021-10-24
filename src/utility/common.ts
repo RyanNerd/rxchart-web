@@ -16,10 +16,10 @@ export const clientDOB = (resident: ResidentRecord): string => {
 
 /**
  * Given the month day and year return the date as a string in the format mm/dd/yyyy
- * @param month {string}
- * @param day {string}
- * @param year {string}
- * @param leadingZeros {?boolean}
+ * @param {string} month The month as a string
+ * @param {string} day The day in the month as a string
+ * @param {string} year The year as a string
+ * @param {boolean} leadingZeros True if leading zeros in the output, otherwise no leading zeros
  * @returns {string}
  */
 export const dateToString = (month: string, day: string, year: string, leadingZeros?: boolean): string => {
@@ -38,7 +38,7 @@ export const dateToString = (month: string, day: string, year: string, leadingZe
  * Given a ResidentRecord return the first and last name of the client in the format: first last
  * If the client Nickname field is populated then the format is: first last "nickname"
  * @param {ResidentRecord} resident The client record
- * @param includeNickname True if the nickname should be returned in quotes, no display of the nickname otherwise
+ * @param {boolean} includeNickname True if nickname should be returned in quotes, no display of the nickname otherwise
  */
 export const clientFullName = (resident: ResidentRecord, includeNickname = false): string => {
     const clientName = resident.FirstName.trim() + ' ' + resident.LastName.trim();

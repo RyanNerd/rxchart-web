@@ -25,7 +25,7 @@ type LogResponse = {
 
 /**
  * PillboxProvider API connector
- * @param baseUrl The base URL to use (determined from the .env file)
+ * @param {string} baseUrl The base URL to use (determined from the .env file)
  */
 const PillboxProvider = (baseUrl: string): IPillboxProvider => {
     const _baseUrl = baseUrl;
@@ -93,7 +93,7 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
         /**
          * Post interface
          * @returns {Promise<PillboxRecord>}
-         * @param pillboxId The PK of the Pillbox table
+         * @param {number} pillboxId The PK of the Pillbox table
          */
         log: async (pillboxId: number): Promise<DrugLogRecord[]> => {
             const uri = _baseUrl + 'pillbox/log?api_key=' + _apiKey;
