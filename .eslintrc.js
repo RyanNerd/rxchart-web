@@ -31,12 +31,19 @@ module.exports = {
             typescript: {}
         }
     },
-    extends: ['prettier', 'eslint:recommended', 'plugin:@typescript-eslint/recommended'],
+    extends: [
+        'prettier',
+        'eslint:recommended',
+        'plugin:react/recommended',
+        'plugin:@typescript-eslint/recommended',
+        'plugin:react-hooks/recommended'
+    ],
     plugins: [
         'eslint-plugin-jsdoc',
         'eslint-plugin-prefer-arrow',
         'eslint-plugin-react',
         'react',
+        'react-hooks',
         '@typescript-eslint'
     ],
     rules: {

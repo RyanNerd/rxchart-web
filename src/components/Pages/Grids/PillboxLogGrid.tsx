@@ -1,7 +1,7 @@
 import {TPillboxLog} from 'components/Pages/MedicinePage';
 import Table from 'react-bootstrap/Table';
 import React from 'reactn';
-import {BsColor} from 'utility/common';
+import {BsColor, randomString} from 'utility/common';
 
 interface IProps {
     pillboxLogList: TPillboxLog[];
@@ -13,6 +13,7 @@ interface IProps {
  */
 const PillboxLogGrid = (props: IProps) => {
     const pillboxLogList = props.pillboxLogList;
+    const key = randomString();
 
     return (
         <Table style={{wordWrap: 'break-word'}} bordered size="sm" striped>
@@ -34,7 +35,7 @@ const PillboxLogGrid = (props: IProps) => {
                         : '';
                     const strikeThrough = log.Active ? undefined : 'line-through';
                     return (
-                        <tr style={{fontWeight: 'bold', color: BsColor.success}}>
+                        <tr key={`pillbox-log-grid-${key}`} style={{fontWeight: 'bold', color: BsColor.success}}>
                             <td>
                                 <span style={{textDecoration: strikeThrough}}>
                                     {log.Drug} {log.Strength}
