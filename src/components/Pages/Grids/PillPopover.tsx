@@ -25,6 +25,7 @@ const PillPopover = (props: IProps) => {
     const pillboxItemInfo = pillboxItemList?.find((p) => p.Id === pillboxItemId);
     const pillboxInfo = pillboxList?.find((pb) => pb.Id === pillboxItemInfo?.PillboxId);
 
+    // noinspection RequiredAttributes
     return (
         <OverlayTrigger placement="top" delay={{show: 200, hide: 300}} overlay={pillTooltip(id)}>
             <span
