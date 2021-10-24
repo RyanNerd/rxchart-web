@@ -33,13 +33,15 @@ import Confirm from './Modals/Confirm';
 import DrugLogEdit from './Modals/DrugLogEdit';
 import MedicineEdit from './Modals/MedicineEdit';
 
-export type TPillboxLog = {
+export type TPillboxMedLog = {
     Active: boolean;
     Drug: string | undefined;
     Strength: string | null | undefined;
     Quantity: number;
     Notes: string | null;
     Updated: Date | null | undefined;
+    PillboxItemId?: number | null;
+    PillboxId?: number | null;
 };
 
 // Display states
@@ -78,7 +80,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [mm] = useGlobal('medicineManager');
     const [otcList, setOtcList] = useGlobal('otcList');
     const [otcLogList, setOtcLogList] = useState<DrugLogRecord[]>([]);
-    const [pillboxDrugLog, setPillboxDrugLog] = useState<TPillboxLog[]>([]);
+    const [pillboxMedLogList, setPillboxMedLogList] = useState<TPillboxMedLog[]>([]);
     const [pillboxItemList] = useGlobal('pillboxItemList');
     const [pillboxList, setPillboxList] = useGlobal('pillboxList');
     const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
@@ -137,7 +139,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     // Refresh the pillboxDrugLog[]
     useEffect(() => {
         if (activePillbox) {
-            const pillboxMedLog = [] as TPillboxLog[];
+            const pillboxMedLog = [] as TPillboxMedLog[];
             pillboxItemList.forEach((pbi) => {
                 if (pbi.PillboxId === activePillbox.Id && pbi.Quantity) {
                     const pbl = drugLogList.find(
@@ -156,15 +158,17 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             Strength: med?.Strength,
                             Quantity: pbi.Quantity,
                             Notes: pbl.Notes,
+                            PillboxItemId: pbl.PillboxItemId,
+                            PillboxId: activePillbox.Id,
                             Updated: pbl.Updated
                         });
                     }
                 }
             });
 
-            setPillboxDrugLog(multiSort(pillboxMedLog, {Quantity: SortDirection.asc, Drug: SortDirection.desc}));
+            setPillboxMedLogList(multiSort(pillboxMedLog, {Quantity: SortDirection.asc, Drug: SortDirection.desc}));
         }
-    }, [medicineList, pillboxItemList, activePillbox, drugLogList, globalMedicineList]);
+    }, [medicineList, pillboxItemList, activePillbox, drugLogList, globalMedicineList, setPillboxMedLogList]);
 
     // If there isn't an active client, or medicineList isn't populated, or this isn't the active tab then do not render
     if (!clientId || !medicineList || activeTabKey !== 'medicine') return null;
@@ -324,6 +328,18 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         // Tell the UI that we're busy. Then log the pillbox contents and when done tell the UI we're no longer busy.
         setIsBusy(true);
         logPillbox(activePillbox?.Id as number).then(() => setIsBusy(false));
+    };
+
+    /**
+     * Handle when the user has clicked on a pill
+     * @param {number} n The PK of the Pillbox table
+     */
+    const handleOnPillClick = (n: number) => {
+        const pb = pillboxList.find((p) => p.Id === n);
+        if (pb) {
+            setActivePillbox(pb);
+            setDisplayType(DISPLAY_TYPE.Pillbox);
+        }
     };
 
     /**
@@ -500,15 +516,17 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             <PillboxListGroup
                                 activePillbox={activePillbox}
                                 disabled={isBusy}
-                                medicineList={medicineList}
                                 onSelect={(id) => setActivePillbox(pillboxList.find((pb) => pb.Id === id) || null)}
                                 onEdit={(r) => savePillbox(r)}
                                 onDelete={(id) => deletePillbox(id)}
-                                clientId={clientId}
-                                pillboxList={pillboxList}
-                                pillboxItemList={pillboxItemList}
-                                pillboxLogList={pillboxDrugLog}
                                 logPillbox={() => handleLogPillbox()}
+                                gridLists={{
+                                    medicineList: globalMedicineList,
+                                    pillboxList,
+                                    pillboxItemList,
+                                    drugLogList
+                                }}
+                                pillboxMedLogList={pillboxMedLogList}
                             />
                         )}
 
@@ -521,13 +539,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                                         medicineList={globalMedicineList.concat(otcList)}
                                         pillboxList={pillboxList}
                                         pillboxItemList={pillboxItemList}
-                                        onPillClick={(n) => {
-                                            const pb = pillboxList.find((p) => p.Id === n);
-                                            if (pb) {
-                                                setActivePillbox(pb);
-                                                setDisplayType(DISPLAY_TYPE.Pillbox);
-                                            }
-                                        }}
+                                        onPillClick={(n) => handleOnPillClick(n)}
                                         onEdit={(d: DrugLogRecord | undefined) => addEditDrugLog(d)}
                                         onDelete={(d: SetStateAction<DrugLogRecord | null>) =>
                                             setShowDeleteDrugLogRecord(d)
@@ -567,20 +579,12 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
                                 {activeMed?.Id && (
                                     <DrugLogGrid
-                                        drugLog={drugLogList}
                                         drugId={activeMed.Id}
                                         columns={['Taken', 'Notes', 'Out', 'In']}
-                                        pillboxList={pillboxList}
-                                        pillboxItemList={pillboxItemList}
-                                        onPillClick={(n) => {
-                                            const pb = pillboxList.find((p) => p.Id === n);
-                                            if (pb) {
-                                                setActivePillbox(pb);
-                                                setDisplayType(DISPLAY_TYPE.Pillbox);
-                                            }
-                                        }}
+                                        onPillClick={(n) => handleOnPillClick(n)}
                                         onEdit={(r) => addEditDrugLog(r)}
                                         onDelete={(r) => setShowDeleteDrugLogRecord(r)}
+                                        gridLists={{medicineList, drugLogList, pillboxList, pillboxItemList}}
                                     />
                                 )}
                             </ListGroup.Item>
@@ -592,9 +596,13 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                                     OTC History
                                 </h5>
                                 <DrugLogGrid
-                                    drugLog={otcLogList}
-                                    medicineList={otcList}
-                                    columns={['Drug', 'Created', 'Updated', 'Notes']}
+                                    gridLists={{
+                                        medicineList: otcList,
+                                        drugLogList: otcLogList,
+                                        pillboxList: undefined,
+                                        pillboxItemList: undefined
+                                    }}
+                                    columns={['Drug', 'Taken', 'Notes']}
                                     onEdit={(r) => addEditOtcLog(r)}
                                     onDelete={(r) => setShowDeleteDrugLogRecord(r)}
                                 />

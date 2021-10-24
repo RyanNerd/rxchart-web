@@ -1,10 +1,14 @@
-import {TPillboxLog} from 'components/Pages/MedicinePage';
+import {IGridLists} from 'components/Pages/Grids/DrugLogGrid';
+import PillPopover from 'components/Pages/Grids/PillPopover';
+import {TPillboxMedLog} from 'components/Pages/MedicinePage';
 import Table from 'react-bootstrap/Table';
 import React from 'reactn';
+import {PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
 import {BsColor, randomString} from 'utility/common';
 
 interface IProps {
-    pillboxLogList: TPillboxLog[];
+    gridLists: IGridLists;
+    pillboxMedLogList: TPillboxMedLog[];
 }
 
 /**
@@ -12,8 +16,10 @@ interface IProps {
  * @param {IProps} props The props for this component
  */
 const PillboxLogGrid = (props: IProps) => {
-    const pillboxLogList = props.pillboxLogList;
-    const key = randomString();
+    const pillboxMedLogList = props.pillboxMedLogList;
+    const gridLists = props.gridLists;
+    const pillboxList = gridLists.pillboxList || ([] as PillboxRecord[]);
+    const pillboxItemList = gridLists.pillboxItemList || ([] as PillboxItemRecord[]);
 
     return (
         <Table style={{wordWrap: 'break-word'}} bordered size="sm" striped>
@@ -26,7 +32,7 @@ const PillboxLogGrid = (props: IProps) => {
                 <th>Time</th>
             </tr>
             <tbody>
-                {pillboxLogList.map((log) => {
+                {pillboxMedLogList.map((log) => {
                     const updated = log.Updated
                         ? new Date(log.Updated).toLocaleString('en-US', {
                               hour: '2-digit',
@@ -34,15 +40,28 @@ const PillboxLogGrid = (props: IProps) => {
                           })
                         : '';
                     const strikeThrough = log.Active ? undefined : 'line-through';
+                    const key = log.PillboxItemId || randomString();
+
                     return (
-                        <tr key={`pillbox-log-grid-${key}`} style={{fontWeight: 'bold', color: BsColor.success}}>
+                        <tr
+                            id={key.toString()}
+                            key={`pillbox-log-grid-${key}`}
+                            style={{fontWeight: 'bold', color: BsColor.success}}
+                        >
                             <td>
                                 <span style={{textDecoration: strikeThrough}}>
                                     {log.Drug} {log.Strength}
                                 </span>
                             </td>
                             <td>
-                                {'💊 '} {log.Notes}
+                                <PillPopover
+                                    id={log.PillboxItemId as number}
+                                    pillboxItemId={log.PillboxItemId as number}
+                                    pillboxItemList={pillboxItemList}
+                                    pillboxList={pillboxList}
+                                    onPillClick={(n) => n + 1}
+                                />{' '}
+                                {log.Notes}
                             </td>
                             <td>{updated}</td>
                         </tr>
