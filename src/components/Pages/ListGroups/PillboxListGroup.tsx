@@ -12,8 +12,8 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Row from 'react-bootstrap/Row';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import React, {useEffect, useState} from 'reactn';
-import {MedicineRecord, newPillboxRecord, PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
-import {BsColor, getDrugName, getMedicineRecord, multiSort, SortDirection} from 'utility/common';
+import {newPillboxRecord, PillboxRecord} from 'types/RecordTypes';
+import {BsColor, deconstructGridLists, getDrugName, getMedicineRecord, multiSort, SortDirection} from 'utility/common';
 import ConfirmDialogModal from '../Modals/ConfirmDialogModal';
 import PillboxEdit from '../Modals/PillboxEdit';
 
@@ -51,13 +51,7 @@ const PillboxListGroup = (props: IProps) => {
         pillboxMedLogList
     } = props;
     const clientId = activePillbox?.ResidentId;
-    const pillboxList = gridLists.pillboxList || ([] as PillboxRecord[]);
-    const pillboxItemList = gridLists.pillboxItemList || ([] as PillboxItemRecord[]);
-    const medicineList = gridLists.medicineList || ([] as MedicineRecord[]);
-
-    // If there is at least one pillbox (but no active pillbox) then force the first pillbox as the active pillbox
-    if (pillboxList.length > 0 && !activePillbox) onSelect(pillboxList[0].Id as number);
-
+    const {pillboxList, pillboxItemList, medicineList} = deconstructGridLists(gridLists);
     const [showAlert, setShowAlert] = useState(false);
     const [showPillboxDeleteConfirm, setShowPillboxDeleteConfirm] = useState(false);
     const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord | null>(null);
@@ -70,6 +64,13 @@ const PillboxListGroup = (props: IProps) => {
               hour12: true
           } as Intl.DateTimeFormatOptions)
         : null;
+
+    // If there are pillboxes but not an activePillbox then set the activePillbox via the onSelect cb
+    useEffect(() => {
+        if (pillboxList.length > 0 && !activePillbox) {
+            onSelect(pillboxList[0].Id as number);
+        }
+    }, [pillboxList, activePillbox, onSelect]);
 
     // When the activePillbox has already been logged today then setShowAlert to true
     useEffect(() => {
