@@ -14,7 +14,7 @@ const AuthManager = (authenticationProvider: IAuthenticationProvider): IAuthMana
      * Authentication API call
      * @param {string} username The username to authenticate
      * @param {string} password The password to authenticate
-     * @returns Promise<Authenticated | void>
+     * @returns {Promise<Authenticated | void>}
      */
     const _authenticate = async (username: string, password: string) => {
         const [e, r] = (await asyncWrapper(authenticationProvider.post({username, password}))) as [

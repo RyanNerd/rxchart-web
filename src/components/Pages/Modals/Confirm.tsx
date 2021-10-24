@@ -21,7 +21,7 @@ const Confirm = {
     /**
      * Confirm.Modal component
      * @param {IProps} props Props for the component
-     * @returns Modal
+     * @returns {JSX.Element} Modal
      */
     Modal: (props: IProps): JSX.Element => {
         const {backdrop = 'static', buttonvariant = 'primary', onSelect, size = 'sm'} = {...props};

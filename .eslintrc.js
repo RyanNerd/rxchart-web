@@ -24,7 +24,7 @@ module.exports = {
             structuredTags: {
                 JSX: {type: true}
             },
-            definedTags: ['note', 'record', 'link']
+            definedTags: ['link']
         }
     },
     extends: [
@@ -67,6 +67,8 @@ module.exports = {
         ],
         'id-match': 'error',
         indent: 'off',
+        'max-classes-per-file': ['error', 1],
+        'linebreak-style': 'off',
         'jsdoc/check-alignment': 'error',
         'jsdoc/check-indentation': 'error',
         'jsdoc/newline-after-description': 'off',
@@ -78,8 +80,6 @@ module.exports = {
         'jsdoc/check-tag-names': ['error', {definedTags: ['link']}],
         'jsdoc/check-types': 1,
         'jsdoc/check-values': 1,
-        'linebreak-style': 'off',
-        'max-classes-per-file': ['error', 1],
         'jsdoc/empty-tags': 1,
         'jsdoc/implements-on-classes': 1,
         'jsdoc/multiline-blocks': 1,
@@ -97,6 +97,25 @@ module.exports = {
         'jsdoc/require-property-description': 1,
         'jsdoc/require-property-name': 1,
         'jsdoc/require-property-type': 1,
+        'jsdoc/require-returns-check': 1,
+        'jsdoc/require-returns-description': 'off', // todo: when there is time
+        'jsdoc/require-returns-type': 1,
+        'jsdoc/require-throws': 1,
+        'jsdoc/require-yields': 1,
+        'jsdoc/require-yields-check': 1,
+        'jsdoc/tag-lines': 1,
+        'jsdoc/valid-types': ['error', {allowEmptyNamepaths: true, checkSeesForNamepaths: false}],
+        'jsdoc/check-access': 1,
+        'jsdoc/check-examples': 1,
+        'jsdoc/match-description': 'off',
+        'jsdoc/no-missing-syntax': 'off',
+        'jsdoc/no-restricted-syntax': 'off',
+        'jsdoc/no-types': 'off',
+        'jsdoc/require-description-complete-sentence': 'off',
+        'jsdoc/require-example': 'off',
+        'jsdoc/require-file-overview': 'off',
+        'jsdoc/require-hyphen-before-param-description': 'off',
+        'jsdoc/require-returns': 'off',
         'max-len': [
             'error',
             {

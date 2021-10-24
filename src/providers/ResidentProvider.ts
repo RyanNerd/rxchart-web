@@ -55,7 +55,7 @@ const ResidentProvider = (url: string): IResidentProvider => {
 
         /**
          * Restore Interface
-         * @param {restore_id: number} residentId PK of the Resident table
+         * @param {number} residentId PK of the Resident table
          * @returns {Promise<ResidentRecord>}
          */
         restore: async (residentId: number): Promise<ResidentRecord> => {

@@ -166,12 +166,19 @@ export const isToday = (dateIn: Date): boolean => {
     return nowFull === dateFull;
 };
 
+interface IMonthDayYear {
+    month: number;
+    day: number;
+    year: number;
+    now: Date;
+}
+
 /**
  * Return an object containing the day, month, and year as numbers and a date indicating now or a given date
  * @param {Date} inDate Date object to convert
- * @returns {month: number, day: number, year: number, now: Date}
+ * @returns {IMonthDayYear}
  */
-export const getMDY = (inDate?: Date): {month: number; day: number; year: number; now: Date} => {
+export const getMDY = (inDate?: Date): IMonthDayYear => {
     const now = inDate ? new Date(inDate) : new Date();
     const day = now.getDate();
     const month = now.getMonth() + 1;
@@ -340,7 +347,6 @@ export const isYearValid = (year: string, isDOB: boolean): boolean => {
  * A functional wrapper around async/await
  * @link https://dev.to/dewaldels/javascript-async-await-wrapper-22ao
  * @param {Promise<any>} fn Function to be wrapped
- * @returns {[null , <T>] | [any, null}}
  */
 export const asyncWrapper = async <T>(fn: Promise<T>) => {
     try {
@@ -369,7 +375,7 @@ interface IArrayGeneric {
  * Sorts an array of objects by column/property.
  * @link https://www.golangprograms.com/javascript-sort-multi-dimensional-array-on-specific-columns.html
  * @param {[{}]} array - The array of objects.
- * @param {[index: string]:any} sortObject e.g. { age: 'desc', name: 'asc' }
+ * @param {SortObject} sortObject e.g. { age: 'desc', name: 'asc' }
  * @returns {[]} The sorted array.
  */
 export const multiSort = (array: IArrayGeneric, sortObject: SortObject): [] => {
