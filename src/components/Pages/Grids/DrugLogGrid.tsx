@@ -1,7 +1,8 @@
+import PillPopover from 'components/Pages/Grids/PillPopover';
 import Button from 'react-bootstrap/Button';
 import Table, {TableProps} from 'react-bootstrap/Table';
 import React from 'reactn';
-import {DrugLogRecord, MedicineRecord} from 'types/RecordTypes';
+import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
 import {
     calculateLastTaken,
     getBsColor,
@@ -20,7 +21,9 @@ interface IProps extends TableProps {
     medicineList?: MedicineRecord[];
     onDelete?: (r: DrugLogRecord) => void;
     onEdit?: (r: DrugLogRecord) => void;
-    [key: string]: unknown;
+    pillboxList?: PillboxRecord[];
+    pillboxItemList?: PillboxItemRecord[];
+    onPillClick?: (n: number) => void;
 }
 
 /**
@@ -29,7 +32,18 @@ interface IProps extends TableProps {
  * @return {JSX.Element}
  */
 const DrugLogGrid = (props: IProps): JSX.Element => {
-    const {columns, condensed = 'false', drugId, drugLog = [], medicineList = [], onDelete, onEdit} = props;
+    const {
+        columns,
+        condensed = 'false',
+        drugId,
+        drugLog = [],
+        medicineList = [],
+        onDelete,
+        onEdit,
+        pillboxList = [] as PillboxRecord[],
+        pillboxItemList = [] as PillboxItemRecord[],
+        onPillClick
+    } = props;
 
     const filteredDrugs = drugId ? drugLog.filter((drug) => drug && drug.MedicineId === drugId) : drugLog;
 
@@ -133,7 +147,18 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                         fontWeight
                     }}
                 >
-                    {drug.PillboxItemId && <span>{'💊 '}</span>} <b>{drug.Notes}</b>
+                    {drug.PillboxItemId && (
+                        <span>
+                            <PillPopover
+                                pillboxItemId={drug.PillboxItemId}
+                                id={drug.Id as number}
+                                pillboxItemList={pillboxItemList}
+                                pillboxList={pillboxList}
+                                onPillClick={(n) => onPillClick?.(n)}
+                            />
+                        </span>
+                    )}{' '}
+                    <b>{drug.Notes}</b>
                 </td>
                 {columns.includes('Out') && (
                     <td
