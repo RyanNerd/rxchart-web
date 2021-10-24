@@ -173,6 +173,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     // If there isn't an active client, or medicineList isn't populated, or this isn't the active tab then do not render
     if (!clientId || !medicineList || activeTabKey !== 'medicine') return null;
 
+    const medicineOtcList = medicineList.concat(otcList);
+
     /**
      * Given a MedicineRecord Update or Insert the record and rehydrate the globalMedicineList
      * @param {MedicineRecord} med Medicine record object
@@ -299,7 +301,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      * @returns {string | undefined}
      */
     const drugName = (medicineId: number): string | undefined => {
-        return getDrugName(medicineId, medicineList.concat(otcList));
+        return getDrugName(medicineId, medicineOtcList);
     };
 
     /**
@@ -638,10 +640,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
             {showDrugLog && (
                 <DrugLogEdit
-                    otc={getMedicineRecord(showDrugLog.MedicineId, medicineList.concat(otcList))?.OTC || false}
-                    drugName={
-                        getMedicineRecord(showDrugLog.MedicineId, medicineList.concat(otcList))?.Drug || '[unknown]'
-                    }
+                    otc={getMedicineRecord(showDrugLog.MedicineId, medicineOtcList)?.OTC || false}
+                    drugName={getMedicineRecord(showDrugLog.MedicineId, medicineOtcList)?.Drug || '[unknown]'}
                     show={true}
                     drugLogInfo={showDrugLog}
                     onHide={() => setShowDrugLog(null)}
@@ -684,7 +684,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
             <DrugLogToast
                 toast={toast as DrugLogRecord[]}
-                medicineList={medicineList.concat(otcList)}
+                medicineList={medicineOtcList}
                 show={toast !== null}
                 onClose={() => setToast(null)}
             />
