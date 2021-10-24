@@ -19,6 +19,11 @@ module.exports = {
         },
         react: {
             version: 'detect'
+        },
+        jsdoc: {
+            structuredTags: {
+                JSX: {type: true}
+            }
         }
     },
     extends: [
@@ -64,6 +69,7 @@ module.exports = {
         'jsdoc/check-alignment': 'error',
         'jsdoc/check-indentation': 'error',
         'jsdoc/newline-after-description': 'off',
+        'jsdoc/no-undefined-types': 1,
         'linebreak-style': 'off',
         'max-classes-per-file': ['error', 1],
         'max-len': [
@@ -141,5 +147,8 @@ module.exports = {
         ],
         'use-isnan': 'error',
         'valid-typeof': 'off'
+    },
+    globals: {
+        JSX: true
     }
 };

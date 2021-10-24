@@ -28,7 +28,7 @@ type TProps = Modify<
 
 /**
  * Button with a tooltip overlay
- * @param {IProps} props
+ * @param {TProps} props
  * @returns {JSX.Element}
  */
 const TooltipButton = (props: TProps): JSX.Element => {
