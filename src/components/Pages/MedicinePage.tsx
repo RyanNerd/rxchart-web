@@ -519,6 +519,15 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                                         activeClient={activeClient}
                                         drugLogList={drugLogList}
                                         medicineList={globalMedicineList.concat(otcList)}
+                                        pillboxList={pillboxList}
+                                        pillboxItemList={pillboxItemList}
+                                        onPillClick={(n) => {
+                                            const pb = pillboxList.find((p) => p.Id === n);
+                                            if (pb) {
+                                                setActivePillbox(pb);
+                                                setDisplayType(DISPLAY_TYPE.Pillbox);
+                                            }
+                                        }}
                                         onEdit={(d: DrugLogRecord | undefined) => addEditDrugLog(d)}
                                         onDelete={(d: SetStateAction<DrugLogRecord | null>) =>
                                             setShowDeleteDrugLogRecord(d)
@@ -561,6 +570,15 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                                         drugLog={drugLogList}
                                         drugId={activeMed.Id}
                                         columns={['Taken', 'Notes', 'Out', 'In']}
+                                        pillboxList={pillboxList}
+                                        pillboxItemList={pillboxItemList}
+                                        onPillClick={(n) => {
+                                            const pb = pillboxList.find((p) => p.Id === n);
+                                            if (pb) {
+                                                setActivePillbox(pb);
+                                                setDisplayType(DISPLAY_TYPE.Pillbox);
+                                            }
+                                        }}
                                         onEdit={(r) => addEditDrugLog(r)}
                                         onDelete={(r) => setShowDeleteDrugLogRecord(r)}
                                     />

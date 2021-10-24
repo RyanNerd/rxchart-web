@@ -2,13 +2,16 @@ import DrugLogHistoryGrid from 'components/Pages/Grids/DrugLogHistoryGrid';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import React, {useEffect, useState} from 'reactn';
-import {DrugLogRecord, MedicineRecord, ResidentRecord} from 'types/RecordTypes';
+import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord, ResidentRecord} from 'types/RecordTypes';
 import {clientDOB, clientFullName} from 'utility/common';
 
 interface IProps {
     activeClient: ResidentRecord;
     drugLogList: DrugLogRecord[];
     medicineList: MedicineRecord[];
+    pillboxList: PillboxRecord[];
+    pillboxItemList: PillboxItemRecord[];
+    onPillClick: (n: number) => void;
     onEdit: (d: DrugLogRecord) => void;
     onDelete: (d: DrugLogRecord) => void;
 }
@@ -18,7 +21,8 @@ interface IProps {
  * @param  {IProps} props
  */
 const MedDrugLogHistory = (props: IProps) => {
-    const {activeClient, drugLogList, medicineList, onDelete, onEdit} = props;
+    const {activeClient, drugLogList, medicineList, onDelete, onEdit, pillboxList, pillboxItemList, onPillClick} =
+        props;
 
     const [printing, setPrinting] = useState(false);
 
@@ -75,6 +79,9 @@ const MedDrugLogHistory = (props: IProps) => {
                 <DrugLogHistoryGrid
                     drugLog={drugLogList}
                     medicineList={medicineList}
+                    pillboxList={pillboxList}
+                    pillboxItemList={pillboxItemList}
+                    onPillClick={(n) => onPillClick(n)}
                     onDelete={(d) => onDelete(d)}
                     onEdit={(d) => onEdit(d)}
                 />

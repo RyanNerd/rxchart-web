@@ -1,7 +1,8 @@
+import PillPopover from 'components/Pages/Grids/PillPopover';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import React from 'reactn';
-import {DrugLogRecord, MedicineRecord} from 'types/RecordTypes';
+import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
 import {
     calculateLastTaken,
     getBsColor,
@@ -16,6 +17,9 @@ interface IProps {
     medicineList: MedicineRecord[];
     onDelete: (r: DrugLogRecord) => void;
     onEdit: (r: DrugLogRecord) => void;
+    pillboxList: PillboxRecord[];
+    pillboxItemList: PillboxItemRecord[];
+    onPillClick: (n: number) => void;
 }
 
 /**
@@ -24,7 +28,7 @@ interface IProps {
  * @return {JSX.Element}
  */
 const DrugLogHistoryGrid = (props: IProps): JSX.Element => {
-    const {drugLog = [], medicineList = [], onDelete, onEdit} = props;
+    const {drugLog = [], medicineList = [], onDelete, onEdit, pillboxList, pillboxItemList, onPillClick} = props;
 
     /**
      * Returns the value of the drug column for the given drugId
@@ -112,7 +116,18 @@ const DrugLogHistoryGrid = (props: IProps): JSX.Element => {
                         fontWeight
                     }}
                 >
-                    {drug.PillboxItemId && <span>{'💊 '}</span>} <b>{drug.Notes}</b>
+                    {drug.PillboxItemId && (
+                        <span>
+                            <PillPopover
+                                pillboxItemId={drug.PillboxItemId}
+                                id={drug.Id as number}
+                                pillboxItemList={pillboxItemList}
+                                pillboxList={pillboxList}
+                                onPillClick={(n) => onPillClick(n)}
+                            />
+                        </span>
+                    )}{' '}
+                    <b>{drug.Notes}</b>
                 </td>
 
                 <td
