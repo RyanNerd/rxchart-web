@@ -3,8 +3,7 @@ import PillPopover from 'components/Pages/Grids/PillPopover';
 import {TPillboxMedLog} from 'components/Pages/MedicinePage';
 import Table from 'react-bootstrap/Table';
 import React from 'reactn';
-import {PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
-import {BsColor, randomString} from 'utility/common';
+import {BsColor, deconstructGridLists, randomString} from 'utility/common';
 
 interface IProps {
     gridLists: IGridLists;
@@ -16,10 +15,8 @@ interface IProps {
  * @param {IProps} props The props for this component
  */
 const PillboxLogGrid = (props: IProps) => {
-    const pillboxMedLogList = props.pillboxMedLogList;
-    const gridLists = props.gridLists;
-    const pillboxList = gridLists.pillboxList || ([] as PillboxRecord[]);
-    const pillboxItemList = gridLists.pillboxItemList || ([] as PillboxItemRecord[]);
+    const {gridLists, pillboxMedLogList} = props;
+    const {pillboxList, pillboxItemList} = deconstructGridLists(gridLists);
 
     return (
         <Table style={{wordWrap: 'break-word'}} bordered size="sm" striped>

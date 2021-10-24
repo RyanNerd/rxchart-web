@@ -1,10 +1,12 @@
+import {IGridLists} from 'components/Pages/Grids/DrugLogGrid';
 import PillPopover from 'components/Pages/Grids/PillPopover';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import React from 'reactn';
-import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
+import {DrugLogRecord, MedicineRecord} from 'types/RecordTypes';
 import {
     calculateLastTaken,
+    deconstructGridLists,
     getBsColor,
     getFormattedDate,
     getLastTakenVariant,
@@ -13,12 +15,9 @@ import {
 } from 'utility/common';
 
 interface IProps {
-    drugLog: DrugLogRecord[];
-    medicineList: MedicineRecord[];
+    gridLists: IGridLists;
     onDelete: (r: DrugLogRecord) => void;
     onEdit: (r: DrugLogRecord) => void;
-    pillboxList: PillboxRecord[];
-    pillboxItemList: PillboxItemRecord[];
     onPillClick: (n: number) => void;
 }
 
@@ -28,8 +27,8 @@ interface IProps {
  * @returns {JSX.Element}
  */
 const DrugLogHistoryGrid = (props: IProps): JSX.Element => {
-    const {drugLog = [], medicineList = [], onDelete, onEdit, pillboxList, pillboxItemList, onPillClick} = props;
-
+    const {onDelete, onEdit, gridLists, onPillClick} = props;
+    const {medicineList, pillboxItemList, pillboxList, drugLogList} = deconstructGridLists(gridLists);
     /**
      * Returns the value of the drug column for the given drugId
      * @param {number} medicineId The PK of the Medicine table
@@ -199,7 +198,7 @@ const DrugLogHistoryGrid = (props: IProps): JSX.Element => {
                 </tr>
             </thead>
 
-            <tbody>{drugLog.map(DrugRow)}</tbody>
+            <tbody>{drugLogList.map(DrugRow)}</tbody>
         </Table>
     );
 };

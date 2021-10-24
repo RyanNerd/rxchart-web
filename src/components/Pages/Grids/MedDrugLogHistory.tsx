@@ -1,16 +1,14 @@
+import {IGridLists} from 'components/Pages/Grids/DrugLogGrid';
 import DrugLogHistoryGrid from 'components/Pages/Grids/DrugLogHistoryGrid';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import React, {useEffect, useState} from 'reactn';
-import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord, ResidentRecord} from 'types/RecordTypes';
-import {clientDOB, clientFullName} from 'utility/common';
+import {DrugLogRecord, ResidentRecord} from 'types/RecordTypes';
+import {clientDOB, clientFullName, deconstructGridLists} from 'utility/common';
 
 interface IProps {
     activeClient: ResidentRecord;
-    drugLogList: DrugLogRecord[];
-    medicineList: MedicineRecord[];
-    pillboxList: PillboxRecord[];
-    pillboxItemList: PillboxItemRecord[];
+    gridLists: IGridLists;
     onPillClick: (n: number) => void;
     onEdit: (d: DrugLogRecord) => void;
     onDelete: (d: DrugLogRecord) => void;
@@ -21,9 +19,10 @@ interface IProps {
  * @param {IProps} props The props for this component
  */
 const MedDrugLogHistory = (props: IProps) => {
-    const {activeClient, drugLogList, medicineList, onDelete, onEdit, pillboxList, pillboxItemList, onPillClick} =
-        props;
+    const {activeClient, gridLists, onDelete, onEdit, onPillClick} = props;
 
+    // Deconstruct the gridLists
+    const {drugLogList} = deconstructGridLists(gridLists);
     const [printing, setPrinting] = useState(false);
 
     useEffect(() => {
@@ -77,10 +76,7 @@ const MedDrugLogHistory = (props: IProps) => {
 
             <div className="mt-3">
                 <DrugLogHistoryGrid
-                    drugLog={drugLogList}
-                    medicineList={medicineList}
-                    pillboxList={pillboxList}
-                    pillboxItemList={pillboxItemList}
+                    gridLists={gridLists}
                     onPillClick={(n) => onPillClick(n)}
                     onDelete={(d) => onDelete(d)}
                     onEdit={(d) => onEdit(d)}

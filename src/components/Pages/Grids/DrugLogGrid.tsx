@@ -5,6 +5,7 @@ import React from 'reactn';
 import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
 import {
     calculateLastTaken,
+    deconstructGridLists,
     getBsColor,
     getFormattedDate,
     getLastTakenVariant,
@@ -39,11 +40,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
     const {columns, condensed = 'false', drugId, onDelete, onEdit, gridLists, onPillClick} = props;
 
     // Deconstruct the gridLists
-    const drugLogList = gridLists.drugLogList || ([] as DrugLogRecord[]);
-    const medicineList = gridLists.medicineList || ([] as MedicineRecord[]);
-    const pillboxList = gridLists.pillboxList || ([] as PillboxRecord[]);
-    const pillboxItemList = gridLists.pillboxItemList || ([] as PillboxItemRecord[]);
-
+    const {drugLogList, medicineList, pillboxList, pillboxItemList} = deconstructGridLists(gridLists);
     const filteredDrugs = drugId ? drugLogList.filter((drug) => drug && drug.MedicineId === drugId) : drugLogList;
 
     /**

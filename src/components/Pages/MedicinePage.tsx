@@ -535,10 +535,12 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                                 <ListGroup.Item>
                                     <MedDrugLogHistory
                                         activeClient={activeClient}
-                                        drugLogList={drugLogList}
-                                        medicineList={globalMedicineList.concat(otcList)}
-                                        pillboxList={pillboxList}
-                                        pillboxItemList={pillboxItemList}
+                                        gridLists={{
+                                            drugLogList,
+                                            pillboxList,
+                                            pillboxItemList,
+                                            medicineList: globalMedicineList.concat(otcList)
+                                        }}
                                         onPillClick={(n) => handleOnPillClick(n)}
                                         onEdit={(d: DrugLogRecord | undefined) => addEditDrugLog(d)}
                                         onDelete={(d: SetStateAction<DrugLogRecord | null>) =>
