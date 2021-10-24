@@ -1,5 +1,8 @@
+import {IMedicineManager} from 'managers/MedicineManager';
 import Card from 'react-bootstrap/Card';
-import React, {useGlobal} from 'reactn';
+import React from 'reactn';
+import {State} from 'reactn/default';
+import {Setter} from 'reactn/types/use-global';
 import {MedicineRecord, PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
 import {BsColor} from 'utility/common';
 import getPillboxItems, {PillRowType} from './getPillboxItems';
@@ -8,6 +11,9 @@ import PillboxItemGrid from './PillboxItemGrid';
 interface IProps {
     medicineList: MedicineRecord[];
     activePillbox: PillboxRecord;
+    mm: IMedicineManager;
+    pillboxItemList: PillboxItemRecord[];
+    setPillboxItemList: Setter<State, 'pillboxItemList'>;
 }
 
 /**
@@ -15,10 +21,8 @@ interface IProps {
  * @param {IProps} props The props for the component
  */
 const PillboxCard = (props: IProps) => {
-    const {medicineList, activePillbox} = props;
+    const {medicineList, pillboxItemList, setPillboxItemList, activePillbox, mm} = props;
 
-    const [pillboxItemList, setPillboxItemList] = useGlobal('pillboxItemList');
-    const [mm] = useGlobal('medicineManager');
     const clientId = activePillbox.ResidentId;
     const pillboxName = activePillbox.Name;
     const pillboxId = activePillbox?.Id;

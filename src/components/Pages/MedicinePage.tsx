@@ -81,7 +81,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [otcList, setOtcList] = useGlobal('otcList');
     const [otcLogList, setOtcLogList] = useState<DrugLogRecord[]>([]);
     const [pillboxMedLogList, setPillboxMedLogList] = useState<TPillboxMedLog[]>([]);
-    const [pillboxItemList] = useGlobal('pillboxItemList');
+    const [pillboxItemList, setPillboxItemList] = useGlobal('pillboxItemList');
     const [pillboxList, setPillboxList] = useGlobal('pillboxList');
     const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
     const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
@@ -612,7 +612,13 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         )}
 
                         {displayType === DISPLAY_TYPE.Pillbox && activePillbox && activePillbox.Id && (
-                            <PillboxCard medicineList={medicineList} activePillbox={activePillbox} />
+                            <PillboxCard
+                                medicineList={medicineList}
+                                activePillbox={activePillbox}
+                                mm={mm}
+                                pillboxItemList={pillboxItemList}
+                                setPillboxItemList={setPillboxItemList}
+                            />
                         )}
                     </ListGroup>
                 )}
