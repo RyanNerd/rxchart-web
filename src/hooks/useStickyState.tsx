@@ -6,17 +6,15 @@ import {useState, useEffect} from 'reactn';
  * @param {string} key
  * @param {any} defaultValue
  */
-const useStickyState = (key: string, defaultValue: any) => {
+const useStickyState = (key: string, defaultValue: unknown) => {
     const [value, setValue] = useState(() => {
         const stickyValue = window.localStorage.getItem(key);
-        return stickyValue !== null
-            ? JSON.parse(stickyValue)
-            : defaultValue;
+        return stickyValue !== null ? JSON.parse(stickyValue) : defaultValue;
     });
     useEffect(() => {
         window.localStorage.setItem(key, JSON.stringify(value));
     }, [key, value]);
     return [value, setValue];
-}
+};
 
 export default useStickyState;
