@@ -19,7 +19,7 @@ const ManageOtcGrid = (props: IProps): JSX.Element => {
 
     const OtcRow = (drug: MedicineRecord) => {
         return (
-            <tr id={'med-detail-grid-row-' + drug.Id}>
+            <tr key={drug.Id} id={'med-detail-grid-row-' + drug.Id}>
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                     <Button size="sm" id={'medicine-edit-btn-row' + drug.Id} onClick={() => onEdit(drug)}>
                         Edit

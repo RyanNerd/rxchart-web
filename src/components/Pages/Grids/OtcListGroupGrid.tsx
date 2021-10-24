@@ -20,7 +20,7 @@ const OtcListGroupGrid = (props: IProps): JSX.Element => {
     const OtcRow = (drug: MedicineRecord) => {
         const isSelected = activeDrug && activeDrug.Id === drug.Id;
         return (
-            <tr id={'list-grp-grid-row-' + drug.Id} style={{fontWeight: isSelected ? 'bold' : undefined}}>
+            <tr key={drug.Id} id={`list-grp-grid-row-${drug.Id}`} style={{fontWeight: isSelected ? 'bold' : undefined}}>
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                     <ToggleButton
                         id={'list-grp-otc-grid-select-btn-' + drug.Id}

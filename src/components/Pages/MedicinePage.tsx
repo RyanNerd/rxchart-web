@@ -322,7 +322,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             if (loggedPillboxDrugs.length > 0) {
                 const drugLogs = await mm.loadDrugLog(clientId, 5);
                 await setDrugLogList(drugLogs);
-                loggedPillboxDrugs.forEach((ld) => toastQ.push(ld));
+                loggedPillboxDrugs.forEach((ld) => toastQ.push({...ld}));
                 setToast(toastQ);
             }
         };

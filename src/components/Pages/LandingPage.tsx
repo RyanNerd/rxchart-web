@@ -31,7 +31,7 @@ const LandingPage = () => {
     if (navBarElement?.length > 0) navBarElement[0].classList.add('d-print-none');
 
     /**
-     * Memoized MedicinePage to reduce number of re-renders
+     * Memoized pages to reduce number of re-renders
      */
     const medicinePage = useMemo(() => {
         return <MedicinePage activeTabKey={activeTabKey} activeResident={activeResident} />;
@@ -49,6 +49,10 @@ const LandingPage = () => {
         return <ManageOtcPage activeTabKey={activeTabKey} />;
     }, [activeTabKey]);
 
+    const loginPage = useMemo(() => {
+        return <LoginPage activeTabKey={activeTabKey} setActiveTabKey={setActiveTabKey} />;
+    }, [activeTabKey, setActiveTabKey]);
+
     /**
      * Tab Title component to format tab appearance
      * @param {ITitleProps} props The props for this component
@@ -64,7 +68,7 @@ const LandingPage = () => {
                 eventKey="login"
                 title={<Title activeKey="login">{apiKey ? 'Logout' : 'Login'}</Title>}
             >
-                <LoginPage />
+                <Tab.Content>{loginPage}</Tab.Content>
             </Tab>
             <Tab disabled={!apiKey} eventKey="resident" title={<Title activeKey="resident">Clients</Title>}>
                 <Tab.Content>{clientPage}</Tab.Content>

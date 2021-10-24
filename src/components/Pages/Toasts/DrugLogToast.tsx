@@ -34,8 +34,9 @@ const DrugLogToast = (props: IProps) => {
             <Toast.Body>
                 <ul>
                     {toast?.map((t) => {
+                        const key = t.Id;
                         return (
-                            <li key={`drug-log-toast-${t.id}`} className="rx-icon">
+                            <li key={`drug-log-toast-${key}`} className="rx-icon">
                                 {getDrugName(t.MedicineId, medicineList)} {t.Notes}
                             </li>
                         );

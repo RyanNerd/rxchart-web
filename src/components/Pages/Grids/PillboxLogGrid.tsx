@@ -20,9 +20,11 @@ const PillboxLogGrid = (props: IProps) => {
 
     return (
         <Table style={{wordWrap: 'break-word'}} bordered size="sm" striped>
-            <th style={{textAlign: 'center', verticalAlign: 'middle'}} colSpan={3}>
-                Pillbox Log History
-            </th>
+            <tr>
+                <th style={{textAlign: 'center', verticalAlign: 'middle'}} colSpan={3}>
+                    Pillbox Log History
+                </th>
+            </tr>
             <tr>
                 <th>Drug</th>
                 <th>Notes/Amount</th>

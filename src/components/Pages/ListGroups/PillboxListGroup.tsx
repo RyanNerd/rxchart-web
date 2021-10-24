@@ -29,6 +29,7 @@ interface IProps {
 }
 
 interface IPillboxLineItem {
+    Id: number | null;
     Drug: string;
     Strength: string;
     Qty: number;
@@ -95,7 +96,7 @@ const PillboxListGroup = (props: IProps) => {
             const qty = d.Quantity;
             const medicine = getMedicineRecord(d.MedicineId, medicineList);
             const strength = medicine?.Strength || '';
-            pillboxLineItems.push({Drug: drugName, Strength: strength, Qty: qty});
+            pillboxLineItems.push({Id: d.Id, Drug: drugName, Strength: strength, Qty: qty});
         }
     });
 
@@ -145,7 +146,7 @@ const PillboxListGroup = (props: IProps) => {
      */
     const PillboxLineItem = (i: IPillboxLineItem) => {
         return (
-            <li className="rx-icon">
+            <li key={i.Id} id={`pillbox-line-item-${i.Id}`} className="rx-icon">
                 {'('} {i.Qty} {') '} {i.Drug} {i.Strength}
             </li>
         );

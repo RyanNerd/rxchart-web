@@ -39,11 +39,12 @@ const MedDropdown = (props: IProps): JSX.Element | null => {
      */
     const MedDropdownItems = (i: IDropdownItem): JSX.Element => {
         if (i.id === 0) {
-            return <Dropdown.Divider />;
+            return <Dropdown.Divider key={0} />;
         }
 
+        const key = i.id < 0 ? 'pillbox-' + i.id : 'medicine-' + i.id;
         return (
-            <Dropdown.Item key={i.id.toString()} active={i.id === activeId} onSelect={() => onSelect(i.id)}>
+            <Dropdown.Item key={key} active={i.id === activeId} onSelect={() => onSelect(i.id)}>
                 <span>
                     <span style={{display: 'block'}}>{i.description}</span>
                     {i.subtext && <span style={{fontSize: '12px', display: 'block'}}>{i.subtext}</span>}

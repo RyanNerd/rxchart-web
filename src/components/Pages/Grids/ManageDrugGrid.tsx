@@ -30,6 +30,7 @@ const ManageDrugGrid = (props: IProps): JSX.Element => {
         return (
             <tr
                 id={'manage-drug-grid-row-' + drug.Id}
+                key={drug.Id}
                 style={{textDecoration: !drug.Active ? 'line-through' : undefined}}
             >
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>

@@ -3,6 +3,8 @@ import {Authenticated} from 'providers/AuthenticationProvider';
 import Alert from 'react-bootstrap/Alert';
 import Container from 'react-bootstrap/Container';
 import React, {setGlobal, useEffect, useGlobal, useRef, useState} from 'reactn';
+import {State} from 'reactn/default';
+import {Setter} from 'reactn/types/use-global';
 import {MedicineRecord, ResidentRecord} from 'types/RecordTypes';
 import {asyncWrapper} from 'utility/common';
 import getInitialState from 'utility/getInitialState';
@@ -12,15 +14,21 @@ import {ReactComponent as UserIcon} from '../../icons/user.svg';
 import '../../styles/neumorphism.css';
 import About from './Modals/About';
 
+interface IProps {
+    activeTabKey: string;
+    setActiveTabKey: Setter<State, 'activeTabKey'>;
+}
+
 /**
  * Sign in page
  * @returns {JSX.Element | null}
  */
-const LoginPage = (): JSX.Element | null => {
+const LoginPage = (props: IProps): JSX.Element | null => {
+    const {activeTabKey, setActiveTabKey} = props;
+
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [, setOtcList] = useGlobal('otcList');
     const [, setResidentList] = useGlobal('residentList');
-    const [activeTabKey, setActiveTabKey] = useGlobal('activeTabKey');
     const [am] = useGlobal('authManager');
     const [canLogin, setCanLogin] = useState(false);
     const [mm] = useGlobal('medicineManager');
