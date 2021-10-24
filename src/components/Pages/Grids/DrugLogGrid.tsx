@@ -12,17 +12,21 @@ import {
     isToday
 } from 'utility/common';
 
+export interface IGridLists {
+    drugLogList?: DrugLogRecord[];
+    medicineList?: MedicineRecord[];
+    pillboxList?: PillboxRecord[];
+    pillboxItemList?: PillboxItemRecord[];
+}
+
 interface IProps extends TableProps {
     checkoutOnly?: boolean;
     columns: string[];
     condensed?: string;
     drugId?: number | null;
-    drugLog?: DrugLogRecord[];
-    medicineList?: MedicineRecord[];
     onDelete?: (r: DrugLogRecord) => void;
     onEdit?: (r: DrugLogRecord) => void;
-    pillboxList?: PillboxRecord[];
-    pillboxItemList?: PillboxItemRecord[];
+    gridLists: IGridLists;
     onPillClick?: (n: number) => void;
 }
 
@@ -32,20 +36,15 @@ interface IProps extends TableProps {
  * @returns {JSX.Element}
  */
 const DrugLogGrid = (props: IProps): JSX.Element => {
-    const {
-        columns,
-        condensed = 'false',
-        drugId,
-        drugLog = [],
-        medicineList = [],
-        onDelete,
-        onEdit,
-        pillboxList = [] as PillboxRecord[],
-        pillboxItemList = [] as PillboxItemRecord[],
-        onPillClick
-    } = props;
+    const {columns, condensed = 'false', drugId, onDelete, onEdit, gridLists, onPillClick} = props;
 
-    const filteredDrugs = drugId ? drugLog.filter((drug) => drug && drug.MedicineId === drugId) : drugLog;
+    // Deconstruct the gridLists
+    const drugLogList = gridLists.drugLogList || ([] as DrugLogRecord[]);
+    const medicineList = gridLists.medicineList || ([] as MedicineRecord[]);
+    const pillboxList = gridLists.pillboxList || ([] as PillboxRecord[]);
+    const pillboxItemList = gridLists.pillboxItemList || ([] as PillboxItemRecord[]);
+
+    const filteredDrugs = drugId ? drugLogList.filter((drug) => drug && drug.MedicineId === drugId) : drugLogList;
 
     /**
      * Returns the value of the drug column for the given drugId
@@ -249,7 +248,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                     {onDelete && <th></th>}
                 </tr>
             </thead>
-            <tbody>{drugLog && drugLog.length && filteredDrugs ? filteredDrugs.map(DrugRow) : <></>}</tbody>
+            <tbody>{drugLogList && drugLogList.length && filteredDrugs ? filteredDrugs.map(DrugRow) : <></>}</tbody>
         </Table>
     );
 };

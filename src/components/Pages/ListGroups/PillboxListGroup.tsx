@@ -1,6 +1,7 @@
+import {IGridLists} from 'components/Pages/Grids/DrugLogGrid';
 import PillboxLogGrid from 'components/Pages/Grids/PillboxLogGrid';
 import DisabledSpinner from 'components/Pages/ListGroups/DisabledSpinner';
-import {TPillboxLog} from 'components/Pages/MedicinePage';
+import {TPillboxMedLog} from 'components/Pages/MedicinePage';
 import Alert from 'react-bootstrap/Alert';
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
@@ -18,16 +19,13 @@ import PillboxEdit from '../Modals/PillboxEdit';
 
 interface IProps {
     activePillbox: PillboxRecord | null;
-    clientId: number;
     disabled?: boolean;
     logPillbox: () => void;
-    medicineList: MedicineRecord[];
     onDelete: (id: number) => void;
     onEdit: (pb: PillboxRecord) => void;
     onSelect: (n: number) => void;
-    pillboxItemList: PillboxItemRecord[];
-    pillboxList: PillboxRecord[];
-    pillboxLogList: TPillboxLog[];
+    gridLists: IGridLists;
+    pillboxMedLogList: TPillboxMedLog[];
 }
 
 interface IPillboxLineItem {
@@ -43,17 +41,18 @@ interface IPillboxLineItem {
 const PillboxListGroup = (props: IProps) => {
     const {
         activePillbox,
-        clientId,
         disabled = false,
         logPillbox,
-        medicineList = [],
         onDelete,
         onEdit,
         onSelect,
-        pillboxItemList,
-        pillboxList,
-        pillboxLogList
+        gridLists,
+        pillboxMedLogList
     } = props;
+    const clientId = activePillbox?.ResidentId;
+    const pillboxList = gridLists.pillboxList || ([] as PillboxRecord[]);
+    const pillboxItemList = gridLists.pillboxItemList || ([] as PillboxItemRecord[]);
+    const medicineList = gridLists.medicineList || ([] as MedicineRecord[]);
 
     // If there is at least one pillbox (but no active pillbox) then force the first pillbox as the active pillbox
     if (pillboxList.length > 0 && !activePillbox) onSelect(pillboxList[0].Id as number);
@@ -62,7 +61,7 @@ const PillboxListGroup = (props: IProps) => {
     const [showPillboxDeleteConfirm, setShowPillboxDeleteConfirm] = useState(false);
     const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord | null>(null);
 
-    const firstLoggedPillbox = pillboxLogList.find((p) => p.Updated)?.Updated;
+    const firstLoggedPillbox = pillboxMedLogList.find((p) => p.Updated)?.Updated;
     const logTime = firstLoggedPillbox
         ? new Date(firstLoggedPillbox).toLocaleString('en-US', {
               hour: '2-digit',
@@ -106,6 +105,8 @@ const PillboxListGroup = (props: IProps) => {
         paddingBottom: '0.20rem',
         paddingLeft: '1.25rem'
     };
+
+    if (!clientId) return null;
 
     /**
      * Pillbox RadioButton component
@@ -296,9 +297,9 @@ const PillboxListGroup = (props: IProps) => {
                     </Card>
                 )}
 
-                {pillboxLogList.length > 0 && (
+                {pillboxMedLogList.length > 0 && (
                     <ListGroup.Item style={listboxItemStyle}>
-                        <PillboxLogGrid pillboxLogList={pillboxLogList} />
+                        <PillboxLogGrid gridLists={gridLists} pillboxMedLogList={pillboxMedLogList} />
                     </ListGroup.Item>
                 )}
 
