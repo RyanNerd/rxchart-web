@@ -17,20 +17,33 @@ interface IProps {
  */
 const PillPopover = (props: IProps) => {
     const {id, pillboxItemId, pillboxList, pillboxItemList, onPillClick} = props;
-
-    const pillTooltip = (id: number) => {
-        return <Tooltip id={'pill-popover' + id.toString()}>{pillboxInfo?.Name}</Tooltip>;
-    };
-
     const pillboxItemInfo = pillboxItemList?.find((p) => p.Id === pillboxItemId);
     const pillboxInfo = pillboxList?.find((pb) => pb.Id === pillboxItemInfo?.PillboxId);
 
+    /**
+     * Tooltip to display if there's an associated pillbox
+     */
+    const pillTooltip = () => {
+        return <Tooltip id={`pill-popover' + ${id}`}>Pillbox: {pillboxInfo?.Name}</Tooltip>;
+    };
+
+    /**
+     * Tooltip to show when the pillbox has been deleted
+     */
+    const deletedTooltip = () => {
+        return <Tooltip id={`pill-popover-dead-${id}`}>{'Pillbox deleted'}</Tooltip>;
+    };
+
     // noinspection RequiredAttributes
     return (
-        <OverlayTrigger placement="top" delay={{show: 200, hide: 300}} overlay={pillTooltip(id)}>
+        <OverlayTrigger
+            placement="top"
+            delay={{show: 200, hide: 300}}
+            overlay={pillboxInfo ? pillTooltip() : deletedTooltip()}
+        >
             <span
-                onClick={() => onPillClick?.(pillboxInfo?.Id as number)}
-                style={{cursor: onPillClick ? 'pointer' : undefined}}
+                onClick={() => (pillboxInfo ? onPillClick?.(pillboxInfo?.Id as number) : undefined)}
+                style={{cursor: pillboxInfo ? (onPillClick ? 'pointer' : undefined) : 'not-allowed'}}
             >
                 {'💊 '}
             </span>
