@@ -56,6 +56,7 @@ const CheckoutGrid = (props: IProps): JSX.Element => {
         // Figure out medicine field values
         const isOtc = drugColumnLookup(drug.MedicineId, 'OTC');
         let drugName = drugColumnLookup(drug.MedicineId, 'Drug') as string | null;
+        const active = drugColumnLookup(drug.MedicineId, 'Active');
 
         if (!drugName || drugName.length === 0) {
             drugName = 'UNKNOWN - Medicine removed!';
@@ -70,7 +71,11 @@ const CheckoutGrid = (props: IProps): JSX.Element => {
         const fontWeight = isToday(updatedDate) ? 'bold' : undefined;
 
         return (
-            <tr key={drug.Id} id={'checkout-grid-row-' + drug.Id} style={{color: variantColor}}>
+            <tr
+                key={drug.Id}
+                id={'checkout-grid-row-' + drug.Id}
+                style={{color: variantColor, textDecoration: active ? undefined : 'line-through'}}
+            >
                 <td style={{verticalAlign: 'middle', fontWeight}}>
                     <span>{drugName}</span> <span>{drugStrength}</span> <span>{isOtc ? ' (OTC)' : ''}</span>
                 </td>

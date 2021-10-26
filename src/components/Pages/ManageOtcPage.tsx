@@ -1,11 +1,12 @@
+import TooltipContainer from 'components/Pages/Buttons/Containters/TooltipContainer';
 import ManageOtcGrid from 'components/Pages/Grids/ManageOtcGrid';
 import Alert from 'react-bootstrap/Alert';
+import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import {MedicineRecord, newMedicineRecord} from 'types/RecordTypes';
-import TooltipButton from './Buttons/TooltipButton';
 import Confirm from './Modals/Confirm';
 import MedicineEdit from './Modals/MedicineEdit';
 
@@ -85,9 +86,11 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
     return (
         <>
             <ButtonGroup className="mb-2" as={Row}>
-                <TooltipButton tooltip="Manually Add New OTC" size="sm" variant="info" onClick={() => onEdit(null)}>
-                    + OTC
-                </TooltipButton>
+                <TooltipContainer tooltip="Manually Add New OTC">
+                    <Button size="sm" variant="info" onClick={() => onEdit(null)}>
+                        + OTC
+                    </Button>
+                </TooltipContainer>
 
                 <Form.Control
                     autoFocus

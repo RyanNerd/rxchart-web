@@ -60,7 +60,7 @@ const ConfirmDialogModal = (props: IProps) => {
     };
 
     return (
-        <Modal {...props} show={showModal} backdrop="static">
+        <Modal backdrop="static" {...props} show={showModal}>
             {title && <ModalHeader>{title}</ModalHeader>}
 
             <ModalBody>{body}</ModalBody>

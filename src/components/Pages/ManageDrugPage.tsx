@@ -1,15 +1,18 @@
+import TooltipContainer from 'components/Pages/Buttons/Containters/TooltipContainer';
 import ManageDrugGrid from 'components/Pages/Grids/ManageDrugGrid';
 import CheckoutListGroup from 'components/Pages/ListGroups/CheckoutListGroup';
+import ConfirmDialogModal from 'components/Pages/Modals/ConfirmDialogModal';
 import DrugLogToast from 'components/Pages/Toasts/DrugLogToast';
+import Alert from 'react-bootstrap/Alert';
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import React, {useGlobal, useState} from 'reactn';
 import {DrugLogRecord, MedicineRecord, newDrugLogRecord, newMedicineRecord} from 'types/RecordTypes';
 import {getCheckoutList, getDrugName} from 'utility/common';
 import TabContent from '../../styles/common.css';
-import TooltipButton from './Buttons/TooltipButton';
 import DrugLogEdit from './Modals/DrugLogEdit';
 import MedicineEdit from './Modals/MedicineEdit';
 
@@ -34,6 +37,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
     const [showCheckoutPrint, setShowCheckoutPrint] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const [toast, setToast] = useState<DrugLogRecord[] | null>(null);
+    const [showCheckoutAllMeds, setShowCheckoutAllMeds] = useState(false);
 
     const {activeTabKey} = props;
 
@@ -42,14 +46,47 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
 
     /**
      * Given a DrugLogRecord Update or Insert the record and rehydrate the drugLogList
-     * @param {DrugLogRecord} drugLog The drugLog record object
+     * @param {DrugLogRecord[]} drugLogs Array of drugLog records to insert or update
      * @param {number} clientId The PK of the Resident table
      */
-    const saveDrugLog = async (drugLog: DrugLogRecord, clientId: number): Promise<DrugLogRecord> => {
-        const r = await mm.updateDrugLog(drugLog);
-        const drugs = await mm.loadDrugLog(clientId, 5);
-        await setDrugLogList(drugs);
-        return r;
+    const saveDrugLog = async (drugLogs: DrugLogRecord[], clientId: number): Promise<DrugLogRecord[]> => {
+        const drugsLogged = [] as DrugLogRecord[];
+        for (const d of drugLogs) {
+            /**
+             * Insert or Update the drugLog record
+             * @param {DrugLogRecord} d The drugLog record to insert or update
+             */
+            const save = async (d: DrugLogRecord) => {
+                return await mm.updateDrugLog(d);
+            };
+            drugsLogged.push(await save(d));
+        }
+        await setDrugLogList(await mm.loadDrugLog(clientId, 5));
+        return drugsLogged;
+    };
+
+    /**
+     * Checks out all medicine and brings up the checkout print dialog
+     */
+    const logAllDrugsCheckedOut = () => {
+        const clientId = activeClient?.Id as number;
+        const toastQ = [] as DrugLogRecord[];
+        medicineList.forEach((m) => {
+            if (m.Active) {
+                const drugLog = {...newDrugLogRecord};
+                drugLog.Out = 1;
+                drugLog.Notes = '** ALL **';
+                drugLog.MedicineId = m.Id as number;
+                drugLog.ResidentId = clientId;
+                toastQ.push(drugLog);
+            }
+        });
+
+        if (toastQ.length > 0) {
+            saveDrugLog(toastQ, clientId)
+                .then((t) => setToast(t))
+                .then(() => setShowCheckoutPrint(true));
+        }
     };
 
     /**
@@ -158,16 +195,12 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
 
     return (
         <Form className={TabContent}>
-            <Row className="d-print-none">
-                <TooltipButton
-                    disabled={showCheckoutPrint}
-                    tooltip="Manually Add New Medicine"
-                    size="sm"
-                    variant="info"
-                    onClick={() => onEdit(null)}
-                >
-                    + Medicine
-                </TooltipButton>
+            <ButtonGroup as={Row} className="d-print-none">
+                <TooltipContainer tooltip={'Manually Add New Medicine'}>
+                    <Button disabled={showCheckoutPrint} size="sm" variant="info" onClick={() => onEdit(null)}>
+                        + Medicine
+                    </Button>
+                </TooltipContainer>
 
                 <Button
                     className="ml-3"
@@ -177,10 +210,25 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                     onClick={() => setShowCheckoutPrint(true)}
                 >
                     Print Medicine Checkout{' '}
-                    {checkoutList.length && <Badge variant="secondary">{checkoutList.length}</Badge>}
+                    {checkoutList.length > 0 && <Badge variant="secondary">{checkoutList.length}</Badge>}
                 </Button>
-            </Row>
 
+                <TooltipContainer
+                    tooltip={'At least one drug is already checked out'}
+                    placement="right"
+                    show={checkoutList.length > 0}
+                >
+                    <Button
+                        className="ml-3"
+                        size="sm"
+                        variant="outline-secondary"
+                        disabled={showCheckoutPrint}
+                        onClick={() => setShowCheckoutAllMeds(true)}
+                    >
+                        Checkout All {checkoutList.length > 0 && <Badge variant="danger">{checkoutList.length}</Badge>}
+                    </Button>
+                </TooltipContainer>
+            </ButtonGroup>
             {showCheckoutPrint && activeClient && (
                 <Row className="mt-2">
                     <CheckoutListGroup
@@ -191,7 +239,6 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                     />
                 </Row>
             )}
-
             {!showCheckoutPrint && (
                 <Row className="mt-2 d-print-none">
                     <ManageDrugGrid
@@ -207,7 +254,6 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                     />
                 </Row>
             )}
-
             {showMedicineEdit && medicineInfo && (
                 <MedicineEdit
                     show={showMedicineEdit}
@@ -218,26 +264,90 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                     drugInfo={medicineInfo}
                 />
             )}
-
             {showCheckoutModal && activeClient?.Id && (
                 <DrugLogEdit
                     drugName={drugName(showCheckoutModal.MedicineId) || '[unknown]'}
                     drugLogInfo={showCheckoutModal}
                     onClose={(dl) => {
                         setShowCheckoutModal(null);
-                        if (dl) saveDrugLog(dl, activeClient.Id as number).then((r) => setToast([r]));
+                        if (dl) saveDrugLog([dl], activeClient.Id as number).then((t) => setToast(t));
                     }}
                     onHide={() => setShowCheckoutModal(null)}
                     show={true}
                 />
             )}
-
             <DrugLogToast
                 toast={toast as DrugLogRecord[]}
                 medicineList={medicineList.concat(otcList)}
                 show={toast !== null}
                 onClose={() => setToast(null)}
             />
+            <ConfirmDialogModal
+                centered
+                size="lg"
+                show={showCheckoutAllMeds}
+                title={
+                    <h3>
+                        Checkout <b>ALL</b> Medications
+                    </h3>
+                }
+                body={
+                    <>
+                        <p>
+                            Answering Yes will mark <b>all</b> medicines as checked out and bring up the print dialog
+                        </p>
+                        <ul
+                            style={{
+                                listStyleType: 'square'
+                            }}
+                        >
+                            {medicineList.map((m) => (
+                                <li key={`$m.Id`}>
+                                    {checkoutList.find((d) => m.Id === d.MedicineId) && <Badge>❎</Badge>}{' '}
+                                    <span style={{textDecoration: m.Active ? undefined : 'line-through'}}>
+                                        {m.Drug}
+                                    </span>{' '}
+                                    {!m.Active && <span>(Inactive medication will not appear in checkout)</span>}
+                                </li>
+                            ))}
+                        </ul>
+                        {medicineList.some((m) => checkoutList.find((c) => m.Id === c.MedicineId)) && (
+                            <Alert variant="warning">
+                                At least one drug is already checked out<Badge>❎</Badge>. You must remove checked out
+                                drugs from the drug log history before you can <b>checkout all drugs.</b>
+                            </Alert>
+                        )}
+                    </>
+                }
+                yesButton={
+                    <Button
+                        disabled={medicineList.some((m) => checkoutList.find((c) => m.Id === c.MedicineId))}
+                        variant="danger"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setShowCheckoutAllMeds(false);
+                            logAllDrugsCheckedOut();
+                        }}
+                    >
+                        Yes{' '}
+                        {medicineList.some((m) => checkoutList.find((c) => m.Id === c.MedicineId)) && (
+                            <span style={{fontSize: '12px'}}>(At least one drug is already checked out)</span>
+                        )}
+                    </Button>
+                }
+                noButton={
+                    <Button
+                        variant="secondary"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setShowCheckoutAllMeds(false);
+                        }}
+                    >
+                        No
+                    </Button>
+                }
+            />
+            ;
         </Form>
     );
 };
