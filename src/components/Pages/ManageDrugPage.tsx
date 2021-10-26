@@ -222,7 +222,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                         className="ml-3"
                         size="sm"
                         variant="outline-secondary"
-                        disabled={showCheckoutPrint}
+                        disabled={showCheckoutPrint || medicineList.length === 0}
                         onClick={() => setShowCheckoutAllMeds(true)}
                     >
                         Checkout All {checkoutList.length > 0 && <Badge variant="danger">{checkoutList.length}</Badge>}
@@ -347,7 +347,6 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                     </Button>
                 }
             />
-            ;
         </Form>
     );
 };
