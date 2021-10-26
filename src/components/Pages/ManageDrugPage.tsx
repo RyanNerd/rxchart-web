@@ -216,7 +216,8 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                 <TooltipContainer
                     tooltip={'At least one drug is already checked out'}
                     placement="right"
-                    show={checkoutList.length > 0}
+                    show={checkoutList.length > 0 && !showCheckoutAllMeds}
+                    delay={{show: 120, hide: 200}}
                 >
                     <Button
                         className="ml-3"
@@ -293,9 +294,9 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                 }
                 body={
                     <>
-                        <p>
+                        <Alert variant="warning">
                             Answering Yes will mark <b>all</b> medicines as checked out and bring up the print dialog
-                        </p>
+                        </Alert>
                         <ul
                             style={{
                                 listStyleType: 'square'
