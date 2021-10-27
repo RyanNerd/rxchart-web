@@ -26,7 +26,7 @@ const DrugLogToast = (props: IProps) => {
             show={show}
             delay={toast && toast.length > 1 ? 5000 : 2000}
             autohide
-            className="p-1"
+            className="p-1 mb-2 d-print-none"
         >
             <Toast.Header>
                 <b>Updating Drug History</b>
