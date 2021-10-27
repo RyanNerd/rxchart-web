@@ -349,6 +349,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      * @returns {IDropdownItem[]}
      */
     const buildItemList = () => {
+        const checkoutList = getCheckoutList(drugLogList);
         const itemList = [] as IDropdownItem[];
 
         // Build the itemList with any pillboxes and meds from medicineList
@@ -374,7 +375,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         medicineList.forEach((m) => {
             const strength = m.Strength || '';
             const other = m.OtherNames?.length > 0 ? `(${m.OtherNames})` : null;
-            const description = m.Drug + ' ' + strength;
+            const checkoutMed = checkoutList.find((c) => c.MedicineId === m.Id);
+            const description = (checkoutMed ? '❎ ' : '') + m.Drug + ' ' + strength;
             itemList.push({
                 id: m.Id as number,
                 description,
