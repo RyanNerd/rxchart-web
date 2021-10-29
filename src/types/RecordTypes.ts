@@ -1,3 +1,4 @@
+// ORM record of the Resident "Client" table
 export type ClientRecord = {
     Created?: null | Date;
     DOB_DAY: number | string;
@@ -14,6 +15,7 @@ export type ClientRecord = {
     [key: string]: unknown;
 };
 
+// ORM record of the MedHistory table
 export type DrugLogRecord = {
     Created?: string | null;
     Id: null | number;
@@ -27,6 +29,7 @@ export type DrugLogRecord = {
     [key: string]: unknown;
 };
 
+// ORM record of the Medicine table
 export type MedicineRecord = {
     Barcode: string | null;
     Directions: string | null;
@@ -44,6 +47,7 @@ export type MedicineRecord = {
     Strength: string | null;
 };
 
+// ORM record of the Pillbox table
 export type PillboxRecord = {
     Id: number | null;
     ResidentId: number | null;
@@ -52,6 +56,7 @@ export type PillboxRecord = {
     [key: string]: unknown;
 };
 
+// ORM record of the PillboxItem table
 export type PillboxItemRecord = {
     Id: number | null;
     ResidentId: number;
@@ -60,15 +65,7 @@ export type PillboxItemRecord = {
     Quantity: number;
 };
 
-// Technically not a record but an object with a collection of records
-export type Client = {
-    clientInfo: ClientRecord;
-    drugLogList: DrugLogRecord[];
-    medicineList: MedicineRecord[];
-    pillboxList: PillboxRecord[];
-    pillboxItemList: PillboxItemRecord[];
-};
-
+// Default empty Medication record
 export const newMedicineRecord = {
     Barcode: '',
     Directions: '',
@@ -81,6 +78,7 @@ export const newMedicineRecord = {
     Strength: ''
 } as MedicineRecord;
 
+// Default empty MedHistory record
 export const newDrugLogRecord = {
     Id: null,
     MedicineId: 0,
@@ -91,6 +89,7 @@ export const newDrugLogRecord = {
     ResidentId: 0
 } as DrugLogRecord;
 
+// Default empty Resident (Client) record
 export const newResidentRecord = {
     Id: null,
     FirstName: '',
@@ -102,6 +101,7 @@ export const newResidentRecord = {
     Notes: ''
 } as ClientRecord;
 
+// Default empty Pillbox record
 export const newPillboxRecord = {
     Id: null,
     ResidentId: 0,
@@ -109,6 +109,7 @@ export const newPillboxRecord = {
     Notes: null
 } as PillboxRecord;
 
+// Default empty PillboxItem record
 export const newPillboxItemRecord = {
     Id: null,
     ResidentId: 0,

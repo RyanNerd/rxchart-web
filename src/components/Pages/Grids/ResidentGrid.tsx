@@ -2,11 +2,12 @@ import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import React from 'reactn';
-import {Client, ClientRecord} from 'types/RecordTypes';
+import {ClientRecord} from 'types/RecordTypes';
 import {clientDOB, getFormattedDate, getMDY} from 'utility/common';
+import {TClient} from 'reactn/default';
 
 interface IProps {
-    activeClient: Client | null;
+    activeClient: TClient | null;
     onDelete?: (r: ClientRecord) => void;
     onEdit?: (r: ClientRecord) => void;
     onSelected?: (r: ClientRecord) => void;

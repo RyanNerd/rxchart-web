@@ -5,10 +5,20 @@ import {IClientManager} from 'managers/ClientManager';
 import {Authenticated} from 'providers/AuthenticationProvider';
 import type {ComponentClass, FunctionComponent} from 'react';
 import 'reactn';
-import {Client, ClientRecord, MedicineRecord} from 'types/RecordTypes';
+import {ClientRecord, MedicineRecord, DrugLogRecord, PillboxRecord, PillboxItemRecord} from 'types/RecordTypes';
 import {IProviders} from 'utility/getInitialState';
+
 /* eslint @typescript-eslint/no-explicit-any: off */
 declare module 'reactn/default' {
+    // Client Type for the activeClient
+    export type TClient = {
+        clientInfo: ClientRecord;
+        drugLogList: DrugLogRecord[];
+        medicineList: MedicineRecord[];
+        pillboxList: PillboxRecord[];
+        pillboxItemList: PillboxItemRecord[];
+    };
+
     export interface Reducers {
         append: (global: State, dispatch: Dispatch, ...strings: any[]) => Pick<State, 'value'>;
         doNothing: (global: State, dispatch: Dispatch) => null;
@@ -18,7 +28,7 @@ declare module 'reactn/default' {
     export interface State {
         activeTabKey: string;
         authManager: IAuthManager;
-        activeClient: Client | null;
+        activeClient: TClient | null;
         count: number;
         __errorDetails: any;
         medicineManager: IMedicineManager;
