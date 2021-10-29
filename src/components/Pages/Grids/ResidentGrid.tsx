@@ -2,15 +2,15 @@ import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import React from 'reactn';
-import {ResidentRecord} from 'types/RecordTypes';
+import {Client, ClientRecord} from 'types/RecordTypes';
 import {clientDOB, getFormattedDate, getMDY} from 'utility/common';
 
 interface IProps {
-    activeResident: ResidentRecord | null;
-    onDelete?: (r: ResidentRecord) => void;
-    onEdit?: (r: ResidentRecord) => void;
-    onSelected?: (r: ResidentRecord) => void;
-    residentList: ResidentRecord[];
+    activeClient: Client | null;
+    onDelete?: (r: ClientRecord) => void;
+    onEdit?: (r: ClientRecord) => void;
+    onSelected?: (r: ClientRecord) => void;
+    residentList: ClientRecord[];
 }
 
 /**
@@ -19,62 +19,67 @@ interface IProps {
  * @returns {JSX.Element}
  */
 const ResidentGrid = (props: IProps): JSX.Element => {
-    const {activeResident, onDelete, onEdit, onSelected, residentList} = props;
+    const {activeClient, onDelete, onEdit, onSelected, residentList} = props;
 
     /**
      * Resident Child Table Component
      *
-     * @param {object} resident Resident record object
+     * @param {object} clientRecord Resident table record object
      */
-    const ResidentRow = (resident: ResidentRecord) => {
+    const ResidentRow = (clientRecord: ClientRecord) => {
         // Get formatted DOB
-        const dob = clientDOB(resident);
+        const dob = clientDOB(clientRecord);
+        const clientInfo = activeClient && activeClient.clientInfo;
 
         // Determine if this row is selected [for radio ToggleButtons]
-        const isSelected = onSelected && activeResident && resident.Id === activeResident.Id;
+        const isSelected = onSelected && clientRecord.Id === clientInfo?.Id;
         const mdy = getMDY();
-        const created = getFormattedDate(resident.Created || mdy.now);
-        const updated = getFormattedDate(resident.Updated || mdy.now);
+        const created = getFormattedDate(clientRecord.Created || mdy.now);
+        const updated = getFormattedDate(clientRecord.Updated || mdy.now);
         const fontWeight = isSelected ? 'bold' : undefined;
 
         return (
-            <tr key={'resident-grid-row-' + resident.Id} id={'resident-grid-row-' + resident.Id}>
+            <tr key={'clientRecord-grid-row-' + clientRecord.Id} id={'clientRecord-grid-row-' + clientRecord.Id}>
                 {onSelected && (
                     <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                         <ToggleButton
-                            id={'resident-grid-select-btn-' + resident.Id}
+                            id={'clientRecord-grid-select-btn-' + clientRecord.Id}
                             type="radio"
                             name="resident-list"
                             variant="outline-info"
                             checked={isSelected || false}
-                            onClick={() => onSelected(resident)}
-                            value={resident.Id as number}
+                            onClick={() => onSelected(clientRecord)}
+                            value={clientRecord.Id as number}
                         />
                     </td>
                 )}
 
-                <td style={{verticalAlign: 'middle', fontWeight}}>{resident.LastName}</td>
-                <td style={{verticalAlign: 'middle', fontWeight}}>{resident.FirstName}</td>
-                <td style={{verticalAlign: 'middle', fontWeight}}>{resident.Nickname}</td>
+                <td style={{verticalAlign: 'middle', fontWeight}}>{clientRecord.LastName}</td>
+                <td style={{verticalAlign: 'middle', fontWeight}}>{clientRecord.FirstName}</td>
+                <td style={{verticalAlign: 'middle', fontWeight}}>{clientRecord.Nickname}</td>
                 <td style={{verticalAlign: 'middle', fontWeight}}>{dob}</td>
                 <td style={{verticalAlign: 'middle', fontWeight}}>{created}</td>
                 <td style={{verticalAlign: 'middle', fontWeight}}>{updated}</td>
 
                 {onEdit && (
                     <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
-                        <Button size="sm" id={'resident-grid-edit-btn-' + resident.Id} onClick={() => onEdit(resident)}>
+                        <Button
+                            size="sm"
+                            id={'clientRecord-grid-edit-btn-' + clientRecord.Id}
+                            onClick={() => onEdit(clientRecord)}
+                        >
                             Edit
                         </Button>
                     </td>
                 )}
 
-                {onDelete && !resident.deleted_at && (
+                {onDelete && !clientRecord.deleted_at && (
                     <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                         <Button
                             size="sm"
-                            id={'resident-grid-delete-btn-' + resident.Id}
+                            id={'clientRecord-grid-delete-btn-' + clientRecord.Id}
                             variant="outline-danger"
-                            onClick={() => onDelete(resident)}
+                            onClick={() => onDelete(clientRecord)}
                         >
                             <span role="img" aria-label="delete">
                                 🗑️

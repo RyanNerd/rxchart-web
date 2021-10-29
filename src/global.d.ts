@@ -1,11 +1,11 @@
 /* eslint-disable max-len */
 import {IAuthManager} from 'managers/AuthManager';
 import {IMedicineManager} from 'managers/MedicineManager';
-import {IResidentManager} from 'managers/ResidentManager';
+import {IClientManager} from 'managers/ClientManager';
 import {Authenticated} from 'providers/AuthenticationProvider';
-import 'reactn';
 import type {ComponentClass, FunctionComponent} from 'react';
-import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord, ResidentRecord} from 'types/RecordTypes';
+import 'reactn';
+import {Client, ClientRecord, MedicineRecord} from 'types/RecordTypes';
 import {IProviders} from 'utility/getInitialState';
 /* eslint @typescript-eslint/no-explicit-any: off */
 declare module 'reactn/default' {
@@ -16,20 +16,16 @@ declare module 'reactn/default' {
     }
 
     export interface State {
-        activeResident: ResidentRecord | null;
         activeTabKey: string;
         authManager: IAuthManager;
+        activeClient: Client | null;
         count: number;
-        drugLogList: DrugLogRecord[];
         __errorDetails: any;
-        medicineList: MedicineRecord[];
-        pillboxList: PillboxRecord[];
-        pillboxItemList: PillboxItemRecord[];
         medicineManager: IMedicineManager;
         otcList: MedicineRecord[];
         providers: IProviders;
-        residentList: ResidentRecord[];
-        residentManager: IResidentManager;
+        clientList: ClientRecord[];
+        clientManager: IClientManager;
         signIn: Authenticated;
         value: string;
     }

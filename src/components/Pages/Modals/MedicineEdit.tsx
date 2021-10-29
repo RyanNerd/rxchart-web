@@ -4,11 +4,12 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Row from 'react-bootstrap/Row';
-import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
-import {MedicineRecord} from 'types/RecordTypes';
+import React, {useEffect, useRef, useState} from 'reactn';
+import {ClientRecord, MedicineRecord} from 'types/RecordTypes';
 import {clientFullName, isDateFuture, isDayValid, isMonthValid, isYearValid} from 'utility/common';
 
 interface IProps {
+    clientRecord: ClientRecord;
     drugInfo: MedicineRecord;
     onClose: (r: MedicineRecord | null) => void;
     show: boolean;
@@ -20,10 +21,10 @@ interface IProps {
  * @returns {JSX.Element | null}
  */
 const MedicineEdit = (props: IProps): JSX.Element | null => {
-    const [activeResident] = useGlobal('activeResident');
     const [canSave, setCanSave] = useState(false);
     const [drugInfo, setDrugInfo] = useState<MedicineRecord>(props.drugInfo);
     const [show, setShow] = useState(props.show);
+    const clientRecord = props.clientRecord;
     const otc = drugInfo.OTC;
     const textInput = useRef<HTMLInputElement>(null);
 
@@ -136,7 +137,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
 
     const drugTitleType = drugInfo.Id ? 'Edit ' : ('Add ' as string);
     const drugName = drugInfo.Id ? drugInfo.Drug : 'new drug';
-    const fullName = activeResident && clientFullName(activeResident);
+    const fullName = clientFullName(clientRecord);
 
     const modalTitle = otc ? (
         <Modal.Title>

@@ -1,4 +1,4 @@
-export type ResidentRecord = {
+export type ClientRecord = {
     Created?: null | Date;
     DOB_DAY: number | string;
     DOB_MONTH: number | string;
@@ -44,6 +44,31 @@ export type MedicineRecord = {
     Strength: string | null;
 };
 
+export type PillboxRecord = {
+    Id: number | null;
+    ResidentId: number | null;
+    Name: string;
+    Notes: string | null;
+    [key: string]: unknown;
+};
+
+export type PillboxItemRecord = {
+    Id: number | null;
+    ResidentId: number;
+    PillboxId: number;
+    MedicineId: number;
+    Quantity: number;
+};
+
+// Technically not a record but an object with a collection of records
+export type Client = {
+    clientInfo: ClientRecord;
+    drugLogList: DrugLogRecord[];
+    medicineList: MedicineRecord[];
+    pillboxList: PillboxRecord[];
+    pillboxItemList: PillboxItemRecord[];
+};
+
 export const newMedicineRecord = {
     Barcode: '',
     Directions: '',
@@ -75,30 +100,14 @@ export const newResidentRecord = {
     DOB_MONTH: '',
     DOB_DAY: '',
     Notes: ''
-} as ResidentRecord;
-
-export type PillboxRecord = {
-    Id: number | null;
-    ResidentId: number | null;
-    Name: string;
-    Notes: string | null;
-    [key: string]: unknown;
-};
+} as ClientRecord;
 
 export const newPillboxRecord = {
     Id: null,
     ResidentId: 0,
     Name: '',
     Notes: null
-};
-
-export type PillboxItemRecord = {
-    Id: number | null;
-    ResidentId: number;
-    PillboxId: number;
-    MedicineId: number;
-    Quantity: number;
-};
+} as PillboxRecord;
 
 export const newPillboxItemRecord = {
     Id: null,
@@ -106,4 +115,4 @@ export const newPillboxItemRecord = {
     PillboxId: 0,
     MedicineId: 0,
     Quantity: 1
-};
+} as PillboxItemRecord;

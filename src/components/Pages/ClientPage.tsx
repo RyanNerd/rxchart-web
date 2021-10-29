@@ -4,7 +4,7 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
-import {newResidentRecord, ResidentRecord} from 'types/RecordTypes';
+import {newResidentRecord, ClientRecord} from 'types/RecordTypes';
 import {clientFullName} from 'utility/common';
 import ResidentGrid from './Grids/ResidentGrid';
 import ClientRoster from './Modals/ClientRoster';
@@ -12,32 +12,34 @@ import Confirm from './Modals/Confirm';
 import ResidentEdit from './Modals/ResidentEdit';
 
 interface IProps {
-    residentSelected: () => void;
+    clientSelected: () => void;
     activeTabKey: string;
 }
 
 /**
  * Display Resident Grid
- * Allow user to edit and add Residents
+ * Allow user to edit and add Clients
  * @param {IProps} props Props for the component
  * @returns {JSX.Element | null}
  */
-const ResidentPage = (props: IProps): JSX.Element | null => {
-    const [activeResident, setActiveResident] = useGlobal('activeResident');
-    const [residentList, setResidentList] = useGlobal('residentList');
-    const [filteredResidents, setFilteredResidents] = useState<ResidentRecord[]>(residentList);
-    const [rm] = useGlobal('residentManager');
+const ClientPage = (props: IProps): JSX.Element | null => {
+    const [, setErrorDetails] = useGlobal('__errorDetails');
+    const [activeClient, setActiveClient] = useGlobal('activeClient');
+    const [clientList, setClientList] = useGlobal('clientList');
+    const [filteredClients, setFilteredClients] = useState<ClientRecord[]>(clientList);
+    const [mm] = useGlobal('medicineManager');
+    const [cm] = useGlobal('clientManager');
     const [searchIsValid, setSearchIsValid] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [showClientRoster, setShowClientRoster] = useState(false);
-    const [showDeleteResident, setShowDeleteResident] = useState<null | ResidentRecord>(null);
-    const [showResidentEdit, setShowResidentEdit] = useState<ResidentRecord | null>(null);
+    const [showDeleteResident, setShowDeleteResident] = useState<null | ClientRecord>(null);
+    const [showResidentEdit, setShowResidentEdit] = useState<ClientRecord | null>(null);
     const focusRef = useRef<HTMLInputElement>(null);
 
     // Filter the resident list by the search textbox value
     useEffect(() => {
         if (searchText.length > 0) {
-            const filter = residentList.filter((residentRecord) => {
+            const filter = clientList.filter((residentRecord) => {
                 const firstName = residentRecord.FirstName.toLowerCase();
                 const lastName = residentRecord.LastName.toLowerCase();
                 const nickname = residentRecord.Nickname ? residentRecord.Nickname.toLowerCase() : '';
@@ -47,16 +49,16 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
 
             if (filter && filter.length > 0) {
                 setSearchIsValid(true);
-                setFilteredResidents(filter);
+                setFilteredClients(filter);
             } else {
                 setSearchIsValid(false);
-                setFilteredResidents([]);
+                setFilteredClients([]);
             }
         } else {
             setSearchIsValid(false);
-            setFilteredResidents(residentList);
+            setFilteredClients(clientList);
         }
-    }, [residentList, searchText]);
+    }, [clientList, searchText]);
 
     useEffect(() => {
         focusRef?.current?.focus();
@@ -65,29 +67,48 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     // Don't render if this tab isn't active.
     if (props.activeTabKey !== 'resident') return null;
 
-    const onSelected = props.residentSelected;
+    const onSelected = props.clientSelected;
 
     /**
      * Fires when user clicks on the select button or if the user is trying to add an existing active client
-     * @param {ResidentRecord} client The client record object
+     * @param {ClientRecord} clientRecord A ClientRecord object to set as the activeClient.clientInfo
      */
-    const handleOnSelected = (client: ResidentRecord) => {
-        const activateClient = async (clientRec: ResidentRecord) => {
-            await setActiveResident(clientRec);
-            await setSearchText('');
-            onSelected();
+    const handleOnSelected = (clientRecord?: ClientRecord) => {
+        const refreshClient = async (clientRec: ClientRecord): Promise<void> => {
+            const clientId = clientRec.Id as number;
+            try {
+                const ml = await mm.loadMedicineList(clientId);
+                const dl = await mm.loadDrugLog(clientId, 5);
+                const pbl = await mm.loadPillboxList(clientId);
+                const pbItemList = await mm.loadPillboxItemList(clientId);
+                await setActiveClient({
+                    ...activeClient,
+                    drugLogList: dl,
+                    medicineList: ml,
+                    pillboxItemList: pbItemList,
+                    pillboxList: pbl,
+                    clientInfo: clientRec
+                });
+            } catch (e) {
+                await setErrorDetails(e);
+            }
         };
-        activateClient(client);
+
+        if (clientRecord) {
+            refreshClient(clientRecord).then(() => onSelected());
+        } else {
+            onSelected();
+        }
     };
 
     /**
-     * Given the ResidentRecord update/insert the record, rehydrate the residentList global
-     * @param {ResidentRecord} client The client record object
+     * Given the ResidentRecord update/insert the record, rehydrate the clientList global
+     * @param {ClientRecord} client The client record object
      */
-    const saveClient = async (client: ResidentRecord) => {
-        const r = await rm.updateResident(client);
-        const rl = await rm.loadResidentList();
-        await setResidentList(rl);
+    const saveClient = async (client: ClientRecord) => {
+        const r = await cm.updateClient(client);
+        const rl = await cm.loadClientList();
+        await setClientList(rl);
         return r;
     };
 
@@ -96,11 +117,12 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
      * @param {number} clientId The PK of the Resident table
      */
     const deleteClient = async (clientId: number) => {
-        const d = await rm.deleteResident(clientId);
+        const d = await cm.deleteClient(clientId);
         if (d) {
-            const rl = await rm.loadResidentList();
-            await setResidentList(rl);
-            await setActiveResident(null);
+            const rl = await cm.loadClientList();
+            await setClientList(rl);
+            await setActiveClient(null);
+            setSearchText('');
         }
     };
 
@@ -146,22 +168,22 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                 </Button>
 
                 {showClientRoster && (
-                    <ClientRoster onUnload={() => setShowClientRoster(false)} clientList={residentList} />
+                    <ClientRoster onUnload={() => setShowClientRoster(false)} clientList={clientList} />
                 )}
             </Row>
 
             <Row className="mt-3">
                 <ResidentGrid
-                    activeResident={activeResident}
-                    residentList={filteredResidents}
-                    onDelete={(resident: ResidentRecord) => setShowDeleteResident(resident)}
-                    onEdit={(resident: ResidentRecord) => setShowResidentEdit({...resident})}
+                    activeClient={activeClient}
+                    residentList={filteredClients}
+                    onDelete={(resident: ClientRecord) => setShowDeleteResident(resident)}
+                    onEdit={(resident: ClientRecord) => setShowResidentEdit({...resident})}
                     onSelected={(r) => handleOnSelected(r)}
                 />
             </Row>
 
             <ResidentEdit
-                residentInfo={showResidentEdit as ResidentRecord}
+                residentInfo={showResidentEdit as ClientRecord}
                 show={showResidentEdit !== null}
                 onClose={(client) => {
                     // Hide this modal
@@ -171,8 +193,8 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                     if (client) {
                         // Are we adding a new record?
                         if (client.Id === null) {
-                            // Search residentList for any existing clients to prevent adding dupes
-                            const existing = residentList.find(
+                            // Search clientList for any existing clients to prevent adding dupes
+                            const existing = clientList.find(
                                 (r) =>
                                     r.FirstName.trim().toLowerCase() === client.FirstName.trim().toLowerCase() &&
                                     r.LastName.trim().toLowerCase() === client.LastName.trim().toLowerCase() &&
@@ -193,7 +215,7 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
                             // Is user trying to add an existing active client?
                             // If so then make the exiting client the active instead.
                             if (existing) {
-                                handleOnSelected(existing);
+                                handleOnSelected();
                                 return;
                             }
                         }
@@ -222,4 +244,4 @@ const ResidentPage = (props: IProps): JSX.Element | null => {
     );
 };
 
-export default ResidentPage;
+export default ClientPage;

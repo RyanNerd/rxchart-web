@@ -1,7 +1,6 @@
-import ActiveResidentObserver from 'observers/ActiveResidentObserver';
 import ErrorDetailsObserver from 'observers/ErrorDetailsObserver';
-import {ReactNode} from 'reactn/default';
 import React from 'reactn';
+import {ReactNode} from 'reactn/default';
 
 interface IProps {
     children: ReactNode | undefined;
@@ -14,9 +13,8 @@ interface IProps {
  */
 const Main = (props: IProps) => {
     /**
-     * Initialize all the observers
+     * Initialize the ErrorDetail observer
      */
-    ActiveResidentObserver(); // Watching: __activeResident
     ErrorDetailsObserver(); // Watching: __errorDetails
 
     const {children} = props;

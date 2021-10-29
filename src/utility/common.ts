@@ -1,5 +1,5 @@
 import {IGridLists} from 'components/Pages/Grids/DrugLogGrid';
-import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord, ResidentRecord} from 'types/RecordTypes';
+import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord, ClientRecord} from 'types/RecordTypes';
 
 interface IKey {
     /* eslint @typescript-eslint/no-explicit-any: off */
@@ -8,10 +8,10 @@ interface IKey {
 
 /**
  * Given a ResidentRecord return the resident's DOB as a string.
- * @param {ResidentRecord} resident The client record
+ * @param {ClientRecord} resident The client record
  * @returns {string}
  */
-export const clientDOB = (resident: ResidentRecord): string => {
+export const clientDOB = (resident: ClientRecord): string => {
     return dateToString(resident.DOB_MONTH.toString(), resident.DOB_DAY.toString(), resident.DOB_YEAR.toString(), true);
 };
 
@@ -38,10 +38,10 @@ export const dateToString = (month: string, day: string, year: string, leadingZe
 /**
  * Given a ResidentRecord return the first and last name of the client in the format: first last
  * If the client Nickname field is populated then the format is: first last "nickname"
- * @param {ResidentRecord} resident The client record
+ * @param {ClientRecord} resident The client record
  * @param {boolean} includeNickname True if nickname should be returned in quotes, no display of the nickname otherwise
  */
-export const clientFullName = (resident: ResidentRecord, includeNickname = false): string => {
+export const clientFullName = (resident: ClientRecord, includeNickname = false): string => {
     const clientName = resident.FirstName.trim() + ' ' + resident.LastName.trim();
     if (includeNickname && resident?.Nickname && resident?.Nickname.trim().length > 0) {
         return clientName + ' "' + resident.Nickname.trim() + '"';

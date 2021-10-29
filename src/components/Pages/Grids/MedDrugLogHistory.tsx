@@ -3,11 +3,11 @@ import DrugLogHistoryGrid from 'components/Pages/Grids/DrugLogHistoryGrid';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import React, {useEffect, useState} from 'reactn';
-import {DrugLogRecord, ResidentRecord} from 'types/RecordTypes';
+import {DrugLogRecord, ClientRecord} from 'types/RecordTypes';
 import {clientDOB, clientFullName, deconstructGridLists} from 'utility/common';
 
 interface IProps {
-    activeClient: ResidentRecord;
+    activeClient: ClientRecord;
     gridLists: IGridLists;
     onPillClick: (n: number) => void;
     onEdit: (d: DrugLogRecord) => void;

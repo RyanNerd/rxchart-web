@@ -4,7 +4,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton, {DropdownButtonProps} from 'react-bootstrap/DropdownButton';
 import React from 'reactn';
 import {Modify} from 'types/Modify';
-import {ResidentRecord} from 'types/RecordTypes';
+import {ClientRecord} from 'types/RecordTypes';
 import {clientDOB} from 'utility/common';
 
 interface IProps extends DropdownButtonProps {
@@ -15,7 +15,7 @@ interface IProps extends DropdownButtonProps {
 type TProps = Modify<
     IProps,
     {
-        clientRecord: ResidentRecord;
+        clientRecord: ClientRecord;
         title?: ReactNode | undefined;
         disabled?: boolean;
     }

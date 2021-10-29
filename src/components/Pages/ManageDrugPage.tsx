@@ -10,7 +10,7 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import React, {useGlobal, useState} from 'reactn';
-import {DrugLogRecord, MedicineRecord, newDrugLogRecord, newMedicineRecord} from 'types/RecordTypes';
+import {DrugLogRecord, MedicineRecord, newDrugLogRecord, newMedicineRecord, PillboxItemRecord} from 'types/RecordTypes';
 import {getCheckoutList, getDrugName} from 'utility/common';
 import TabContent from '../../styles/common.css';
 import DrugLogEdit from './Modals/DrugLogEdit';
@@ -26,23 +26,22 @@ interface IProps {
  * @returns {JSX.Element | null}
  */
 const ManageDrugPage = (props: IProps): JSX.Element | null => {
-    const [activeClient] = useGlobal('activeResident');
-    const [drugLogList, setDrugLogList] = useGlobal('drugLogList');
+    const [activeClient, setActiveClient] = useGlobal('activeClient');
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
-    const [medicineList, setMedicineList] = useGlobal('medicineList');
     const [mm] = useGlobal('medicineManager');
-    const [otcList, setOtcList] = useGlobal('otcList');
-    const [pillboxItemList, setPillboxItemList] = useGlobal('pillboxItemList');
     const [showCheckoutModal, setShowCheckoutModal] = useState<DrugLogRecord | null>(null);
     const [showCheckoutPrint, setShowCheckoutPrint] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const [toast, setToast] = useState<DrugLogRecord[] | null>(null);
     const [showCheckoutAllMeds, setShowCheckoutAllMeds] = useState(false);
 
-    const {activeTabKey} = props;
+    const activeTabKey = props.activeTabKey;
 
     // If this tab isn't active then don't render
     if (activeTabKey !== 'manage') return null;
+    if (!activeClient) return null;
+
+    const {clientInfo, medicineList, drugLogList, pillboxItemList} = activeClient;
 
     /**
      * Given a DrugLogRecord Update or Insert the record and rehydrate the drugLogList
@@ -61,7 +60,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
             };
             drugsLogged.push(await save(d));
         }
-        await setDrugLogList(await mm.loadDrugLog(clientId, 5));
+        await setActiveClient({...activeClient, drugLogList: await mm.loadDrugLog(clientId, 5)});
         return drugsLogged;
     };
 
@@ -69,7 +68,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
      * Checks out all medicine and brings up the checkout print dialog
      */
     const logAllDrugsCheckedOut = () => {
-        const clientId = activeClient?.Id as number;
+        const clientId = clientInfo.Id as number;
         const toastQ = [] as DrugLogRecord[];
         medicineList.forEach((m) => {
             if (m.Active) {
@@ -115,28 +114,28 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
 
         const m = await mm.updateMedicine(med);
         const ml = await mm.loadMedicineList(clientId);
-        await setMedicineList(ml);
-
-        // If the updated record is OTC we need to refresh the otcList.
-        if (m.OTC) {
-            const ol = await mm.loadOtcList();
-            await setOtcList(ol);
-        }
+        let dl = null as null | DrugLogRecord[];
+        let pbil = null as null | PillboxItemRecord[];
 
         // If the medicine has been set to inactive then refresh the drug log and remove from any pillboxItems
         if (!m.Active) {
-            const dl = await mm.loadDrugLog(activeClient?.Id as number, 5);
-            await setDrugLogList(dl);
+            dl = await mm.loadDrugLog(clientInfo.Id as number, 5);
+            await setActiveClient({...activeClient, drugLogList: dl});
 
             if (!m.Active) {
-                removeInactivePillboxItems(m.Id as number).then((delCount) => {
-                    if (delCount > 0) {
-                        mm.loadPillboxItemList(activeClient?.Id as number).then((pbil) => setPillboxItemList(pbil));
-                    }
-                });
+                const count = await removeInactivePillboxItems(m.Id as number);
+                if (count > 0) {
+                    pbil = await mm.loadPillboxItemList(clientInfo.Id as number);
+                }
             }
         }
 
+        await setActiveClient({
+            ...activeClient,
+            medicineList: ml,
+            drugLogList: dl ? dl : activeClient.drugLogList,
+            pillboxItemList: pbil ? pbil : activeClient.pillboxItemList
+        });
         return m;
     };
 
@@ -150,7 +149,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
             : {
                   ...newMedicineRecord,
                   OTC: false,
-                  ResidentId: activeClient?.Id,
+                  ResidentId: clientInfo.Id,
                   FillDateDay: '',
                   FillDateMonth: '',
                   FillDateYear: ''
@@ -181,7 +180,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
      * @returns {string | undefined}
      */
     const drugName = (medicineId: number): string | undefined => {
-        return getDrugName(medicineId, medicineList.concat(otcList));
+        return getDrugName(medicineId, medicineList);
     };
 
     const checkoutList = getCheckoutList(drugLogList);
@@ -236,7 +235,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                         onClose={() => setShowCheckoutPrint(false)}
                         checkoutList={checkoutList}
                         medicineList={medicineList}
-                        activeClient={activeClient}
+                        activeClient={clientInfo}
                     />
                 </Row>
             )}
@@ -247,7 +246,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                         onDelete={(mr) => {
                             const med = {...mr};
                             med.Active = false;
-                            saveMedicine(med, activeClient?.Id as number);
+                            saveMedicine(med, clientInfo.Id as number);
                         }}
                         onEdit={(m) => onEdit(m)}
                         onLogDrug={(d) => handleLogDrug(d)}
@@ -257,21 +256,22 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
             )}
             {showMedicineEdit && medicineInfo && (
                 <MedicineEdit
+                    clientRecord={clientInfo}
                     show={showMedicineEdit}
                     onClose={(m) => {
                         setShowMedicineEdit(false);
-                        if (m) saveMedicine(m, activeClient?.Id as number);
+                        if (m) saveMedicine(m, clientInfo.Id as number);
                     }}
                     drugInfo={medicineInfo}
                 />
             )}
-            {showCheckoutModal && activeClient?.Id && (
+            {showCheckoutModal && clientInfo.Id && (
                 <DrugLogEdit
                     drugName={drugName(showCheckoutModal.MedicineId) || '[unknown]'}
                     drugLogInfo={showCheckoutModal}
                     onClose={(dl) => {
                         setShowCheckoutModal(null);
-                        if (dl) saveDrugLog([dl], activeClient.Id as number).then((t) => setToast(t));
+                        if (dl) saveDrugLog([dl], clientInfo.Id as number).then((t) => setToast(t));
                     }}
                     onHide={() => setShowCheckoutModal(null)}
                     show={true}
@@ -279,7 +279,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
             )}
             <DrugLogToast
                 toast={toast as DrugLogRecord[]}
-                medicineList={medicineList.concat(otcList)}
+                medicineList={medicineList}
                 show={toast !== null}
                 onClose={() => setToast(null)}
             />

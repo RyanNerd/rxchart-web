@@ -1,19 +1,15 @@
-import {IMedicineManager} from 'managers/MedicineManager';
 import Card from 'react-bootstrap/Card';
 import React from 'reactn';
-import {State} from 'reactn/default';
-import {Setter} from 'reactn/types/use-global';
 import {MedicineRecord, PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
 import {BsColor} from 'utility/common';
 import getPillboxItems, {PillRowType} from './getPillboxItems';
 import PillboxItemGrid from './PillboxItemGrid';
 
 interface IProps {
-    medicineList: MedicineRecord[];
     activePillbox: PillboxRecord;
-    mm: IMedicineManager;
+    medicineList: MedicineRecord[];
+    onEdit: (p: PillboxItemRecord) => void;
     pillboxItemList: PillboxItemRecord[];
-    setPillboxItemList: Setter<State, 'pillboxItemList'>;
 }
 
 /**
@@ -21,27 +17,13 @@ interface IProps {
  * @param {IProps} props The props for the component
  */
 const PillboxCard = (props: IProps) => {
-    const {medicineList, pillboxItemList, setPillboxItemList, activePillbox, mm} = props;
-
-    const clientId = activePillbox.ResidentId;
+    const {medicineList, pillboxItemList, activePillbox, onEdit} = props;
     const pillboxName = activePillbox.Name;
     const pillboxId = activePillbox?.Id;
     const pillboxGridItems = pillboxId
         ? getPillboxItems(medicineList, pillboxItemList, pillboxId)
         : ([] as PillRowType[]);
     const pillboxItemCount = pillboxGridItems.filter((pgi) => pgi.Quantity !== null && pgi.Quantity > 0).length;
-
-    /**
-     * Add or update a pillboxItem record
-     * @param {PillboxItemRecord} pbi The pillboxItem record object
-     */
-    const savePillboxItem = async (pbi: PillboxItemRecord) => {
-        const updatedPbi = await mm.updatePillboxItem(pbi);
-        if (updatedPbi) {
-            const pbItemList = await mm.loadPillboxItemList(clientId as number);
-            await setPillboxItemList(pbItemList);
-        }
-    };
 
     return (
         <Card>
@@ -72,11 +54,7 @@ const PillboxCard = (props: IProps) => {
                 </h6>
             </Card.Title>
             <Card.Body>
-                <PillboxItemGrid
-                    className="mt-0"
-                    pillboxGridItems={pillboxGridItems}
-                    onEdit={(r) => savePillboxItem(r)}
-                />
+                <PillboxItemGrid className="mt-0" pillboxGridItems={pillboxGridItems} onEdit={(r) => onEdit(r)} />
             </Card.Body>
         </Card>
     );

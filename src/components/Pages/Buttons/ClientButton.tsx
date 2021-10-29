@@ -2,12 +2,12 @@
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import React from 'reactn';
-import {ResidentRecord} from 'types/RecordTypes';
+import {ClientRecord} from 'types/RecordTypes';
 import {clientFullName} from 'utility/common';
 
 interface IProps {
     className?: string;
-    clientRecord: ResidentRecord;
+    clientRecord: ClientRecord;
     onSelect?: (choice: string) => void;
     disabled?: boolean;
     [key: string]: unknown;

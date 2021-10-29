@@ -1,12 +1,6 @@
 import {MedicineRecord, PillboxItemRecord} from 'types/RecordTypes';
 import {multiSort, SortDirection} from 'utility/common';
 
-export interface IPillboxItemGrid {
-    medicineList: MedicineRecord[];
-    pillboxItemList: PillboxItemRecord[];
-    pillboxId: number;
-}
-
 export type PillRowType = {
     Drug: string;
     Id: number | null;

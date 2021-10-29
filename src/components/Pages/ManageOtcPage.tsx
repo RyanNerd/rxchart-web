@@ -6,12 +6,13 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
-import {MedicineRecord, newMedicineRecord} from 'types/RecordTypes';
+import {ClientRecord, MedicineRecord, newMedicineRecord} from 'types/RecordTypes';
 import Confirm from './Modals/Confirm';
 import MedicineEdit from './Modals/MedicineEdit';
 
 interface IProps {
     activeTabKey: string;
+    clientRecord: ClientRecord;
 }
 
 /**
@@ -125,6 +126,7 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
             {showMedicineEdit && medicineInfo && (
                 /* MedicineEdit Modal */
                 <MedicineEdit
+                    clientRecord={props.clientRecord}
                     show={showMedicineEdit}
                     onClose={(r) => {
                         setShowMedicineEdit(false);

@@ -1,18 +1,18 @@
 import Frak from 'frak/lib/components/Frak';
-import {ResidentRecord} from 'types/RecordTypes';
+import {ClientRecord} from 'types/RecordTypes';
 
-export interface IResidentProvider {
+export interface IClientProvider {
     setApiKey: (apiKey: string) => void;
-    search: (options: Record<string, unknown>) => Promise<ResidentRecord[]>;
-    restore: (residentId: number) => Promise<ResidentRecord>;
-    read: (id: number) => Promise<ResidentRecord>;
-    post: (residentInfo: ResidentRecord) => Promise<ResidentRecord>;
+    search: (options: Record<string, unknown>) => Promise<ClientRecord[]>;
+    restore: (residentId: number) => Promise<ClientRecord>;
+    read: (id: number) => Promise<ClientRecord>;
+    post: (residentInfo: ClientRecord) => Promise<ClientRecord>;
     delete: (residentId: number) => Promise<DeleteResponse>;
 }
 
 type DeleteResponse = {success: boolean};
 type RecordResponse = {
-    data: ResidentRecord[] | ResidentRecord;
+    data: ClientRecord[] | ClientRecord;
     status: number;
     success: boolean;
 };
@@ -21,7 +21,7 @@ type RecordResponse = {
  * ResidentProvider API service connector
  * @param {string} url The url to use
  */
-const ResidentProvider = (url: string): IResidentProvider => {
+const ClientProvider = (url: string): IClientProvider => {
     const _baseUrl = url;
     const _frak = Frak();
     let _apiKey = null as string | null;
@@ -37,13 +37,13 @@ const ResidentProvider = (url: string): IResidentProvider => {
         /**
          * Search Interface
          * @param {object} options Multishaped object for the fetch request
-         * @returns {Promise<ResidentRecord[]>}
+         * @returns {Promise<ClientRecord[]>}
          */
-        search: async (options: Record<string, unknown>): Promise<ResidentRecord[]> => {
+        search: async (options: Record<string, unknown>): Promise<ClientRecord[]> => {
             const uri = _baseUrl + 'resident/search?api_key=' + _apiKey;
             const response = await _frak.post<RecordResponse>(uri, options);
             if (response.success) {
-                return response.data as ResidentRecord[];
+                return response.data as ClientRecord[];
             } else {
                 if (response.status === 404) {
                     return [];
@@ -56,14 +56,14 @@ const ResidentProvider = (url: string): IResidentProvider => {
         /**
          * Restore Interface
          * @param {number} residentId PK of the Resident table
-         * @returns {Promise<ResidentRecord>}
+         * @returns {Promise<ClientRecord>}
          */
-        restore: async (residentId: number): Promise<ResidentRecord> => {
+        restore: async (residentId: number): Promise<ClientRecord> => {
             const uri = _baseUrl + 'resident/restore?api_key=' + _apiKey;
             const body = {restore_id: residentId};
             const response = await _frak.post<RecordResponse>(uri, body);
             if (response.success) {
-                return response.data as ResidentRecord;
+                return response.data as ClientRecord;
             } else {
                 throw response;
             }
@@ -74,11 +74,11 @@ const ResidentProvider = (url: string): IResidentProvider => {
          * @param {number} id PK of the Resident table
          * @returns {Promise<Response>}
          */
-        read: async (id: number): Promise<ResidentRecord> => {
+        read: async (id: number): Promise<ClientRecord> => {
             const uri = _baseUrl + 'resident/' + id + '?api_key=' + _apiKey;
             const response = await _frak.get<RecordResponse>(uri);
             if (response.success) {
-                return response.data as ResidentRecord;
+                return response.data as ClientRecord;
             } else {
                 throw response;
             }
@@ -86,14 +86,14 @@ const ResidentProvider = (url: string): IResidentProvider => {
 
         /**
          * Post interface
-         * @param {ResidentRecord} residentInfo The client object
-         * @returns {Promise<ResidentRecord>}
+         * @param {ClientRecord} residentInfo The client object
+         * @returns {Promise<ClientRecord>}
          */
-        post: async (residentInfo: ResidentRecord): Promise<ResidentRecord> => {
+        post: async (residentInfo: ClientRecord): Promise<ClientRecord> => {
             const uri = _baseUrl + 'resident?api_key=' + _apiKey;
             const response = await _frak.post<RecordResponse>(uri, residentInfo);
             if (response.success) {
-                return response.data as ResidentRecord;
+                return response.data as ClientRecord;
             } else {
                 throw response;
             }
@@ -116,4 +116,4 @@ const ResidentProvider = (url: string): IResidentProvider => {
     };
 };
 
-export default ResidentProvider;
+export default ClientProvider;
