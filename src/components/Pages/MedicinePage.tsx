@@ -74,6 +74,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [clientId, setClientId] = useState<number | null>(activeClient?.clientInfo?.Id || null);
     const [displayType, setDisplayType] = useState<DISPLAY_TYPE>(DISPLAY_TYPE.Medicine);
     const [isBusy, setIsBusy] = useState(false);
+    const [medItemList, setMedItemList] = useState<IDropdownItem[]>([]);
     const [mm] = useGlobal('medicineManager');
     const [otcList, setOtcList] = useGlobal('otcList');
     const [otcLogList, setOtcLogList] = useState<DrugLogRecord[]>([]);
@@ -165,6 +166,54 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             setPillboxMedLogList(multiSort(pillboxMedLog, {Quantity: SortDirection.asc, Drug: SortDirection.desc}));
         }
     }, [activeClient, activePillbox, setPillboxMedLogList]);
+
+    // Build the dropdown items for the Medicine dropdown
+    useEffect(() => {
+        const itemList = [] as IDropdownItem[];
+        if (activeClient) {
+            const {drugLogList, pillboxList, pillboxItemList, medicineList} = activeClient;
+
+            const checkoutList = getCheckoutList(drugLogList);
+            // Build the itemList with any pillboxes and meds from medicineList
+            let pbCnt = 0;
+            pillboxList.forEach((p) => {
+                const pbItems = pillboxItemList.filter((pbi) => pbi.PillboxId === p.Id);
+                const loggedPillboxItems = drugLogList.filter(
+                    (d) => d.Updated && isToday(d.Updated) && pbItems.find((pbi) => pbi.Id === d.PillboxItemId)
+                );
+
+                if (loggedPillboxItems.length === 0) {
+                    itemList.push({
+                        id: -(p.Id as number),
+                        description: p.Name.toUpperCase(),
+                        subtext: null
+                    }); // Pillbox have negative id
+                    pbCnt++;
+                }
+            });
+            if (pbCnt > 0) {
+                itemList.push({id: 0, description: 'divider', subtext: null});
+            }
+            medicineList.forEach((m) => {
+                if (m.Active) {
+                    const strength = m.Strength || '';
+                    const other = m.OtherNames?.length > 0 ? `(${m.OtherNames})` : null;
+                    const checkoutMed = checkoutList.find((c) => c.MedicineId === m.Id);
+                    const description = (checkoutMed ? '❎ ' : '') + m.Drug + ' ' + strength;
+                    itemList.push({
+                        id: m.Id as number,
+                        description,
+                        subtext: other
+                    });
+                }
+            });
+        }
+
+        if (itemList.length === 0) {
+            setActiveMed(null);
+        }
+        setMedItemList(itemList);
+    }, [activeClient]);
 
     // If there isn't an active client or this isn't the active tab then do not render
     if (!clientId || activeTabKey !== 'medicine') return null;
@@ -364,53 +413,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         }
     };
 
-    /**
-     * Builds and returns the dropdown items for the Medicine dropdown
-     * @returns {IDropdownItem[]}
-     */
-    const buildItemList = () => {
-        const itemList = [] as IDropdownItem[];
-        if (activeClient) {
-            const {drugLogList, pillboxList, pillboxItemList, medicineList} = activeClient;
-
-            const checkoutList = getCheckoutList(drugLogList);
-            // Build the itemList with any pillboxes and meds from medicineList
-            let pbCnt = 0;
-            pillboxList.forEach((p) => {
-                const pbItems = pillboxItemList.filter((pbi) => pbi.PillboxId === p.Id);
-                const loggedPillboxItems = drugLogList.filter(
-                    (d) => d.Updated && isToday(d.Updated) && pbItems.find((pbi) => pbi.Id === d.PillboxItemId)
-                );
-
-                if (loggedPillboxItems.length === 0) {
-                    itemList.push({
-                        id: -(p.Id as number),
-                        description: p.Name.toUpperCase(),
-                        subtext: null
-                    }); // Pillbox have negative id
-                    pbCnt++;
-                }
-            });
-            if (pbCnt > 0) {
-                itemList.push({id: 0, description: 'divider', subtext: null});
-            }
-            medicineList.forEach((m) => {
-                if (m.Active) {
-                    const strength = m.Strength || '';
-                    const other = m.OtherNames?.length > 0 ? `(${m.OtherNames})` : null;
-                    const checkoutMed = checkoutList.find((c) => c.MedicineId === m.Id);
-                    const description = (checkoutMed ? '❎ ' : '') + m.Drug + ' ' + strength;
-                    itemList.push({
-                        id: m.Id as number,
-                        description,
-                        subtext: other
-                    });
-                }
-            });
-        }
-        return itemList;
-    };
-
     if (!activeClient) return null;
 
     const {drugLogList, pillboxList, pillboxItemList, medicineList} = activeClient;
@@ -526,7 +528,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                                         setActiveMed(medicineList.find((m) => m.Id === id) || null);
                                     }
                                 }}
-                                itemList={buildItemList()}
+                                itemList={medItemList}
                                 lastTaken={activeMed?.Id ? calculateLastTaken(activeMed.Id, drugLogList) : null}
                                 logDrug={(n) => handleLogDrugAmount(n)}
                             />
