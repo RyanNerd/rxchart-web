@@ -11,7 +11,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import React, {useGlobal, useState} from 'reactn';
 import {DrugLogRecord, MedicineRecord, newDrugLogRecord, newMedicineRecord, PillboxItemRecord} from 'types/RecordTypes';
-import {getCheckoutList, getDrugName} from 'utility/common';
+import {clientFullName, getCheckoutList, getDrugName} from 'utility/common';
 import TabContent from '../../styles/common.css';
 import DrugLogEdit from './Modals/DrugLogEdit';
 import MedicineEdit from './Modals/MedicineEdit';
@@ -256,7 +256,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
             )}
             {showMedicineEdit && medicineInfo && (
                 <MedicineEdit
-                    clientRecord={clientInfo}
+                    fullName={clientFullName(clientInfo)}
                     show={showMedicineEdit}
                     onClose={(m) => {
                         setShowMedicineEdit(false);

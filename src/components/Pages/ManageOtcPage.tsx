@@ -126,13 +126,10 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
             {showMedicineEdit && medicineInfo && (
                 /* MedicineEdit Modal */
                 <MedicineEdit
-                    clientRecord={props.clientRecord}
                     show={showMedicineEdit}
                     onClose={(r) => {
                         setShowMedicineEdit(false);
-                        if (r) {
-                            saveOtcMedicine(r);
-                        }
+                        if (r) saveOtcMedicine(r).then((m) => setSearchText(m.Drug));
                     }}
                     drugInfo={medicineInfo}
                 />

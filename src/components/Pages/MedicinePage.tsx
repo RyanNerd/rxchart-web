@@ -15,6 +15,7 @@ import React, {useEffect, useGlobal, useState} from 'reactn';
 import {DrugLogRecord, MedicineRecord, newDrugLogRecord, PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
 import {
     calculateLastTaken,
+    clientFullName,
     getCheckoutList,
     getDrugName,
     getFormattedDate,
@@ -662,7 +663,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             {/* MedicineEdit Modal*/}
             {showMedicineEdit && (
                 <MedicineEdit
-                    clientRecord={activeClient.clientInfo}
+                    fullName={clientFullName(activeClient.clientInfo)}
                     show={true}
                     onClose={(r: MedicineRecord | null) => {
                         setShowMedicineEdit(null);
