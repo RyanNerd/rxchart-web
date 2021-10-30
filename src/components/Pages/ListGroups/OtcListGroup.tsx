@@ -38,7 +38,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
         otcSelected
     } = props;
 
-    const [filteredOtcList, setFilteredOtcList] = useState(otcList);
+    const [filteredOtcList, setFilteredOtcList] = useState(otcList.filter((o) => o.Active));
     const [searchIsValid, setSearchIsValid] = useState<boolean | null>(null);
     const [searchText, setSearchText] = useState('');
     const lastTaken = activeOtc?.Id ? calculateLastTaken(activeOtc.Id, drugLogList) : null;
@@ -53,13 +53,16 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                 const barcode = medicineRecord.Barcode ? medicineRecord.Barcode.toLowerCase() : '';
                 const other = medicineRecord.OtherNames ? medicineRecord.OtherNames.toLowerCase() : '';
                 const search = searchText.toLowerCase();
-                return drug.includes(search) || barcode.includes(search) || other.includes(search);
+                return (
+                    medicineRecord.Active &&
+                    (drug.includes(search) || barcode.includes(search) || other.includes(search))
+                );
             });
             setSearchIsValid(filter?.length > 0);
             setFilteredOtcList(filter?.length > 0 ? filter : []);
         } else {
             setSearchIsValid(false);
-            setFilteredOtcList(otcList);
+            setFilteredOtcList(otcList.filter((o) => o.Active));
         }
     }, [otcList, searchText]);
 

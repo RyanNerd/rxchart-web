@@ -40,9 +40,6 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
     const drugLogList = activeClient ? activeClient.drugLogList : [];
     const pillboxItemList = activeClient ? activeClient.pillboxItemList : [];
     const checkoutList = getCheckoutList(drugLogList);
-    // const [checkoutList] = useState(getCheckoutList(drugLogList));
-    console.log('drugLogList', drugLogList);
-    console.log('checkoutList', checkoutList);
 
     const [showCheckoutAlert, setShowCheckoutAlert] = useState(checkoutList.length > 0);
 
@@ -250,11 +247,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                 <Row className="mt-2 d-print-none">
                     <ManageDrugGrid
                         checkoutList={medicineWithCheckout}
-                        onDelete={(mr) => {
-                            const med = {...mr};
-                            med.Active = false;
-                            saveMedicine(med, clientInfo.Id as number);
-                        }}
+                        onDelete={(mr) => saveMedicine({...mr, Active: !mr.Active}, clientInfo.Id as number)}
                         onEdit={(m) => onEdit(m)}
                         onLogDrug={(d) => handleLogDrug(d)}
                         medicineList={medicineList}
