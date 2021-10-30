@@ -36,12 +36,21 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
     const [showCheckoutAllMeds, setShowCheckoutAllMeds] = useState(false);
 
     const activeTabKey = props.activeTabKey;
+    const medicineList = activeClient ? activeClient.medicineList : [];
+    const drugLogList = activeClient ? activeClient.drugLogList : [];
+    const pillboxItemList = activeClient ? activeClient.pillboxItemList : [];
+    const checkoutList = getCheckoutList(drugLogList);
+    // const [checkoutList] = useState(getCheckoutList(drugLogList));
+    console.log('drugLogList', drugLogList);
+    console.log('checkoutList', checkoutList);
+
+    const [showCheckoutAlert, setShowCheckoutAlert] = useState(checkoutList.length > 0);
 
     // If this tab isn't active then don't render
-    if (activeTabKey !== 'manage') return null;
     if (!activeClient) return null;
+    if (activeTabKey !== 'manage') return null;
 
-    const {clientInfo, medicineList, drugLogList, pillboxItemList} = activeClient;
+    const clientInfo = activeClient.clientInfo;
 
     /**
      * Given a DrugLogRecord Update or Insert the record and rehydrate the drugLogList
@@ -183,8 +192,6 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
         return getDrugName(medicineId, medicineList);
     };
 
-    const checkoutList = getCheckoutList(drugLogList);
-
     /**
      * Return a MedicineRecord[] array of all medicines that have Out populated and was logged today
      */
@@ -312,17 +319,20 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                                 </li>
                             ))}
                         </ul>
-                        {medicineList.some((m) => checkoutList.find((c) => m.Id === c.MedicineId)) && (
-                            <Alert variant="warning">
-                                At least one drug is already checked out<Badge>❎</Badge>. You must remove checked out
-                                drugs from the drug log history before you can <b>checkout all drugs.</b>
-                            </Alert>
-                        )}
+                        <Alert
+                            variant="warning"
+                            show={showCheckoutAlert}
+                            dismissible
+                            onClose={() => setShowCheckoutAlert(false)}
+                        >
+                            At least one drug is already checked out<Badge>❎</Badge>.{' '}
+                            <b>Dismiss this alert if you want to proceed.</b>
+                        </Alert>
                     </>
                 }
                 yesButton={
                     <Button
-                        disabled={medicineList.some((m) => checkoutList.find((c) => m.Id === c.MedicineId))}
+                        disabled={showCheckoutAlert}
                         variant="danger"
                         onClick={(e) => {
                             e.preventDefault();
@@ -331,7 +341,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                         }}
                     >
                         Yes{' '}
-                        {medicineList.some((m) => checkoutList.find((c) => m.Id === c.MedicineId)) && (
+                        {checkoutList.length > 0 && (
                             <span style={{fontSize: '12px'}}>(At least one drug is already checked out)</span>
                         )}
                     </Button>
