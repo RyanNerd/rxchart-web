@@ -4,18 +4,18 @@ import ClientRoster from 'components/Pages/Modals/ClientRoster';
 import ResidentEdit from 'components/Pages/Modals/ResidentEdit';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import React, {useEffect, useGlobal, useState} from 'reactn';
-import {ResidentRecord} from 'types/RecordTypes';
+import {ClientRecord} from 'types/RecordTypes';
 
 /**
  * Dropdown Buttons for the activeClient
  */
 const ClientHeader = () => {
     const [, setActiveTabKey] = useGlobal('activeTabKey');
-    const [, setResidentList] = useGlobal('residentList');
-    const [activeClient, setActiveClient] = useGlobal('activeResident');
+    const [clientList, setClientList] = useGlobal('clientList');
+    const [activeClient, setActiveClient] = useGlobal('activeClient');
     const [copyText, setCopyText] = useState('');
     const [hmisName, setHmisName] = useState('');
-    const [rm] = useGlobal('residentManager');
+    const [cm] = useGlobal('clientManager');
     const [showClientEdit, setShowClientEdit] = useState(false);
     const [showClientRoster, setShowClientRoster] = useState(false);
 
@@ -53,14 +53,14 @@ const ClientHeader = () => {
 
     /**
      * Update Resident record
-     * @param {ResidentRecord} client Resident record object
+     * @param {ClientRecord} client Resident record object
      */
-    const saveClient = async (client: ResidentRecord) => {
-        const r = await rm.updateResident(client);
-        if (r) {
-            const rl = await rm.loadResidentList();
-            await setResidentList(rl);
-            await setActiveClient(r);
+    const saveClient = async (client: ClientRecord) => {
+        const r = await cm.updateClient(client);
+        if (r && activeClient) {
+            const rl = await cm.loadClientList();
+            await setClientList(rl);
+            await setActiveClient({...activeClient, clientInfo: r});
         }
     };
 
@@ -69,13 +69,14 @@ const ClientHeader = () => {
         return null;
     }
 
+    const clientRecord = activeClient.clientInfo;
     return (
         <>
             <h3 className="d-print-none auto-center mb-0" style={{textAlign: 'center'}}>
                 <ButtonGroup>
                     <ClientButton
                         className="mr-2"
-                        clientRecord={activeClient}
+                        clientRecord={clientRecord}
                         onSelect={(choice) => {
                             switch (choice) {
                                 case 'edit':
@@ -85,10 +86,10 @@ const ClientHeader = () => {
                                     setShowClientRoster(true);
                                     break;
                                 case 'copy':
-                                    setCopyText(activeClient.FirstName.trim() + ' ' + activeClient.LastName);
+                                    setCopyText(clientRecord.FirstName.trim() + ' ' + clientRecord.LastName);
                                     break;
                                 case 'hmis':
-                                    setHmisName(activeClient.FirstName.trim() + ' ' + activeClient.LastName);
+                                    setHmisName(clientRecord.FirstName.trim() + ' ' + clientRecord.LastName);
                                     break;
                                 case 'switch':
                                     setActiveTabKey('resident');
@@ -97,16 +98,16 @@ const ClientHeader = () => {
                         }}
                     />
 
-                    <ClientDobButton clientRecord={activeClient} />
+                    <ClientDobButton clientRecord={clientRecord} />
                 </ButtonGroup>
             </h3>
 
             {showClientRoster && activeClient && (
-                <ClientRoster onUnload={() => setShowClientRoster(false)} clientList={[activeClient]} />
+                <ClientRoster onUnload={() => setShowClientRoster(false)} clientList={clientList} />
             )}
 
             <ResidentEdit
-                residentInfo={activeClient as ResidentRecord}
+                residentInfo={clientRecord}
                 show={showClientEdit}
                 onClose={(client) => {
                     setShowClientEdit(false);

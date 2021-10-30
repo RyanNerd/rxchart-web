@@ -7,7 +7,7 @@ import LoginPage from './LoginPage';
 import ManageDrugPage from './ManageDrugPage';
 import ManageOtcPage from './ManageOtcPage';
 import MedicinePage from './MedicinePage';
-import ResidentPage from './ResidentPage';
+import ClientPage from 'components/Pages/ClientPage';
 
 interface ITitleProps {
     activeKey: string;
@@ -18,7 +18,7 @@ interface ITitleProps {
  * Landing Page - Tab Page Menu UI
  */
 const LandingPage = () => {
-    const [activeResident] = useGlobal('activeResident');
+    const [activeClient] = useGlobal('activeClient');
     const [activeTabKey, setActiveTabKey] = useGlobal('activeTabKey');
     const [signIn] = useGlobal('signIn');
     const apiKey = signIn.apiKey;
@@ -34,20 +34,22 @@ const LandingPage = () => {
      * Memoized pages to reduce number of re-renders
      */
     const medicinePage = useMemo(() => {
-        return <MedicinePage activeTabKey={activeTabKey} activeResident={activeResident} />;
-    }, [activeTabKey, activeResident]);
+        return <MedicinePage activeTabKey={activeTabKey} />;
+    }, [activeTabKey]);
 
     const manageDrugPage = useMemo(() => {
         return <ManageDrugPage activeTabKey={activeTabKey} />;
     }, [activeTabKey]);
 
     const clientPage = useMemo(() => {
-        return <ResidentPage activeTabKey={activeTabKey} residentSelected={() => setActiveTabKey('medicine')} />;
+        return <ClientPage activeTabKey={activeTabKey} clientSelected={() => setActiveTabKey('medicine')} />;
     }, [activeTabKey, setActiveTabKey]);
 
     const manageOtcPage = useMemo(() => {
-        return <ManageOtcPage activeTabKey={activeTabKey} />;
-    }, [activeTabKey]);
+        if (activeClient) {
+            return <ManageOtcPage activeTabKey={activeTabKey} clientRecord={activeClient.clientInfo} />;
+        }
+    }, [activeTabKey, activeClient]);
 
     const loginPage = useMemo(() => {
         return <LoginPage activeTabKey={activeTabKey} setActiveTabKey={setActiveTabKey} />;
@@ -73,15 +75,11 @@ const LandingPage = () => {
             <Tab disabled={!apiKey} eventKey="resident" title={<Title activeKey="resident">Clients</Title>}>
                 <Tab.Content>{clientPage}</Tab.Content>
             </Tab>
-            <Tab
-                disabled={!apiKey || !activeResident}
-                eventKey="medicine"
-                title={<Title activeKey="medicine">Rx</Title>}
-            >
-                {activeResident && activeTabKey === 'medicine' && <Tab.Content>{medicinePage}</Tab.Content>}
+            <Tab disabled={!apiKey || !activeClient} eventKey="medicine" title={<Title activeKey="medicine">Rx</Title>}>
+                {activeClient && activeTabKey === 'medicine' && <Tab.Content>{medicinePage}</Tab.Content>}
             </Tab>
             <Tab
-                disabled={!apiKey || !activeResident}
+                disabled={!apiKey || !activeClient}
                 eventKey="manage"
                 title={<Title activeKey="manage">Manage Rx</Title>}
             >

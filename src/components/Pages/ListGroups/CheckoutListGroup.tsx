@@ -3,13 +3,13 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ListGroup from 'react-bootstrap/ListGroup';
 import React from 'reactn';
-import {DrugLogRecord, MedicineRecord, ResidentRecord} from 'types/RecordTypes';
+import {DrugLogRecord, MedicineRecord, ClientRecord} from 'types/RecordTypes';
 import {clientFullName, getFormattedDate} from 'utility/common';
 
 interface IProps {
     checkoutList: DrugLogRecord[];
     medicineList: MedicineRecord[];
-    activeClient: ResidentRecord;
+    activeClient: ClientRecord;
     onClose?: () => void;
 }
 const CheckoutListGroup = (props: IProps) => {

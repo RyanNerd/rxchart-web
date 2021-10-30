@@ -12,7 +12,7 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Row from 'react-bootstrap/Row';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import React, {useEffect, useState} from 'reactn';
-import {newPillboxRecord, PillboxRecord} from 'types/RecordTypes';
+import {ClientRecord, newPillboxRecord, PillboxRecord} from 'types/RecordTypes';
 import {BsColor, deconstructGridLists, getDrugName, getMedicineRecord, multiSort, SortDirection} from 'utility/common';
 import ConfirmDialogModal from '../Modals/ConfirmDialogModal';
 import PillboxEdit from '../Modals/PillboxEdit';
@@ -20,6 +20,7 @@ import PillboxEdit from '../Modals/PillboxEdit';
 interface IProps {
     activePillbox: PillboxRecord | null;
     disabled?: boolean;
+    clientRecord: ClientRecord;
     logPillbox: () => void;
     onDelete: (id: number) => void;
     onEdit: (pb: PillboxRecord) => void;
@@ -42,6 +43,7 @@ interface IPillboxLineItem {
 const PillboxListGroup = (props: IProps) => {
     const {
         activePillbox,
+        clientRecord,
         disabled = false,
         logPillbox,
         onDelete,
@@ -327,6 +329,7 @@ const PillboxListGroup = (props: IProps) => {
                         setPillboxInfo(null);
                         if (r) onEdit(r);
                     }}
+                    clientRecord={clientRecord}
                     pillboxInfo={pillboxInfo}
                     show={true}
                 />

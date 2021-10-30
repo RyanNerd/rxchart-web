@@ -5,7 +5,7 @@ import Container from 'react-bootstrap/Container';
 import React, {setGlobal, useEffect, useGlobal, useRef, useState} from 'reactn';
 import {State} from 'reactn/default';
 import {Setter} from 'reactn/types/use-global';
-import {MedicineRecord, ResidentRecord} from 'types/RecordTypes';
+import {MedicineRecord, ClientRecord} from 'types/RecordTypes';
 import {asyncWrapper} from 'utility/common';
 import getInitialState from 'utility/getInitialState';
 import {ReactComponent as LockIcon} from '../../icons/lock.svg';
@@ -28,13 +28,13 @@ const LoginPage = (props: IProps): JSX.Element | null => {
 
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [, setOtcList] = useGlobal('otcList');
-    const [, setResidentList] = useGlobal('residentList');
+    const [, setClientList] = useGlobal('clientList');
     const [am] = useGlobal('authManager');
     const [canLogin, setCanLogin] = useState(false);
     const [mm] = useGlobal('medicineManager');
     const [password, setPassword] = useState('');
     const [providers] = useGlobal('providers');
-    const [rm] = useGlobal('residentManager');
+    const [cm] = useGlobal('clientManager');
     const [showAboutPage, setShowAboutPage] = useState(false);
     const [signIn, setSignIn] = useGlobal('signIn');
     const [username, setUsername] = useState('');
@@ -75,13 +75,13 @@ const LoginPage = (props: IProps): JSX.Element | null => {
                     if (e) await setErrorDetails(e);
                     else {
                         // Load ALL Resident records up front and save them in the global store.
-                        const [errLoadClients, clients] = (await asyncWrapper(rm.loadResidentList())) as [
+                        const [errLoadClients, clients] = (await asyncWrapper(cm.loadClientList())) as [
                             unknown,
-                            Promise<ResidentRecord[]>
+                            Promise<ClientRecord[]>
                         ];
                         if (errLoadClients) await setErrorDetails(errLoadClients);
                         else {
-                            await setResidentList(await clients);
+                            await setClientList(await clients);
                             const [errLoadOtc, otcMeds] = (await asyncWrapper(mm.loadOtcList())) as [
                                 unknown,
                                 Promise<MedicineRecord[]>

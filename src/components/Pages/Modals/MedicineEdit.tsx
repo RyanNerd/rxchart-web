@@ -4,11 +4,12 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Row from 'react-bootstrap/Row';
-import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
+import React, {useEffect, useRef, useState} from 'reactn';
 import {MedicineRecord} from 'types/RecordTypes';
-import {clientFullName, isDateFuture, isDayValid, isMonthValid, isYearValid} from 'utility/common';
+import {isDateFuture, isDayValid, isMonthValid, isYearValid} from 'utility/common';
 
 interface IProps {
+    fullName?: string;
     drugInfo: MedicineRecord;
     onClose: (r: MedicineRecord | null) => void;
     show: boolean;
@@ -20,7 +21,6 @@ interface IProps {
  * @returns {JSX.Element | null}
  */
 const MedicineEdit = (props: IProps): JSX.Element | null => {
-    const [activeResident] = useGlobal('activeResident');
     const [canSave, setCanSave] = useState(false);
     const [drugInfo, setDrugInfo] = useState<MedicineRecord>(props.drugInfo);
     const [show, setShow] = useState(props.show);
@@ -35,19 +35,19 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
     // Observer/mutator for drugInfo
     useEffect(() => {
         const info = {...props.drugInfo};
-        if (info?.Directions === null) {
+        if (info.Directions === null) {
             info.Directions = '';
         }
-        if (info?.Notes === null) {
+        if (info.Notes === null) {
             info.Notes = '';
         }
-        if (info?.FillDateMonth === null) {
+        if (info.FillDateMonth === null) {
             info.FillDateMonth = '';
         }
-        if (info?.FillDateDay === null) {
+        if (info.FillDateDay === null) {
             info.FillDateDay = '';
         }
-        if (info?.FillDateYear === null) {
+        if (info.FillDateYear === null) {
             info.FillDateYear = '';
         }
         setDrugInfo(info);
@@ -135,8 +135,8 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
     }
 
     const drugTitleType = drugInfo.Id ? 'Edit ' : ('Add ' as string);
-    const drugName = drugInfo.Id ? drugInfo.Drug : 'new drug';
-    const fullName = activeResident && clientFullName(activeResident);
+    const drugName = drugInfo.Id || drugInfo?.Drug.length > 0 ? drugInfo.Drug : 'new drug';
+    const fullName = props.fullName;
 
     const modalTitle = otc ? (
         <Modal.Title>
@@ -227,6 +227,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                         <Col sm="9">
                             <Form.Control
                                 type="text"
+                                tabIndex={-1}
                                 value={drugInfo.OtherNames}
                                 placeholder="Other names for the drug"
                                 name="OtherNames"

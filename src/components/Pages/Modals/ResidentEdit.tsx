@@ -5,12 +5,12 @@ import Modal from 'react-bootstrap/Modal';
 import Row from 'react-bootstrap/Row';
 import React, {useEffect, useRef, useState} from 'reactn';
 
-import {ResidentRecord} from 'types/RecordTypes';
+import {ClientRecord} from 'types/RecordTypes';
 import {isDateFuture, isDayValid, isMonthValid, isYearValid} from 'utility/common';
 
 interface IProps {
-    onClose: (r: ResidentRecord | null) => void;
-    residentInfo: ResidentRecord;
+    onClose: (r: ClientRecord | null) => void;
+    residentInfo: ClientRecord;
     show: boolean;
 }
 
@@ -21,7 +21,7 @@ interface IProps {
  */
 const ResidentEdit = (props: IProps): JSX.Element | null => {
     const [canSave, setCanSave] = useState(true);
-    const [residentInfo, setResidentInfo] = useState<ResidentRecord>(props.residentInfo);
+    const [residentInfo, setResidentInfo] = useState<ClientRecord>(props.residentInfo);
     const [show, setShow] = useState(props.show);
     const focusRef = useRef<HTMLInputElement>(null);
 

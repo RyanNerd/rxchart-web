@@ -1,18 +1,18 @@
 import {State} from 'reactn/default';
-import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord, ResidentRecord} from 'types/RecordTypes';
+import {ClientRecord, MedicineRecord} from 'types/RecordTypes';
 import AuthManager from '../managers/AuthManager';
 import MedicineManager from '../managers/MedicineManager';
-import ResidentManager from '../managers/ResidentManager';
+import ClientManager from 'managers/ClientManager';
 import AuthenticationProvider, {IAuthenticationProvider} from '../providers/AuthenticationProvider';
 import MedHistoryProvider, {IMedHistoryProvider} from '../providers/MedHistoryProvider';
 import MedicineProvider, {IMedicineProvider} from '../providers/MedicineProvider';
 import PillboxItemProvider, {IPillboxItemProvider} from '../providers/PillboxItemProvider';
 import PillboxProvider, {IPillboxProvider} from '../providers/PillboxProvider';
-import ResidentProvider, {IResidentProvider} from '../providers/ResidentProvider';
+import ClientProvider, {IClientProvider} from 'providers/ClientProvider';
 
 export interface IProviders {
     authenticationProvider: IAuthenticationProvider;
-    residentProvider: IResidentProvider;
+    clientProvider: IClientProvider;
     medicineProvider: IMedicineProvider;
     medHistoryProvider: IMedHistoryProvider;
     pillboxProvider: IPillboxProvider;
@@ -31,12 +31,11 @@ const getInitialState = () => {
         throw new Error('The BASEURL environment variable is not set in the .env file or the .env file is missing');
     }
 
-    const errorDetail = undefined;
     const providers = {
         authenticationProvider: AuthenticationProvider(baseUrl),
         medHistoryProvider: MedHistoryProvider(baseUrl),
         medicineProvider: MedicineProvider(baseUrl),
-        residentProvider: ResidentProvider(baseUrl),
+        clientProvider: ClientProvider(baseUrl),
         pillboxProvider: PillboxProvider(baseUrl),
         pillboxItemProvider: PillboxItemProvider(baseUrl),
 
@@ -47,22 +46,19 @@ const getInitialState = () => {
         setApi: async (apiKey: string): Promise<void> => {
             providers.medHistoryProvider.setApiKey(apiKey);
             providers.medicineProvider.setApiKey(apiKey);
-            providers.residentProvider.setApiKey(apiKey);
+            providers.clientProvider.setApiKey(apiKey);
             providers.pillboxProvider.setApiKey(apiKey);
             providers.pillboxItemProvider.setApiKey(apiKey);
         }
     } as IProviders;
 
     return {
-        activeResident: null,
+        __errorDetails: undefined,
+        activeClient: null,
         activeTabKey: 'login',
         authManager: AuthManager(providers.authenticationProvider),
-        drugLogList: [] as DrugLogRecord[],
-        __errorDetails: errorDetail,
-        signIn: {apiKey: null, organization: null, success: null},
-        pillboxList: [] as PillboxRecord[],
-        pillboxItemList: [] as PillboxItemRecord[],
-        medicineList: [] as MedicineRecord[],
+        clientList: [] as ClientRecord[],
+        clientManager: ClientManager(providers.clientProvider),
         medicineManager: MedicineManager(
             providers.medicineProvider,
             providers.medHistoryProvider,
@@ -71,8 +67,7 @@ const getInitialState = () => {
         ),
         otcList: [] as MedicineRecord[],
         providers,
-        residentList: [] as ResidentRecord[],
-        residentManager: ResidentManager(providers.residentProvider)
+        signIn: {apiKey: null, organization: null, success: null}
     } as State;
 };
 

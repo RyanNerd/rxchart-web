@@ -3,11 +3,12 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Row from 'react-bootstrap/Row';
-import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
-import {PillboxRecord} from 'types/RecordTypes';
+import React, {useEffect, useRef, useState} from 'reactn';
+import {ClientRecord, PillboxRecord} from 'types/RecordTypes';
 import {clientFullName} from 'utility/common';
 
 interface IProps {
+    clientRecord: ClientRecord;
     pillboxInfo: PillboxRecord;
     onClose: (r: PillboxRecord | null) => void;
     show: boolean;
@@ -19,7 +20,7 @@ interface IProps {
  * @returns {JSX.Element | null}
  */
 const PillboxEdit = (props: IProps): JSX.Element | null => {
-    const [activeResident] = useGlobal('activeResident');
+    const clientRecord = props.clientRecord;
     const [canSave, setCanSave] = useState(false);
     const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord>(props.pillboxInfo);
     const [show, setShow] = useState(props.show);
@@ -82,7 +83,7 @@ const PillboxEdit = (props: IProps): JSX.Element | null => {
     }
 
     const titleType = pillboxInfo.Id ? 'Edit Pillbox ' : ('Add Pillbox ' as string);
-    const fullName = activeResident && clientFullName(activeResident);
+    const fullName = clientFullName(clientRecord);
 
     return (
         <Modal backdrop="static" centered onEntered={() => textInput?.current?.focus()} show={show} size="lg">
