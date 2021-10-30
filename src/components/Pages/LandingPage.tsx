@@ -45,12 +45,6 @@ const LandingPage = () => {
         return <ClientPage activeTabKey={activeTabKey} clientSelected={() => setActiveTabKey('medicine')} />;
     }, [activeTabKey, setActiveTabKey]);
 
-    const manageOtcPage = useMemo(() => {
-        if (activeClient) {
-            return <ManageOtcPage activeTabKey={activeTabKey} clientRecord={activeClient.clientInfo} />;
-        }
-    }, [activeTabKey, activeClient]);
-
     const loginPage = useMemo(() => {
         return <LoginPage activeTabKey={activeTabKey} setActiveTabKey={setActiveTabKey} />;
     }, [activeTabKey, setActiveTabKey]);
@@ -86,7 +80,9 @@ const LandingPage = () => {
                 <Tab.Content>{manageDrugPage}</Tab.Content>
             </Tab>
             <Tab disabled={!apiKey} eventKey="manage-otc" title={<Title activeKey="manage-otc">Manage OTC</Title>}>
-                <Tab.Content>{manageOtcPage}</Tab.Content>
+                <Tab.Content>
+                    <ManageOtcPage activeTabKey={activeTabKey} />
+                </Tab.Content>
             </Tab>
             <Tab disabled={!errorDetails} eventKey="error" title={<Title activeKey="error">Diagnostics</Title>}>
                 <DiagnosticPage error={errorDetails} dismissErrorAlert={() => window.location.reload()} />

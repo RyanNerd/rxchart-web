@@ -236,30 +236,27 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                         </Col>
                     </Form.Group>
 
-                    {!drugInfo.OTC && (
-                        <Form.Group as={Row}>
-                            <Col sm="3">
-                                <Form.Label style={{userSelect: 'none'}}>Active</Form.Label>
-                            </Col>
-                            <Col sm="2">
-                                <Form.Check
-                                    style={{transform: 'scale(2)'}}
-                                    onChange={(e) => handleOnChange(e)}
-                                    checked={drugInfo.Active}
-                                    name="Active"
-                                    tabIndex={-1}
-                                />
-                            </Col>
-                            <Col sm="6">
-                                {!drugInfo.Active && (
-                                    <>
-                                        <span style={{fontWeight: 'bold'}}>{drugInfo.Drug}</span> will not appear in the
-                                        dropdown
-                                    </>
-                                )}
-                            </Col>
-                        </Form.Group>
-                    )}
+                    <Form.Group as={Row}>
+                        <Col sm="3">
+                            <Form.Label style={{userSelect: 'none'}}>Active</Form.Label>
+                        </Col>
+                        <Col sm="2">
+                            <Form.Check
+                                style={{transform: 'scale(2)'}}
+                                onChange={(e) => handleOnChange(e)}
+                                checked={drugInfo.Active}
+                                name="Active"
+                                tabIndex={-1}
+                            />
+                        </Col>
+                        <Col sm="6">
+                            {!drugInfo.Active && (
+                                <>
+                                    <span style={{fontWeight: 'bold'}}>{drugInfo.Drug}</span> is unavailable
+                                </>
+                            )}
+                        </Col>
+                    </Form.Group>
 
                     <Form.Group as={Row} controlId="drug-Directions">
                         <Form.Label column sm="2" style={{userSelect: 'none'}}>

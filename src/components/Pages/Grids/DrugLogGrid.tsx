@@ -73,6 +73,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
         // Figure out medicine field values
         const isOtc = drugColumnLookup(drug.MedicineId, 'OTC');
         let drugName = drugColumnLookup(drug.MedicineId, 'Drug') as string | null;
+        const active = drugColumnLookup(drug.MedicineId, 'Active');
         const medicineNotes = drugColumnLookup(drug.MedicineId, 'Notes') as string | null;
         const medicineDirections = drugColumnLookup(drug.MedicineId, 'Directions');
         const drugDetails = (
@@ -93,7 +94,11 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
         const fontWeight = isToday(updatedDate) ? 'bold' : undefined;
 
         return (
-            <tr key={'druglog-grid-row-' + drug.Id} id={'druglog-grid-row-' + drug.Id} style={{color: variantColor}}>
+            <tr
+                key={'druglog-grid-row-' + drug.Id}
+                id={'druglog-grid-row-' + drug.Id}
+                style={{color: variantColor, textDecoration: !active ? 'line-through' : undefined}}
+            >
                 {onEdit && (
                     <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                         <Button

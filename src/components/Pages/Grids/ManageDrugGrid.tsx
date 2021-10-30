@@ -1,5 +1,6 @@
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import Table from 'react-bootstrap/Table';
 import React from 'reactn';
 import {MedicineRecord} from 'types/RecordTypes';
@@ -69,12 +70,11 @@ const ManageDrugGrid = (props: IProps): JSX.Element => {
                     <Button
                         size="sm"
                         id={'manage-drug-grid-delete-btn' + drug.Id}
-                        variant={'outline-warning'}
+                        variant={'outline-light'}
                         onClick={() => onDelete(drug)}
-                        disabled={!drug.Active}
                     >
                         <span role="img" aria-label="delete">
-                            {'🚫'}
+                            <Form.Check style={{transform: 'scale(2)'}} checked={drug.Active} name="Active" />
                         </span>
                     </Button>
                 </td>
@@ -93,7 +93,7 @@ const ManageDrugGrid = (props: IProps): JSX.Element => {
                     <th>Directions</th>
                     <th>Notes</th>
                     <th>Barcode</th>
-                    <th style={{textAlign: 'center', verticalAlign: 'middle'}}>Deactivate</th>
+                    <th style={{textAlign: 'center', verticalAlign: 'middle'}}>Active</th>
                 </tr>
             </thead>
             <tbody>{medicineList.map(TableRow)}</tbody>

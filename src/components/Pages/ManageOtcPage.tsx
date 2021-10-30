@@ -1,18 +1,15 @@
 import TooltipContainer from 'components/Pages/Buttons/Containters/TooltipContainer';
 import ManageOtcGrid from 'components/Pages/Grids/ManageOtcGrid';
-import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
-import {ClientRecord, MedicineRecord, newMedicineRecord} from 'types/RecordTypes';
-import Confirm from './Modals/Confirm';
+import {MedicineRecord, newMedicineRecord} from 'types/RecordTypes';
 import MedicineEdit from './Modals/MedicineEdit';
 
 interface IProps {
     activeTabKey: string;
-    clientRecord: ClientRecord;
 }
 
 /**
@@ -21,16 +18,15 @@ interface IProps {
  * @returns {JSX.Element | null}
  */
 const ManageOtcPage = (props: IProps): JSX.Element | null => {
-    const [, setErrorDetails] = useGlobal('__errorDetails');
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [mm] = useGlobal('medicineManager');
     const [otcList, setOtcList] = useGlobal('otcList');
     const [filteredOtcList, setFilteredOtcList] = useState<MedicineRecord[]>(otcList);
     const [searchIsValid, setSearchIsValid] = useState(false);
     const [searchText, setSearchText] = useState('');
-    const [showDeleteMedicine, setShowDeleteMedicine] = useState(false);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const focusRef = useRef<HTMLInputElement>(null);
+    const activeTabKey = props.activeTabKey;
 
     // Set focus to the Search textbox when this page becomes active
     useEffect(() => {
@@ -61,7 +57,7 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
     }, [otcList, searchText]);
 
     // If this tab isn't active then don't render
-    if (props.activeTabKey !== 'manage-otc') return null;
+    if (activeTabKey !== 'manage-otc') return null;
 
     /**
      * Given a MedicineRecord Update or Insert the record and rehydrate the global otcList
@@ -97,7 +93,7 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
                     autoFocus
                     className="ml-2"
                     id="medicine-page-search-text"
-                    style={{width: '220px'}}
+                    style={{width: '820px'}}
                     isValid={searchIsValid}
                     ref={focusRef}
                     type="search"
@@ -115,8 +111,9 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
             <Row>
                 <ManageOtcGrid
                     onDelete={(medicineRecord) => {
-                        setMedicineInfo({...medicineRecord});
-                        setShowDeleteMedicine(true);
+                        saveOtcMedicine({...medicineRecord, Active: !medicineRecord.Active}).then((m) =>
+                            setSearchText(m.Active ? m.Drug : '')
+                        );
                     }}
                     onEdit={onEdit}
                     otcList={filteredOtcList}
@@ -129,46 +126,10 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
                     show={showMedicineEdit}
                     onClose={(r) => {
                         setShowMedicineEdit(false);
-                        if (r) saveOtcMedicine(r).then((m) => setSearchText(m.Drug));
+                        if (r) saveOtcMedicine(r).then((m) => setSearchText(m.Active ? m.Drug : ''));
                     }}
                     drugInfo={medicineInfo}
                 />
-            )}
-
-            {medicineInfo && showDeleteMedicine && (
-                <Confirm.Modal
-                    size="lg"
-                    show={showDeleteMedicine}
-                    buttonvariant="danger"
-                    onSelect={(a) => {
-                        setShowDeleteMedicine(false);
-                        if (a) {
-                            mm.deleteMedicine(medicineInfo?.Id as number).then((d) => {
-                                if (d) {
-                                    mm.loadOtcList().then((ol) => setOtcList(ol));
-                                } else {
-                                    setErrorDetails('Unable to Delete OTC medicine. Id: ' + medicineInfo.Id);
-                                }
-                            });
-                        }
-                    }}
-                >
-                    <Confirm.Header>
-                        <Confirm.Title>{'Delete ' + medicineInfo.Drug}</Confirm.Title>
-                    </Confirm.Header>
-                    <Confirm.Body>
-                        <Alert variant="danger" style={{textAlign: 'center'}}>
-                            <span>
-                                This will delete the OTC medicine <b>{medicineInfo.Drug}</b> for <i>ALL</i> residents
-                            </span>
-                            <span>
-                                {' '}
-                                and <b>ALL</b> history for this drug!
-                            </span>
-                        </Alert>
-                        <Alert variant="warning">Are you sure?</Alert>
-                    </Confirm.Body>
-                </Confirm.Modal>
             )}
         </>
     );
