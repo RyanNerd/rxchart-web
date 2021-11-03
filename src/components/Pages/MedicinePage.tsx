@@ -705,7 +705,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             });
                     }}
                     show={true}
-                    buttonvariant="danger"
+                    yesButtonProps={{variant: 'danger'}}
                 >
                     <Confirm.Header>
                         <Confirm.Title>Delete {drugName(showDeleteDrugLogRecord.MedicineId)} Log Record</Confirm.Title>

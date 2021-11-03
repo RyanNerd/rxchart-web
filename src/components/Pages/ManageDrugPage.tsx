@@ -316,6 +316,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                     setShowCheckoutAllMeds(false);
                     if (a) logAllDrugsCheckedOut();
                 }}
+                yesButtonProps={{disabled: showCheckoutAlert}}
             >
                 <Confirm.Header>
                     <Confirm.Title>

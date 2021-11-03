@@ -343,7 +343,7 @@ const PillboxListGroup = (props: IProps) => {
                 }}
                 show={showPillboxDeleteConfirm}
                 backdrop="static"
-                buttonvariant="danger"
+                yesButtonProps={{variant: 'danger'}}
             >
                 <Confirm.Header>
                     <Confirm.Title>

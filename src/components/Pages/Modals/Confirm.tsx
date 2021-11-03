@@ -1,6 +1,5 @@
-import Button from 'react-bootstrap/Button';
+import Button, {ButtonProps} from 'react-bootstrap/Button';
 import Modal, {ModalProps} from 'react-bootstrap/Modal';
-import {ButtonVariant} from 'react-bootstrap/types';
 import React, {useEffect, useState} from 'reactn';
 import {ReactNode} from 'reactn/default';
 
@@ -9,7 +8,8 @@ interface IChildren {
 }
 
 interface IProps extends ModalProps {
-    buttonvariant?: ButtonVariant;
+    yesButtonProps?: ButtonProps;
+    noButtonProps?: ButtonProps;
     onSelect: (a: boolean) => void;
 }
 
@@ -24,7 +24,15 @@ const Confirm = {
      * @returns {JSX.Element} Modal
      */
     Modal: (props: IProps): JSX.Element => {
-        const {backdrop = 'static', buttonvariant = 'primary', onSelect, size = 'sm'} = {...props};
+        const defaultYesButtonProps = props.yesButtonProps ? props.yesButtonProps : {variant: 'primary'};
+        const defaultNoButtonProps = props.noButtonProps ? props.noButtonProps : {variant: 'secondary'};
+        const {
+            backdrop = 'static',
+            onSelect,
+            size = 'sm',
+            yesButtonProps = defaultYesButtonProps,
+            noButtonProps = defaultNoButtonProps
+        } = {...props};
         const [show, setShow] = useState(props.show);
 
         // Observer for show
@@ -50,10 +58,10 @@ const Confirm = {
             <Modal {...props} show={show} size={size} backdrop={backdrop} centered>
                 {props.children}
                 <Modal.Footer>
-                    <Button onClick={(e) => onAnswer(e, true)} variant={buttonvariant}>
+                    <Button {...yesButtonProps} onClick={(e) => onAnswer(e, true)}>
                         Yes
                     </Button>
-                    <Button onClick={(e) => onAnswer(e, false)} variant="secondary">
+                    <Button {...noButtonProps} onClick={(e) => onAnswer(e, false)}>
                         No
                     </Button>
                 </Modal.Footer>
