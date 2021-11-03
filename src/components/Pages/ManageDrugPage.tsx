@@ -238,7 +238,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                 <TooltipContainer
                     tooltip={'At least one drug is already checked out'}
                     placement="right"
-                    show={checkoutList.length > 0 && !showCheckoutAllMeds && !showCheckoutPrint}
+                    show={checkoutList.length > 0 && !showCheckoutAllMeds && !showCheckoutPrint && !showMedicineEdit}
                     delay={{show: 120, hide: 200}}
                 >
                     <Button
