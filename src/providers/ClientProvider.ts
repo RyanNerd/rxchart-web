@@ -36,7 +36,7 @@ const ClientProvider = (url: string): IClientProvider => {
 
         /**
          * Search Interface
-         * @param {object} options Multishaped object for the fetch request
+         * @param {object} options Multi shaped object for the fetch request
          * @returns {Promise<ClientRecord[]>}
          */
         search: async (options: Record<string, unknown>): Promise<ClientRecord[]> => {

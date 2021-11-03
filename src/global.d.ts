@@ -1,4 +1,6 @@
 /* eslint-disable max-len */
+// noinspection JSUnusedGlobalSymbols
+
 import {IAuthManager} from 'managers/AuthManager';
 import {IMedicineManager} from 'managers/MedicineManager';
 import {IClientManager} from 'managers/ClientManager';
@@ -54,7 +56,7 @@ declare module 'reactn/default' {
          * @param predicate find calls predicate once for each element of the array, in ascending
          * order, until it finds one where predicate returns true. If such an element is found, find
          * immediately returns that element value. Otherwise, find returns undefined.
-         * @param thisArg If provided, it will be used as the this value for each invocation of
+         * @param thisArg If provided, it will be used as the `this` value for each invocation of
          * predicate. If it is not provided, undefined is used instead.
          */
         find<S extends T>(
@@ -69,7 +71,7 @@ declare module 'reactn/default' {
          * @param predicate find calls predicate once for each element of the array, in ascending
          * order, until it finds one where predicate returns true. If such an element is found,
          * findIndex immediately returns that element index. Otherwise, findIndex returns -1.
-         * @param thisArg If provided, it will be used as the this value for each invocation of
+         * @param thisArg If provided, it will be used as the `this` value for each invocation of
          * predicate. If it is not provided, undefined is used instead.
          */
         findIndex(predicate: (value: T, index: number, obj: T[]) => unknown, thisArg?: any): number;
@@ -85,13 +87,13 @@ declare module 'reactn/default' {
         fill(value: T, start?: number, end?: number): this;
 
         /**
-         * Returns the this object after copying a section of the array identified by start and end
+         * Returns the `this` object after copying a section of the array identified by start and end
          * to the same array starting at position target
          * @param target If target is negative, it is treated as length+target where length is the
          * length of the array.
          * @param start If start is negative, it is treated as length+start. If end is negative, it
          * is treated as length+end.
-         * @param end If not specified, length of the this object is used as its default value.
+         * @param end If not specified, length of the `this` object is used as its default value.
          */
         copyWithin(target: number, start: number, end?: number): this;
     }
@@ -155,7 +157,7 @@ declare module 'reactn/default' {
     interface DeprecatedLifecycle<P, S> {
         /**
          * Called immediately before mounting occurs, and before `Component#render`.
-         * Avoid introducing any side-effects or subscriptions in this method.
+         * Avoid introducing any side effects or subscriptions in this method.
          *
          * Note: the presence of getSnapshotBeforeUpdate or getDerivedStateFromProps
          * prevents this from being invoked.
@@ -167,7 +169,7 @@ declare module 'reactn/default' {
         componentWillMount?(): void;
         /**
          * Called immediately before mounting occurs, and before `Component#render`.
-         * Avoid introducing any side-effects or subscriptions in this method.
+         * Avoid introducing any side effects or subscriptions in this method.
          *
          * This method will not stop working in React 17.
          *
@@ -247,7 +249,7 @@ declare module 'reactn/default' {
          */
         componentDidMount?(): void;
         /**
-         * Called to determine whether the change in props and state should trigger a re-render.
+         * Called to determine whether the change in props and state should trigger a rerender.
          *
          * `Component` always returns true.
          * `PureComponent` implements a shallow comparison on props and state and returns true if any

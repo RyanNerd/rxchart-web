@@ -1,3 +1,5 @@
+// noinspection JSUnusedGlobalSymbols
+
 import {IGridLists} from 'components/Pages/Grids/DrugLogGrid';
 import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord, ClientRecord} from 'types/RecordTypes';
 
@@ -395,7 +397,7 @@ export const multiSort = (array: IArrayGeneric, sortObject: SortObject): [] => {
             return 0;
         }
 
-        // If b > a, multiply by -1 to get the reverse direction.
+        // If `b > a`, multiply by -1 to get the reverse direction.
         return a > b ? direction : -1 * direction;
     };
 

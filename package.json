@@ -52,7 +52,7 @@
     "prettier": "^2.4.1"
   },
   "prettier": {
-    "$schema": "http://json.schemastore.org/prettierrc",
+    "$schema": "https://json.schemastore.org/prettierrc",
     "printWidth": 120,
     "trailingComma": "none",
     "bracketSameLine": false,

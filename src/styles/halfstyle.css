@@ -1,6 +1,6 @@
 /*
     @link https://stackoverflow.com/a/23569891/4323201
-    Useage:
+    Usage:
     <span class="halfStyle" data-content="X">X</span>
 */
 .halfStyle {
@@ -22,7 +22,7 @@
     overflow: hidden;
     pointer-events: none; /* so the base char is selectable by mouse */
     color: #f00; /* for demo purposes */
-    text-shadow: 2px -2px 0px #af0; /* for demo purposes */
+    text-shadow: 2px -2px 0 #af0; /* for demo purposes */
 }
 
 .halfStyle:after { /* creates the right part */
@@ -37,5 +37,5 @@
     overflow: hidden;
     pointer-events: none; /* so the base char is selectable by mouse */
     color: #000; /* for demo purposes */
-    text-shadow: 2px 2px 0px #0af; /* for demo purposes */
+    text-shadow: 2px 2px 0 #0af; /* for demo purposes */
 }

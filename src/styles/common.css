@@ -20,11 +20,14 @@
 /*
     @see https://www.30secondsofcode.org/css/s/hover-underline-animation/
 */
+/*noinspection CssUnusedSymbol*/
 .hover-underline-animation {
     display: inline-block;
     position: relative;
     color: #0087ca;
 }
+
+/*noinspection CssUnusedSymbol*/
 .hover-underline-animation::after {
     content: '';
     position: absolute;
@@ -37,11 +40,14 @@
     transform-origin: bottom right;
     transition: transform 0.25s ease-out;
 }
+
+/*noinspection CssUnusedSymbol*/
 .hover-underline-animation:hover::after {
     transform: scaleX(1);
     transform-origin: bottom left;
 }
 
+/*noinspection CssUnusedSymbol*/
 a.hover-underline-animation:hover, a.hover-underline-animation:visited, a.hover-underline-animation:link, a.hover-underline-animation:active
 {
     text-decoration: none;
@@ -51,6 +57,7 @@ li.no-marker::marker {
     content: none;
 }
 
+/*noinspection CssUnusedSymbol*/
 li.rx-icon::marker {
     content: "💊 ";
     color: chartreuse;
