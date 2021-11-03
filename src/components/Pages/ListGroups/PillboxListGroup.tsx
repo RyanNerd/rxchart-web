@@ -2,6 +2,7 @@ import {IGridLists} from 'components/Pages/Grids/DrugLogGrid';
 import PillboxLogGrid from 'components/Pages/Grids/PillboxLogGrid';
 import DisabledSpinner from 'components/Pages/ListGroups/DisabledSpinner';
 import {TPillboxMedLog} from 'components/Pages/MedicinePage';
+import Confirm from 'components/Pages/Modals/Confirm';
 import Alert from 'react-bootstrap/Alert';
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
@@ -14,7 +15,6 @@ import ToggleButton from 'react-bootstrap/ToggleButton';
 import React, {useEffect, useState} from 'reactn';
 import {ClientRecord, newPillboxRecord, PillboxRecord} from 'types/RecordTypes';
 import {BsColor, deconstructGridLists, getDrugName, getMedicineRecord, multiSort, SortDirection} from 'utility/common';
-import ConfirmDialogModal from '../Modals/ConfirmDialogModal';
 import PillboxEdit from '../Modals/PillboxEdit';
 
 interface IProps {
@@ -335,35 +335,25 @@ const PillboxListGroup = (props: IProps) => {
                 />
             )}
 
-            <ConfirmDialogModal
+            <Confirm.Modal
                 centered
+                onSelect={(a) => {
+                    setShowPillboxDeleteConfirm(false);
+                    if (a) onDelete(activePillbox?.Id as number);
+                }}
                 show={showPillboxDeleteConfirm}
-                title={<h3>Delete Pillbox {activePillbox?.Name}</h3>}
-                body={<Alert variant="danger">{'Delete Pillbox: ' + activePillbox?.Name}</Alert>}
-                yesButton={
-                    <Button
-                        variant="danger"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            setShowPillboxDeleteConfirm(false);
-                            onDelete(activePillbox?.Id as number);
-                        }}
-                    >
-                        Delete
-                    </Button>
-                }
-                noButton={
-                    <Button
-                        variant="secondary"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            setShowPillboxDeleteConfirm(false);
-                        }}
-                    >
-                        Cancel
-                    </Button>
-                }
-            />
+                backdrop="static"
+                buttonvariant="danger"
+            >
+                <Confirm.Header>
+                    <Confirm.Title>
+                        <h3>Delete Pillbox {activePillbox?.Name}</h3>
+                    </Confirm.Title>
+                </Confirm.Header>
+                <Confirm.Body>
+                    <Alert variant="danger">{'Delete Pillbox: ' + activePillbox?.Name}</Alert>
+                </Confirm.Body>
+            </Confirm.Modal>
         </>
     );
 };

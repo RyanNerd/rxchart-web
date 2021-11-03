@@ -24,11 +24,11 @@ const OtcListGroupGrid = (props: IProps): JSX.Element => {
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                     <ToggleButton
                         id={'list-grp-otc-grid-select-btn-' + drug.Id}
-                        type="radio"
+                        type="checkbox"
                         name="resident-list"
                         variant="outline-info"
                         checked={isSelected || false}
-                        onClick={() => onSelect(drug)}
+                        onChange={() => onSelect(drug)}
                         value={drug.Id as number}
                     />
                 </td>

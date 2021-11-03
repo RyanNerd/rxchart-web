@@ -45,11 +45,11 @@ const ResidentGrid = (props: IProps): JSX.Element => {
                     <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                         <ToggleButton
                             id={'clientRecord-grid-select-btn-' + clientRecord.Id}
-                            type="radio"
+                            type="checkbox"
                             name="resident-list"
                             variant="outline-info"
                             checked={isSelected || false}
-                            onClick={() => onSelected(clientRecord)}
+                            onChange={() => onSelected(clientRecord)}
                             value={clientRecord.Id as number}
                         />
                     </td>

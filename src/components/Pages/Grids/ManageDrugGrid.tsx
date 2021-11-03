@@ -67,14 +67,14 @@ const ManageDrugGrid = (props: IProps): JSX.Element => {
                 <td style={{verticalAlign: 'middle'}}>{drug.Barcode}</td>
 
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
-                    <Button
-                        size="sm"
-                        id={'manage-drug-grid-delete-btn' + drug.Id}
-                        variant={'outline-light'}
-                        onClick={() => onDelete(drug)}
-                    >
+                    <Button size="sm" id={'manage-drug-grid-delete-btn' + drug.Id} variant={'outline-light'}>
                         <span role="img" aria-label="delete">
-                            <Form.Check style={{transform: 'scale(2)'}} checked={drug.Active} name="Active" />
+                            <Form.Check
+                                style={{transform: 'scale(2)'}}
+                                checked={drug.Active}
+                                onChange={() => onDelete(drug)}
+                                name="Active"
+                            />
                         </span>
                     </Button>
                 </td>
