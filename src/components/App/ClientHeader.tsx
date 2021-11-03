@@ -11,7 +11,7 @@ import {ClientRecord} from 'types/RecordTypes';
  */
 const ClientHeader = () => {
     const [, setActiveTabKey] = useGlobal('activeTabKey');
-    const [clientList, setClientList] = useGlobal('clientList');
+    const [, setClientList] = useGlobal('clientList');
     const [activeClient, setActiveClient] = useGlobal('activeClient');
     const [copyText, setCopyText] = useState('');
     const [hmisName, setHmisName] = useState('');
@@ -103,7 +103,7 @@ const ClientHeader = () => {
             </h3>
 
             {showClientRoster && activeClient && (
-                <ClientRoster onUnload={() => setShowClientRoster(false)} clientList={clientList} />
+                <ClientRoster onUnload={() => setShowClientRoster(false)} clientList={[activeClient.clientInfo]} />
             )}
 
             <ResidentEdit
