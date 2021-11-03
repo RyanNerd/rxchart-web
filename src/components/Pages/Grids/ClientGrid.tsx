@@ -19,7 +19,7 @@ interface IProps {
  * @param {IProps} props The props for this component
  * @returns {JSX.Element}
  */
-const ResidentGrid = (props: IProps): JSX.Element => {
+const ClientGrid = (props: IProps): JSX.Element => {
     const {activeClient, onDelete, onEdit, onSelected, residentList} = props;
 
     /**
@@ -124,4 +124,4 @@ const ResidentGrid = (props: IProps): JSX.Element => {
     );
 };
 
-export default ResidentGrid;
+export default ClientGrid;

@@ -6,7 +6,7 @@ import Row from 'react-bootstrap/Row';
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import {newResidentRecord, ClientRecord} from 'types/RecordTypes';
 import {clientFullName} from 'utility/common';
-import ResidentGrid from './Grids/ResidentGrid';
+import ClientGrid from 'components/Pages/Grids/ClientGrid';
 import ClientRoster from './Modals/ClientRoster';
 import Confirm from './Modals/Confirm';
 import ResidentEdit from './Modals/ResidentEdit';
@@ -94,6 +94,9 @@ const ClientPage = (props: IProps): JSX.Element | null => {
             }
         };
 
+        // Clear the search textbox
+        setSearchText('');
+
         if (clientRecord) {
             refreshClient(clientRecord).then(() => onSelected());
         } else {
@@ -173,7 +176,7 @@ const ClientPage = (props: IProps): JSX.Element | null => {
             </Row>
 
             <Row className="mt-3">
-                <ResidentGrid
+                <ClientGrid
                     activeClient={activeClient}
                     residentList={filteredClients}
                     onDelete={(resident: ClientRecord) => setShowDeleteResident(resident)}
