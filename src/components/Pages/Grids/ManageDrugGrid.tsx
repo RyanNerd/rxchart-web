@@ -30,12 +30,12 @@ const ManageDrugGrid = (props: IProps): JSX.Element => {
 
         return (
             <tr
-                id={'manage-drug-grid-row-' + drug.Id}
+                id={`manage-drug-grid-row-${drug.Id}`}
                 key={drug.Id}
                 style={{textDecoration: !drug.Active ? 'line-through' : undefined}}
             >
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
-                    <Button size="sm" id={'manage-drug-grid-edit-btn-' + drug.Id} onClick={() => onEdit(drug)}>
+                    <Button size="sm" id={`manage-drug-grid-edit-btn-${drug.Id}`} onClick={() => onEdit(drug)}>
                         Edit
                     </Button>
                 </td>
@@ -45,7 +45,7 @@ const ManageDrugGrid = (props: IProps): JSX.Element => {
                         disabled={!drug.Active}
                         variant="info"
                         size="sm"
-                        id={'manage-drug-grid-checkout-btn-' + drug.Id}
+                        id={`manage-drug-grid-checkout-btn-${drug.Id}`}
                         onClick={() => onLogDrug(drug)}
                     >
                         + Log Drug {!drug.Active && <Badge>🚫</Badge>}
@@ -67,7 +67,7 @@ const ManageDrugGrid = (props: IProps): JSX.Element => {
                 <td style={{verticalAlign: 'middle'}}>{drug.Barcode}</td>
 
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
-                    <Button size="sm" id={'manage-drug-grid-delete-btn' + drug.Id} variant={'outline-light'}>
+                    <Button size="sm" id={`manage-drug-grid-delete-btn-${drug.Id}`} variant={'outline-light'}>
                         <span role="img" aria-label="delete">
                             <Form.Check
                                 style={{transform: 'scale(2)'}}

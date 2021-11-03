@@ -1,22 +1,16 @@
-import Button from "react-bootstrap/Button";
-import React from "reactn";
+import Button from 'react-bootstrap/Button';
+import React from 'reactn';
 
 interface IProps {
-    lastTaken: number | null | undefined
-    lastTakenVariant: string
-    onLogAmount: (n: number) => void
-    disabled?: boolean
-    buttonTitle?: string
+    lastTaken: number | null | undefined;
+    lastTakenVariant: string;
+    onLogAmount: (n: number) => void;
+    disabled?: boolean;
+    buttonTitle?: string;
 }
 
 const LogButtons = (props: IProps) => {
-    const {
-        lastTaken,
-        lastTakenVariant,
-        onLogAmount,
-        disabled = false,
-        buttonTitle = 'Log'
-    } = props;
+    const {lastTaken, lastTakenVariant, onLogAmount, disabled = false, buttonTitle = 'Log'} = props;
 
     const disable = lastTaken === 0 || disabled;
 
@@ -25,7 +19,7 @@ const LogButtons = (props: IProps) => {
             <Button
                 size="sm"
                 disabled={disable}
-                variant={"outline-" + lastTakenVariant}
+                variant={`outline-${lastTakenVariant}`}
                 className="mr-2"
                 onClick={(e) => {
                     e.preventDefault();
@@ -39,7 +33,7 @@ const LogButtons = (props: IProps) => {
                 size="sm"
                 disabled={disable}
                 className="mr-2"
-                variant={"outline-" + lastTakenVariant}
+                variant={`outline-${lastTakenVariant}`}
                 onClick={(e) => {
                     e.preventDefault();
                     onLogAmount(2);
@@ -52,7 +46,7 @@ const LogButtons = (props: IProps) => {
                 size="sm"
                 disabled={disable}
                 className="mr-2"
-                variant={"outline-" + lastTakenVariant}
+                variant={`outline-${lastTakenVariant}`}
                 onClick={(e) => {
                     e.preventDefault();
                     onLogAmount(3);
@@ -64,7 +58,7 @@ const LogButtons = (props: IProps) => {
             <Button
                 size="sm"
                 disabled={disable}
-                variant={"outline-" + lastTakenVariant}
+                variant={`outline-${lastTakenVariant}`}
                 onClick={(e) => {
                     e.preventDefault();
                     onLogAmount(4);
@@ -73,7 +67,7 @@ const LogButtons = (props: IProps) => {
                 {buttonTitle} 4
             </Button>
         </>
-    )
-}
+    );
+};
 
 export default LogButtons;

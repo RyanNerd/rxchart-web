@@ -82,8 +82,8 @@ const DrugLogHistoryGrid = (props: IProps): JSX.Element => {
 
         return (
             <tr
-                key={'druglog-history-grid-row-' + drug.Id}
-                id={'druglog-history-grid-row-' + drug.Id}
+                key={`druglog-history-grid-row-${drug.Id}`}
+                id={`druglog-history-grid-row-${drug.Id}`}
                 style={{color: variantColor, textDecoration: strikeThrough}}
             >
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
@@ -157,7 +157,7 @@ const DrugLogHistoryGrid = (props: IProps): JSX.Element => {
                     <Button
                         className="d-print-none"
                         size="sm"
-                        id={'drug-grid-delete-btn-' + drug.Id}
+                        id={`drug-grid-delete-btn-${drug.Id}`}
                         variant="outline-danger"
                         onClick={() => onDelete(drug)}
                     >

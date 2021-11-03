@@ -607,7 +607,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                                     className="hover-underline-animation"
                                     variant="link"
                                     target="_blank"
-                                    href={'https://goodrx.com/' + activeMed?.Drug}
+                                    href={`https://goodrx.com/${activeMed?.Drug}`}
                                 >
                                     {activeMed?.Drug}
                                 </Button>

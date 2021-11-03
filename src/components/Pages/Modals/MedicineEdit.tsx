@@ -244,7 +244,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                         </Form.Label>
 
                         <Col sm="1">
-                            <Button size="sm" id={'medicine-active-checkbox-' + drugInfo.Id} variant="outline-light">
+                            <Button size="sm" id={`medicine-active-checkbox-${drugInfo.Id}`} variant="outline-light">
                                 <span role="img" aria-label="active">
                                     <Form.Check
                                         tabIndex={-1}

@@ -7,14 +7,12 @@ interface IProps {
 }
 
 /**
- * Outer wrapper that initializes the observers and renders the main "page" in an effort to reduce re-rendering
+ * Wrapper that initializes the ErrorDetail observer and renders the main "page" in an effort to reduce rerendering
  * @param {IProps} props The props for this component
  * @link https://overreacted.io/before-you-memo/
  */
 const Main = (props: IProps) => {
-    /**
-     * Initialize the ErrorDetail observer
-     */
+    // Initialize the ErrorDetail observer
     ErrorDetailsObserver(); // Watching: __errorDetails
 
     const {children} = props;

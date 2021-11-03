@@ -1,4 +1,4 @@
-import TooltipContainer from 'components/Pages/Buttons/Containters/TooltipContainer';
+import TooltipContainer from 'components/Pages/Containters/TooltipContainer';
 import ManageOtcGrid from 'components/Pages/Grids/ManageOtcGrid';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';

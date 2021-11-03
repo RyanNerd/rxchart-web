@@ -1,4 +1,4 @@
-import TooltipContainer from 'components/Pages/Buttons/Containters/TooltipContainer';
+import TooltipContainer from 'components/Pages/Containters/TooltipContainer';
 import ManageDrugGrid from 'components/Pages/Grids/ManageDrugGrid';
 import CheckoutListGroup from 'components/Pages/ListGroups/CheckoutListGroup';
 import Confirm from 'components/Pages/Modals/Confirm';

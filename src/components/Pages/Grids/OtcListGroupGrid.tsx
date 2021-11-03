@@ -23,7 +23,7 @@ const OtcListGroupGrid = (props: IProps): JSX.Element => {
             <tr key={drug.Id} id={`list-grp-grid-row-${drug.Id}`} style={{fontWeight: isSelected ? 'bold' : undefined}}>
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                     <ToggleButton
-                        id={'list-grp-otc-grid-select-btn-' + drug.Id}
+                        id={`list-grp-otc-grid-select-btn-${drug.Id}`}
                         type="checkbox"
                         name="resident-list"
                         variant="outline-info"

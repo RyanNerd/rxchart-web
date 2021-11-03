@@ -95,8 +95,8 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
 
         return (
             <tr
-                key={'druglog-grid-row-' + drug.Id}
-                id={'druglog-grid-row-' + drug.Id}
+                key={`druglog-grid-row-${drug.Id}`}
+                id={`druglog-grid-row-${drug.Id}`}
                 style={{color: variantColor, textDecoration: !active ? 'line-through' : undefined}}
             >
                 {onEdit && (
@@ -188,7 +188,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                     <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                         <Button
                             size="sm"
-                            id={'drug-grid-delete-btn-' + drug.Id}
+                            id={`drug-grid-delete-btn-${drug.Id}`}
                             variant="outline-danger"
                             onClick={() => onDelete(drug)}
                         >

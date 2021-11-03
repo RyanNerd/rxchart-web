@@ -73,7 +73,7 @@ const CheckoutGrid = (props: IProps): JSX.Element => {
         return (
             <tr
                 key={drug.Id}
-                id={'checkout-grid-row-' + drug.Id}
+                id={`checkout-grid-row-${drug.Id}`}
                 style={{color: variantColor, textDecoration: active ? undefined : 'line-through'}}
             >
                 <td style={{verticalAlign: 'middle', fontWeight}}>

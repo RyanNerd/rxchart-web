@@ -41,7 +41,7 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
         const quantity = pill.Quantity || 0;
 
         return (
-            <tr key={'pill-grid-row-' + domId} id={'pill-grid-row-' + domId}>
+            <tr key={`pill-grid-row-${domId}`} id={`pill-grid-row-${domId}`}>
                 <td style={{verticalAlign: 'middle', fontStyle, fontWeight, color}}>{pill.Drug}</td>
 
                 <td style={{verticalAlign: 'middle', fontStyle, fontWeight, color}}>{pill.Strength}</td>
@@ -49,7 +49,7 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                     <Button
                         disabled={quantity === 0}
-                        id={'pill-grid-inc-btn' + domId}
+                        id={`pill-grid-inc-btn-${domId}`}
                         onClick={(e) => {
                             e.preventDefault();
                             onEdit({
@@ -89,7 +89,7 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
                         <Dropdown.Toggle
                             split
                             variant={isInPillbox ? 'success' : 'info'}
-                            id={'pill-grid-dropdown-' + domId}
+                            id={`pill-grid-dropdown-${domId}`}
                         />
                         <Dropdown.Menu>
                             <Dropdown.Item eventKey="0" disabled={pill.Quantity === 0}>
@@ -115,7 +115,7 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
 
                     <Button
                         className="ml-2"
-                        id={'pill-grid-inc-btn' + domId}
+                        id={`pill-grid-inc-btn-${domId}`}
                         onClick={(e) => {
                             e.preventDefault();
                             onEdit({

@@ -40,11 +40,11 @@ const ClientGrid = (props: IProps): JSX.Element => {
         const fontWeight = isSelected ? 'bold' : undefined;
 
         return (
-            <tr key={'clientRecord-grid-row-' + clientRecord.Id} id={'clientRecord-grid-row-' + clientRecord.Id}>
+            <tr key={`clientRecord-grid-row-${clientRecord.Id}`} id={`clientRecord-grid-row-${clientRecord.Id}`}>
                 {onSelected && (
                     <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                         <ToggleButton
-                            id={'clientRecord-grid-select-btn-' + clientRecord.Id}
+                            id={`clientRecord-grid-select-btn-${clientRecord.Id}`}
                             type="checkbox"
                             name="resident-list"
                             variant="outline-info"
@@ -66,7 +66,7 @@ const ClientGrid = (props: IProps): JSX.Element => {
                     <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                         <Button
                             size="sm"
-                            id={'clientRecord-grid-edit-btn-' + clientRecord.Id}
+                            id={`clientRecord-grid-edit-btn-${clientRecord.Id}`}
                             onClick={() => onEdit(clientRecord)}
                         >
                             Edit
@@ -78,7 +78,7 @@ const ClientGrid = (props: IProps): JSX.Element => {
                     <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                         <Button
                             size="sm"
-                            id={'clientRecord-grid-delete-btn-' + clientRecord.Id}
+                            id={`clientRecord-grid-delete-btn-${clientRecord.Id}`}
                             variant="outline-danger"
                             onClick={() => onDelete(clientRecord)}
                         >

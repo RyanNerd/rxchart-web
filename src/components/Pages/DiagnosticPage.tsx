@@ -213,7 +213,7 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
                                 {error?.message?.map((value: string) => {
                                     const uniqueId = randomString();
                                     return (
-                                        <React.Fragment key={'msg-' + uniqueId}>
+                                        <React.Fragment key={`msg-${uniqueId}`}>
                                             <li>{value}</li>
                                         </React.Fragment>
                                     );
@@ -225,7 +225,7 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
                                 {invalidMessages.map((message: {key: string; value: unknown}) => {
                                     const uniqueId = randomString();
                                     return (
-                                        <React.Fragment key={'dp-invalid-' + uniqueId}>
+                                        <React.Fragment key={`dp-invalid-${uniqueId}`}>
                                             <li>Field: {message.key}</li>
                                             <li>Details: {message.value}</li>
                                         </React.Fragment>

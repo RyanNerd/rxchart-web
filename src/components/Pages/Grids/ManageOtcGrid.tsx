@@ -22,13 +22,13 @@ const ManageOtcGrid = (props: IProps): JSX.Element => {
         return (
             <tr
                 key={medicineRecord.Id}
-                id={'otc-detail-grid-row-' + medicineRecord.Id}
+                id={`otc-detail-grid-row-${medicineRecord.Id}`}
                 style={{textDecoration: !medicineRecord.Active ? 'line-through' : undefined}}
             >
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                     <Button
                         size="sm"
-                        id={'otc-edit-btn-row' + medicineRecord.Id}
+                        id={`otc-edit-btn-row-${medicineRecord.Id}`}
                         onClick={() => onEdit(medicineRecord)}
                     >
                         Edit
@@ -46,7 +46,7 @@ const ManageOtcGrid = (props: IProps): JSX.Element => {
                 <td style={{verticalAlign: 'middle'}}>{medicineRecord.Barcode}</td>
 
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
-                    <Button size="sm" id={'otc-grid-delete-btn-' + medicineRecord.Id} variant="outline-light">
+                    <Button size="sm" id={`otc-grid-delete-btn-${medicineRecord.Id}`} variant="outline-light">
                         <span role="img" aria-label="delete">
                             <Form.Check
                                 style={{transform: 'scale(2)'}}
