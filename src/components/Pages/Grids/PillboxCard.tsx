@@ -21,7 +21,11 @@ const PillboxCard = (props: IProps) => {
     const pillboxName = activePillbox.Name;
     const pillboxId = activePillbox?.Id;
     const pillboxGridItems = pillboxId
-        ? getPillboxItems(medicineList, pillboxItemList, pillboxId)
+        ? getPillboxItems(
+              medicineList.filter((m) => m.Active),
+              pillboxItemList,
+              pillboxId
+          )
         : ([] as PillRowType[]);
     const pillboxItemCount = pillboxGridItems.filter((pgi) => pgi.Quantity !== null && pgi.Quantity > 0).length;
 
