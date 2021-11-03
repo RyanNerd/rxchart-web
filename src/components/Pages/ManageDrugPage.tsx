@@ -48,14 +48,10 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
     const [clientInfo, setClientInfo] = useState<ClientRecord | null>(null);
     const activeTabKey = props.activeTabKey;
 
-    // When the activeTabKey is set to manage, and we have an activeClient then set the checkoutList, and
-    // update the showCheckoutAlert state
+    // When the activeClient is "active" then deconstruct the activeClient into the lists and clientInfo constants
     useEffect(() => {
         if (activeClient) {
-            const drugLogList = activeClient.drugLogList;
-            const medicineList = activeClient.medicineList;
-            const pillboxItemList = activeClient.pillboxItemList;
-            const clientInfo = activeClient.clientInfo;
+            const {drugLogList, medicineList, pillboxItemList, clientInfo} = activeClient;
             const checkoutList = getCheckoutList(drugLogList);
             setMedicineList(medicineList);
             setPillboxItemList(pillboxItemList);
@@ -316,7 +312,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                     setShowCheckoutAllMeds(false);
                     if (a) logAllDrugsCheckedOut();
                 }}
-                yesButtonProps={{disabled: showCheckoutAlert}}
+                yesButtonProps={{disabled: showCheckoutAlert, variant: 'warning'}}
             >
                 <Confirm.Header>
                     <Confirm.Title>
