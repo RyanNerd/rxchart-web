@@ -62,7 +62,7 @@ const ClientPage = (props: IProps): JSX.Element | null => {
 
     useEffect(() => {
         focusRef?.current?.focus();
-    });
+    }, [focusRef]);
 
     // Don't render if this tab isn't active.
     if (props.activeTabKey !== 'resident') return null;
@@ -94,12 +94,12 @@ const ClientPage = (props: IProps): JSX.Element | null => {
             }
         };
 
-        // Clear the search textbox
-        setSearchText('');
-
         if (clientRecord) {
-            refreshClient(clientRecord).then(() => onSelected());
+            refreshClient(clientRecord)
+                .then(() => onSelected())
+                .then(() => setSearchText(''));
         } else {
+            setSearchText('');
             onSelected();
         }
     };
