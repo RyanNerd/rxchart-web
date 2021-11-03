@@ -1,5 +1,6 @@
 import {IGridLists} from 'components/Pages/Grids/DrugLogGrid';
 import PillPopover from 'components/Pages/Grids/PillPopover';
+import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import React from 'reactn';
@@ -93,6 +94,7 @@ const DrugLogHistoryGrid = (props: IProps): JSX.Element => {
 
                 <td style={{verticalAlign: 'middle', fontWeight}}>
                     <span style={{color: variantColor, fontStyle: strikeThrough ? 'italic' : undefined}}>
+                        {drug.Out && drug.Out > 0 && <Badge className="d-print-none">❎ </Badge>}
                         {drugName}
                     </span>{' '}
                     <span>{drugStrength}</span> <span>{isOtc ? ' (OTC)' : ''}</span>

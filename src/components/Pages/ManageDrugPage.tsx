@@ -313,6 +313,12 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                     if (a) logAllDrugsCheckedOut();
                 }}
                 yesButtonProps={{disabled: showCheckoutAlert, variant: 'warning'}}
+                yesButtonContent={
+                    <span>
+                        Checkout <b>All</b> and Print
+                    </span>
+                }
+                noButtonContent={'Cancel'}
             >
                 <Confirm.Header>
                     <Confirm.Title>

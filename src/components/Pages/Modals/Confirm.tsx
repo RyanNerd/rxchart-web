@@ -10,6 +10,8 @@ interface IChildren {
 interface IProps extends ModalProps {
     yesButtonProps?: ButtonProps;
     noButtonProps?: ButtonProps;
+    yesButtonContent?: ReactNode;
+    noButtonContent?: ReactNode;
     onSelect: (a: boolean) => void;
 }
 
@@ -31,7 +33,9 @@ const Confirm = {
             onSelect,
             size = 'sm',
             yesButtonProps = defaultYesButtonProps,
-            noButtonProps = defaultNoButtonProps
+            noButtonProps = defaultNoButtonProps,
+            yesButtonContent = 'Yes',
+            noButtonContent = 'No'
         } = {...props};
         const [show, setShow] = useState(props.show);
 
@@ -59,10 +63,10 @@ const Confirm = {
                 {props.children}
                 <Modal.Footer>
                     <Button {...yesButtonProps} onClick={(e) => onAnswer(e, true)}>
-                        Yes
+                        {yesButtonContent}
                     </Button>
                     <Button {...noButtonProps} onClick={(e) => onAnswer(e, false)}>
-                        No
+                        {noButtonContent}
                     </Button>
                 </Modal.Footer>
             </Modal>
