@@ -193,6 +193,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
 
                         <Col sm="4">
                             <Form.Control
+                                tabIndex={1}
                                 className={drugInfo.Drug !== '' ? '' : 'is-invalid'}
                                 ref={textInput}
                                 type="text"
@@ -210,6 +211,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
 
                         <Col sm="2">
                             <Form.Control
+                                tabIndex={2}
                                 type="text"
                                 value={drugInfo.Strength ? drugInfo.Strength : ''}
                                 placeholder="e.g. 100 MG TABS"
@@ -237,22 +239,28 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                     </Form.Group>
 
                     <Form.Group as={Row}>
-                        <Col sm="3">
-                            <Form.Label style={{userSelect: 'none'}}>Active</Form.Label>
+                        <Form.Label column sm="2" style={{userSelect: 'none'}}>
+                            Active
+                        </Form.Label>
+
+                        <Col sm="1">
+                            <Button size="sm" id={'medicine-active-checkbox-' + drugInfo.Id} variant="outline-light">
+                                <span role="img" aria-label="active">
+                                    <Form.Check
+                                        tabIndex={-1}
+                                        style={{transform: 'scale(2)'}}
+                                        checked={drugInfo.Active}
+                                        onChange={(e) => handleOnChange(e)}
+                                        name="Active"
+                                    />
+                                </span>
+                            </Button>
                         </Col>
-                        <Col sm="2">
-                            <Form.Check
-                                style={{transform: 'scale(2)'}}
-                                onChange={(e) => handleOnChange(e)}
-                                checked={drugInfo.Active}
-                                name="Active"
-                                tabIndex={-1}
-                            />
-                        </Col>
-                        <Col sm="6">
+                        <Col sm="9">
                             {!drugInfo.Active && (
                                 <>
-                                    <span style={{fontWeight: 'bold'}}>{drugInfo.Drug}</span> is unavailable
+                                    <span style={{fontWeight: 'bold'}}>{drugInfo.Drug}</span> will not show in the
+                                    medicine dropdown
                                 </>
                             )}
                         </Col>
@@ -265,6 +273,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
 
                         <Col sm="9">
                             <Form.Control
+                                tabIndex={3}
                                 as="textarea"
                                 rows={2}
                                 value={drugInfo.Directions ? drugInfo.Directions : ''}
@@ -283,6 +292,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
 
                             <Col sm="9">
                                 <Form.Control
+                                    tabIndex={4}
                                     as="textarea"
                                     rows={3}
                                     value={(drugInfo && drugInfo.Notes) || ''}
@@ -300,6 +310,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
 
                         <Col sm="9">
                             <Form.Control
+                                tabIndex={5}
                                 type="text"
                                 value={drugInfo.Barcode ? drugInfo.Barcode : ''}
                                 name="Barcode"
@@ -319,6 +330,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                             </Form.Label>
                             <Col sm="2">
                                 <Form.Control
+                                    tabIndex={6}
                                     className={
                                         drugInfo.FillDateMonth?.length === 0
                                             ? ''
@@ -338,6 +350,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                             </Form.Label>
                             <Col sm="2">
                                 <Form.Control
+                                    tabIndex={7}
                                     className={
                                         drugInfo.FillDateDay === ''
                                             ? ''
@@ -360,6 +373,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                             </Form.Label>
                             <Col sm={2}>
                                 <Form.Control
+                                    tabIndex={8}
                                     className={
                                         drugInfo.FillDateYear === ''
                                             ? ''
