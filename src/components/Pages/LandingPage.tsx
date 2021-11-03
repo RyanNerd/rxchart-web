@@ -1,3 +1,4 @@
+import ClientPage from 'components/Pages/ClientPage';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import React, {useGlobal, useMemo} from 'reactn';
@@ -7,7 +8,6 @@ import LoginPage from './LoginPage';
 import ManageDrugPage from './ManageDrugPage';
 import ManageOtcPage from './ManageOtcPage';
 import MedicinePage from './MedicinePage';
-import ClientPage from 'components/Pages/ClientPage';
 
 interface ITitleProps {
     activeKey: string;

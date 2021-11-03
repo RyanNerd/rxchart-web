@@ -1,7 +1,7 @@
 import TooltipContainer from 'components/Pages/Buttons/Containters/TooltipContainer';
 import ManageDrugGrid from 'components/Pages/Grids/ManageDrugGrid';
 import CheckoutListGroup from 'components/Pages/ListGroups/CheckoutListGroup';
-import ConfirmDialogModal from 'components/Pages/Modals/ConfirmDialogModal';
+import Confirm from 'components/Pages/Modals/Confirm';
 import DrugLogToast from 'components/Pages/Toasts/DrugLogToast';
 import Alert from 'react-bootstrap/Alert';
 import Badge from 'react-bootstrap/Badge';
@@ -9,8 +9,15 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import React, {useGlobal, useState} from 'reactn';
-import {DrugLogRecord, MedicineRecord, newDrugLogRecord, newMedicineRecord, PillboxItemRecord} from 'types/RecordTypes';
+import React, {useEffect, useGlobal, useState} from 'reactn';
+import {
+    ClientRecord,
+    DrugLogRecord,
+    MedicineRecord,
+    newDrugLogRecord,
+    newMedicineRecord,
+    PillboxItemRecord
+} from 'types/RecordTypes';
 import {clientFullName, getCheckoutList, getDrugName} from 'utility/common';
 import TabContent from '../../styles/common.css';
 import DrugLogEdit from './Modals/DrugLogEdit';
@@ -34,20 +41,36 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const [toast, setToast] = useState<DrugLogRecord[] | null>(null);
     const [showCheckoutAllMeds, setShowCheckoutAllMeds] = useState(false);
-
+    const [showCheckoutAlert, setShowCheckoutAlert] = useState(false);
+    const [checkoutList, setCheckoutList] = useState<DrugLogRecord[]>([]);
+    const [medicineList, setMedicineList] = useState<MedicineRecord[]>([]);
+    const [pillboxItemList, setPillboxItemList] = useState<PillboxItemRecord[]>([]);
+    const [clientInfo, setClientInfo] = useState<ClientRecord | null>(null);
     const activeTabKey = props.activeTabKey;
-    const medicineList = activeClient ? activeClient.medicineList : [];
-    const drugLogList = activeClient ? activeClient.drugLogList : [];
-    const pillboxItemList = activeClient ? activeClient.pillboxItemList : [];
-    const checkoutList = getCheckoutList(drugLogList);
 
-    const [showCheckoutAlert, setShowCheckoutAlert] = useState(checkoutList.length > 0);
+    // When the activeTabKey is set to manage, and we have an activeClient then set the checkoutList, and
+    // update the showCheckoutAlert state
+    useEffect(() => {
+        if (activeClient) {
+            const drugLogList = activeClient.drugLogList;
+            const medicineList = activeClient.medicineList;
+            const pillboxItemList = activeClient.pillboxItemList;
+            const clientInfo = activeClient.clientInfo;
+            const checkoutList = getCheckoutList(drugLogList);
+            setMedicineList(medicineList);
+            setPillboxItemList(pillboxItemList);
+            setClientInfo(clientInfo);
+            setCheckoutList(checkoutList);
+        }
+    }, [activeClient]);
 
-    // If this tab isn't active then don't render
-    if (!activeClient) return null;
+    useEffect(() => {
+        setShowCheckoutAlert(checkoutList.length > 0);
+    }, [checkoutList]);
+
+    // No need to render if there's not an activeClient or if the activeTabKey isn't 'manage'
+    if (!activeClient || !clientInfo) return null;
     if (activeTabKey !== 'manage') return null;
-
-    const clientInfo = activeClient.clientInfo;
 
     /**
      * Given a DrugLogRecord Update or Insert the record and rehydrate the drugLogList
@@ -283,16 +306,25 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                 show={toast !== null}
                 onClose={() => setToast(null)}
             />
-            <ConfirmDialogModal
+
+            <Confirm.Modal
                 centered
+                backdrop="static"
                 size="lg"
                 show={showCheckoutAllMeds}
-                title={
-                    <h3>
-                        Checkout <b>ALL</b> Medications
-                    </h3>
-                }
-                body={
+                onSelect={(a) => {
+                    setShowCheckoutAllMeds(false);
+                    if (a) logAllDrugsCheckedOut();
+                }}
+            >
+                <Confirm.Header>
+                    <Confirm.Title>
+                        <h3>
+                            Checkout <b>ALL</b> Medications
+                        </h3>
+                    </Confirm.Title>
+                </Confirm.Header>
+                <Confirm.Body>
                     <>
                         <Alert variant="warning">
                             Answering Yes will mark <b>all</b> medicines as checked out and bring up the print dialog
@@ -303,7 +335,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                             }}
                         >
                             {medicineList.map((m) => (
-                                <li key={`$m.Id`}>
+                                <li key={`med-checkout-li-${m.Id}`}>
                                     {checkoutList.find((d) => m.Id === d.MedicineId) && <Badge>❎</Badge>}{' '}
                                     <span style={{textDecoration: m.Active ? undefined : 'line-through'}}>
                                         {m.Drug}
@@ -316,41 +348,16 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                             variant="warning"
                             show={showCheckoutAlert}
                             dismissible
-                            onClose={() => setShowCheckoutAlert(false)}
+                            onClose={() => {
+                                setShowCheckoutAlert(false);
+                            }}
                         >
                             At least one drug is already checked out<Badge>❎</Badge>.{' '}
                             <b>Dismiss this alert if you want to proceed.</b>
                         </Alert>
                     </>
-                }
-                yesButton={
-                    <Button
-                        disabled={showCheckoutAlert}
-                        variant="danger"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            setShowCheckoutAllMeds(false);
-                            logAllDrugsCheckedOut();
-                        }}
-                    >
-                        Yes{' '}
-                        {checkoutList.length > 0 && (
-                            <span style={{fontSize: '12px'}}>(At least one drug is already checked out)</span>
-                        )}
-                    </Button>
-                }
-                noButton={
-                    <Button
-                        variant="secondary"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            setShowCheckoutAllMeds(false);
-                        }}
-                    >
-                        No
-                    </Button>
-                }
-            />
+                </Confirm.Body>
+            </Confirm.Modal>
         </Form>
     );
 };
