@@ -120,17 +120,14 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
                 />
             </Row>
 
-            {showMedicineEdit && medicineInfo && (
-                /* MedicineEdit Modal */
-                <MedicineEdit
-                    show={showMedicineEdit}
-                    onClose={(r) => {
-                        setShowMedicineEdit(false);
-                        if (r) saveOtcMedicine(r).then((m) => setSearchText(m.Active ? m.Drug : ''));
-                    }}
-                    drugInfo={medicineInfo}
-                />
-            )}
+            <MedicineEdit
+                show={showMedicineEdit}
+                onClose={(r) => {
+                    setShowMedicineEdit(false);
+                    if (r) saveOtcMedicine(r).then((m) => setSearchText(m.Active ? m.Drug : ''));
+                }}
+                drugInfo={medicineInfo as MedicineRecord}
+            />
         </>
     );
 };

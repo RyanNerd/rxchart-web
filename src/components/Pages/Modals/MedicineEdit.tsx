@@ -26,7 +26,6 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
     const [canSave, setCanSave] = useState(false);
     const [drugInfo, setDrugInfo] = useState<MedicineRecord>(props.drugInfo);
     const [show, setShow] = useState(props.show);
-    const otc = drugInfo.OTC;
     const allowDelete = props.allowDelete;
     const onClose = props.onClose;
     const textInput = useRef<HTMLInputElement>(null);
@@ -38,25 +37,29 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
 
     // Observer/mutator for drugInfo
     useEffect(() => {
-        const info = {...props.drugInfo};
-        if (info.Directions === null) info.Directions = '';
-        if (info.Notes === null) info.Notes = '';
-        if (info.FillDateMonth === null) info.FillDateMonth = '';
-        if (info.FillDateDay === null) info.FillDateDay = '';
-        if (info.FillDateYear === null) info.FillDateYear = '';
-        setDrugInfo(info);
+        if (props.drugInfo) {
+            const info = {...props.drugInfo};
+            if (info.Directions === null) info.Directions = '';
+            if (info.Notes === null) info.Notes = '';
+            if (info.FillDateMonth === null) info.FillDateMonth = '';
+            if (info.FillDateDay === null) info.FillDateDay = '';
+            if (info.FillDateYear === null) info.FillDateYear = '';
+            setDrugInfo(info);
+        }
     }, [props.drugInfo]);
 
     // Disable the Save button if the Drug name is empty.
     useEffect(() => {
-        // Is the Drug field populated?
-        if (drugInfo?.Drug.length > 0) {
-            // If any elements have an is-invalid class marker or the fill date is incomplete/ invalid
-            // then don't allow a save.
-            const isInvalidClasses = document.querySelectorAll('.is-invalid');
-            setCanSave(isInvalidClasses.length === 0);
-        } else {
-            setCanSave(false);
+        if (drugInfo) {
+            // Is the Drug field populated?
+            if (drugInfo?.Drug.length > 0) {
+                // If any elements have an is-invalid class marker or the fill date is incomplete/ invalid
+                // then don't allow a save.
+                const isInvalidClasses = document.querySelectorAll('.is-invalid');
+                setCanSave(isInvalidClasses.length === 0);
+            } else {
+                setCanSave(false);
+            }
         }
     }, [drugInfo, setCanSave]);
 
@@ -114,10 +117,11 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
     };
 
     // Short circuit render if there is no drugInfo record.
-    if (!drugInfo) {
+    if (drugInfo === null || Object.keys(drugInfo).length === 0) {
         return null;
     }
 
+    const otc = drugInfo.OTC;
     const drugTitleType = drugInfo.Id ? 'Edit ' : ('Add ' as string);
     const drugName = drugInfo.Id || drugInfo?.Drug.length > 0 ? drugInfo.Drug : 'new drug';
     const fullName = props.fullName;

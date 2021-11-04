@@ -291,22 +291,20 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                 </Row>
             )}
 
-            {showMedicineEdit && medicineInfo && (
-                <MedicineEdit
-                    allowDelete={!drugLogList.find((d) => d.MedicineId === medicineInfo.Id)}
-                    fullName={clientFullName(clientInfo)}
-                    show={showMedicineEdit}
-                    onClose={(m) => {
-                        setShowMedicineEdit(false);
-                        if (m && m.Id && m.Id < 0) {
-                            setShowDeleteMedicine(Math.abs(m.Id)); // Negative Id indicates a delete operation
-                        } else {
-                            if (m) saveMedicine(m, clientInfo.Id as number);
-                        }
-                    }}
-                    drugInfo={medicineInfo}
-                />
-            )}
+            <MedicineEdit
+                allowDelete={!drugLogList.find((d) => d.MedicineId === medicineInfo?.Id)}
+                fullName={clientFullName(clientInfo)}
+                show={showMedicineEdit}
+                onClose={(m) => {
+                    setShowMedicineEdit(false);
+                    if (m && m.Id && m.Id < 0) {
+                        setShowDeleteMedicine(Math.abs(m.Id)); // Negative Id indicates a delete operation
+                    } else {
+                        if (m) saveMedicine(m, clientInfo.Id as number);
+                    }
+                }}
+                drugInfo={medicineInfo as MedicineRecord}
+            />
 
             {showCheckoutModal && clientInfo.Id && (
                 <DrugLogEdit

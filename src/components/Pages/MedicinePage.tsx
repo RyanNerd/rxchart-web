@@ -230,19 +230,14 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      */
     const saveMedicine = async (med: MedicineRecord) => {
         const m = await mm.updateMedicine(med);
-
-        // If the updated record is OTC we need to refresh the otcList as well.
         if (m.OTC) {
             // Rehydrate the global otcList
             const ol = await mm.loadOtcList();
             await setOtcList(ol);
-            setActiveOtc(m);
         } else {
-            // Rehydrate the medicineList
+            // Rehydrate the client medicineList
             const ml = await mm.loadMedicineList(clientId);
-            if (activeClient) {
-                await setActiveClient({...activeClient, medicineList: ml});
-            }
+            if (activeClient) await setActiveClient({...activeClient, medicineList: ml});
         }
         return m;
     };
@@ -678,22 +673,25 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 )}
             </Row>
 
-            {showMedicineEdit && (
-                <MedicineEdit
-                    allowDelete={!drugLogList.find((d) => d.MedicineId === showMedicineEdit.Id)}
-                    fullName={clientFullName(activeClient.clientInfo)}
-                    show={true}
-                    onClose={(r: MedicineRecord | null) => {
-                        setShowMedicineEdit(null);
-                        if (r && r.Id && r.Id < 0) {
+            <MedicineEdit
+                allowDelete={!drugLogList.find((d) => d.MedicineId === showMedicineEdit?.Id)}
+                fullName={clientFullName(activeClient.clientInfo)}
+                show={showMedicineEdit !== null}
+                onClose={(r) => {
+                    setShowMedicineEdit(null);
+                    if (r) {
+                        if (r.Id && r.Id < 0) {
                             setShowDeleteMedicine(Math.abs(r.Id)); // Negative Id indicates a delete operation
                         } else {
-                            if (r) saveMedicine(r).then((m) => setActiveMed(m));
+                            saveMedicine(r).then((m) => {
+                                if (m.OTC) setActiveOtc(m);
+                                else setActiveMed(m);
+                            });
                         }
-                    }}
-                    drugInfo={showMedicineEdit}
-                />
-            )}
+                    }
+                }}
+                drugInfo={showMedicineEdit as MedicineRecord}
+            />
 
             {showDrugLog && (
                 <DrugLogEdit
