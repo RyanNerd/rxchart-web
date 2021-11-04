@@ -1,6 +1,7 @@
 import MedDrugLogHistory from 'components/Pages/Grids/MedDrugLogHistory';
 import CheckoutListGroup from 'components/Pages/ListGroups/CheckoutListGroup';
 import {IDropdownItem} from 'components/Pages/ListGroups/MedDropdown';
+import DeleteMedicineModal from 'components/Pages/Modals/DeleteMedicineModal';
 import DrugLogToast from 'components/Pages/Toasts/DrugLogToast';
 import usePrevious from 'hooks/usePrevious';
 import {SetStateAction} from 'react';
@@ -81,6 +82,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [otcLogList, setOtcLogList] = useState<DrugLogRecord[]>([]);
     const [pillboxMedLogList, setPillboxMedLogList] = useState<TPillboxMedLog[]>([]);
     const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
+    const [showDeleteMedicine, setShowDeleteMedicine] = useState(0);
     const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
     const [showMedicineEdit, setShowMedicineEdit] = useState<MedicineRecord | null>(null);
     const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
@@ -242,6 +244,21 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             }
         }
         return m;
+    };
+
+    /**
+     * Given a MedicineRecord PK delete the medicine
+     * @param {number} id The PK of the Medicine record to delete
+     */
+    const deleteMedicine = async (id: number) => {
+        await setIsBusy(true);
+        const result = await mm.deleteMedicine(id);
+        if (result) {
+            // Rehydrate the medicineList
+            const ml = await mm.loadMedicineList(clientId);
+            if (activeClient) await setActiveClient({...activeClient, medicineList: ml});
+        }
+        await setIsBusy(false);
     };
 
     /**
@@ -660,14 +677,18 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 )}
             </Row>
 
-            {/* MedicineEdit Modal*/}
             {showMedicineEdit && (
                 <MedicineEdit
+                    allowDelete={!drugLogList.find((d) => d.MedicineId === showMedicineEdit.Id)}
                     fullName={clientFullName(activeClient.clientInfo)}
                     show={true}
                     onClose={(r: MedicineRecord | null) => {
                         setShowMedicineEdit(null);
-                        if (r) saveMedicine(r).then((m) => setActiveMed(m));
+                        if (r && r.Id && r.Id < 0) {
+                            setShowDeleteMedicine(Math.abs(r.Id)); // Negative Id indicates a delete operation
+                        } else {
+                            if (r) saveMedicine(r).then((m) => setActiveMed(m));
+                        }
                     }}
                     drugInfo={showMedicineEdit}
                 />
@@ -687,7 +708,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 />
             )}
 
-            {/* Confirm Delete of Drug Log*/}
             {showDeleteDrugLogRecord && (
                 <Confirm.Modal
                     size="lg"
@@ -718,6 +738,20 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     </Confirm.Body>
                 </Confirm.Modal>
             )}
+
+            <DeleteMedicineModal
+                show={showDeleteMedicine !== 0}
+                medicine={medicineList.find((m) => m.Id === showDeleteMedicine) as MedicineRecord}
+                onSelect={(n) => {
+                    setShowDeleteMedicine(0);
+                    if (n > 0) {
+                        deleteMedicine(n).then(() => {
+                            if (medicineList.length > 0) setActiveMed(medicineList[0]);
+                            else setActiveMed(null);
+                        });
+                    }
+                }}
+            />
 
             <DrugLogToast
                 toast={toast as DrugLogRecord[]}

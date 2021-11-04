@@ -2,6 +2,7 @@ import TooltipContainer from 'components/Pages/Containters/TooltipContainer';
 import ManageDrugGrid from 'components/Pages/Grids/ManageDrugGrid';
 import CheckoutListGroup from 'components/Pages/ListGroups/CheckoutListGroup';
 import Confirm from 'components/Pages/Modals/Confirm';
+import DeleteMedicineModal from 'components/Pages/Modals/DeleteMedicineModal';
 import DrugLogToast from 'components/Pages/Toasts/DrugLogToast';
 import Alert from 'react-bootstrap/Alert';
 import Badge from 'react-bootstrap/Badge';
@@ -44,7 +45,9 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
     const [showCheckoutAlert, setShowCheckoutAlert] = useState(false);
     const [checkoutList, setCheckoutList] = useState<DrugLogRecord[]>([]);
     const [medicineList, setMedicineList] = useState<MedicineRecord[]>([]);
+    const [drugLogList, setDrugLogList] = useState<DrugLogRecord[]>([]);
     const [pillboxItemList, setPillboxItemList] = useState<PillboxItemRecord[]>([]);
+    const [showDeleteMedicine, setShowDeleteMedicine] = useState(0);
     const [clientInfo, setClientInfo] = useState<ClientRecord | null>(null);
     const activeTabKey = props.activeTabKey;
 
@@ -53,6 +56,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
         if (activeClient) {
             const {drugLogList, medicineList, pillboxItemList, clientInfo} = activeClient;
             const checkoutList = getCheckoutList(drugLogList);
+            setDrugLogList(drugLogList);
             setMedicineList(medicineList);
             setPillboxItemList(pillboxItemList);
             setClientInfo(clientInfo);
@@ -165,6 +169,19 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
     };
 
     /**
+     * Given a MedicineRecord PK delete the medicine
+     * @param {number} id The PK of the Medicine record to delete
+     */
+    const deleteMedicine = async (id: number) => {
+        const result = await mm.deleteMedicine(id);
+        if (result) {
+            // Rehydrate the medicineList
+            const ml = await mm.loadMedicineList(clientInfo.Id as number);
+            if (activeClient) await setActiveClient({...activeClient, medicineList: ml});
+        }
+    };
+
+    /**
      * Fires when the Edit button is clicked
      * @param {MedicineRecord | null} medicine The medicine record object, or null for a new record
      */
@@ -262,6 +279,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                     />
                 </Row>
             )}
+
             {!showCheckoutPrint && (
                 <Row className="mt-2 d-print-none">
                     <ManageDrugGrid
@@ -273,17 +291,24 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                     />
                 </Row>
             )}
+
             {showMedicineEdit && medicineInfo && (
                 <MedicineEdit
+                    allowDelete={!drugLogList.find((d) => d.MedicineId === medicineInfo.Id)}
                     fullName={clientFullName(clientInfo)}
                     show={showMedicineEdit}
                     onClose={(m) => {
                         setShowMedicineEdit(false);
-                        if (m) saveMedicine(m, clientInfo.Id as number);
+                        if (m && m.Id && m.Id < 0) {
+                            setShowDeleteMedicine(Math.abs(m.Id)); // Negative Id indicates a delete operation
+                        } else {
+                            if (m) saveMedicine(m, clientInfo.Id as number);
+                        }
                     }}
                     drugInfo={medicineInfo}
                 />
             )}
+
             {showCheckoutModal && clientInfo.Id && (
                 <DrugLogEdit
                     drugName={drugName(showCheckoutModal.MedicineId) || '[unknown]'}
@@ -296,6 +321,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                     show={true}
                 />
             )}
+
             <DrugLogToast
                 toast={toast as DrugLogRecord[]}
                 medicineList={medicineList}
@@ -361,6 +387,15 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                     </>
                 </Confirm.Body>
             </Confirm.Modal>
+
+            <DeleteMedicineModal
+                show={showDeleteMedicine !== 0}
+                medicine={medicineInfo as MedicineRecord}
+                onSelect={(n) => {
+                    setShowDeleteMedicine(0);
+                    if (n > 0) deleteMedicine(n);
+                }}
+            />
         </Form>
     );
 };
