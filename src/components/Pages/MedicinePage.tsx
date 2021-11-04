@@ -98,8 +98,9 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     useEffect(() => {
         if (prevActiveTabKey !== activeTabKey && activeTabKey === 'medicine') {
             const medicineList = activeClient?.medicineList || ([] as MedicineRecord[]);
-            if (medicineList.length > 0) {
-                setActiveMed(medicineList[0]);
+            const activeMeds = medicineList.filter((m) => m.Active); // Only active medications
+            if (activeMeds.length > 0) {
+                setActiveMed(activeMeds[0]);
             } else {
                 setActiveMed(null);
             }
