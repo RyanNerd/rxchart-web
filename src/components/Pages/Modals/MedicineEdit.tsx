@@ -1,3 +1,4 @@
+import TooltipContainer from 'components/Pages/Containters/TooltipContainer';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -9,6 +10,7 @@ import {MedicineRecord} from 'types/RecordTypes';
 import {isDateFuture, isDayValid, isMonthValid, isYearValid} from 'utility/common';
 
 interface IProps {
+    allowDelete?: boolean;
     fullName?: string;
     drugInfo: MedicineRecord;
     onClose: (r: MedicineRecord | null) => void;
@@ -25,6 +27,8 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
     const [drugInfo, setDrugInfo] = useState<MedicineRecord>(props.drugInfo);
     const [show, setShow] = useState(props.show);
     const otc = drugInfo.OTC;
+    const allowDelete = props.allowDelete;
+    const onClose = props.onClose;
     const textInput = useRef<HTMLInputElement>(null);
 
     // Observer for show
@@ -35,21 +39,11 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
     // Observer/mutator for drugInfo
     useEffect(() => {
         const info = {...props.drugInfo};
-        if (info.Directions === null) {
-            info.Directions = '';
-        }
-        if (info.Notes === null) {
-            info.Notes = '';
-        }
-        if (info.FillDateMonth === null) {
-            info.FillDateMonth = '';
-        }
-        if (info.FillDateDay === null) {
-            info.FillDateDay = '';
-        }
-        if (info.FillDateYear === null) {
-            info.FillDateYear = '';
-        }
+        if (info.Directions === null) info.Directions = '';
+        if (info.Notes === null) info.Notes = '';
+        if (info.FillDateMonth === null) info.FillDateMonth = '';
+        if (info.FillDateDay === null) info.FillDateDay = '';
+        if (info.FillDateYear === null) info.FillDateYear = '';
         setDrugInfo(info);
     }, [props.drugInfo]);
 
@@ -76,15 +70,9 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
 
         // Check if any of the FillDate fields are populated then all need to be populated or all blank
         let cnt = 0;
-        if (fillDateMonth !== '') {
-            cnt++;
-        }
-        if (fillDateDay !== '') {
-            cnt++;
-        }
-        if (fillDateYear !== '') {
-            cnt++;
-        }
+        if (fillDateMonth !== '') cnt++;
+        if (fillDateDay !== '') cnt++;
+        if (fillDateYear !== '') cnt++;
 
         // Fill date can't be in the future
         if (cnt === 3) {
@@ -93,12 +81,8 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                 parseInt(fillDateMonth as string) - 1,
                 parseInt(fillDateDay as string)
             );
-
-            if (isDateFuture(fillDate)) {
-                cnt = 4;
-            }
+            if (isDateFuture(fillDate)) cnt = 4;
         }
-
         return cnt === 0 || cnt === 3;
     };
 
@@ -115,16 +99,16 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
     };
 
     /**
-     * Fires when the user clicks on save or cancel
-     * @param {React.MouseEvent<HTMLElement>} e Mouse event object
-     * @param {boolean} shouldSave True if user clicked the save button, otherwise false
+     * Fires when the user clicks on the Save or Cancel, or Delete button
+     * @param {string} action "save", "cancel", or "delete"
      */
-    const handleHide = (e: React.MouseEvent<HTMLElement>, shouldSave: boolean) => {
-        e.preventDefault();
-        if (shouldSave) {
-            props.onClose({...drugInfo});
-        } else {
-            props.onClose(null);
+    const handleHide = (action: 'cancel' | 'save' | 'delete') => {
+        if (action === 'save') onClose(drugInfo);
+        if (action === 'cancel') onClose(null);
+        if (action === 'delete') {
+            const medInfo = {...drugInfo};
+            medInfo.Id = -(medInfo.Id as number); // Set the Id as negative to indicate a delete operation
+            onClose(medInfo);
         }
         setShow(false);
     };
@@ -394,16 +378,23 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
             </Modal.Body>
 
             <Modal.Footer>
-                <Button onClick={(e) => handleHide(e, false)} variant="secondary">
+                <Button onClick={() => handleHide('cancel')} variant="secondary">
                     Cancel
                 </Button>
                 <Button
                     disabled={!canSave}
-                    onClick={(e) => handleHide(e, true)}
+                    onClick={() => handleHide('save')}
                     variant={otc && drugTitleType === 'Edit ' ? 'danger' : 'primary'}
                 >
                     Save changes
                 </Button>
+                {allowDelete && drugInfo.Id && !otc && !drugInfo.Active && (
+                    <TooltipContainer tooltip={'Permantly Delete Medicine'} placement="right">
+                        <Button onClick={() => handleHide('delete')} variant="danger">
+                            Delete
+                        </Button>
+                    </TooltipContainer>
+                )}
             </Modal.Footer>
         </Modal>
     );
