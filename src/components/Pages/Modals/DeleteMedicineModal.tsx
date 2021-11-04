@@ -11,7 +11,7 @@ interface IProps {
 }
 
 /**
- * Delete Confirmation Modal
+ * Delete Medicine Confirmation Modal
  * @param {IProps} props The props for the component
  */
 const DeleteMedicineModal = (props: IProps) => {
