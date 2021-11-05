@@ -9,8 +9,8 @@ import {clientFullName} from 'utility/common';
 
 interface IProps {
     clientRecord: ClientRecord;
-    pillboxInfo: PillboxRecord;
     onClose: (r: PillboxRecord | null) => void;
+    pillboxInfo: PillboxRecord;
     show: boolean;
 }
 
@@ -20,35 +20,25 @@ interface IProps {
  * @returns {JSX.Element | null}
  */
 const PillboxEdit = (props: IProps): JSX.Element | null => {
-    const clientRecord = props.clientRecord;
-    const [canSave, setCanSave] = useState(false);
-    const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord>(props.pillboxInfo);
-    const [show, setShow] = useState(props.show);
-    const textInput = useRef<HTMLInputElement>(null);
+    const {clientRecord, onClose} = props;
 
-    // Observer for show
+    const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord>(props.pillboxInfo);
+    useEffect(() => {
+        setPillboxInfo({...props.pillboxInfo});
+    }, [props.pillboxInfo]);
+
+    const [show, setShow] = useState(props.show);
     useEffect(() => {
         setShow(props.show);
     }, [props.show]);
 
-    // Observer/mutator for pillboxInfo
+    const [canSave, setCanSave] = useState(false);
     useEffect(() => {
-        const info = {...props.pillboxInfo};
-        setPillboxInfo(info);
-    }, [props.pillboxInfo]);
-
-    // Disable the Save button if the Pillbox name is empty.
-    useEffect(() => {
-        // Is the Name field populated?
-        if (pillboxInfo?.Name.length > 0) {
-            // If any elements have an is-invalid class marker or the fill date is incomplete/ invalid
-            // then don't allow a save.
-            const isInvalidClasses = document.querySelectorAll('.is-invalid');
-            setCanSave(isInvalidClasses.length === 0);
-        } else {
-            setCanSave(false);
-        }
+        if (pillboxInfo?.Name?.length > 0) setCanSave(document.querySelectorAll('.is-invalid')?.length === 0);
+        else setCanSave(false);
     }, [pillboxInfo, setCanSave]);
+
+    const textInput = useRef<HTMLInputElement>(null);
 
     /**
      * Fires when a text field or checkbox is changing.
@@ -64,23 +54,16 @@ const PillboxEdit = (props: IProps): JSX.Element | null => {
 
     /**
      * Fires when the user clicks on save or cancel
-     * @param {React.MouseEvent<HTMLElement>} e Mouse event object
      * @param {boolean} shouldSave True if the user clicked the save button, otherwise false
      */
-    const handleHide = (e: React.MouseEvent<HTMLElement>, shouldSave: boolean) => {
-        e.preventDefault();
-        if (shouldSave) {
-            props.onClose({...pillboxInfo});
-        } else {
-            props.onClose(null);
-        }
+    const handleHide = (shouldSave: boolean) => {
+        if (shouldSave) onClose({...pillboxInfo});
+        else onClose(null);
         setShow(false);
     };
 
     // Short circuit render if there is no drugInfo record.
-    if (!pillboxInfo) {
-        return null;
-    }
+    if (!pillboxInfo) return null;
 
     const titleType = pillboxInfo.Id ? 'Edit Pillbox ' : ('Add Pillbox ' as string);
     const fullName = clientFullName(clientRecord);
@@ -104,16 +87,15 @@ const PillboxEdit = (props: IProps): JSX.Element | null => {
                         <Form.Label column sm="2" style={{userSelect: 'none'}}>
                             Pillbox Name
                         </Form.Label>
-
                         <Col sm="4">
                             <Form.Control
                                 className={pillboxInfo.Name !== '' ? '' : 'is-invalid'}
-                                ref={textInput}
-                                type="text"
-                                value={pillboxInfo.Name}
                                 name="Name"
                                 onChange={(e) => handleOnChange(e)}
+                                ref={textInput}
                                 required
+                                type="text"
+                                value={pillboxInfo.Name}
                             />
                             <div className="invalid-feedback">Pillbox Name field cannot be blank.</div>
                         </Col>
@@ -123,14 +105,13 @@ const PillboxEdit = (props: IProps): JSX.Element | null => {
                         <Form.Label column sm="2" style={{userSelect: 'none'}}>
                             Notes
                         </Form.Label>
-
                         <Col sm="9">
                             <Form.Control
                                 as="textarea"
-                                rows={3}
-                                value={pillboxInfo.Notes ? pillboxInfo.Notes : ''}
                                 name="Notes"
                                 onChange={(e) => handleOnChange(e)}
+                                rows={3}
+                                value={pillboxInfo.Notes ? pillboxInfo.Notes : ''}
                             />
                         </Col>
                     </Form.Group>
@@ -138,10 +119,10 @@ const PillboxEdit = (props: IProps): JSX.Element | null => {
             </Modal.Body>
 
             <Modal.Footer>
-                <Button onClick={(e) => handleHide(e, false)} variant="secondary">
+                <Button onClick={() => handleHide(false)} variant="secondary">
                     Cancel
                 </Button>
-                <Button disabled={!canSave} onClick={(e) => handleHide(e, true)} variant={'primary'}>
+                <Button disabled={!canSave} onClick={() => handleHide(true)} variant={'primary'}>
                     Save changes
                 </Button>
             </Modal.Footer>

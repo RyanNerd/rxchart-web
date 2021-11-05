@@ -306,18 +306,16 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                 drugInfo={medicineInfo as MedicineRecord}
             />
 
-            {showCheckoutModal && clientInfo.Id && (
-                <DrugLogEdit
-                    drugName={drugName(showCheckoutModal.MedicineId) || '[unknown]'}
-                    drugLogInfo={showCheckoutModal}
-                    onClose={(dl) => {
-                        setShowCheckoutModal(null);
-                        if (dl) saveDrugLog([dl], clientInfo.Id as number).then((t) => setToast(t));
-                    }}
-                    onHide={() => setShowCheckoutModal(null)}
-                    show={true}
-                />
-            )}
+            <DrugLogEdit
+                drugLogInfo={showCheckoutModal as DrugLogRecord}
+                drugName={drugName(showCheckoutModal?.MedicineId as number) || '[unknown]'}
+                onClose={(dl) => {
+                    setShowCheckoutModal(null);
+                    if (dl) saveDrugLog([dl], clientInfo.Id as number).then((t) => setToast(t));
+                }}
+                onHide={() => setShowCheckoutModal(null)}
+                show={clientInfo.Id !== null && showCheckoutModal !== null}
+            />
 
             <DrugLogToast
                 toast={toast as DrugLogRecord[]}

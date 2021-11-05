@@ -675,8 +675,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
             <MedicineEdit
                 allowDelete={!drugLogList.find((d) => d.MedicineId === showMedicineEdit?.Id)}
+                drugInfo={showMedicineEdit as MedicineRecord}
                 fullName={clientFullName(activeClient.clientInfo)}
-                show={showMedicineEdit !== null}
                 onClose={(r) => {
                     setShowMedicineEdit(null);
                     if (r) {
@@ -690,22 +690,20 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         }
                     }
                 }}
-                drugInfo={showMedicineEdit as MedicineRecord}
+                show={showMedicineEdit !== null}
             />
 
-            {showDrugLog && (
-                <DrugLogEdit
-                    otc={getMedicineRecord(showDrugLog.MedicineId, medicineOtcList)?.OTC || false}
-                    drugName={getMedicineRecord(showDrugLog.MedicineId, medicineOtcList)?.Drug || '[unknown]'}
-                    show={true}
-                    drugLogInfo={showDrugLog}
-                    onHide={() => setShowDrugLog(null)}
-                    onClose={(drugLogRecord) => {
-                        setShowDrugLog(null);
-                        if (drugLogRecord) saveDrugLog(drugLogRecord).then((r) => setToast([r]));
-                    }}
-                />
-            )}
+            <DrugLogEdit
+                drugLogInfo={showDrugLog as DrugLogRecord}
+                drugName={getMedicineRecord(showDrugLog?.MedicineId as number, medicineOtcList)?.Drug || '[unknown]'}
+                onClose={(drugLogRecord) => {
+                    setShowDrugLog(null);
+                    if (drugLogRecord) saveDrugLog(drugLogRecord).then((r) => setToast([r]));
+                }}
+                onHide={() => setShowDrugLog(null)}
+                otc={getMedicineRecord(showDrugLog?.MedicineId as number, medicineOtcList)?.OTC || false}
+                show={showDrugLog !== null}
+            />
 
             {showDeleteDrugLogRecord && (
                 <Confirm.Modal

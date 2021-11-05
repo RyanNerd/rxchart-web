@@ -4,7 +4,6 @@ import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Row from 'react-bootstrap/Row';
 import React, {useEffect, useRef, useState} from 'reactn';
-
 import {ClientRecord} from 'types/RecordTypes';
 import {isDateFuture, isDayValid, isMonthValid, isYearValid} from 'utility/common';
 
@@ -20,9 +19,22 @@ interface IProps {
  * @returns {JSX.Element | null}
  */
 const ResidentEdit = (props: IProps): JSX.Element | null => {
-    const [canSave, setCanSave] = useState(true);
     const [residentInfo, setResidentInfo] = useState<ClientRecord>(props.residentInfo);
+    useEffect(() => {
+        if (props.residentInfo) setResidentInfo({...props.residentInfo});
+    }, [props.residentInfo]);
+
     const [show, setShow] = useState(props.show);
+    useEffect(() => {
+        setShow(props.show);
+    }, [props.show]);
+
+    const [canSave, setCanSave] = useState(true);
+    useEffect(() => {
+        setCanSave(document.querySelectorAll('.is-invalid')?.length === 0);
+    }, [residentInfo, setResidentInfo]);
+
+    const onClose = props.onClose;
     const focusRef = useRef<HTMLInputElement>(null);
 
     /**
@@ -39,20 +51,19 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
 
     /**
      * Fires when the user clicks on save or cancel
-     * @param {React.MouseEvent<HTMLElement>} e Mouse event object
      * @param {boolean} shouldSave Set to true if the user clicked the save button, otherwise false
      */
-    const handleHide = (e: React.MouseEvent<HTMLElement>, shouldSave: boolean) => {
-        e.preventDefault();
-        if (shouldSave) {
-            props.onClose({...residentInfo});
-        } else {
-            props.onClose(null);
-        }
+    const handleHide = (shouldSave: boolean) => {
+        if (shouldSave) onClose({...residentInfo});
+        else onClose(null);
         setShow(false);
     };
 
-    const isDobValid = () => {
+    /**
+     * Verify the DOB
+     * @returns {boolean} true if valid, otherwise false
+     */
+    const isDobValid = (): boolean => {
         const dobYear = residentInfo.DOB_YEAR.toString();
         const dobMonth = residentInfo.DOB_MONTH.toString();
         const dobDay = residentInfo.DOB_DAY.toString();
@@ -74,30 +85,10 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
         }
     };
 
-    // Observer for show
-    useEffect(() => {
-        setShow(props.show);
-    }, [props.show]);
-
-    // Observer for residentInfo property
-    useEffect(() => {
-        if (props.residentInfo) {
-            setResidentInfo({...props.residentInfo});
-        }
-    }, [props.residentInfo]);
-
-    // Anytime the fields change check if we have any invalid entries
-    useEffect(() => {
-        const isInvalidClasses = document.querySelectorAll('.is-invalid');
-        setCanSave(isInvalidClasses.length === 0);
-    }, [residentInfo, setResidentInfo]);
-
     // Prevent render if there is no data.
-    if (!residentInfo) {
-        return null;
-    }
+    if (!residentInfo) return null;
 
-    const residentTitle = residentInfo.Id ? 'Edit Resident' : 'Add New Resident';
+    const residentTitle = residentInfo.Id ? 'Edit Client' : 'Add New Client';
 
     return (
         <Modal backdrop="static" centered onEntered={() => focusRef?.current?.focus()} show={show} size="lg">
@@ -114,12 +105,12 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                         <Col sm="7">
                             <Form.Control
                                 className={residentInfo.FirstName !== '' ? '' : 'is-invalid'}
-                                type="text"
-                                value={residentInfo.FirstName}
                                 name="FirstName"
                                 onChange={(e) => handleOnChange(e)}
                                 ref={focusRef}
                                 required
+                                type="text"
+                                value={residentInfo.FirstName}
                             />
                             <div className="invalid-feedback">First name can not be blank.</div>
                         </Col>
@@ -132,11 +123,11 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                         <Col sm="7">
                             <Form.Control
                                 className={residentInfo.LastName !== '' ? '' : 'is-invalid'}
-                                type="text"
-                                value={residentInfo.LastName}
                                 name="LastName"
                                 onChange={(e) => handleOnChange(e)}
                                 required
+                                type="text"
+                                value={residentInfo.LastName}
                             />
                             <div className="invalid-feedback">Last name can not be blank.</div>
                         </Col>
@@ -148,11 +139,11 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                         </Form.Label>
                         <Col sm="7">
                             <Form.Control
-                                type="text"
-                                value={residentInfo.Nickname}
                                 name="Nickname"
                                 onChange={(e) => handleOnChange(e)}
                                 required
+                                type="text"
+                                value={residentInfo.Nickname}
                             />
                         </Col>
                     </Form.Group>
@@ -165,11 +156,11 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                         <Col sm="2">
                             <Form.Control
                                 className={isMonthValid(residentInfo.DOB_MONTH.toString()) ? '' : 'is-invalid'}
-                                type="text"
-                                value={residentInfo.DOB_MONTH}
                                 name="DOB_MONTH"
                                 onChange={(e) => handleOnChange(e)}
                                 required
+                                type="text"
+                                value={residentInfo.DOB_MONTH}
                             />
                             <div className="invalid-feedback">Enter the month (1-12).</div>
                         </Col>
@@ -184,11 +175,11 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                                         ? ''
                                         : 'is-invalid'
                                 }
-                                type="text"
-                                value={residentInfo.DOB_DAY}
                                 name="DOB_DAY"
                                 onChange={(e) => handleOnChange(e)}
                                 required
+                                type="text"
+                                value={residentInfo.DOB_DAY}
                             />
                             <div className="invalid-feedback">Enter a valid day.</div>
                         </Col>
@@ -198,15 +189,16 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                         <Col sm={3}>
                             <Form.Control
                                 className={isYearValid(residentInfo.DOB_YEAR.toString(), true) ? '' : 'is-invalid'}
-                                type="text"
-                                value={residentInfo.DOB_YEAR}
                                 name="DOB_YEAR"
                                 onChange={(e) => handleOnChange(e)}
                                 required
+                                type="text"
+                                value={residentInfo.DOB_YEAR}
                             />
                             <div className="invalid-feedback">Enter a valid birth year.</div>
                         </Col>
                     </Form.Group>
+
                     <Form.Group as={Row}>
                         <Form.Label column sm="2">
                             Notes
@@ -214,11 +206,11 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                         <Col sm={9}>
                             <Form.Control
                                 as="textarea"
-                                rows={4}
-                                value={residentInfo.Notes}
+                                className={residentInfo?.Notes?.trim().length > 500 ? 'is-invalid' : ''}
                                 name="Notes"
                                 onChange={(e) => handleOnChange(e)}
-                                className={residentInfo?.Notes?.trim().length > 500 ? 'is-invalid' : ''}
+                                rows={4}
+                                value={residentInfo.Notes}
                             />
                             <div className="invalid-feedback">
                                 Notes can only be 500 characters long. length={residentInfo?.Notes?.trim().length}
@@ -229,10 +221,10 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
             </Modal.Body>
 
             <Modal.Footer>
-                <Button onClick={(e) => handleHide(e, false)} variant="secondary">
+                <Button onClick={() => handleHide(false)} variant="secondary">
                     Cancel
                 </Button>
-                <Button disabled={!canSave} onClick={(e) => handleHide(e, true)} variant="primary">
+                <Button disabled={!canSave} onClick={() => handleHide(true)} variant="primary">
                     Save changes
                 </Button>
             </Modal.Footer>

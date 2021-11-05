@@ -21,31 +21,21 @@ interface IProps {
  * @returns {JSX.Element | null}
  */
 const DrugLogEdit = (props: IProps): JSX.Element | null => {
-    const [canSave, setCanSave] = useState(false);
-    const [drugLogInfo, setDrugLogInfo] = useState(props.drugLogInfo);
-    const [show, setShow] = useState(props.show);
-    const otc = props.otc;
-    const onClose = props.onClose;
-    const onHide = props.onHide;
-    const title = props.drugName ? 'Log ' + props.drugName.trim() : 'Log Drug';
-    const textInput = useRef<HTMLTextAreaElement>(null);
+    const {otc, onClose, onHide, drugName} = props;
 
-    // Observer for show
+    const [drugLogInfo, setDrugLogInfo] = useState(props.drugLogInfo);
+    useEffect(() => {
+        const drugLogRecord = {...props.drugLogInfo};
+        if (!drugLogRecord.Notes) drugLogRecord.Notes = '';
+        setDrugLogInfo(drugLogRecord);
+    }, [props.drugLogInfo]);
+
+    const [show, setShow] = useState(props.show);
     useEffect(() => {
         setShow(props.show);
     }, [props.show]);
 
-    // Observer for drugInfo
-    useEffect(() => {
-        const drugLogRecord = props.drugLogInfo;
-        // If props.drugLogInfo.Notes is null or empty then make it an empty string
-        if (!drugLogRecord.Notes) {
-            drugLogRecord.Notes = '';
-        }
-        setDrugLogInfo(drugLogRecord);
-    }, [props.drugLogInfo]);
-
-    // Disable the Save button if Notes are empty.
+    const [canSave, setCanSave] = useState(false);
     useEffect(() => {
         const canSave =
             (drugLogInfo &&
@@ -55,6 +45,9 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
             false;
         setCanSave(canSave);
     }, [drugLogInfo]);
+
+    const textInput = useRef<HTMLTextAreaElement>(null);
+    const title = drugName ? 'Log ' + drugName.trim() : 'Log Drug';
 
     /**
      * Fires when a text field or checkbox is changing.
@@ -68,11 +61,8 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
         if (drugLogInfo !== null) {
             if (isNumber) {
                 const num = parseInt(value as string);
-                if (num <= 0) {
-                    drugLogInfo[name] = null;
-                } else {
-                    drugLogInfo[name] = num;
-                }
+                if (num <= 0) drugLogInfo[name] = null;
+                else drugLogInfo[name] = num;
             } else {
                 drugLogInfo[name] = value;
             }
@@ -82,55 +72,41 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
 
     /**
      * Fires when the user clicks on Save or Cancel
-     * @param {React.MouseEvent<HTMLElement>} e Mouse event object
      * @param {boolean} shouldSave True if the user clicked save, otherwise false
      */
-    const handleHide = (e: React.MouseEvent<HTMLElement>, shouldSave: boolean) => {
-        e.preventDefault();
-        if (shouldSave) {
-            const saveDrugLogInfo = {...drugLogInfo} as DrugLogRecord;
-            onClose(saveDrugLogInfo);
-        } else {
-            onClose(null);
-        }
+    const handleHide = (shouldSave: boolean) => {
+        if (shouldSave) onClose({...drugLogInfo});
+        else onClose(null);
         setShow(false);
     };
 
     // Short circuit render if there is no drugLogInfo.
-    if (!drugLogInfo) {
-        return null;
-    }
+    if (!drugLogInfo) return null;
 
     return (
         <Modal
             backdrop="static"
             centered
+            onEntered={() => textInput?.current?.focus()}
             onHide={() => onHide()}
-            onEntered={() => {
-                if (textInput && textInput.current) {
-                    textInput.current.focus();
-                }
-            }}
             show={show}
         >
             <Modal.Header closeButton>
                 <Modal.Title>{title}</Modal.Title>
             </Modal.Header>
-
             <Modal.Body>
                 <Form>
                     <Form.Group as={Row} controlId="drug-log-notes">
                         <Form.Label column md="4">
                             Amount / Notes
                         </Form.Label>
-
                         <Col md="8">
                             <Form.Control
                                 as="textarea"
-                                ref={textInput}
-                                value={drugLogInfo.Notes as string}
                                 name="Notes"
                                 onChange={(e) => handleOnChange(e)}
+                                ref={textInput}
+                                value={drugLogInfo.Notes as string}
                             />
                         </Col>
                     </Form.Group>
@@ -143,10 +119,10 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
                                 </Form.Label>
                                 <Col md="8">
                                     <Form.Control
-                                        type="number"
-                                        value={drugLogInfo.Out || undefined}
                                         name="Out"
                                         onChange={(e) => handleOnChange(e, true)}
+                                        type="number"
+                                        value={drugLogInfo.Out || undefined}
                                     />
                                 </Col>
                             </Form.Group>
@@ -157,10 +133,10 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
                                 </Form.Label>
                                 <Col md="8">
                                     <Form.Control
-                                        type="number"
-                                        value={drugLogInfo.In || undefined}
                                         name="In"
                                         onChange={(e) => handleOnChange(e, true)}
+                                        type="number"
+                                        value={drugLogInfo.In || undefined}
                                     />
                                 </Col>
                             </Form.Group>
@@ -170,10 +146,10 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
             </Modal.Body>
 
             <Modal.Footer>
-                <Button onClick={(e) => handleHide(e, false)} variant="secondary">
+                <Button onClick={() => handleHide(false)} variant="secondary">
                     Cancel
                 </Button>
-                <Button disabled={!canSave} onClick={(e) => handleHide(e, true)} variant="primary">
+                <Button disabled={!canSave} onClick={() => handleHide(true)} variant="primary">
                     Save changes
                 </Button>
             </Modal.Footer>
