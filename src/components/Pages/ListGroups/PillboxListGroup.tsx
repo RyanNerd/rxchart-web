@@ -19,21 +19,21 @@ import PillboxEdit from '../Modals/PillboxEdit';
 
 interface IProps {
     activePillbox: PillboxRecord | null;
-    disabled?: boolean;
     clientRecord: ClientRecord;
+    disabled?: boolean;
+    gridLists: IGridLists;
     logPillbox: () => void;
     onDelete: (id: number) => void;
     onEdit: (pb: PillboxRecord) => void;
     onSelect: (n: number) => void;
-    gridLists: IGridLists;
     pillboxMedLogList: TPillboxMedLog[];
 }
 
 interface IPillboxLineItem {
-    Id: number | null;
     Drug: string;
-    Strength: string;
+    Id: number | null;
     Qty: number;
+    Strength: string;
 }
 
 /**
@@ -45,19 +45,15 @@ const PillboxListGroup = (props: IProps) => {
         activePillbox,
         clientRecord,
         disabled = false,
+        gridLists,
         logPillbox,
         onDelete,
         onEdit,
         onSelect,
-        gridLists,
         pillboxMedLogList
     } = props;
-    const clientId = activePillbox?.ResidentId;
-    const {pillboxList, pillboxItemList, medicineList} = deconstructGridLists(gridLists);
-    const [showAlert, setShowAlert] = useState(false);
-    const [showPillboxDeleteConfirm, setShowPillboxDeleteConfirm] = useState(false);
-    const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord | null>(null);
 
+    const {pillboxList, pillboxItemList, medicineList} = deconstructGridLists(gridLists);
     const firstLoggedPillbox = pillboxMedLogList.find((p) => p.Updated)?.Updated;
     const logTime = firstLoggedPillbox
         ? new Date(firstLoggedPillbox).toLocaleString('en-US', {
@@ -66,18 +62,19 @@ const PillboxListGroup = (props: IProps) => {
               hour12: true
           } as Intl.DateTimeFormatOptions)
         : null;
-
-    // If there are pillboxes but not an activePillbox then set the activePillbox via the onSelect cb
-    useEffect(() => {
-        if (pillboxList.length > 0 && !activePillbox) {
-            onSelect(pillboxList[0].Id as number);
-        }
-    }, [pillboxList, activePillbox, onSelect]);
-
-    // When the activePillbox has already been logged today then setShowAlert to true
+    const [showAlert, setShowAlert] = useState(false);
     useEffect(() => {
         setShowAlert(logTime !== null);
     }, [activePillbox, logTime]);
+
+    const [showPillboxDeleteConfirm, setShowPillboxDeleteConfirm] = useState(false);
+    const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord | null>(null);
+    const clientId = clientRecord.Id;
+
+    // If there are pillboxes but not an activePillbox then set the activePillbox via the onSelect cb
+    useEffect(() => {
+        if (pillboxList.length > 0 && !activePillbox) onSelect(pillboxList[0].Id as number);
+    }, [pillboxList, activePillbox, onSelect]);
 
     /**
      * Return an array of PillboxItemRecord[] where the Quantity is > 0
@@ -109,8 +106,6 @@ const PillboxListGroup = (props: IProps) => {
         paddingBottom: '0.20rem',
         paddingLeft: '1.25rem'
     };
-
-    if (!clientId) return null;
 
     /**
      * Pillbox RadioButton component
@@ -323,17 +318,15 @@ const PillboxListGroup = (props: IProps) => {
                 )}
             </ListGroup>
 
-            {pillboxInfo && (
-                <PillboxEdit
-                    onClose={(r) => {
-                        setPillboxInfo(null);
-                        if (r) onEdit(r);
-                    }}
-                    clientRecord={clientRecord}
-                    pillboxInfo={pillboxInfo}
-                    show={true}
-                />
-            )}
+            <PillboxEdit
+                onClose={(r) => {
+                    setPillboxInfo(null);
+                    if (r) onEdit(r);
+                }}
+                clientRecord={clientRecord}
+                pillboxInfo={pillboxInfo as PillboxRecord}
+                show={pillboxInfo !== null}
+            />
 
             <Confirm.Modal
                 centered

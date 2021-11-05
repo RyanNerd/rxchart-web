@@ -11,8 +11,8 @@ import {isDateFuture, isDayValid, isMonthValid, isYearValid} from 'utility/commo
 
 interface IProps {
     allowDelete?: boolean;
-    fullName?: string;
     drugInfo: MedicineRecord;
+    fullName?: string;
     onClose: (r: MedicineRecord | null) => void;
     show: boolean;
 }
@@ -23,19 +23,9 @@ interface IProps {
  * @returns {JSX.Element | null}
  */
 const MedicineEdit = (props: IProps): JSX.Element | null => {
-    const [canSave, setCanSave] = useState(false);
+    const {allowDelete, onClose, fullName} = props;
+
     const [drugInfo, setDrugInfo] = useState<MedicineRecord>(props.drugInfo);
-    const [show, setShow] = useState(props.show);
-    const allowDelete = props.allowDelete;
-    const onClose = props.onClose;
-    const textInput = useRef<HTMLInputElement>(null);
-
-    // Observer for show
-    useEffect(() => {
-        setShow(props.show);
-    }, [props.show]);
-
-    // Observer/mutator for drugInfo
     useEffect(() => {
         if (props.drugInfo) {
             const info = {...props.drugInfo};
@@ -48,20 +38,18 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
         }
     }, [props.drugInfo]);
 
-    // Disable the Save button if the Drug name is empty.
+    const [show, setShow] = useState(props.show);
     useEffect(() => {
-        if (drugInfo) {
-            // Is the Drug field populated?
-            if (drugInfo?.Drug.length > 0) {
-                // If any elements have an is-invalid class marker or the fill date is incomplete/ invalid
-                // then don't allow a save.
-                const isInvalidClasses = document.querySelectorAll('.is-invalid');
-                setCanSave(isInvalidClasses.length === 0);
-            } else {
-                setCanSave(false);
-            }
-        }
+        setShow(props.show);
+    }, [props.show]);
+
+    const [canSave, setCanSave] = useState(false);
+    useEffect(() => {
+        if (drugInfo?.Drug?.length > 0) setCanSave(document.querySelectorAll('.is-invalid')?.length === 0);
+        else setCanSave(false);
     }, [drugInfo, setCanSave]);
+
+    const textInput = useRef<HTMLInputElement>(null);
 
     /**
      * Returns true if the Fill Date fields have a valid fill date or if the fill date is empty.
@@ -116,15 +104,12 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
         setShow(false);
     };
 
-    // Short circuit render if there is no drugInfo record.
-    if (drugInfo === null || Object.keys(drugInfo).length === 0) {
-        return null;
-    }
+    // Short circuit render if there is no drugInfo record or the drugInfo object is empty
+    if (drugInfo === null || Object.keys(drugInfo).length === 0) return null;
 
     const otc = drugInfo.OTC;
     const drugTitleType = drugInfo.Id ? 'Edit ' : ('Add ' as string);
     const drugName = drugInfo.Id || drugInfo?.Drug.length > 0 ? drugInfo.Drug : 'new drug';
-    const fullName = props.fullName;
 
     const modalTitle = otc ? (
         <Modal.Title>
@@ -144,27 +129,37 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
         </Modal.Title>
     );
 
-    const otcAlert =
-        otc && drugInfo.Id !== null ? (
-            <Form.Group as={Row} controlId="otc-alert">
-                <Form.Label column sm="2" style={{userSelect: 'none'}}>
-                    <span style={{color: 'red'}}>
-                        <b>OTC Warning</b>
-                    </span>
-                </Form.Label>
+    const otcAlert = (
+        <Form.Group as={Row} controlId="otc-alert">
+            <Form.Label column sm="2" style={{userSelect: 'none'}}>
+                <span style={{color: 'red'}}>
+                    <b>OTC Warning</b>
+                </span>
+            </Form.Label>
 
-                <Col sm="9">
-                    <Alert variant="danger">
-                        <span style={{color: 'red'}}>
-                            <b>CAUTION:</b>
-                        </span>{' '}
-                        Changes to this OTC medicine will affect <b>ALL</b> clients!
-                    </Alert>
-                </Col>
-            </Form.Group>
-        ) : (
-            <></>
-        );
+            <Col sm="9">
+                <Alert variant="danger">
+                    <span style={{color: 'red'}}>
+                        <b>CAUTION:</b>
+                    </span>{' '}
+                    Changes to this OTC medicine will affect <b>ALL</b> clients!
+                </Alert>
+            </Col>
+        </Form.Group>
+    );
+
+    const fillDateMonthValid =
+        drugInfo.FillDateMonth === '' ? '' : isMonthValid(drugInfo.FillDateMonth as string) ? '' : 'is-invalid';
+
+    const fillDateDayValid =
+        drugInfo.FillDateDay === ''
+            ? ''
+            : isDayValid(drugInfo.FillDateDay as string, drugInfo.FillDateMonth as string)
+            ? ''
+            : 'is-invalid';
+
+    const fillDateYearValid =
+        drugInfo.FillDateYear === '' ? '' : isYearValid(drugInfo.FillDateYear as string, false) ? '' : 'is-invalid';
 
     return (
         <Modal backdrop="static" centered onEntered={() => textInput?.current?.focus()} show={show} size="lg">
@@ -172,23 +167,22 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
 
             <Modal.Body>
                 <Form>
-                    {otcAlert}
+                    {otc && drugInfo.Id !== null && otcAlert}
 
                     <Form.Group as={Row}>
                         <Form.Label column sm="2" style={{userSelect: 'none'}}>
                             Drug Name
                         </Form.Label>
-
                         <Col sm="4">
                             <Form.Control
-                                tabIndex={1}
                                 className={drugInfo.Drug !== '' ? '' : 'is-invalid'}
-                                ref={textInput}
-                                type="text"
-                                value={drugInfo.Drug}
                                 name="Drug"
                                 onChange={(e) => handleOnChange(e)}
+                                ref={textInput}
                                 required
+                                tabIndex={1}
+                                type="text"
+                                value={drugInfo.Drug}
                             />
                             <div className="invalid-feedback">Drug Name cannot be blank.</div>
                         </Col>
@@ -196,15 +190,14 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                         <Form.Label column sm="1" style={{userSelect: 'none'}}>
                             Strength
                         </Form.Label>
-
                         <Col sm="2">
                             <Form.Control
+                                name="Strength"
+                                onChange={(e) => handleOnChange(e)}
+                                placeholder="e.g. 100 MG TABS"
                                 tabIndex={2}
                                 type="text"
                                 value={drugInfo.Strength ? drugInfo.Strength : ''}
-                                placeholder="e.g. 100 MG TABS"
-                                name="Strength"
-                                onChange={(e) => handleOnChange(e)}
                             />
                         </Col>
                     </Form.Group>
@@ -213,15 +206,14 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                         <Form.Label column sm="2" style={{userSelect: 'none'}}>
                             Other Names
                         </Form.Label>
-
                         <Col sm="9">
                             <Form.Control
-                                type="text"
-                                tabIndex={-1}
-                                value={drugInfo.OtherNames}
-                                placeholder="Other names for the drug"
                                 name="OtherNames"
                                 onChange={(e) => handleOnChange(e)}
+                                placeholder="Other names for the drug"
+                                tabIndex={-1}
+                                type="text"
+                                value={drugInfo.OtherNames}
                             />
                         </Col>
                     </Form.Group>
@@ -230,16 +222,15 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                         <Form.Label column sm="2" style={{userSelect: 'none'}}>
                             Active
                         </Form.Label>
-
                         <Col sm="1">
                             <Button size="sm" id={`medicine-active-checkbox-${drugInfo.Id}`} variant="outline-light">
                                 <span role="img" aria-label="active">
                                     <Form.Check
-                                        tabIndex={-1}
-                                        style={{transform: 'scale(2)'}}
                                         checked={drugInfo.Active}
-                                        onChange={(e) => handleOnChange(e)}
                                         name="Active"
+                                        onChange={(e) => handleOnChange(e)}
+                                        style={{transform: 'scale(2)'}}
+                                        tabIndex={-1}
                                     />
                                 </span>
                             </Button>
@@ -258,16 +249,15 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                         <Form.Label column sm="2" style={{userSelect: 'none'}}>
                             Directions
                         </Form.Label>
-
                         <Col sm="9">
                             <Form.Control
-                                tabIndex={3}
                                 as="textarea"
-                                rows={2}
-                                value={drugInfo.Directions ? drugInfo.Directions : ''}
-                                placeholder="e.g. Take 1 tablet at bedtime"
                                 name="Directions"
                                 onChange={(e) => handleOnChange(e)}
+                                placeholder="e.g. Take 1 tablet at bedtime"
+                                rows={2}
+                                tabIndex={3}
+                                value={drugInfo.Directions ? drugInfo.Directions : ''}
                             />
                         </Col>
                     </Form.Group>
@@ -277,15 +267,14 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                             <Form.Label column sm="2" style={{userSelect: 'none'}}>
                                 Notes
                             </Form.Label>
-
                             <Col sm="9">
                                 <Form.Control
-                                    tabIndex={4}
                                     as="textarea"
-                                    rows={3}
-                                    value={(drugInfo && drugInfo.Notes) || ''}
                                     name="Notes"
                                     onChange={(e) => handleOnChange(e)}
+                                    rows={3}
+                                    tabIndex={4}
+                                    value={(drugInfo && drugInfo.Notes) || ''}
                                 />
                             </Col>
                         </Form.Group>
@@ -295,14 +284,13 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                         <Form.Label column sm="2" style={{userSelect: 'none'}}>
                             Barcode
                         </Form.Label>
-
                         <Col sm="9">
                             <Form.Control
+                                name="Barcode"
+                                onChange={(e) => handleOnChange(e)}
                                 tabIndex={5}
                                 type="text"
                                 value={drugInfo.Barcode ? drugInfo.Barcode : ''}
-                                name="Barcode"
-                                onChange={(e) => handleOnChange(e)}
                             />
                         </Col>
                     </Form.Group>
@@ -318,18 +306,12 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                             </Form.Label>
                             <Col sm="2">
                                 <Form.Control
-                                    tabIndex={6}
-                                    className={
-                                        drugInfo.FillDateMonth?.length === 0
-                                            ? ''
-                                            : isMonthValid(drugInfo.FillDateMonth as string)
-                                            ? ''
-                                            : 'is-invalid'
-                                    }
-                                    type="text"
-                                    value={drugInfo.FillDateMonth}
+                                    className={fillDateMonthValid}
                                     name="FillDateMonth"
                                     onChange={(e) => handleOnChange(e)}
+                                    tabIndex={6}
+                                    type="text"
+                                    value={drugInfo.FillDateMonth}
                                 ></Form.Control>
                                 <div className="invalid-feedback">Invalid Month</div>
                             </Col>
@@ -338,21 +320,12 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                             </Form.Label>
                             <Col sm="2">
                                 <Form.Control
-                                    tabIndex={7}
-                                    className={
-                                        drugInfo.FillDateDay === ''
-                                            ? ''
-                                            : isDayValid(
-                                                  drugInfo.FillDateDay as string,
-                                                  drugInfo.FillDateMonth as string
-                                              )
-                                            ? ''
-                                            : 'is-invalid'
-                                    }
-                                    type="text"
-                                    value={drugInfo.FillDateDay}
+                                    className={fillDateDayValid}
                                     name="FillDateDay"
                                     onChange={(e) => handleOnChange(e)}
+                                    tabIndex={7}
+                                    type="text"
+                                    value={drugInfo.FillDateDay}
                                 />
                                 <div className="invalid-feedback">Invalid Day</div>
                             </Col>
@@ -361,18 +334,12 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                             </Form.Label>
                             <Col sm={2}>
                                 <Form.Control
-                                    tabIndex={8}
-                                    className={
-                                        drugInfo.FillDateYear === ''
-                                            ? ''
-                                            : isYearValid(drugInfo.FillDateYear as string, false)
-                                            ? ''
-                                            : 'is-invalid'
-                                    }
-                                    type="text"
-                                    value={drugInfo.FillDateYear}
+                                    className={fillDateYearValid}
                                     name="FillDateYear"
                                     onChange={(e) => handleOnChange(e)}
+                                    tabIndex={8}
+                                    type="text"
+                                    value={drugInfo.FillDateYear}
                                 />
                                 <div className="invalid-feedback">Invalid Year</div>
                             </Col>

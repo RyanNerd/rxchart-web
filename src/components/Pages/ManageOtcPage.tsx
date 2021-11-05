@@ -121,12 +121,12 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
             </Row>
 
             <MedicineEdit
-                show={showMedicineEdit}
+                drugInfo={medicineInfo as MedicineRecord}
                 onClose={(r) => {
                     setShowMedicineEdit(false);
                     if (r) saveOtcMedicine(r).then((m) => setSearchText(m.Active ? m.Drug : ''));
                 }}
-                drugInfo={medicineInfo as MedicineRecord}
+                show={showMedicineEdit}
             />
         </>
     );
