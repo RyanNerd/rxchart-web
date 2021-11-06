@@ -77,16 +77,12 @@ const ClientPage = (props: IProps): JSX.Element | null => {
         const refreshClient = async (clientRec: ClientRecord): Promise<void> => {
             const clientId = clientRec.Id as number;
             try {
-                const ml = await mm.loadMedicineList(clientId);
-                const dl = await mm.loadDrugLog(clientId, 5);
-                const pbl = await mm.loadPillboxList(clientId);
-                const pbItemList = await mm.loadPillboxItemList(clientId);
                 await setActiveClient({
                     ...activeClient,
-                    drugLogList: dl,
-                    medicineList: ml,
-                    pillboxItemList: pbItemList,
-                    pillboxList: pbl,
+                    drugLogList: await mm.loadDrugLog(clientId, 5),
+                    medicineList: await mm.loadMedicineList(clientId),
+                    pillboxItemList: await mm.loadPillboxItemList(clientId),
+                    pillboxList: await mm.loadPillboxList(clientId),
                     clientInfo: clientRec
                 });
             } catch (e) {
