@@ -225,20 +225,17 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const medicineOtcList = activeClient?.medicineList.concat(otcList) as MedicineRecord[];
 
     /**
-     * Given a MedicineRecord Update or Insert the record and rehydrate the globalMedicineList
+     * Given a MedicineRecord object Update or Insert the record and rehydrate the global otcList / medicineList
      * @param {MedicineRecord} med Medicine record object
      */
     const saveMedicine = async (med: MedicineRecord) => {
+        await setIsBusy(true);
         const m = await mm.updateMedicine(med);
-        if (m.OTC) {
-            // Rehydrate the global otcList
-            const ol = await mm.loadOtcList();
-            await setOtcList(ol);
-        } else {
-            // Rehydrate the client medicineList
-            const ml = await mm.loadMedicineList(clientId);
-            if (activeClient) await setActiveClient({...activeClient, medicineList: ml});
+        if (activeClient) {
+            if (m.OTC) await setOtcList(await mm.loadOtcList());
+            else await setActiveClient({...activeClient, medicineList: await mm.loadMedicineList(clientId)});
         }
+        await setIsBusy(false);
         return m;
     };
 
@@ -247,14 +244,12 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      * @param {number} id The PK of the Medicine record to delete
      */
     const deleteMedicine = async (id: number) => {
-        await setIsBusy(true);
-        const result = await mm.deleteMedicine(id);
-        if (result) {
-            // Rehydrate the medicineList
-            const ml = await mm.loadMedicineList(clientId);
-            if (activeClient) await setActiveClient({...activeClient, medicineList: ml});
+        if (activeClient) {
+            await setIsBusy(true);
+            if (await mm.deleteMedicine(id))
+                await setActiveClient({...activeClient, medicineList: await mm.loadMedicineList(clientId)});
+            await setIsBusy(false);
         }
-        await setIsBusy(false);
     };
 
     /**
@@ -264,10 +259,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const saveDrugLog = async (drugLog: DrugLogRecord): Promise<DrugLogRecord> => {
         await setIsBusy(true);
         const r = await mm.updateDrugLog(drugLog);
-        // Rehydrate the drugLogList
-        const drugs = await mm.loadDrugLog(clientId, 5);
         if (activeClient) {
-            await setActiveClient({...activeClient, drugLogList: drugs});
+            await setActiveClient({...activeClient, drugLogList: await mm.loadDrugLog(clientId, 5)});
         }
         await setIsBusy(false);
         return r;

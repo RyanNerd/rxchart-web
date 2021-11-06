@@ -11,6 +11,7 @@ export interface IMedicineManager {
     deletePillbox: (pillboxId: number) => Promise<boolean>;
     deletePillboxItem: (pillboxItemId: number) => Promise<boolean>;
     loadDrugLog: (residentId: number, days?: number) => Promise<DrugLogRecord[]>;
+    loadDrugLogForMedicine: (medicineId: number) => Promise<DrugLogRecord[]>;
     loadMedicineList: (residentId: number) => Promise<MedicineRecord[]>;
     loadPillboxList: (residentId: number) => Promise<PillboxRecord[]>;
     loadPillboxItemList: (clientId: number) => Promise<PillboxItemRecord[]>;
@@ -101,6 +102,20 @@ const MedicineManager = (
                 orderBy: [['Created', 'desc']]
             };
         }
+        const [e, r] = (await asyncWrapper(medHistoryProvider.search(searchCriteria))) as [
+            unknown,
+            Promise<DrugLogRecord[]>
+        ];
+        if (e) throw e;
+        else return r;
+    };
+
+    /**
+     * For a given medicine PK return all MedHistory DrugLogRecords[]
+     * @param {number} medicineId The PK of the Medicine table
+     */
+    const _loadDrugLogForMedicine = async (medicineId: number) => {
+        const searchCriteria = {where: [['MedicineId', '=', medicineId]]};
         const [e, r] = (await asyncWrapper(medHistoryProvider.search(searchCriteria))) as [
             unknown,
             Promise<DrugLogRecord[]>
@@ -244,6 +259,9 @@ const MedicineManager = (
         },
         loadDrugLog: async (residentId: number, days?: number): Promise<DrugLogRecord[]> => {
             return await _loadDrugLog(residentId, days);
+        },
+        loadDrugLogForMedicine: async (medicineId: number): Promise<DrugLogRecord[]> => {
+            return await _loadDrugLogForMedicine(medicineId);
         },
         loadMedicineList: async (residentId: number): Promise<MedicineRecord[]> => {
             return await _loadMedicineList(residentId);
