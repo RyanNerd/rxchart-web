@@ -167,7 +167,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
 
             <Modal.Body>
                 <Form>
-                    {otc && drugInfo.Id !== null && otcAlert}
+                    {otc && drugInfo.Id !== null && !allowDelete && otcAlert}
 
                     <Form.Group as={Row}>
                         <Form.Label column sm="2" style={{userSelect: 'none'}}>
@@ -359,7 +359,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                 >
                     Save changes
                 </Button>
-                {allowDelete && drugInfo.Id && !otc && !drugInfo.Active && (
+                {allowDelete && drugInfo.Id && !drugInfo.Active && (
                     <TooltipContainer tooltip={'Permantly Delete Medicine'} placement="right">
                         <Button onClick={() => handleHide('delete')} variant="danger">
                             Delete
