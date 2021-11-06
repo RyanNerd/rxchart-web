@@ -106,8 +106,7 @@ const ClientPage = (props: IProps): JSX.Element | null => {
      */
     const saveClient = async (client: ClientRecord) => {
         const r = await cm.updateClient(client);
-        const rl = await cm.loadClientList();
-        await setClientList(rl);
+        await setClientList(await cm.loadClientList());
         return r;
     };
 
@@ -116,10 +115,8 @@ const ClientPage = (props: IProps): JSX.Element | null => {
      * @param {number} clientId The PK of the Resident table
      */
     const deleteClient = async (clientId: number) => {
-        const d = await cm.deleteClient(clientId);
-        if (d) {
-            const rl = await cm.loadClientList();
-            await setClientList(rl);
+        if (await cm.deleteClient(clientId)) {
+            await setClientList(await cm.loadClientList());
             await setActiveClient(null);
             setSearchText('');
         }

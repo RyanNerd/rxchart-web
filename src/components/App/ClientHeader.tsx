@@ -56,11 +56,9 @@ const ClientHeader = () => {
      * @param {ClientRecord} client Resident record object
      */
     const saveClient = async (client: ClientRecord) => {
-        const r = await cm.updateClient(client);
-        if (r && activeClient) {
-            const rl = await cm.loadClientList();
-            await setClientList(rl);
-            await setActiveClient({...activeClient, clientInfo: r});
+        if (activeClient) {
+            await setActiveClient({...activeClient, clientInfo: await cm.updateClient(client)});
+            await setClientList(await cm.loadClientList());
         }
     };
 

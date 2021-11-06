@@ -94,10 +94,9 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
 
         // If this is an existing OTC medicine then determine if the medicine is allowed to be deleted
         if (medicineInfo.Id) {
-            const drugLogs = await getDrugLogForMedication(medicineInfo.Id);
             const dt = new Date();
             dt.setDate(dt.getDate() - 5);
-            const logsInFiveDays = drugLogs.filter((d) => {
+            const logsInFiveDays = (await getDrugLogForMedication(medicineInfo.Id)).filter((d) => {
                 const updated = d.Updated ? new Date(d.Updated) : null;
                 return updated ? updated > dt : false;
             });
@@ -136,7 +135,7 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
 
             <Row>
                 <ManageOtcGrid
-                    onDeactivate={(medicineRecord) => {
+                    onToggleActive={(medicineRecord) => {
                         saveOtcMedicine({...medicineRecord, Active: !medicineRecord.Active}).then((m) =>
                             setSearchText(m.Active ? m.Drug : '')
                         );

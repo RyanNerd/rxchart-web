@@ -6,7 +6,7 @@ import React from 'reactn';
 import {MedicineRecord} from 'types/RecordTypes';
 
 interface IProps {
-    onDelete: (r: MedicineRecord) => void;
+    onToggleActive: (r: MedicineRecord) => void;
     onEdit: (r: MedicineRecord) => void;
     onLogDrug: (r: MedicineRecord) => void;
     medicineList: MedicineRecord[];
@@ -19,7 +19,7 @@ interface IProps {
  * @returns {JSX.Element}
  */
 const ManageDrugGrid = (props: IProps): JSX.Element => {
-    const {checkoutList, onDelete, onEdit, onLogDrug, medicineList} = props;
+    const {checkoutList, onToggleActive, onEdit, onLogDrug, medicineList} = props;
 
     /**
      * Table row component for each medicine record
@@ -72,7 +72,7 @@ const ManageDrugGrid = (props: IProps): JSX.Element => {
                             <Form.Check
                                 style={{transform: 'scale(2)'}}
                                 checked={drug.Active}
-                                onChange={() => onDelete(drug)}
+                                onChange={() => onToggleActive(drug)}
                                 name="Active"
                             />
                         </span>

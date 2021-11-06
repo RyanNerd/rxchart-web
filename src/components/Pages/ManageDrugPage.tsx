@@ -33,21 +33,21 @@ interface IProps {
  * @returns {JSX.Element | null}
  */
 const ManageDrugPage = (props: IProps): JSX.Element | null => {
+    const [, setPillboxItemList] = useState<PillboxItemRecord[]>([]);
     const [activeClient, setActiveClient] = useGlobal('activeClient');
+    const [checkoutList, setCheckoutList] = useState<DrugLogRecord[]>([]);
+    const [clientInfo, setClientInfo] = useState<ClientRecord | null>(null);
+    const [drugLogList, setDrugLogList] = useState<DrugLogRecord[]>([]);
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
+    const [medicineList, setMedicineList] = useState<MedicineRecord[]>([]);
     const [mm] = useGlobal('medicineManager');
+    const [showCheckoutAlert, setShowCheckoutAlert] = useState(false);
+    const [showCheckoutAllMeds, setShowCheckoutAllMeds] = useState(false);
     const [showCheckoutModal, setShowCheckoutModal] = useState<DrugLogRecord | null>(null);
     const [showCheckoutPrint, setShowCheckoutPrint] = useState(false);
+    const [showDeleteMedicine, setShowDeleteMedicine] = useState(0);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const [toast, setToast] = useState<DrugLogRecord[] | null>(null);
-    const [showCheckoutAllMeds, setShowCheckoutAllMeds] = useState(false);
-    const [showCheckoutAlert, setShowCheckoutAlert] = useState(false);
-    const [checkoutList, setCheckoutList] = useState<DrugLogRecord[]>([]);
-    const [medicineList, setMedicineList] = useState<MedicineRecord[]>([]);
-    const [drugLogList, setDrugLogList] = useState<DrugLogRecord[]>([]);
-    const [pillboxItemList, setPillboxItemList] = useState<PillboxItemRecord[]>([]);
-    const [showDeleteMedicine, setShowDeleteMedicine] = useState(0);
-    const [clientInfo, setClientInfo] = useState<ClientRecord | null>(null);
     const activeTabKey = props.activeTabKey;
 
     // When the activeClient is "active" then deconstruct the activeClient into the lists and clientInfo constants
@@ -122,47 +122,10 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
      * @param {number} clientId The PK of the Resident table
      */
     const saveMedicine = async (med: MedicineRecord, clientId: number) => {
-        /**
-         * Remove all the PillboxItems when a medicine is marked as inactive
-         * @param {number} medicineId The PK of the Medicine table
-         */
-        const removeInactivePillboxItems = async (medicineId: number) => {
-            let delCount = 0;
-            pillboxItemList.forEach((pbi) => {
-                const removePillboxItems = async () => {
-                    if (pbi.MedicineId === medicineId) {
-                        await mm.deletePillboxItem(pbi.Id as number);
-                        delCount++;
-                    }
-                };
-                removePillboxItems();
-            });
-            return delCount;
-        };
-
         const m = await mm.updateMedicine(med);
-        const ml = await mm.loadMedicineList(clientId);
-        let dl = null as null | DrugLogRecord[];
-        let pbil = null as null | PillboxItemRecord[];
-
-        // If the medicine has been set to inactive then refresh the drug log and remove from any pillboxItems
-        if (!m.Active) {
-            dl = await mm.loadDrugLog(clientInfo.Id as number, 5);
-            await setActiveClient({...activeClient, drugLogList: dl});
-
-            if (!m.Active) {
-                const count = await removeInactivePillboxItems(m.Id as number);
-                if (count > 0) {
-                    pbil = await mm.loadPillboxItemList(clientInfo.Id as number);
-                }
-            }
-        }
-
         await setActiveClient({
             ...activeClient,
-            medicineList: ml,
-            drugLogList: dl ? dl : activeClient.drugLogList,
-            pillboxItemList: pbil ? pbil : activeClient.pillboxItemList
+            medicineList: await mm.loadMedicineList(clientId)
         });
         return m;
     };
@@ -172,11 +135,11 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
      * @param {number} id The PK of the Medicine record to delete
      */
     const deleteMedicine = async (id: number) => {
-        const result = await mm.deleteMedicine(id);
-        if (result) {
-            // Rehydrate the medicineList
-            const ml = await mm.loadMedicineList(clientInfo.Id as number);
-            if (activeClient) await setActiveClient({...activeClient, medicineList: ml});
+        if (activeClient && (await mm.deleteMedicine(id))) {
+            await setActiveClient({
+                ...activeClient,
+                medicineList: await mm.loadMedicineList(clientInfo.Id as number)
+            });
         }
     };
 
@@ -283,7 +246,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                 <Row className="mt-2 d-print-none">
                     <ManageDrugGrid
                         checkoutList={medicineWithCheckout}
-                        onDelete={(mr) => saveMedicine({...mr, Active: !mr.Active}, clientInfo.Id as number)}
+                        onToggleActive={(mr) => saveMedicine({...mr, Active: !mr.Active}, clientInfo.Id as number)}
                         onEdit={(m) => onEdit(m)}
                         onLogDrug={(d) => handleLogDrug(d)}
                         medicineList={medicineList}

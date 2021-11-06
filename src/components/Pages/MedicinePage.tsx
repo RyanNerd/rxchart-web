@@ -271,13 +271,9 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      * @param {PillboxRecord} pillbox Pillbox record object
      */
     const savePillbox = async (pillbox: PillboxRecord) => {
-        const pb = await mm.updatePillbox(pillbox);
-        if (pb) {
-            const pbl = await mm.loadPillboxList(clientId);
-            if (activeClient) {
-                await setActiveClient({...activeClient, pillboxList: pbl});
-                await setActivePillbox(pb);
-            }
+        if (activeClient) {
+            setActivePillbox(await mm.updatePillbox(pillbox));
+            await setActiveClient({...activeClient, pillboxList: await mm.loadPillboxList(clientId)});
         }
     };
 
@@ -286,10 +282,9 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      * @param {number} pillboxId The PK for the Pillbox table
      */
     const deletePillbox = async (pillboxId: number) => {
-        const d = await mm.deletePillbox(pillboxId);
-        if (d) {
-            const pbl = await mm.loadPillboxList(clientId);
-            if (activeClient) {
+        if (activeClient) {
+            if (await mm.deletePillbox(pillboxId)) {
+                const pbl = await mm.loadPillboxList(clientId);
                 await setActiveClient({...activeClient, pillboxList: pbl});
                 await setActivePillbox(pbl.length > 0 ? pbl[0] : null);
             }
@@ -380,9 +375,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
             // If there are any logged Pillbox drugs then refresh the drugLogList global and toast the success.
             if (loggedPillboxDrugs.length > 0) {
-                const drugLogs = await mm.loadDrugLog(clientId, 5);
                 if (activeClient) {
-                    await setActiveClient({...activeClient, drugLogList: drugLogs});
+                    await setActiveClient({...activeClient, drugLogList: await mm.loadDrugLog(clientId, 5)});
                     loggedPillboxDrugs.forEach((ld) => toastQ.push({...ld}));
                     setToast(toastQ);
                 }
@@ -677,8 +671,12 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             setShowDeleteMedicine(Math.abs(r.Id)); // Negative Id indicates a delete operation
                         } else {
                             saveMedicine(r).then((m) => {
-                                if (m.OTC) setActiveOtc(m);
-                                else setActiveMed(m);
+                                if (m.OTC) {
+                                    setActiveOtc(m.Active ? m : null);
+                                } else {
+                                    const activeMeds = medicineList.filter((m) => m.Active);
+                                    setActiveMed(m.Active ? m : activeMeds.length === 0 ? null : activeMeds[0]);
+                                }
                             });
                         }
                     }
