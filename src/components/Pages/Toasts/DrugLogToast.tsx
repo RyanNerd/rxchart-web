@@ -4,10 +4,10 @@ import {DrugLogRecord, MedicineRecord} from 'types/RecordTypes';
 import {BsColor, getDrugName} from 'utility/common';
 
 interface IProps {
-    toast: DrugLogRecord[];
     medicineList: MedicineRecord[];
-    show: boolean;
     onClose: () => void;
+    show: boolean;
+    toast: DrugLogRecord[];
 }
 
 const DrugLogToast = (props: IProps) => {
@@ -15,6 +15,11 @@ const DrugLogToast = (props: IProps) => {
 
     return (
         <Toast
+            autohide
+            className="p-1 mb-2 d-print-none"
+            delay={toast && toast.length > 1 ? 5000 : 2000}
+            onClose={() => onClose()}
+            show={show}
             style={{
                 position: 'absolute',
                 top: 0.95,
@@ -22,11 +27,6 @@ const DrugLogToast = (props: IProps) => {
                 color: '#fff',
                 backgroundColor: BsColor.success
             }}
-            onClose={() => onClose()}
-            show={show}
-            delay={toast && toast.length > 1 ? 5000 : 2000}
-            autohide
-            className="p-1 mb-2 d-print-none"
         >
             <Toast.Header>
                 <b>Updating Drug History</b>
