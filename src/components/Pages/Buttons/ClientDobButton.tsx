@@ -1,8 +1,8 @@
-import {ReactNode} from 'reactn/default';
 import Badge from 'react-bootstrap/Badge';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton, {DropdownButtonProps} from 'react-bootstrap/DropdownButton';
 import React from 'reactn';
+import {ReactNode} from 'reactn/default';
 import {Modify} from 'types/Modify';
 import {ClientRecord} from 'types/RecordTypes';
 import {clientDOB} from 'utility/common';
@@ -29,8 +29,8 @@ type TProps = Modify<
 const ClientDobButton = (props: TProps) => {
     const isDev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
     const {
-        disabled = false,
         clientRecord,
+        disabled = false,
         title = (
             <span style={{fontStyle: isDev ? 'italic' : 'bold'}}>
                 {clientRecord.Notes && <Badge variant="light">🔔</Badge>} {clientDOB(clientRecord)}

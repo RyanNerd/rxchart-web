@@ -67,9 +67,6 @@ export const randomString = (): string => {
  * @returns {null | number}
  */
 export const calculateLastTaken = (drugId: number, drugLogList: DrugLogRecord[]): number | null => {
-    if (drugLogList === null) {
-        return null;
-    }
     let diff;
     const filteredDrugs = drugLogList.filter((drug) => drug && drug.MedicineId === drugId);
     const latestDrug = filteredDrugs && filteredDrugs.length > 0 ? filteredDrugs[0] : null;

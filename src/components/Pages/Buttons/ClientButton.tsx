@@ -6,24 +6,15 @@ import {ClientRecord} from 'types/RecordTypes';
 import {clientFullName} from 'utility/common';
 
 interface IProps {
+    [key: string]: unknown;
     className?: string;
     clientRecord: ClientRecord;
-    onSelect?: (choice: string) => void;
-    disabled?: boolean;
-    [key: string]: unknown;
+    onSelect: (choice: string) => void;
 }
 
 const ClientButton = (props: IProps) => {
-    const {clientRecord, onSelect, className, disabled} = props;
-
+    const {clientRecord, onSelect, className} = props;
     const development = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
-
-    const handleClick = (choice: string) => {
-        if (onSelect) {
-            onSelect(choice);
-        }
-    };
-
     const clientName = (
         <span style={{fontStyle: development ? 'italic' : 'bold'}}>{clientFullName(clientRecord, true)}</span>
     );
@@ -39,14 +30,13 @@ const ClientButton = (props: IProps) => {
             id="client-dropdown-button"
             className={className}
             onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
-            disabled={disabled}
         >
-            <Dropdown.Item onClick={() => handleClick('edit')}>Edit Client</Dropdown.Item>
-            <Dropdown.Item onClick={() => handleClick('print')}>Print Medbox Labels</Dropdown.Item>
-            <Dropdown.Item onClick={() => handleClick('copy')}>Copy name to clipboard</Dropdown.Item>
-            <Dropdown.Item onClick={() => handleClick('hmis')}>Copy name to clipboard and launch HMIS</Dropdown.Item>
+            <Dropdown.Item onClick={() => onSelect('edit')}>Edit Client</Dropdown.Item>
+            <Dropdown.Item onClick={() => onSelect('print')}>Print Medbox Labels</Dropdown.Item>
+            <Dropdown.Item onClick={() => onSelect('copy')}>Copy name to clipboard</Dropdown.Item>
+            <Dropdown.Item onClick={() => onSelect('hmis')}>Copy name to clipboard and launch HMIS</Dropdown.Item>
             <Dropdown.Divider />
-            <Dropdown.Item onClick={() => handleClick('switch')}>Switch to a different client</Dropdown.Item>
+            <Dropdown.Item onClick={() => onSelect('switch')}>Switch to a different client</Dropdown.Item>
         </DropdownButton>
     );
 };
