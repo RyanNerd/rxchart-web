@@ -39,20 +39,20 @@ import MedicineEdit from './Modals/MedicineEdit';
 export type TPillboxMedLog = {
     Active: boolean;
     Drug: string | undefined;
-    Strength: string | null | undefined;
-    Quantity: number;
     Notes: string | null;
-    Updated: Date | null | undefined;
-    PillboxItemId?: number | null;
     PillboxId?: number | null;
+    PillboxItemId?: number | null;
+    Quantity: number;
+    Strength: string | null | undefined;
+    Updated: Date | null | undefined;
 };
 
 // Display states
 enum DISPLAY_TYPE {
+    History = 'history',
     Medicine = 'med',
     OTC = 'otc',
     Pillbox = 'pillbox',
-    History = 'history',
     Print = 'print'
 }
 
@@ -102,11 +102,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         if (prevActiveTabKey !== activeTabKey && activeTabKey === 'medicine') {
             const medicineList = activeClient?.medicineList || ([] as MedicineRecord[]);
             const activeMeds = medicineList.filter((m) => m.Active); // Only active medications
-            if (activeMeds.length > 0) {
-                setActiveMed(activeMeds[0]);
-            } else {
-                setActiveMed(null);
-            }
+            setActiveMed(activeMeds.length > 0 ? activeMeds[0] : null);
         }
     }, [activeTabKey, prevActiveTabKey, activeClient]);
 
@@ -169,7 +165,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     }
                 }
             });
-
             setPillboxMedLogList(multiSort(pillboxMedLog, {Quantity: SortDirection.asc, Drug: SortDirection.desc}));
         }
     }, [activeClient, activePillbox, setPillboxMedLogList]);
@@ -188,7 +183,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 const loggedPillboxItems = drugLogList.filter(
                     (d) => d.Updated && isToday(d.Updated) && pbItems.find((pbi) => pbi.Id === d.PillboxItemId)
                 );
-
                 if (loggedPillboxItems.length === 0) {
                     itemList.push({
                         id: -(p.Id as number),
@@ -198,9 +192,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     pbCnt++;
                 }
             });
-            if (pbCnt > 0) {
-                itemList.push({id: 0, description: 'divider', subtext: null});
-            }
+            if (pbCnt > 0) itemList.push({id: 0, description: 'divider', subtext: null});
+
             medicineList.forEach((m) => {
                 if (m.Active) {
                     const strength = m.Strength || '';
@@ -215,10 +208,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 }
             });
         }
+        if (itemList.length === 0) setActiveMed(null);
 
-        if (itemList.length === 0) {
-            setActiveMed(null);
-        }
         setMedItemList(itemList);
     }, [activeClient]);
 
@@ -417,11 +408,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      * @param {PillboxItemRecord} pbi The pillboxItem record object
      */
     const savePillboxItem = async (pbi: PillboxItemRecord) => {
-        const updatedPbi = await mm.updatePillboxItem(pbi);
-        if (updatedPbi && activeClient) {
-            const pbItemList = await mm.loadPillboxItemList(clientId as number);
-            await setActiveClient({...activeClient, pillboxItemList: pbItemList});
-        }
+        if (activeClient && (await mm.updatePillboxItem(pbi)))
+            await setActiveClient({...activeClient, pillboxItemList: await mm.loadPillboxItemList(clientId as number)});
     };
 
     if (!activeClient) return null;
@@ -441,79 +429,79 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         }}
                     >
                         <ToggleButton
-                            className="d-print-none"
-                            key="med-list-group-med-btn"
-                            id="med-list-group-med-radio-btn"
-                            type="radio"
-                            size="sm"
-                            variant="outline-success"
-                            name="radio-med-list-group"
-                            value={DISPLAY_TYPE.Medicine}
                             checked={displayType === DISPLAY_TYPE.Medicine}
+                            className="d-print-none"
+                            id="med-list-group-med-radio-btn"
+                            key="med-list-group-med-btn"
+                            name="radio-med-list-group"
                             onChange={() => setDisplayType(DISPLAY_TYPE.Medicine)}
+                            size="sm"
+                            type="radio"
+                            value={DISPLAY_TYPE.Medicine}
+                            variant="outline-success"
                         >
                             <span className="ml-2">Medicine</span>
                         </ToggleButton>
 
                         <ToggleButton
-                            key="med-list-group-otc-btn"
-                            id="med-list-group-otc-radio-btn"
+                            checked={displayType === DISPLAY_TYPE.OTC}
                             className="ml-2 d-print-none"
                             disabled={otcList?.length === 0}
-                            type="radio"
-                            size="sm"
-                            variant="outline-success"
+                            id="med-list-group-otc-radio-btn"
+                            key="med-list-group-otc-btn"
                             name="radio-med-list-group"
-                            value={DISPLAY_TYPE.OTC}
-                            checked={displayType === DISPLAY_TYPE.OTC}
                             onChange={() => setDisplayType(DISPLAY_TYPE.OTC)}
+                            size="sm"
+                            type="radio"
+                            value={DISPLAY_TYPE.OTC}
+                            variant="outline-success"
                         >
                             <span className="ml-2">OTC</span>
                         </ToggleButton>
 
                         <ToggleButton
-                            key="med-list-group-history-btn"
-                            id="med-list-group-history-radio-btn"
+                            checked={displayType === DISPLAY_TYPE.History}
                             className="ml-2 d-print-none"
                             disabled={drugLogList.length === 0}
+                            id="med-list-group-history-radio-btn"
+                            key="med-list-group-history-btn"
+                            onChange={() => setDisplayType(DISPLAY_TYPE.History)}
                             size="sm"
                             type="radio"
-                            variant="outline-success"
                             value={DISPLAY_TYPE.History}
-                            checked={displayType === DISPLAY_TYPE.History}
-                            onChange={() => setDisplayType(DISPLAY_TYPE.History)}
+                            variant="outline-success"
                         >
                             <span className="ml-2">History</span>
                         </ToggleButton>
 
                         <ToggleButton
-                            key="med-list-group-pill-btn"
-                            id="med-list-group-pill-radio-btn"
+                            checked={displayType === DISPLAY_TYPE.Pillbox}
                             className="ml-2 d-print-none"
                             disabled={medicineList.length < 5}
+                            id="med-list-group-pill-radio-btn"
+                            key="med-list-group-pill-btn"
+                            name="radio-med-list-group"
+                            onChange={() => setDisplayType(DISPLAY_TYPE.Pillbox)}
                             size="sm"
                             type="radio"
-                            variant="outline-success"
-                            name="radio-med-list-group"
                             value={DISPLAY_TYPE.Pillbox}
-                            checked={displayType === DISPLAY_TYPE.Pillbox}
-                            onChange={() => setDisplayType(DISPLAY_TYPE.Pillbox)}
+                            variant="outline-success"
                         >
                             <span className="ml-2">Pillbox</span>
                         </ToggleButton>
 
                         <ToggleButton
-                            key="med-list-group-print-btn"
-                            id="med-list-group-print-radio-btn"
+                            checked={displayType === DISPLAY_TYPE.Print}
                             className="ml-2 d-print-none"
+                            disabled={checkoutList.length === 0}
+                            id="med-list-group-print-radio-btn"
+                            key="med-list-group-print-btn"
+                            name="radio-print-list-group"
+                            onChange={() => setDisplayType(DISPLAY_TYPE.Print)}
                             size="sm"
                             type="radio"
-                            disabled={checkoutList.length === 0}
-                            variant="outline-success"
-                            name="radio-print-list-group"
                             value={DISPLAY_TYPE.Print}
-                            checked={displayType === DISPLAY_TYPE.Print}
-                            onChange={() => setDisplayType(DISPLAY_TYPE.Print)}
+                            variant="outline-success"
                         >
                             <span className="ml-2">
                                 Print Med Checkout{' '}
@@ -525,12 +513,12 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     <ListGroup.Item>
                         {displayType === DISPLAY_TYPE.Medicine && (
                             <MedListGroup
-                                disabled={isBusy}
                                 activeMed={activeMed}
                                 addDrugLog={() => addEditDrugLog()}
-                                clientId={clientId}
-                                editMedicine={(m) => setShowMedicineEdit(m)}
                                 canvasId="med-barcode"
+                                clientId={clientId}
+                                disabled={isBusy}
+                                editMedicine={(m) => setShowMedicineEdit(m)}
                                 itemChanged={(id) => {
                                     if (id < 0) {
                                         setActivePillbox(pillboxList.find((p) => p.Id === Math.abs(id)) || null);
@@ -547,12 +535,12 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
                         {displayType === DISPLAY_TYPE.OTC && (
                             <OtcListGroup
-                                disabled={otcList.length === 0 || isBusy}
-                                editOtcMedicine={(r) => setShowMedicineEdit(r)}
                                 activeOtc={activeOtc}
+                                disabled={otcList.length === 0 || isBusy}
                                 drugLogList={drugLogList}
-                                logOtcDrugAmount={(n) => handleLogOtcDrugAmount(n)}
+                                editOtcMedicine={(r) => setShowMedicineEdit(r)}
                                 logOtcDrug={() => addEditOtcLog()}
+                                logOtcDrugAmount={(n) => handleLogOtcDrugAmount(n)}
                                 otcList={otcList}
                                 otcSelected={(d) => setActiveOtc(d)}
                             />
@@ -560,19 +548,19 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
                         {displayType === DISPLAY_TYPE.Pillbox && (
                             <PillboxListGroup
-                                clientRecord={activeClient.clientInfo}
                                 activePillbox={activePillbox}
+                                clientRecord={activeClient.clientInfo}
                                 disabled={isBusy}
-                                onSelect={(id) => setActivePillbox(pillboxList.find((pb) => pb.Id === id) || null)}
-                                onEdit={(r) => savePillbox(r)}
-                                onDelete={(id) => deletePillbox(id)}
-                                logPillbox={() => handleLogPillbox()}
                                 gridLists={{
                                     medicineList: medicineList.filter((m) => m.Active),
                                     pillboxList,
                                     pillboxItemList,
                                     drugLogList
                                 }}
+                                logPillbox={() => handleLogPillbox()}
+                                onDelete={(id) => deletePillbox(id)}
+                                onEdit={(r) => savePillbox(r)}
+                                onSelect={(id) => setActivePillbox(pillboxList.find((pb) => pb.Id === id) || null)}
                                 pillboxMedLogList={pillboxMedLogList}
                             />
                         )}
@@ -588,11 +576,11 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                                             pillboxItemList,
                                             medicineList: medicineList.concat(otcList)
                                         }}
-                                        onPillClick={(n) => handleOnPillClick(n)}
                                         onEdit={(d: DrugLogRecord | undefined) => addEditDrugLog(d)}
                                         onDelete={(d: SetStateAction<DrugLogRecord | null>) =>
                                             setShowDeleteDrugLogRecord(d)
                                         }
+                                        onPillClick={(n) => handleOnPillClick(n)}
                                     />
                                 </ListGroup.Item>
                             </ListGroup>
@@ -600,9 +588,9 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
                         {displayType === DISPLAY_TYPE.Print && activeClient && activeClient?.clientInfo && (
                             <CheckoutListGroup
+                                activeClient={activeClient.clientInfo}
                                 checkoutList={checkoutList}
                                 medicineList={medicineList}
-                                activeClient={activeClient.clientInfo}
                             />
                         )}
                     </ListGroup.Item>
@@ -613,11 +601,11 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         {displayType === DISPLAY_TYPE.Medicine && (
                             <ListGroup.Item style={{textAlign: 'center'}}>
                                 <Button
-                                    size="lg"
                                     className="hover-underline-animation"
-                                    variant="link"
-                                    target="_blank"
                                     href={`https://goodrx.com/${activeMed?.Drug}`}
+                                    size="lg"
+                                    target="_blank"
+                                    variant="link"
                                 >
                                     {activeMed?.Drug}
                                 </Button>
@@ -626,12 +614,12 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
                                 {activeMed?.Id && (
                                     <DrugLogGrid
-                                        drugId={activeMed.Id}
                                         columns={['Taken', 'Notes', 'Out', 'In']}
-                                        onPillClick={(n) => handleOnPillClick(n)}
-                                        onEdit={(r) => addEditDrugLog(r)}
-                                        onDelete={(r) => setShowDeleteDrugLogRecord(r)}
+                                        drugId={activeMed.Id}
                                         gridLists={{medicineList, drugLogList, pillboxList, pillboxItemList}}
+                                        onDelete={(r) => setShowDeleteDrugLogRecord(r)}
+                                        onEdit={(r) => addEditDrugLog(r)}
+                                        onPillClick={(n) => handleOnPillClick(n)}
                                     />
                                 )}
                             </ListGroup.Item>
@@ -643,24 +631,24 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                                     OTC History
                                 </h5>
                                 <DrugLogGrid
+                                    columns={['Drug', 'Taken', 'Notes']}
+                                    onDelete={(r) => setShowDeleteDrugLogRecord(r)}
+                                    onEdit={(r) => addEditOtcLog(r)}
                                     gridLists={{
                                         medicineList: otcList,
                                         drugLogList: otcLogList,
                                         pillboxList: undefined,
                                         pillboxItemList: undefined
                                     }}
-                                    columns={['Drug', 'Taken', 'Notes']}
-                                    onEdit={(r) => addEditOtcLog(r)}
-                                    onDelete={(r) => setShowDeleteDrugLogRecord(r)}
                                 />
                             </ListGroup.Item>
                         )}
 
                         {displayType === DISPLAY_TYPE.Pillbox && activePillbox && activePillbox.Id && (
                             <PillboxCard
-                                onEdit={(pbi) => savePillboxItem(pbi)}
-                                medicineList={medicineList}
                                 activePillbox={activePillbox}
+                                medicineList={medicineList}
+                                onEdit={(pbi) => savePillboxItem(pbi)}
                                 pillboxItemList={pillboxItemList}
                             />
                         )}
@@ -736,7 +724,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             )}
 
             <DeleteMedicineModal
-                show={showDeleteMedicine !== 0}
                 medicine={medicineList.find((m) => m.Id === showDeleteMedicine) as MedicineRecord}
                 onSelect={(n) => {
                     setShowDeleteMedicine(0);
@@ -747,13 +734,14 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         });
                     }
                 }}
+                show={showDeleteMedicine !== 0}
             />
 
             <DrugLogToast
-                toast={toast as DrugLogRecord[]}
                 medicineList={medicineOtcList}
-                show={toast !== null}
                 onClose={() => setToast(null)}
+                show={toast !== null}
+                toast={toast as DrugLogRecord[]}
             />
         </>
     );

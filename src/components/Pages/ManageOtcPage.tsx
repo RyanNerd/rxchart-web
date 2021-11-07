@@ -70,9 +70,7 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
      * @param {number} medicineId The PK of the Medicine record to delete, or a zero for a NOP
      */
     const deleteOtcMedicine = async (medicineId: number) => {
-        if (medicineId > 0) {
-            if (await mm.deleteMedicine(medicineId)) await setOtcList(await mm.loadOtcList());
-        }
+        if (medicineId > 0) if (await mm.deleteMedicine(medicineId)) await setOtcList(await mm.loadOtcList());
     };
 
     /**
@@ -101,10 +99,8 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
                 return updated ? updated > dt : false;
             });
             setAllowDelete(logsInFiveDays.length === 0);
-            setShowMedicineEdit(true);
-        } else {
-            setShowMedicineEdit(true);
         }
+        setShowMedicineEdit(true);
     };
 
     return (
@@ -120,27 +116,27 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
                     autoFocus
                     className="ml-2"
                     id="medicine-page-search-text"
-                    style={{width: '820px'}}
                     isValid={searchIsValid}
-                    ref={focusRef}
-                    type="search"
-                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
                     onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
                         if (e.key === 'Enter') e.preventDefault();
                     }}
-                    onChange={(e) => setSearchText(e.target.value)}
                     placeholder="Search OTC"
+                    ref={focusRef}
+                    style={{width: '820px'}}
+                    type="search"
+                    value={searchText}
                 />
             </ButtonGroup>
 
             <Row>
                 <ManageOtcGrid
+                    onEdit={onEdit}
                     onToggleActive={(medicineRecord) => {
                         saveOtcMedicine({...medicineRecord, Active: !medicineRecord.Active}).then((m) =>
                             setSearchText(m.Active ? m.Drug : '')
                         );
                     }}
-                    onEdit={onEdit}
                     otcList={filteredOtcList}
                 />
             </Row>
@@ -160,13 +156,13 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
             />
 
             <DeleteMedicineModal
-                show={showDeleteMedicine !== 0}
                 medicine={otcList.find((m) => m.Id === showDeleteMedicine) as MedicineRecord}
                 onSelect={(medicineId) => {
                     deleteOtcMedicine(medicineId)
                         .then(() => setShowDeleteMedicine(0))
                         .then(() => setSearchText(''));
                 }}
+                show={showDeleteMedicine !== 0}
             />
         </>
     );

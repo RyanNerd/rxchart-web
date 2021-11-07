@@ -1,12 +1,12 @@
+import ClientGrid from 'components/Pages/Grids/ClientGrid';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
-import {newResidentRecord, ClientRecord} from 'types/RecordTypes';
+import {ClientRecord, newResidentRecord} from 'types/RecordTypes';
 import {clientFullName} from 'utility/common';
-import ClientGrid from 'components/Pages/Grids/ClientGrid';
 import ClientRoster from './Modals/ClientRoster';
 import Confirm from './Modals/Confirm';
 import ResidentEdit from './Modals/ResidentEdit';
@@ -138,28 +138,19 @@ const ClientPage = (props: IProps): JSX.Element | null => {
                 <Form.Control
                     autoFocus
                     id="medicine-page-search-text"
-                    style={{width: '220px'}}
                     isValid={searchIsValid}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
+                        if (e.key === 'Enter') e.preventDefault();
+                    }}
+                    placeholder="Search resident"
                     ref={focusRef}
+                    style={{width: '220px'}}
                     type="search"
                     value={searchText}
-                    onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
-                        if (e.key === 'Enter') {
-                            e.preventDefault();
-                        }
-                    }}
-                    onChange={(e) => setSearchText(e.target.value)}
-                    placeholder="Search resident"
                 />
 
-                <Button
-                    className="ml-2"
-                    disabled={showClientRoster}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        setShowClientRoster(true);
-                    }}
-                >
+                <Button className="ml-2" disabled={showClientRoster} onClick={() => setShowClientRoster(true)}>
                     Print Client Roster
                 </Button>
 
@@ -171,10 +162,10 @@ const ClientPage = (props: IProps): JSX.Element | null => {
             <Row className="mt-3">
                 <ClientGrid
                     activeClient={activeClient}
-                    residentList={filteredClients}
                     onDelete={(resident: ClientRecord) => setShowDeleteResident(resident)}
                     onEdit={(resident: ClientRecord) => setShowResidentEdit({...resident})}
                     onSelected={(r) => handleOnSelected(r)}
+                    residentList={filteredClients}
                 />
             </Row>
 
@@ -182,7 +173,6 @@ const ClientPage = (props: IProps): JSX.Element | null => {
                 residentInfo={showResidentEdit as ClientRecord}
                 show={showResidentEdit !== null}
                 onClose={(client) => {
-                    // Hide this modal
                     setShowResidentEdit(null);
 
                     // Do we have a record to update or add?

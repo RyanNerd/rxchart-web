@@ -205,20 +205,20 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
 
                 <Button
                     className="ml-3"
-                    size="sm"
-                    variant="info"
                     disabled={checkoutList.length === 0 || showCheckoutPrint}
                     onClick={() => setShowCheckoutPrint(true)}
+                    size="sm"
+                    variant="info"
                 >
                     Print Medicine Checkout{' '}
                     {checkoutList.length > 0 && <Badge variant="secondary">{checkoutList.length}</Badge>}
                 </Button>
 
                 <TooltipContainer
-                    tooltip={'At least one drug is already checked out'}
+                    delay={{show: 120, hide: 200}}
                     placement="right"
                     show={checkoutList.length > 0 && !showCheckoutAllMeds && !showCheckoutPrint && !showMedicineEdit}
-                    delay={{show: 120, hide: 200}}
+                    tooltip={'At least one drug is already checked out'}
                 >
                     <Button
                         className="ml-3"
@@ -234,10 +234,10 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
             {showCheckoutPrint && activeClient && (
                 <Row className="mt-2">
                     <CheckoutListGroup
-                        onClose={() => setShowCheckoutPrint(false)}
+                        activeClient={clientInfo}
                         checkoutList={checkoutList}
                         medicineList={medicineList}
-                        activeClient={clientInfo}
+                        onClose={() => setShowCheckoutPrint(false)}
                     />
                 </Row>
             )}
@@ -246,27 +246,29 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                 <Row className="mt-2 d-print-none">
                     <ManageDrugGrid
                         checkoutList={medicineWithCheckout}
-                        onToggleActive={(mr) => saveMedicine({...mr, Active: !mr.Active}, clientInfo.Id as number)}
+                        medicineList={medicineList}
                         onEdit={(m) => onEdit(m)}
                         onLogDrug={(d) => handleLogDrug(d)}
-                        medicineList={medicineList}
+                        onToggleActive={(mr) => saveMedicine({...mr, Active: !mr.Active}, clientInfo.Id as number)}
                     />
                 </Row>
             )}
 
             <MedicineEdit
                 allowDelete={!drugLogList.find((d) => d.MedicineId === medicineInfo?.Id)}
+                drugInfo={medicineInfo as MedicineRecord}
                 fullName={clientFullName(clientInfo)}
-                show={showMedicineEdit}
                 onClose={(m) => {
                     setShowMedicineEdit(false);
-                    if (m && m.Id && m.Id < 0) {
-                        setShowDeleteMedicine(Math.abs(m.Id)); // Negative Id indicates a delete operation
-                    } else {
-                        if (m) saveMedicine(m, clientInfo.Id as number);
+                    if (m) {
+                        if (m.Id && m.Id < 0) {
+                            setShowDeleteMedicine(Math.abs(m.Id)); // Negative Id indicates a delete operation
+                        } else {
+                            saveMedicine(m, clientInfo.Id as number);
+                        }
                     }
                 }}
-                drugInfo={medicineInfo as MedicineRecord}
+                show={showMedicineEdit}
             />
 
             <DrugLogEdit
@@ -281,31 +283,31 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
             />
 
             <DrugLogToast
-                toast={toast as DrugLogRecord[]}
                 medicineList={medicineList}
-                show={toast !== null}
                 onClose={() => setToast(null)}
+                show={toast !== null}
+                toast={toast as DrugLogRecord[]}
             />
 
             <CheckoutAllModal
-                show={showCheckoutAllMeds}
-                medicineList={medicineList}
                 checkoutList={checkoutList}
+                medicineList={medicineList}
                 onSelect={(a) => {
                     setShowCheckoutAllMeds(false);
                     if (a) logAllDrugsCheckedOut();
                 }}
-                showCheckoutAlert={showCheckoutAlert}
                 onCloseCheckoutAlert={() => setShowCheckoutAlert(false)}
+                show={showCheckoutAllMeds}
+                showCheckoutAlert={showCheckoutAlert}
             />
 
             <DeleteMedicineModal
-                show={showDeleteMedicine !== 0}
                 medicine={medicineInfo as MedicineRecord}
                 onSelect={(n) => {
                     setShowDeleteMedicine(0);
                     if (n > 0) deleteMedicine(n);
                 }}
+                show={showDeleteMedicine !== 0}
             />
         </Form>
     );

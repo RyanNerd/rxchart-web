@@ -5,7 +5,7 @@ import Container from 'react-bootstrap/Container';
 import React, {setGlobal, useEffect, useGlobal, useRef, useState} from 'reactn';
 import {State} from 'reactn/default';
 import {Setter} from 'reactn/types/use-global';
-import {MedicineRecord, ClientRecord} from 'types/RecordTypes';
+import {ClientRecord, MedicineRecord} from 'types/RecordTypes';
 import {asyncWrapper} from 'utility/common';
 import getInitialState from 'utility/getInitialState';
 import {ReactComponent as LockIcon} from '../../icons/lock.svg';
@@ -25,33 +25,26 @@ interface IProps {
  */
 const LoginPage = (props: IProps): JSX.Element | null => {
     const {activeTabKey, setActiveTabKey} = props;
-
+    const [, setClientList] = useGlobal('clientList');
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [, setOtcList] = useGlobal('otcList');
-    const [, setClientList] = useGlobal('clientList');
     const [am] = useGlobal('authManager');
     const [canLogin, setCanLogin] = useState(false);
+    const [cm] = useGlobal('clientManager');
     const [mm] = useGlobal('medicineManager');
     const [password, setPassword] = useState('');
     const [providers] = useGlobal('providers');
-    const [cm] = useGlobal('clientManager');
     const [showAboutPage, setShowAboutPage] = useState(false);
     const [signIn, setSignIn] = useGlobal('signIn');
     const [username, setUsername] = useState('');
     const focusRef = useRef<HTMLInputElement>(null);
 
-    // Set focus to the search input when this page is selected.
     useEffect(() => {
         if (activeTabKey === 'login') focusRef?.current?.focus();
     }, [focusRef, activeTabKey]);
 
-    // Determine if the user is allowed to log in or not
     useEffect(() => {
-        if (!username || username.length === 0 || !password || password.length === 0) {
-            setCanLogin(false);
-        } else {
-            setCanLogin(true);
-        }
+        setCanLogin(!(!username || username.length === 0 || !password || password.length === 0));
     }, [password, username]);
 
     // Prevent render if this tab isn't active
@@ -125,29 +118,26 @@ const LoginPage = (props: IProps): JSX.Element | null => {
                     <UserIcon className="ml-4" style={{marginTop: '12px'}} />
                     <input
                         autoFocus
-                        type="text"
-                        placeholder="Username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
                         className="ml-3 mb3"
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="Username"
                         ref={focusRef}
                         required
+                        type="text"
+                        value={username}
                     />
                 </div>
                 <div className="neu-field">
                     <LockIcon className="ml-4" style={{marginTop: '12px'}} />
                     <input
-                        type="password"
-                        placeholder="Password"
                         className="ml-3"
-                        value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         onKeyUp={(e: React.KeyboardEvent<HTMLElement>) => {
-                            if (e.key === 'Enter') {
-                                e.preventDefault();
-                                authenticate();
-                            }
+                            if (e.key === 'Enter') authenticate();
                         }}
+                        placeholder="Password"
+                        type="password"
+                        value={password}
                     />
                 </div>
                 <button
@@ -159,14 +149,14 @@ const LoginPage = (props: IProps): JSX.Element | null => {
                 </button>
 
                 <Alert
-                    variant="warning"
-                    show={signIn.success !== null && !signIn.success}
+                    className="mt-4"
+                    dismissible
                     onClose={() => {
                         setSignIn({apiKey: null, success: null, organization: null});
                         focusRef?.current?.focus();
                     }}
-                    className="mt-4"
-                    dismissible
+                    show={signIn.success !== null && !signIn.success}
+                    variant="warning"
                 >
                     <Alert.Heading>
                         <strong>Invalid Credentials</strong>

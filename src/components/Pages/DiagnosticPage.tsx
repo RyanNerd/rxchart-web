@@ -16,12 +16,12 @@ interface IProps {
 
 interface IWillow {
     authenticated: boolean;
+    data?: null | unknown[];
     message: string[] | null;
     missing?: {invalid?: IKey};
     status: number;
-    timestamp: number;
     success: boolean;
-    data?: null | unknown[];
+    timestamp: number;
 }
 
 /**
@@ -56,14 +56,9 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
     // Observer to show / hide the Diagnostics tab title
     useEffect(() => {
         const el = document.getElementById('landing-page-tabs-tab-error');
-        if (error) {
-            if (el) {
-                el.style.color = '#007BFF';
-            }
-        } else {
-            if (el) {
-                el.style.color = 'white';
-            }
+        if (el) {
+            if (error) el.style.color = '#007BFF';
+            else el.style.color = 'white';
         }
     }, [error]);
 
@@ -100,12 +95,12 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
             const _alert = (heading: React.ReactNode, body: React.ReactNode) => {
                 return (
                     <Alert
-                        variant="danger"
                         dismissible
                         onClose={() => {
                             setContent(null);
                             dismissError();
                         }}
+                        variant="danger"
                     >
                         <Alert.Heading>{heading}</Alert.Heading>
                         {body}
@@ -302,9 +297,7 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
         }, [error, content, dismissError]) || null;
 
     // If this tab isn't active then don't render
-    if (activeTabKey !== 'error') {
-        return null;
-    }
+    if (activeTabKey !== 'error') return null;
 
     return <>{finalContent}</>;
 };
