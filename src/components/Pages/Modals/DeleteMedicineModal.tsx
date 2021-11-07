@@ -5,7 +5,7 @@ import {MedicineRecord} from 'types/RecordTypes';
 import {BsColor} from 'utility/common';
 
 interface IProps {
-    medicine: MedicineRecord;
+    medicineRecord: MedicineRecord;
     onSelect: (n: number) => void;
     show: boolean;
 }
@@ -15,17 +15,17 @@ interface IProps {
  * @param {IProps} props The props for the component
  */
 const DeleteMedicineModal = (props: IProps) => {
-    const {medicine, onSelect, show} = props;
+    const {medicineRecord, onSelect, show} = props;
 
     // If no medicine record then do not render
-    if (!medicine) return null;
+    if (!medicineRecord) return null;
 
     return (
         <Confirm.Modal
-            onSelect={(isAccepted) => onSelect(isAccepted ? (medicine.Id as number) : 0)}
+            onSelect={(isAccepted) => onSelect(isAccepted ? (medicineRecord.Id as number) : 0)}
             show={show}
             size="lg"
-            yesButtonContent={`Destroy ${medicine.Drug}`}
+            yesButtonContent={`Destroy ${medicineRecord.Drug}`}
             yesButtonProps={{variant: 'danger'}}
         >
             <Confirm.Header>
@@ -33,9 +33,9 @@ const DeleteMedicineModal = (props: IProps) => {
                     <h3>
                         <span style={{color: BsColor.red}}>Delete</span>{' '}
                         <span style={{color: BsColor.blue}}>
-                            <b>{medicine.Drug} </b>
+                            <b>{medicineRecord.Drug} </b>
                         </span>
-                        {medicine.Strength}
+                        {medicineRecord.Strength}
                     </h3>
                 </Confirm.Title>
             </Confirm.Header>
@@ -43,7 +43,7 @@ const DeleteMedicineModal = (props: IProps) => {
                 <Alert variant="danger">
                     This will <b>permanently</b> delete{' '}
                     <span style={{color: BsColor.blue}}>
-                        <b>{medicine.Drug}</b>
+                        <b>{medicineRecord.Drug}</b>
                     </span>
                 </Alert>
                 <b style={{color: 'red'}}>Are you sure?</b>

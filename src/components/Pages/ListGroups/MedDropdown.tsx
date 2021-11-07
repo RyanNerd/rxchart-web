@@ -5,7 +5,7 @@ import DisabledSpinner from './DisabledSpinner';
 
 export interface IDropdownItem {
     description: string;
-    id: number; // zero indicated a divider
+    id: number; // id === 0 divider, id > 0 medicineId, id < 0 pillboxId
     subtext: string | null;
 }
 
