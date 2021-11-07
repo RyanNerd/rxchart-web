@@ -56,7 +56,6 @@ const CheckoutGrid = (props: IProps): JSX.Element => {
         const drugStrength = drugColumnLookup(medicineId, 'Strength') as string | null;
         const updatedDate = new Date(drug.Updated || '');
         const fontWeight = isToday(updatedDate) ? 'bold' : undefined;
-        const isOtc = drugColumnLookup(medicineId, 'OTC');
         const lastTaken = calculateLastTaken(medicineId, [drug]);
         const variant = getLastTakenVariant(lastTaken);
         const variantColor = getBsColor(variant);
@@ -68,7 +67,7 @@ const CheckoutGrid = (props: IProps): JSX.Element => {
                 style={{color: variantColor, textDecoration: active ? undefined : 'line-through'}}
             >
                 <td style={{verticalAlign: 'middle', fontWeight}}>
-                    <span>{drugName}</span> <span>{drugStrength}</span> <span>{isOtc ? ' (OTC)' : ''}</span>
+                    <span>{drugName}</span> <span>{drugStrength}</span>
                 </td>
 
                 <td
