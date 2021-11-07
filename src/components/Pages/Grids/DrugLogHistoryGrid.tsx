@@ -19,7 +19,7 @@ interface IProps {
     gridLists: IGridLists;
     onDelete: (r: DrugLogRecord) => void;
     onEdit: (r: DrugLogRecord) => void;
-    onPillClick: (n: number) => void;
+    onPillClick: (pillboxId: number) => void;
 }
 
 /**

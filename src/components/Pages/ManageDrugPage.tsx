@@ -302,7 +302,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
             />
 
             <DeleteMedicineModal
-                medicine={medicineInfo as MedicineRecord}
+                medicineRecord={medicineInfo as MedicineRecord}
                 onSelect={(n) => {
                     setShowDeleteMedicine(0);
                     if (n > 0) deleteMedicine(n);

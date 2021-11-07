@@ -23,9 +23,9 @@ interface IProps {
     disabled?: boolean;
     gridLists: IGridLists;
     logPillbox: () => void;
-    onDelete: (id: number) => void;
-    onEdit: (pb: PillboxRecord) => void;
-    onSelect: (n: number) => void;
+    onDelete: (pillboxId: number) => void;
+    onEdit: (pillboxRecord: PillboxRecord) => void;
+    onSelect: (pillboxId: number) => void;
     pillboxMedLogList: TPillboxMedLog[];
 }
 
@@ -109,21 +109,21 @@ const PillboxListGroup = (props: IProps) => {
 
     /**
      * Pillbox RadioButton component
-     * @param {PillboxRecord} pb The pillbox record object
+     * @param {PillboxRecord} pillboxRecord The pillbox record object
      */
-    const PillboxRadioButton = (pb: PillboxRecord) => {
+    const PillboxRadioButton = (pillboxRecord: PillboxRecord) => {
         return (
             <ToggleButton
-                checked={activePillbox?.Id === pb.Id}
+                checked={activePillbox?.Id === pillboxRecord.Id}
                 disabled={disabled}
-                id={`pb-list-group-radio-btn-${pb.Id}`}
-                key={pb.Id}
+                id={`pb-list-group-radio-btn-${pillboxRecord.Id}`}
+                key={pillboxRecord.Id}
                 name="radio-pb-list-group"
-                onChange={() => onSelect(pb.Id as number)}
+                onChange={() => onSelect(pillboxRecord.Id as number)}
                 size="lg"
                 style={{textAlign: 'justify'}}
                 type="radio"
-                value={pb.Id as number}
+                value={pillboxRecord.Id as number}
                 variant="outline-primary"
             >
                 <span className="ml-2">
@@ -132,7 +132,7 @@ const PillboxListGroup = (props: IProps) => {
                             <DisabledSpinner />{' '}
                         </>
                     )}
-                    Pillbox: <b style={{textTransform: 'uppercase'}}>{pb.Name}</b>
+                    Pillbox: <b style={{textTransform: 'uppercase'}}>{pillboxRecord.Name}</b>
                 </span>
             </ToggleButton>
         );

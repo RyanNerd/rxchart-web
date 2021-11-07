@@ -9,9 +9,9 @@ import {clientDOB, clientFullName, deconstructGridLists} from 'utility/common';
 interface IProps {
     activeClient: ClientRecord;
     gridLists: IGridLists;
-    onDelete: (d: DrugLogRecord) => void;
-    onEdit: (d: DrugLogRecord) => void;
-    onPillClick: (n: number) => void;
+    onDelete: (drugLogRecord: DrugLogRecord) => void;
+    onEdit: (drugLogRecord: DrugLogRecord) => void;
+    onPillClick: (pillboxId: number) => void;
 }
 
 /**
@@ -75,9 +75,9 @@ const MedDrugLogHistory = (props: IProps) => {
             <div className="mt-3">
                 <DrugLogHistoryGrid
                     gridLists={gridLists}
-                    onDelete={(d) => onDelete(d)}
-                    onEdit={(d) => onEdit(d)}
-                    onPillClick={(n) => onPillClick(n)}
+                    onDelete={(drugLogRecord) => onDelete(drugLogRecord)}
+                    onEdit={(drugLogRecord) => onEdit(drugLogRecord)}
+                    onPillClick={(pillboxId) => onPillClick(pillboxId)}
                 />
             </div>
         </>

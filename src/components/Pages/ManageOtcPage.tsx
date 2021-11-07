@@ -156,7 +156,7 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
             />
 
             <DeleteMedicineModal
-                medicine={otcList.find((m) => m.Id === showDeleteMedicine) as MedicineRecord}
+                medicineRecord={otcList.find((m) => m.Id === showDeleteMedicine) as MedicineRecord}
                 onSelect={(medicineId) => {
                     deleteOtcMedicine(medicineId)
                         .then(() => setShowDeleteMedicine(0))
