@@ -695,9 +695,9 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             {showDeleteDrugLogRecord && (
                 <Confirm.Modal
                     size="lg"
-                    onSelect={(a) => {
+                    onSelect={(isAccepted) => {
                         setShowDeleteDrugLogRecord(null);
-                        if (a)
+                        if (isAccepted)
                             mm.deleteDrugLog(showDeleteDrugLogRecord?.Id as number).then((ok) => {
                                 if (ok) {
                                     mm.loadDrugLog(clientId, 5).then((drugs) => {

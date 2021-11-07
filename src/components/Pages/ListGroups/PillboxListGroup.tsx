@@ -329,9 +329,9 @@ const PillboxListGroup = (props: IProps) => {
 
             <Confirm.Modal
                 centered
-                onSelect={(a) => {
+                onSelect={(isAccepted) => {
                     setShowPillboxDeleteConfirm(false);
-                    if (a) onDelete(activePillbox?.Id as number);
+                    if (isAccepted) onDelete(activePillbox?.Id as number);
                 }}
                 show={showPillboxDeleteConfirm}
                 yesButtonProps={{variant: 'danger'}}

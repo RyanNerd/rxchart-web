@@ -22,7 +22,7 @@ const DeleteMedicineModal = (props: IProps) => {
 
     return (
         <Confirm.Modal
-            onSelect={(a) => onSelect(a ? (medicine.Id as number) : 0)}
+            onSelect={(isAccepted) => onSelect(isAccepted ? (medicine.Id as number) : 0)}
             show={show}
             size="lg"
             yesButtonContent={`Destroy ${medicine.Drug}`}

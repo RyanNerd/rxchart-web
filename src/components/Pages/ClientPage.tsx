@@ -213,9 +213,9 @@ const ClientPage = (props: IProps): JSX.Element | null => {
             {showDeleteResident && (
                 <Confirm.Modal
                     show={true}
-                    onSelect={(a) => {
+                    onSelect={(isAccepted) => {
                         setShowDeleteResident(null);
-                        if (a) deleteClient(showDeleteResident?.Id as number);
+                        if (isAccepted) deleteClient(showDeleteResident?.Id as number);
                     }}
                 >
                     <Confirm.Header>

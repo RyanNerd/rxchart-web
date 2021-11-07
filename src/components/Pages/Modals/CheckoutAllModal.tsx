@@ -24,7 +24,7 @@ const CheckoutAllModal = (props: IProps) => {
     return (
         <Confirm.Modal
             centered
-            onSelect={(a) => onSelect(a)}
+            onSelect={(isAccepted) => onSelect(isAccepted)}
             show={show}
             size="lg"
             yesButtonProps={{disabled: showCheckoutAlert, variant: 'warning'}}
