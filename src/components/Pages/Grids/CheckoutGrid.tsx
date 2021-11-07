@@ -23,7 +23,6 @@ interface IProps extends TableProps {
  */
 const CheckoutGrid = (props: IProps): JSX.Element => {
     const {drugId, drugLog = [], medicineList = []} = props;
-
     const filteredDrugs = drugId ? drugLog.filter((drug) => drug && drug.MedicineId === drugId) : drugLog;
 
     /**
@@ -35,9 +34,7 @@ const CheckoutGrid = (props: IProps): JSX.Element => {
     const drugColumnLookup = (medicineId: number, columnName: string): unknown => {
         if (medicineId) {
             const medicine = getObjectByProperty<MedicineRecord>(medicineList, 'Id', medicineId);
-            if (medicine) {
-                return medicine[columnName];
-            }
+            if (medicine) return medicine[columnName];
         }
         return null;
     };
@@ -49,26 +46,20 @@ const CheckoutGrid = (props: IProps): JSX.Element => {
      */
     const DrugRow = (drug: DrugLogRecord): JSX.Element | null => {
         // No drug given then no render
-        if (drug === null || !drug.Id) {
-            return null;
-        }
+        if (drug === null || !drug.Id) return null;
 
         // Figure out medicine field values
-        const isOtc = drugColumnLookup(drug.MedicineId, 'OTC');
-        let drugName = drugColumnLookup(drug.MedicineId, 'Drug') as string | null;
-        const active = drugColumnLookup(drug.MedicineId, 'Active');
-
-        if (!drugName || drugName.length === 0) {
-            drugName = 'UNKNOWN - Medicine removed!';
-        }
-
         const medicineId = drug.MedicineId;
+        let drugName = drugColumnLookup(medicineId, 'Drug') as string | null;
+        if (!drugName || drugName.length === 0) drugName = 'UNKNOWN - Medicine removed!';
+        const active = drugColumnLookup(medicineId, 'Active');
         const drugStrength = drugColumnLookup(medicineId, 'Strength') as string | null;
         const updatedDate = new Date(drug.Updated || '');
+        const fontWeight = isToday(updatedDate) ? 'bold' : undefined;
+        const isOtc = drugColumnLookup(medicineId, 'OTC');
         const lastTaken = calculateLastTaken(medicineId, [drug]);
         const variant = getLastTakenVariant(lastTaken);
         const variantColor = getBsColor(variant);
-        const fontWeight = isToday(updatedDate) ? 'bold' : undefined;
 
         return (
             <tr
@@ -129,7 +120,7 @@ const CheckoutGrid = (props: IProps): JSX.Element => {
                 <tr>
                     <th>Drug</th>
                     <th style={{textAlign: 'center', verticalAlign: 'middle'}}>
-                        <span>Updated</span>
+                        <span>Date/Time Stamp</span>
                     </th>
                     <th style={{textAlign: 'center', verticalAlign: 'middle'}}>
                         <span>Amount/Notes</span>

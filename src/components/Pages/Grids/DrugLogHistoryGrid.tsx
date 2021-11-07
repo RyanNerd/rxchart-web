@@ -30,6 +30,7 @@ interface IProps {
 const DrugLogHistoryGrid = (props: IProps): JSX.Element => {
     const {onDelete, onEdit, gridLists, onPillClick} = props;
     const {medicineList, pillboxItemList, pillboxList, drugLogList} = deconstructGridLists(gridLists);
+
     /**
      * Returns the value of the drug column for the given drugId
      * @param {number} medicineId The PK of the Medicine table
@@ -39,9 +40,7 @@ const DrugLogHistoryGrid = (props: IProps): JSX.Element => {
     const drugColumnLookup = (medicineId: number, columnName: string): unknown => {
         if (medicineId) {
             const medicine = getObjectByProperty<MedicineRecord>(medicineList, 'Id', medicineId);
-            if (medicine) {
-                return medicine[columnName];
-            }
+            if (medicine) return medicine[columnName];
         }
         return null;
     };
@@ -53,25 +52,19 @@ const DrugLogHistoryGrid = (props: IProps): JSX.Element => {
      */
     const DrugRow = (drug: DrugLogRecord): JSX.Element | null => {
         // No drug given then no render
-        if (drug === null || !drug.Id) {
-            return null;
-        }
+        if (drug === null || !drug.Id) return null;
 
         // Figure out medicine field values
-        const isOtc = drugColumnLookup(drug.MedicineId, 'OTC');
-        let drugName = drugColumnLookup(drug.MedicineId, 'Drug') as string | null;
-        const drugActive = medicineList.find((m) => m.Id === drug.MedicineId && m.Active);
-        const medicineNotes = drugColumnLookup(drug.MedicineId, 'Notes') as string | null;
-        const medicineDirections = drugColumnLookup(drug.MedicineId, 'Directions');
+        const medicineId = drug.MedicineId;
+        let drugName = drugColumnLookup(medicineId, 'Drug') as string | null;
+        if (!drugName || drugName.length === 0) drugName = 'UNKNOWN - Medicine removed!';
+        const isOtc = drugColumnLookup(medicineId, 'OTC');
+        const drugActive = medicineList.find((m) => m.Id === medicineId && m.Active);
+        const medicineNotes = drugColumnLookup(medicineId, 'Notes') as string | null;
+        const medicineDirections = drugColumnLookup(medicineId, 'Directions');
         const drugDetails = (
             medicineNotes && medicineNotes.trim().length > 0 ? medicineNotes : medicineDirections || ''
         ) as string | null;
-
-        if (!drugName || drugName.length === 0) {
-            drugName = 'UNKNOWN - Medicine removed!';
-        }
-
-        const medicineId = drug.MedicineId;
         const drugStrength = drugColumnLookup(medicineId, 'Strength') as string | null;
         const updatedDate = new Date(drug.Updated || '');
         const lastTaken = calculateLastTaken(medicineId, [drug]);
@@ -82,8 +75,8 @@ const DrugLogHistoryGrid = (props: IProps): JSX.Element => {
 
         return (
             <tr
-                key={`druglog-history-grid-row-${drug.Id}`}
                 id={`druglog-history-grid-row-${drug.Id}`}
+                key={`druglog-history-grid-row-${drug.Id}`}
                 style={{color: variantColor, textDecoration: strikeThrough}}
             >
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
@@ -156,10 +149,10 @@ const DrugLogHistoryGrid = (props: IProps): JSX.Element => {
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                     <Button
                         className="d-print-none"
-                        size="sm"
                         id={`drug-grid-delete-btn-${drug.Id}`}
-                        variant="outline-danger"
                         onClick={() => onDelete(drug)}
+                        size="sm"
+                        variant="outline-danger"
                     >
                         <span role="img" aria-label="delete">
                             🗑️
@@ -175,31 +168,23 @@ const DrugLogHistoryGrid = (props: IProps): JSX.Element => {
             <thead>
                 <tr>
                     <th></th>
-
                     <th>Drug</th>
-
                     <th style={{textAlign: 'center', verticalAlign: 'middle'}}>
                         <span>Taken</span>
                     </th>
-
                     <th style={{textAlign: 'center', verticalAlign: 'middle'}}>
                         <span>Amount/Notes</span>
                     </th>
-
                     <th style={{textAlign: 'center', verticalAlign: 'middle'}}>
                         <span>Out</span>
                     </th>
-
                     <th style={{textAlign: 'center', verticalAlign: 'middle'}}>
                         <span>In</span>
                     </th>
-
                     <th>Details</th>
-
                     <th></th>
                 </tr>
             </thead>
-
             <tbody>{drugLogList.map(DrugRow)}</tbody>
         </Table>
     );

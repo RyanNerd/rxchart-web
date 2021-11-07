@@ -2,9 +2,9 @@ import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import React from 'reactn';
+import {TClient} from 'reactn/default';
 import {ClientRecord} from 'types/RecordTypes';
 import {clientDOB, getFormattedDate, getMDY} from 'utility/common';
-import {TClient} from 'reactn/default';
 
 interface IProps {
     activeClient: TClient | null;
@@ -24,63 +24,55 @@ const ClientGrid = (props: IProps): JSX.Element => {
 
     /**
      * Resident Child Table Component
-     *
      * @param {object} clientRecord Resident table record object
      */
     const ResidentRow = (clientRecord: ClientRecord) => {
-        // Get formatted DOB
-        const dob = clientDOB(clientRecord);
-        const clientInfo = activeClient && activeClient.clientInfo;
-
-        // Determine if this row is selected [for radio ToggleButtons]
-        const isSelected = onSelected && clientRecord.Id === clientInfo?.Id;
         const mdy = getMDY();
         const created = getFormattedDate(clientRecord.Created || mdy.now);
-        const updated = getFormattedDate(clientRecord.Updated || mdy.now);
+        const dob = clientDOB(clientRecord);
+        const isSelected = onSelected && clientRecord.Id === activeClient?.clientInfo?.Id;
         const fontWeight = isSelected ? 'bold' : undefined;
+        const updated = getFormattedDate(clientRecord.Updated || mdy.now);
 
         return (
             <tr key={`clientRecord-grid-row-${clientRecord.Id}`} id={`clientRecord-grid-row-${clientRecord.Id}`}>
                 {onSelected && (
                     <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                         <ToggleButton
-                            id={`clientRecord-grid-select-btn-${clientRecord.Id}`}
-                            type="checkbox"
-                            name="resident-list"
-                            variant="outline-info"
                             checked={isSelected || false}
+                            id={`clientRecord-grid-select-btn-${clientRecord.Id}`}
+                            name="resident-list"
                             onChange={() => onSelected(clientRecord)}
+                            type="checkbox"
                             value={clientRecord.Id as number}
+                            variant="outline-info"
                         />
                     </td>
                 )}
-
                 <td style={{verticalAlign: 'middle', fontWeight}}>{clientRecord.LastName}</td>
                 <td style={{verticalAlign: 'middle', fontWeight}}>{clientRecord.FirstName}</td>
                 <td style={{verticalAlign: 'middle', fontWeight}}>{clientRecord.Nickname}</td>
                 <td style={{verticalAlign: 'middle', fontWeight}}>{dob}</td>
                 <td style={{verticalAlign: 'middle', fontWeight}}>{created}</td>
                 <td style={{verticalAlign: 'middle', fontWeight}}>{updated}</td>
-
                 {onEdit && (
                     <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                         <Button
-                            size="sm"
                             id={`clientRecord-grid-edit-btn-${clientRecord.Id}`}
                             onClick={() => onEdit(clientRecord)}
+                            size="sm"
                         >
                             Edit
                         </Button>
                     </td>
                 )}
-
                 {onDelete && !clientRecord.deleted_at && (
                     <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                         <Button
-                            size="sm"
                             id={`clientRecord-grid-delete-btn-${clientRecord.Id}`}
-                            variant="outline-danger"
                             onClick={() => onDelete(clientRecord)}
+                            size="sm"
+                            variant="outline-danger"
                         >
                             <span role="img" aria-label="delete">
                                 🗑️

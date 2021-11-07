@@ -3,15 +3,15 @@ import DrugLogHistoryGrid from 'components/Pages/Grids/DrugLogHistoryGrid';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import React, {useEffect, useState} from 'reactn';
-import {DrugLogRecord, ClientRecord} from 'types/RecordTypes';
+import {ClientRecord, DrugLogRecord} from 'types/RecordTypes';
 import {clientDOB, clientFullName, deconstructGridLists} from 'utility/common';
 
 interface IProps {
     activeClient: ClientRecord;
     gridLists: IGridLists;
-    onPillClick: (n: number) => void;
-    onEdit: (d: DrugLogRecord) => void;
     onDelete: (d: DrugLogRecord) => void;
+    onEdit: (d: DrugLogRecord) => void;
+    onPillClick: (n: number) => void;
 }
 
 /**
@@ -20,8 +20,6 @@ interface IProps {
  */
 const MedDrugLogHistory = (props: IProps) => {
     const {activeClient, gridLists, onDelete, onEdit, onPillClick} = props;
-
-    // Deconstruct the gridLists
     const {drugLogList} = deconstructGridLists(gridLists);
     const [printing, setPrinting] = useState(false);
 
@@ -77,9 +75,9 @@ const MedDrugLogHistory = (props: IProps) => {
             <div className="mt-3">
                 <DrugLogHistoryGrid
                     gridLists={gridLists}
-                    onPillClick={(n) => onPillClick(n)}
                     onDelete={(d) => onDelete(d)}
                     onEdit={(d) => onEdit(d)}
+                    onPillClick={(n) => onPillClick(n)}
                 />
             </div>
         </>

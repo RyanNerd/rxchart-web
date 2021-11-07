@@ -5,12 +5,12 @@ import React from 'reactn';
 import {DrugLogRecord, MedicineRecord} from 'types/RecordTypes';
 
 interface IProps {
-    show: boolean;
-    medicineList: MedicineRecord[];
     checkoutList: DrugLogRecord[];
-    onSelect: (s: boolean) => void;
-    showCheckoutAlert: boolean;
+    medicineList: MedicineRecord[];
     onCloseCheckoutAlert: () => void;
+    onSelect: (s: boolean) => void;
+    show: boolean;
+    showCheckoutAlert: boolean;
 }
 
 /**
@@ -23,11 +23,11 @@ const CheckoutAllModal = (props: IProps) => {
 
     return (
         <Confirm.Modal
-            centered
             backdrop="static"
-            size="lg"
-            show={show}
+            centered
             onSelect={(a) => onSelect(a)}
+            show={show}
+            size="lg"
             yesButtonProps={{disabled: showCheckoutAlert, variant: 'warning'}}
             yesButtonContent={
                 <span>
@@ -56,8 +56,12 @@ const CheckoutAllModal = (props: IProps) => {
                         {medicineList.map((m) => (
                             <li key={`med-checkout-li-${m.Id}`}>
                                 {checkoutList.find((d) => m.Id === d.MedicineId) && <Badge>❎</Badge>}{' '}
-                                {/* eslint-disable-next-line max-len */}
-                                <span style={{textDecoration: m.Active ? undefined : 'line-through'}}>
+                                <span
+                                    style={{
+                                        textDecoration: m.Active ? undefined : 'line-through',
+                                        fontWeight: checkoutList.find((d) => m.Id === d.MedicineId) ? 'bold' : undefined
+                                    }}
+                                >
                                     {m.Drug}
                                 </span>{' '}
                                 {!m.Active && <span>(Inactive medication will not appear in checkout)</span>}

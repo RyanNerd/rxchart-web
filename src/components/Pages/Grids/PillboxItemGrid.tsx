@@ -22,9 +22,7 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
     const {pillboxGridItems, onEdit} = props;
 
     // No render if there isn't anything to render
-    if (pillboxGridItems.length === 0) {
-        return null;
-    }
+    if (pillboxGridItems.length === 0) return null;
 
     /**
      * Child component for the table for each medicine in the pill box.
@@ -43,15 +41,12 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
         return (
             <tr key={`pill-grid-row-${domId}`} id={`pill-grid-row-${domId}`}>
                 <td style={{verticalAlign: 'middle', fontStyle, fontWeight, color}}>{pill.Drug}</td>
-
                 <td style={{verticalAlign: 'middle', fontStyle, fontWeight, color}}>{pill.Strength}</td>
-
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                     <Button
                         disabled={quantity === 0}
                         id={`pill-grid-inc-btn-${domId}`}
-                        onClick={(e) => {
-                            e.preventDefault();
+                        onClick={() => {
                             onEdit({
                                 Id: pill.Id,
                                 MedicineId: pill.MedicineId,
@@ -80,16 +75,16 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
                     >
                         <Button
                             className="ml-2"
+                            onClick={(e) => e.stopPropagation()}
                             size="sm"
                             variant={isInPillbox ? 'success' : 'info'}
-                            onClick={(e) => e.stopPropagation()}
                         >
                             {pill.Quantity || '0'}
                         </Button>
                         <Dropdown.Toggle
+                            id={`pill-grid-dropdown-${domId}`}
                             split
                             variant={isInPillbox ? 'success' : 'info'}
-                            id={`pill-grid-dropdown-${domId}`}
                         />
                         <Dropdown.Menu>
                             <Dropdown.Item eventKey="0" disabled={pill.Quantity === 0}>

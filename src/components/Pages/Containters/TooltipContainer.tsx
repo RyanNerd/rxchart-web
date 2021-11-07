@@ -8,16 +8,16 @@ import ReactNode from 'reactn/default';
 import {randomString} from 'utility/common';
 
 interface IProps {
-    id?: string;
-    placement?: Placement;
-    tooltip: ReactNode | undefined;
-    defaultShow?: boolean;
     children: unknown;
+    defaultShow?: boolean;
     delay?: OverlayDelay;
     flip?: boolean;
+    id?: string;
     onHide?: () => void;
     onToggle?: () => void;
+    placement?: Placement;
     show?: boolean;
+    tooltip: ReactNode | undefined;
     trigger?: OverlayTriggerType | OverlayTriggerType[];
 }
 
@@ -27,16 +27,16 @@ interface IProps {
  */
 const TooltipContainer = (props: IProps) => {
     const {
-        tooltip,
         children,
-        placement = 'top',
-        id = randomString(),
         defaultShow = false,
         delay,
-        flip = placement && placement.indexOf('auto') !== -1,
+        id = randomString(),
         onHide = null,
         onToggle,
+        placement = 'top',
+        flip = placement && placement.indexOf('auto') !== -1,
         show,
+        tooltip,
         trigger
     } = props;
 
@@ -50,13 +50,13 @@ const TooltipContainer = (props: IProps) => {
     // noinspection RequiredAttributes
     return (
         <OverlayTrigger
-            placement={placement}
-            overlay={tooltipOverlay()}
             defaultShow={defaultShow}
             delay={delay}
             flip={flip}
             onHide={onHide}
             onToggle={onToggle}
+            overlay={tooltipOverlay()}
+            placement={placement}
             show={show}
             trigger={trigger}
         >

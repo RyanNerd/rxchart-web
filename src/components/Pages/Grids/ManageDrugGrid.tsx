@@ -6,11 +6,11 @@ import React from 'reactn';
 import {MedicineRecord} from 'types/RecordTypes';
 
 interface IProps {
-    onToggleActive: (r: MedicineRecord) => void;
+    checkoutList: MedicineRecord[];
+    medicineList: MedicineRecord[];
     onEdit: (r: MedicineRecord) => void;
     onLogDrug: (r: MedicineRecord) => void;
-    medicineList: MedicineRecord[];
-    checkoutList: MedicineRecord[];
+    onToggleActive: (r: MedicineRecord) => void;
 }
 
 /**
@@ -39,41 +39,34 @@ const ManageDrugGrid = (props: IProps): JSX.Element => {
                         Edit
                     </Button>
                 </td>
-
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                     <Button
                         disabled={!drug.Active}
-                        variant="info"
-                        size="sm"
                         id={`manage-drug-grid-checkout-btn-${drug.Id}`}
                         onClick={() => onLogDrug(drug)}
+                        size="sm"
+                        variant="info"
                     >
                         + Log Drug {!drug.Active && <Badge>🚫</Badge>}
                     </Button>
                 </td>
-
                 <td style={{verticalAlign: 'middle'}}>
                     <span>
                         {hasCheckout && <Badge>❎</Badge>} {drug.Drug}
                     </span>
                 </td>
-
                 <td style={{verticalAlign: 'middle'}}>{drug.Strength}</td>
-
                 <td style={{verticalAlign: 'middle'}}>{drug.Directions}</td>
-
                 <td style={{verticalAlign: 'middle'}}>{drug.Notes}</td>
-
                 <td style={{verticalAlign: 'middle'}}>{drug.Barcode}</td>
-
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                     <Button size="sm" id={`manage-drug-grid-delete-btn-${drug.Id}`} variant={'outline-light'}>
                         <span role="img" aria-label="delete">
                             <Form.Check
-                                style={{transform: 'scale(2)'}}
                                 checked={drug.Active}
-                                onChange={() => onToggleActive(drug)}
                                 name="Active"
+                                onChange={() => onToggleActive(drug)}
+                                style={{transform: 'scale(2)'}}
                             />
                         </span>
                     </Button>

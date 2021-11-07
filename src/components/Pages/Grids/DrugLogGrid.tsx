@@ -16,8 +16,8 @@ import {
 export interface IGridLists {
     drugLogList?: DrugLogRecord[];
     medicineList?: MedicineRecord[];
-    pillboxList?: PillboxRecord[];
     pillboxItemList?: PillboxItemRecord[];
+    pillboxList?: PillboxRecord[];
 }
 
 interface IProps extends TableProps {
@@ -25,9 +25,9 @@ interface IProps extends TableProps {
     columns: string[];
     condensed?: string;
     drugId?: number | null;
+    gridLists: IGridLists;
     onDelete?: (r: DrugLogRecord) => void;
     onEdit?: (r: DrugLogRecord) => void;
-    gridLists: IGridLists;
     onPillClick?: (n: number) => void;
 }
 
@@ -38,8 +38,6 @@ interface IProps extends TableProps {
  */
 const DrugLogGrid = (props: IProps): JSX.Element => {
     const {columns, condensed = 'false', drugId, onDelete, onEdit, gridLists, onPillClick} = props;
-
-    // Deconstruct the gridLists
     const {drugLogList, medicineList, pillboxList, pillboxItemList} = deconstructGridLists(gridLists);
     const filteredDrugs = drugId ? drugLogList.filter((drug) => drug && drug.MedicineId === drugId) : drugLogList;
 
@@ -52,9 +50,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
     const drugColumnLookup = (medicineId: number, columnName: string): unknown => {
         if (medicineId) {
             const medicine = getObjectByProperty<MedicineRecord>(medicineList, 'Id', medicineId);
-            if (medicine) {
-                return medicine[columnName];
-            }
+            if (medicine) return medicine[columnName];
         }
         return null;
     };
@@ -66,32 +62,26 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
      */
     const DrugRow = (drug: DrugLogRecord): JSX.Element | null => {
         // No drug given then no render
-        if (drug === null || !drug.Id) {
-            return null;
-        }
+        if (drug === null || !drug.Id) return null;
 
         // Figure out medicine field values
-        const isOtc = drugColumnLookup(drug.MedicineId, 'OTC');
-        let drugName = drugColumnLookup(drug.MedicineId, 'Drug') as string | null;
-        const active = drugColumnLookup(drug.MedicineId, 'Active');
-        const medicineNotes = drugColumnLookup(drug.MedicineId, 'Notes') as string | null;
-        const medicineDirections = drugColumnLookup(drug.MedicineId, 'Directions');
+        const medicineId = drug.MedicineId;
+        const isOtc = drugColumnLookup(medicineId, 'OTC');
+        let drugName = drugColumnLookup(medicineId, 'Drug') as string | null;
+        if (!drugName || drugName.length === 0) drugName = 'UNKNOWN - Medicine removed!';
+        const active = drugColumnLookup(medicineId, 'Active');
+        const medicineNotes = drugColumnLookup(medicineId, 'Notes') as string | null;
+        const medicineDirections = drugColumnLookup(medicineId, 'Directions');
         const drugDetails = (
             medicineNotes && medicineNotes.trim().length > 0 ? medicineNotes : medicineDirections || ''
         ) as string | null;
-
-        if (!drugName || drugName.length === 0) {
-            drugName = 'UNKNOWN - Medicine removed!';
-        }
-
-        const medicineId = drug.MedicineId;
-        const drugStrength = drugColumnLookup(medicineId, 'Strength') as string | null;
         const createdDate = new Date(drug.Created || '');
+        const drugStrength = drugColumnLookup(medicineId, 'Strength') as string | null;
         const updatedDate = new Date(drug.Updated || '');
+        const fontWeight = isToday(updatedDate) ? 'bold' : undefined;
         const lastTaken = calculateLastTaken(medicineId, [drug]);
         const variant = getLastTakenVariant(lastTaken);
         const variantColor = getBsColor(variant);
-        const fontWeight = isToday(updatedDate) ? 'bold' : undefined;
 
         return (
             <tr
@@ -101,18 +91,11 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
             >
                 {onEdit && (
                     <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
-                        <Button
-                            size="sm"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                onEdit(drug);
-                            }}
-                        >
+                        <Button onClick={() => onEdit(drug)} size="sm">
                             Edit
                         </Button>
                     </td>
                 )}
-
                 {columns.includes('Drug') && (
                     <td style={{verticalAlign: 'middle', fontWeight}}>
                         <span>{drugName}</span> <span>{drugStrength}</span> <span>{isOtc ? ' (OTC)' : ''}</span>
@@ -151,11 +134,11 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                     {drug.PillboxItemId && (
                         <span>
                             <PillPopover
-                                pillboxItemId={drug.PillboxItemId}
                                 id={drug.Id as number}
+                                onPillClick={(n) => onPillClick?.(n)}
+                                pillboxItemId={drug.PillboxItemId}
                                 pillboxItemList={pillboxItemList}
                                 pillboxList={pillboxList}
-                                onPillClick={(n) => onPillClick?.(n)}
                             />
                         </span>
                     )}{' '}
@@ -187,10 +170,10 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                 {onDelete && (
                     <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                         <Button
-                            size="sm"
                             id={`drug-grid-delete-btn-${drug.Id}`}
-                            variant="outline-danger"
                             onClick={() => onDelete(drug)}
+                            size="sm"
+                            variant="outline-danger"
                         >
                             <span role="img" aria-label="delete">
                                 🗑️
@@ -206,11 +189,11 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
         <Table
             style={{wordWrap: 'break-word'}}
             {...props}
-            className={condensed !== 'false' ? 'w-auto' : ''}
-            striped
             bordered
+            className={condensed !== 'false' ? 'w-auto' : ''}
             hover
             size="sm"
+            striped
         >
             <thead>
                 <tr>

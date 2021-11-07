@@ -18,8 +18,8 @@ interface IProps {
  */
 const PillboxCard = (props: IProps) => {
     const {medicineList, pillboxItemList, activePillbox, onEdit} = props;
-    const pillboxName = activePillbox.Name;
     const pillboxId = activePillbox?.Id;
+    const pillboxName = activePillbox.Name;
     const pillboxGridItems = pillboxId
         ? getPillboxItems(
               medicineList.filter((m) => m.Active),
@@ -35,11 +35,11 @@ const PillboxCard = (props: IProps) => {
                 <h6 className="mt-3 mb-0 ml-2 user-select-none">
                     <span
                         style={{
-                            color: BsColor.white,
                             backgroundColor: BsColor.primary,
-                            padding: '.5rem 1rem',
-                            boxSizing: 'border-box',
                             borderRadius: '.25rem',
+                            boxSizing: 'border-box',
+                            color: BsColor.white,
+                            padding: '.5rem 1rem',
                             textTransform: 'uppercase'
                         }}
                     >

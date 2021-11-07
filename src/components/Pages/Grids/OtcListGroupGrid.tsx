@@ -17,6 +17,10 @@ interface IProps {
 const OtcListGroupGrid = (props: IProps): JSX.Element => {
     const {onSelect, activeDrug, otcList} = props;
 
+    /**
+     * The OTC Row component
+     * @param {MedicineRecord} drug The Medicine record object
+     */
     const OtcRow = (drug: MedicineRecord) => {
         const isSelected = activeDrug && activeDrug.Id === drug.Id;
         return (

@@ -1,15 +1,13 @@
-import {ReactNode} from "reactn/default";
-import React from "reactn";
-import 'styles/shadowbox.css'
+import React from 'reactn';
+import {ReactNode} from 'reactn/default';
+import 'styles/shadowbox.css';
 
 interface IProps {
     children: ReactNode | undefined;
 }
 
 const ShadowBox = (props: IProps) => {
-    return (
-        <span className="hover-shadow-box-animation">{props.children}</span>
-    )
-}
+    return <span className="hover-shadow-box-animation">{props.children}</span>;
+};
 
 export default ShadowBox;

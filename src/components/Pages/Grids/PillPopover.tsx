@@ -4,11 +4,11 @@ import React from 'reactn';
 import {PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
 
 interface IProps {
-    pillboxItemId: number;
     id: number;
-    pillboxList: PillboxRecord[];
-    pillboxItemList: PillboxItemRecord[];
     onPillClick?: (n: number) => void;
+    pillboxItemId: number;
+    pillboxItemList: PillboxItemRecord[];
+    pillboxList: PillboxRecord[];
 }
 
 /**
@@ -37,9 +37,9 @@ const PillPopover = (props: IProps) => {
     // noinspection RequiredAttributes
     return (
         <OverlayTrigger
-            placement="top"
             delay={{show: 200, hide: 300}}
             overlay={pillboxInfo ? pillTooltip() : deletedTooltip()}
+            placement="top"
         >
             <span
                 onClick={() => (pillboxInfo ? onPillClick?.(pillboxInfo?.Id as number) : undefined)}

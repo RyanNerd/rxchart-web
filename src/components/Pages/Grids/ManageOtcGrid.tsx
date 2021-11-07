@@ -18,41 +18,39 @@ interface IProps {
 const ManageOtcGrid = (props: IProps): JSX.Element => {
     const {onToggleActive, onEdit, otcList} = props;
 
+    /**
+     * OTC Row component
+     * @param {MedicineRecord} medicineRecord The Medicine record object
+     */
     const OtcRow = (medicineRecord: MedicineRecord) => {
         return (
             <tr
-                key={medicineRecord.Id}
                 id={`otc-detail-grid-row-${medicineRecord.Id}`}
+                key={medicineRecord.Id}
                 style={{textDecoration: !medicineRecord.Active ? 'line-through' : undefined}}
             >
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                     <Button
-                        size="sm"
                         id={`otc-edit-btn-row-${medicineRecord.Id}`}
                         onClick={() => onEdit(medicineRecord)}
+                        size="sm"
                     >
                         Edit
                     </Button>
                 </td>
-
                 <td style={{verticalAlign: 'middle'}}>{medicineRecord.Drug}</td>
-
                 <td style={{verticalAlign: 'middle'}}>{medicineRecord.OtherNames}</td>
-
                 <td style={{verticalAlign: 'middle'}}>{medicineRecord.Strength}</td>
-
                 <td style={{verticalAlign: 'middle'}}>{medicineRecord.Directions}</td>
-
                 <td style={{verticalAlign: 'middle'}}>{medicineRecord.Barcode}</td>
-
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                     <Button size="sm" id={`otc-grid-delete-btn-${medicineRecord.Id}`} variant="outline-light">
                         <span role="img" aria-label="delete">
                             <Form.Check
-                                style={{transform: 'scale(2)'}}
                                 checked={medicineRecord.Active}
-                                onChange={() => onToggleActive(medicineRecord)}
                                 name="Active"
+                                onChange={() => onToggleActive(medicineRecord)}
+                                style={{transform: 'scale(2)'}}
                             />
                         </span>
                     </Button>
