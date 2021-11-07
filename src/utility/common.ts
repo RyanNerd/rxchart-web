@@ -1,7 +1,7 @@
 // noinspection JSUnusedGlobalSymbols
 
 import {IGridLists} from 'components/Pages/Grids/DrugLogGrid';
-import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord, ClientRecord} from 'types/RecordTypes';
+import {ClientRecord, DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
 
 interface IKey {
     /* eslint @typescript-eslint/no-explicit-any: off */
@@ -29,12 +29,7 @@ export const dateToString = (month: string, day: string, year: string, leadingZe
     const padZero = (num: string) => {
         return ('00' + parseInt(num)).slice(-2);
     };
-
-    if (leadingZeros) {
-        return padZero(month) + '/' + padZero(day) + '/' + year;
-    } else {
-        return month + '/' + day + '/' + year;
-    }
+    return leadingZeros ? padZero(month) + '/' + padZero(day) + '/' + year : month + '/' + day + '/' + year;
 };
 
 /**
