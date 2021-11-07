@@ -23,10 +23,10 @@ const DeleteMedicineModal = (props: IProps) => {
     return (
         <Confirm.Modal
             onSelect={(a) => onSelect(a ? (medicine.Id as number) : 0)}
-            size="lg"
             show={show}
-            yesButtonProps={{variant: 'danger'}}
+            size="lg"
             yesButtonContent={`Destroy ${medicine.Drug}`}
+            yesButtonProps={{variant: 'danger'}}
         >
             <Confirm.Header>
                 <Confirm.Title>

@@ -23,7 +23,6 @@ const CheckoutAllModal = (props: IProps) => {
 
     return (
         <Confirm.Modal
-            backdrop="static"
             centered
             onSelect={(a) => onSelect(a)}
             show={show}
@@ -69,10 +68,10 @@ const CheckoutAllModal = (props: IProps) => {
                         ))}
                     </ul>
                     <Alert
-                        variant="warning"
-                        show={showCheckoutAlert}
                         dismissible
                         onClose={() => onCloseCheckoutAlert()}
+                        show={showCheckoutAlert}
+                        variant="warning"
                     >
                         At least one drug is already checked out<Badge>❎</Badge>.{' '}
                         <b>Dismiss this alert if you want to proceed.</b>

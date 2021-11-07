@@ -8,16 +8,16 @@ interface IChildren {
 }
 
 interface IProps extends ModalProps {
-    yesButtonProps?: ButtonProps;
-    noButtonProps?: ButtonProps;
-    yesButtonContent?: ReactNode;
     noButtonContent?: ReactNode;
+    noButtonProps?: ButtonProps;
     onSelect: (a: boolean) => void;
+    yesButtonContent?: ReactNode;
+    yesButtonProps?: ButtonProps;
 }
 
 /**
- * Confirmation Modal "inheriting" from the Modal component
- * Uses Reacts "dot notation"
+ * Confirmation Modal "inheriting" (read composition) from the Modal component
+ * Uses Reacts' "dot notation"
  */
 const Confirm = {
     /**
@@ -30,31 +30,26 @@ const Confirm = {
         const defaultNoButtonProps = props.noButtonProps ? props.noButtonProps : {variant: 'secondary'};
         const {
             backdrop = 'static',
+            noButtonContent = 'No',
+            noButtonProps = defaultNoButtonProps,
             onSelect,
             size = 'sm',
-            yesButtonProps = defaultYesButtonProps,
-            noButtonProps = defaultNoButtonProps,
             yesButtonContent = 'Yes',
-            noButtonContent = 'No'
+            yesButtonProps = defaultYesButtonProps
         } = {...props};
-        const [show, setShow] = useState(props.show);
 
-        // Observer for show
+        const [show, setShow] = useState(props.show);
         useEffect(() => {
             setShow(props.show);
         }, [show, props.show]);
 
         /**
          * Handle button click event.
-         * @param {React.MouseEvent} e Mouse event object
          * @param {boolean} answer True if user clicked the confirm/yes button, otherwise false
          */
-        const onAnswer = (e: React.MouseEvent<HTMLElement>, answer: boolean) => {
-            e.preventDefault();
+        const onAnswer = (answer: boolean) => {
             setShow(false);
-            if (props.onHide) {
-                props.onHide();
-            }
+            if (props.onHide) props.onHide();
             onSelect(answer);
         };
 
@@ -62,10 +57,10 @@ const Confirm = {
             <Modal {...props} show={show} size={size} backdrop={backdrop} centered>
                 {props.children}
                 <Modal.Footer>
-                    <Button {...yesButtonProps} onClick={(e) => onAnswer(e, true)}>
+                    <Button {...yesButtonProps} onClick={() => onAnswer(true)}>
                         {yesButtonContent}
                     </Button>
-                    <Button {...noButtonProps} onClick={(e) => onAnswer(e, false)}>
+                    <Button {...noButtonProps} onClick={() => onAnswer(false)}>
                         {noButtonContent}
                     </Button>
                 </Modal.Footer>

@@ -9,9 +9,12 @@ interface IProps {
 
 const ClientRoster = (props: IProps) => {
     const {onUnload, clientList} = props;
-
     const [printWindow, setPrintWindow] = useState<Window | null>(null);
 
+    /**
+     * List item component
+     * @param {ClientRecord} clientRecord The Client (Resident) record object
+     */
     const clientListItem = (clientRecord: ClientRecord) => {
         return (
             <li className="no-marker">
@@ -47,11 +50,11 @@ const ClientRoster = (props: IProps) => {
     return (
         <>
             <NewImprovedWindow
-                features={{height: 800, width: 840}}
                 center="parent"
-                title="Print Client Roster"
+                features={{height: 800, width: 840}}
                 onOpen={(w) => setPrintWindow(w)}
                 onUnload={() => onUnload()}
+                title="Print Client Roster"
             >
                 <ul>
                     {clientList.map((r) => {

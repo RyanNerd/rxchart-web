@@ -1,36 +1,24 @@
-import Button from "react-bootstrap/Button";
-import ListGroup from "react-bootstrap/ListGroup";
-import ListGroupItem from "react-bootstrap/ListGroupItem";
-import Modal from "react-bootstrap/Modal";
-import ModalBody from "react-bootstrap/ModalBody";
-import ModalFooter from "react-bootstrap/ModalFooter";
-import ModalHeader from "react-bootstrap/ModalHeader";
-import React from "reactn";
+import Button from 'react-bootstrap/Button';
+import ListGroup from 'react-bootstrap/ListGroup';
+import ListGroupItem from 'react-bootstrap/ListGroupItem';
+import Modal from 'react-bootstrap/Modal';
+import ModalBody from 'react-bootstrap/ModalBody';
+import ModalFooter from 'react-bootstrap/ModalFooter';
+import ModalHeader from 'react-bootstrap/ModalHeader';
+import React from 'reactn';
 
 interface IProps {
-    show: boolean
-    onClose: () => void
+    onClose: () => void;
+    show: boolean;
 }
 
 const About = (props: IProps) => {
-    const {
-        show,
-        onClose
-    } = props;
-
+    const {onClose, show} = props;
     const version = process.env.REACT_APP_VERSION; // @see: https://stackoverflow.com/a/50822003/4323201
 
     return (
-        <Modal
-            show={show}
-            onClose={() => onClose()}
-            onHide={() => onClose()}
-            centered
-            backdrop="static"
-        >
-            <ModalHeader
-                closeButton
-            >
+        <Modal show={show} onClose={() => onClose()} onHide={() => onClose()} centered backdrop="static">
+            <ModalHeader closeButton>
                 <h3>About RxChart</h3>
             </ModalHeader>
             <ModalBody>
@@ -51,38 +39,26 @@ const About = (props: IProps) => {
                     </ListGroupItem>
                     <ListGroupItem>
                         Support:
-                        <Button
-                            variant="link"
-                            target="_blank"
-                            href="https://github.com/RyanNerd/rxchart-web/issues"
-                        >
+                        <Button variant="link" target="_blank" href="https://github.com/RyanNerd/rxchart-web/issues">
                             Report a problem or request a feature
                         </Button>
                     </ListGroupItem>
                     <ListGroupItem>
                         Developer:
-                        <Button
-                            variant="link"
-                            target="_blank"
-                            href="https://github.com/RyanNerd"
-                        >
+                        <Button variant="link" target="_blank" href="https://github.com/RyanNerd">
                             Ryan Jentzsch
                         </Button>
                     </ListGroupItem>
                     <ListGroupItem>
                         <h6>Attributions</h6>
                         <ul>
-                            <li>Icons made by { }
-                                <a
-                                    href="https://www.freepik.com"
-                                    title="Freepik"
-                                >
+                            <li>
+                                Icons made by {}
+                                <a href="https://www.freepik.com" title="Freepik">
                                     Freepik
-                                </a> from { }
-                                <a
-                                    href="https://www.flaticon.com/"
-                                    title="Flaticon"
-                                >
+                                </a>{' '}
+                                from {}
+                                <a href="https://www.flaticon.com/" title="Flaticon">
                                     www.flaticon.com
                                 </a>
                             </li>
@@ -92,14 +68,10 @@ const About = (props: IProps) => {
             </ModalBody>
 
             <ModalFooter>
-                <Button
-                    onClick={() => onClose()}
-                >
-                    Close
-                </Button>
+                <Button onClick={() => onClose()}>Close</Button>
             </ModalFooter>
         </Modal>
-    )
-}
+    );
+};
 
 export default About;
