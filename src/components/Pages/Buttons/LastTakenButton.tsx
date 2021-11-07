@@ -13,19 +13,13 @@ interface IProps {
  */
 const LastTakenButton = (props: IProps): JSX.Element | null => {
     const {lastTaken = null} = props;
-
-    if (lastTaken === null) {
-        return null;
-    }
+    if (lastTaken === null) return null;
 
     return (
         <Button size="sm" disabled style={{cursor: 'default'}} variant={getLastTakenVariant(lastTaken)}>
-            {/* Display in BOLD if taken 3 or fewer hours ago */}
-            {lastTaken && lastTaken <= 3 ? (
-                <b>Last Taken (hours): {lastTaken}</b>
-            ) : (
-                <span>Last Taken (hours): {lastTaken}</span>
-            )}
+            <span style={{fontWeight: lastTaken && lastTaken <= 3 ? 'bold' : undefined}}>
+                Last Taken (hours): {lastTaken}
+            </span>
         </Button>
     );
 };

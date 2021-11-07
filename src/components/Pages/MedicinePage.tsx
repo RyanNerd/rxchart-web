@@ -76,6 +76,9 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [clientId, setClientId] = useState<number | null>(activeClient?.clientInfo?.Id || null);
     const [displayType, setDisplayType] = useState<DISPLAY_TYPE>(DISPLAY_TYPE.Medicine);
     const [isBusy, setIsBusy] = useState(false);
+    const [lastTaken, setLastTaken] = useState(
+        activeMed?.Id && activeClient?.drugLogList ? calculateLastTaken(activeMed.Id, activeClient.drugLogList) : null
+    );
     const [medItemList, setMedItemList] = useState<IDropdownItem[]>([]);
     const [mm] = useGlobal('medicineManager');
     const [otcList, setOtcList] = useGlobal('otcList');
@@ -218,6 +221,13 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         }
         setMedItemList(itemList);
     }, [activeClient]);
+
+    useEffect(() => {
+        if (activeClient) {
+            const {drugLogList} = activeClient;
+            setLastTaken(activeMed?.Id ? calculateLastTaken(activeMed.Id, drugLogList) : null);
+        }
+    }, [activeClient, activeMed?.Id]);
 
     // If there isn't an active client or this isn't the active tab then do not render
     if (!clientId || activeTabKey !== 'medicine') return null;
@@ -612,9 +622,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                                     {activeMed?.Drug}
                                 </Button>
 
-                                <LastTakenButton
-                                    lastTaken={activeMed?.Id ? calculateLastTaken(activeMed.Id, drugLogList) : null}
-                                />
+                                <LastTakenButton lastTaken={lastTaken} />
 
                                 {activeMed?.Id && (
                                     <DrugLogGrid
