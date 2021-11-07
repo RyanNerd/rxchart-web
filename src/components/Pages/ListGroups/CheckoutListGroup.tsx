@@ -3,18 +3,17 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ListGroup from 'react-bootstrap/ListGroup';
 import React from 'reactn';
-import {DrugLogRecord, MedicineRecord, ClientRecord} from 'types/RecordTypes';
+import {ClientRecord, DrugLogRecord, MedicineRecord} from 'types/RecordTypes';
 import {clientFullName, getFormattedDate} from 'utility/common';
 
 interface IProps {
+    activeClient: ClientRecord;
     checkoutList: DrugLogRecord[];
     medicineList: MedicineRecord[];
-    activeClient: ClientRecord;
     onClose?: () => void;
 }
 const CheckoutListGroup = (props: IProps) => {
     const {checkoutList, medicineList, activeClient, onClose} = props;
-
     const clientName = activeClient ? clientFullName(activeClient) : '';
     const now = new Date();
     const today = getFormattedDate(now);
@@ -24,7 +23,6 @@ const CheckoutListGroup = (props: IProps) => {
             <ListGroup.Item>
                 <ButtonGroup>
                     <Button
-                        size="sm"
                         className="mb-2 d-print-none"
                         onClick={() => {
                             window.print();
@@ -37,6 +35,7 @@ const CheckoutListGroup = (props: IProps) => {
                                 }, 100);
                             }
                         }}
+                        size="sm"
                     >
                         Print
                     </Button>

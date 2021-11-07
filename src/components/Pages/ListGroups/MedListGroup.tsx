@@ -6,21 +6,21 @@ import {getLastTakenVariant, randomString} from 'utility/common';
 import {drawBarcode} from 'utility/drawBarcode';
 import LogButtons from '../Buttons/LogButtons';
 import ShadowBox from '../Buttons/ShadowBox';
-import MedDropdown from './MedDropdown';
 import {IDropdownItem} from '../ListGroups/MedDropdown';
+import MedDropdown from './MedDropdown';
 
 interface IProps {
     activeMed: MedicineRecord | null;
     addDrugLog: () => void;
+    canvasId?: string;
+    canvasUpdated?: (c: HTMLCanvasElement) => void;
     clientId: number;
+    disabled?: boolean;
     editMedicine: (m: MedicineRecord) => void;
-    logDrug: (n: number) => void;
     itemChanged: (i: number) => void;
     itemList: IDropdownItem[];
-    canvasUpdated?: (c: HTMLCanvasElement) => void;
-    canvasId?: string;
-    disabled?: boolean;
     lastTaken: number | null;
+    logDrug: (n: number) => void;
 }
 
 /**
@@ -32,17 +32,16 @@ const MedListGroup = (props: IProps): JSX.Element => {
     const {
         activeMed = null,
         addDrugLog,
+        canvasId = randomString(),
+        canvasUpdated,
         clientId,
+        disabled = false,
         editMedicine,
-        logDrug,
         itemChanged,
         itemList,
-        canvasUpdated,
-        canvasId = randomString(),
-        disabled = false,
-        lastTaken = null
+        lastTaken = null,
+        logDrug
     } = props;
-
     const barCode = activeMed?.Barcode && activeMed.Barcode.length > 0 ? activeMed.Barcode : null;
     const notes = activeMed?.Notes && activeMed.Notes.length > 0 ? activeMed.Notes : null;
     const directions = activeMed?.Directions || null;
@@ -52,24 +51,20 @@ const MedListGroup = (props: IProps): JSX.Element => {
     const fillDateType = fillDateText ? new Date(fillDateText) : null;
     const fillDateOptions = {month: '2-digit', day: '2-digit', year: 'numeric'} as Intl.DateTimeFormatOptions;
     const fillDate = fillDateType ? fillDateType.toLocaleString('en-US', fillDateOptions) : null;
-
-    // Update the barcode image if the barcode has changed
-    useEffect(() => {
-        // Only try to create a barcode canvas IF there is actually a barcode value.
-        const canvas = barCode ? drawBarcode(barCode, canvasId) : null;
-        if (canvasUpdated && canvas) {
-            canvasUpdated(canvas);
-        }
-    }, [barCode, canvasUpdated, canvasId]);
-
     const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
-
     const listboxItemStyle = {
         paddingTop: '0.25rem',
         paddingRight: '1.25rem',
         paddingBottom: '0.20rem',
         paddingLeft: '1.25rem'
     };
+
+    // Update the barcode image if the barcode has changed
+    useEffect(() => {
+        // Only try to create a barcode canvas IF there is actually a barcode value.
+        const canvas = barCode ? drawBarcode(barCode, canvasId) : null;
+        if (canvasUpdated && canvas) canvasUpdated(canvas);
+    }, [barCode, canvasUpdated, canvasId]);
 
     return (
         <ListGroup>
@@ -78,8 +73,7 @@ const MedListGroup = (props: IProps): JSX.Element => {
                     className="mr-1"
                     size="sm"
                     variant="info"
-                    onClick={(e) => {
-                        e.preventDefault();
+                    onClick={() => {
                         editMedicine({
                             ...newMedicineRecord,
                             OTC: false,
@@ -97,11 +91,8 @@ const MedListGroup = (props: IProps): JSX.Element => {
                     disabled={!activeMed}
                     size="sm"
                     variant="info"
-                    onClick={(e) => {
-                        e.preventDefault();
-                        if (activeMed) {
-                            editMedicine(activeMed);
-                        }
+                    onClick={() => {
+                        if (activeMed) editMedicine(activeMed);
                     }}
                 >
                     Edit <b>{activeMed?.Drug}</b>
@@ -112,23 +103,20 @@ const MedListGroup = (props: IProps): JSX.Element => {
                 <>
                     <ListGroup.Item active className="justify-content-left">
                         <MedDropdown
+                            activeId={activeMed.Id}
                             disabled={disabled}
                             itemList={itemList}
-                            activeId={activeMed.Id}
                             onSelect={(i) => itemChanged(i)}
                         />
                     </ListGroup.Item>
 
                     <ListGroup.Item>
                         <Button
-                            size="sm"
-                            disabled={disabled}
                             className="mr-2"
+                            disabled={disabled}
+                            size="sm"
                             variant={lastTakenVariant}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                addDrugLog();
-                            }}
+                            onClick={() => addDrugLog()}
                         >
                             + Log {activeMed?.Drug}
                         </Button>

@@ -4,14 +4,14 @@ import React from 'reactn';
 import DisabledSpinner from './DisabledSpinner';
 
 export interface IDropdownItem {
-    id: number; // zero indicated a divider
     description: string;
+    id: number; // zero indicated a divider
     subtext: string | null;
 }
 
 interface IProps {
-    disabled?: boolean;
     activeId: number; // Negative indicates the record is a pillbox
+    disabled?: boolean;
     itemList: IDropdownItem[];
     onSelect: (s: number) => void;
 }
@@ -25,23 +25,17 @@ const MedDropdown = (props: IProps): JSX.Element | null => {
     const {disabled = false, activeId, itemList, onSelect} = props;
 
     // Do not render unless we have the required props.
-    if (!itemList || itemList.length === 0) {
-        return null;
-    }
+    if (!itemList || itemList.length === 0) return null;
 
     const title = itemList.find((i) => i.id === activeId)?.description;
 
     /**
      * Dropdown Items component
-     *
      * @param {IDropdownItem} i The DropDownItem object
      * @returns {JSX.Element}
      */
     const MedDropdownItems = (i: IDropdownItem): JSX.Element => {
-        if (i.id === 0) {
-            return <Dropdown.Divider key={0} />;
-        }
-
+        if (i.id === 0) return <Dropdown.Divider key={0} />;
         const key = i.id < 0 ? 'pillbox-' + i.id : 'medicine-' + i.id;
         return (
             <Dropdown.Item key={key} active={i.id === activeId} onSelect={() => onSelect(i.id)}>

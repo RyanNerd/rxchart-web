@@ -16,11 +16,10 @@ type TProps = Modify<
 
 /**
  * Spinner to be shown when in a disabled state with an optional components to the right (typically a button)
- * @param {React.PropsWithChildren<IProps>} props The props for the component
+ * @param {TProps} props The props for the component
  */
 const DisabledSpinner = (props: TProps) => {
     const {animation = 'border', size = 'sm', role = 'status'} = {...props};
-
     return <Spinner {...props} animation={animation} size={size} role={role} aria-hidden="true" as="span" />;
 };
 

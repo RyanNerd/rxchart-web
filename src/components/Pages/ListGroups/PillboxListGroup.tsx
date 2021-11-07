@@ -62,14 +62,14 @@ const PillboxListGroup = (props: IProps) => {
               hour12: true
           } as Intl.DateTimeFormatOptions)
         : null;
+    const [showPillboxDeleteConfirm, setShowPillboxDeleteConfirm] = useState(false);
+    const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord | null>(null);
+    const clientId = clientRecord.Id;
+
     const [showAlert, setShowAlert] = useState(false);
     useEffect(() => {
         setShowAlert(logTime !== null);
     }, [activePillbox, logTime]);
-
-    const [showPillboxDeleteConfirm, setShowPillboxDeleteConfirm] = useState(false);
-    const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord | null>(null);
-    const clientId = clientRecord.Id;
 
     // If there are pillboxes but not an activePillbox then set the activePillbox via the onSelect cb
     useEffect(() => {
@@ -114,17 +114,17 @@ const PillboxListGroup = (props: IProps) => {
     const PillboxRadioButton = (pb: PillboxRecord) => {
         return (
             <ToggleButton
-                disabled={disabled}
-                key={pb.Id}
-                id={`pb-list-group-radio-btn-${pb.Id}`}
-                type="radio"
-                name="radio-pb-list-group"
-                variant="outline-primary"
-                size="lg"
-                value={pb.Id as number}
                 checked={activePillbox?.Id === pb.Id}
+                disabled={disabled}
+                id={`pb-list-group-radio-btn-${pb.Id}`}
+                key={pb.Id}
+                name="radio-pb-list-group"
                 onChange={() => onSelect(pb.Id as number)}
+                size="lg"
                 style={{textAlign: 'justify'}}
+                type="radio"
+                value={pb.Id as number}
+                variant="outline-primary"
             >
                 <span className="ml-2">
                     {disabled && (
@@ -202,12 +202,12 @@ const PillboxListGroup = (props: IProps) => {
         return (
             <Button
                 disabled={disabled || drugsInThePillbox.length === 0 || showAlert}
-                variant={drugsInThePillbox.length === 0 || logTime ? 'outline-warning' : 'primary'}
-                size="sm"
                 onClick={() => {
                     logPillbox();
                     setShowAlert(true);
                 }}
+                size="sm"
+                variant={drugsInThePillbox.length === 0 || logTime ? 'outline-warning' : 'primary'}
             >
                 {disabled && (
                     <>
@@ -245,10 +245,9 @@ const PillboxListGroup = (props: IProps) => {
                         {activePillbox && (
                             <>
                                 <Button
-                                    disabled={disabled}
                                     className="ml-2"
-                                    onClick={(e) => {
-                                        e.preventDefault();
+                                    disabled={disabled}
+                                    onClick={() => {
                                         const pillboxRecord = {...activePillbox};
                                         pillboxRecord.ResidentId = clientId;
                                         setPillboxInfo(pillboxRecord);
@@ -259,8 +258,8 @@ const PillboxListGroup = (props: IProps) => {
                                     Edit <span style={{textTransform: 'uppercase'}}>{activePillbox.Name}</span>
                                 </Button>
                                 <Button
-                                    disabled={disabled}
                                     className="ml-2 mr-5"
+                                    disabled={disabled}
                                     onClick={() => setShowPillboxDeleteConfirm(true)}
                                     size="sm"
                                     variant="danger"
@@ -319,11 +318,11 @@ const PillboxListGroup = (props: IProps) => {
             </ListGroup>
 
             <PillboxEdit
+                clientRecord={clientRecord}
                 onClose={(r) => {
                     setPillboxInfo(null);
                     if (r) onEdit(r);
                 }}
-                clientRecord={clientRecord}
                 pillboxInfo={pillboxInfo as PillboxRecord}
                 show={pillboxInfo !== null}
             />
@@ -335,7 +334,6 @@ const PillboxListGroup = (props: IProps) => {
                     if (a) onDelete(activePillbox?.Id as number);
                 }}
                 show={showPillboxDeleteConfirm}
-                backdrop="static"
                 yesButtonProps={{variant: 'danger'}}
             >
                 <Confirm.Header>

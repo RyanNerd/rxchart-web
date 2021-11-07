@@ -66,6 +66,13 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
         }
     }, [otcList, searchText]);
 
+    const listGroupStyle = {
+        paddingTop: '0.25rem',
+        paddingRight: '1.25rem',
+        paddingBottom: '0.25rem',
+        paddingLeft: '1.25rem'
+    };
+
     return (
         <ListGroup>
             <ListGroup.Item
@@ -84,22 +91,19 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                                 autoFocus
                                 className="mr-2"
                                 disabled={disabled}
-                                ref={searchRef}
                                 id="otc-page-search-text"
                                 isValid={searchIsValid || false}
                                 onChange={(e) => setSearchText(e.target.value)}
                                 onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
-                                    if (e.key === 'Enter') {
-                                        e.preventDefault();
-                                    }
+                                    if (e.key === 'Enter') e.preventDefault();
                                 }}
-                                onClick={(e: React.MouseEvent<HTMLElement>) => {
-                                    e.preventDefault();
+                                onClick={() => {
                                     setSearchText('');
                                     setSearchIsValid(null);
                                     otcSelected(null);
                                 }}
                                 placeholder="Search OTC medicine"
+                                ref={searchRef}
                                 size="sm"
                                 style={{width: '220px'}}
                                 type="search"
@@ -108,12 +112,9 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                         </InputGroup.Prepend>
                         <InputGroup.Append style={{zIndex: 0}}>
                             <Button
-                                disabled={disabled}
                                 className="mr-1"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    editOtcMedicine({...newMedicineRecord, OTC: true});
-                                }}
+                                disabled={disabled}
+                                onClick={() => editOtcMedicine({...newMedicineRecord, OTC: true})}
                                 size="sm"
                                 variant="info"
                             >
@@ -123,10 +124,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                             {activeOtc && (
                                 <Button
                                     disabled={disabled}
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        editOtcMedicine({...activeOtc} as MedicineRecord);
-                                    }}
+                                    onClick={() => editOtcMedicine({...activeOtc} as MedicineRecord)}
                                     size="sm"
                                     variant="info"
                                 >
@@ -138,12 +136,9 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                 </FormGroup>
                 <FormGroup>
                     <Button
-                        disabled={!activeOtc || disabled}
                         className="mr-2"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            logOtcDrug();
-                        }}
+                        disabled={!activeOtc || disabled}
+                        onClick={() => logOtcDrug()}
                         size="sm"
                         variant={lastTakenVariant}
                     >
@@ -181,14 +176,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
             </ListGroup.Item>
 
             {activeOtc?.Directions && activeOtc.Drug === searchText && (
-                <ListGroup.Item
-                    style={{
-                        paddingTop: '0.25rem',
-                        paddingRight: '1.25rem',
-                        paddingBottom: '0.25rem',
-                        paddingLeft: '1.25rem'
-                    }}
-                >
+                <ListGroup.Item style={listGroupStyle}>
                     <ShadowBox>
                         <span>
                             <b>Directions: </b> {activeOtc.Directions}
@@ -198,14 +186,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
             )}
 
             {activeOtc?.OtherNames && activeOtc.Drug === searchText && (
-                <ListGroup.Item
-                    style={{
-                        paddingTop: '0.25rem',
-                        paddingRight: '1.25rem',
-                        paddingBottom: '0.25rem',
-                        paddingLeft: '1.25rem'
-                    }}
-                >
+                <ListGroup.Item style={listGroupStyle}>
                     <ShadowBox>
                         <span>
                             <b>Other Names: </b> {activeOtc.OtherNames}
