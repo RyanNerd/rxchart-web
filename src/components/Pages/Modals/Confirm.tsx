@@ -10,7 +10,7 @@ interface IChildren {
 interface IProps extends ModalProps {
     noButtonContent?: ReactNode;
     noButtonProps?: ButtonProps;
-    onSelect: (a: boolean) => void;
+    onSelect: (b: boolean) => void;
     yesButtonContent?: ReactNode;
     yesButtonProps?: ButtonProps;
 }
@@ -45,12 +45,12 @@ const Confirm = {
 
         /**
          * Handle button click event.
-         * @param {boolean} answer True if user clicked the confirm/yes button, otherwise false
+         * @param {boolean} isAccepted True if user clicked the confirm/yes button, otherwise false
          */
-        const onAnswer = (answer: boolean) => {
+        const onAnswer = (isAccepted: boolean) => {
             setShow(false);
             if (props.onHide) props.onHide();
-            onSelect(answer);
+            onSelect(isAccepted);
         };
 
         return (
