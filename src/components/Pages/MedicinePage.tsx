@@ -1,10 +1,10 @@
 import MedDrugLogHistory from 'components/Pages/Grids/MedDrugLogHistory';
 import CheckoutListGroup from 'components/Pages/ListGroups/CheckoutListGroup';
 import {IDropdownItem} from 'components/Pages/ListGroups/MedDropdown';
+import DeleteDrugLogModal from 'components/Pages/Modals/DeleteDrugLogModal';
 import DeleteMedicineModal from 'components/Pages/Modals/DeleteMedicineModal';
 import DrugLogToast from 'components/Pages/Toasts/DrugLogToast';
 import usePrevious from 'hooks/usePrevious';
-import Alert from 'react-bootstrap/Alert';
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -18,7 +18,6 @@ import {
     clientFullName,
     getCheckoutList,
     getDrugName,
-    getFormattedDate,
     getMedicineRecord,
     isToday,
     multiSort,
@@ -31,7 +30,6 @@ import PillboxCard from './Grids/PillboxCard';
 import MedListGroup from './ListGroups/MedListGroup';
 import OtcListGroup from './ListGroups/OtcListGroup';
 import PillboxListGroup from './ListGroups/PillboxListGroup';
-import Confirm from './Modals/Confirm';
 import DrugLogEdit from './Modals/DrugLogEdit';
 import MedicineEdit from './Modals/MedicineEdit';
 
@@ -65,7 +63,6 @@ interface IProps {
  * @returns {JSX.Element | null}
  */
 const MedicinePage = (props: IProps): JSX.Element | null => {
-    const [, setErrorDetails] = useGlobal('__errorDetails');
     const [activeClient, setActiveClient] = useGlobal('activeClient');
     const [activeMed, setActiveMed] = useState<MedicineRecord | null>(null);
     const [activeOtc, setActiveOtc] = useState<MedicineRecord | null>(null);
@@ -616,7 +613,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                                         columns={['Taken', 'Notes', 'Out', 'In']}
                                         drugId={activeMed.Id}
                                         gridLists={{medicineList, drugLogList, pillboxList, pillboxItemList}}
-                                        onDelete={(r) => setShowDeleteDrugLogRecord(r)}
+                                        onDelete={(drugLogRecord) => setShowDeleteDrugLogRecord(drugLogRecord)}
                                         onEdit={(r) => addEditDrugLog(r)}
                                         onPillClick={(n) => handleOnPillClick(n)}
                                     />
@@ -698,37 +695,20 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 show={showDrugLog !== null}
             />
 
-            <Confirm.Modal
-                size="lg"
-                onSelect={(isAccepted) => {
+            <DeleteDrugLogModal
+                drugLogRecord={showDeleteDrugLogRecord as DrugLogRecord}
+                drugName={showDeleteDrugLogRecord ? drugName(showDeleteDrugLogRecord.MedicineId) || '' : ''}
+                onSelect={(drugLogRecord) => {
                     setShowDeleteDrugLogRecord(null);
-                    if (isAccepted)
-                        mm.deleteDrugLog(showDeleteDrugLogRecord?.Id as number).then((logDeleted) => {
-                            if (logDeleted) {
-                                mm.loadDrugLog(clientId, 5).then((drugLogRecords) => {
-                                    setActiveClient({...activeClient, drugLogList: drugLogRecords});
-                                });
-                            } else {
-                                setErrorDetails('DrugLog delete failed for Id: ' + showDeleteDrugLogRecord?.Id);
-                            }
+                    if (drugLogRecord)
+                        mm.deleteDrugLog(showDeleteDrugLogRecord?.Id as number).then(() => {
+                            mm.loadDrugLog(clientId, 5).then((drugLogRecords) => {
+                                setActiveClient({...activeClient, drugLogList: drugLogRecords});
+                            });
                         });
                 }}
                 show={showDeleteDrugLogRecord !== null}
-                yesButtonProps={{variant: 'danger'}}
-            >
-                <Confirm.Header>
-                    <Confirm.Title>
-                        Delete {showDeleteDrugLogRecord ? drugName(showDeleteDrugLogRecord.MedicineId) : null} Log
-                        Record
-                    </Confirm.Title>
-                </Confirm.Header>
-                <Confirm.Body>
-                    {showDeleteDrugLogRecord && showDeleteDrugLogRecord.Updated && (
-                        <Alert variant="secondary">Date: {getFormattedDate(showDeleteDrugLogRecord.Updated)}</Alert>
-                    )}
-                    <b style={{color: 'red'}}>Are you sure?</b>
-                </Confirm.Body>
-            </Confirm.Modal>
+            />
 
             <DeleteMedicineModal
                 medicineRecord={medicineList.find((m) => m.Id === showDeleteMedicine) as MedicineRecord}
