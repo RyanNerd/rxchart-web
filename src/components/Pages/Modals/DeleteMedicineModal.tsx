@@ -6,7 +6,7 @@ import {BsColor} from 'utility/common';
 
 interface IProps {
     medicineRecord: MedicineRecord;
-    onSelect: (n: number) => void;
+    onSelect: (medicineId: number) => void;
     show: boolean;
 }
 
