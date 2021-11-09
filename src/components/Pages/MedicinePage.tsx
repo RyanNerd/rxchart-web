@@ -206,11 +206,12 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     }, [activeClient, activeMed]);
 
     useEffect(() => {
-        if (activeClient) {
-            const {drugLogList} = activeClient;
-            setLastTaken(activeMed?.Id ? calculateLastTaken(activeMed.Id, drugLogList) : null);
-        }
-    }, [activeClient, activeMed?.Id]);
+        setLastTaken(
+            activeClient && activeMed && activeMed.Id
+                ? calculateLastTaken(activeMed.Id, activeClient.drugLogList)
+                : null
+        );
+    }, [activeClient, activeMed, activeMed?.Id]);
 
     // If there isn't an active client, or this isn't the active tab then do not render
     if (activeTabKey !== 'medicine' || !clientId || !activeClient) return null;
