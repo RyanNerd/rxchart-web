@@ -224,10 +224,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const saveMedicine = async (med: MedicineRecord) => {
         await setIsBusy(true);
         const m = await mm.updateMedicine(med);
-        if (activeClient) {
-            if (m.OTC) await setOtcList(await mm.loadOtcList());
-            else await setActiveClient({...activeClient, medicineList: await mm.loadMedicineList(clientId)});
-        }
+        if (m.OTC) await setOtcList(await mm.loadOtcList());
+        else await setActiveClient({...activeClient, medicineList: await mm.loadMedicineList(clientId)});
         await setIsBusy(false);
         return m;
     };
@@ -237,12 +235,13 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      * @param {number} medicineId The PK of the Medicine record to delete
      */
     const deleteMedicine = async (medicineId: number) => {
-        if (activeClient) {
-            await setIsBusy(true);
-            if (await mm.deleteMedicine(medicineId))
-                await setActiveClient({...activeClient, medicineList: await mm.loadMedicineList(clientId)});
-            await setIsBusy(false);
-        }
+        await setIsBusy(true);
+        if (await mm.deleteMedicine(medicineId))
+            await setActiveClient({
+                ...activeClient,
+                medicineList: await mm.loadMedicineList(clientId)
+            });
+        await setIsBusy(false);
     };
 
     /**
@@ -251,12 +250,10 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      */
     const saveDrugLog = async (drugLog: DrugLogRecord): Promise<DrugLogRecord> => {
         await setIsBusy(true);
-        const r = await mm.updateDrugLog(drugLog);
-        if (activeClient) {
-            await setActiveClient({...activeClient, drugLogList: await mm.loadDrugLog(clientId, 5)});
-        }
+        const updatedDrugLog = await mm.updateDrugLog(drugLog);
+        await setActiveClient({...activeClient, drugLogList: await mm.loadDrugLog(clientId, 5)});
         await setIsBusy(false);
-        return r;
+        return updatedDrugLog;
     };
 
     /**
@@ -264,10 +261,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      * @param {PillboxRecord} pillboxRecord Pillbox record object
      */
     const savePillbox = async (pillboxRecord: PillboxRecord) => {
-        if (activeClient) {
-            setActivePillbox(await mm.updatePillbox(pillboxRecord));
-            await setActiveClient({...activeClient, pillboxList: await mm.loadPillboxList(clientId)});
-        }
+        setActivePillbox(await mm.updatePillbox(pillboxRecord));
+        await setActiveClient({...activeClient, pillboxList: await mm.loadPillboxList(clientId)});
     };
 
     /**
@@ -275,12 +270,10 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      * @param {number} pillboxId The PK for the Pillbox table
      */
     const deletePillbox = async (pillboxId: number) => {
-        if (activeClient) {
-            if (await mm.deletePillbox(pillboxId)) {
-                const pbl = await mm.loadPillboxList(clientId);
-                await setActiveClient({...activeClient, pillboxList: pbl});
-                await setActivePillbox(pbl.length > 0 ? pbl[0] : null);
-            }
+        if (await mm.deletePillbox(pillboxId)) {
+            const pbl = await mm.loadPillboxList(clientId);
+            await setActiveClient({...activeClient, pillboxList: pbl});
+            await setActivePillbox(pbl.length > 0 ? pbl[0] : null);
         }
     };
 
