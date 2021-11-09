@@ -4,7 +4,6 @@ import {IDropdownItem} from 'components/Pages/ListGroups/MedDropdown';
 import DeleteDrugLogModal from 'components/Pages/Modals/DeleteDrugLogModal';
 import DeleteMedicineModal from 'components/Pages/Modals/DeleteMedicineModal';
 import DrugLogToast from 'components/Pages/Toasts/DrugLogToast';
-import usePrevious from 'hooks/usePrevious';
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -85,7 +84,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
     const [showMedicineEdit, setShowMedicineEdit] = useState<MedicineRecord | null>(null);
     const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
-    const prevActiveTabKey = usePrevious(activeTabKey);
 
     // Refresh activeClient when the activeResident global changes.
     useEffect(() => {
@@ -93,14 +91,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             setClientId(activeClient?.clientInfo?.Id ? activeClient.clientInfo.Id : null);
         }
     }, [activeClient]);
-
-    useEffect(() => {
-        if (prevActiveTabKey !== activeTabKey && activeTabKey === 'medicine') {
-            const medicineList = activeClient?.medicineList || ([] as MedicineRecord[]);
-            const activeMeds = medicineList.filter((m) => m.Active); // Only active medications
-            setActiveMed(activeMeds.length > 0 ? activeMeds[0] : null);
-        }
-    }, [activeTabKey, prevActiveTabKey, activeClient]);
 
     // activeTabKey refresh from prop
     useEffect(() => {
@@ -170,8 +160,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         const itemList = [] as IDropdownItem[];
         if (activeClient) {
             const {drugLogList, pillboxList, pillboxItemList, medicineList} = activeClient;
-
             const checkoutList = getCheckoutList(drugLogList);
+
             // Build the itemList with any pillboxes and meds from medicineList
             let pbCnt = 0;
             pillboxList.forEach((p) => {
@@ -203,11 +193,17 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     });
                 }
             });
-        }
-        if (itemList.length === 0) setActiveMed(null);
 
+            // If activeMed is null, and we have med items in the list then set the initial activeMed to the first item
+            if (activeMed === null && itemList.length > 0) {
+                const medsOnly = itemList.filter((i) => i.id > 0);
+                setActiveMed(medsOnly.length === 0 ? null : medicineList.find((m) => m.Id === medsOnly[0].id) || null);
+            }
+        } else {
+            setActiveMed(null);
+        }
         setMedItemList(itemList);
-    }, [activeClient]);
+    }, [activeClient, activeMed]);
 
     useEffect(() => {
         if (activeClient) {
@@ -216,10 +212,10 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         }
     }, [activeClient, activeMed?.Id]);
 
-    // If there isn't an active client or this isn't the active tab then do not render
-    if (!clientId || activeTabKey !== 'medicine') return null;
+    // If there isn't an active client, or this isn't the active tab then do not render
+    if (activeTabKey !== 'medicine' || !clientId || !activeClient) return null;
 
-    const medicineOtcList = activeClient?.medicineList.concat(otcList) as MedicineRecord[];
+    const medicineOtcList = activeClient.medicineList.concat(otcList) as MedicineRecord[];
 
     /**
      * Given a MedicineRecord object Update or Insert the record and rehydrate the global otcList / medicineList
