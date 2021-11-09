@@ -281,30 +281,15 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     /**
      * Fires when user clicks on +Log or the drug log edit button
      * @param {DrugLogRecord} drugLogInfo The drugLog record object
+     * @param {boolean} isOtc True if drug to log is an OTC med
      */
-    const addEditDrugLog = (drugLogInfo?: DrugLogRecord) => {
+    const addEditDrugLog = (drugLogInfo?: DrugLogRecord, isOtc?: boolean) => {
         const drugLogRecord = drugLogInfo
             ? {...drugLogInfo}
             : ({
                   Id: null,
                   ResidentId: clientId,
-                  MedicineId: activeMed?.Id,
-                  Notes: ''
-              } as DrugLogRecord);
-        setShowDrugLog(drugLogRecord);
-    };
-
-    /**
-     * Fires when user clicks on +Log or the drug log edit button for OTC drugs
-     * @param {DrugLogRecord} drugLogInfo The drugLog record object
-     */
-    const addEditOtcLog = (drugLogInfo?: DrugLogRecord) => {
-        const drugLogRecord = drugLogInfo
-            ? {...drugLogInfo}
-            : ({
-                  Id: null,
-                  ResidentId: clientId,
-                  MedicineId: activeOtc?.Id,
+                  MedicineId: isOtc ? activeOtc?.Id : activeMed?.Id,
                   Notes: ''
               } as DrugLogRecord);
         setShowDrugLog(drugLogRecord);
@@ -512,7 +497,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                                 disabled={otcList.length === 0 || isBusy}
                                 drugLogList={drugLogList}
                                 editOtcMedicine={(medicineRecord) => setShowMedicineEdit(medicineRecord)}
-                                logOtcDrug={() => addEditOtcLog()}
+                                logOtcDrug={() => addEditDrugLog(undefined, true)}
                                 logOtcDrugAmount={(n) => handleLogDrugAmount(n, true)}
                                 otcList={otcList}
                                 otcSelected={(medicineRecord) => setActiveOtc(medicineRecord)}
@@ -606,7 +591,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                                 <DrugLogGrid
                                     columns={['Drug', 'Taken', 'Notes']}
                                     onDelete={(drugLogRecord) => setShowDeleteDrugLogRecord(drugLogRecord)}
-                                    onEdit={(drugLogRecord) => addEditOtcLog(drugLogRecord)}
+                                    onEdit={(drugLogRecord) => addEditDrugLog(drugLogRecord, true)}
                                     gridLists={{
                                         medicineList: otcList,
                                         drugLogList: otcLogList,
