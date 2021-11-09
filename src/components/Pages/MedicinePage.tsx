@@ -313,28 +313,15 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     /**
      * Fires when the Log 1...4 buttons are clicked.
      * @param {number} amount The number of pills (medication) taken
+     * @param {boolean} isOtc True if the amount logged is an OTC med
      */
-    const handleLogDrugAmount = (amount: number) => {
+    const handleLogDrugAmount = (amount: number, isOtc?: boolean) => {
+        const medicineId = isOtc ? activeOtc?.Id : activeMed?.Id;
         const drugLogInfo = {...newDrugLogRecord};
         drugLogInfo.ResidentId = clientId;
-        drugLogInfo.MedicineId = activeMed?.Id as number;
+        drugLogInfo.MedicineId = medicineId as number;
         drugLogInfo.Notes = amount.toString();
         saveDrugLog(drugLogInfo).then((r) => setToast([r]));
-    };
-
-    /**
-     * Fires when the Log 1 or Log 2, etc. buttons are clicked for OTC drugs
-     * @param {number} amount The number of pills (medication) taken
-     */
-    const handleLogOtcDrugAmount = (amount: number) => {
-        const drugId = activeOtc?.Id as number;
-        if (drugId) {
-            const drugLogInfo = {...newDrugLogRecord};
-            drugLogInfo.ResidentId = clientId;
-            drugLogInfo.MedicineId = drugId;
-            drugLogInfo.Notes = amount.toString();
-            saveDrugLog(drugLogInfo).then((r) => setToast([r]));
-        }
     };
 
     /**
@@ -526,7 +513,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                                 drugLogList={drugLogList}
                                 editOtcMedicine={(medicineRecord) => setShowMedicineEdit(medicineRecord)}
                                 logOtcDrug={() => addEditOtcLog()}
-                                logOtcDrugAmount={(n) => handleLogOtcDrugAmount(n)}
+                                logOtcDrugAmount={(n) => handleLogDrugAmount(n, true)}
                                 otcList={otcList}
                                 otcSelected={(medicineRecord) => setActiveOtc(medicineRecord)}
                             />
