@@ -13,6 +13,7 @@ import ToggleButton from 'react-bootstrap/ToggleButton';
 import React, {useEffect, useGlobal, useState} from 'reactn';
 import {DrugLogRecord, MedicineRecord, newDrugLogRecord, PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
 import {
+    asyncWrapper,
     calculateLastTaken,
     clientFullName,
     getCheckoutList,
@@ -70,6 +71,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [checkoutList, setCheckoutList] = useState<DrugLogRecord[]>([]);
     const [clientId, setClientId] = useState<number | null>(activeClient?.clientInfo?.Id || null);
     const [displayType, setDisplayType] = useState<DISPLAY_TYPE>(DISPLAY_TYPE.Medicine);
+    const [, setErrorDetails] = useGlobal('__errorDetails');
     const [isBusy, setIsBusy] = useState(false);
     const [lastTaken, setLastTaken] = useState(
         activeMed?.Id && activeClient?.drugLogList ? calculateLastTaken(activeMed.Id, activeClient.drugLogList) : null
@@ -224,11 +226,25 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      */
     const saveMedicine = async (med: MedicineRecord) => {
         await setIsBusy(true);
-        const m = await mm.updateMedicine(med);
-        if (m.OTC) await setOtcList(await mm.loadOtcList());
-        else await setActiveClient({...activeClient, medicineList: await mm.loadMedicineList(clientId)});
+        const [e, m] = (await asyncWrapper(mm.updateMedicine(med))) as [unknown, Promise<MedicineRecord>];
+        if (e) await setErrorDetails(e);
+        if ((await m).OTC) {
+            const [errLoadOtc, otcMeds] = (await asyncWrapper(mm.loadOtcList())) as [
+                unknown,
+                Promise<MedicineRecord[]>
+            ];
+            if (errLoadOtc) await setErrorDetails(errLoadOtc);
+            else await setOtcList(await otcMeds);
+        } else {
+            const [errLoadMeds, meds] = (await asyncWrapper(mm.loadMedicineList(clientId))) as [
+                unknown,
+                Promise<MedicineRecord[]>
+            ];
+            if (errLoadMeds) await setErrorDetails(errLoadMeds);
+            else await setActiveClient({...activeClient, medicineList: await meds});
+        }
         await setIsBusy(false);
-        return m;
+        return await m;
     };
 
     /**
@@ -237,11 +253,14 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      */
     const deleteMedicine = async (medicineId: number) => {
         await setIsBusy(true);
-        if (await mm.deleteMedicine(medicineId))
+        const [e, deleted] = (await asyncWrapper(mm.deleteMedicine(medicineId))) as [unknown, Promise<boolean>];
+        if (e) await setErrorDetails(e);
+        if (await deleted)
             await setActiveClient({
                 ...activeClient,
                 medicineList: await mm.loadMedicineList(clientId)
             });
+        else await setErrorDetails(new Error('Unable to delete medicine. Id: ' + medicineId));
         await setIsBusy(false);
     };
 
@@ -251,10 +270,21 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      */
     const saveDrugLog = async (drugLog: DrugLogRecord): Promise<DrugLogRecord> => {
         await setIsBusy(true);
-        const updatedDrugLog = await mm.updateDrugLog(drugLog);
-        await setActiveClient({...activeClient, drugLogList: await mm.loadDrugLog(clientId, 5)});
+        const [e, updatedDrugLog] = (await asyncWrapper(mm.updateDrugLog(drugLog))) as [
+            unknown,
+            Promise<DrugLogRecord>
+        ];
+        if (e) await setErrorDetails(e);
+        else {
+            const [errLoadLog, drugLogs] = (await asyncWrapper(mm.loadDrugLog(clientId, 5))) as [
+                unknown,
+                Promise<DrugLogRecord[]>
+            ];
+            if (errLoadLog) await setErrorDetails(errLoadLog);
+            else await setActiveClient({...activeClient, drugLogList: await drugLogs});
+        }
         await setIsBusy(false);
-        return updatedDrugLog;
+        return await updatedDrugLog;
     };
 
     /**
@@ -262,8 +292,20 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      * @param {PillboxRecord} pillboxRecord Pillbox record object
      */
     const savePillbox = async (pillboxRecord: PillboxRecord) => {
-        setActivePillbox(await mm.updatePillbox(pillboxRecord));
-        await setActiveClient({...activeClient, pillboxList: await mm.loadPillboxList(clientId)});
+        setIsBusy(true);
+        const [e, updatedPillbox] = (await asyncWrapper(mm.updatePillbox(pillboxRecord))) as [
+            unknown,
+            Promise<PillboxRecord>
+        ];
+        if (e) await setErrorDetails(e);
+        else setActivePillbox(await updatedPillbox);
+        const [errLoadPillbox, pillboxes] = (await asyncWrapper(mm.loadPillboxList(clientId))) as [
+            unknown,
+            Promise<PillboxRecord[]>
+        ];
+        if (errLoadPillbox) await setErrorDetails(errLoadPillbox);
+        else await setActiveClient({...activeClient, pillboxList: await pillboxes});
+        setIsBusy(false);
     };
 
     /**
@@ -271,11 +313,81 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      * @param {number} pillboxId The PK for the Pillbox table
      */
     const deletePillbox = async (pillboxId: number) => {
-        if (await mm.deletePillbox(pillboxId)) {
-            const pbl = await mm.loadPillboxList(clientId);
-            await setActiveClient({...activeClient, pillboxList: pbl});
-            await setActivePillbox(pbl.length > 0 ? pbl[0] : null);
+        setIsBusy(true);
+        const [e, pillboxDeleted] = (await asyncWrapper(mm.deletePillbox(pillboxId))) as [unknown, Promise<boolean>];
+        if (e) await setErrorDetails(e);
+        else if (await pillboxDeleted) {
+            const [errLoad, pillboxes] = (await asyncWrapper(mm.loadPillboxList(clientId))) as [
+                unknown,
+                Promise<PillboxRecord[]>
+            ];
+            if (errLoad) await setErrorDetails(errLoad);
+            else {
+                const pillboxList = await pillboxes;
+                await setActiveClient({...activeClient, pillboxList});
+                await setActivePillbox(pillboxList.length > 0 ? pillboxList[0] : null);
+            }
+        } else {
+            await setErrorDetails(new Error('Unable to delete Pillbox. Id: ' + pillboxId));
         }
+        setIsBusy(false);
+    };
+
+    /**
+     * Handle when the user clicks on Log Pillbox
+     */
+    const handleLogPillbox = () => {
+        /**
+         * Log all the pillbox items, refresh the drugLogList, and toast the logged drugs
+         * @param {number} pillboxId The PK of the Pillbox table
+         */
+        const logPillbox = async (pillboxId: number) => {
+            const toastQ = [] as DrugLogRecord[];
+            const [e, loggedPillboxMeds] = (await asyncWrapper(mm.logPillbox(pillboxId))) as [
+                unknown,
+                Promise<DrugLogRecord[]>
+            ];
+            if (e) await setErrorDetails(e);
+            else {
+                const loggedPillboxDrugs = await loggedPillboxMeds;
+                if (loggedPillboxDrugs.length > 0) {
+                    const [errLoadLog, drugLogs] = (await asyncWrapper(mm.loadDrugLog(clientId, 5))) as [
+                        unknown,
+                        Promise<DrugLogRecord[]>
+                    ];
+                    if (errLoadLog) await setErrorDetails(errLoadLog);
+                    else await setActiveClient({...activeClient, drugLogList: await drugLogs});
+                    loggedPillboxDrugs.forEach((ld) => toastQ.push({...ld}));
+                    setToast(toastQ);
+                }
+            }
+        };
+
+        // Tell the UI that we're busy. Then log the pillbox contents and when done tell the UI we're no longer busy.
+        setIsBusy(true);
+        logPillbox(activePillbox?.Id as number).then(() => setIsBusy(false));
+    };
+
+    /**
+     * Add or update a pillboxItem record
+     * @param {PillboxItemRecord} pillboxItemRecord The pillboxItem record object
+     */
+    const savePillboxItem = async (pillboxItemRecord: PillboxItemRecord) => {
+        setIsBusy(true);
+        const [e, updatedPillboxItem] = (await asyncWrapper(mm.updatePillboxItem(pillboxItemRecord))) as [
+            unknown,
+            Promise<PillboxItemRecord>
+        ];
+        if (e) await setErrorDetails(e);
+        else if (await updatedPillboxItem) {
+            const [errLoadPills, pillboxItems] = (await asyncWrapper(mm.loadPillboxItemList(clientId as number))) as [
+                unknown,
+                Promise<PillboxItemRecord[]>
+            ];
+            if (errLoadPills) await setErrorDetails(errLoadPills);
+            else await setActiveClient({...activeClient, pillboxItemList: await pillboxItems});
+        }
+        setIsBusy(false);
     };
 
     /**
@@ -319,35 +431,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     };
 
     /**
-     * Handle when the user clicks on Log Pillbox
-     */
-    const handleLogPillbox = () => {
-        /**
-         * Log all the pillbox items, refresh the drugLogList, and toast the logged drugs
-         * @param {number} pillboxId The PK of the Pillbox table
-         */
-        const logPillbox = async (pillboxId: number) => {
-            const toastQ = [] as DrugLogRecord[];
-
-            // Log drugs in the pillbox
-            const loggedPillboxDrugs = await mm.logPillbox(pillboxId);
-
-            // If there are any logged Pillbox drugs then refresh the drugLogList global and toast the success.
-            if (loggedPillboxDrugs.length > 0) {
-                if (activeClient) {
-                    await setActiveClient({...activeClient, drugLogList: await mm.loadDrugLog(clientId, 5)});
-                    loggedPillboxDrugs.forEach((ld) => toastQ.push({...ld}));
-                    setToast(toastQ);
-                }
-            }
-        };
-
-        // Tell the UI that we're busy. Then log the pillbox contents and when done tell the UI we're no longer busy.
-        setIsBusy(true);
-        logPillbox(activePillbox?.Id as number).then(() => setIsBusy(false));
-    };
-
-    /**
      * Handle when the user has clicked on a pill
      * @param {number} pillboxId The PK of the Pillbox table
      */
@@ -359,15 +442,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 setDisplayType(DISPLAY_TYPE.Pillbox);
             }
         }
-    };
-
-    /**
-     * Add or update a pillboxItem record
-     * @param {PillboxItemRecord} pillboxItemRecord The pillboxItem record object
-     */
-    const savePillboxItem = async (pillboxItemRecord: PillboxItemRecord) => {
-        if (activeClient && (await mm.updatePillboxItem(pillboxItemRecord)))
-            await setActiveClient({...activeClient, pillboxItemList: await mm.loadPillboxItemList(clientId as number)});
     };
 
     if (!activeClient) return null;
