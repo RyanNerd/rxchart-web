@@ -221,20 +221,23 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const medicineOtcList = activeClient.medicineList.concat(otcList) as MedicineRecord[];
 
     /**
-     * Given a MedicineRecord object Update or Insert the record and rehydrate the global otcList / medicineList
+     * Given a MedicineRecord object Update/Insert the record and rehydrate the global otcList / medicineList
+     * Set the activeOtc or the activeMed with the updated medicine (if Active)
      * @param {MedicineRecord} med Medicine record object
      */
     const saveMedicine = async (med: MedicineRecord) => {
         await setIsBusy(true);
         const [e, m] = (await asyncWrapper(mm.updateMedicine(med))) as [unknown, Promise<MedicineRecord>];
         if (e) await setErrorDetails(e);
-        if ((await m).OTC) {
+        const updatedMedicineRecord = await m;
+        if (updatedMedicineRecord.OTC) {
             const [errLoadOtc, otcMeds] = (await asyncWrapper(mm.loadOtcList())) as [
                 unknown,
                 Promise<MedicineRecord[]>
             ];
             if (errLoadOtc) await setErrorDetails(errLoadOtc);
             else await setOtcList(await otcMeds);
+            setActiveOtc(updatedMedicineRecord.Active ? updatedMedicineRecord : null);
         } else {
             const [errLoadMeds, meds] = (await asyncWrapper(mm.loadMedicineList(clientId))) as [
                 unknown,
@@ -242,9 +245,12 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             ];
             if (errLoadMeds) await setErrorDetails(errLoadMeds);
             else await setActiveClient({...activeClient, medicineList: await meds});
+            const activeMeds = (await meds).filter((m) => m.Active);
+            setActiveMed(
+                updatedMedicineRecord.Active ? updatedMedicineRecord : activeMeds.length === 0 ? null : activeMeds[0]
+            );
         }
         await setIsBusy(false);
-        return await m;
     };
 
     /**
@@ -694,26 +700,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 fullName={clientFullName(activeClient.clientInfo)}
                 onClose={(medicineRecord) => {
                     setShowMedicineEdit(null);
-                    if (medicineRecord) {
-                        if (medicineRecord.Id && medicineRecord.Id < 0) {
-                            setShowDeleteMedicine(Math.abs(medicineRecord.Id));
-                        } else {
-                            saveMedicine(medicineRecord).then((medicineRecord) => {
-                                if (medicineRecord.OTC) {
-                                    setActiveOtc(medicineRecord.Active ? medicineRecord : null);
-                                } else {
-                                    const activeMeds = medicineList.filter((m) => m.Active);
-                                    setActiveMed(
-                                        medicineRecord.Active
-                                            ? medicineRecord
-                                            : activeMeds.length === 0
-                                            ? null
-                                            : activeMeds[0]
-                                    );
-                                }
-                            });
-                        }
-                    }
+                    if (medicineRecord) saveMedicine(medicineRecord);
                 }}
                 show={showMedicineEdit !== null}
             />
