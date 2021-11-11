@@ -342,36 +342,28 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     /**
      * Handle when the user clicks on Log Pillbox
      */
-    const handleLogPillbox = () => {
-        /**
-         * Log all the pillbox items, refresh the drugLogList, and toast the logged drugs
-         * @param {number} pillboxId The PK of the Pillbox table
-         */
-        const logPillbox = async (pillboxId: number) => {
-            const toastQ = [] as DrugLogRecord[];
-            const [e, loggedPillboxMeds] = (await asyncWrapper(mm.logPillbox(pillboxId))) as [
-                unknown,
-                Promise<DrugLogRecord[]>
-            ];
-            if (e) await setErrorDetails(e);
-            else {
-                const loggedPillboxDrugs = await loggedPillboxMeds;
-                if (loggedPillboxDrugs.length > 0) {
-                    const [errLoadLog, drugLogs] = (await asyncWrapper(mm.loadDrugLog(clientId, 5))) as [
-                        unknown,
-                        Promise<DrugLogRecord[]>
-                    ];
-                    if (errLoadLog) await setErrorDetails(errLoadLog);
-                    else await setActiveClient({...activeClient, drugLogList: await drugLogs});
-                    loggedPillboxDrugs.forEach((ld) => toastQ.push({...ld}));
-                    setToast(toastQ);
-                }
-            }
-        };
-
-        // Tell the UI that we're busy. Then log the pillbox contents and when done tell the UI we're no longer busy.
+    const handleLogPillbox = async () => {
         setIsBusy(true);
-        logPillbox(activePillbox?.Id as number).then(() => setIsBusy(false));
+        const toastQ = [] as DrugLogRecord[];
+        const [e, loggedPillboxMeds] = (await asyncWrapper(mm.logPillbox(activePillbox?.Id as number))) as [
+            unknown,
+            Promise<DrugLogRecord[]>
+        ];
+        if (e) await setErrorDetails(e);
+        else {
+            const loggedPillboxDrugs = await loggedPillboxMeds;
+            if (loggedPillboxDrugs.length > 0) {
+                const [errLoadLog, drugLogs] = (await asyncWrapper(mm.loadDrugLog(clientId, 5))) as [
+                    unknown,
+                    Promise<DrugLogRecord[]>
+                ];
+                if (errLoadLog) await setErrorDetails(errLoadLog);
+                else await setActiveClient({...activeClient, drugLogList: await drugLogs});
+                loggedPillboxDrugs.forEach((ld) => toastQ.push({...ld}));
+                setToast(toastQ);
+            }
+        }
+        setIsBusy(false);
     };
 
     /**
