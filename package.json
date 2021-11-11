@@ -24,7 +24,7 @@
     "test": "react-scripts test",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "eslint src",
-    "changelog": "git changelog --list --all:"
+    "changelog": "git changelog --list --all"
   },
   "eslintConfig": {
     "extends": "react-app"
