@@ -13,6 +13,7 @@ import ToggleButton from 'react-bootstrap/ToggleButton';
 import React, {useEffect, useGlobal, useState} from 'reactn';
 import {DrugLogRecord, MedicineRecord, newDrugLogRecord, PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
 import {
+    asyncWrapper,
     calculateLastTaken,
     clientFullName,
     getCheckoutList,
@@ -70,6 +71,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [checkoutList, setCheckoutList] = useState<DrugLogRecord[]>([]);
     const [clientId, setClientId] = useState<number | null>(activeClient?.clientInfo?.Id || null);
     const [displayType, setDisplayType] = useState<DISPLAY_TYPE>(DISPLAY_TYPE.Medicine);
+    const [, setErrorDetails] = useGlobal('__errorDetails');
     const [isBusy, setIsBusy] = useState(false);
     const [lastTaken, setLastTaken] = useState(
         activeMed?.Id && activeClient?.drugLogList ? calculateLastTaken(activeMed.Id, activeClient.drugLogList) : null
@@ -224,8 +226,10 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      */
     const saveMedicine = async (med: MedicineRecord) => {
         await setIsBusy(true);
-        const m = await mm.updateMedicine(med);
-        if (m.OTC) await setOtcList(await mm.loadOtcList());
+        const [e, m] = (await asyncWrapper(mm.updateMedicine(med))) as [unknown, Promise<MedicineRecord>];
+        if (e) await setErrorDetails(e);
+        const medicineRecord = await m;
+        if (medicineRecord.OTC) await setOtcList(await mm.loadOtcList());
         else await setActiveClient({...activeClient, medicineList: await mm.loadMedicineList(clientId)});
         await setIsBusy(false);
         return m;
@@ -237,11 +241,14 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      */
     const deleteMedicine = async (medicineId: number) => {
         await setIsBusy(true);
-        if (await mm.deleteMedicine(medicineId))
+        const [e, deleted] = (await asyncWrapper(mm.deleteMedicine(medicineId))) as [unknown, Promise<boolean>];
+        if (e) await setErrorDetails(e);
+        if (await deleted)
             await setActiveClient({
                 ...activeClient,
                 medicineList: await mm.loadMedicineList(clientId)
             });
+        else await setErrorDetails(new Error('Unable to delete medicine. Id: ' + medicineId));
         await setIsBusy(false);
     };
 
@@ -251,8 +258,12 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      */
     const saveDrugLog = async (drugLog: DrugLogRecord): Promise<DrugLogRecord> => {
         await setIsBusy(true);
-        const updatedDrugLog = await mm.updateDrugLog(drugLog);
-        await setActiveClient({...activeClient, drugLogList: await mm.loadDrugLog(clientId, 5)});
+        const [e, updatedDrugLog] = (await asyncWrapper(mm.updateDrugLog(drugLog))) as [
+            unknown,
+            Promise<DrugLogRecord>
+        ];
+        if (e) await setErrorDetails(e);
+        else await setActiveClient({...activeClient, drugLogList: await mm.loadDrugLog(clientId, 5)});
         await setIsBusy(false);
         return updatedDrugLog;
     };
@@ -302,7 +313,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
      */
     const handleLogDrugAmount = (amount: number, isOtc?: boolean) => {
         const medicineId = isOtc ? activeOtc?.Id : activeMed?.Id;
-        const drugLogInfo = {...newDrugLogRecord};
+        const drugLogInfo = {...newDrugLogRecord, OTC: isOtc};
         drugLogInfo.ResidentId = clientId;
         drugLogInfo.MedicineId = medicineId as number;
         drugLogInfo.Notes = amount.toString();
