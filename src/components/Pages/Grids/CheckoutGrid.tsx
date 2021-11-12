@@ -16,6 +16,12 @@ interface IProps extends TableProps {
     medicineList: MedicineRecord[];
 }
 
+interface ITableProps extends TableProps {
+    drugId: unknown;
+    drugLog: unknown;
+    medicineList: unknown;
+}
+
 /**
  * Checkout Grid
  * @param {IProps} props The props for this component
@@ -113,8 +119,13 @@ const CheckoutGrid = (props: IProps): JSX.Element => {
         );
     };
 
+    const tableProps = {...(props as ITableProps)};
+    delete tableProps.drugId;
+    delete tableProps.drugLog;
+    delete tableProps.medicineList;
+
     return (
-        <Table style={{wordWrap: 'break-word'}} {...props} className={'w-auto'} striped bordered hover size="sm">
+        <Table style={{wordWrap: 'break-word'}} {...tableProps} className={'w-auto'} striped bordered hover size="sm">
             <thead>
                 <tr>
                     <th>Drug</th>

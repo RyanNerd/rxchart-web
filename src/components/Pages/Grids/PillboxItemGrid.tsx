@@ -13,6 +13,11 @@ interface IProps extends TableProps {
     pillboxGridItems: PillRowType[];
 }
 
+interface ITableProps extends TableProps {
+    onEdit: unknown;
+    pillboxGridItems: unknown;
+}
+
 /**
  * PillboxItemGrid
  * @param {IProps} props The props for this component
@@ -131,8 +136,12 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
         );
     };
 
+    const tableProps = {...props} as ITableProps;
+    delete tableProps.onEdit;
+    delete tableProps.pillboxGridItems;
+
     return (
-        <Table style={{wordWrap: 'break-word'}} {...props} bordered hover size="sm" striped>
+        <Table style={{wordWrap: 'break-word'}} {...tableProps} bordered hover size="sm" striped>
             <thead>
                 <tr>
                     <th>Drug</th>

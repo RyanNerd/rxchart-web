@@ -21,6 +21,10 @@ type TProps = Modify<
     }
 >;
 
+interface IDropdownProps extends DropdownButtonProps {
+    clientRecord: unknown;
+}
+
 /**
  * ClientDobButton is a dropdown button that displays the date of birth of the given client record
  * The dropdown shows the client notes if they have any.
@@ -38,6 +42,9 @@ const ClientDobButton = (props: TProps) => {
         )
     } = props;
 
+    const dropdownProps = {...(props as IDropdownProps)};
+    delete dropdownProps.clientRecord;
+
     /**
      * CSS Style override for getting the Dropdown.ItemText to display correctly
      * @param {React.MouseEvent<HTMLElement>} e Mouse event object
@@ -47,8 +54,8 @@ const ClientDobButton = (props: TProps) => {
      */
     return (
         <DropdownButton
-            {...props}
-            disabled={disabled || clientRecord.Notes == null || clientRecord?.Notes?.trim().length === 0}
+            {...dropdownProps}
+            disabled={disabled || clientRecord?.Notes == null || clientRecord?.Notes?.trim().length === 0}
             id="client-dob-dropdown-button"
             onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
             title={title}
@@ -58,7 +65,7 @@ const ClientDobButton = (props: TProps) => {
                 <Dropdown.Header>
                     <h5>Notes</h5>
                 </Dropdown.Header>
-                <Dropdown.ItemText>{clientRecord.Notes}</Dropdown.ItemText>
+                <Dropdown.ItemText>{clientRecord?.Notes}</Dropdown.ItemText>
             </Dropdown.Item>
         </DropdownButton>
     );

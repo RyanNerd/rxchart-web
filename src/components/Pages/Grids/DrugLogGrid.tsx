@@ -31,6 +31,17 @@ interface IProps extends TableProps {
     onPillClick?: (n: number) => void;
 }
 
+interface ITableProps extends TableProps {
+    checkoutOnly: unknown;
+    columns: unknown;
+    condensed: unknown;
+    drugId: unknown;
+    gridLists: unknown;
+    onDelete: unknown;
+    onEdit: unknown;
+    onPillClick: unknown;
+}
+
 /**
  * DrugLogGrid
  * @param {IProps} props The props for this component
@@ -185,10 +196,20 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
         );
     };
 
+    const tableProps = {...(props as ITableProps)};
+    delete tableProps.checkoutOnly;
+    delete tableProps.columns;
+    delete tableProps.condensed;
+    delete tableProps.drugId;
+    delete tableProps.gridLists;
+    delete tableProps.onDelete;
+    delete tableProps.onEdit;
+    delete tableProps.onPillClick;
+
     return (
         <Table
             style={{wordWrap: 'break-word'}}
-            {...props}
+            {...tableProps}
             bordered
             className={condensed !== 'false' ? 'w-auto' : ''}
             hover
