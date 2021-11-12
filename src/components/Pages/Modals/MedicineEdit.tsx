@@ -23,7 +23,7 @@ interface IProps {
  * @returns {JSX.Element | null}
  */
 const MedicineEdit = (props: IProps): JSX.Element | null => {
-    const {allowDelete, onClose, fullName} = props;
+    const {allowDelete = false, onClose, fullName} = props;
 
     const [drugInfo, setDrugInfo] = useState<MedicineRecord>(props.drugInfo);
     useEffect(() => {
@@ -167,7 +167,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
 
             <Modal.Body>
                 <Form>
-                    {otc && drugInfo.Id !== null && !allowDelete && otcAlert}
+                    {otc && drugInfo?.Id && !allowDelete ? otcAlert : null}
 
                     <Form.Group as={Row}>
                         <Form.Label column sm="2" style={{userSelect: 'none'}}>
