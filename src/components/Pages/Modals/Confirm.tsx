@@ -15,6 +15,14 @@ interface IProps extends ModalProps {
     yesButtonProps?: ButtonProps;
 }
 
+interface IModalProps extends ModalProps {
+    noButtonContent: unknown;
+    noButtonProps: unknown;
+    onSelect: unknown;
+    yesButtonContent: unknown;
+    yesButtonProps: unknown;
+}
+
 /**
  * Confirmation Modal "inheriting" (read composition) from the Modal component
  * Uses Reacts' "dot notation"
@@ -53,8 +61,15 @@ const Confirm = {
             onSelect(isAccepted);
         };
 
+        const modalProps = {...props} as IModalProps;
+        delete modalProps.noButtonContent;
+        delete modalProps.noButtonProps;
+        delete modalProps.onSelect;
+        delete modalProps.yesButtonContent;
+        delete modalProps.yesButtonProps;
+
         return (
-            <Modal {...props} show={show} size={size} backdrop={backdrop} centered>
+            <Modal {...modalProps} show={show} size={size} backdrop={backdrop} centered>
                 {props.children}
                 <Modal.Footer>
                     <Button {...yesButtonProps} onClick={() => onAnswer(true)}>
