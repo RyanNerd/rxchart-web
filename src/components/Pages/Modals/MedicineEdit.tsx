@@ -1,4 +1,8 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck TS is mad at <Typeahead> wrongly thinking that ALL attributes are required
 import TooltipContainer from 'components/Pages/Containters/TooltipContainer';
+import {Typeahead} from 'react-bootstrap-typeahead';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -8,6 +12,7 @@ import Row from 'react-bootstrap/Row';
 import React, {useEffect, useRef, useState} from 'reactn';
 import {MedicineRecord} from 'types/RecordTypes';
 import {isDateFuture, isDayValid, isMonthValid, isYearValid} from 'utility/common';
+import drugNameList from 'utility/drugNameList';
 
 interface IProps {
     allowDelete?: boolean;
@@ -24,6 +29,7 @@ interface IProps {
  */
 const MedicineEdit = (props: IProps): JSX.Element | null => {
     const {allowDelete = false, onClose, fullName} = props;
+    const [drugSelected, setDrugSelected] = useState([]);
 
     const [drugInfo, setDrugInfo] = useState<MedicineRecord>(props.drugInfo);
     useEffect(() => {
@@ -49,7 +55,8 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
         else setCanSave(false);
     }, [drugInfo, setCanSave]);
 
-    const textInput = useRef<HTMLInputElement>(null);
+    const drugInput = useRef<HTMLInputElement>(null);
+    const strengthInput = useRef<HTMLInputElement>(null);
 
     /**
      * Returns true if the Fill Date fields have a valid fill date or if the fill date is empty.
@@ -161,8 +168,18 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
     const fillDateYearValid =
         drugInfo.FillDateYear === '' ? '' : isYearValid(drugInfo.FillDateYear as string, false) ? '' : 'is-invalid';
 
+    // noinspection RequiredAttributes TS/Inspector thinks <Typeahead> requires ALL attributes when this is NOT so
     return (
-        <Modal backdrop="static" centered onEntered={() => textInput?.current?.focus()} show={show} size="lg">
+        <Modal
+            backdrop="static"
+            centered
+            onEntered={() => {
+                setDrugSelected([]);
+                drugInput?.current?.focus();
+            }}
+            show={show}
+            size="lg"
+        >
             <Modal.Header closeButton>{modalTitle}</Modal.Header>
 
             <Modal.Body>
@@ -173,16 +190,24 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                         <Form.Label column sm="2" style={{userSelect: 'none'}}>
                             Drug Name
                         </Form.Label>
-                        <Col sm="4">
-                            <Form.Control
+                        <Col sm="6">
+                            <Typeahead
+                                autoFocus={true}
+                                caseSensitive={false}
                                 className={drugInfo.Drug !== '' ? '' : 'is-invalid'}
+                                id="med-edit-drug-name-suggest"
+                                multiple={false}
                                 name="Drug"
-                                onChange={(e) => handleOnChange(e)}
-                                ref={textInput}
-                                required
+                                defaultInputValue={drugInfo?.Drug || ''}
+                                emptyLabel={''}
+                                onBlur={() => strengthInput?.current?.focus()}
+                                onChange={setDrugSelected}
+                                onInputChange={(t) => setDrugInfo({...drugInfo, Drug: t})}
+                                options={drugNameList}
+                                placeholder="Drug name"
+                                ref={drugInput}
+                                selected={drugSelected}
                                 tabIndex={1}
-                                type="text"
-                                value={drugInfo.Drug}
                             />
                             <div className="invalid-feedback">Drug Name cannot be blank.</div>
                         </Col>
@@ -195,6 +220,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                                 name="Strength"
                                 onChange={(e) => handleOnChange(e)}
                                 placeholder="e.g. 100 MG TABS"
+                                ref={strengthInput}
                                 tabIndex={2}
                                 type="text"
                                 value={drugInfo.Strength ? drugInfo.Strength : ''}
