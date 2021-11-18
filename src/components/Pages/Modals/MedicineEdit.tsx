@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import DrugNameDropdown from 'components/Pages/Buttons/DrugNameDropdown';
 import TooltipContainer from 'components/Pages/Containters/TooltipContainer';
 import Alert from 'react-bootstrap/Alert';
@@ -375,7 +373,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                     Save changes
                 </Button>
                 {allowDelete && drugInfo.Id && !drugInfo.Active && (
-                    <TooltipContainer tooltip={'Permantly Delete Medicine'} placement="right">
+                    <TooltipContainer tooltip={'Permanently Delete Medicine'} placement="right">
                         <Button onClick={() => handleHide('delete')} variant="danger">
                             Delete
                         </Button>
