@@ -1,8 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck TS is mad at <Typeahead> wrongly thinking that ALL attributes are required
+// @ts-nocheck
+import DrugNameDropdown from 'components/Pages/Buttons/DrugNameDropdown';
 import TooltipContainer from 'components/Pages/Containters/TooltipContainer';
-import {Typeahead} from 'react-bootstrap-typeahead';
-import 'react-bootstrap-typeahead/css/Typeahead.css';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -12,7 +11,6 @@ import Row from 'react-bootstrap/Row';
 import React, {useEffect, useRef, useState} from 'reactn';
 import {MedicineRecord} from 'types/RecordTypes';
 import {isDateFuture, isDayValid, isMonthValid, isYearValid} from 'utility/common';
-import drugNameList from 'utility/drugNameList';
 
 interface IProps {
     allowDelete?: boolean;
@@ -29,7 +27,6 @@ interface IProps {
  */
 const MedicineEdit = (props: IProps): JSX.Element | null => {
     const {allowDelete = false, onClose, fullName} = props;
-    const [drugSelected, setDrugSelected] = useState([]);
 
     const [drugInfo, setDrugInfo] = useState<MedicineRecord>(props.drugInfo);
     useEffect(() => {
@@ -174,7 +171,6 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
             backdrop="static"
             centered
             onEntered={() => {
-                setDrugSelected([]);
                 drugInput?.current?.focus();
             }}
             show={show}
@@ -191,24 +187,17 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                             Drug Name
                         </Form.Label>
                         <Col sm="6">
-                            <Typeahead
-                                autoFocus={true}
-                                caseSensitive={false}
-                                className={drugInfo.Drug !== '' ? '' : 'is-invalid'}
-                                id="med-edit-drug-name-suggest"
-                                multiple={false}
-                                name="Drug"
-                                defaultInputValue={drugInfo?.Drug || ''}
-                                emptyLabel={''}
-                                onBlur={() => strengthInput?.current?.focus()}
-                                onChange={setDrugSelected}
-                                onInputChange={(t) => setDrugInfo({...drugInfo, Drug: t})}
-                                options={drugNameList}
-                                placeholder="Drug name"
-                                ref={drugInput}
-                                selected={drugSelected}
-                                tabIndex={1}
-                            />
+                            <div className={drugInfo.Drug !== '' ? '' : 'is-invalid'}>
+                                <DrugNameDropdown
+                                    onChange={(e) => setDrugInfo({...drugInfo, Drug: e.target.value})}
+                                    onSelect={(s) => {
+                                        setDrugInfo({...drugInfo, Drug: s});
+                                        strengthInput?.current?.focus();
+                                    }}
+                                    initalValue={drugInfo.Drug}
+                                    drugInputRef={drugInput}
+                                />
+                            </div>
                             <div className="invalid-feedback">Drug Name cannot be blank.</div>
                         </Col>
 
