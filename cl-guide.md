@@ -1,6 +1,6 @@
 | Icon | Type     | LONG description                                                                                            |
 |------|----------|-------------------------------------------------------------------------------------------------------------|
-| ⛲    | feat     | New Feature                                                                                                 |
+| ⛲   | feat     | New Feature                                                                                                 |
 | 🐛   | bug      | A bug fixes                                                                                                 |
 | 📓   | docs     | Documentation only changes                                                                                  |
 | 👗   | style    | Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)      |
