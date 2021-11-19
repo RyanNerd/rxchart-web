@@ -17,7 +17,7 @@ const CustomMenu = forwardRef(
             <div ref={ref} style={style} className={className} aria-labelledby={labeledBy}>
                 <FormControl
                     autoFocus
-                    className="mx-1 my-2 w-auto"
+                    className="mx-1 my-2 w-3"
                     placeholder="Drug name"
                     onChange={(e) => onChange(e)}
                     onKeyDown={(e) => onKeyDown(e)}
@@ -25,17 +25,15 @@ const CustomMenu = forwardRef(
                     value={value}
                     ref={inputRef}
                 />
-                {children !== undefined && (
-                    <ul
-                        className="list-unstyled"
-                        style={{
-                            height: value.length > 1 ? '150px' : undefined,
-                            overflow: value.length > 1 ? 'scroll' : undefined
-                        }}
-                    >
-                        {React.Children.toArray(children).filter((child) => child.props.children)}
-                    </ul>
-                )}
+                <ul
+                    className="list-unstyled"
+                    style={{
+                        height: '110px',
+                        overflowY: 'scroll'
+                    }}
+                >
+                    {React.Children.toArray(children).filter((child) => child.props.children)}
+                </ul>
             </div>
         );
     }
@@ -60,12 +58,10 @@ const DrugNameDropdown = (props: IProps) => {
 
     const [filteredDrugNames, setFilteredDrugNames] = useState([]);
     useEffect(() => {
+        setFilteredDrugNames([]);
         if (drugNameInput.length > 1) {
             const drugNames = drugNameList.filter((d) => d.toLowerCase().startsWith(drugNameInput.toLowerCase()));
-            if (drugNames.length === 1 && drugNameInput === drugNames[0]) setFilteredDrugNames([]);
-            else setFilteredDrugNames(drugNames);
-        } else {
-            setFilteredDrugNames([]);
+            setFilteredDrugNames(drugNames);
         }
     }, [drugNameInput, drugNameInput.length]);
 
@@ -103,10 +99,17 @@ const DrugNameDropdown = (props: IProps) => {
     /**
      * The Drug name drop down item
      * @param {string} drugName The name of the drug
+     * @param {boolean} disabled true if the Dropdown.Item should be disabled
      */
-    const DrugNameItems = (drugName: string) => {
+    const DrugNameItems = (drugName: string, disabled: boolean) => {
         return (
-            <Dropdown.Item id={`drug-name-item-${drugName}`} key={`drug-name-item-${drugName}`} eventKey={drugName}>
+            <Dropdown.Item
+                active={drugNameInput === drugName}
+                id={`drug-name-item-${drugName}`}
+                key={`drug-name-item-${drugName}`}
+                eventKey={drugName}
+                disabled={disabled}
+            >
                 {drugName}
             </Dropdown.Item>
         );
@@ -120,7 +123,9 @@ const DrugNameDropdown = (props: IProps) => {
                 onKeyDown={(e: KeyboardEvent) => handleOnKeyDown(e)}
                 inputRef={inputRef}
             >
-                {filteredDrugNames.length > 0 ? filteredDrugNames.map(DrugNameItems) : undefined}
+                {filteredDrugNames.length > 0
+                    ? filteredDrugNames.map((d) => DrugNameItems(d, false))
+                    : DrugNameItems('no suggestions..', true)}
             </CustomMenu>
         </Dropdown>
     );
