@@ -144,7 +144,7 @@ const drugNameList = [
     'Januvia',
     'Jardiance',
     'Keppra',
-    'Ketorolac tromethamine',
+    'Ketorolac',
     'Labetalol',
     'Lamotrigine',
     'Lansoprazole',
