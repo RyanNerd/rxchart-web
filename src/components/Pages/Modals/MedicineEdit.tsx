@@ -192,9 +192,12 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                                     onChange={(e) => setDrugInfo({...drugInfo, Drug: e.target.value})}
                                     onSelect={(s) => {
                                         setDrugInfo({...drugInfo, Drug: s});
-                                        strengthInput?.current?.focus();
+                                        // Kludge so JS isn't stupid where it puts focus on the Directions textbox
+                                        setTimeout(() => {
+                                            strengthInput?.current?.focus();
+                                        }, 300);
                                     }}
-                                    initalValue={drugInfo.Drug}
+                                    initialValue={drugInfo.Drug}
                                     drugInputRef={drugInput}
                                 />
                             </div>
