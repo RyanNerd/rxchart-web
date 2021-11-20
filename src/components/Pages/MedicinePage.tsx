@@ -632,7 +632,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             <ListGroup.Item style={{textAlign: 'center'}}>
                                 <Button
                                     className="hover-underline-animation"
-                                    href={`https://goodrx.com/${activeMed?.Drug}`}
+                                    href={`https://vsearch.nlm.nih.gov/vivisimo/cgi-bin/query-meta?v%3Aproject=medlineplus&v%3Asources=medlineplus-bundle&query=${activeMed?.Drug}`}
                                     size="lg"
                                     target="_blank"
                                     variant="link"
