@@ -174,7 +174,9 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
             show={show}
             size="lg"
         >
-            <Modal.Header closeButton>{modalTitle}</Modal.Header>
+            <Modal.Header onHide={() => onClose(null)} closeButton>
+                {modalTitle}
+            </Modal.Header>
 
             <Modal.Body>
                 <Form>
