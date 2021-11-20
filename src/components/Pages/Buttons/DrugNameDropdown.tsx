@@ -1,9 +1,9 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck -- TS is very cross about CustomMenu, but since this is such an exotic component TS is off for everything
+import {ChangeEvent} from 'react';
 import {FormControl} from 'react-bootstrap';
 import Dropdown from 'react-bootstrap/Dropdown';
 import React, {forwardRef, useEffect, useState} from 'reactn';
-import {ChangeEvent} from 'react';
 import drugNameList from 'utility/drugNameList';
 
 /**
@@ -43,7 +43,7 @@ interface IProps {
     onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
     onSelect?: (s: string) => void;
     drugInputRef: React.RefObject<HTMLInputElement>;
-    initalValue: string;
+    initialValue: string;
 }
 
 /**
@@ -51,10 +51,11 @@ interface IProps {
  * @param {IProps} props The props for this component
  */
 const DrugNameDropdown = (props: IProps) => {
-    const [drugNameInput, setDrugNameInput] = useState(props.initalValue);
+    // The only reason drugNameInput ref is given is so that the parent component can force focus
+    const [drugNameInput, setDrugNameInput] = useState(props.initialValue);
     useEffect(() => {
-        setDrugNameInput(props.initalValue);
-    }, [props.initalValue]);
+        setDrugNameInput(props.initialValue);
+    }, [props.initialValue]);
 
     const [filteredDrugNames, setFilteredDrugNames] = useState([]);
     useEffect(() => {
@@ -82,7 +83,6 @@ const DrugNameDropdown = (props: IProps) => {
      */
     const handleOnSelect = (s: string) => {
         setDrugNameInput(s);
-        inputRef?.current?.blur();
         if (props.onSelect) props.onSelect(s);
     };
 
@@ -92,7 +92,21 @@ const DrugNameDropdown = (props: IProps) => {
      */
     const handleOnKeyDown = (e: KeyboardEvent) => {
         if (e.key === 'Enter') {
-            handleOnSelect(drugNameInput);
+            if (drugNameInput.length > 0) {
+                handleOnSelect(drugNameInput);
+            } else {
+                e.preventDefault();
+            }
+        }
+
+        if (filteredDrugNames.length === 0) {
+            if (e.key === 'Tab') {
+                if (drugNameInput.length > 0) {
+                    handleOnSelect(drugNameInput);
+                } else {
+                    e.preventDefault();
+                }
+            }
         }
     };
 
