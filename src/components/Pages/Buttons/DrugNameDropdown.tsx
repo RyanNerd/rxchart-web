@@ -125,7 +125,7 @@ const DrugNameDropdown = (props: IProps) => {
             >
                 {filteredDrugNames.length > 0
                     ? filteredDrugNames.map((d) => DrugNameItems(d, false))
-                    : DrugNameItems('no suggestions..', true)}
+                    : ['no suggestions..'].map((s) => DrugNameItems(s, true))}
             </CustomMenu>
         </Dropdown>
     );
