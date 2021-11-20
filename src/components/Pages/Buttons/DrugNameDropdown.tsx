@@ -1,4 +1,4 @@
-//  eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck -- TS is very cross about CustomMenu, but since this is such an exotic component TS is off for everything
 import {FormControl} from 'react-bootstrap';
 import Dropdown from 'react-bootstrap/Dropdown';
