@@ -1,7 +1,8 @@
 import ClientPage from 'components/Pages/ClientPage';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import React, {useGlobal, useMemo} from 'reactn';
+import ToggleButton from 'react-bootstrap/ToggleButton';
+import React, {useGlobal, useMemo, useEffect} from 'reactn';
 import {ReactNode} from 'reactn/default';
 import DiagnosticPage from './DiagnosticPage';
 import LoginPage from './LoginPage';
@@ -30,6 +31,26 @@ const LandingPage = () => {
     const navBarElement = document.getElementsByClassName('nav nav-tabs');
     if (navBarElement?.length > 0) navBarElement[0].classList.add('d-print-none');
 
+    // Observer to show / hide the Diagnostics tab title
+    useEffect(() => {
+        const el = document.getElementById('landing-page-tabs-tab-error');
+        if (el) {
+            if (errorDetails) el.style.display = 'block';
+            else el.style.display = 'none';
+        }
+    }, [errorDetails]);
+
+    // Observer to show / hide tabs based on if logged in and if a client has been selected
+    useEffect(() => {
+        ['resident', 'medicine', 'manage', 'manage-otc'].map((tab) => {
+            const el = document.getElementById('landing-page-tabs-tab-' + tab);
+            if (el) {
+                if (tab === 'resident' || tab === 'manage-otc') el.style.display = apiKey ? 'block' : 'none';
+                else el.style.display = apiKey && activeClient ? 'block' : 'none';
+            }
+        });
+    }, [activeClient, apiKey]);
+
     /**
      * Memoized pages to reduce number of re-renders
      */
@@ -54,7 +75,20 @@ const LandingPage = () => {
      * @param {ITitleProps} props The props for this component
      */
     const Title = (props: ITitleProps) => {
-        return <span className={activeTabKey === props.activeKey ? 'bld' : undefined}>{props.children}</span>;
+        const {activeKey, children} = props;
+        return (
+            <ToggleButton
+                className={activeKey === activeTabKey ? 'bld' : undefined}
+                size="sm"
+                type="radio"
+                value={activeKey}
+                checked={activeKey === activeTabKey}
+                variant="outline-info"
+            >
+                {' '}
+                {children}
+            </ToggleButton>
+        );
     };
 
     return (
@@ -85,7 +119,9 @@ const LandingPage = () => {
                 </Tab.Content>
             </Tab>
             <Tab disabled={!errorDetails} eventKey="error" title={<Title activeKey="error">Diagnostics</Title>}>
-                <DiagnosticPage error={errorDetails} dismissErrorAlert={() => window.location.reload()} />
+                <Tab.Content>
+                    <DiagnosticPage error={errorDetails} dismissErrorAlert={() => window.location.reload()} />
+                </Tab.Content>
             </Tab>
         </Tabs>
     );
