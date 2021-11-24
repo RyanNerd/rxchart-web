@@ -79,7 +79,7 @@ const LandingPage = () => {
         return (
             <ToggleButton
                 className={activeKey === activeTabKey ? 'bld' : undefined}
-                size="sm"
+                size="lg"
                 type="radio"
                 value={activeKey}
                 checked={activeKey === activeTabKey}

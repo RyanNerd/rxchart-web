@@ -1,4 +1,5 @@
 import {IClientProvider} from 'providers/ClientProvider';
+import {TClient} from 'reactn/default';
 import {ClientRecord} from 'types/RecordTypes';
 import {asyncWrapper} from 'utility/common';
 
@@ -7,6 +8,7 @@ type DeleteResponse = {success: boolean};
 export interface IClientManager {
     deleteClient: (clientId: number) => Promise<boolean>;
     loadClientList: () => Promise<ClientRecord[]>;
+    loadClient: (clientId: number) => Promise<TClient>;
     updateClient: (r: ClientRecord) => Promise<ClientRecord>;
 }
 
@@ -21,6 +23,16 @@ const ClientManager = (clientProvider: IClientProvider): IClientManager => {
      */
     const _updateClient = async (clientRecord: ClientRecord): Promise<ClientRecord> => {
         const [e, r] = (await asyncWrapper(clientProvider.post(clientRecord))) as [unknown, Promise<ClientRecord>];
+        if (e) throw e;
+        else return r;
+    };
+
+    /**
+     * Loads the Client object
+     * @param {number} clientId The PK of the client
+     */
+    const _loadClient = async (clientId: number) => {
+        const [e, r] = (await asyncWrapper(clientProvider.load(clientId))) as [unknown, Promise<TClient>];
         if (e) throw e;
         else return r;
     };
@@ -53,9 +65,12 @@ const ClientManager = (clientProvider: IClientProvider): IClientManager => {
         else return r;
     };
 
-    return {
+    return <IClientManager>{
         deleteClient: async (clientId: number): Promise<boolean> => {
             return await _deleteClient(clientId);
+        },
+        loadClient: async (clientId: number): Promise<TClient> => {
+            return await _loadClient(clientId);
         },
         loadClientList: async (): Promise<ClientRecord[]> => {
             return await _loadClientList();
