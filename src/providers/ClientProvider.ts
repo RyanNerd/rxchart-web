@@ -1,19 +1,26 @@
 import Frak from 'frak/lib/components/Frak';
+import {TClient} from 'reactn/default';
 import {ClientRecord} from 'types/RecordTypes';
 
 export interface IClientProvider {
-    setApiKey: (apiKey: string) => void;
-    search: (options: Record<string, unknown>) => Promise<ClientRecord[]>;
-    restore: (residentId: number) => Promise<ClientRecord>;
-    read: (id: number) => Promise<ClientRecord>;
-    post: (residentInfo: ClientRecord) => Promise<ClientRecord>;
     delete: (residentId: number) => Promise<DeleteResponse>;
+    load: (clientId: number) => Promise<TClient>;
+    post: (residentInfo: ClientRecord) => Promise<ClientRecord>;
+    read: (id: number) => Promise<ClientRecord>;
+    restore: (residentId: number) => Promise<ClientRecord>;
+    search: (options: Record<string, unknown>) => Promise<ClientRecord[]>;
+    setApiKey: (apiKey: string) => void;
 }
 
 type DeleteResponse = {success: boolean};
 type RecordResponse = {
     data: ClientRecord[] | ClientRecord;
     status: number;
+    success: boolean;
+};
+
+type LoadResponse = {
+    data: TClient;
     success: boolean;
 };
 
@@ -109,6 +116,21 @@ const ClientProvider = (url: string): IClientProvider => {
             const response = await _frak.delete<DeleteResponse>(uri);
             if (response.success) {
                 return response;
+            } else {
+                throw response;
+            }
+        },
+
+        /**
+         * Load all Client info as TClient type
+         * @param {number} clientId PK of the Client
+         * @returns {Promise<TClient>}
+         */
+        load: async (clientId: number): Promise<TClient> => {
+            const uri = _baseUrl + 'client-load/' + clientId + '?api_key=' + _apiKey;
+            const response = await _frak.get<LoadResponse>(uri);
+            if (response.success) {
+                return response.data;
             } else {
                 throw response;
             }

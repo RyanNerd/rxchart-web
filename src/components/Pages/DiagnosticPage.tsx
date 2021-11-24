@@ -1,7 +1,7 @@
 import Alert from 'react-bootstrap/Alert';
 import Button, {ButtonProps} from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
-import React, {useEffect, useGlobal, useMemo, useState} from 'reactn';
+import React, {useGlobal, useMemo, useState} from 'reactn';
 import {ReactNode} from 'reactn/default';
 import {randomString} from 'utility/common';
 
@@ -52,15 +52,6 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
     const getText = async (response: Response) => {
         return await response.text();
     };
-
-    // Observer to show / hide the Diagnostics tab title
-    useEffect(() => {
-        const el = document.getElementById('landing-page-tabs-tab-error');
-        if (el) {
-            if (error) el.style.color = '#007BFF';
-            else el.style.color = 'white';
-        }
-    }, [error]);
 
     /**
      * Use memoization, so we don't have 3000 re-renders when an error occurs.

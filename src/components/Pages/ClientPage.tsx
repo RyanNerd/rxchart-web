@@ -27,7 +27,6 @@ const ClientPage = (props: IProps): JSX.Element | null => {
     const [activeClient, setActiveClient] = useGlobal('activeClient');
     const [clientList, setClientList] = useGlobal('clientList');
     const [filteredClients, setFilteredClients] = useState<ClientRecord[]>(clientList);
-    const [mm] = useGlobal('medicineManager');
     const [cm] = useGlobal('clientManager');
     const [searchIsValid, setSearchIsValid] = useState(false);
     const [searchText, setSearchText] = useState('');
@@ -74,16 +73,16 @@ const ClientPage = (props: IProps): JSX.Element | null => {
      * @param {ClientRecord} clientRecord A ClientRecord object to set as the activeClient.clientInfo
      */
     const handleOnSelected = (clientRecord?: ClientRecord) => {
-        const refreshClient = async (clientRec: ClientRecord): Promise<void> => {
-            const clientId = clientRec.Id as number;
+        const refreshClient = async (clientId: number): Promise<void> => {
+            const clientLoad = await cm.loadClient(clientId);
             try {
                 await setActiveClient({
                     ...activeClient,
-                    drugLogList: await mm.loadDrugLog(clientId, 5),
-                    medicineList: await mm.loadMedicineList(clientId),
-                    pillboxItemList: await mm.loadPillboxItemList(clientId),
-                    pillboxList: await mm.loadPillboxList(clientId),
-                    clientInfo: clientRec
+                    clientInfo: clientLoad.clientInfo,
+                    drugLogList: clientLoad.drugLogList,
+                    medicineList: clientLoad.medicineList,
+                    pillboxList: clientLoad.pillboxList,
+                    pillboxItemList: clientLoad.pillboxItemList
                 });
             } catch (e) {
                 await setErrorDetails(e);
@@ -91,7 +90,7 @@ const ClientPage = (props: IProps): JSX.Element | null => {
         };
 
         if (clientRecord) {
-            refreshClient(clientRecord)
+            refreshClient(clientRecord.Id as number)
                 .then(() => onSelected())
                 .then(() => setSearchText(''));
         } else {
