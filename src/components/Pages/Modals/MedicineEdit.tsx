@@ -188,18 +188,31 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                         </Form.Label>
                         <Col sm="6">
                             <div className={drugInfo.Drug !== '' ? '' : 'is-invalid'}>
-                                <DrugNameDropdown
-                                    onChange={(e) => setDrugInfo({...drugInfo, Drug: e.target.value})}
-                                    onSelect={(s) => {
-                                        setDrugInfo({...drugInfo, Drug: s});
-                                        // Kludge so JS isn't stupid where it puts focus on the Directions textbox
-                                        setTimeout(() => {
-                                            strengthInput?.current?.focus();
-                                        }, 300);
-                                    }}
-                                    initialValue={drugInfo.Drug}
-                                    drugInputRef={drugInput}
-                                />
+                                {otc ? (
+                                    <Form.Control
+                                        id="otc-drug-textbox"
+                                        name="Drug"
+                                        onChange={(e) => handleOnChange(e)}
+                                        placeholder="OTC Drug Name"
+                                        tabIndex={1}
+                                        type="text"
+                                        value={drugInfo.Drug ? drugInfo.Drug : ''}
+                                        ref={drugInput}
+                                    />
+                                ) : (
+                                    <DrugNameDropdown
+                                        onChange={(e) => setDrugInfo({...drugInfo, Drug: e.target.value})}
+                                        onSelect={(s) => {
+                                            setDrugInfo({...drugInfo, Drug: s});
+                                            // Kludge so JS isn't stupid where it puts focus on the Directions textbox
+                                            setTimeout(() => {
+                                                strengthInput?.current?.focus();
+                                            }, 300);
+                                        }}
+                                        initialValue={drugInfo.Drug}
+                                        drugInputRef={drugInput}
+                                    />
+                                )}
                             </div>
                             <div className="invalid-feedback">Drug Name cannot be blank.</div>
                         </Col>
