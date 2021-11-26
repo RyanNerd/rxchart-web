@@ -5,6 +5,7 @@ import {IAuthManager} from 'managers/AuthManager';
 import {IMedicineManager} from 'managers/MedicineManager';
 import {IClientManager} from 'managers/ClientManager';
 import {Authenticated} from 'providers/AuthenticationProvider';
+import {SyntheticEvent, UIEvent} from 'react';
 import type {ComponentClass, FunctionComponent} from 'react';
 import 'reactn';
 import {ClientRecord, MedicineRecord, DrugLogRecord, PillboxRecord, PillboxItemRecord} from 'types/RecordTypes';
@@ -40,6 +41,38 @@ declare module 'reactn/default' {
         clientManager: IClientManager;
         signIn: Authenticated;
         value: string;
+    }
+
+    /**
+     * React type defs declared here. This is so we can exclusively use `reactn` for imports
+     */
+    interface ChangeEvent<T = Element> extends SyntheticEvent<T> {
+        target: EventTarget & T;
+    }
+
+    interface KeyboardEvent<T = Element> extends UIEvent<T, NativeKeyboardEvent> {
+        altKey: boolean;
+        /** @deprecated */
+        charCode: number;
+        ctrlKey: boolean;
+        code: string;
+        /**
+         * See [DOM Level 3 Events spec](https://www.w3.org/TR/uievents-key/#keys-modifier). for a list of valid (case-sensitive) arguments to this method.
+         */
+        getModifierState(key: string): boolean;
+        /**
+         * See the [DOM Level 3 Events spec](https://www.w3.org/TR/uievents-key/#named-key-attribute-values). for possible values
+         */
+        key: string;
+        /** @deprecated */
+        keyCode: number;
+        locale: string;
+        location: number;
+        metaKey: boolean;
+        repeat: boolean;
+        shiftKey: boolean;
+        /** @deprecated */
+        which: number;
     }
 
     export type ReactText = string | number;
