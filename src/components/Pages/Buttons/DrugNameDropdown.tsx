@@ -1,46 +1,59 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck -- TS is very cross about CustomMenu, but since this is such an exotic component TS is off for everything
-import {ChangeEvent} from 'react';
 import {FormControl} from 'react-bootstrap';
 import Dropdown from 'react-bootstrap/Dropdown';
 import React, {forwardRef, useEffect, useState} from 'reactn';
+import {ChangeEvent, KeyboardEvent} from 'reactn/default';
 import drugNameList from 'utility/drugNameList';
+
+// TS Formatting for ForwardRef
+// @link https://stackoverflow.com/a/64778925/4323201
+type FormControlElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+type CustomMenuProps = {
+    children?: React.ReactNode;
+    style?: React.CSSProperties;
+    className?: string;
+    labeledBy?: string;
+    onChange: (e: React.ChangeEvent<FormControlElement>) => void;
+    onKeyDown: (e: React.KeyboardEvent<FormControlElement>) => void;
+    inputRef: React.RefObject<HTMLInputElement>;
+    value?: string | string[] | number;
+};
 
 /**
  * Custom Menu item
  * forwardRef -- Dropdown needs access to the DOM of the Menu to measure it
  * @link https://react-bootstrap-v4.netlify.app/components/dropdowns/#custom-dropdown-components
  */
-const CustomMenu = forwardRef(
-    ({children, style, className, 'aria-labelledby': labeledBy, value, onChange, onKeyDown, inputRef}, ref) => {
-        return (
-            <div ref={ref} style={style} className={className} aria-labelledby={labeledBy}>
-                <FormControl
-                    autoFocus
-                    className="mx-1 my-2 w-3"
-                    placeholder="Drug name"
-                    onChange={(e) => onChange(e)}
-                    onKeyDown={(e) => onKeyDown(e)}
-                    type="text"
-                    value={value}
-                    ref={inputRef}
-                />
-                <ul
-                    className="list-unstyled"
-                    style={{
-                        height: '110px',
-                        overflowY: 'scroll'
-                    }}
-                >
-                    {React.Children.toArray(children).filter((child) => child.props.children)}
-                </ul>
-            </div>
-        );
-    }
-);
+const CustomMenu = forwardRef((props: CustomMenuProps, ref: React.Ref<HTMLDivElement>) => {
+    const {children, style, className, labeledBy, onChange, onKeyDown, inputRef, value} = props;
+
+    return (
+        <div ref={ref} style={style} className={className} aria-labelledby={labeledBy}>
+            <FormControl
+                autoFocus
+                className="mx-1 my-2 w-3"
+                placeholder="Drug name"
+                onChange={(e) => onChange(e)}
+                onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => onKeyDown(e)}
+                type="text"
+                value={value}
+                ref={inputRef}
+            />
+            <ul
+                className="list-unstyled"
+                style={{
+                    height: '110px',
+                    overflowY: 'scroll'
+                }}
+            >
+                {/* eslint-disable-next-line  @typescript-eslint/no-explicit-any */}
+                {React.Children.toArray(children).filter((child: any) => child.props.children)}
+            </ul>
+        </div>
+    );
+});
 
 interface IProps {
-    onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (e: React.ChangeEvent<FormControlElement>) => void;
     onSelect?: (s: string) => void;
     drugInputRef: React.RefObject<HTMLInputElement>;
     initialValue: string;
@@ -57,7 +70,7 @@ const DrugNameDropdown = (props: IProps) => {
         setDrugNameInput(props.initialValue);
     }, [props.initialValue]);
 
-    const [filteredDrugNames, setFilteredDrugNames] = useState([]);
+    const [filteredDrugNames, setFilteredDrugNames] = useState<string[]>([]);
     useEffect(() => {
         setFilteredDrugNames([]);
         if (drugNameInput.length > 1) {
@@ -72,7 +85,7 @@ const DrugNameDropdown = (props: IProps) => {
      * Handler for when the value in the textbox changes
      * @param {ChangeEvent<HTMLInputElement>} e Change event for the textbox
      */
-    const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleOnChange = (e: React.ChangeEvent<FormControlElement>) => {
         setDrugNameInput(e.target.value);
         if (props.onChange) props.onChange(e);
     };
@@ -111,7 +124,7 @@ const DrugNameDropdown = (props: IProps) => {
     };
 
     /**
-     * The Drug name drop down item
+     * The Drug name dropdown item
      * @param {string} drugName The name of the drug
      * @param {boolean} disabled true if the Dropdown.Item should be disabled
      */
@@ -133,7 +146,7 @@ const DrugNameDropdown = (props: IProps) => {
         <Dropdown show id="dropdown-med-select" onSelect={(s) => handleOnSelect(s || '')}>
             <CustomMenu
                 value={drugNameInput}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => handleOnChange(e)}
+                onChange={(e) => handleOnChange(e)}
                 onKeyDown={(e: KeyboardEvent) => handleOnKeyDown(e)}
                 inputRef={inputRef}
             >
