@@ -257,6 +257,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
             <MedicineEdit
                 allowDelete={!drugLogList.find((d) => d.MedicineId === medicineInfo?.Id)}
                 drugInfo={medicineInfo as MedicineRecord}
+                existingDrugs={medicineInfo?.Id === null ? medicineList.map((m) => m.Drug) : []}
                 fullName={clientFullName(clientInfo)}
                 onClose={(m) => {
                     setShowMedicineEdit(false);
