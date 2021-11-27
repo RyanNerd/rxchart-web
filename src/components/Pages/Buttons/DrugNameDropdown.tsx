@@ -1,3 +1,4 @@
+import {CSSProperties} from 'react';
 import {FormControl} from 'react-bootstrap';
 import Dropdown from 'react-bootstrap/Dropdown';
 import React, {forwardRef, useEffect, useState} from 'reactn';
@@ -34,17 +35,12 @@ const CustomMenu = forwardRef((props: CustomMenuProps, ref: React.Ref<HTMLDivEle
                 placeholder="Drug name"
                 onChange={(e) => onChange(e)}
                 onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => onKeyDown(e)}
+                style={style}
                 type="text"
                 value={value}
                 ref={inputRef}
             />
-            <ul
-                className="list-unstyled"
-                style={{
-                    height: '110px',
-                    overflowY: 'scroll'
-                }}
-            >
+            <ul className="list-unstyled" style={{...style, height: '110px', overflowY: 'scroll'}}>
                 {/* eslint-disable-next-line  @typescript-eslint/no-explicit-any */}
                 {React.Children.toArray(children).filter((child: any) => child.props.children)}
             </ul>
@@ -53,10 +49,12 @@ const CustomMenu = forwardRef((props: CustomMenuProps, ref: React.Ref<HTMLDivEle
 });
 
 interface IProps {
+    drugInputRef: React.RefObject<HTMLInputElement>;
+    existingDrugs: string[];
+    initialValue: string;
     onChange?: (e: React.ChangeEvent<FormControlElement>) => void;
     onSelect?: (s: string) => void;
-    drugInputRef: React.RefObject<HTMLInputElement>;
-    initialValue: string;
+    style?: CSSProperties | undefined;
 }
 
 /**
@@ -74,10 +72,16 @@ const DrugNameDropdown = (props: IProps) => {
     useEffect(() => {
         setFilteredDrugNames([]);
         if (drugNameInput.length > 1) {
-            const drugNames = drugNameList.filter((d) => d.toLowerCase().startsWith(drugNameInput.toLowerCase()));
+            // Remove any drugs that the client already has from the suggestion list
+            const existingDrugs = props.existingDrugs;
+            const drugNames = drugNameList.filter(
+                (d) =>
+                    d.toLowerCase().startsWith(drugNameInput.toLowerCase().trim()) &&
+                    !existingDrugs.some((x) => x.split(' ')[0].toLowerCase().trim().includes(d.toLowerCase()))
+            );
             setFilteredDrugNames(drugNames);
         }
-    }, [drugNameInput, drugNameInput.length]);
+    }, [drugNameInput, drugNameInput.length, props.existingDrugs]);
 
     const inputRef = props.drugInputRef;
 
@@ -145,6 +149,7 @@ const DrugNameDropdown = (props: IProps) => {
     return (
         <Dropdown show id="dropdown-med-select" onSelect={(s) => handleOnSelect(s || '')}>
             <CustomMenu
+                style={props.style}
                 value={drugNameInput}
                 onChange={(e) => handleOnChange(e)}
                 onKeyDown={(e: KeyboardEvent) => handleOnKeyDown(e)}

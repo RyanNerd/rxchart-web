@@ -129,8 +129,10 @@ export enum BsColor {
     success = '#28a745',
     teal = '#20c997',
     warning = '#ffc107',
+    warningSoft = '#fff3cd', // Custom
     white = '#fff',
-    yellow = '#ffc107'
+    yellow = '#ffc107',
+    yellowLight = '#fff3cd' // Custom
 }
 
 type T_BS_Colors = keyof typeof BsColor;

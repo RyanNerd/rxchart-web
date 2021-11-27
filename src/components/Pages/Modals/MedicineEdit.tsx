@@ -8,11 +8,12 @@ import Modal from 'react-bootstrap/Modal';
 import Row from 'react-bootstrap/Row';
 import React, {useEffect, useRef, useState} from 'reactn';
 import {MedicineRecord} from 'types/RecordTypes';
-import {isDateFuture, isDayValid, isMonthValid, isYearValid} from 'utility/common';
+import {BsColor, isDateFuture, isDayValid, isMonthValid, isYearValid} from 'utility/common';
 
 interface IProps {
     allowDelete?: boolean;
     drugInfo: MedicineRecord;
+    existingDrugs?: string[];
     fullName?: string;
     onClose: (r: MedicineRecord | null) => void;
     show: boolean;
@@ -24,7 +25,7 @@ interface IProps {
  * @returns {JSX.Element | null}
  */
 const MedicineEdit = (props: IProps): JSX.Element | null => {
-    const {allowDelete = false, onClose, fullName} = props;
+    const {allowDelete = false, onClose, fullName, existingDrugs = []} = props;
 
     const [drugInfo, setDrugInfo] = useState<MedicineRecord>(props.drugInfo);
     useEffect(() => {
@@ -49,6 +50,15 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
         if (drugInfo?.Drug?.length > 0) setCanSave(document.querySelectorAll('.is-invalid')?.length === 0);
         else setCanSave(false);
     }, [drugInfo, setCanSave]);
+
+    const [showExistingDrugAlert, setShowExistingDrugAlert] = useState(false);
+    useEffect(() => {
+        const drugText = drugInfo?.Drug.split(' ')[0].trim().toLowerCase() || '';
+        const existingDrugs = props?.existingDrugs || [];
+        if (existingDrugs.find((e) => drugText === e.split(' ')[0].trim().split(' ')[0].toLowerCase()))
+            setShowExistingDrugAlert(true);
+        else setShowExistingDrugAlert(false);
+    }, [drugInfo?.Drug, props?.existingDrugs]);
 
     const drugInput = useRef<HTMLInputElement>(null);
     const strengthInput = useRef<HTMLInputElement>(null);
@@ -181,7 +191,6 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
             <Modal.Body>
                 <Form>
                     {otc && drugInfo?.Id && !allowDelete ? otcAlert : null}
-
                     <Form.Group as={Row}>
                         <Form.Label column sm="2" style={{userSelect: 'none'}}>
                             Drug Name
@@ -200,18 +209,32 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                                         ref={drugInput}
                                     />
                                 ) : (
-                                    <DrugNameDropdown
-                                        onChange={(e) => setDrugInfo({...drugInfo, Drug: e.target.value})}
-                                        onSelect={(s) => {
-                                            setDrugInfo({...drugInfo, Drug: s});
-                                            // Kludge so JS isn't stupid where it puts focus on the Directions textbox
-                                            setTimeout(() => {
-                                                strengthInput?.current?.focus();
-                                            }, 300);
-                                        }}
-                                        initialValue={drugInfo.Drug}
-                                        drugInputRef={drugInput}
-                                    />
+                                    <>
+                                        {showExistingDrugAlert && (
+                                            <Alert variant="warning" style={{textAlign: 'center'}}>
+                                                <b>Warning: </b>
+                                                <b style={{textTransform: 'capitalize'}}>{drugInfo.Drug}</b>
+                                                <span> may already exist</span>
+                                            </Alert>
+                                        )}
+
+                                        <DrugNameDropdown
+                                            onChange={(e) => setDrugInfo({...drugInfo, Drug: e.target.value})}
+                                            onSelect={(s) => {
+                                                setDrugInfo({...drugInfo, Drug: s});
+                                                // Kludge for JS stupidity focusing on wrong input
+                                                setTimeout(() => {
+                                                    strengthInput?.current?.focus();
+                                                }, 300);
+                                            }}
+                                            initialValue={drugInfo.Drug}
+                                            drugInputRef={drugInput}
+                                            style={{
+                                                backgroundColor: showExistingDrugAlert ? BsColor.warningSoft : undefined
+                                            }}
+                                            existingDrugs={existingDrugs}
+                                        />
+                                    </>
                                 )}
                             </div>
                             <div className="invalid-feedback">Drug Name cannot be blank.</div>
