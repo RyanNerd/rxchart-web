@@ -1,9 +1,10 @@
 import ClientPage from 'components/Pages/ClientPage';
+import SettingsPage from 'components/Pages/SettingsPage';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import ToggleButton from 'react-bootstrap/ToggleButton';
-import React, {useGlobal, useMemo, useEffect} from 'reactn';
-import {ReactNode} from 'reactn/default';
+import React, {useEffect, useGlobal, useMemo} from 'reactn';
+import {IPreferences, ReactNode} from 'reactn/default';
 import DiagnosticPage from './DiagnosticPage';
 import LoginPage from './LoginPage';
 import ManageDrugPage from './ManageDrugPage';
@@ -15,15 +16,21 @@ interface ITitleProps {
     children: ReactNode;
 }
 
+interface IProps {
+    preferences: IPreferences;
+}
+
 /**
  * Landing Page - Tab Page Menu UI
+ * @param {IProps} props The props for this component
  */
-const LandingPage = () => {
+const LandingPage = (props: IProps) => {
     const [activeClient] = useGlobal('activeClient');
     const [activeTabKey, setActiveTabKey] = useGlobal('activeTabKey');
     const [signIn] = useGlobal('signIn');
     const apiKey = signIn.apiKey;
     const [errorDetails] = useGlobal('__errorDetails');
+    const preferences = props.preferences;
 
     // We need to get a ref to the outer (class nav nav-tabs) div element to prevent printing it.
     // React-bootstrap adds this with no id attribute or other method of obtaining a ref, so we need to use
@@ -79,7 +86,7 @@ const LandingPage = () => {
         return (
             <ToggleButton
                 className={activeKey === activeTabKey ? 'bld' : undefined}
-                size="lg"
+                size={preferences.landingPageTabSize}
                 type="radio"
                 value={activeKey}
                 checked={activeKey === activeTabKey}
@@ -121,6 +128,11 @@ const LandingPage = () => {
             <Tab disabled={!errorDetails} eventKey="error" title={<Title activeKey="error">Diagnostics</Title>}>
                 <Tab.Content>
                     <DiagnosticPage error={errorDetails} dismissErrorAlert={() => window.location.reload()} />
+                </Tab.Content>
+            </Tab>
+            <Tab eventKey="settings" title={<Title activeKey={'settings'}>Preferences</Title>}>
+                <Tab.Content>
+                    <SettingsPage />
                 </Tab.Content>
             </Tab>
         </Tabs>

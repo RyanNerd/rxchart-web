@@ -5,13 +5,13 @@ import Container from 'react-bootstrap/Container';
 import React, {setGlobal, useEffect, useGlobal, useRef, useState} from 'reactn';
 import {State} from 'reactn/default';
 import {Setter} from 'reactn/types/use-global';
+import 'styles/neumorphism/login.css';
 import {ClientRecord, MedicineRecord} from 'types/RecordTypes';
 import {asyncWrapper} from 'utility/common';
 import getInitialState from 'utility/getInitialState';
 import {ReactComponent as LockIcon} from '../../icons/lock.svg';
 import RxIcon from '../../icons/prescription.svg';
 import {ReactComponent as UserIcon} from '../../icons/user.svg';
-import '../../styles/neumorphism.css';
 import About from './Modals/About';
 
 interface IProps {

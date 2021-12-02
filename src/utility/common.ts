@@ -424,3 +424,30 @@ export const deconstructGridLists = (gridLists: IGridLists) => {
         pillboxItemList
     };
 };
+
+/**
+ * Set local storage using a key getting
+ * @param {string} key The key for the local storage
+ * @param {any} value The value to save to local storage (internally this is saved as a JSON string)
+ */
+export const setStickyState = (key: string, value: unknown) => {
+    window.localStorage.setItem(key, JSON.stringify(value));
+    return getStickyState(key);
+};
+
+/**
+ * Get local storage value given a key.
+ * @param {string} key The key for the local storage
+ */
+export const getStickyState = (key: string) => {
+    const item = window.localStorage.getItem(key);
+    return item !== null ? JSON.parse(item) : null;
+};
+
+/**
+ * Remove a local storage item given a key
+ * @param {string} key The key for the local storage
+ */
+export const deleteStickyState = (key: string) => {
+    return window.localStorage.removeItem(key);
+};
