@@ -2,7 +2,7 @@ import {CSSProperties} from 'react';
 import {FormControl} from 'react-bootstrap';
 import Dropdown from 'react-bootstrap/Dropdown';
 import React, {forwardRef, useEffect, useState} from 'reactn';
-import {ChangeEvent, KeyboardEvent} from 'reactn/default';
+import {ChangeEvent, KeyboardEvent} from 'react';
 import drugNameList from 'utility/drugNameList';
 
 // TS Formatting for ForwardRef

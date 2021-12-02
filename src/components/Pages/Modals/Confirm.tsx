@@ -1,7 +1,7 @@
+import {ReactNode} from 'react';
 import Button, {ButtonProps} from 'react-bootstrap/Button';
 import Modal, {ModalProps} from 'react-bootstrap/Modal';
 import React, {useEffect, useState} from 'reactn';
-import {ReactNode} from 'reactn/default';
 
 interface IChildren {
     children: ReactNode;
