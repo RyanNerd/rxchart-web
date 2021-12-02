@@ -1,0 +1,67 @@
+/* Toggle */
+.neu-font {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 300;
+}
+
+.neu-label {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    color: #394a56;
+}
+
+.neu-label-text-right {
+    margin-left: 16px;
+}
+.neu-label-text-left {
+    margin-right: 16px;
+}
+.neu-label-text-left-disabled {
+    margin-right: 16px;
+    cursor: not-allowed;
+}
+
+.neu-toggle {
+    isolation: isolate;
+    position: relative;
+    height: 15px;
+    width: 30px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow:
+            -4px -2px 4px 0 #ffffff,
+            4px 2px 6px 0 #d1d9e6,
+            2px 2px 2px 0 #d1d9e6 inset,
+            -2px -2px 2px 0 #ffffff inset;
+}
+
+.neu-toggle-state {
+    display: none;
+}
+
+.neu-indicator {
+    height: 100%;
+    width: 200%;
+    background: #ecf0f3;
+    border-radius: 15px;
+    transform: translate3d(-75%, 0, 0);
+    transition: transform 0.4s cubic-bezier(0.85, 0.05, 0.18, 1.35);
+    box-shadow:
+            -4px -2px 4px 0 #ffffff,
+            4px 2px 6px 0 #d1d9e6;
+}
+
+.neu-toggle-state:checked ~ .neu-indicator {
+    transform: translate3d(25%, 0, 0);
+}
+
+.neu-toggle-state:disabled ~ .neu-indicator {
+    cursor: not-allowed;
+    background: #d1d9e6;
+}
+
+/* Uncomment below to show color when switch is checked */
+/*.neu-toggle-state:checked ~ .neu-indicator {*/
+/*    background: #a3aab9;*/
+/*}*/

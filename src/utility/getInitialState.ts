@@ -1,14 +1,14 @@
+import ClientManager from 'managers/ClientManager';
+import ClientProvider, {IClientProvider} from 'providers/ClientProvider';
 import {State} from 'reactn/default';
 import {ClientRecord, MedicineRecord} from 'types/RecordTypes';
 import AuthManager from '../managers/AuthManager';
 import MedicineManager from '../managers/MedicineManager';
-import ClientManager from 'managers/ClientManager';
 import AuthenticationProvider, {IAuthenticationProvider} from '../providers/AuthenticationProvider';
 import MedHistoryProvider, {IMedHistoryProvider} from '../providers/MedHistoryProvider';
 import MedicineProvider, {IMedicineProvider} from '../providers/MedicineProvider';
 import PillboxItemProvider, {IPillboxItemProvider} from '../providers/PillboxItemProvider';
 import PillboxProvider, {IPillboxProvider} from '../providers/PillboxProvider';
-import ClientProvider, {IClientProvider} from 'providers/ClientProvider';
 
 export interface IProviders {
     authenticationProvider: IAuthenticationProvider;
@@ -66,6 +66,7 @@ const getInitialState = () => {
             providers.pillboxItemProvider
         ),
         otcList: [] as MedicineRecord[],
+        preferences: null,
         providers,
         signIn: {apiKey: null, organization: null, success: null}
     } as State;

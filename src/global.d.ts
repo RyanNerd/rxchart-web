@@ -28,6 +28,11 @@ declare module 'reactn/default' {
         increment: (global: State, dispatch: Dispatch, i: number) => Pick<State, 'count'>;
     }
 
+    export interface IPreferences {
+        landingPageTabSize: 'lg' | 'sm';
+        rxTabSize: 'lg' | 'sm';
+    }
+
     export interface State {
         activeTabKey: string;
         authManager: IAuthManager;
@@ -36,6 +41,7 @@ declare module 'reactn/default' {
         __errorDetails: any;
         medicineManager: IMedicineManager;
         otcList: MedicineRecord[];
+        preferences: IPreferences | null;
         providers: IProviders;
         clientList: ClientRecord[];
         clientManager: IClientManager;
