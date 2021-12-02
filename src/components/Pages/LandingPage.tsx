@@ -1,10 +1,11 @@
 import ClientPage from 'components/Pages/ClientPage';
 import SettingsPage from 'components/Pages/SettingsPage';
+import {ReactNode} from 'react';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import React, {useEffect, useGlobal, useMemo} from 'reactn';
-import {IPreferences, ReactNode} from 'reactn/default';
+import {IPreferences} from 'reactn/default';
 import DiagnosticPage from './DiagnosticPage';
 import LoginPage from './LoginPage';
 import ManageDrugPage from './ManageDrugPage';

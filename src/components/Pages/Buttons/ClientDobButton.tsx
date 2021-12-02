@@ -1,8 +1,8 @@
+import {ReactNode} from 'react';
 import Badge from 'react-bootstrap/Badge';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton, {DropdownButtonProps} from 'react-bootstrap/DropdownButton';
 import React from 'reactn';
-import {ReactNode} from 'reactn/default';
 import {Modify} from 'types/Modify';
 import {ClientRecord} from 'types/RecordTypes';
 import {clientDOB} from 'utility/common';

@@ -1,5 +1,5 @@
+import {ReactNode} from 'react';
 import React from 'reactn';
-import {ReactNode} from 'reactn/default';
 import 'styles/shadowbox.css';
 
 interface IProps {

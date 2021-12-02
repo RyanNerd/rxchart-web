@@ -2,7 +2,7 @@ import Alert from 'react-bootstrap/Alert';
 import Button, {ButtonProps} from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import React, {useGlobal, useMemo, useState} from 'reactn';
-import {ReactNode} from 'reactn/default';
+import {ReactNode} from 'react';
 import {randomString} from 'utility/common';
 
 interface IKey {

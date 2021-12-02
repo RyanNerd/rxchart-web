@@ -1,4 +1,5 @@
-import React, {useEffect, useState, InputHTMLAttributes} from 'react';
+import {InputHTMLAttributes} from 'react';
+import React, {useEffect, useState} from 'reactn';
 import '../../../styles/neumorphism/toggle.css';
 
 interface IProps extends InputHTMLAttributes<HTMLInputElement> {

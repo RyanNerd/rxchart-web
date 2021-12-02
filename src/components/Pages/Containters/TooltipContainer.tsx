@@ -1,10 +1,10 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck We disable TS because we'd need to drag in many, many react-bootstrap property type defs and merge them
+import ReactNode from 'react';
 import {Placement} from 'react-bootstrap/Overlay';
 import OverlayTrigger, {OverlayDelay, OverlayTriggerType} from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import React from 'reactn';
-import ReactNode from 'reactn/default';
 import {randomString} from 'utility/common';
 
 interface IProps {

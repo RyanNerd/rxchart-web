@@ -1,6 +1,6 @@
 import ErrorDetailsObserver from 'observers/ErrorDetailsObserver';
+import {ReactNode} from 'react';
 import React from 'reactn';
-import {ReactNode} from 'reactn/default';
 
 interface IProps {
     children: ReactNode | undefined;
