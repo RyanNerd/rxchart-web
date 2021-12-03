@@ -109,10 +109,12 @@ const LandingPage = (props: IProps) => {
                 <Tab.Content>{loginPage}</Tab.Content>
             </Tab>
             <Tab disabled={!apiKey} eventKey="resident" title={<Title activeKey="resident">Clients</Title>}>
-                <Tab.Content>{clientPage}</Tab.Content>
+                <Tab.Content style={{marginLeft: 0}}>{clientPage}</Tab.Content>
             </Tab>
             <Tab disabled={!apiKey || !activeClient} eventKey="medicine" title={<Title activeKey="medicine">Rx</Title>}>
-                {activeClient && activeTabKey === 'medicine' && <Tab.Content>{medicinePage}</Tab.Content>}
+                {activeClient && activeTabKey === 'medicine' && (
+                    <Tab.Content style={{marginLeft: 0}}>{medicinePage}</Tab.Content>
+                )}
             </Tab>
             <Tab
                 disabled={!apiKey || !activeClient}

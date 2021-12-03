@@ -455,6 +455,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 onSelect={(key) => setDisplayType((key as DISPLAY_TYPE) || DISPLAY_TYPE.Medicine)}
             >
                 <Tab
+                    style={{marginLeft: '-40px'}}
                     title={
                         <ToggleButton
                             checked={displayType === DISPLAY_TYPE.Medicine}
@@ -525,6 +526,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 </Tab>
 
                 <Tab
+                    style={{marginLeft: '-40px'}}
                     eventKey={DISPLAY_TYPE.OTC}
                     title={
                         <ToggleButton
@@ -581,6 +583,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
                 {/* Only show when: activeClient && activeClient.clientInfo */}
                 <Tab
+                    style={{marginLeft: '-40px'}}
                     className="d-print-flex"
                     eventKey={DISPLAY_TYPE.History}
                     title={
@@ -616,6 +619,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
                 {/* Show when activePillbox && activePillbox.Id */}
                 <Tab
+                    style={{marginLeft: '-40px'}}
                     eventKey={DISPLAY_TYPE.Pillbox}
                     title={
                         <ToggleButton
@@ -671,6 +675,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
 
                 {/* Only show when: activeClient && activeClient.clientInfo */}
                 <Tab
+                    style={{marginLeft: '-40px'}}
                     eventKey={DISPLAY_TYPE.Print}
                     title={
                         <ToggleButton
