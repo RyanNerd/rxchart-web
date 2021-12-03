@@ -3,6 +3,7 @@ import DrugLogGrid from 'components/Pages/Grids/DrugLogGrid';
 import {IDropdownItem} from 'components/Pages/ListGroups/MedDropdown';
 import MedListGroup from 'components/Pages/ListGroups/MedListGroup';
 import DeleteDrugLogModal from 'components/Pages/Modals/DeleteDrugLogModal';
+import DrugLogEdit from 'components/Pages/Modals/DrugLogEdit';
 import MedicineEdit from 'components/Pages/Modals/MedicineEdit';
 import DrugLogToast from 'components/Pages/Toasts/DrugLogToast';
 import {IMedicineManager} from 'managers/MedicineManager';
@@ -16,13 +17,13 @@ import {DrugLogRecord, MedicineRecord, newDrugLogRecord} from 'types/RecordTypes
 import {asyncWrapper, calculateLastTaken, clientFullName, getCheckoutList, getDrugName, isToday} from 'utility/common';
 
 interface IProps {
-    editDrugLog: (drugLogInfo: DrugLogRecord) => void; // todo: bring this down
+    // editDrugLog: (drugLogInfo: DrugLogRecord) => void; // todo: bring this down
     mm: IMedicineManager;
     pillboxSelected: (id: number) => void;
 }
 
 const RxMedicine = (props: IProps) => {
-    const {editDrugLog, mm, pillboxSelected} = props;
+    const {mm, pillboxSelected} = props;
     const [activeMed, setActiveMed] = useState<MedicineRecord | null>(null);
     const [activeClient, setActiveClient] = useGlobal('activeClient');
     const clientId = activeClient?.clientInfo.Id;
@@ -33,6 +34,7 @@ const RxMedicine = (props: IProps) => {
     const [medItemList, setMedItemList] = useState<IDropdownItem[]>([]);
     const {drugLogList, pillboxList, pillboxItemList, medicineList} = activeClient as TClient;
     const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
+    const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
 
     // todo: determine if this is needed
     // const [lastTaken, setLastTaken] = useState(
@@ -172,16 +174,7 @@ const RxMedicine = (props: IProps) => {
                   MedicineId: activeMed?.Id,
                   Notes: ''
               } as DrugLogRecord);
-        editDrugLog(drugLogRecord);
-    };
-
-    /**
-     * Convenience function to get drug name
-     * @param {number} medicineId The PK of the Medicine table
-     * @returns {string | undefined}
-     */
-    const drugName = (medicineId: number): string | undefined => {
-        return getDrugName(medicineId, medicineList);
+        setShowDrugLog(drugLogRecord);
     };
 
     if (activeClient === null) return null;
@@ -241,7 +234,9 @@ const RxMedicine = (props: IProps) => {
 
             <DeleteDrugLogModal
                 drugLogRecord={showDeleteDrugLogRecord as DrugLogRecord}
-                drugName={showDeleteDrugLogRecord ? drugName(showDeleteDrugLogRecord.MedicineId) || '' : ''}
+                drugName={
+                    showDeleteDrugLogRecord ? getDrugName(showDeleteDrugLogRecord.MedicineId, medicineList) || '' : ''
+                }
                 onSelect={(drugLogRecord) => {
                     setShowDeleteDrugLogRecord(null);
                     if (drugLogRecord) {
@@ -272,6 +267,18 @@ const RxMedicine = (props: IProps) => {
                 onClose={() => setToast(null)}
                 show={toast !== null}
                 toast={toast as DrugLogRecord[]}
+            />
+
+            <DrugLogEdit
+                drugLogInfo={showDrugLog as DrugLogRecord}
+                drugName={getDrugName(showDrugLog?.MedicineId as number, medicineList) || '[unknown]'}
+                onClose={(drugLogRecord) => {
+                    setShowDrugLog(null);
+                    if (drugLogRecord)
+                        saveDrugLog(drugLogRecord).then((updatedDrugLogRecord) => setToast([updatedDrugLogRecord]));
+                }}
+                onHide={() => setShowDrugLog(null)}
+                show={showDrugLog !== null}
             />
         </>
     );
