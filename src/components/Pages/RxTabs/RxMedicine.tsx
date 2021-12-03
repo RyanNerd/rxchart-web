@@ -1,0 +1,280 @@
+import LastTakenButton from 'components/Pages/Buttons/LastTakenButton';
+import DrugLogGrid from 'components/Pages/Grids/DrugLogGrid';
+import {IDropdownItem} from 'components/Pages/ListGroups/MedDropdown';
+import MedListGroup from 'components/Pages/ListGroups/MedListGroup';
+import DeleteDrugLogModal from 'components/Pages/Modals/DeleteDrugLogModal';
+import MedicineEdit from 'components/Pages/Modals/MedicineEdit';
+import DrugLogToast from 'components/Pages/Toasts/DrugLogToast';
+import {IMedicineManager} from 'managers/MedicineManager';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import ListGroup from 'react-bootstrap/ListGroup';
+import Row from 'react-bootstrap/Row';
+import React, {useEffect, useGlobal, useState} from 'reactn';
+import {TClient} from 'reactn/default';
+import {DrugLogRecord, MedicineRecord, newDrugLogRecord} from 'types/RecordTypes';
+import {asyncWrapper, calculateLastTaken, clientFullName, getCheckoutList, getDrugName, isToday} from 'utility/common';
+
+interface IProps {
+    editDrugLog: (drugLogInfo: DrugLogRecord) => void; // todo: bring this down
+    mm: IMedicineManager;
+    pillboxSelected: (id: number) => void;
+}
+
+const RxMedicine = (props: IProps) => {
+    const {editDrugLog, mm, pillboxSelected} = props;
+    const [activeMed, setActiveMed] = useState<MedicineRecord | null>(null);
+    const [activeClient, setActiveClient] = useGlobal('activeClient');
+    const clientId = activeClient?.clientInfo.Id;
+    const [, setErrorDetails] = useGlobal('__errorDetails');
+    const [isBusy, setIsBusy] = useState(false);
+    const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
+    const [showMedicineEdit, setShowMedicineEdit] = useState<MedicineRecord | null>(null);
+    const [medItemList, setMedItemList] = useState<IDropdownItem[]>([]);
+    const {drugLogList, pillboxList, pillboxItemList, medicineList} = activeClient as TClient;
+    const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
+
+    // todo: determine if this is needed
+    // const [lastTaken, setLastTaken] = useState(
+    //     activeMed?.Id &&
+    //          activeClient?.drugLogList ? calculateLastTaken(activeMed.Id, activeClient.drugLogList) : null
+    // );
+    // useEffect(() => {
+    //     setLastTaken(
+    //         activeClient && activeMed && activeMed.Id
+    //             ? calculateLastTaken(activeMed.Id, activeClient.drugLogList)
+    //             : null
+    //     );
+    // }, [activeClient, activeMed, activeMed?.Id]);
+
+    // Build the dropdown items for the Medicine dropdown
+    useEffect(() => {
+        const itemList = [] as IDropdownItem[];
+        if (activeClient) {
+            const {drugLogList, pillboxList, pillboxItemList, medicineList} = activeClient;
+            const checkoutList = getCheckoutList(drugLogList);
+
+            // Build the itemList with any pillboxes and meds from medicineList
+            let pbCnt = 0;
+            pillboxList.forEach((p) => {
+                const pbItems = pillboxItemList.filter((pbi) => pbi.PillboxId === p.Id);
+                const loggedPillboxItems = drugLogList.filter(
+                    (d) => d.Updated && isToday(d.Updated) && pbItems.find((pbi) => pbi.Id === d.PillboxItemId)
+                );
+                if (loggedPillboxItems.length === 0) {
+                    itemList.push({
+                        id: -(p.Id as number),
+                        description: p.Name.toUpperCase(),
+                        subtext: null
+                    }); // Pillbox have negative id
+                    pbCnt++;
+                }
+            });
+            if (pbCnt > 0) itemList.push({id: 0, description: 'divider', subtext: null});
+
+            medicineList.forEach((m) => {
+                if (m.Active) {
+                    const strength = m.Strength || '';
+                    const other = m.OtherNames?.length > 0 ? `(${m.OtherNames})` : null;
+                    const checkoutMed = checkoutList.find((c) => c.MedicineId === m.Id);
+                    const description = (checkoutMed ? '❎ ' : '') + m.Drug + ' ' + strength;
+                    itemList.push({
+                        id: m.Id as number,
+                        description,
+                        subtext: other
+                    });
+                }
+            });
+
+            // If activeMed is null, and we have med items in the list then set the initial activeMed to the first item
+            if (activeMed === null && itemList.length > 0) {
+                const medsOnly = itemList.filter((i) => i.id > 0);
+                setActiveMed(medsOnly.length === 0 ? null : medicineList.find((m) => m.Id === medsOnly[0].id) || null);
+            }
+        } else {
+            setActiveMed(null);
+        }
+        setMedItemList(itemList);
+    }, [activeClient, activeMed]);
+
+    /**
+     * Given a MedicineRecord object Update/Insert the record and rehydrate the global otcList / medicineList
+     * Set the activeOtc or the activeMed with the updated medicine (if Active)
+     * @param {MedicineRecord} med Medicine record object
+     */
+    const saveMedicine = async (med: MedicineRecord) => {
+        await setIsBusy(true);
+        const [e, m] = (await asyncWrapper(mm.updateMedicine(med))) as [unknown, Promise<MedicineRecord>];
+        if (e) await setErrorDetails(e);
+        const updatedMedicineRecord = await m;
+
+        const [errLoadMeds, meds] = (await asyncWrapper(mm.loadMedicineList(clientId as number))) as [
+            unknown,
+            Promise<MedicineRecord[]>
+        ];
+        if (errLoadMeds) await setErrorDetails(errLoadMeds);
+        else await setActiveClient({...(activeClient as TClient), medicineList: await meds});
+        const activeMeds = (await meds).filter((m) => m.Active);
+        setActiveMed(
+            updatedMedicineRecord.Active ? updatedMedicineRecord : activeMeds.length === 0 ? null : activeMeds[0]
+        );
+        await setIsBusy(false);
+    };
+
+    /**
+     * Given a DrugLogRecord Update or Insert the record and rehydrate the drugLogList
+     * @param {DrugLogRecord} drugLog Druglog record object
+     */
+    const saveDrugLog = async (drugLog: DrugLogRecord): Promise<DrugLogRecord> => {
+        await setIsBusy(true);
+        const [e, updatedDrugLog] = (await asyncWrapper(mm.updateDrugLog(drugLog))) as [
+            unknown,
+            Promise<DrugLogRecord>
+        ];
+        if (e) await setErrorDetails(e);
+        else {
+            const [errLoadLog, drugLogs] = (await asyncWrapper(mm.loadDrugLog(clientId as number, 5))) as [
+                unknown,
+                Promise<DrugLogRecord[]>
+            ];
+            if (errLoadLog) await setErrorDetails(errLoadLog);
+            else await setActiveClient({...(activeClient as TClient), drugLogList: await drugLogs});
+        }
+        await setIsBusy(false);
+        return await updatedDrugLog;
+    };
+
+    /**
+     * Fires when the Log 1...4 buttons are clicked.
+     * @param {number} amount The number of pills (medication) taken
+     */
+    const handleLogDrugAmount = (amount: number) => {
+        setIsBusy(true);
+        const medicineId = activeMed?.Id;
+        const drugLogInfo = {...newDrugLogRecord};
+        drugLogInfo.ResidentId = clientId as number;
+        drugLogInfo.MedicineId = medicineId as number;
+        drugLogInfo.Notes = amount.toString();
+        saveDrugLog(drugLogInfo).then((d) => setToast([d]));
+        setIsBusy(false);
+    };
+
+    /**
+     * Fires when user clicks on +Log or the drug log edit button
+     * @param {DrugLogRecord} drugLogInfo The drugLog record object
+     */
+    const handleAddEditDrugLog = (drugLogInfo?: DrugLogRecord) => {
+        const drugLogRecord = drugLogInfo
+            ? {...drugLogInfo}
+            : ({
+                  Id: null,
+                  ResidentId: clientId,
+                  MedicineId: activeMed?.Id,
+                  Notes: ''
+              } as DrugLogRecord);
+        editDrugLog(drugLogRecord);
+    };
+
+    /**
+     * Convenience function to get drug name
+     * @param {number} medicineId The PK of the Medicine table
+     * @returns {string | undefined}
+     */
+    const drugName = (medicineId: number): string | undefined => {
+        return getDrugName(medicineId, medicineList);
+    };
+
+    if (activeClient === null) return null;
+    return (
+        <>
+            <Row>
+                <Col className="col-4">
+                    <MedListGroup
+                        activeMed={activeMed}
+                        addDrugLog={() => handleAddEditDrugLog()}
+                        canvasId="med-barcode"
+                        clientId={clientId as number}
+                        disabled={isBusy}
+                        editMedicine={(medicineRecord) => setShowMedicineEdit(medicineRecord)}
+                        itemChanged={(id) => {
+                            if (id < 0) {
+                                pillboxSelected(Math.abs(id));
+                            } else {
+                                setActiveMed(medicineList.find((m) => m.Id === id) || null);
+                            }
+                        }}
+                        itemList={medItemList}
+                        lastTaken={activeMed?.Id ? calculateLastTaken(activeMed.Id, drugLogList) : null}
+                        logDrug={(n) => handleLogDrugAmount(n)}
+                    />
+                </Col>
+
+                <ListGroup as={Col} className="col-8">
+                    <ListGroup.Item style={{textAlign: 'center'}}>
+                        <Button
+                            className="hover-underline-animation"
+                            href={`https://vsearch.nlm.nih.gov/vivisimo/cgi-bin/query-meta?v%3Aproject=medlineplus&v%3Asources=medlineplus-bundle&query=${activeMed?.Drug}`}
+                            size="lg"
+                            target="_blank"
+                            variant="link"
+                        >
+                            {activeMed?.Drug}
+                        </Button>
+
+                        <LastTakenButton
+                            lastTaken={activeMed?.Id ? calculateLastTaken(activeMed.Id, drugLogList) : null}
+                        />
+
+                        {activeMed?.Id && (
+                            <DrugLogGrid
+                                columns={['Taken', 'Notes', 'Out', 'In']}
+                                drugId={activeMed.Id}
+                                gridLists={{medicineList, drugLogList, pillboxList, pillboxItemList}}
+                                onDelete={(drugLogRecord) => setShowDeleteDrugLogRecord(drugLogRecord)}
+                                onEdit={(r) => handleAddEditDrugLog(r)}
+                                onPillClick={(n) => alert('handleOnPillClick(n)')}
+                            />
+                        )}
+                    </ListGroup.Item>
+                </ListGroup>
+            </Row>
+
+            <DeleteDrugLogModal
+                drugLogRecord={showDeleteDrugLogRecord as DrugLogRecord}
+                drugName={showDeleteDrugLogRecord ? drugName(showDeleteDrugLogRecord.MedicineId) || '' : ''}
+                onSelect={(drugLogRecord) => {
+                    setShowDeleteDrugLogRecord(null);
+                    if (drugLogRecord) {
+                        mm.deleteDrugLog(showDeleteDrugLogRecord?.Id as number).then(() => {
+                            mm.loadDrugLog(clientId as number, 5).then((drugLogRecords) => {
+                                setActiveClient({...(activeClient as TClient), drugLogList: drugLogRecords});
+                            });
+                        });
+                    }
+                }}
+                show={showDeleteDrugLogRecord !== null}
+            />
+
+            <MedicineEdit
+                allowDelete={!drugLogList.find((d) => d.MedicineId === showMedicineEdit?.Id)}
+                drugInfo={showMedicineEdit as MedicineRecord}
+                existingDrugs={showMedicineEdit?.Id === null ? medicineList.map((m) => m.Drug) : []}
+                fullName={clientFullName(activeClient.clientInfo)}
+                onClose={(medicineRecord) => {
+                    setShowMedicineEdit(null);
+                    if (medicineRecord) saveMedicine(medicineRecord);
+                }}
+                show={showMedicineEdit !== null}
+            />
+
+            <DrugLogToast
+                medicineList={medicineList}
+                onClose={() => setToast(null)}
+                show={toast !== null}
+                toast={toast as DrugLogRecord[]}
+            />
+        </>
+    );
+};
+
+export default RxMedicine;
