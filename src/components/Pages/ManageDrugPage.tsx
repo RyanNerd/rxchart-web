@@ -234,7 +234,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
             {showCheckoutPrint && activeClient && (
                 <Row className="mt-2">
                     <CheckoutListGroup
-                        activeClient={clientInfo}
+                        clientRecord={clientInfo}
                         checkoutList={checkoutList}
                         medicineList={medicineList}
                         onClose={() => setShowCheckoutPrint(false)}
