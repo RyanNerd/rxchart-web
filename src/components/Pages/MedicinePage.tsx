@@ -373,7 +373,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 >
                     {activeClient && (
                         <RxMedicine
-                            editDrugLog={(d) => setShowDrugLog(d)}
                             mm={mm}
                             pillboxSelected={(id) => {
                                 setActivePillbox(pillboxList.find((p) => p.Id === id) || null);
