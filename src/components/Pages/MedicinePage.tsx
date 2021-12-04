@@ -42,7 +42,7 @@ interface IProps {
  */
 const MedicinePage = (props: IProps): JSX.Element | null => {
     const [activeClient] = useGlobal('activeClient');
-    const [, setActivePillbox] = useState<PillboxRecord | null>(null); // fixme: need to tell RxPillbox active pillbox
+    const [activePillbox, setActivePillbox] = useState<PillboxRecord | null>(null);
     const [activeTabKey, setActiveTabKey] = useState(props.activeTabKey);
     const [checkoutList, setCheckoutList] = useState<DrugLogRecord[]>([]);
     const [displayType, setDisplayType] = useState<DISPLAY_TYPE>(DISPLAY_TYPE.Medicine);
@@ -95,7 +95,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     <RxMedicine
                         mm={mm}
                         pillboxSelected={(id) => {
-                            // fixme: need to tell RxPillbox what pillbox is active
                             setActivePillbox(pillboxList.find((p) => p.Id === id) || null);
                             setDisplayType(DISPLAY_TYPE.Pillbox);
                         }}
@@ -150,8 +149,8 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 >
                     <RxHistory
                         mm={mm}
+                        otcList={otcList}
                         pillboxSelected={(id) => {
-                            // fixme: need to tell RxPillbox what pillbox is active
                             setActivePillbox(pillboxList.find((p) => p.Id === id) || null);
                             setDisplayType(DISPLAY_TYPE.Pillbox);
                         }}
@@ -180,7 +179,11 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         </ToggleButton>
                     }
                 >
-                    <RxPillbox mm={mm} />
+                    <RxPillbox
+                        mm={mm}
+                        activePillbox={activePillbox}
+                        activePillboxChanged={(pb) => setActivePillbox(pb)}
+                    />
                 </Tab>
 
                 {/* Only show when: activeClient && activeClient.clientInfo */}

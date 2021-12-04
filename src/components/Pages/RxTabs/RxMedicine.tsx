@@ -17,7 +17,6 @@ import {DrugLogRecord, MedicineRecord, newDrugLogRecord} from 'types/RecordTypes
 import {asyncWrapper, calculateLastTaken, clientFullName, getCheckoutList, getDrugName, isToday} from 'utility/common';
 
 interface IProps {
-    // editDrugLog: (drugLogInfo: DrugLogRecord) => void; // todo: bring this down
     mm: IMedicineManager;
     pillboxSelected: (id: number) => void;
 }
@@ -35,19 +34,6 @@ const RxMedicine = (props: IProps) => {
     const {drugLogList, pillboxList, pillboxItemList, medicineList} = activeClient as TClient;
     const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
     const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
-
-    // todo: determine if this is needed
-    // const [lastTaken, setLastTaken] = useState(
-    //     activeMed?.Id &&
-    //          activeClient?.drugLogList ? calculateLastTaken(activeMed.Id, activeClient.drugLogList) : null
-    // );
-    // useEffect(() => {
-    //     setLastTaken(
-    //         activeClient && activeMed && activeMed.Id
-    //             ? calculateLastTaken(activeMed.Id, activeClient.drugLogList)
-    //             : null
-    //     );
-    // }, [activeClient, activeMed, activeMed?.Id]);
 
     // Build the dropdown items for the Medicine dropdown
     useEffect(() => {
@@ -225,7 +211,7 @@ const RxMedicine = (props: IProps) => {
                                 gridLists={{medicineList, drugLogList, pillboxList, pillboxItemList}}
                                 onDelete={(drugLogRecord) => setShowDeleteDrugLogRecord(drugLogRecord)}
                                 onEdit={(r) => handleAddEditDrugLog(r)}
-                                onPillClick={(n) => alert('handleOnPillClick(n)')}
+                                onPillClick={(n) => pillboxSelected(n)}
                             />
                         )}
                     </ListGroup.Item>

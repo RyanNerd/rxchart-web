@@ -14,16 +14,23 @@ import {asyncWrapper, isToday, multiSort, SortDirection} from 'utility/common';
 
 interface IProps {
     mm: IMedicineManager;
+    activePillbox: PillboxRecord | null;
+    activePillboxChanged: (pb: PillboxRecord | null) => void;
 }
 
 const RxPillbox = (props: IProps) => {
     const mm = props.mm;
+    const activePillboxChanged = props.activePillboxChanged;
     const [activeClient, setActiveClient] = useGlobal('activeClient');
     const [isBusy, setIsBusy] = useState(false);
     const [, setErrorDetails] = useGlobal('__errorDetails');
-    const [activePillbox, setActivePillbox] = useState<PillboxRecord | null>(null);
     const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
     const [pillboxMedLogList, setPillboxMedLogList] = useState<TPillboxMedLog[]>([]);
+
+    const [activePillbox, setActivePillbox] = useState(props.activePillbox);
+    useEffect(() => {
+        setActivePillbox(props.activePillbox);
+    }, [props.activePillbox]);
 
     // Refresh the pillboxDrugLog[]
     useEffect(() => {
@@ -71,7 +78,9 @@ const RxPillbox = (props: IProps) => {
             Promise<PillboxRecord>
         ];
         if (e) await setErrorDetails(e);
-        else setActivePillbox(await updatedPillbox);
+        else {
+            activePillboxChanged(await updatedPillbox);
+        }
         const [errLoadPillbox, pillboxes] = (await asyncWrapper(
             mm.loadPillboxList(activeClient?.clientInfo.Id as number)
         )) as [unknown, Promise<PillboxRecord[]>];
@@ -96,7 +105,7 @@ const RxPillbox = (props: IProps) => {
             else {
                 const pillboxList = await pillboxes;
                 await setActiveClient({...(activeClient as TClient), pillboxList});
-                await setActivePillbox(pillboxList.length > 0 ? pillboxList[0] : null);
+                activePillboxChanged(pillboxList.length > 0 ? pillboxList[0] : null);
             }
         } else {
             await setErrorDetails(new Error('Unable to delete Pillbox. Id: ' + pillboxId));
@@ -170,7 +179,7 @@ const RxPillbox = (props: IProps) => {
                         onDelete={(pillboxId) => deletePillbox(pillboxId)}
                         onEdit={(pillboxRecord) => savePillbox(pillboxRecord)}
                         onSelect={(pillboxId) =>
-                            setActivePillbox(activeClient.pillboxList.find((pb) => pb.Id === pillboxId) || null)
+                            activePillboxChanged(activeClient.pillboxList.find((pb) => pb.Id === pillboxId) || null)
                         }
                         pillboxMedLogList={pillboxMedLogList}
                     />

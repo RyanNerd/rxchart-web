@@ -11,14 +11,14 @@ import {asyncWrapper, getDrugName, getMedicineRecord} from 'utility/common';
 interface IProps {
     mm: IMedicineManager;
     pillboxSelected: (id: number) => void;
+    otcList: MedicineRecord[];
 }
 
 const RxHistory = (props: IProps) => {
     const pillboxSelected = props.pillboxSelected;
     const mm = props.mm;
+    const otcList = props.otcList;
     const [activeClient, setActiveClient] = useGlobal('activeClient');
-    const [otcList, setOtcList] = useGlobal('otcList');
-    const [activeOtc, setActiveOtc] = useState<MedicineRecord | null>(null);
     const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
     const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
     const [isBusy, setIsBusy] = useState(false);
@@ -47,22 +47,6 @@ const RxHistory = (props: IProps) => {
         return await updatedDrugLog;
     };
 
-    /**
-     * Fires when user clicks on +Log or the drug log edit button
-     * @param {DrugLogRecord} drugLogInfo The drugLog record object
-     */
-    const addEditDrugLog = (drugLogInfo?: DrugLogRecord) => {
-        const drugLogRecord = drugLogInfo
-            ? {...drugLogInfo}
-            : ({
-                  Id: null,
-                  ResidentId: activeClient?.clientInfo.Id,
-                  MedicineId: activeOtc?.Id,
-                  Notes: ''
-              } as DrugLogRecord);
-        setShowDrugLog(drugLogRecord);
-    };
-
     const medicineOtcList = activeClient?.medicineList.concat(otcList) as MedicineRecord[];
 
     if (activeClient === null) return null;
@@ -70,13 +54,14 @@ const RxHistory = (props: IProps) => {
         <>
             <MedDrugLogHistory
                 activeClient={activeClient.clientInfo}
+                disabled={isBusy}
                 gridLists={{
                     drugLogList: activeClient.drugLogList,
                     pillboxList: activeClient.pillboxList,
                     pillboxItemList: activeClient.pillboxItemList,
                     medicineList: activeClient.medicineList.concat(otcList)
                 }}
-                onEdit={(drugLogRecord) => addEditDrugLog(drugLogRecord)}
+                onEdit={(drugLogRecord) => setShowDrugLog({...drugLogRecord})}
                 onDelete={(drugLogRecord) => setShowDeleteDrugLogRecord(drugLogRecord)}
                 onPillClick={(pillboxId) => pillboxSelected(pillboxId)}
             />

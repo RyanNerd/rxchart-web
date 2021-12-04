@@ -149,7 +149,6 @@ const RxOtc = (props: IProps) => {
                 fullName={clientFullName(activeClient.clientInfo)}
                 onClose={(medicineRecord) => {
                     setShowMedicineEdit(null);
-                    // todo: Existing drugs is not showing warning alert!
                     if (medicineRecord) saveMedicine(medicineRecord);
                 }}
                 show={showMedicineEdit !== null}
