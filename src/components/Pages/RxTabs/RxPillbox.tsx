@@ -1,6 +1,5 @@
 import PillboxCard from 'components/Pages/Grids/PillboxCard';
 import PillboxListGroup from 'components/Pages/ListGroups/PillboxListGroup';
-import {TPillboxMedLog} from 'components/Pages/MedicinePage';
 import DrugLogToast from 'components/Pages/Toasts/DrugLogToast';
 import {IMedicineManager} from 'managers/MedicineManager';
 import Col from 'react-bootstrap/Col';
@@ -11,6 +10,17 @@ import {TClient} from 'reactn/default';
 import TabContent from 'styles/common.css';
 import {DrugLogRecord, PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
 import {asyncWrapper, isToday, multiSort, SortDirection} from 'utility/common';
+
+export type TPillboxMedLog = {
+    Active: boolean;
+    Drug: string | undefined;
+    Notes: string | null;
+    PillboxId?: number | null;
+    PillboxItemId?: number | null;
+    Quantity: number;
+    Strength: string | null | undefined;
+    Updated: Date | null | undefined;
+};
 
 interface IProps {
     mm: IMedicineManager;

@@ -167,7 +167,7 @@ const RxMedicine = (props: IProps) => {
     return (
         <>
             <Row>
-                <Col className="col-4">
+                <Col className="col-5">
                     <MedListGroup
                         activeMed={activeMed}
                         addDrugLog={() => handleAddEditDrugLog()}
@@ -188,7 +188,7 @@ const RxMedicine = (props: IProps) => {
                     />
                 </Col>
 
-                <ListGroup as={Col} className="col-8">
+                <ListGroup as={Col} className="col-7">
                     <ListGroup.Item style={{textAlign: 'center'}}>
                         <Button
                             className="hover-underline-animation"

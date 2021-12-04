@@ -1,6 +1,6 @@
 import {IGridLists} from 'components/Pages/Grids/DrugLogGrid';
 import PillPopover from 'components/Pages/Grids/PillPopover';
-import {TPillboxMedLog} from 'components/Pages/MedicinePage';
+import {TPillboxMedLog} from 'components/Pages/RxTabs/RxPillbox';
 import Table from 'react-bootstrap/Table';
 import React from 'reactn';
 import {BsColor, deconstructGridLists, randomString} from 'utility/common';

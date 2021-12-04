@@ -10,12 +10,12 @@ import {asyncWrapper, getDrugName, getMedicineRecord} from 'utility/common';
 
 interface IProps {
     mm: IMedicineManager;
-    pillboxSelected: (id: number) => void;
+    onPillboxSelected: (id: number) => void;
     otcList: MedicineRecord[];
 }
 
 const RxHistory = (props: IProps) => {
-    const pillboxSelected = props.pillboxSelected;
+    const onPillboxSelected = props.onPillboxSelected;
     const mm = props.mm;
     const otcList = props.otcList;
     const [activeClient, setActiveClient] = useGlobal('activeClient');
@@ -63,7 +63,7 @@ const RxHistory = (props: IProps) => {
                 }}
                 onEdit={(drugLogRecord) => setShowDrugLog({...drugLogRecord})}
                 onDelete={(drugLogRecord) => setShowDeleteDrugLogRecord(drugLogRecord)}
-                onPillClick={(pillboxId) => pillboxSelected(pillboxId)}
+                onPillClick={(pillboxId) => onPillboxSelected(pillboxId)}
             />
 
             <DrugLogEdit

@@ -11,19 +11,8 @@ import React, {useEffect, useGlobal, useState} from 'reactn';
 import {DrugLogRecord, PillboxRecord} from 'types/RecordTypes';
 import {getCheckoutList} from 'utility/common';
 
-export type TPillboxMedLog = {
-    Active: boolean;
-    Drug: string | undefined;
-    Notes: string | null;
-    PillboxId?: number | null;
-    PillboxItemId?: number | null;
-    Quantity: number;
-    Strength: string | null | undefined;
-    Updated: Date | null | undefined;
-};
-
-// Display states
-enum DISPLAY_TYPE {
+// Active Rx tab states
+enum TAB_KEY {
     History = 'history',
     Medicine = 'med',
     OTC = 'otc',
@@ -43,13 +32,12 @@ interface IProps {
 const MedicinePage = (props: IProps): JSX.Element | null => {
     const [activeClient] = useGlobal('activeClient');
     const [activePillbox, setActivePillbox] = useState<PillboxRecord | null>(null);
-    const [activeTabKey, setActiveTabKey] = useState(props.activeTabKey);
+    const [activeRxTab, setActiveRxTab] = useState<TAB_KEY>(TAB_KEY.Medicine);
     const [checkoutList, setCheckoutList] = useState<DrugLogRecord[]>([]);
-    const [displayType, setDisplayType] = useState<DISPLAY_TYPE>(DISPLAY_TYPE.Medicine);
     const [mm] = useGlobal('medicineManager');
     const [otcList] = useGlobal('otcList');
 
-    // activeTabKey refresh from prop
+    const [activeTabKey, setActiveTabKey] = useState(props.activeTabKey);
     useEffect(() => {
         setActiveTabKey(props.activeTabKey);
     }, [props.activeTabKey]);
@@ -61,7 +49,36 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
         }
     }, [activeClient, setCheckoutList]);
 
-    // If there isn't an active client, or this isn't the active tab then do not render
+    // Observer to show / hide RxTabs
+    useEffect(() => {
+        if (activeClient) {
+            const historyEl = document.getElementById('medicine-page-tabs-tab-' + TAB_KEY.History);
+            if (historyEl) {
+                historyEl.style.display = activeClient.drugLogList.length === 0 ? 'none' : 'block';
+                if (activeRxTab === TAB_KEY.History && activeClient.drugLogList.length === 0) {
+                    setActiveRxTab(TAB_KEY.Medicine);
+                }
+            }
+
+            const pillboxEl = document.getElementById('medicine-page-tabs-tab-' + TAB_KEY.Pillbox);
+            if (pillboxEl) {
+                pillboxEl.style.display = activeClient.medicineList.length < 5 ? 'none' : 'block';
+                if (activeRxTab === TAB_KEY.Pillbox && activeClient.medicineList.length < 5) {
+                    setActiveRxTab(TAB_KEY.Medicine);
+                }
+            }
+
+            const printEl = document.getElementById('medicine-page-tabs-tab-' + TAB_KEY.Print);
+            if (printEl) {
+                printEl.style.display = checkoutList.length === 0 ? 'none' : 'block';
+                if (activeRxTab === TAB_KEY.Print && checkoutList.length === 0) {
+                    setActiveRxTab(TAB_KEY.Medicine);
+                }
+            }
+        }
+    }, [activeClient, activeRxTab, checkoutList.length]);
+
+    // If there isn't an active client, or the active tab isn't 'medicine' then do not render
     if (!activeClient || activeTabKey !== 'medicine') return null;
 
     const {drugLogList, pillboxList, medicineList} = activeClient;
@@ -69,53 +86,54 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     return (
         <>
             <Tabs
-                activeKey={displayType}
-                onSelect={(key) => setDisplayType((key as DISPLAY_TYPE) || DISPLAY_TYPE.Medicine)}
+                id="medicine-page-tabs"
+                activeKey={activeRxTab}
+                defaultActiveKey={TAB_KEY.Medicine}
+                onSelect={(key) => setActiveRxTab((key as TAB_KEY) || TAB_KEY.Medicine)}
             >
                 <Tab
-                    style={{marginLeft: '-40px', marginRight: '1%'}}
+                    style={{marginLeft: '-35px', marginRight: '1%'}}
                     title={
                         <ToggleButton
-                            checked={displayType === DISPLAY_TYPE.Medicine}
+                            checked={activeRxTab === TAB_KEY.Medicine}
                             className="d-print-none"
                             id="med-list-group-med-radio-btn"
                             key="med-list-group-med-btn"
                             name="radio-med-list-group"
-                            onChange={() => setDisplayType(DISPLAY_TYPE.Medicine)}
+                            onChange={() => setActiveRxTab(TAB_KEY.Medicine)}
                             size="sm"
                             type="radio"
-                            value={DISPLAY_TYPE.Medicine}
+                            value={TAB_KEY.Medicine}
                             variant="outline-success"
                         >
                             <span className="ml-2">Medicine</span>
                         </ToggleButton>
                     }
-                    eventKey={DISPLAY_TYPE.Medicine}
+                    eventKey={TAB_KEY.Medicine}
                 >
                     <RxMedicine
                         mm={mm}
                         pillboxSelected={(id) => {
                             setActivePillbox(pillboxList.find((p) => p.Id === id) || null);
-                            setDisplayType(DISPLAY_TYPE.Pillbox);
+                            setActiveRxTab(TAB_KEY.Pillbox);
                         }}
                     />
                 </Tab>
 
                 <Tab
                     style={{marginLeft: '-40px'}}
-                    eventKey={DISPLAY_TYPE.OTC}
+                    eventKey={TAB_KEY.OTC}
                     title={
                         <ToggleButton
-                            checked={displayType === DISPLAY_TYPE.OTC}
+                            checked={activeRxTab === TAB_KEY.OTC}
                             className="ml-2 d-print-none"
-                            disabled={otcList?.length === 0}
                             id="med-list-group-otc-radio-btn"
                             key="med-list-group-otc-btn"
                             name="radio-med-list-group"
-                            onChange={() => setDisplayType(DISPLAY_TYPE.OTC)}
+                            onChange={() => setActiveRxTab(TAB_KEY.OTC)}
                             size="sm"
                             type="radio"
-                            value={DISPLAY_TYPE.OTC}
+                            value={TAB_KEY.OTC}
                             variant="outline-success"
                         >
                             <span className="ml-2">OTC</span>
@@ -125,22 +143,21 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     <RxOtc mm={mm} />
                 </Tab>
 
-                {/* Only show when: activeClient && activeClient.clientInfo */}
                 <Tab
                     style={{marginLeft: '-40px'}}
                     className="d-print-flex"
-                    eventKey={DISPLAY_TYPE.History}
+                    eventKey={TAB_KEY.History}
                     title={
                         <ToggleButton
-                            checked={displayType === DISPLAY_TYPE.History}
+                            checked={activeRxTab === TAB_KEY.History}
                             className="ml-2 d-print-none"
                             disabled={drugLogList.length === 0}
                             id="med-list-group-history-radio-btn"
                             key="med-list-group-history-btn"
-                            onChange={() => setDisplayType(DISPLAY_TYPE.History)}
+                            onChange={() => setActiveRxTab(TAB_KEY.History)}
                             size="sm"
                             type="radio"
-                            value={DISPLAY_TYPE.History}
+                            value={TAB_KEY.History}
                             variant="outline-success"
                         >
                             <span className="ml-2">History</span>
@@ -150,9 +167,9 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     <RxHistory
                         mm={mm}
                         otcList={otcList}
-                        pillboxSelected={(id) => {
+                        onPillboxSelected={(id) => {
                             setActivePillbox(pillboxList.find((p) => p.Id === id) || null);
-                            setDisplayType(DISPLAY_TYPE.Pillbox);
+                            setActiveRxTab(TAB_KEY.Pillbox);
                         }}
                     />
                 </Tab>
@@ -160,19 +177,19 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 {/* Show when activePillbox && activePillbox.Id */}
                 <Tab
                     style={{marginLeft: '-40px'}}
-                    eventKey={DISPLAY_TYPE.Pillbox}
+                    eventKey={TAB_KEY.Pillbox}
                     title={
                         <ToggleButton
-                            checked={displayType === DISPLAY_TYPE.Pillbox}
+                            checked={activeRxTab === TAB_KEY.Pillbox}
                             className="ml-2 d-print-none"
                             disabled={medicineList.length < 5}
                             id="med-list-group-pill-radio-btn"
                             key="med-list-group-pill-btn"
                             name="radio-med-list-group"
-                            onChange={() => setDisplayType(DISPLAY_TYPE.Pillbox)}
+                            onChange={() => setActiveRxTab(TAB_KEY.Pillbox)}
                             size="sm"
                             type="radio"
-                            value={DISPLAY_TYPE.Pillbox}
+                            value={TAB_KEY.Pillbox}
                             variant="outline-success"
                         >
                             <span className="ml-2">Pillbox</span>
@@ -186,22 +203,21 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     />
                 </Tab>
 
-                {/* Only show when: activeClient && activeClient.clientInfo */}
                 <Tab
                     style={{marginLeft: '-40px'}}
-                    eventKey={DISPLAY_TYPE.Print}
+                    eventKey={TAB_KEY.Print}
                     title={
                         <ToggleButton
-                            checked={displayType === DISPLAY_TYPE.Print}
+                            checked={activeRxTab === TAB_KEY.Print}
                             className="ml-2 d-print-none"
                             disabled={checkoutList.length === 0}
                             id="med-list-group-print-radio-btn"
                             key="med-list-group-print-btn"
                             name="radio-print-list-group"
-                            onChange={() => setDisplayType(DISPLAY_TYPE.Print)}
+                            onChange={() => setActiveRxTab(TAB_KEY.Print)}
                             size="sm"
                             type="radio"
-                            value={DISPLAY_TYPE.Print}
+                            value={TAB_KEY.Print}
                             variant="outline-success"
                         >
                             <span className="ml-2">
