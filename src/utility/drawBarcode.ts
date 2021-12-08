@@ -4,7 +4,7 @@ import BwipJs from 'bwip-js';
  * Given a barcode and an DOM element Id this will draw a barcode on the canvasId
  * @param {string} barCode The barcode string
  * @param {string} canvasId A unique ID to use (needed when multiple instances of the barcode are rendered)
- * @returns {HTMLCanvasElement}
+ * @returns {HTMLCanvasElement} The canvas element upon which the barcode is drawn
  */
 export const drawBarcode = (barCode: string, canvasId: string): HTMLCanvasElement | void => {
     try {

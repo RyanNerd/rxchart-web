@@ -10,7 +10,7 @@ interface IKey {
 /**
  * Given a ResidentRecord return the resident's DOB as a string.
  * @param {ClientRecord} resident The client record
- * @returns {string}
+ * @returns {string} Returns the DOB in the format MM/DD/YYYY
  */
 export const clientDOB = (resident: ClientRecord): string => {
     return dateToString(resident.DOB_MONTH.toString(), resident.DOB_DAY.toString(), resident.DOB_YEAR.toString(), true);
@@ -22,7 +22,7 @@ export const clientDOB = (resident: ClientRecord): string => {
  * @param {string} day The day in the month as a string
  * @param {string} year The year as a string
  * @param {boolean} leadingZeros True if leading zeros in the output, otherwise no leading zeros
- * @returns {string}
+ * @returns {string} Date in the format of MM/DD/YYYY or M/D/YYYY depending on if leadingZeros is true.
  */
 export const dateToString = (month: string, day: string, year: string, leadingZeros?: boolean): string => {
     const padZero = (num: string) => {
@@ -48,7 +48,7 @@ export const clientFullName = (resident: ClientRecord, includeNickname = false):
 
 /**
  * Return a random string.
- * @returns {string}
+ * @returns {string} The random string
  */
 export const randomString = (): string => {
     return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -58,7 +58,7 @@ export const randomString = (): string => {
  * Return in hours how long it has been since a drug was last taken.
  * @param {number} drugId The PK of the Medicine table
  * @param {DrugLogRecord[]} drugLogList Array of drugs logged for the client
- * @returns {null | number}
+ * @returns {null | number} Number of hours or null
  */
 export const calculateLastTaken = (drugId: number, drugLogList: DrugLogRecord[]): number | null => {
     let diff;
@@ -147,7 +147,7 @@ export const getBsColor = (variant: T_BS_Colors) => {
 /**
  * Given a date object return true if the date is today.
  * @param {Date} dateIn Date object to check
- * @returns {boolean}
+ * @returns {boolean} True if the given date is today, otherwise false
  */
 export const isToday = (dateIn: Date): boolean => {
     const date = new Date(dateIn);
@@ -172,7 +172,7 @@ interface IMonthDayYear {
 /**
  * Return an object containing the day, month, and year as numbers and a date indicating now or a given date
  * @param {Date} inDate Date object to convert
- * @returns {IMonthDayYear}
+ * @returns {IMonthDayYear} Object containing the current day, month and year, and the date object for `now()`
  */
 export const getMDY = (inDate?: Date): IMonthDayYear => {
     const now = inDate ? new Date(inDate) : new Date();
@@ -185,7 +185,7 @@ export const getMDY = (inDate?: Date): IMonthDayYear => {
 /**
  * Given a string or Date object return the formatted string of the date: mm/dd/yyyy, hh:mm AM
  * @param {Date | string} date The date to parse and format
- * @returns {string}
+ * @returns {string} The date in the format of MM/DD/YYYY HH:MM am/pm
  */
 export const getFormattedDate = (date: Date | string): string => {
     const dt = typeof date === 'string' ? new Date(date) : date;
@@ -202,7 +202,7 @@ export const getFormattedDate = (date: Date | string): string => {
 /**
  * Given a date return true if the date is in the future, false otherwise.
  * @param {Date} dateIn The date to check
- * @returns {boolean}
+ * @returns {boolean} True if the date is in the future, otherwise false
  */
 export const isDateFuture = (dateIn: Date): boolean => {
     const nowMDY = getMDY();
@@ -218,7 +218,7 @@ export const isDateFuture = (dateIn: Date): boolean => {
  * @param {IKey} objectList Any array of {object}
  * @param {string} propName The property name to search for
  * @param {any} searchValue The value to search for
- * @returns {Object | undefined}
+ * @returns {Object | undefined} The object searched for or undefined if not found
  */
 export const getObjectByProperty = <T>(objectList: IKey, propName: string, searchValue: any): T | undefined => {
     return objectList.find((obj: IKey) => obj[propName] === searchValue);
@@ -228,7 +228,7 @@ export const getObjectByProperty = <T>(objectList: IKey, propName: string, searc
  * Given the MedicineId, and medicineList return the name of the drug
  * @param {number} medicineId PK of the Medicine table
  * @param {MedicineRecord[]} medicineList Array of medicines
- * @returns {string | undefined}
+ * @returns {string | undefined} The name of the drug as a string, or undefined if not found
  */
 export const getDrugName = (medicineId: number, medicineList: MedicineRecord[]): string | undefined => {
     return getMedicineRecord(medicineId, medicineList)?.Drug;
@@ -238,7 +238,7 @@ export const getDrugName = (medicineId: number, medicineList: MedicineRecord[]):
  * Given the Id of the Medicine return the medicine record
  * @param {number} medicineId PK of the Medicine table
  * @param {MedicineRecord[]} medicineList Array of medicines
- * @returns {MedicineRecord | undefined}
+ * @returns {MedicineRecord | undefined} The MedicineRecord if found, otherwise undefined
  */
 export const getMedicineRecord = (medicineId: number, medicineList: MedicineRecord[]): MedicineRecord | undefined => {
     return getObjectByProperty<MedicineRecord>(medicineList, 'Id', medicineId);
@@ -248,13 +248,13 @@ export const getMedicineRecord = (medicineId: number, medicineList: MedicineReco
  * Returns a string of a drug that soft matches in the given drugList if found, otherwise returns a null;
  * @param {string} searchText The text to search for
  * @param {MedicineRecord[]} drugList Array of medicines
- * @returns {null | string}
+ * @returns {null | string} The drug that matches the search or null if no match found
  */
 export const searchDrugs = (searchText: string, drugList: MedicineRecord[]) => {
     const textLen = searchText ? searchText.length : 0;
     if (textLen > 0 && drugList && drugList.length > 0) {
         let drugMatch;
-        const c = searchText.substr(0, 1);
+        const c = searchText.substring(0, 1);
         // Is the first character a digit? If so, search the Barcode otherwise search the Drug name
         if (c >= '0' && c <= '9') {
             drugMatch = drugList.filter(
@@ -262,7 +262,7 @@ export const searchDrugs = (searchText: string, drugList: MedicineRecord[]) => {
             );
         } else {
             drugMatch = drugList.filter(
-                (drug) => drug.Drug.substr(0, textLen).toLowerCase() === searchText.toLowerCase()
+                (drug) => drug.Drug.substring(0, textLen).toLowerCase() === searchText.toLowerCase()
             );
         }
         if (drugMatch && drugMatch.length > 0) {
@@ -290,7 +290,7 @@ export const getCheckoutList = (drugLogList: DrugLogRecord[]) => {
  * Given the day and month returns false if the month and day pair isn't a valid day date, otherwise returns true.
  * @param {string} day The day as a string type for the month to check
  * @param {string} month The month as a string type of the month to check
- * @returns {boolean}
+ * @returns {boolean} Returns true if the month / day are valid values, false otherwise
  */
 export const isDayValid = (day: string, month: string): boolean => {
     let maxDay = 28;
@@ -315,19 +315,19 @@ export const isDayValid = (day: string, month: string): boolean => {
 };
 
 /**
- * Given a month numeric return 'is-invalid' if the number isn't between 1 and 12, otherwise return ''.
+ * Given a string determine if the string converted to an int is a valid month value (1-12)
  * @param {string} month The month as a string type to check
- * @returns {boolean}
+ * @returns {boolean} True if the given month is between 1 and 12.
  */
 export const isMonthValid = (month: string): boolean => {
     return parseInt(month) >= 1 && parseInt(month) <= 12;
 };
 
 /**
- * Returns 'is-invalid' if the year is not valid using the isDOB flag to determine the valid range.
+ * Returns true if the given year is within a valid range
  * @param {string} year The year as a string type to check
  * @param {boolean} isDOB True if the year is considered to be the date of birth year
- * @returns {boolean}
+ * @returns {boolean} True if the given year is valid, otherwise false
  */
 export const isYearValid = (year: string, isDOB: boolean): boolean => {
     const nYear = parseInt(year);
@@ -382,7 +382,6 @@ export const multiSort = (array: IArrayGeneric, sortObject: SortObject): [] => {
      * @param {number} a Comparison number a
      * @param {number} b Comparison number b
      * @param {SortDirection} direction The SortDirection enum value
-     * @returns {number}
      */
     const keySort = (a: number, b: number, direction: SortDirection): number => {
         // If the values are the same, do not switch positions.

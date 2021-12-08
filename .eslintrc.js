@@ -98,7 +98,7 @@ module.exports = {
         'jsdoc/require-property-name': 1,
         'jsdoc/require-property-type': 1,
         'jsdoc/require-returns-check': 1,
-        'jsdoc/require-returns-description': 'off',
+        'jsdoc/require-returns-description': 1,
         'jsdoc/require-returns-type': 1,
         'jsdoc/require-throws': 1,
         'jsdoc/require-yields': 1,

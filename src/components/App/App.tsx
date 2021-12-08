@@ -14,7 +14,6 @@ export const defaultPreferences = {
 /**
  * Main Entry Component
  * Also the single source of truth for database updates and global state management
- * @returns {JSX.Element}
  */
 const App = () => {
     const [preferences, setPreferences] = useGlobal('preferences');
