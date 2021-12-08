@@ -14,6 +14,10 @@ interface IProps {
     otcList: MedicineRecord[];
 }
 
+/**
+ * RxHistory Tab - Shows a grid of drugs logged for the past 5 days
+ * @param {IProps} props The props for this component
+ */
 const RxHistory = (props: IProps) => {
     const {mm, onPillboxSelected, otcList} = props;
     const [, setErrorDetails] = useGlobal('__errorDetails');

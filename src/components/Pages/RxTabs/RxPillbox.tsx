@@ -23,11 +23,15 @@ export type TPillboxMedLog = {
 };
 
 interface IProps {
-    mm: IMedicineManager;
     activePillbox: PillboxRecord | null;
     activePillboxChanged: (pb: PillboxRecord | null) => void;
+    mm: IMedicineManager;
 }
 
+/**
+ * RxPillbox tab - Displays PillboxListGroup and PillboxCard
+ * @param {IProps} props The props for this component
+ */
 const RxPillbox = (props: IProps) => {
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [activeClient, setActiveClient] = useGlobal('activeClient');

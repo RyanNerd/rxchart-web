@@ -25,7 +25,7 @@ interface IProps {
 }
 
 /**
- * MedicinePage - UI for logging prescription medications
+ * MedicinePage - UI for logging prescription & OTC medications as well as pillboxes and medication checkout
  * @param {IProps} props The props for this component
  * @returns {JSX.Element | null}
  */

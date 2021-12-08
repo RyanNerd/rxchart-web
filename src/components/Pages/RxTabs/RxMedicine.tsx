@@ -21,6 +21,10 @@ interface IProps {
     pillboxSelected: (id: number) => void;
 }
 
+/**
+ * The RxMedicine tab - Displays the drug dropdown and drug log grid
+ * @param {IProps} props The props for this component
+ */
 const RxMedicine = (props: IProps) => {
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [activeClient, setActiveClient] = useGlobal('activeClient');

@@ -17,8 +17,11 @@ interface IProps {
     mm: IMedicineManager;
 }
 
+/**
+ * The RxOtc tab - Displays the OTC drug dropdown and drug log grid
+ * @param {IProps} props The props for this component
+ */
 const RxOtc = (props: IProps) => {
-    const mm = props.mm;
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [activeClient, setActiveClient] = useGlobal('activeClient');
     const [activeOtc, setActiveOtc] = useState<MedicineRecord | null>(null);
@@ -29,6 +32,7 @@ const RxOtc = (props: IProps) => {
     const [showMedicineEdit, setShowMedicineEdit] = useState<MedicineRecord | null>(null);
     const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
     const clientId = activeClient?.clientInfo.Id;
+    const mm = props.mm;
 
     /**
      * Fires when the Log 1...4 buttons are clicked.

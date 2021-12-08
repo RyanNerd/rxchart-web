@@ -8,6 +8,10 @@ interface IProps {
     checkoutList: DrugLogRecord[];
 }
 
+/**
+ * RxPrint Tab -- Displays the Medication Checkout grid and signature printout
+ * @param {IProps} props - The props for this component
+ */
 const RxPrint = (props: IProps) => {
     const activeClient = props.activeClient;
     const checkoutList = props.checkoutList;
