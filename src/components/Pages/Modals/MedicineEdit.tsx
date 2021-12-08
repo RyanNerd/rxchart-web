@@ -245,6 +245,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                         </Form.Label>
                         <Col sm="2">
                             <Form.Control
+                                autoComplete="off"
                                 name="Strength"
                                 onChange={(e) => handleOnChange(e)}
                                 placeholder="e.g. 100 MG TABS"

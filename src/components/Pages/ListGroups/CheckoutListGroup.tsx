@@ -7,14 +7,14 @@ import {ClientRecord, DrugLogRecord, MedicineRecord} from 'types/RecordTypes';
 import {clientFullName, getFormattedDate} from 'utility/common';
 
 interface IProps {
-    activeClient: ClientRecord;
+    clientRecord: ClientRecord;
     checkoutList: DrugLogRecord[];
     medicineList: MedicineRecord[];
     onClose?: () => void;
 }
 const CheckoutListGroup = (props: IProps) => {
-    const {checkoutList, medicineList, activeClient, onClose} = props;
-    const clientName = activeClient ? clientFullName(activeClient) : '';
+    const {checkoutList, medicineList, clientRecord, onClose} = props;
+    const clientName = clientRecord ? clientFullName(clientRecord) : '';
     const now = new Date();
     const today = getFormattedDate(now);
 

@@ -33,10 +33,7 @@ const App = () => {
             <Main>
                 <Header />
                 <ClientHeader />
-
-                <div style={{marginLeft: '15px'}}>
-                    <LandingPage preferences={preferences} />
-                </div>
+                <LandingPage preferences={preferences} />
             </Main>
         </React.StrictMode>
     );

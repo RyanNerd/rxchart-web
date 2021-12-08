@@ -1,5 +1,6 @@
 import {IGridLists} from 'components/Pages/Grids/DrugLogGrid';
 import DrugLogHistoryGrid from 'components/Pages/Grids/DrugLogHistoryGrid';
+import DisabledSpinner from 'components/Pages/ListGroups/DisabledSpinner';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import React, {useEffect, useState} from 'reactn';
@@ -12,6 +13,7 @@ interface IProps {
     onDelete: (drugLogRecord: DrugLogRecord) => void;
     onEdit: (drugLogRecord: DrugLogRecord) => void;
     onPillClick: (pillboxId: number) => void;
+    disabled: boolean;
 }
 
 /**
@@ -19,7 +21,7 @@ interface IProps {
  * @param {IProps} props The props for this component
  */
 const MedDrugLogHistory = (props: IProps) => {
-    const {activeClient, gridLists, onDelete, onEdit, onPillClick} = props;
+    const {activeClient, gridLists, onDelete, onEdit, onPillClick, disabled} = props;
     const {drugLogList} = deconstructGridLists(gridLists);
     const [printing, setPrinting] = useState(false);
 
@@ -40,8 +42,8 @@ const MedDrugLogHistory = (props: IProps) => {
     return (
         <>
             <ButtonGroup className="d-print-none mr-3 mb-1">
-                <Button onClick={() => setPrinting(true)} variant="primary" size="sm">
-                    Print
+                <Button disabled={disabled} onClick={() => setPrinting(true)} variant="primary" size="sm">
+                    {disabled && <DisabledSpinner />} Print
                 </Button>
                 {hasPillboxItems && <span className="ml-3">💊 indicates drug logged from a Pillbox</span>}
             </ButtonGroup>
