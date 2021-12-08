@@ -1,8 +1,7 @@
-import {IGridLists} from 'components/Pages/Grids/DrugLogGrid';
 import PillboxLogGrid from 'components/Pages/Grids/PillboxLogGrid';
 import DisabledSpinner from 'components/Pages/ListGroups/DisabledSpinner';
-import {TPillboxMedLog} from 'components/Pages/RxTabs/RxPillbox';
 import Confirm from 'components/Pages/Modals/Confirm';
+import {TPillboxMedLog} from 'components/Pages/RxTabs/RxPillbox';
 import Alert from 'react-bootstrap/Alert';
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
@@ -13,15 +12,16 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Row from 'react-bootstrap/Row';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import React, {useEffect, useState} from 'reactn';
-import {ClientRecord, newPillboxRecord, PillboxRecord} from 'types/RecordTypes';
-import {BsColor, deconstructGridLists, getDrugName, getMedicineRecord, multiSort, SortDirection} from 'utility/common';
+import {TClient} from 'reactn/default';
+import {newPillboxRecord, PillboxRecord} from 'types/RecordTypes';
+import {BsColor, getMedicineRecord, multiSort, SortDirection} from 'utility/common';
+import '../../../styles/pillbox-list-group.css';
 import PillboxEdit from '../Modals/PillboxEdit';
 
 interface IProps {
+    activeClient: TClient;
     activePillbox: PillboxRecord | null;
-    clientRecord: ClientRecord;
     disabled?: boolean;
-    gridLists: IGridLists;
     logPillbox: () => void;
     onDelete: (pillboxId: number) => void;
     onEdit: (pillboxRecord: PillboxRecord) => void;
@@ -42,10 +42,9 @@ interface IPillboxLineItem {
  */
 const PillboxListGroup = (props: IProps) => {
     const {
+        activeClient,
         activePillbox,
-        clientRecord,
         disabled = false,
-        gridLists,
         logPillbox,
         onDelete,
         onEdit,
@@ -53,7 +52,7 @@ const PillboxListGroup = (props: IProps) => {
         pillboxMedLogList
     } = props;
 
-    const {pillboxList, pillboxItemList, medicineList} = deconstructGridLists(gridLists);
+    const {pillboxList, pillboxItemList, medicineList} = activeClient;
     const firstLoggedPillbox = pillboxMedLogList.find((p) => p.Updated)?.Updated;
     const logTime = firstLoggedPillbox
         ? new Date(firstLoggedPillbox).toLocaleString('en-US', {
@@ -64,7 +63,7 @@ const PillboxListGroup = (props: IProps) => {
         : null;
     const [showPillboxDeleteConfirm, setShowPillboxDeleteConfirm] = useState(false);
     const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord | null>(null);
-    const clientId = clientRecord.Id;
+    const clientId = activeClient.clientInfo.Id;
 
     const [showAlert, setShowAlert] = useState(false);
     useEffect(() => {
@@ -91,21 +90,17 @@ const PillboxListGroup = (props: IProps) => {
     const drugsInThePillbox = activePillbox?.Id ? getDrugsInThePillbox() : [];
     const pillboxLineItems: IPillboxLineItem[] = [];
     drugsInThePillbox.forEach((d) => {
-        const drugName = getDrugName(d.MedicineId, medicineList);
-        if (drugName) {
+        const medicineRecord = getMedicineRecord(
+            d.MedicineId,
+            medicineList.filter((m) => m.Active)
+        );
+        if (medicineRecord) {
+            const drugName = medicineRecord.Drug;
+            const strength = medicineRecord?.Strength || '';
             const qty = d.Quantity;
-            const medicine = getMedicineRecord(d.MedicineId, medicineList);
-            const strength = medicine?.Strength || '';
             pillboxLineItems.push({Id: d.Id, Drug: drugName, Strength: strength, Qty: qty});
         }
     });
-
-    const listboxItemStyle = {
-        paddingTop: '0.25rem',
-        paddingRight: '1.25rem',
-        paddingBottom: '0.20rem',
-        paddingLeft: '1.25rem'
-    };
 
     /**
      * Pillbox RadioButton component
@@ -296,13 +291,13 @@ const PillboxListGroup = (props: IProps) => {
                 )}
 
                 {pillboxMedLogList.length > 0 && (
-                    <ListGroup.Item style={listboxItemStyle}>
-                        <PillboxLogGrid gridLists={gridLists} pillboxMedLogList={pillboxMedLogList} />
+                    <ListGroup.Item className="pb-group-item">
+                        <PillboxLogGrid activeClient={activeClient} pillboxMedLogList={pillboxMedLogList} />
                     </ListGroup.Item>
                 )}
 
                 {showAlert && (
-                    <ListGroup.Item style={listboxItemStyle}>
+                    <ListGroup.Item className="pb-group-item">
                         <Alert className="mb-0" variant="danger" dismissible onClose={() => setShowAlert(false)}>
                             <Alert.Heading className="mb-0">
                                 Pillbox <b style={{textTransform: 'uppercase'}}>{activePillbox?.Name}</b> logged today
@@ -313,12 +308,12 @@ const PillboxListGroup = (props: IProps) => {
                 )}
 
                 {activePillbox?.Notes && (
-                    <ListGroup.Item style={listboxItemStyle}>{activePillbox.Notes}</ListGroup.Item>
+                    <ListGroup.Item className="pb-group-item">{activePillbox.Notes}</ListGroup.Item>
                 )}
             </ListGroup>
 
             <PillboxEdit
-                clientRecord={clientRecord}
+                clientRecord={activeClient.clientInfo}
                 onClose={(r) => {
                     setPillboxInfo(null);
                     if (r) onEdit(r);

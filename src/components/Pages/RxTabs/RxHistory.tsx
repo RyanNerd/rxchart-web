@@ -55,17 +55,12 @@ const RxHistory = (props: IProps) => {
     return (
         <>
             <MedDrugLogHistory
-                activeClient={activeClient.clientInfo}
+                activeClient={activeClient}
                 disabled={isBusy}
-                gridLists={{
-                    drugLogList: activeClient.drugLogList,
-                    pillboxList: activeClient.pillboxList,
-                    pillboxItemList: activeClient.pillboxItemList,
-                    medicineList: activeClient.medicineList.concat(otcList)
-                }}
                 onEdit={(drugLogRecord) => setShowDrugLog({...drugLogRecord})}
                 onDelete={(drugLogRecord) => setShowDeleteDrugLogRecord(drugLogRecord)}
                 onPillClick={(pillboxId) => onPillboxSelected(pillboxId)}
+                otcList={otcList}
             />
 
             <DrugLogEdit

@@ -1,7 +1,6 @@
 // noinspection JSUnusedGlobalSymbols
 
-import {IGridLists} from 'components/Pages/Grids/DrugLogGrid';
-import {ClientRecord, DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
+import {ClientRecord, DrugLogRecord, MedicineRecord} from 'types/RecordTypes';
 
 interface IKey {
     /* eslint @typescript-eslint/no-explicit-any: off */
@@ -408,21 +407,6 @@ export const multiSort = (array: IArrayGeneric, sortObject: SortObject): [] => {
         }
         return sorted;
     });
-};
-
-export const deconstructGridLists = (gridLists: IGridLists) => {
-    const {
-        drugLogList = [] as DrugLogRecord[],
-        medicineList = [] as MedicineRecord[],
-        pillboxList = [] as PillboxRecord[],
-        pillboxItemList = [] as PillboxItemRecord[]
-    } = gridLists;
-    return {
-        drugLogList,
-        medicineList,
-        pillboxList,
-        pillboxItemList
-    };
 };
 
 /**

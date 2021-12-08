@@ -129,18 +129,14 @@ const RxOtc = (props: IProps) => {
                         </h5>
                         <DrugLogGrid
                             columns={['Drug', 'Taken', 'Notes']}
+                            drugLogList={activeClient.drugLogList.filter((drug: DrugLogRecord) => {
+                                return otcList.some((m) => {
+                                    return m.Id === drug?.MedicineId;
+                                });
+                            })}
+                            medicineList={otcList}
                             onDelete={(drugLogRecord) => setShowDeleteDrugLogRecord(drugLogRecord)}
                             onEdit={(drugLogRecord) => addEditDrugLog(drugLogRecord)}
-                            gridLists={{
-                                medicineList: otcList,
-                                drugLogList: activeClient.drugLogList.filter((drug: DrugLogRecord) => {
-                                    return otcList.some((m) => {
-                                        return m.Id === drug?.MedicineId;
-                                    });
-                                }),
-                                pillboxList: undefined,
-                                pillboxItemList: undefined
-                            }}
                         />
                     </ListGroup.Item>
                 </ListGroup>
