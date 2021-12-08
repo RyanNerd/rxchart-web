@@ -1,18 +1,18 @@
-import {IGridLists} from 'components/Pages/Grids/DrugLogGrid';
 import DrugLogHistoryGrid from 'components/Pages/Grids/DrugLogHistoryGrid';
 import DisabledSpinner from 'components/Pages/ListGroups/DisabledSpinner';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import React, {useEffect, useState} from 'reactn';
-import {ClientRecord, DrugLogRecord} from 'types/RecordTypes';
-import {clientDOB, clientFullName, deconstructGridLists} from 'utility/common';
+import {TClient} from 'reactn/default';
+import {DrugLogRecord, MedicineRecord} from 'types/RecordTypes';
+import {clientDOB, clientFullName} from 'utility/common';
 
 interface IProps {
-    activeClient: ClientRecord;
-    gridLists: IGridLists;
+    activeClient: TClient;
     onDelete: (drugLogRecord: DrugLogRecord) => void;
     onEdit: (drugLogRecord: DrugLogRecord) => void;
     onPillClick: (pillboxId: number) => void;
+    otcList: MedicineRecord[];
     disabled: boolean;
 }
 
@@ -21,8 +21,7 @@ interface IProps {
  * @param {IProps} props The props for this component
  */
 const MedDrugLogHistory = (props: IProps) => {
-    const {activeClient, gridLists, onDelete, onEdit, onPillClick, disabled} = props;
-    const {drugLogList} = deconstructGridLists(gridLists);
+    const {activeClient, onDelete, onEdit, onPillClick, disabled} = props;
     const [printing, setPrinting] = useState(false);
 
     useEffect(() => {
@@ -37,7 +36,7 @@ const MedDrugLogHistory = (props: IProps) => {
         }
     }, [printing]);
 
-    const hasPillboxItems = drugLogList.some((d) => d.PillboxItemId);
+    const hasPillboxItems = activeClient.drugLogList.some((d) => d.PillboxItemId);
 
     return (
         <>
@@ -56,7 +55,7 @@ const MedDrugLogHistory = (props: IProps) => {
                             fontWeight: 'bold'
                         }}
                     >
-                        {clientFullName(activeClient) + ' DOB: ' + clientDOB(activeClient)}
+                        {clientFullName(activeClient.clientInfo) + ' DOB: ' + clientDOB(activeClient.clientInfo)}
                     </li>
 
                     <span style={{fontSize: '12px'}}>
@@ -76,7 +75,7 @@ const MedDrugLogHistory = (props: IProps) => {
 
             <div className="mt-3">
                 <DrugLogHistoryGrid
-                    gridLists={gridLists}
+                    activeClient={activeClient}
                     onDelete={(drugLogRecord) => onDelete(drugLogRecord)}
                     onEdit={(drugLogRecord) => onEdit(drugLogRecord)}
                     onPillClick={(pillboxId) => onPillClick(pillboxId)}

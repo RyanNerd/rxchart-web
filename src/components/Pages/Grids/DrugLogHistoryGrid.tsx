@@ -1,13 +1,12 @@
-import {IGridLists} from 'components/Pages/Grids/DrugLogGrid';
 import PillPopover from 'components/Pages/Grids/PillPopover';
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import React from 'reactn';
+import {TClient} from 'reactn/default';
 import {DrugLogRecord, MedicineRecord} from 'types/RecordTypes';
 import {
     calculateLastTaken,
-    deconstructGridLists,
     getBsColor,
     getFormattedDate,
     getLastTakenVariant,
@@ -16,7 +15,7 @@ import {
 } from 'utility/common';
 
 interface IProps {
-    gridLists: IGridLists;
+    activeClient: TClient;
     onDelete: (r: DrugLogRecord) => void;
     onEdit: (r: DrugLogRecord) => void;
     onPillClick: (pillboxId: number) => void;
@@ -28,8 +27,8 @@ interface IProps {
  * @returns {JSX.Element}
  */
 const DrugLogHistoryGrid = (props: IProps): JSX.Element => {
-    const {onDelete, onEdit, gridLists, onPillClick} = props;
-    const {medicineList, pillboxItemList, pillboxList, drugLogList} = deconstructGridLists(gridLists);
+    const {activeClient, onDelete, onEdit, onPillClick} = props;
+    const {medicineList, pillboxItemList, pillboxList, drugLogList} = activeClient;
 
     /**
      * Returns the value of the drug column for the given drugId

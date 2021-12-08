@@ -5,7 +5,6 @@ import React from 'reactn';
 import {DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
 import {
     calculateLastTaken,
-    deconstructGridLists,
     getBsColor,
     getFormattedDate,
     getLastTakenVariant,
@@ -13,33 +12,18 @@ import {
     isToday
 } from 'utility/common';
 
-export interface IGridLists {
-    drugLogList?: DrugLogRecord[];
-    medicineList?: MedicineRecord[];
-    pillboxItemList?: PillboxItemRecord[];
-    pillboxList?: PillboxRecord[];
-}
-
 interface IProps extends TableProps {
     checkoutOnly?: boolean;
     columns: string[];
     condensed?: string;
     drugId?: number | null;
-    gridLists: IGridLists;
+    drugLogList: DrugLogRecord[];
+    medicineList: MedicineRecord[];
     onDelete?: (r: DrugLogRecord) => void;
     onEdit?: (r: DrugLogRecord) => void;
     onPillClick?: (n: number) => void;
-}
-
-interface ITableProps extends TableProps {
-    checkoutOnly: unknown;
-    columns: unknown;
-    condensed: unknown;
-    drugId: unknown;
-    gridLists: unknown;
-    onDelete: unknown;
-    onEdit: unknown;
-    onPillClick: unknown;
+    pillboxItemList?: PillboxItemRecord[];
+    pillboxList?: PillboxRecord[];
 }
 
 /**
@@ -48,8 +32,17 @@ interface ITableProps extends TableProps {
  * @returns {JSX.Element}
  */
 const DrugLogGrid = (props: IProps): JSX.Element => {
-    const {columns, condensed = 'false', drugId, onDelete, onEdit, gridLists, onPillClick} = props;
-    const {drugLogList, medicineList, pillboxList, pillboxItemList} = deconstructGridLists(gridLists);
+    const {
+        columns = [],
+        drugId,
+        onDelete,
+        onEdit,
+        drugLogList,
+        medicineList,
+        pillboxItemList = [],
+        pillboxList = [],
+        onPillClick
+    } = props;
     const filteredDrugs = drugId ? drugLogList.filter((drug) => drug && drug.MedicineId === drugId) : drugLogList;
 
     /**
@@ -196,26 +189,8 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
         );
     };
 
-    const tableProps = {...(props as ITableProps)};
-    delete tableProps.checkoutOnly;
-    delete tableProps.columns;
-    delete tableProps.condensed;
-    delete tableProps.drugId;
-    delete tableProps.gridLists;
-    delete tableProps.onDelete;
-    delete tableProps.onEdit;
-    delete tableProps.onPillClick;
-
     return (
-        <Table
-            style={{wordWrap: 'break-word'}}
-            {...tableProps}
-            bordered
-            className={condensed !== 'false' ? 'w-auto' : ''}
-            hover
-            size="sm"
-            striped
-        >
+        <Table bordered hover size="sm" striped style={{wordWrap: 'break-word'}}>
             <thead>
                 <tr>
                     {onEdit && <th></th>}

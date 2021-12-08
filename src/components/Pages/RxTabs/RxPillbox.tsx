@@ -180,15 +180,9 @@ const RxPillbox = (props: IProps) => {
             <Row className={TabContent} noGutters>
                 <Col>
                     <PillboxListGroup
+                        activeClient={activeClient}
                         activePillbox={activePillbox}
-                        clientRecord={activeClient.clientInfo}
                         disabled={isBusy}
-                        gridLists={{
-                            medicineList: activeClient.medicineList.filter((m) => m.Active),
-                            pillboxList: activeClient.pillboxList,
-                            pillboxItemList: activeClient.pillboxItemList,
-                            drugLogList: activeClient.drugLogList
-                        }}
                         logPillbox={() => handleLogPillbox()}
                         onDelete={(pillboxId) => deletePillbox(pillboxId)}
                         onEdit={(pillboxRecord) => savePillbox(pillboxRecord)}

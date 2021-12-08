@@ -212,10 +212,13 @@ const RxMedicine = (props: IProps) => {
                             <DrugLogGrid
                                 columns={['Taken', 'Notes', 'Out', 'In']}
                                 drugId={activeMed.Id}
-                                gridLists={{medicineList, drugLogList, pillboxList, pillboxItemList}}
+                                drugLogList={drugLogList}
+                                medicineList={medicineList}
                                 onDelete={(drugLogRecord) => setShowDeleteDrugLogRecord(drugLogRecord)}
                                 onEdit={(r) => handleAddEditDrugLog(r)}
                                 onPillClick={(n) => pillboxSelected(n)}
+                                pillboxItemList={pillboxItemList}
+                                pillboxList={pillboxList}
                             />
                         )}
                     </ListGroup.Item>

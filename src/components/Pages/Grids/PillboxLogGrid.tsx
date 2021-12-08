@@ -1,12 +1,12 @@
-import {IGridLists} from 'components/Pages/Grids/DrugLogGrid';
 import PillPopover from 'components/Pages/Grids/PillPopover';
 import {TPillboxMedLog} from 'components/Pages/RxTabs/RxPillbox';
 import Table from 'react-bootstrap/Table';
 import React from 'reactn';
-import {BsColor, deconstructGridLists, randomString} from 'utility/common';
+import {TClient} from 'reactn/default';
+import {BsColor, randomString} from 'utility/common';
 
 interface IProps {
-    gridLists: IGridLists;
+    activeClient: TClient;
     pillboxMedLogList: TPillboxMedLog[];
 }
 
@@ -15,8 +15,8 @@ interface IProps {
  * @param {IProps} props The props for this component
  */
 const PillboxLogGrid = (props: IProps) => {
-    const {gridLists, pillboxMedLogList} = props;
-    const {pillboxList, pillboxItemList} = deconstructGridLists(gridLists);
+    const {activeClient, pillboxMedLogList} = props;
+    const {pillboxList, pillboxItemList} = activeClient;
 
     return (
         <Table style={{wordWrap: 'break-word'}} bordered size="sm" striped>
