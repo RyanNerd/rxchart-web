@@ -22,18 +22,18 @@ interface IProps {
 }
 
 const RxMedicine = (props: IProps) => {
-    const {mm, pillboxSelected} = props;
-    const [activeMed, setActiveMed] = useState<MedicineRecord | null>(null);
-    const [activeClient, setActiveClient] = useGlobal('activeClient');
-    const clientId = activeClient?.clientInfo.Id;
     const [, setErrorDetails] = useGlobal('__errorDetails');
+    const [activeClient, setActiveClient] = useGlobal('activeClient');
+    const [activeMed, setActiveMed] = useState<MedicineRecord | null>(null);
     const [isBusy, setIsBusy] = useState(false);
-    const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
-    const [showMedicineEdit, setShowMedicineEdit] = useState<MedicineRecord | null>(null);
     const [medItemList, setMedItemList] = useState<IDropdownItem[]>([]);
-    const {drugLogList, pillboxList, pillboxItemList, medicineList} = activeClient as TClient;
-    const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
+    const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
     const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
+    const [showMedicineEdit, setShowMedicineEdit] = useState<MedicineRecord | null>(null);
+    const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
+    const clientId = activeClient?.clientInfo.Id;
+    const {drugLogList, pillboxList, pillboxItemList, medicineList} = activeClient as TClient;
+    const {mm, pillboxSelected} = props;
 
     // Build the dropdown items for the Medicine dropdown
     useEffect(() => {
@@ -140,9 +140,9 @@ const RxMedicine = (props: IProps) => {
         setIsBusy(true);
         const medicineId = activeMed?.Id;
         const drugLogInfo = {...newDrugLogRecord};
-        drugLogInfo.ResidentId = clientId as number;
         drugLogInfo.MedicineId = medicineId as number;
         drugLogInfo.Notes = amount.toString();
+        drugLogInfo.ResidentId = clientId as number;
         saveDrugLog(drugLogInfo).then((d) => setToast([d]));
         setIsBusy(false);
     };

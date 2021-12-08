@@ -76,6 +76,25 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 }
             }
         }
+
+        // Move LandingPage tabs up for more screen real estate
+        const tabContent = document.querySelectorAll<HTMLElement>('div#root > .tab-content');
+        if (tabContent && tabContent.length > 0) {
+            tabContent[0].style.marginTop = '-15px';
+        }
+
+        // Move MedicinePage rxTabs up for more screen real estate
+        const navElement = document.querySelectorAll<HTMLElement>('div.medicine-page-tablet > nav.nav');
+        if (navElement && navElement.length > 0) {
+            navElement[0].style.marginBottom = '-15px';
+        }
+
+        // Changing padding on this tab changes it for all RxTabs. More screen real estate
+        const rxMedicineTab = document.getElementsByClassName('rx-medicine-tab');
+        if (rxMedicineTab) {
+            const rxMedTabElement = rxMedicineTab[0] as HTMLElement;
+            rxMedTabElement.style.paddingBottom = '1px';
+        }
     }, [activeClient, activeRxTab, checkoutList.length]);
 
     // If there isn't an active client, or the active tab isn't 'medicine' then do not render
@@ -84,7 +103,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const {drugLogList, pillboxList, medicineList} = activeClient;
 
     return (
-        <>
+        <div className="medicine-page-tablet">
             <Tabs
                 id="medicine-page-tabs"
                 activeKey={activeRxTab}
@@ -92,7 +111,9 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 onSelect={(key) => setActiveRxTab((key as TAB_KEY) || TAB_KEY.Medicine)}
             >
                 <Tab
+                    eventKey={TAB_KEY.Medicine}
                     style={{marginLeft: '-35px', marginRight: '1%'}}
+                    tabClassName="rx-medicine-tab"
                     title={
                         <ToggleButton
                             checked={activeRxTab === TAB_KEY.Medicine}
@@ -109,7 +130,6 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             <span className="ml-2">Medicine</span>
                         </ToggleButton>
                     }
-                    eventKey={TAB_KEY.Medicine}
                 >
                     <RxMedicine
                         mm={mm}
@@ -121,8 +141,9 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 </Tab>
 
                 <Tab
-                    style={{marginLeft: '-40px'}}
                     eventKey={TAB_KEY.OTC}
+                    style={{marginLeft: '-40px'}}
+                    tabClassName="rx-otc-tab"
                     title={
                         <ToggleButton
                             checked={activeRxTab === TAB_KEY.OTC}
@@ -144,9 +165,9 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 </Tab>
 
                 <Tab
-                    style={{marginLeft: '-40px'}}
-                    className="d-print-flex"
                     eventKey={TAB_KEY.History}
+                    style={{marginLeft: '-40px'}}
+                    tabClassName="rx-history-tab d-print-flex"
                     title={
                         <ToggleButton
                             checked={activeRxTab === TAB_KEY.History}
@@ -174,10 +195,10 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     />
                 </Tab>
 
-                {/* Show when activePillbox && activePillbox.Id */}
                 <Tab
-                    style={{marginLeft: '-40px'}}
                     eventKey={TAB_KEY.Pillbox}
+                    style={{marginLeft: '-40px'}}
+                    tabClassName="rx-pillbox-tab"
                     title={
                         <ToggleButton
                             checked={activeRxTab === TAB_KEY.Pillbox}
@@ -204,6 +225,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 </Tab>
 
                 <Tab
+                    tabClassName="rx-print-tab"
                     style={{marginLeft: '-40px'}}
                     eventKey={TAB_KEY.Print}
                     title={
@@ -230,7 +252,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                     <RxPrint activeClient={activeClient} checkoutList={checkoutList} />
                 </Tab>
             </Tabs>
-        </>
+        </div>
     );
 };
 

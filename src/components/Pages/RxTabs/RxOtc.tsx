@@ -19,16 +19,16 @@ interface IProps {
 
 const RxOtc = (props: IProps) => {
     const mm = props.mm;
-    const [activeClient, setActiveClient] = useGlobal('activeClient');
     const [, setErrorDetails] = useGlobal('__errorDetails');
-    const clientId = activeClient?.clientInfo.Id;
-    const [otcList, setOtcList] = useGlobal('otcList');
+    const [activeClient, setActiveClient] = useGlobal('activeClient');
     const [activeOtc, setActiveOtc] = useState<MedicineRecord | null>(null);
     const [isBusy, setIsBusy] = useState(false);
-    const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
-    const [showMedicineEdit, setShowMedicineEdit] = useState<MedicineRecord | null>(null);
-    const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
+    const [otcList, setOtcList] = useGlobal('otcList');
     const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
+    const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
+    const [showMedicineEdit, setShowMedicineEdit] = useState<MedicineRecord | null>(null);
+    const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
+    const clientId = activeClient?.clientInfo.Id;
 
     /**
      * Fires when the Log 1...4 buttons are clicked.
@@ -37,9 +37,9 @@ const RxOtc = (props: IProps) => {
     const handleLogOtcDrugAmount = (amount: number) => {
         const medicineId = activeOtc?.Id;
         const drugLogInfo = {...newDrugLogRecord};
-        drugLogInfo.ResidentId = clientId as number;
         drugLogInfo.MedicineId = medicineId as number;
         drugLogInfo.Notes = amount.toString();
+        drugLogInfo.ResidentId = clientId as number;
         saveDrugLog(drugLogInfo).then((r) => setToast([r]));
     };
 
@@ -121,7 +121,7 @@ const RxOtc = (props: IProps) => {
                 <ListGroup as={Col} className="ml-2">
                     <ListGroup.Item>
                         <h5 className="mb-2" style={{textAlign: 'center'}}>
-                            OTC History
+                            OTC Log History
                         </h5>
                         <DrugLogGrid
                             columns={['Drug', 'Taken', 'Notes']}

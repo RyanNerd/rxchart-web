@@ -29,13 +29,13 @@ interface IProps {
 }
 
 const RxPillbox = (props: IProps) => {
-    const mm = props.mm;
-    const activePillboxChanged = props.activePillboxChanged;
+    const [, setErrorDetails] = useGlobal('__errorDetails');
     const [activeClient, setActiveClient] = useGlobal('activeClient');
     const [isBusy, setIsBusy] = useState(false);
-    const [, setErrorDetails] = useGlobal('__errorDetails');
-    const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
     const [pillboxMedLogList, setPillboxMedLogList] = useState<TPillboxMedLog[]>([]);
+    const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
+    const activePillboxChanged = props.activePillboxChanged;
+    const mm = props.mm;
 
     const [activePillbox, setActivePillbox] = useState(props.activePillbox);
     useEffect(() => {
@@ -194,6 +194,7 @@ const RxPillbox = (props: IProps) => {
                         pillboxMedLogList={pillboxMedLogList}
                     />
                 </Col>
+
                 <ListGroup as={Col} className="ml-3">
                     {activePillbox && activePillbox.Id && (
                         <PillboxCard

@@ -15,8 +15,8 @@ const RxPrint = (props: IProps) => {
     if (activeClient === null) return null;
     return (
         <CheckoutListGroup
-            clientRecord={activeClient.clientInfo}
             checkoutList={checkoutList}
+            clientRecord={activeClient.clientInfo}
             medicineList={activeClient.medicineList}
         />
     );

@@ -15,15 +15,13 @@ interface IProps {
 }
 
 const RxHistory = (props: IProps) => {
-    const onPillboxSelected = props.onPillboxSelected;
-    const mm = props.mm;
-    const otcList = props.otcList;
+    const {mm, onPillboxSelected, otcList} = props;
+    const [, setErrorDetails] = useGlobal('__errorDetails');
     const [activeClient, setActiveClient] = useGlobal('activeClient');
+    const [isBusy, setIsBusy] = useState(false);
+    const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
     const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
     const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
-    const [isBusy, setIsBusy] = useState(false);
-    const [, setErrorDetails] = useGlobal('__errorDetails');
-    const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
 
     /**
      * Given a DrugLogRecord Update or Insert the record and rehydrate the drugLogList
@@ -68,7 +66,7 @@ const RxHistory = (props: IProps) => {
 
             <DrugLogEdit
                 drugLogInfo={showDrugLog as DrugLogRecord}
-                drugName={getMedicineRecord(showDrugLog?.MedicineId as number, medicineOtcList)?.Drug || '[unknown]'}
+                drugName={getDrugName(showDrugLog?.MedicineId as number, medicineOtcList) || '[unknown]'}
                 onClose={(drugLogRecord) => {
                     setShowDrugLog(null);
                     if (drugLogRecord)
@@ -81,11 +79,7 @@ const RxHistory = (props: IProps) => {
 
             <DeleteDrugLogModal
                 drugLogRecord={showDeleteDrugLogRecord as DrugLogRecord}
-                drugName={
-                    showDeleteDrugLogRecord
-                        ? getDrugName(showDeleteDrugLogRecord.MedicineId, medicineOtcList) || ''
-                        : ''
-                }
+                drugName={getDrugName(showDrugLog?.MedicineId as number, medicineOtcList) || '[unknown]'}
                 onSelect={(drugLogRecord) => {
                     setShowDeleteDrugLogRecord(null);
                     if (drugLogRecord)
