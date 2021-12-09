@@ -1,4 +1,5 @@
 import ClientGrid from 'components/Pages/Grids/ClientGrid';
+import ClientEdit from 'components/Pages/Modals/ClientEdit';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
@@ -9,7 +10,6 @@ import {ClientRecord, newResidentRecord} from 'types/RecordTypes';
 import {clientFullName} from 'utility/common';
 import ClientRoster from './Modals/ClientRoster';
 import Confirm from './Modals/Confirm';
-import ResidentEdit from './Modals/ResidentEdit';
 
 interface IProps {
     clientSelected: () => void;
@@ -20,7 +20,6 @@ interface IProps {
  * Display Resident Grid
  * Allow user to edit and add Clients
  * @param {IProps} props Props for the component
- * @returns {JSX.Element | null}
  */
 const ClientPage = (props: IProps): JSX.Element | null => {
     const [, setErrorDetails] = useGlobal('__errorDetails');
@@ -32,7 +31,7 @@ const ClientPage = (props: IProps): JSX.Element | null => {
     const [searchText, setSearchText] = useState('');
     const [showClientRoster, setShowClientRoster] = useState(false);
     const [showDeleteResident, setShowDeleteResident] = useState<null | ClientRecord>(null);
-    const [showResidentEdit, setShowResidentEdit] = useState<ClientRecord | null>(null);
+    const [showClientEdit, setShowClientEdit] = useState<ClientRecord | null>(null);
     const focusRef = useRef<HTMLInputElement>(null);
 
     // Filter the resident list by the search textbox value
@@ -128,7 +127,7 @@ const ClientPage = (props: IProps): JSX.Element | null => {
                     className="mr-2"
                     onClick={(e: React.MouseEvent<HTMLElement>) => {
                         e.preventDefault();
-                        setShowResidentEdit({...newResidentRecord});
+                        setShowClientEdit({...newResidentRecord});
                     }}
                 >
                     + Resident
@@ -162,17 +161,17 @@ const ClientPage = (props: IProps): JSX.Element | null => {
                 <ClientGrid
                     activeClient={activeClient}
                     onDelete={(resident: ClientRecord) => setShowDeleteResident(resident)}
-                    onEdit={(resident: ClientRecord) => setShowResidentEdit({...resident})}
+                    onEdit={(resident: ClientRecord) => setShowClientEdit({...resident})}
                     onSelected={(r) => handleOnSelected(r)}
                     residentList={filteredClients}
                 />
             </Row>
 
-            <ResidentEdit
-                residentInfo={showResidentEdit as ClientRecord}
-                show={showResidentEdit !== null}
+            <ClientEdit
+                clientInfo={showClientEdit as ClientRecord}
+                cm={cm}
                 onClose={(client) => {
-                    setShowResidentEdit(null);
+                    setShowClientEdit(null);
 
                     // Do we have a record to update or add?
                     if (client) {
@@ -207,6 +206,7 @@ const ClientPage = (props: IProps): JSX.Element | null => {
                         saveClient(client).then((c) => handleOnSelected(c));
                     }
                 }}
+                show={showClientEdit !== null}
             />
 
             {showDeleteResident && (
