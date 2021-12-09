@@ -54,6 +54,8 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
     useEffect(() => {
         const drugText = drugInfo?.Drug.split(' ')[0].trim().toLowerCase() || '';
         const existingDrugs = props?.existingDrugs || [];
+        console.log('existingDrugs', existingDrugs);
+        console.log('drugText', drugText);
         if (existingDrugs.find((e) => drugText === e.split(' ')[0].trim().split(' ')[0].toLowerCase()))
             setShowExistingDrugAlert(true);
         else setShowExistingDrugAlert(false);
@@ -195,9 +197,18 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                             Drug Name
                         </Form.Label>
                         <Col sm="6">
+                            {showExistingDrugAlert && (
+                                <Alert variant="warning" style={{textAlign: 'center'}}>
+                                    <b>Warning: </b>
+                                    <b style={{textTransform: 'capitalize'}}>{drugInfo.Drug}</b>
+                                    <span> may already exist</span>
+                                </Alert>
+                            )}
+
                             <div className={drugInfo.Drug !== '' ? '' : 'is-invalid'}>
                                 {otc ? (
                                     <Form.Control
+                                        autoComplete="off"
                                         id="otc-drug-textbox"
                                         name="Drug"
                                         onChange={(e) => handleOnChange(e)}
@@ -208,32 +219,22 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                                         ref={drugInput}
                                     />
                                 ) : (
-                                    <>
-                                        {showExistingDrugAlert && (
-                                            <Alert variant="warning" style={{textAlign: 'center'}}>
-                                                <b>Warning: </b>
-                                                <b style={{textTransform: 'capitalize'}}>{drugInfo.Drug}</b>
-                                                <span> may already exist</span>
-                                            </Alert>
-                                        )}
-
-                                        <DrugNameDropdown
-                                            onChange={(e) => setDrugInfo({...drugInfo, Drug: e.target.value})}
-                                            onSelect={(s) => {
-                                                setDrugInfo({...drugInfo, Drug: s});
-                                                // Kludge for JS stupidity focusing on wrong input
-                                                setTimeout(() => {
-                                                    strengthInput?.current?.focus();
-                                                }, 300);
-                                            }}
-                                            initialValue={drugInfo.Drug}
-                                            drugInputRef={drugInput}
-                                            style={{
-                                                backgroundColor: showExistingDrugAlert ? BsColor.warningSoft : undefined
-                                            }}
-                                            existingDrugs={existingDrugs}
-                                        />
-                                    </>
+                                    <DrugNameDropdown
+                                        onChange={(e) => setDrugInfo({...drugInfo, Drug: e.target.value})}
+                                        onSelect={(s) => {
+                                            setDrugInfo({...drugInfo, Drug: s});
+                                            // Kludge for JS stupidity focusing on wrong input
+                                            setTimeout(() => {
+                                                strengthInput?.current?.focus();
+                                            }, 300);
+                                        }}
+                                        initialValue={drugInfo.Drug}
+                                        drugInputRef={drugInput}
+                                        style={{
+                                            backgroundColor: showExistingDrugAlert ? BsColor.warningSoft : undefined
+                                        }}
+                                        existingDrugs={existingDrugs}
+                                    />
                                 )}
                             </div>
                             <div className="invalid-feedback">Drug Name cannot be blank.</div>
