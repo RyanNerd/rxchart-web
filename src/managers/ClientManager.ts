@@ -6,6 +6,7 @@ import {asyncWrapper} from 'utility/common';
 type DeleteResponse = {success: boolean};
 
 export interface IClientManager {
+    checkForDupe: (clientRecord: ClientRecord) => Promise<ClientRecord[]>;
     deleteClient: (clientId: number) => Promise<boolean>;
     loadClientList: () => Promise<ClientRecord[]>;
     loadClient: (clientId: number) => Promise<TClient>;
@@ -65,7 +66,34 @@ const ClientManager = (clientProvider: IClientProvider): IClientManager => {
         else return r;
     };
 
+    /**
+     * Given a client record check if there's a duplicate record
+     * @param {ClientRecord} client The client object
+     */
+    const _checkForDupe = async (client: ClientRecord) => {
+        const searchCriteria = {
+            where: [
+                ['FirstName', '=', client.FirstName],
+                ['LastName', '=', client.LastName],
+                ['DOB_YEAR', '=', client.DOB_YEAR],
+                ['DOB_MONTH', '=', client.DOB_MONTH],
+                ['DOB_DAY', '=', client.DOB_DAY],
+                ['Id', '<>', client.Id]
+            ],
+            withTrashed: true
+        };
+        const [e, r] = (await asyncWrapper(clientProvider.search(searchCriteria))) as [
+            unknown,
+            Promise<ClientRecord[]>
+        ];
+        if (e) throw e;
+        else return r;
+    };
+
     return <IClientManager>{
+        checkForDupe: async (clientRecord: ClientRecord): Promise<ClientRecord[]> => {
+            return await _checkForDupe(clientRecord);
+        },
         deleteClient: async (clientId: number): Promise<boolean> => {
             return await _deleteClient(clientId);
         },

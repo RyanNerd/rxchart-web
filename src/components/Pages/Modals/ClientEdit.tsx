@@ -1,3 +1,4 @@
+import {IClientManager} from 'managers/ClientManager';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
@@ -8,21 +9,24 @@ import {ClientRecord} from 'types/RecordTypes';
 import {isDateFuture, isDayValid, isMonthValid, isYearValid} from 'utility/common';
 
 interface IProps {
+    clientInfo: ClientRecord;
+    cm: IClientManager;
     onClose: (r: ClientRecord | null) => void;
-    residentInfo: ClientRecord;
     show: boolean;
 }
 
 /**
- * Edit Modal for Resident
+ * Edit Modal for Client
  * @param {IProps} props Props for the component
- * @returns {JSX.Element | null}
  */
-const ResidentEdit = (props: IProps): JSX.Element | null => {
-    const [residentInfo, setResidentInfo] = useState<ClientRecord>(props.residentInfo);
+const ClientEdit = (props: IProps): JSX.Element | null => {
+    const cm = props.cm;
+    const [isDupe, setIsDupe] = useState(false);
+
+    const [clientInfo, setClientInfo] = useState<ClientRecord>(props.clientInfo);
     useEffect(() => {
-        if (props.residentInfo) setResidentInfo({...props.residentInfo});
-    }, [props.residentInfo]);
+        if (props.clientInfo) setClientInfo({...props.clientInfo});
+    }, [props.clientInfo]);
 
     const [show, setShow] = useState(props.show);
     useEffect(() => {
@@ -32,7 +36,7 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
     const [canSave, setCanSave] = useState(true);
     useEffect(() => {
         setCanSave(document.querySelectorAll('.is-invalid')?.length === 0);
-    }, [residentInfo, setResidentInfo]);
+    }, [clientInfo, setClientInfo]);
 
     const onClose = props.onClose;
     const focusRef = useRef<HTMLInputElement>(null);
@@ -45,8 +49,8 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
         const target = e.target as HTMLInputElement;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
-        residentInfo[name] = value;
-        setResidentInfo({...residentInfo});
+        clientInfo[name] = value;
+        setClientInfo({...clientInfo});
     };
 
     /**
@@ -54,7 +58,7 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
      * @param {boolean} shouldSave Set to true if the user clicked the save button, otherwise false
      */
     const handleHide = (shouldSave: boolean) => {
-        if (shouldSave) onClose({...residentInfo});
+        if (shouldSave) onClose({...clientInfo});
         else onClose(null);
         setShow(false);
     };
@@ -64,13 +68,13 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
      * @returns {boolean} true if valid, otherwise false
      */
     const isDobValid = (): boolean => {
-        const dobYear = residentInfo.DOB_YEAR.toString();
-        const dobMonth = residentInfo.DOB_MONTH.toString();
-        const dobDay = residentInfo.DOB_DAY.toString();
+        const dobYear = clientInfo.DOB_YEAR.toString();
+        const dobMonth = clientInfo.DOB_MONTH.toString();
+        const dobDay = clientInfo.DOB_DAY.toString();
         const dob = new Date(
-            residentInfo.DOB_YEAR as number,
-            residentInfo.DOB_MONTH as number,
-            residentInfo.DOB_DAY as number
+            clientInfo.DOB_YEAR as number,
+            clientInfo.DOB_MONTH as number,
+            clientInfo.DOB_DAY as number
         );
 
         if (dobYear !== '' && dobMonth !== '' && dobDay !== '') {
@@ -85,10 +89,17 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
         }
     };
 
-    // Prevent render if there is no data.
-    if (!residentInfo) return null;
+    /**
+     * Called each time focus is changed on fields that could be a duplicate
+     */
+    const checkForDuplicates = () => {
+        cm.checkForDupe(clientInfo).then((dupe) => setIsDupe(dupe.length > 0));
+    };
 
-    const residentTitle = residentInfo.Id ? 'Edit Client' : 'Add New Client';
+    // Prevent render if there is no data.
+    if (!clientInfo) return null;
+
+    const residentTitle = clientInfo.Id ? 'Edit Client' : 'Add New Client';
 
     return (
         <Modal backdrop="static" centered onEntered={() => focusRef?.current?.focus()} show={show} size="lg">
@@ -104,13 +115,14 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                         </Form.Label>
                         <Col sm="7">
                             <Form.Control
-                                className={residentInfo.FirstName !== '' ? '' : 'is-invalid'}
+                                className={clientInfo.FirstName !== '' ? '' : 'is-invalid'}
                                 name="FirstName"
+                                onBlur={() => checkForDuplicates()}
                                 onChange={(e) => handleOnChange(e)}
                                 ref={focusRef}
                                 required
                                 type="text"
-                                value={residentInfo.FirstName}
+                                value={clientInfo.FirstName}
                             />
                             <div className="invalid-feedback">First name can not be blank.</div>
                         </Col>
@@ -122,12 +134,13 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                         </Form.Label>
                         <Col sm="7">
                             <Form.Control
-                                className={residentInfo.LastName !== '' ? '' : 'is-invalid'}
+                                className={clientInfo.LastName !== '' ? '' : 'is-invalid'}
                                 name="LastName"
+                                onBlur={() => checkForDuplicates()}
                                 onChange={(e) => handleOnChange(e)}
                                 required
                                 type="text"
-                                value={residentInfo.LastName}
+                                value={clientInfo.LastName}
                             />
                             <div className="invalid-feedback">Last name can not be blank.</div>
                         </Col>
@@ -143,7 +156,7 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                                 onChange={(e) => handleOnChange(e)}
                                 required
                                 type="text"
-                                value={residentInfo.Nickname}
+                                value={clientInfo.Nickname}
                             />
                         </Col>
                     </Form.Group>
@@ -155,12 +168,13 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                         </Form.Label>
                         <Col sm="2">
                             <Form.Control
-                                className={isMonthValid(residentInfo.DOB_MONTH.toString()) ? '' : 'is-invalid'}
+                                className={isMonthValid(clientInfo.DOB_MONTH.toString()) ? '' : 'is-invalid'}
                                 name="DOB_MONTH"
+                                onBlur={() => checkForDuplicates()}
                                 onChange={(e) => handleOnChange(e)}
                                 required
                                 type="text"
-                                value={residentInfo.DOB_MONTH}
+                                value={clientInfo.DOB_MONTH}
                             />
                             <div className="invalid-feedback">Enter the month (1-12).</div>
                         </Col>
@@ -171,15 +185,16 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                         <Col sm={2}>
                             <Form.Control
                                 className={
-                                    isDayValid(residentInfo.DOB_DAY.toString(), residentInfo.DOB_MONTH.toString())
+                                    isDayValid(clientInfo.DOB_DAY.toString(), clientInfo.DOB_MONTH.toString())
                                         ? ''
                                         : 'is-invalid'
                                 }
                                 name="DOB_DAY"
+                                onBlur={() => checkForDuplicates()}
                                 onChange={(e) => handleOnChange(e)}
                                 required
                                 type="text"
-                                value={residentInfo.DOB_DAY}
+                                value={clientInfo.DOB_DAY}
                             />
                             <div className="invalid-feedback">Enter a valid day.</div>
                         </Col>
@@ -188,12 +203,13 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                         </Form.Label>
                         <Col sm={3}>
                             <Form.Control
-                                className={isYearValid(residentInfo.DOB_YEAR.toString(), true) ? '' : 'is-invalid'}
+                                className={isYearValid(clientInfo.DOB_YEAR.toString(), true) ? '' : 'is-invalid'}
                                 name="DOB_YEAR"
+                                onBlur={() => checkForDuplicates()}
                                 onChange={(e) => handleOnChange(e)}
                                 required
                                 type="text"
-                                value={residentInfo.DOB_YEAR}
+                                value={clientInfo.DOB_YEAR}
                             />
                             <div className="invalid-feedback">Enter a valid birth year.</div>
                         </Col>
@@ -206,14 +222,14 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                         <Col sm={9}>
                             <Form.Control
                                 as="textarea"
-                                className={residentInfo?.Notes?.trim().length > 500 ? 'is-invalid' : ''}
+                                className={clientInfo?.Notes?.trim().length > 500 ? 'is-invalid' : ''}
                                 name="Notes"
                                 onChange={(e) => handleOnChange(e)}
                                 rows={4}
-                                value={residentInfo.Notes}
+                                value={clientInfo.Notes}
                             />
                             <div className="invalid-feedback">
-                                Notes can only be 500 characters long. length={residentInfo?.Notes?.trim().length}
+                                Notes can only be 500 characters long. length={clientInfo?.Notes?.trim().length}
                             </div>
                         </Col>
                     </Form.Group>
@@ -224,12 +240,21 @@ const ResidentEdit = (props: IProps): JSX.Element | null => {
                 <Button onClick={() => handleHide(false)} variant="secondary">
                     Cancel
                 </Button>
-                <Button disabled={!canSave} onClick={() => handleHide(true)} variant="primary">
+                <Button
+                    className={isDupe ? 'is-invalid' : ''}
+                    disabled={!canSave}
+                    onClick={() => handleHide(true)}
+                    style={{cursor: canSave ? 'pointer' : 'not-allowed'}}
+                    variant="primary"
+                >
                     Save changes
                 </Button>
+                <div className="invalid-feedback" style={{textAlign: 'right'}}>
+                    This client already exists
+                </div>
             </Modal.Footer>
         </Modal>
     );
 };
 
-export default ResidentEdit;
+export default ClientEdit;

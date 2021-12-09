@@ -1,7 +1,7 @@
 import ClientButton from 'components/Pages/Buttons/ClientButton';
 import ClientDobButton from 'components/Pages/Buttons/ClientDobButton';
+import ClientEdit from 'components/Pages/Modals/ClientEdit';
 import ClientRoster from 'components/Pages/Modals/ClientRoster';
-import ResidentEdit from 'components/Pages/Modals/ResidentEdit';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import React, {useEffect, useGlobal, useState} from 'reactn';
 import {ClientRecord} from 'types/RecordTypes';
@@ -104,8 +104,9 @@ const ClientHeader = () => {
                 <ClientRoster onUnload={() => setShowClientRoster(false)} clientList={[activeClient.clientInfo]} />
             )}
 
-            <ResidentEdit
-                residentInfo={clientRecord}
+            <ClientEdit
+                clientInfo={clientRecord}
+                cm={cm}
                 show={showClientEdit}
                 onClose={(client) => {
                     setShowClientEdit(false);
