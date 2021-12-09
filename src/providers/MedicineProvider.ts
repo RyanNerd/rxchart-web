@@ -36,7 +36,7 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
         /**
          * Search Interface
          * @param {object} options A multi-shaped options object when the fetch is performed
-         * @returns {Promise<MedicineRecord[]>}
+         * @returns {Promise<MedicineRecord[]>} An array of Medicine records
          */
         search: async (options: Record<string, unknown>): Promise<MedicineRecord[]> => {
             const uri = _baseUrl + 'medicine/search?api_key=' + _apiKey;
@@ -54,7 +54,7 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
         /**
          * Read interface
          * @param {string | number} id The PK of the Medicine table
-         * @returns {Promise<MedicineRecord>}
+         * @returns {Promise<MedicineRecord>} Medicine record
          */
         read: async (id: number | string): Promise<MedicineRecord> => {
             const uri = _baseUrl + 'medicine/' + id + '?api_key=' + _apiKey;
@@ -69,7 +69,7 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
         /**
          * Post interface
          * @param {MedicineRecord} medInfo The Medicine record object
-         * @returns {Promise<MedicineRecord>}
+         * @returns {Promise<MedicineRecord>} Medicine record
          */
         post: async (medInfo: MedicineRecord): Promise<MedicineRecord> => {
             const uri = _baseUrl + 'medicine?api_key=' + _apiKey;
@@ -84,7 +84,7 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
         /**
          * Delete interface
          * @param {string | number} medId The PK of the Medicine table
-         * @returns {Promise<DeleteResponse>}
+         * @returns {Promise<DeleteResponse>} Success: true/false
          */
         delete: async (medId: string | number): Promise<DeleteResponse> => {
             const uri = _baseUrl + 'medicine/' + medId + '?api_key=' + _apiKey;

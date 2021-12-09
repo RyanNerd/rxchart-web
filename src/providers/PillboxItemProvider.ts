@@ -37,7 +37,7 @@ const PillboxItemProvider = (baseurl: string): IPillboxItemProvider => {
          * Search Interface
          * @see https://www.notion.so/Willow-Framework-Users-Guide-bf56317580884ccd95ed8d3889f83c72
          * @param {object} options Multi-shaped object of options when the fetch is performed
-         * @returns {Promise<PillboxItemRecord[]>}
+         * @returns {Promise<PillboxItemRecord[]>} An array of pillbox items
          */
         search: async (options: Record<string, unknown>): Promise<PillboxItemRecord[]> => {
             const uri = _baseUrl + 'pillbox-item/search?api_key=' + _apiKey;
@@ -56,7 +56,7 @@ const PillboxItemProvider = (baseurl: string): IPillboxItemProvider => {
         /**
          * Read interface
          * @param {string | number} id The PK of the PillboxItem table
-         * @returns {Promise<PillboxItemRecord[]>}
+         * @returns {Promise<PillboxItemRecord[]>} A pillbox item record
          */
         read: async (id: string | number): Promise<PillboxItemRecord> => {
             const uri = _baseUrl + 'pillbox-item/' + id + '?api_key=' + _apiKey;
@@ -71,7 +71,7 @@ const PillboxItemProvider = (baseurl: string): IPillboxItemProvider => {
         /**
          * Post interface
          * @param {PillboxItemRecord} pillboxItemInfo The Pillbox record object
-         * @returns {Promise<PillboxItemRecord>}
+         * @returns {Promise<PillboxItemRecord>} A pillbox item record
          */
         post: async (pillboxItemInfo: PillboxItemRecord): Promise<PillboxItemRecord> => {
             const uri = _baseUrl + 'pillbox-item?api_key=' + _apiKey;
@@ -86,7 +86,7 @@ const PillboxItemProvider = (baseurl: string): IPillboxItemProvider => {
         /**
          * Delete interface
          * @param {string | number} pillboxItemId The PK of the PillboxItem table
-         * @returns {Promise<DeleteResponse>}
+         * @returns {Promise<DeleteResponse>} success: true/false
          */
         delete: async (pillboxItemId: string | number): Promise<DeleteResponse> => {
             const uri = _baseUrl + 'pillbox-item/' + pillboxItemId + '?api_key=' + _apiKey;

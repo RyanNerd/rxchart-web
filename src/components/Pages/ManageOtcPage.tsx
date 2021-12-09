@@ -16,7 +16,6 @@ interface IProps {
 /**
  * ManageOtcPage - UI for Displaying, editing and adding OTC drugs
  * @param {IProps} props The props for the component
- * @returns {JSX.Element | null}
  */
 const ManageOtcPage = (props: IProps): JSX.Element | null => {
     const [allowDelete, setAllowDelete] = useState(false);
@@ -81,7 +80,7 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
         /**
          * Given the Medicine PK return all MedHistory records
          * @param {number} medicineId The Medicine PK
-         * @returns {Promise<DrugLogRecord[]>}
+         * @returns {Promise<DrugLogRecord[]>} An array of drug log records
          */
         const getDrugLogForMedication = async (medicineId: number): Promise<DrugLogRecord[]> => {
             return await mm.loadDrugLogForMedicine(medicineId);

@@ -21,7 +21,6 @@ interface IProps {
 
 /**
  * Sign in page
- * @returns {JSX.Element | null}
  */
 const LoginPage = (props: IProps): JSX.Element | null => {
     const {activeTabKey, setActiveTabKey} = props;

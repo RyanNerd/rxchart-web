@@ -21,7 +21,6 @@ interface ITableProps extends TableProps {
 /**
  * PillboxItemGrid
  * @param {IProps} props The props for this component
- * @returns {JSX.Element}
  */
 const PillboxItemGrid = (props: IProps): JSX.Element | null => {
     const {pillboxGridItems, onEdit} = props;
@@ -31,7 +30,6 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
 
     /**
      * Child component for the table for each medicine in the pill box.
-     * @returns {JSX.Element | null}
      * @param {PillRowType} pill The pill row object
      */
     const PillRow = (pill: PillRowType): JSX.Element | null => {

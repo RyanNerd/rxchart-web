@@ -17,7 +17,6 @@ interface IProps {
 /**
  * ResidentGrid component
  * @param {IProps} props The props for this component
- * @returns {JSX.Element}
  */
 const ClientGrid = (props: IProps): JSX.Element => {
     const {activeClient, onDelete, onEdit, onSelected, residentList} = props;

@@ -12,7 +12,6 @@ interface IProps {
 /**
  * OtcListGroup Table
  * @param {IProps} props The props for this component
- * @returns {JSX.Element}
  */
 const OtcListGroupGrid = (props: IProps): JSX.Element => {
     const {onSelect, activeDrug, otcList} = props;

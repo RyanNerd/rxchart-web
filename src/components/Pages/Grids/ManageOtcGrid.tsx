@@ -13,7 +13,6 @@ interface IProps {
 /**
  * ManageOtc Table
  * @param {IProps} props The props for this component
- * @returns {JSX.Element}
  */
 const ManageOtcGrid = (props: IProps): JSX.Element => {
     const {onToggleActive, onEdit, otcList} = props;

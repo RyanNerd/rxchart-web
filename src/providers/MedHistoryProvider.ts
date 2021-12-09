@@ -37,7 +37,7 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
          * Search Interface
          * @see https://www.notion.so/Willow-Framework-Users-Guide-bf56317580884ccd95ed8d3889f83c72
          * @param {object} options A multi-shaped object used when the fetch is performed
-         * @returns {Promise<DrugLogRecord[]>}
+         * @returns {Promise<DrugLogRecord[]>} Array of drug log records
          */
         search: async (options: Record<string, unknown>): Promise<DrugLogRecord[]> => {
             const uri = _baseUrl + 'medhistory/search?api_key=' + _apiKey;
@@ -56,7 +56,7 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
         /**
          * Read interface
          * @param {string | number} id The PK of the MedHistory table
-         * @returns {Promise<DrugLogRecord[]>}
+         * @returns {Promise<DrugLogRecord[]>} Array of drug log records
          */
         read: async (id: string | number): Promise<DrugLogRecord> => {
             const uri = _baseUrl + 'medhistory/' + id + '?api_key=' + _apiKey;
@@ -71,7 +71,7 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
         /**
          * Post interface
          * @param {DrugLogRecord} drugInfo The MedHistory (drugLog) record
-         * @returns {Promise<DrugLogRecord>}
+         * @returns {Promise<DrugLogRecord>} Drug log record
          */
         post: async (drugInfo: DrugLogRecord): Promise<DrugLogRecord> => {
             const uri = _baseUrl + 'medhistory?api_key=' + _apiKey;
@@ -86,7 +86,7 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
         /**
          * Delete interface
          * @param {string | number} drugId The PK for the MedHistory table
-         * @returns {Promise<DeleteResponse>}
+         * @returns {Promise<DeleteResponse>} Success: true/false
          */
         delete: async (drugId: string | number): Promise<DeleteResponse> => {
             const uri = _baseUrl + 'medhistory/' + drugId + '?api_key=' + _apiKey;

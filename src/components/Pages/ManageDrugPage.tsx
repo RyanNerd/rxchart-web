@@ -30,7 +30,6 @@ interface IProps {
 /**
  * ManageDrugPage - UI for Displaying, editing and adding Medicine
  * @param {IProps} props The props for the component
- * @returns {JSX.Element | null}
  */
 const ManageDrugPage = (props: IProps): JSX.Element | null => {
     const [, setPillboxItemList] = useState<PillboxItemRecord[]>([]);
@@ -181,7 +180,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
     /**
      * Convenience function to get drug name
      * @param {number} medicineId The PK of the Medicine table
-     * @returns {string | undefined}
+     * @returns {string | undefined} The drug name if found, otherwise undefined
      */
     const drugName = (medicineId: number): string | undefined => {
         return getDrugName(medicineId, medicineList);

@@ -16,7 +16,6 @@ interface IProps {
 /**
  * ManageDrug Table
  * @param {IProps} props The props for this component
- * @returns {JSX.Element}
  */
 const ManageDrugGrid = (props: IProps): JSX.Element => {
     const {checkoutList, onToggleActive, onEdit, onLogDrug, medicineList} = props;

@@ -19,7 +19,6 @@ interface IProps {
 /**
  * Med Dropdown
  * @param {IProps} props The props for the component
- * @returns {JSX.Element | null}
  */
 const MedDropdown = (props: IProps): JSX.Element | null => {
     const {disabled = false, activeId, itemList, onSelect} = props;
@@ -32,7 +31,6 @@ const MedDropdown = (props: IProps): JSX.Element | null => {
     /**
      * Dropdown Items component
      * @param {IDropdownItem} i The DropDownItem object
-     * @returns {JSX.Element}
      */
     const MedDropdownItems = (i: IDropdownItem): JSX.Element => {
         if (i.id === 0) return <Dropdown.Divider key={0} />;

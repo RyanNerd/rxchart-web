@@ -34,7 +34,7 @@ const AuthenticationProvider = (url: string): IAuthenticationProvider => {
         /**
          * Post interface for authentication
          * @param {AuthCredentials} credentials The AuthCredentials object {username: string, password: string}
-         * @returns {Promise<Authenticated>}
+         * @returns {Promise<Authenticated>} Authenticated obj {success: true/false, organization: org, apiKey: API key}
          */
         post: async (credentials: AuthCredentials): Promise<Authenticated> => {
             const uri = _baseUrl + 'authenticate';

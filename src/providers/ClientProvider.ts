@@ -44,7 +44,7 @@ const ClientProvider = (url: string): IClientProvider => {
         /**
          * Search Interface
          * @param {object} options Multi shaped object for the fetch request
-         * @returns {Promise<ClientRecord[]>}
+         * @returns {Promise<ClientRecord[]>} An array of client records
          */
         search: async (options: Record<string, unknown>): Promise<ClientRecord[]> => {
             const uri = _baseUrl + 'resident/search?api_key=' + _apiKey;
@@ -63,7 +63,7 @@ const ClientProvider = (url: string): IClientProvider => {
         /**
          * Restore Interface
          * @param {number} residentId PK of the Resident table
-         * @returns {Promise<ClientRecord>}
+         * @returns {Promise<ClientRecord>} A client record
          */
         restore: async (residentId: number): Promise<ClientRecord> => {
             const uri = _baseUrl + 'resident/restore?api_key=' + _apiKey;
@@ -79,7 +79,7 @@ const ClientProvider = (url: string): IClientProvider => {
         /**
          * Read Interface
          * @param {number} id PK of the Resident table
-         * @returns {Promise<Response>}
+         * @returns {Promise<ClientRecord>} A client record
          */
         read: async (id: number): Promise<ClientRecord> => {
             const uri = _baseUrl + 'resident/' + id + '?api_key=' + _apiKey;
@@ -94,7 +94,7 @@ const ClientProvider = (url: string): IClientProvider => {
         /**
          * Post interface
          * @param {ClientRecord} residentInfo The client object
-         * @returns {Promise<ClientRecord>}
+         * @returns {Promise<ClientRecord>} A client record
          */
         post: async (residentInfo: ClientRecord): Promise<ClientRecord> => {
             const uri = _baseUrl + 'resident?api_key=' + _apiKey;
@@ -109,7 +109,7 @@ const ClientProvider = (url: string): IClientProvider => {
         /**
          * Delete interface
          * @param {number} residentId PK of the Resident table
-         * @returns {Promise<DeleteResponse>}
+         * @returns {Promise<DeleteResponse>} Success: true/false
          */
         delete: async (residentId: number): Promise<DeleteResponse> => {
             const uri = _baseUrl + 'resident/' + residentId + '?api_key=' + _apiKey;
@@ -124,7 +124,7 @@ const ClientProvider = (url: string): IClientProvider => {
         /**
          * Load all Client info as TClient type
          * @param {number} clientId PK of the Client
-         * @returns {Promise<TClient>}
+         * @returns {Promise<TClient>} A TClient object
          */
         load: async (clientId: number): Promise<TClient> => {
             const uri = _baseUrl + 'client-load/' + clientId + '?api_key=' + _apiKey;

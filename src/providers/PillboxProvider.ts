@@ -43,7 +43,7 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
         /**
          * Search Interface
          * @param {object} options A multi-shaped object indicating the options to use to fetch
-         * @returns {Promise<PillboxRecord[]>}
+         * @returns {Promise<PillboxRecord[]>} Array of Pillbox records
          */
         search: async (options: Record<string, unknown>): Promise<PillboxRecord[]> => {
             const uri = _baseUrl + 'pillbox/search?api_key=' + _apiKey;
@@ -61,7 +61,7 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
         /**
          * Read interface
          * @param {string | number} id The PK of the Pillbox table
-         * @returns {Promise<PillboxRecord>}
+         * @returns {Promise<PillboxRecord>} a pillbox record
          */
         read: async (id: number | string): Promise<PillboxRecord> => {
             const uri = _baseUrl + 'pillbox/' + id + '?api_key=' + _apiKey;
@@ -77,7 +77,7 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
         /**
          * Post interface
          * @param {PillboxRecord} pillboxInfo The Pillbox record
-         * @returns {Promise<PillboxRecord>}
+         * @returns {Promise<PillboxRecord>} A pillbox record
          */
         post: async (pillboxInfo: PillboxRecord): Promise<PillboxRecord> => {
             const uri = _baseUrl + 'pillbox?api_key=' + _apiKey;
@@ -92,8 +92,8 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
 
         /**
          * Post interface
-         * @returns {Promise<PillboxRecord>}
          * @param {number} pillboxId The PK of the Pillbox table
+         * @returns {Promise<PillboxRecord>} A pillbox record
          */
         log: async (pillboxId: number): Promise<DrugLogRecord[]> => {
             const uri = _baseUrl + 'pillbox/log?api_key=' + _apiKey;
@@ -109,7 +109,7 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
         /**
          * Delete interface
          * @param {string | number} pillboxId The PK for the Pillbox table
-         * @returns {Promise<DeleteResponse>}
+         * @returns {Promise<DeleteResponse>} Delete response {success: true/false}
          */
         delete: async (pillboxId: string | number): Promise<DeleteResponse> => {
             const uri = _baseUrl + 'pillbox/' + pillboxId + '?api_key=' + _apiKey;

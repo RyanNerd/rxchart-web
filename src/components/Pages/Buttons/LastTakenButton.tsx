@@ -9,7 +9,6 @@ interface IProps {
 /**
  * Colored button that displays Last Taken in hours.
  * @param {IProps} props The props for this component
- * @returns {JSX.Element}
  */
 const LastTakenButton = (props: IProps): JSX.Element | null => {
     const {lastTaken = null} = props;

@@ -17,7 +17,6 @@ interface IProps {
 /**
  * Edit Modal for Pillbox
  * @param {IProps} props Props for the component
- * @returns {JSX.Element | null}
  */
 const PillboxEdit = (props: IProps): JSX.Element | null => {
     const {clientRecord, onClose} = props;

@@ -27,7 +27,6 @@ interface IWillow {
 /**
  * DiagnosticPage
  * @param {IProps} props The props for this component
- * @returns {JSX.Element | null}
  */
 const DiagnosticPage = (props: IProps): JSX.Element | null => {
     const [activeTabKey] = useGlobal('activeTabKey');
@@ -39,7 +38,7 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
     /**
      * Function to create the unsafe HTML object
      * @param {string} html The HTML text to be safely rendered
-     * @returns {object}
+     * @returns {object} An object containing safe HTML
      */
     const createMarkup = (html: string): {__html: string} => {
         return {__html: html};

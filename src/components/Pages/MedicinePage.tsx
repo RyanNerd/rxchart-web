@@ -27,7 +27,6 @@ interface IProps {
 /**
  * MedicinePage - UI for logging prescription & OTC medications as well as pillboxes and medication checkout
  * @param {IProps} props The props for this component
- * @returns {JSX.Element | null}
  */
 const MedicinePage = (props: IProps): JSX.Element | null => {
     const [activeClient] = useGlobal('activeClient');
