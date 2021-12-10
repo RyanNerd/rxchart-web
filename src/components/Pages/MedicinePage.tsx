@@ -8,6 +8,7 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import React, {useEffect, useGlobal, useState} from 'reactn';
+import {IPreferences} from 'reactn/default';
 import {DrugLogRecord, PillboxRecord} from 'types/RecordTypes';
 import {getCheckoutList} from 'utility/common';
 
@@ -22,6 +23,7 @@ enum TAB_KEY {
 
 interface IProps {
     activeTabKey: string;
+    preferences: IPreferences;
 }
 
 /**
@@ -35,6 +37,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     const [checkoutList, setCheckoutList] = useState<DrugLogRecord[]>([]);
     const [mm] = useGlobal('medicineManager');
     const [otcList] = useGlobal('otcList');
+    const preferences = props.preferences;
 
     const [activeTabKey, setActiveTabKey] = useState(props.activeTabKey);
     useEffect(() => {
@@ -121,7 +124,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             key="med-list-group-med-btn"
                             name="radio-med-list-group"
                             onChange={() => setActiveRxTab(TAB_KEY.Medicine)}
-                            size="sm"
+                            size={preferences.rxTabSize}
                             type="radio"
                             value={TAB_KEY.Medicine}
                             variant="outline-success"
@@ -151,7 +154,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             key="med-list-group-otc-btn"
                             name="radio-med-list-group"
                             onChange={() => setActiveRxTab(TAB_KEY.OTC)}
-                            size="sm"
+                            size={preferences.rxTabSize}
                             type="radio"
                             value={TAB_KEY.OTC}
                             variant="outline-success"
@@ -175,7 +178,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             id="med-list-group-history-radio-btn"
                             key="med-list-group-history-btn"
                             onChange={() => setActiveRxTab(TAB_KEY.History)}
-                            size="sm"
+                            size={preferences.rxTabSize}
                             type="radio"
                             value={TAB_KEY.History}
                             variant="outline-success"
@@ -207,7 +210,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             key="med-list-group-pill-btn"
                             name="radio-med-list-group"
                             onChange={() => setActiveRxTab(TAB_KEY.Pillbox)}
-                            size="sm"
+                            size={preferences.rxTabSize}
                             type="radio"
                             value={TAB_KEY.Pillbox}
                             variant="outline-success"
@@ -236,7 +239,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                             key="med-list-group-print-btn"
                             name="radio-print-list-group"
                             onChange={() => setActiveRxTab(TAB_KEY.Print)}
-                            size="sm"
+                            size={preferences.rxTabSize}
                             type="radio"
                             value={TAB_KEY.Print}
                             variant="outline-success"

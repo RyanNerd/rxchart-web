@@ -1,9 +1,9 @@
+import {defaultPreferences} from 'components/App/App';
 import ToggleSwitch from 'components/Pages/Buttons/ToggleSwitch';
 import Container from 'react-bootstrap/Container';
 import React, {useEffect, useGlobal} from 'reactn';
 import 'styles/neumorphism/settings.css';
 import {setStickyState} from 'utility/common';
-import {defaultPreferences} from 'components/App/App';
 
 const SettingsPage = () => {
     const [preferences, setPreferences] = useGlobal('preferences');
@@ -38,7 +38,6 @@ const SettingsPage = () => {
                     <b className="row2-col1">Rx Tab Size</b>
                     <div className="row2-col2">
                         <ToggleSwitch
-                            disabled={true}
                             isChecked={preferences.rxTabSize === 'lg'}
                             onToggle={(t) => setPreferences({...preferences, rxTabSize: t ? 'lg' : 'sm'})}
                             leftText="Small"

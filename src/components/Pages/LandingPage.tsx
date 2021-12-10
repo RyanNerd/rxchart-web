@@ -63,8 +63,8 @@ const LandingPage = (props: IProps) => {
      * Memoized pages to reduce number of re-renders
      */
     const medicinePage = useMemo(() => {
-        return <MedicinePage activeTabKey={activeTabKey} />;
-    }, [activeTabKey]);
+        return <MedicinePage activeTabKey={activeTabKey} preferences={preferences} />;
+    }, [activeTabKey, preferences]);
 
     const manageDrugPage = useMemo(() => {
         return <ManageDrugPage activeTabKey={activeTabKey} />;
