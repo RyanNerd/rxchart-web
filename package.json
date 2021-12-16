@@ -19,8 +19,7 @@
     "build": "export NODE_OPTIONS=\"--max-old-space-size=1024\" && react-scripts build",
     "test": "react-scripts test",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
-    "lint": "eslint src",
-    "changelog": "git changelog --list --all"
+    "lint": "eslint src"
   },
   "eslintConfig": {
     "extends": "react-app"
