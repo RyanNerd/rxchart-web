@@ -1,6 +1,6 @@
 {
   "name": "rxchart",
-  "version": "0.11.2",
+  "version": "0.11.3",
   "private": false,
   "dependencies": {
     "bootstrap": "^4.6.1",
