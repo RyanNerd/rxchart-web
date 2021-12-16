@@ -178,7 +178,7 @@ module.exports = {
             }
         ],
         'react/jsx-wrap-multilines': 'off',
-        'require-await': 'off',
+        'require-await': 'error',
         'react-hooks/exhaustive-deps': 'error',
         semi: 'off',
         'space-before-function-paren': 'off',
