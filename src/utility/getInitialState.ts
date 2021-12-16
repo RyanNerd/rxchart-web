@@ -44,11 +44,11 @@ const getInitialState = () => {
          * @param {string} apiKey The API key as returned from the web service
          */
         setApi: async (apiKey: string): Promise<void> => {
-            providers.medHistoryProvider.setApiKey(apiKey);
-            providers.medicineProvider.setApiKey(apiKey);
-            providers.clientProvider.setApiKey(apiKey);
-            providers.pillboxProvider.setApiKey(apiKey);
-            providers.pillboxItemProvider.setApiKey(apiKey);
+            await providers.medHistoryProvider.setApiKey(apiKey);
+            await providers.medicineProvider.setApiKey(apiKey);
+            await providers.clientProvider.setApiKey(apiKey);
+            await providers.pillboxProvider.setApiKey(apiKey);
+            await providers.pillboxItemProvider.setApiKey(apiKey);
         }
     } as IProviders;
 
