@@ -48,7 +48,7 @@ const RxMedicine = (props: IProps) => {
 
             // Build the itemList with any pillboxes and meds from medicineList
             let pbCnt = 0;
-            pillboxList.forEach((p) => {
+            for (const p of pillboxList) {
                 const pbItems = pillboxItemList.filter((pbi) => pbi.PillboxId === p.Id);
                 const loggedPillboxItems = drugLogList.filter(
                     (d) => d.Updated && isToday(d.Updated) && pbItems.find((pbi) => pbi.Id === d.PillboxItemId)
@@ -61,10 +61,10 @@ const RxMedicine = (props: IProps) => {
                     }); // Pillbox have negative id
                     pbCnt++;
                 }
-            });
+            }
             if (pbCnt > 0) itemList.push({id: 0, description: 'divider', subtext: null});
 
-            medicineList.forEach((m) => {
+            for (const m of medicineList) {
                 if (m.Active) {
                     const strength = m.Strength || '';
                     const other = m.OtherNames?.length > 0 ? `(${m.OtherNames})` : null;
@@ -76,7 +76,7 @@ const RxMedicine = (props: IProps) => {
                         subtext: other
                     });
                 }
-            });
+            }
 
             // If activeMed is null, and we have med items in the list then set the initial activeMed to the first item
             if (activeMed === null && itemList.length > 0) {
@@ -104,11 +104,13 @@ const RxMedicine = (props: IProps) => {
             unknown,
             Promise<MedicineRecord[]>
         ];
-        if (errLoadMeds) await setErrorDetails(errLoadMeds);
-        else await setActiveClient({...(activeClient as TClient), medicineList: await meds});
+        await (errLoadMeds
+            ? setErrorDetails(errLoadMeds)
+            : setActiveClient({...(activeClient as TClient), medicineList: await meds}));
         const activeMeds = (await meds).filter((m) => m.Active);
+        // prettier-ignore
         setActiveMed(
-            updatedMedicineRecord.Active ? updatedMedicineRecord : activeMeds.length === 0 ? null : activeMeds[0]
+            updatedMedicineRecord.Active ? updatedMedicineRecord : (activeMeds.length === 0 ? null : activeMeds[0])
         );
         await setIsBusy(false);
     };
@@ -129,8 +131,9 @@ const RxMedicine = (props: IProps) => {
                 unknown,
                 Promise<DrugLogRecord[]>
             ];
-            if (errLoadLog) await setErrorDetails(errLoadLog);
-            else await setActiveClient({...(activeClient as TClient), drugLogList: await drugLogs});
+            await (errLoadLog
+                ? setErrorDetails(errLoadLog)
+                : setActiveClient({...(activeClient as TClient), drugLogList: await drugLogs}));
         }
         await setIsBusy(false);
         return await updatedDrugLog;
@@ -244,7 +247,7 @@ const RxMedicine = (props: IProps) => {
             />
 
             <MedicineEdit
-                allowDelete={!drugLogList.find((d) => d.MedicineId === showMedicineEdit?.Id)}
+                allowDelete={!drugLogList.some((d) => d.MedicineId === showMedicineEdit?.Id)}
                 drugInfo={showMedicineEdit as MedicineRecord}
                 existingDrugs={showMedicineEdit?.Id === null ? medicineList.map((m) => m.Drug) : []}
                 fullName={clientFullName(activeClient.clientInfo)}

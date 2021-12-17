@@ -69,7 +69,16 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
      * @param {number} medicineId The PK of the Medicine record to delete, or a zero for a NOP
      */
     const deleteOtcMedicine = async (medicineId: number) => {
-        if (medicineId > 0) if (await mm.deleteMedicine(medicineId)) await setOtcList(await mm.loadOtcList());
+        if (medicineId > 0 && (await mm.deleteMedicine(medicineId))) await setOtcList(await mm.loadOtcList());
+    };
+
+    /**
+     * Given the Medicine PK return all MedHistory records
+     * @param {number} medicineId The Medicine PK
+     * @returns {Promise<DrugLogRecord[]>} An array of drug log records
+     */
+    const getDrugLogForMedication = async (medicineId: number): Promise<DrugLogRecord[]> => {
+        return await mm.loadDrugLogForMedicine(medicineId);
     };
 
     /**
@@ -77,15 +86,6 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
      * @param {MedicineRecord | null} medicine The medicine record object for update, null indicates a new record
      */
     const onEdit = async (medicine?: MedicineRecord | null) => {
-        /**
-         * Given the Medicine PK return all MedHistory records
-         * @param {number} medicineId The Medicine PK
-         * @returns {Promise<DrugLogRecord[]>} An array of drug log records
-         */
-        const getDrugLogForMedication = async (medicineId: number): Promise<DrugLogRecord[]> => {
-            return await mm.loadDrugLogForMedicine(medicineId);
-        };
-
         const medicineInfo = medicine ? {...medicine} : {...newMedicineRecord, OTC: true};
         setMedicineInfo(medicineInfo);
 

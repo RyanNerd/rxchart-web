@@ -3,6 +3,7 @@ import {IClientManager} from 'managers/ClientManager';
 import {IMedicineManager} from 'managers/MedicineManager';
 import {Authenticated} from 'providers/AuthenticationProvider';
 import 'reactn';
+import {State} from 'reactn/default';
 import {ClientRecord, DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
 import {IProviders} from 'utility/getInitialState';
 
@@ -16,12 +17,6 @@ declare module 'reactn/default' {
         pillboxList: PillboxRecord[];
         pillboxItemList: PillboxItemRecord[];
     };
-
-    export interface Reducers {
-        append: (global: State, dispatch: Dispatch, ...strings: any[]) => Pick<State, 'value'>;
-        doNothing: (global: State, dispatch: Dispatch) => null;
-        increment: (global: State, dispatch: Dispatch, i: number) => Pick<State, 'count'>;
-    }
 
     export interface IPreferences {
         landingPageTabSize: 'lg' | 'sm';
@@ -43,4 +38,10 @@ declare module 'reactn/default' {
         signIn: Authenticated;
         value: string;
     }
+}
+
+export interface Reducers {
+    append: (global: State, dispatch: Dispatch, ...strings: unknown[]) => Pick<State, 'value'>;
+    doNothing: (global: State, dispatch: Dispatch) => null;
+    increment: (global: State, dispatch: Dispatch, i: number) => Pick<State, 'count'>;
 }

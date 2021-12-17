@@ -71,7 +71,7 @@ const ManageOtcGrid = (props: IProps): JSX.Element => {
                     <th style={{textAlign: 'center', verticalAlign: 'middle'}}>Active</th>
                 </tr>
             </thead>
-            <tbody>{otcList.map(OtcRow)}</tbody>
+            <tbody>{otcList.map((element) => OtcRow(element))}</tbody>
         </Table>
     );
 };

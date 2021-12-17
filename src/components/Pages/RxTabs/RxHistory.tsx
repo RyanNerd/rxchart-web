@@ -42,16 +42,17 @@ const RxHistory = (props: IProps) => {
             const [errLoadLog, drugLogs] = (await asyncWrapper(
                 mm.loadDrugLog(activeClient?.clientInfo?.Id as number, 5)
             )) as [unknown, Promise<DrugLogRecord[]>];
-            if (errLoadLog) await setErrorDetails(errLoadLog);
-            else await setActiveClient({...(activeClient as TClient), drugLogList: await drugLogs});
+            await (errLoadLog
+                ? setErrorDetails(errLoadLog)
+                : setActiveClient({...(activeClient as TClient), drugLogList: await drugLogs}));
         }
         await setIsBusy(false);
         return await updatedDrugLog;
     };
 
-    const medicineOtcList = activeClient?.medicineList.concat(otcList) as MedicineRecord[];
-
     if (activeClient === null) return null;
+    const medicineOtcList = [...activeClient.medicineList, ...otcList];
+
     return (
         <>
             <MedDrugLogHistory

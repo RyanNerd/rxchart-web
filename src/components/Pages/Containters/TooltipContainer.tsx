@@ -34,7 +34,7 @@ const TooltipContainer = (props: IProps) => {
         onHide = null,
         onToggle,
         placement = 'top',
-        flip = placement && placement.indexOf('auto') !== -1,
+        flip = placement && placement.includes('auto'),
         show,
         tooltip,
         trigger

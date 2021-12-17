@@ -19,7 +19,7 @@ export type PillRowType = {
  */
 const getPillboxItems = (medicineList: MedicineRecord[], pillboxItemList: PillboxItemRecord[], pillboxId: number) => {
     const pillBuild = [] as PillRowType[];
-    medicineList.forEach((m) => {
+    for (const m of medicineList) {
         const residentId = m.ResidentId as number;
         const pillboxItemRecord = pillboxItemList.find((r) => r.MedicineId === m.Id && r.PillboxId === pillboxId);
         if (pillboxItemRecord) {
@@ -43,7 +43,7 @@ const getPillboxItems = (medicineList: MedicineRecord[], pillboxItemList: Pillbo
                 Strength: m.Strength
             });
         }
-    });
+    }
 
     return multiSort(pillBuild, {Quantity: SortDirection.asc, Drug: SortDirection.desc});
 };

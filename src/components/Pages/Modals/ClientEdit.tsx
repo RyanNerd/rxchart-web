@@ -77,16 +77,9 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
             clientInfo.DOB_DAY as number
         );
 
-        if (dobYear !== '' && dobMonth !== '' && dobDay !== '') {
-            return (
-                isYearValid(dobYear, true) &&
-                isMonthValid(dobMonth) &&
-                isDayValid(dobDay, dobMonth) &&
-                !isDateFuture(dob)
-            );
-        } else {
-            return false;
-        }
+        return dobYear !== '' && dobMonth !== '' && dobDay !== ''
+            ? isYearValid(dobYear, true) && isMonthValid(dobMonth) && isDayValid(dobDay, dobMonth) && !isDateFuture(dob)
+            : false;
     };
 
     /**

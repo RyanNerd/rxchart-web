@@ -99,7 +99,7 @@ const LoginPage = (props: IProps): JSX.Element | null => {
     const signOff = async () => {
         try {
             await setGlobal(getInitialState());
-            console.log('logout successful');
+            console.log('logout successful'); // eslint-disable-line no-console
         } catch (e) {
             await setErrorDetails(e);
         }
@@ -180,7 +180,7 @@ const LoginPage = (props: IProps): JSX.Element | null => {
                     onClick={(e) => {
                         e.persist();
                         if (e.ctrlKey) {
-                            console.log('Testing Diagnostics');
+                            console.log('Testing Diagnostics'); // eslint-disable-line no-console
                             setErrorDetails(new Error('Testing error handler'));
                         } else {
                             signOff();

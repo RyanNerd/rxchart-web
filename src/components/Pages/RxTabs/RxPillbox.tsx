@@ -52,7 +52,7 @@ const RxPillbox = (props: IProps) => {
             const pillboxMedLog = [] as TPillboxMedLog[];
             const pillboxItemList = activeClient.pillboxItemList;
             const drugLogList = activeClient.drugLogList;
-            pillboxItemList.forEach((pbi) => {
+            for (const pbi of pillboxItemList) {
                 if (pbi.PillboxId === activePillbox.Id && pbi.Quantity) {
                     const drugLogRecord = drugLogList.find(
                         (dlr) =>
@@ -76,7 +76,7 @@ const RxPillbox = (props: IProps) => {
                         });
                     }
                 }
-            });
+            }
             setPillboxMedLogList(multiSort(pillboxMedLog, {Quantity: SortDirection.asc, Drug: SortDirection.desc}));
         }
     }, [activeClient, activePillbox, setPillboxMedLogList]);
@@ -98,8 +98,9 @@ const RxPillbox = (props: IProps) => {
         const [errLoadPillbox, pillboxes] = (await asyncWrapper(
             mm.loadPillboxList(activeClient?.clientInfo.Id as number)
         )) as [unknown, Promise<PillboxRecord[]>];
-        if (errLoadPillbox) await setErrorDetails(errLoadPillbox);
-        else await setActiveClient({...(activeClient as TClient), pillboxList: await pillboxes});
+        await (errLoadPillbox
+            ? setErrorDetails(errLoadPillbox)
+            : setActiveClient({...(activeClient as TClient), pillboxList: await pillboxes}));
         setIsBusy(false);
     };
 
@@ -142,8 +143,9 @@ const RxPillbox = (props: IProps) => {
             const [errLoadPills, pillboxItems] = (await asyncWrapper(
                 mm.loadPillboxItemList(activeClient?.clientInfo.Id as number)
             )) as [unknown, Promise<PillboxItemRecord[]>];
-            if (errLoadPills) await setErrorDetails(errLoadPills);
-            else await setActiveClient({...(activeClient as TClient), pillboxItemList: await pillboxItems});
+            await (errLoadPills
+                ? setErrorDetails(errLoadPills)
+                : setActiveClient({...(activeClient as TClient), pillboxItemList: await pillboxItems}));
         }
         setIsBusy(false);
     };
@@ -165,9 +167,10 @@ const RxPillbox = (props: IProps) => {
                 const [errLoadLog, drugLogs] = (await asyncWrapper(
                     mm.loadDrugLog(activeClient?.clientInfo.Id as number, 5)
                 )) as [unknown, Promise<DrugLogRecord[]>];
-                if (errLoadLog) await setErrorDetails(errLoadLog);
-                else await setActiveClient({...(activeClient as TClient), drugLogList: await drugLogs});
-                loggedPillboxDrugs.forEach((ld) => toastQ.push({...ld}));
+                await (errLoadLog
+                    ? setErrorDetails(errLoadLog)
+                    : setActiveClient({...(activeClient as TClient), drugLogList: await drugLogs}));
+                for (const ld of loggedPillboxDrugs) toastQ.push({...ld});
                 setToast(toastQ);
             }
         }

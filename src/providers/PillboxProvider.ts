@@ -1,15 +1,6 @@
 import Frak from 'frak/lib/components/Frak';
 import {DrugLogRecord, PillboxRecord} from 'types/RecordTypes';
 
-export interface IPillboxProvider {
-    setApiKey: (apiKey: string) => void;
-    search: (options: Record<string, unknown>) => Promise<PillboxRecord[]>;
-    read: (id: number | string) => Promise<PillboxRecord>;
-    post: (drugInfo: PillboxRecord) => Promise<PillboxRecord>;
-    delete: (drugId: string | number) => Promise<DeleteResponse>;
-    log: (pillboxId: number) => Promise<DrugLogRecord[]>;
-}
-
 type DeleteResponse = {success: boolean};
 type RecordResponse = {
     data: PillboxRecord[] | PillboxRecord;
@@ -22,6 +13,15 @@ type LogResponse = {
     status: number;
     data: DrugLogRecord[];
 };
+
+export interface IPillboxProvider {
+    setApiKey: (apiKey: string) => void;
+    search: (options: Record<string, unknown>) => Promise<PillboxRecord[]>;
+    read: (id: number | string) => Promise<PillboxRecord>;
+    post: (drugInfo: PillboxRecord) => Promise<PillboxRecord>;
+    delete: (drugId: string | number) => Promise<DeleteResponse>;
+    log: (pillboxId: number) => Promise<DrugLogRecord[]>;
+}
 
 /**
  * PillboxProvider API connector

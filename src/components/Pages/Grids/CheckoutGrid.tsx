@@ -141,7 +141,13 @@ const CheckoutGrid = (props: IProps): JSX.Element => {
                     </th>
                 </tr>
             </thead>
-            <tbody>{drugLog && drugLog.length && filteredDrugs ? filteredDrugs.map(DrugRow) : <></>}</tbody>
+            <tbody>
+                {drugLog && drugLog.length > 0 && filteredDrugs ? (
+                    filteredDrugs.map((element) => DrugRow(element))
+                ) : (
+                    <></>
+                )}
+            </tbody>
         </Table>
     );
 };

@@ -35,19 +35,6 @@ const RxOtc = (props: IProps) => {
     const mm = props.mm;
 
     /**
-     * Fires when the Log 1...4 buttons are clicked.
-     * @param {number} amount The number of pills (medication) taken
-     */
-    const handleLogOtcDrugAmount = (amount: number) => {
-        const medicineId = activeOtc?.Id;
-        const drugLogInfo = {...newDrugLogRecord};
-        drugLogInfo.MedicineId = medicineId as number;
-        drugLogInfo.Notes = amount.toString();
-        drugLogInfo.ResidentId = clientId as number;
-        saveDrugLog(drugLogInfo).then((r) => setToast([r]));
-    };
-
-    /**
      * Given a DrugLogRecord Update or Insert the record and rehydrate the drugLogList
      * @param {DrugLogRecord} drugLog Druglog record object
      */
@@ -63,11 +50,25 @@ const RxOtc = (props: IProps) => {
                 unknown,
                 Promise<DrugLogRecord[]>
             ];
-            if (errLoadLog) await setErrorDetails(errLoadLog);
-            else await setActiveClient({...(activeClient as TClient), drugLogList: await drugLogs});
+            await (errLoadLog
+                ? setErrorDetails(errLoadLog)
+                : setActiveClient({...(activeClient as TClient), drugLogList: await drugLogs}));
         }
         await setIsBusy(false);
         return await updatedDrugLog;
+    };
+
+    /**
+     * Fires when the Log 1...4 buttons are clicked.
+     * @param {number} amount The number of pills (medication) taken
+     */
+    const handleLogOtcDrugAmount = (amount: number) => {
+        const medicineId = activeOtc?.Id;
+        const drugLogInfo = {...newDrugLogRecord};
+        drugLogInfo.MedicineId = medicineId as number;
+        drugLogInfo.Notes = amount.toString();
+        drugLogInfo.ResidentId = clientId as number;
+        saveDrugLog(drugLogInfo).then((r) => setToast([r]));
     };
 
     /**
@@ -81,8 +82,7 @@ const RxOtc = (props: IProps) => {
         if (e) await setErrorDetails(e);
         const updatedMedicineRecord = await m;
         const [errLoadOtc, otcMeds] = (await asyncWrapper(mm.loadOtcList())) as [unknown, Promise<MedicineRecord[]>];
-        if (errLoadOtc) await setErrorDetails(errLoadOtc);
-        else await setOtcList(await otcMeds);
+        await (errLoadOtc ? setErrorDetails(errLoadOtc) : setOtcList(await otcMeds));
         setActiveOtc(updatedMedicineRecord.Active ? updatedMedicineRecord : null);
         await setIsBusy(false);
     };
@@ -103,9 +103,9 @@ const RxOtc = (props: IProps) => {
         setShowDrugLog(drugLogRecord);
     };
 
-    const medicineOtcList = activeClient?.medicineList.concat(otcList) as MedicineRecord[];
-
     if (activeClient === null) return null;
+    const medicineOtcList = [...activeClient.medicineList, ...otcList];
+
     return (
         <>
             <Row noGutters>
@@ -115,7 +115,7 @@ const RxOtc = (props: IProps) => {
                         disabled={otcList.length === 0 || isBusy}
                         drugLogList={activeClient.drugLogList}
                         editOtcMedicine={(medicineRecord) => setShowMedicineEdit(medicineRecord)}
-                        logOtcDrug={() => addEditDrugLog(undefined)}
+                        logOtcDrug={() => addEditDrugLog()}
                         logOtcDrugAmount={(n) => handleLogOtcDrugAmount(n)}
                         otcList={otcList}
                         otcSelected={(medicineRecord) => setActiveOtc(medicineRecord)}
@@ -143,7 +143,7 @@ const RxOtc = (props: IProps) => {
             </Row>
 
             <MedicineEdit
-                allowDelete={!activeClient.drugLogList.find((d) => d.MedicineId === showMedicineEdit?.Id)}
+                allowDelete={!activeClient.drugLogList.some((d) => d.MedicineId === showMedicineEdit?.Id)}
                 drugInfo={showMedicineEdit as MedicineRecord}
                 existingDrugs={showMedicineEdit?.Id === null ? otcList.map((m) => m.Drug) : []}
                 fullName={clientFullName(activeClient.clientInfo)}

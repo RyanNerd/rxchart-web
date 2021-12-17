@@ -182,7 +182,7 @@ const DrugLogHistoryGrid = (props: IProps): JSX.Element => {
                     <th></th>
                 </tr>
             </thead>
-            <tbody>{drugLogList.map(DrugRow)}</tbody>
+            <tbody>{drugLogList.map((element) => DrugRow(element))}</tbody>
         </Table>
     );
 };

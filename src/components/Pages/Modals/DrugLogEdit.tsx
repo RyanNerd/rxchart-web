@@ -59,7 +59,7 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
         const name = target.name;
         if (drugLogInfo !== null) {
             if (isNumber) {
-                const num = parseInt(value as string);
+                const num = Number.parseInt(value as string);
                 if (num <= 0) drugLogInfo[name] = null;
                 else drugLogInfo[name] = num;
             } else {
