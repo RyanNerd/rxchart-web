@@ -71,7 +71,7 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
                                 Id: pill.Id,
                                 MedicineId: pill.MedicineId,
                                 PillboxId: pillboxId,
-                                Quantity: parseInt(k || '0'),
+                                Quantity: Number.parseInt(k || '0'),
                                 ResidentId: pill.ResidentId
                             });
                         }}

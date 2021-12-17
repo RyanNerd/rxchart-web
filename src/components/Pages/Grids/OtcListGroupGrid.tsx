@@ -52,7 +52,7 @@ const OtcListGroupGrid = (props: IProps): JSX.Element => {
                     <th>Strength</th>
                 </tr>
             </thead>
-            <tbody>{otcList.map(OtcRow)}</tbody>
+            <tbody>{otcList.map((element) => OtcRow(element))}</tbody>
         </Table>
     );
 };

@@ -58,7 +58,7 @@ const CheckoutAllModal = (props: IProps) => {
                                 <span
                                     style={{
                                         textDecoration: m.Active ? undefined : 'line-through',
-                                        fontWeight: checkoutList.find((d) => m.Id === d.MedicineId) ? 'bold' : undefined
+                                        fontWeight: checkoutList.some((d) => m.Id === d.MedicineId) ? 'bold' : undefined
                                     }}
                                 >
                                     {m.Drug}

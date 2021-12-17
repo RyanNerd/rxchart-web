@@ -68,30 +68,34 @@ const ClientPage = (props: IProps): JSX.Element | null => {
     const onSelected = props.clientSelected;
 
     /**
+     * Given the client PK load the client info from the API and set as the ActiveClient
+     * @param {number} clientId Client PK
+     */
+    const refreshClient = async (clientId: number): Promise<void> => {
+        const clientLoad = await cm.loadClient(clientId);
+        try {
+            await setActiveClient({
+                ...activeClient,
+                clientInfo: clientLoad.clientInfo,
+                drugLogList: clientLoad.drugLogList,
+                medicineList: clientLoad.medicineList,
+                pillboxList: clientLoad.pillboxList,
+                pillboxItemList: clientLoad.pillboxItemList
+            });
+        } catch (e) {
+            await setErrorDetails(e);
+        }
+    };
+
+    /**
      * Fires when user clicks on the select button or if the user is trying to add an existing active client
      * @param {ClientRecord} clientRecord A ClientRecord object to set as the activeClient.clientInfo
      */
-    const handleOnSelected = (clientRecord?: ClientRecord) => {
-        const refreshClient = async (clientId: number): Promise<void> => {
-            const clientLoad = await cm.loadClient(clientId);
-            try {
-                await setActiveClient({
-                    ...activeClient,
-                    clientInfo: clientLoad.clientInfo,
-                    drugLogList: clientLoad.drugLogList,
-                    medicineList: clientLoad.medicineList,
-                    pillboxList: clientLoad.pillboxList,
-                    pillboxItemList: clientLoad.pillboxItemList
-                });
-            } catch (e) {
-                await setErrorDetails(e);
-            }
-        };
-
+    const handleOnSelected = async (clientRecord?: ClientRecord) => {
         if (clientRecord) {
-            refreshClient(clientRecord.Id as number)
-                .then(() => onSelected())
-                .then(() => setSearchText(''));
+            await refreshClient(clientRecord.Id as number);
+            onSelected();
+            setSearchText('');
         } else {
             setSearchText('');
             onSelected();
@@ -182,17 +186,17 @@ const ClientPage = (props: IProps): JSX.Element | null => {
                                 (r) =>
                                     r.FirstName.trim().toLowerCase() === client.FirstName.trim().toLowerCase() &&
                                     r.LastName.trim().toLowerCase() === client.LastName.trim().toLowerCase() &&
-                                    (typeof r.DOB_DAY === 'string' ? parseInt(r.DOB_DAY) : r.DOB_DAY) ===
+                                    (typeof r.DOB_DAY === 'string' ? Number.parseInt(r.DOB_DAY) : r.DOB_DAY) ===
                                         (typeof client.DOB_DAY === 'string'
-                                            ? parseInt(client.DOB_DAY)
+                                            ? Number.parseInt(client.DOB_DAY)
                                             : client.DOB_DAY) &&
-                                    (typeof r.DOB_MONTH === 'string' ? parseInt(r.DOB_MONTH) : r.DOB_MONTH) ===
+                                    (typeof r.DOB_MONTH === 'string' ? Number.parseInt(r.DOB_MONTH) : r.DOB_MONTH) ===
                                         (typeof client.DOB_MONTH === 'string'
-                                            ? parseInt(client.DOB_MONTH)
+                                            ? Number.parseInt(client.DOB_MONTH)
                                             : client.DOB_MONTH) &&
-                                    (typeof r.DOB_YEAR === 'string' ? parseInt(r.DOB_YEAR) : r.DOB_YEAR) ===
+                                    (typeof r.DOB_YEAR === 'string' ? Number.parseInt(r.DOB_YEAR) : r.DOB_YEAR) ===
                                         (typeof client.DOB_YEAR === 'string'
-                                            ? parseInt(client.DOB_YEAR)
+                                            ? Number.parseInt(client.DOB_YEAR)
                                             : client.DOB_YEAR)
                             );
 

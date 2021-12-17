@@ -18,26 +18,26 @@ const InitError = () => {
 };
 
 /**
+ * Fires once the App has successfully rendered logging the result to the console
+ * @param {State} initialState The global initial state
+ */
+const logAppStarted = (initialState: State) => {
+    if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+        console.log('RxChart Started', initialState); // eslint-disable-line no-console
+    } else {
+        console.log('RxChart Started'); // eslint-disable-line no-console
+    }
+};
+
+/**
  * Start the app using async/await
  */
 const startApp = async () => {
-    /**
-     * Fires once the App has successfully rendered logging the result to the console
-     * @param {State} initialState The global initial state
-     */
-    const logAppStarted = (initialState: State) => {
-        if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-            console.log('RxChart Started', initialState);
-        } else {
-            console.log('RxChart Started');
-        }
-    };
-
     try {
         const initialState = await setGlobal(getInitialState());
         ReactDOM.render(<App />, document.getElementById('root'), () => logAppStarted(initialState));
     } catch (err) {
-        console.log('Something went wrong', err);
+        console.log('Something went wrong', err); // eslint-disable-line no-console
         ReactDOM.render(<InitError />, document.getElementById('root'));
     }
 };

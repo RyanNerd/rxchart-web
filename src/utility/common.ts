@@ -1,5 +1,4 @@
 // noinspection JSUnusedGlobalSymbols
-
 import {ClientRecord, DrugLogRecord, MedicineRecord} from 'types/RecordTypes';
 
 interface IKey {
@@ -8,12 +7,12 @@ interface IKey {
 }
 
 /**
- * Given a ResidentRecord return the resident's DOB as a string.
- * @param {ClientRecord} resident The client record
- * @returns {string} Returns the DOB in the format MM/DD/YYYY
+ * Given a numeric string pad zeros to the string
+ * @param {string} num Numeric string
+ * @returns {string} The zero padded number
  */
-export const clientDOB = (resident: ClientRecord): string => {
-    return dateToString(resident.DOB_MONTH.toString(), resident.DOB_DAY.toString(), resident.DOB_YEAR.toString(), true);
+const padZero = (num: string) => {
+    return ('00' + Number.parseInt(num)).slice(-2);
 };
 
 /**
@@ -25,10 +24,16 @@ export const clientDOB = (resident: ClientRecord): string => {
  * @returns {string} Date in the format of MM/DD/YYYY or M/D/YYYY depending on if leadingZeros is true.
  */
 export const dateToString = (month: string, day: string, year: string, leadingZeros?: boolean): string => {
-    const padZero = (num: string) => {
-        return ('00' + parseInt(num)).slice(-2);
-    };
     return leadingZeros ? padZero(month) + '/' + padZero(day) + '/' + year : month + '/' + day + '/' + year;
+};
+
+/**
+ * Given a ResidentRecord return the resident's DOB as a string.
+ * @param {ClientRecord} resident The client record
+ * @returns {string} Returns the DOB in the format MM/DD/YYYY
+ */
+export const clientDOB = (resident: ClientRecord): string => {
+    return dateToString(resident.DOB_MONTH.toString(), resident.DOB_DAY.toString(), resident.DOB_YEAR.toString(), true);
 };
 
 /**
@@ -39,11 +44,9 @@ export const dateToString = (month: string, day: string, year: string, leadingZe
  */
 export const clientFullName = (resident: ClientRecord, includeNickname = false): string => {
     const clientName = resident.FirstName.trim() + ' ' + resident.LastName.trim();
-    if (includeNickname && resident?.Nickname && resident?.Nickname.trim().length > 0) {
-        return clientName + ' "' + resident.Nickname.trim() + '"';
-    } else {
-        return clientName;
-    }
+    return includeNickname && resident?.Nickname && resident?.Nickname.trim().length > 0
+        ? clientName + ' "' + resident.Nickname.trim() + '"'
+        : clientName;
 };
 
 /**
@@ -51,7 +54,16 @@ export const clientFullName = (resident: ClientRecord, includeNickname = false):
  * @returns {string} The random string
  */
 export const randomString = (): string => {
-    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    // prettier-ignore
+    return Math
+            .random()
+            .toString(36)
+            .slice(2, 15)
+            +
+            Math
+            .random()
+            .toString(36)
+            .slice(2, 15);
 };
 
 /**
@@ -67,7 +79,7 @@ export const calculateLastTaken = (drugId: number, drugLogList: DrugLogRecord[])
     if (latestDrug) {
         const date = new Date(latestDrug.Created || '');
         const latestDrugDate = Math.round(date.getTime() / 1000);
-        const now = Math.round(new Date().getTime() / 1000);
+        const now = Math.round(Date.now() / 1000);
         diff = Math.round((now - latestDrugDate) / 3600);
     } else {
         diff = null;
@@ -210,28 +222,18 @@ export const isDateFuture = (dateIn: Date): boolean => {
     //  ('00' + parseInt(num)).slice(-2);
     const nowString = nowMDY.year.toString() + ('00' + nowMDY.month).slice(-2) + ('00' + nowMDY.day).slice(-2);
     const dateString = dateMDY.year.toString() + ('00' + dateMDY.month).slice(-2) + ('00' + dateMDY.day).slice(-2);
-    return parseInt(dateString) > parseInt(nowString);
+    return Number.parseInt(dateString) > Number.parseInt(nowString);
 };
 
 /**
  * Return an object in an array that matches the object.propName === searchValue
  * @param {IKey} objectList Any array of {object}
- * @param {string} propName The property name to search for
+ * @param {string} propertyName The property name to search for
  * @param {any} searchValue The value to search for
  * @returns {Object | undefined} The object searched for or undefined if not found
  */
-export const getObjectByProperty = <T>(objectList: IKey, propName: string, searchValue: any): T | undefined => {
-    return objectList.find((obj: IKey) => obj[propName] === searchValue);
-};
-
-/**
- * Given the MedicineId, and medicineList return the name of the drug
- * @param {number} medicineId PK of the Medicine table
- * @param {MedicineRecord[]} medicineList Array of medicines
- * @returns {string | undefined} The name of the drug as a string, or undefined if not found
- */
-export const getDrugName = (medicineId: number, medicineList: MedicineRecord[]): string | undefined => {
-    return getMedicineRecord(medicineId, medicineList)?.Drug;
+export const getObjectByProperty = <T>(objectList: IKey, propertyName: string, searchValue: any): T | undefined => {
+    return objectList.find((object: IKey) => object[propertyName] === searchValue);
 };
 
 /**
@@ -245,31 +247,49 @@ export const getMedicineRecord = (medicineId: number, medicineList: MedicineReco
 };
 
 /**
+ * Given the MedicineId, and medicineList return the name of the drug
+ * @param {number} medicineId PK of the Medicine table
+ * @param {MedicineRecord[]} medicineList Array of medicines
+ * @returns {string | undefined} The name of the drug as a string, or undefined if not found
+ */
+export const getDrugName = (medicineId: number, medicineList: MedicineRecord[]): string | undefined => {
+    return getMedicineRecord(medicineId, medicineList)?.Drug;
+};
+
+/**
  * Returns a string of a drug that soft matches in the given drugList if found, otherwise returns a null;
  * @param {string} searchText The text to search for
  * @param {MedicineRecord[]} drugList Array of medicines
  * @returns {null | string} The drug that matches the search or null if no match found
  */
 export const searchDrugs = (searchText: string, drugList: MedicineRecord[]) => {
-    const textLen = searchText ? searchText.length : 0;
-    if (textLen > 0 && drugList && drugList.length > 0) {
-        let drugMatch;
-        const c = searchText.substring(0, 1);
+    const textLength = searchText ? searchText.length : 0;
+    if (textLength > 0 && drugList && drugList.length > 0) {
+        const c = searchText.slice(0, 1);
         // Is the first character a digit? If so, search the Barcode otherwise search the Drug name
-        if (c >= '0' && c <= '9') {
-            drugMatch = drugList.filter(
-                (drug) => drug.Barcode?.substr(0, textLen).toLowerCase() === searchText.toLowerCase()
-            );
-        } else {
-            drugMatch = drugList.filter(
-                (drug) => drug.Drug.substring(0, textLen).toLowerCase() === searchText.toLowerCase()
-            );
-        }
+        const drugMatch =
+            c >= '0' && c <= '9'
+                ? drugList.filter(
+                      (drug) =>
+                          drug.Barcode?.slice(0, Math.max(0, textLength)).toLowerCase() === searchText.toLowerCase()
+                  )
+                : drugList.filter(
+                      (drug) => drug.Drug.slice(0, Math.max(0, textLength)).toLowerCase() === searchText.toLowerCase()
+                  );
         if (drugMatch && drugMatch.length > 0) {
             return drugMatch[0];
         }
     }
     return null;
+};
+
+/**
+ * Given the DrugLog record determine if the drug was updated today
+ * @param {DrugLogRecord} drug The DrugLog record
+ * @returns {null | undefined | boolean} Truthy value if drug log record was updated today
+ */
+const isThisDay = (drug: DrugLogRecord) => {
+    return drug && drug.Updated && isToday(new Date(drug.Updated));
 };
 
 /**
@@ -279,9 +299,6 @@ export const searchDrugs = (searchText: string, drugList: MedicineRecord[]) => {
  */
 export const getCheckoutList = (drugLogList: DrugLogRecord[]) => {
     return drugLogList.filter((drug) => {
-        const isThisDay = (drug: DrugLogRecord) => {
-            return drug && drug.Updated && isToday(new Date(drug.Updated));
-        };
         return ((drug.Out && drug.Out > 0) || (drug.In && drug.In > 0)) && isThisDay(drug);
     });
 };
@@ -294,8 +311,8 @@ export const getCheckoutList = (drugLogList: DrugLogRecord[]) => {
  */
 export const isDayValid = (day: string, month: string): boolean => {
     let maxDay = 28;
-    const nMonth = parseInt(month);
-    const nDay = parseInt(day);
+    const nMonth = Number.parseInt(month);
+    const nDay = Number.parseInt(day);
     if (
         nMonth === 1 ||
         nMonth === 3 ||
@@ -320,7 +337,7 @@ export const isDayValid = (day: string, month: string): boolean => {
  * @returns {boolean} True if the given month is between 1 and 12.
  */
 export const isMonthValid = (month: string): boolean => {
-    return parseInt(month) >= 1 && parseInt(month) <= 12;
+    return Number.parseInt(month) >= 1 && Number.parseInt(month) <= 12;
 };
 
 /**
@@ -330,7 +347,7 @@ export const isMonthValid = (month: string): boolean => {
  * @returns {boolean} True if the given year is valid, otherwise false
  */
 export const isYearValid = (year: string, isDOB: boolean): boolean => {
-    const nYear = parseInt(year);
+    const nYear = Number.parseInt(year);
     if (isDOB) {
         const today = new Date();
         const todayYear = today.getFullYear();
@@ -342,11 +359,11 @@ export const isYearValid = (year: string, isDOB: boolean): boolean => {
 /**
  * A functional wrapper around async/await
  * @link https://dev.to/dewaldels/javascript-async-await-wrapper-22ao
- * @param {Promise<any>} fn Function to be wrapped
+ * @param {Promise<any>} function_ Function to be wrapped
  */
-export const asyncWrapper = async <T>(fn: Promise<T>) => {
+export const asyncWrapper = async <T>(function_: Promise<T>) => {
     try {
-        const data = await fn;
+        const data = await function_;
         return [null, data];
     } catch (error) {
         return [error, null];
@@ -368,6 +385,22 @@ interface IArrayGeneric {
 }
 
 /**
+ * Determine the sort direction by comparing sort key values
+ * @param {number} a Comparison number a
+ * @param {number} b Comparison number b
+ * @param {SortDirection} direction The SortDirection enum value
+ */
+const keySort = (a: number, b: number, direction: SortDirection): number => {
+    // If the values are the same, do not switch positions.
+    if (a === b) {
+        return 0;
+    }
+
+    // If `b > a`, multiply by -1 to get the reverse direction.
+    return a > b ? direction : -1 * direction;
+};
+
+/**
  * Sorts an array of objects by column/property.
  * @link https://www.golangprograms.com/javascript-sort-multi-dimensional-array-on-specific-columns.html
  * @param {[{}]} array - The array of objects.
@@ -376,22 +409,6 @@ interface IArrayGeneric {
  */
 export const multiSort = (array: IArrayGeneric, sortObject: SortObject): [] => {
     const sortKeys = Object.keys(sortObject);
-
-    /**
-     * Determine the sort direction by comparing sort key values
-     * @param {number} a Comparison number a
-     * @param {number} b Comparison number b
-     * @param {SortDirection} direction The SortDirection enum value
-     */
-    const keySort = (a: number, b: number, direction: SortDirection): number => {
-        // If the values are the same, do not switch positions.
-        if (a === b) {
-            return 0;
-        }
-
-        // If `b > a`, multiply by -1 to get the reverse direction.
-        return a > b ? direction : -1 * direction;
-    };
 
     return array.sort((a: {[x: string]: number}, b: {[x: string]: number}) => {
         let sorted = 0;
@@ -409,6 +426,15 @@ export const multiSort = (array: IArrayGeneric, sortObject: SortObject): [] => {
 };
 
 /**
+ * Get local storage value given a key.
+ * @param {string} key The key for the local storage
+ */
+export const getStickyState = (key: string) => {
+    const item = window.localStorage.getItem(key);
+    return item !== null ? JSON.parse(item) : null;
+};
+
+/**
  * Set local storage using a key getting
  * @param {string} key The key for the local storage
  * @param {any} value The value to save to local storage (internally this is saved as a JSON string)
@@ -416,15 +442,6 @@ export const multiSort = (array: IArrayGeneric, sortObject: SortObject): [] => {
 export const setStickyState = (key: string, value: unknown) => {
     window.localStorage.setItem(key, JSON.stringify(value));
     return getStickyState(key);
-};
-
-/**
- * Get local storage value given a key.
- * @param {string} key The key for the local storage
- */
-export const getStickyState = (key: string) => {
-    const item = window.localStorage.getItem(key);
-    return item !== null ? JSON.parse(item) : null;
 };
 
 /**

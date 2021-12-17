@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {IClientProvider} from 'providers/ClientProvider';
 import {TClient} from 'reactn/default';
 import {ClientRecord} from 'types/RecordTypes';

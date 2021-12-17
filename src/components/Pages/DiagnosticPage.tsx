@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/consistent-function-scoping,no-prototype-builtins */
 import Alert from 'react-bootstrap/Alert';
 import Button, {ButtonProps} from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
@@ -239,29 +240,24 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
             if (!error) return null;
 
             try {
-                console.log('Error:', error);
-                console.log('typeof error', typeof error);
+                console.log('Error:', error); // eslint-disable-line no-console
+                console.log('typeof error', typeof error); // eslint-disable-line no-console
 
                 if (content) {
                     return content;
                 }
 
                 /**
-                 * Duck 🦆 typing to figure out what type error is
+                 * Duck 🦆 typing to figure out what type the error is
                  */
-                if (error instanceof Object) {
-                    if (
-                        // eslint-disable-next-line no-prototype-builtins
-                        error.hasOwnProperty('message') &&
-                        // eslint-disable-next-line no-prototype-builtins
-                        error.hasOwnProperty('status') &&
-                        // eslint-disable-next-line no-prototype-builtins
-                        error.hasOwnProperty('timestamp') &&
-                        // eslint-disable-next-line no-prototype-builtins
-                        error.hasOwnProperty('success')
-                    ) {
-                        handleWillowError(error as IWillow);
-                    }
+                if (
+                    error instanceof Object &&
+                    error.hasOwnProperty('message') &&
+                    error.hasOwnProperty('status') &&
+                    error.hasOwnProperty('timestamp') &&
+                    error.hasOwnProperty('success')
+                ) {
+                    handleWillowError(error as IWillow);
                 }
                 if (error instanceof Response) {
                     handleResponseError(error);
@@ -270,14 +266,12 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
                     handleNativeError(error);
                 }
                 if (typeof error === 'string') {
-                    if (error.toLowerCase().includes('html')) {
-                        return handleHtmlError(error);
-                    } else {
-                        return handleNativeError(new Error(error));
-                    }
+                    return error.toLowerCase().includes('html')
+                        ? handleHtmlError(error)
+                        : handleNativeError(new Error(error));
                 }
                 return _alert(<b>Unknown Error</b>, 'Check console log.');
-            } catch (e) {
+            } catch {
                 return (
                     <>
                         <p>Error in DiagnosticsPage</p>

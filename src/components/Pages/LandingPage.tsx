@@ -43,8 +43,7 @@ const LandingPage = (props: IProps) => {
     useEffect(() => {
         const el = document.getElementById('landing-page-tabs-tab-error');
         if (el) {
-            if (errorDetails) el.style.display = 'block';
-            else el.style.display = 'none';
+            el.style.display = errorDetails ? 'block' : 'none';
         }
     }, [errorDetails]);
 

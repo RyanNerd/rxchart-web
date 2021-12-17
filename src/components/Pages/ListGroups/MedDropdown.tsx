@@ -66,7 +66,7 @@ const MedDropdown = (props: IProps): JSX.Element | null => {
             }
             variant="primary"
         >
-            {itemList.map(MedDropdownItems)}
+            {itemList.map((element) => MedDropdownItems(element))}
         </DropdownButton>
     );
 };

@@ -18,8 +18,8 @@ export const drawBarcode = (barCode: string, canvasId: string): HTMLCanvasElemen
                 textxalign: 'center' // Always good to set this
             });
         }
-    } catch (e) {
+    } catch (error) {
         // This is a non-critical error, so we just log it to the console.
-        console.log('barcode image render error', e);
+        console.log('barcode image render error', error); // eslint-disable-line no-console
     }
 };

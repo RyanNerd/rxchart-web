@@ -227,7 +227,13 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                     {onDelete && <th></th>}
                 </tr>
             </thead>
-            <tbody>{drugLogList && drugLogList.length && filteredDrugs ? filteredDrugs.map(DrugRow) : <></>}</tbody>
+            <tbody>
+                {drugLogList && drugLogList.length > 0 && filteredDrugs ? (
+                    filteredDrugs.map((element) => DrugRow(element))
+                ) : (
+                    <></>
+                )}
+            </tbody>
         </Table>
     );
 };
