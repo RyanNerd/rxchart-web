@@ -38,7 +38,7 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
     useEffect(() => {
         const canSave =
             (drugLogInfo &&
-                ((drugLogInfo.Notes && drugLogInfo.Notes.length > 0) ||
+                ((drugLogInfo.Notes && drugLogInfo.Notes.length > 0 && drugLogInfo.Notes !== '0') ||
                     (drugLogInfo.In && drugLogInfo.In > 0) ||
                     (drugLogInfo.Out && drugLogInfo.Out > 0))) ||
             false;
