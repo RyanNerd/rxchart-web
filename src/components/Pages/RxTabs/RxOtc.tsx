@@ -1,5 +1,6 @@
 import DrugLogGrid from 'components/Pages/Grids/DrugLogGrid';
 import OtcListGroup from 'components/Pages/ListGroups/OtcListGroup';
+import {TAB_KEY} from 'components/Pages/MedicinePage';
 import DeleteDrugLogModal from 'components/Pages/Modals/DeleteDrugLogModal';
 import DrugLogEdit from 'components/Pages/Modals/DrugLogEdit';
 import MedicineEdit from 'components/Pages/Modals/MedicineEdit';
@@ -8,13 +9,14 @@ import {IMedicineManager} from 'managers/MedicineManager';
 import Col from 'react-bootstrap/Col';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Row from 'react-bootstrap/Row';
-import React, {useGlobal, useState} from 'reactn';
+import React, {useEffect, useGlobal, useState} from 'reactn';
 import {TClient} from 'reactn/default';
 import {DrugLogRecord, MedicineRecord, newDrugLogRecord} from 'types/RecordTypes';
 import {asyncWrapper, clientFullName, getDrugName, getMedicineRecord} from 'utility/common';
 
 interface IProps {
     mm: IMedicineManager;
+    activeRxTab: TAB_KEY;
 }
 
 /**
@@ -33,6 +35,11 @@ const RxOtc = (props: IProps) => {
     const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
     const clientId = activeClient?.clientInfo.Id;
     const mm = props.mm;
+
+    const [activeRxTab, setActiveRxTab] = useState<TAB_KEY>(props.activeRxTab);
+    useEffect(() => {
+        setActiveRxTab(props.activeRxTab);
+    }, [props.activeRxTab]);
 
     /**
      * Given a DrugLogRecord Update or Insert the record and rehydrate the drugLogList
@@ -112,6 +119,7 @@ const RxOtc = (props: IProps) => {
                 <Col>
                     <OtcListGroup
                         activeOtc={activeOtc}
+                        activeRxTab={activeRxTab}
                         disabled={otcList.length === 0 || isBusy}
                         drugLogList={activeClient.drugLogList}
                         editOtcMedicine={(medicineRecord) => setShowMedicineEdit(medicineRecord)}

@@ -13,7 +13,7 @@ import {DrugLogRecord, PillboxRecord} from 'types/RecordTypes';
 import {getCheckoutList} from 'utility/common';
 
 // Active Rx tab states
-enum TAB_KEY {
+export enum TAB_KEY {
     History = 'history',
     Medicine = 'med',
     OTC = 'otc',
@@ -163,7 +163,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         </ToggleButton>
                     }
                 >
-                    <RxOtc mm={mm} />
+                    <RxOtc mm={mm} activeRxTab={activeRxTab} />
                 </Tab>
 
                 <Tab
