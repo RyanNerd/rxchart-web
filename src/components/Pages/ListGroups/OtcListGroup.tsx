@@ -1,5 +1,6 @@
 import OtcListGroupGrid from 'components/Pages/Grids/OtcListGroupGrid';
 import DisabledSpinner from 'components/Pages/ListGroups/DisabledSpinner';
+import {TAB_KEY} from 'components/Pages/MedicinePage';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import FormGroup from 'react-bootstrap/FormGroup';
@@ -13,6 +14,7 @@ import ShadowBox from '../Buttons/ShadowBox';
 
 interface IProps {
     activeOtc: MedicineRecord | null;
+    activeRxTab: TAB_KEY;
     disabled?: boolean;
     drugLogList: DrugLogRecord[];
     editOtcMedicine: (m: MedicineRecord) => void;
@@ -44,6 +46,12 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
     const lastTaken = activeOtc?.Id ? calculateLastTaken(activeOtc.Id, drugLogList) : null;
     const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
     const searchRef = useRef<HTMLInputElement>(null);
+
+    const [activeRxTab, setActiveRxTab] = useState<TAB_KEY>(props.activeRxTab);
+    useEffect(() => {
+        setActiveRxTab(props.activeRxTab);
+        if (props.activeRxTab === TAB_KEY.OTC) searchRef?.current?.focus();
+    }, [activeRxTab, props.activeRxTab]);
 
     // Filter the otcList by the search textbox value
     useEffect(() => {
@@ -89,6 +97,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                         <InputGroup.Prepend>
                             <Form.Control
                                 autoFocus
+                                autoComplete="off"
                                 className="mr-2"
                                 disabled={disabled}
                                 id="otc-page-search-text"
