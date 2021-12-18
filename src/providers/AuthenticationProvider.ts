@@ -1,9 +1,5 @@
 import Frak from 'frak/lib/components/Frak';
 
-export interface IAuthenticationProvider {
-    post: (credentials: AuthCredentials) => Promise<Authenticated>;
-}
-
 type AuthResponse = {
     success: boolean;
     data: {
@@ -22,6 +18,10 @@ type AuthCredentials = {
     username: string;
     password: string;
 };
+
+export interface IAuthenticationProvider {
+    post: (credentials: AuthCredentials) => Promise<Authenticated>;
+}
 
 /**
  * Authentication Provider API Connector

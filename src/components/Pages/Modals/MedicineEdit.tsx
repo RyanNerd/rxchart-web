@@ -54,9 +54,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
     useEffect(() => {
         const drugText = drugInfo?.Drug.split(' ')[0].trim().toLowerCase() || '';
         const existingDrugs = props?.existingDrugs || [];
-        console.log('existingDrugs', existingDrugs);
-        console.log('drugText', drugText);
-        if (existingDrugs.find((e) => drugText === e.split(' ')[0].trim().split(' ')[0].toLowerCase()))
+        if (existingDrugs.some((e) => drugText === e.split(' ')[0].trim().split(' ')[0].toLowerCase()))
             setShowExistingDrugAlert(true);
         else setShowExistingDrugAlert(false);
     }, [drugInfo?.Drug, props?.existingDrugs]);
@@ -81,9 +79,9 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
         // Fill date can't be in the future
         if (cnt === 3) {
             const fillDate = new Date(
-                parseInt(fillDateYear as string),
-                parseInt(fillDateMonth as string) - 1,
-                parseInt(fillDateDay as string)
+                Number.parseInt(fillDateYear as string),
+                Number.parseInt(fillDateMonth as string) - 1,
+                Number.parseInt(fillDateDay as string)
             );
             if (isDateFuture(fillDate)) cnt = 4;
         }
@@ -161,18 +159,21 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
         </Form.Group>
     );
 
+    // prettier-ignore
     const fillDateMonthValid =
-        drugInfo.FillDateMonth === '' ? '' : isMonthValid(drugInfo.FillDateMonth as string) ? '' : 'is-invalid';
+        drugInfo.FillDateMonth === '' ? '' : (isMonthValid(drugInfo.FillDateMonth as string) ? '' : 'is-invalid');
 
+    // prettier-ignore
     const fillDateDayValid =
         drugInfo.FillDateDay === ''
             ? ''
-            : isDayValid(drugInfo.FillDateDay as string, drugInfo.FillDateMonth as string)
+            : (isDayValid(drugInfo.FillDateDay as string, drugInfo.FillDateMonth as string)
             ? ''
-            : 'is-invalid';
+            : 'is-invalid');
 
+    // prettier-ignore
     const fillDateYearValid =
-        drugInfo.FillDateYear === '' ? '' : isYearValid(drugInfo.FillDateYear as string, false) ? '' : 'is-invalid';
+        drugInfo.FillDateYear === '' ? '' : (isYearValid(drugInfo.FillDateYear as string, false) ? '' : 'is-invalid');
 
     // noinspection RequiredAttributes TS/Inspector thinks <Typeahead> requires ALL attributes when this is NOT so
     return (

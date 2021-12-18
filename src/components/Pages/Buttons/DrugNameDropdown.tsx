@@ -74,11 +74,24 @@ const DrugNameDropdown = (props: IProps) => {
         if (drugNameInput.length > 1) {
             // Remove any drugs that the client already has from the suggestion list
             const existingDrugs = props.existingDrugs;
-            const drugNames = drugNameList.filter(
-                (d) =>
-                    d.toLowerCase().startsWith(drugNameInput.toLowerCase().trim()) &&
-                    !existingDrugs.some((x) => x.split(' ')[0].toLowerCase().trim().includes(d.toLowerCase()))
-            );
+            // prettier-ignore
+            const drugNames = drugNameList
+                .filter((d) => d
+                    .toLowerCase()
+                    .startsWith(
+                        drugNameInput
+                        .toLowerCase()
+                        .trim()
+                    )
+                    &&
+                    !existingDrugs
+                    .some((x) => x
+                        .split(' ')[0]
+                        .toLowerCase()
+                        .trim()
+                        .includes(d.toLowerCase())
+                    )
+                );
             setFilteredDrugNames(drugNames);
         }
     }, [drugNameInput, drugNameInput.length, props.existingDrugs]);
@@ -116,13 +129,11 @@ const DrugNameDropdown = (props: IProps) => {
             }
         }
 
-        if (filteredDrugNames.length === 0) {
-            if (e.key === 'Tab') {
-                if (drugNameInput.length > 0) {
-                    handleOnSelect(drugNameInput);
-                } else {
-                    e.preventDefault();
-                }
+        if (filteredDrugNames.length === 0 && e.key === 'Tab') {
+            if (drugNameInput.length > 0) {
+                handleOnSelect(drugNameInput);
+            } else {
+                e.preventDefault();
             }
         }
     };

@@ -2,16 +2,6 @@ import Frak from 'frak/lib/components/Frak';
 import {TClient} from 'reactn/default';
 import {ClientRecord} from 'types/RecordTypes';
 
-export interface IClientProvider {
-    delete: (residentId: number) => Promise<DeleteResponse>;
-    load: (clientId: number) => Promise<TClient>;
-    post: (residentInfo: ClientRecord) => Promise<ClientRecord>;
-    read: (id: number) => Promise<ClientRecord>;
-    restore: (residentId: number) => Promise<ClientRecord>;
-    search: (options: Record<string, unknown>) => Promise<ClientRecord[]>;
-    setApiKey: (apiKey: string) => void;
-}
-
 type DeleteResponse = {success: boolean};
 type RecordResponse = {
     data: ClientRecord[] | ClientRecord;
@@ -23,6 +13,16 @@ type LoadResponse = {
     data: TClient;
     success: boolean;
 };
+
+export interface IClientProvider {
+    delete: (residentId: number) => Promise<DeleteResponse>;
+    load: (clientId: number) => Promise<TClient>;
+    post: (residentInfo: ClientRecord) => Promise<ClientRecord>;
+    read: (id: number) => Promise<ClientRecord>;
+    restore: (residentId: number) => Promise<ClientRecord>;
+    search: (options: Record<string, unknown>) => Promise<ClientRecord[]>;
+    setApiKey: (apiKey: string) => void;
+}
 
 /**
  * ResidentProvider API service connector

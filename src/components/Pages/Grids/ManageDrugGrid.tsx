@@ -88,7 +88,7 @@ const ManageDrugGrid = (props: IProps): JSX.Element => {
                     <th style={{textAlign: 'center', verticalAlign: 'middle'}}>Active</th>
                 </tr>
             </thead>
-            <tbody>{medicineList.map(TableRow)}</tbody>
+            <tbody>{medicineList.map((element) => TableRow(element))}</tbody>
         </Table>
     );
 };

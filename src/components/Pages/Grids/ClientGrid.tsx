@@ -110,7 +110,7 @@ const ClientGrid = (props: IProps): JSX.Element => {
                     {onDelete && <th />}
                 </tr>
             </thead>
-            <tbody>{residentList.length > 0 && residentList.map(ResidentRow)}</tbody>
+            <tbody>{residentList.length > 0 && residentList.map((element) => ResidentRow(element))}</tbody>
         </Table>
     );
 };

@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/consistent-function-scoping */
 import TooltipContainer from 'components/Pages/Containters/TooltipContainer';
 import ManageDrugGrid from 'components/Pages/Grids/ManageDrugGrid';
 import CheckoutListGroup from 'components/Pages/ListGroups/CheckoutListGroup';
@@ -97,7 +98,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
     const logAllDrugsCheckedOut = () => {
         const clientId = clientInfo.Id as number;
         const toastQ = [] as DrugLogRecord[];
-        medicineList.forEach((m) => {
+        for (const m of medicineList) {
             if (m.Active) {
                 const drugLog = {...newDrugLogRecord};
                 drugLog.Out = 1;
@@ -106,7 +107,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
                 drugLog.ResidentId = clientId;
                 toastQ.push(drugLog);
             }
-        });
+        }
 
         if (toastQ.length > 0) {
             saveDrugLog(toastQ, clientId)
@@ -254,7 +255,7 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
             )}
 
             <MedicineEdit
-                allowDelete={!drugLogList.find((d) => d.MedicineId === medicineInfo?.Id)}
+                allowDelete={!drugLogList.some((d) => d.MedicineId === medicineInfo?.Id)}
                 drugInfo={medicineInfo as MedicineRecord}
                 existingDrugs={medicineInfo?.Id === null ? medicineList.map((m) => m.Drug) : []}
                 fullName={clientFullName(clientInfo)}

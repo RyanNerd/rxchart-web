@@ -52,7 +52,7 @@ const PillboxListGroup = (props: IProps) => {
         pillboxMedLogList
     } = props;
 
-    const {pillboxList, pillboxItemList, medicineList} = activeClient;
+    const {pillboxList, pillboxItemList, medicineList, clientInfo} = activeClient;
     const firstLoggedPillbox = pillboxMedLogList.find((p) => p.Updated)?.Updated;
     const logTime = firstLoggedPillbox
         ? new Date(firstLoggedPillbox).toLocaleString('en-US', {
@@ -63,7 +63,7 @@ const PillboxListGroup = (props: IProps) => {
         : null;
     const [showPillboxDeleteConfirm, setShowPillboxDeleteConfirm] = useState(false);
     const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord | null>(null);
-    const clientId = activeClient.clientInfo.Id;
+    const clientId = clientInfo.Id;
 
     const [showAlert, setShowAlert] = useState(false);
     useEffect(() => {
@@ -89,7 +89,7 @@ const PillboxListGroup = (props: IProps) => {
     // Build out the pillbox line items content
     const drugsInThePillbox = activePillbox?.Id ? getDrugsInThePillbox() : [];
     const pillboxLineItems: IPillboxLineItem[] = [];
-    drugsInThePillbox.forEach((d) => {
+    for (const d of drugsInThePillbox) {
         const medicineRecord = getMedicineRecord(
             d.MedicineId,
             medicineList.filter((m) => m.Active)
@@ -100,7 +100,7 @@ const PillboxListGroup = (props: IProps) => {
             const qty = d.Quantity;
             pillboxLineItems.push({Id: d.Id, Drug: drugName, Strength: strength, Qty: qty});
         }
-    });
+    }
 
     /**
      * Pillbox RadioButton component
@@ -164,7 +164,11 @@ const PillboxListGroup = (props: IProps) => {
                 >
                     <ul>
                         {pillboxLineItems.length > 0 ? (
-                            <>{multiSort(pillboxLineItems, {Drug: SortDirection.desc}).map(PillboxLineItem)}</>
+                            <>
+                                {multiSort(pillboxLineItems, {Drug: SortDirection.desc}).map((element) =>
+                                    PillboxLineItem(element)
+                                )}
+                            </>
                         ) : (
                             <>
                                 <li style={{listStyleType: 'none'}}>
@@ -274,7 +278,9 @@ const PillboxListGroup = (props: IProps) => {
                     <ListGroup.Item>
                         <Row noGutters>
                             <Col xl={5}>
-                                <ButtonGroup vertical>{pillboxList.map(PillboxRadioButton)}</ButtonGroup>
+                                <ButtonGroup vertical>
+                                    {pillboxList.map((element) => PillboxRadioButton(element))}
+                                </ButtonGroup>
                             </Col>
 
                             <Col xl={7}>
@@ -313,7 +319,7 @@ const PillboxListGroup = (props: IProps) => {
             </ListGroup>
 
             <PillboxEdit
-                clientRecord={activeClient.clientInfo}
+                clientRecord={clientInfo}
                 onClose={(r) => {
                     setPillboxInfo(null);
                     if (r) onEdit(r);
