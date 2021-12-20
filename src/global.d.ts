@@ -43,5 +43,5 @@ declare module 'reactn/default' {
 export interface Reducers {
     append: (global: State, dispatch: Dispatch, ...strings: unknown[]) => Pick<State, 'value'>;
     doNothing: (global: State, dispatch: Dispatch) => null;
-    increment: (global: State, dispatch: Dispatch, i: number) => Pick<State, 'count'>;
+    increment: (global: State, dispatch: Dispatch, index: number) => Pick<State, 'count'>;
 }

@@ -27,8 +27,8 @@ const ClientRoster = (props: IProps) => {
 
     useEffect(() => {
         if (printWindow) {
-            const handleAfterPrint = (e: Event) => {
-                e.preventDefault();
+            const handleAfterPrint = (event: Event) => {
+                event.preventDefault();
                 printWindow.close();
             };
 

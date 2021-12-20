@@ -36,11 +36,11 @@ const LoginPage = (props: IProps): JSX.Element | null => {
     const [showAboutPage, setShowAboutPage] = useState(false);
     const [signIn, setSignIn] = useGlobal('signIn');
     const [username, setUsername] = useState('');
-    const focusRef = useRef<HTMLInputElement>(null);
+    const focusReference = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        if (activeTabKey === 'login') focusRef?.current?.focus();
-    }, [focusRef, activeTabKey]);
+        if (activeTabKey === 'login') focusReference?.current?.focus();
+    }, [focusReference, activeTabKey]);
 
     useEffect(() => {
         setCanLogin(!(!username || username.length === 0 || !password || password.length === 0));
@@ -53,32 +53,32 @@ const LoginPage = (props: IProps): JSX.Element | null => {
      * Perform the authentication by calling the web service to validate the username and password.
      */
     const authenticate = async () => {
-        const [e, auth] = (await asyncWrapper(am.authenticate(username, password))) as [
+        const [errorAuth, auth] = (await asyncWrapper(am.authenticate(username, password))) as [
             unknown,
             Promise<Authenticated>
         ];
-        if (e) await setErrorDetails(e);
+        if (errorAuth) await setErrorDetails(errorAuth);
         else {
-            const [eAuth, result] = (await asyncWrapper(auth)) as [unknown, Authenticated];
-            if (eAuth) await setErrorDetails(eAuth);
+            const [errorAuthenticated, result] = (await asyncWrapper(auth)) as [unknown, Authenticated];
+            if (errorAuthenticated) await setErrorDetails(errorAuthenticated);
             else {
                 if (result.success && result.apiKey) {
-                    const [e] = await asyncWrapper(providers.setApi(result.apiKey));
-                    if (e) await setErrorDetails(e);
+                    const [errorSetApi] = await asyncWrapper(providers.setApi(result.apiKey));
+                    if (errorSetApi) await setErrorDetails(errorSetApi);
                     else {
                         // Load ALL Resident records up front and save them in the global store.
-                        const [errLoadClients, clients] = (await asyncWrapper(cm.loadClientList())) as [
+                        const [errorLoadClients, clients] = (await asyncWrapper(cm.loadClientList())) as [
                             unknown,
                             Promise<ClientRecord[]>
                         ];
-                        if (errLoadClients) await setErrorDetails(errLoadClients);
+                        if (errorLoadClients) await setErrorDetails(errorLoadClients);
                         else {
                             await setClientList(await clients);
-                            const [errLoadOtc, otcMeds] = (await asyncWrapper(mm.loadOtcList())) as [
+                            const [errorLoadOtc, otcMeds] = (await asyncWrapper(mm.loadOtcList())) as [
                                 unknown,
                                 Promise<MedicineRecord[]>
                             ];
-                            if (errLoadOtc) await setErrorDetails(errLoadOtc);
+                            if (errorLoadOtc) await setErrorDetails(errorLoadOtc);
                             else {
                                 await setOtcList(await otcMeds);
                                 await setSignIn(result);
@@ -100,8 +100,8 @@ const LoginPage = (props: IProps): JSX.Element | null => {
         try {
             await setGlobal(getInitialState());
             console.log('logout successful'); // eslint-disable-line no-console
-        } catch (e) {
-            await setErrorDetails(e);
+        } catch (error) {
+            await setErrorDetails(error);
         }
     };
 
@@ -118,9 +118,9 @@ const LoginPage = (props: IProps): JSX.Element | null => {
                     <input
                         autoFocus
                         className="ml-3 mb3"
-                        onChange={(e) => setUsername(e.target.value)}
+                        onChange={(changeEvnet) => setUsername(changeEvnet.target.value)}
                         placeholder="Username"
-                        ref={focusRef}
+                        ref={focusReference}
                         required
                         type="text"
                         value={username}
@@ -130,9 +130,9 @@ const LoginPage = (props: IProps): JSX.Element | null => {
                     <LockIcon className="ml-4" style={{marginTop: '12px'}} />
                     <input
                         className="ml-3"
-                        onChange={(e) => setPassword(e.target.value)}
-                        onKeyUp={(e: React.KeyboardEvent<HTMLElement>) => {
-                            if (e.key === 'Enter') authenticate();
+                        onChange={(changeEvent) => setPassword(changeEvent.target.value)}
+                        onKeyUp={(keyboardEvent: React.KeyboardEvent<HTMLElement>) => {
+                            if (keyboardEvent.key === 'Enter') authenticate();
                         }}
                         placeholder="Password"
                         type="password"
@@ -152,7 +152,7 @@ const LoginPage = (props: IProps): JSX.Element | null => {
                     dismissible
                     onClose={() => {
                         setSignIn({apiKey: null, success: null, organization: null});
-                        focusRef?.current?.focus();
+                        focusReference?.current?.focus();
                     }}
                     show={signIn.success !== null && !signIn.success}
                     variant="warning"
@@ -177,9 +177,9 @@ const LoginPage = (props: IProps): JSX.Element | null => {
 
                 <button
                     className="neu-button"
-                    onClick={(e) => {
-                        e.persist();
-                        if (e.ctrlKey) {
+                    onClick={(mouseEvent) => {
+                        mouseEvent.persist();
+                        if (mouseEvent.ctrlKey) {
                             console.log('Testing Diagnostics'); // eslint-disable-line no-console
                             setErrorDetails(new Error('Testing error handler'));
                         } else {

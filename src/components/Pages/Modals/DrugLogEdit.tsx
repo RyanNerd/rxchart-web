@@ -50,18 +50,18 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
 
     /**
      * Fires when a text field or checkbox is changing.
-     * @param {React.KeyboardEvent<HTMLElement>} e Keyboard event object
+     * @param {React.KeyboardEvent<HTMLElement>} changeEvent Keyboard event object
      * @param {boolean} isNumber True if the expected input is numeric
      */
-    const handleOnChange = (e: React.ChangeEvent<HTMLElement>, isNumber?: boolean) => {
-        const target = e.target as HTMLInputElement;
+    const handleOnChange = (changeEvent: React.ChangeEvent<HTMLElement>, isNumber?: boolean) => {
+        const target = changeEvent.target as HTMLInputElement;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
         if (drugLogInfo !== null) {
             if (isNumber) {
-                const num = Number.parseInt(value as string);
-                if (num <= 0) drugLogInfo[name] = null;
-                else drugLogInfo[name] = num;
+                const n = Number.parseInt(value as string);
+                if (n <= 0) drugLogInfo[name] = null;
+                else drugLogInfo[name] = n;
             } else {
                 drugLogInfo[name] = value;
             }
@@ -103,7 +103,7 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
                             <Form.Control
                                 as="textarea"
                                 name="Notes"
-                                onChange={(e) => handleOnChange(e)}
+                                onChange={(changeEvent) => handleOnChange(changeEvent)}
                                 ref={textInput}
                                 value={drugLogInfo.Notes as string}
                             />
@@ -119,7 +119,7 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
                                 <Col md="8">
                                     <Form.Control
                                         name="Out"
-                                        onChange={(e) => handleOnChange(e, true)}
+                                        onChange={(changeEvent) => handleOnChange(changeEvent, true)}
                                         type="number"
                                         value={drugLogInfo.Out || undefined}
                                     />
@@ -133,7 +133,7 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
                                 <Col md="8">
                                     <Form.Control
                                         name="In"
-                                        onChange={(e) => handleOnChange(e, true)}
+                                        onChange={(changeEvent) => handleOnChange(changeEvent, true)}
                                         type="number"
                                         value={drugLogInfo.In || undefined}
                                     />

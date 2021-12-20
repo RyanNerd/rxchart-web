@@ -101,12 +101,12 @@ const DiagnosticPage = (props: IProps): JSX.Element | null => {
 
             /**
              * Handler for when error is an instance of Error
-             * @param {Error} err Error object
+             * @param {Error} error Error object
              */
-            const handleNativeError = (err: Error) => {
-                const message = err.message;
-                const name = err.name;
-                const stack = err?.stack;
+            const handleNativeError = (error: Error) => {
+                const message = error.message;
+                const name = error.name;
+                const stack = error?.stack;
                 const body = (
                     <>
                         <p>{message}</p>

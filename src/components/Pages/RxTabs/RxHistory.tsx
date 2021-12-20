@@ -33,17 +33,17 @@ const RxHistory = (props: IProps) => {
      */
     const saveDrugLog = async (drugLog: DrugLogRecord): Promise<DrugLogRecord> => {
         await setIsBusy(true);
-        const [e, updatedDrugLog] = (await asyncWrapper(mm.updateDrugLog(drugLog))) as [
+        const [errorUpdateDrugLog, updatedDrugLog] = (await asyncWrapper(mm.updateDrugLog(drugLog))) as [
             unknown,
             Promise<DrugLogRecord>
         ];
-        if (e) await setErrorDetails(e);
+        if (errorUpdateDrugLog) await setErrorDetails(errorUpdateDrugLog);
         else {
-            const [errLoadLog, drugLogs] = (await asyncWrapper(
+            const [errorLoadDrugLog, drugLogs] = (await asyncWrapper(
                 mm.loadDrugLog(activeClient?.clientInfo?.Id as number, 5)
             )) as [unknown, Promise<DrugLogRecord[]>];
-            await (errLoadLog
-                ? setErrorDetails(errLoadLog)
+            await (errorLoadDrugLog
+                ? setErrorDetails(errorLoadDrugLog)
                 : setActiveClient({...(activeClient as TClient), drugLogList: await drugLogs}));
         }
         await setIsBusy(false);

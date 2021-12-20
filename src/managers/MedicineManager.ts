@@ -42,8 +42,11 @@ const MedicineManager = (
      * @param {number} drugLogId The PK of the MedHistory table
      */
     const _deleteDrugLog = async (drugLogId: number) => {
-        const [e, r] = (await asyncWrapper(medHistoryProvider.delete(drugLogId))) as [unknown, Promise<DeleteResponse>];
-        if (e) throw e;
+        const [error, r] = (await asyncWrapper(medHistoryProvider.delete(drugLogId))) as [
+            unknown,
+            Promise<DeleteResponse>
+        ];
+        if (error) throw error;
         else return (await r).success;
     };
 
@@ -52,8 +55,11 @@ const MedicineManager = (
      * @param {number} medicineId The PK of the Medicine table
      */
     const _deleteMedicine = async (medicineId: number) => {
-        const [e, r] = (await asyncWrapper(medicineProvider.delete(medicineId))) as [unknown, Promise<DeleteResponse>];
-        if (e) throw e;
+        const [error, r] = (await asyncWrapper(medicineProvider.delete(medicineId))) as [
+            unknown,
+            Promise<DeleteResponse>
+        ];
+        if (error) throw error;
         else return (await r).success;
     };
 
@@ -62,8 +68,11 @@ const MedicineManager = (
      * @param {number} pillboxId The PK of the Pillbox table
      */
     const _deletePillbox = async (pillboxId: number) => {
-        const [e, r] = (await asyncWrapper(pillboxProvider.delete(pillboxId))) as [unknown, Promise<DeleteResponse>];
-        if (e) throw e;
+        const [error, r] = (await asyncWrapper(pillboxProvider.delete(pillboxId))) as [
+            unknown,
+            Promise<DeleteResponse>
+        ];
+        if (error) throw error;
         else return (await r).success;
     };
 
@@ -72,11 +81,11 @@ const MedicineManager = (
      * @param {number} pillboxItemId The PK of the PillboxItem table
      */
     const _deletePillboxItem = async (pillboxItemId: number) => {
-        const [e, r] = (await asyncWrapper(pillboxProvider.delete(pillboxItemId))) as [
+        const [error, r] = (await asyncWrapper(pillboxProvider.delete(pillboxItemId))) as [
             unknown,
             Promise<DeleteResponse>
         ];
-        if (e) throw e;
+        if (error) throw error;
         else return (await r).success;
     };
 
@@ -103,11 +112,11 @@ const MedicineManager = (
                 orderBy: [['Created', 'desc']]
             };
         }
-        const [e, r] = (await asyncWrapper(medHistoryProvider.search(searchCriteria))) as [
+        const [error, r] = (await asyncWrapper(medHistoryProvider.search(searchCriteria))) as [
             unknown,
             Promise<DrugLogRecord[]>
         ];
-        if (e) throw e;
+        if (error) throw error;
         else return r;
     };
 
@@ -117,11 +126,11 @@ const MedicineManager = (
      */
     const _loadDrugLogForMedicine = async (medicineId: number) => {
         const searchCriteria = {where: [['MedicineId', '=', medicineId]]};
-        const [e, r] = (await asyncWrapper(medHistoryProvider.search(searchCriteria))) as [
+        const [error, r] = (await asyncWrapper(medHistoryProvider.search(searchCriteria))) as [
             unknown,
             Promise<DrugLogRecord[]>
         ];
-        if (e) throw e;
+        if (error) throw error;
         else return r;
     };
 
@@ -134,11 +143,11 @@ const MedicineManager = (
             where: [['ResidentId', '=', clientId]],
             orderBy: [['Created', 'desc']]
         };
-        const [e, r] = (await asyncWrapper(pillboxItemProvider.search(searchCriteria))) as [
+        const [error, r] = (await asyncWrapper(pillboxItemProvider.search(searchCriteria))) as [
             unknown,
             Promise<PillboxItemRecord[]>
         ];
-        if (e) throw e;
+        if (error) throw error;
         else return r;
     };
 
@@ -151,11 +160,11 @@ const MedicineManager = (
             where: [['ResidentId', '=', clientId]],
             orderBy: [['Drug', 'asc']]
         };
-        const [e, r] = (await asyncWrapper(medicineProvider.search(searchCriteria))) as [
+        const [error, r] = (await asyncWrapper(medicineProvider.search(searchCriteria))) as [
             unknown,
             Promise<MedicineRecord[]>
         ];
-        if (e) throw e;
+        if (error) throw error;
         else return r;
     };
 
@@ -168,11 +177,11 @@ const MedicineManager = (
             where: [['ResidentId', '=', clientId]],
             orderBy: [['Name', 'asc']]
         };
-        const [e, r] = (await asyncWrapper(pillboxProvider.search(searchCriteria))) as [
+        const [error, r] = (await asyncWrapper(pillboxProvider.search(searchCriteria))) as [
             unknown,
             Promise<PillboxRecord[]>
         ];
-        if (e) throw e;
+        if (error) throw error;
         else return r;
     };
 
@@ -184,11 +193,11 @@ const MedicineManager = (
             where: [['OTC', '=', true]],
             orderBy: [['Drug', 'asc']]
         };
-        const [e, r] = (await asyncWrapper(medicineProvider.search(searchCriteria))) as [
+        const [error, r] = (await asyncWrapper(medicineProvider.search(searchCriteria))) as [
             unknown,
             Promise<MedicineRecord[]>
         ];
-        if (e) throw e;
+        if (error) throw error;
         else return r;
     };
 
@@ -197,8 +206,11 @@ const MedicineManager = (
      * @param {DrugLogRecord} drugLogInfo The drug log record object
      */
     const _updateDrugLog = async (drugLogInfo: DrugLogRecord) => {
-        const [e, r] = (await asyncWrapper(medHistoryProvider.post(drugLogInfo))) as [unknown, Promise<DrugLogRecord>];
-        if (e) throw e;
+        const [error, r] = (await asyncWrapper(medHistoryProvider.post(drugLogInfo))) as [
+            unknown,
+            Promise<DrugLogRecord>
+        ];
+        if (error) throw error;
         else return r;
     };
 
@@ -207,8 +219,8 @@ const MedicineManager = (
      * @param {MedicineRecord} medInfo The medicine record object
      */
     const _updateMedicine = async (medInfo: MedicineRecord) => {
-        const [e, r] = (await asyncWrapper(medicineProvider.post(medInfo))) as [unknown, Promise<MedicineRecord>];
-        if (e) throw e;
+        const [error, r] = (await asyncWrapper(medicineProvider.post(medInfo))) as [unknown, Promise<MedicineRecord>];
+        if (error) throw error;
         else return r;
     };
 
@@ -217,8 +229,8 @@ const MedicineManager = (
      * @param {PillboxRecord} pillInfo The pillbox record object
      */
     const _updatePillbox = async (pillInfo: PillboxRecord) => {
-        const [e, r] = (await asyncWrapper(pillboxProvider.post(pillInfo))) as [unknown, Promise<PillboxRecord>];
-        if (e) throw e;
+        const [error, r] = (await asyncWrapper(pillboxProvider.post(pillInfo))) as [unknown, Promise<PillboxRecord>];
+        if (error) throw error;
         else return r;
     };
 
@@ -227,11 +239,11 @@ const MedicineManager = (
      * @param {PillboxItemRecord} pillboxItemInfo The pillboxItem record object
      */
     const _updatePillboxItem = async (pillboxItemInfo: PillboxItemRecord) => {
-        const [e, r] = (await asyncWrapper(pillboxItemProvider.post(pillboxItemInfo))) as [
+        const [error, r] = (await asyncWrapper(pillboxItemProvider.post(pillboxItemInfo))) as [
             unknown,
             Promise<PillboxItemRecord>
         ];
-        if (e) throw e;
+        if (error) throw error;
         else return r;
     };
 
@@ -240,8 +252,8 @@ const MedicineManager = (
      * @param {number} pillboxId The PK of the Pillbox table
      */
     const _logPillbox = async (pillboxId: number) => {
-        const [e, r] = (await asyncWrapper(pillboxProvider.log(pillboxId))) as [unknown, Promise<DrugLogRecord[]>];
-        if (e) throw e;
+        const [error, r] = (await asyncWrapper(pillboxProvider.log(pillboxId))) as [unknown, Promise<DrugLogRecord[]>];
+        if (error) throw error;
         else return r;
     };
 

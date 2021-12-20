@@ -17,11 +17,11 @@ const AuthManager = (authenticationProvider: IAuthenticationProvider): IAuthMana
      * @returns {Promise<Authenticated>} Authenticated obj {success: true/false, organization: org, apiKey: API key}
      */
     const _authenticate = async (username: string, password: string) => {
-        const [e, r] = (await asyncWrapper(authenticationProvider.post({username, password}))) as [
+        const [error, r] = (await asyncWrapper(authenticationProvider.post({username, password}))) as [
             unknown,
             Promise<Authenticated>
         ];
-        if (e) throw e;
+        if (error) throw error;
         else return r;
     };
 

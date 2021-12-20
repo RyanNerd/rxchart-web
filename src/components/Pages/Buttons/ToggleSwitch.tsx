@@ -33,7 +33,7 @@ const ToggleSwitch = (props: IProps) => {
                     type="checkbox"
                     name="neu-check"
                     checked={toggleChecked}
-                    onChange={(e) => onToggle(e.target.checked)}
+                    onChange={(changeEvent) => onToggle(changeEvent.target.checked)}
                 />
                 <div className="neu-indicator"></div>
             </div>

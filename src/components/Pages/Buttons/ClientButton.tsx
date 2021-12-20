@@ -29,7 +29,7 @@ const ClientButton = (props: IProps) => {
             title={clientName}
             id="client-dropdown-button"
             className={className}
-            onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
+            onClick={(mouseEvent: React.MouseEvent<HTMLElement>) => mouseEvent.stopPropagation()}
         >
             <Dropdown.Item onClick={() => onSelect('edit')}>Edit Client</Dropdown.Item>
             <Dropdown.Item onClick={() => onSelect('print')}>Print Medbox Labels</Dropdown.Item>

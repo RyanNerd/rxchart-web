@@ -32,7 +32,7 @@ const ClientPage = (props: IProps): JSX.Element | null => {
     const [showClientRoster, setShowClientRoster] = useState(false);
     const [showDeleteResident, setShowDeleteResident] = useState<null | ClientRecord>(null);
     const [showClientEdit, setShowClientEdit] = useState<ClientRecord | null>(null);
-    const focusRef = useRef<HTMLInputElement>(null);
+    const focusReference = useRef<HTMLInputElement>(null);
 
     // Filter the resident list by the search textbox value
     useEffect(() => {
@@ -59,8 +59,8 @@ const ClientPage = (props: IProps): JSX.Element | null => {
     }, [clientList, searchText]);
 
     useEffect(() => {
-        focusRef?.current?.focus();
-    }, [focusRef]);
+        focusReference?.current?.focus();
+    }, [focusReference]);
 
     // Don't render if this tab isn't active.
     if (props.activeTabKey !== 'resident') return null;
@@ -82,8 +82,8 @@ const ClientPage = (props: IProps): JSX.Element | null => {
                 pillboxList: clientLoad.pillboxList,
                 pillboxItemList: clientLoad.pillboxItemList
             });
-        } catch (e) {
-            await setErrorDetails(e);
+        } catch (error) {
+            await setErrorDetails(error);
         }
     };
 
@@ -129,8 +129,8 @@ const ClientPage = (props: IProps): JSX.Element | null => {
             <Row as={ButtonGroup}>
                 <Button
                     className="mr-2"
-                    onClick={(e: React.MouseEvent<HTMLElement>) => {
-                        e.preventDefault();
+                    onClick={(mouseEvent: React.MouseEvent<HTMLElement>) => {
+                        mouseEvent.preventDefault();
                         setShowClientEdit({...newResidentRecord});
                     }}
                 >
@@ -141,12 +141,12 @@ const ClientPage = (props: IProps): JSX.Element | null => {
                     autoFocus
                     id="medicine-page-search-text"
                     isValid={searchIsValid}
-                    onChange={(e) => setSearchText(e.target.value)}
-                    onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
-                        if (e.key === 'Enter') e.preventDefault();
+                    onChange={(changeEvent) => setSearchText(changeEvent.target.value)}
+                    onKeyDown={(keyboardEvent: React.KeyboardEvent<HTMLElement>) => {
+                        if (keyboardEvent.key === 'Enter') keyboardEvent.preventDefault();
                     }}
                     placeholder="Search resident"
-                    ref={focusRef}
+                    ref={focusReference}
                     style={{width: '220px'}}
                     type="search"
                     value={searchText}

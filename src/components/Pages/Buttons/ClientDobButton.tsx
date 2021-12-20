@@ -31,12 +31,12 @@ interface IDropdownProps extends DropdownButtonProps {
  * @param {IProps} props The props for this component
  */
 const ClientDobButton = (props: TProps) => {
-    const isDev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+    const isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
     const {
         clientRecord,
         disabled = false,
         title = (
-            <span style={{fontStyle: isDev ? 'italic' : 'bold'}}>
+            <span style={{fontStyle: isDevelopment ? 'italic' : 'bold'}}>
                 {clientRecord.Notes && <Badge variant="light">🔔</Badge>} {clientDOB(clientRecord)}
             </span>
         )
@@ -47,7 +47,7 @@ const ClientDobButton = (props: TProps) => {
 
     /**
      * CSS Style override for getting the Dropdown.ItemText to display correctly
-     * @param {React.MouseEvent<HTMLElement>} e Mouse event object
+     * @param {React.MouseEvent<HTMLElement>} mouseEvent Mouse event object
      * @link https://stackoverflow.com/a/17887494/4323201
      * Work-around so React 17 can be used
      * @link https://github.com/react-bootstrap/react-bootstrap/issues/5409#issuecomment-718699584
@@ -57,9 +57,9 @@ const ClientDobButton = (props: TProps) => {
             {...dropdownProps}
             disabled={disabled || clientRecord?.Notes == null || clientRecord?.Notes?.trim().length === 0}
             id="client-dob-dropdown-button"
-            onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
+            onClick={(mouseEvent: React.MouseEvent<HTMLElement>) => mouseEvent.stopPropagation()}
             title={title}
-            variant={isDev ? 'outline-danger' : 'outline-secondary'}
+            variant={isDevelopment ? 'outline-danger' : 'outline-secondary'}
         >
             <Dropdown.Item style={{whiteSpace: 'normal', width: '300px'}}>
                 <Dropdown.Header>

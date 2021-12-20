@@ -6,11 +6,11 @@ import {useEffect, useRef} from 'reactn';
  * @param {any} value The value to compare against the previous state
  */
 const usePrevious = <T>(value: T): T | undefined => {
-    const ref = useRef<T>();
+    const reference = useRef<T>();
     useEffect(() => {
-        ref.current = value;
+        reference.current = value;
     });
-    return ref.current;
+    return reference.current;
 };
 
 export default usePrevious;

@@ -47,18 +47,18 @@ const RxOtc = (props: IProps) => {
      */
     const saveDrugLog = async (drugLog: DrugLogRecord): Promise<DrugLogRecord> => {
         await setIsBusy(true);
-        const [e, updatedDrugLog] = (await asyncWrapper(mm.updateDrugLog(drugLog))) as [
+        const [errorUpdateDrugLog, updatedDrugLog] = (await asyncWrapper(mm.updateDrugLog(drugLog))) as [
             unknown,
             Promise<DrugLogRecord>
         ];
-        if (e) await setErrorDetails(e);
+        if (errorUpdateDrugLog) await setErrorDetails(errorUpdateDrugLog);
         else {
-            const [errLoadLog, drugLogs] = (await asyncWrapper(mm.loadDrugLog(clientId as number, 5))) as [
+            const [errorLoadDrugLog, drugLogs] = (await asyncWrapper(mm.loadDrugLog(clientId as number, 5))) as [
                 unknown,
                 Promise<DrugLogRecord[]>
             ];
-            await (errLoadLog
-                ? setErrorDetails(errLoadLog)
+            await (errorLoadDrugLog
+                ? setErrorDetails(errorLoadDrugLog)
                 : setActiveClient({...(activeClient as TClient), drugLogList: await drugLogs}));
         }
         await setIsBusy(false);
@@ -85,11 +85,11 @@ const RxOtc = (props: IProps) => {
      */
     const saveMedicine = async (med: MedicineRecord) => {
         await setIsBusy(true);
-        const [e, m] = (await asyncWrapper(mm.updateMedicine(med))) as [unknown, Promise<MedicineRecord>];
-        if (e) await setErrorDetails(e);
+        const [error, m] = (await asyncWrapper(mm.updateMedicine(med))) as [unknown, Promise<MedicineRecord>];
+        if (error) await setErrorDetails(error);
         const updatedMedicineRecord = await m;
-        const [errLoadOtc, otcMeds] = (await asyncWrapper(mm.loadOtcList())) as [unknown, Promise<MedicineRecord[]>];
-        await (errLoadOtc ? setErrorDetails(errLoadOtc) : setOtcList(await otcMeds));
+        const [errorLoadOtc, otcMeds] = (await asyncWrapper(mm.loadOtcList())) as [unknown, Promise<MedicineRecord[]>];
+        await (errorLoadOtc ? setErrorDetails(errorLoadOtc) : setOtcList(await otcMeds));
         setActiveOtc(updatedMedicineRecord.Active ? updatedMedicineRecord : null);
         await setIsBusy(false);
     };

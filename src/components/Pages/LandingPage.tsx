@@ -41,19 +41,19 @@ const LandingPage = (props: IProps) => {
 
     // Observer to show / hide the Diagnostics tab title
     useEffect(() => {
-        const el = document.getElementById('landing-page-tabs-tab-error');
-        if (el) {
-            el.style.display = errorDetails ? 'block' : 'none';
+        const element = document.getElementById('landing-page-tabs-tab-error');
+        if (element) {
+            element.style.display = errorDetails ? 'block' : 'none';
         }
     }, [errorDetails]);
 
     // Observer to show / hide tabs based on if logged in and if a client has been selected
     useEffect(() => {
         ['resident', 'medicine', 'manage', 'manage-otc'].map((tab) => {
-            const el = document.getElementById('landing-page-tabs-tab-' + tab);
-            if (el) {
-                if (tab === 'resident' || tab === 'manage-otc') el.style.display = apiKey ? 'block' : 'none';
-                else el.style.display = apiKey && activeClient ? 'block' : 'none';
+            const element = document.getElementById('landing-page-tabs-tab-' + tab);
+            if (element) {
+                if (tab === 'resident' || tab === 'manage-otc') element.style.display = apiKey ? 'block' : 'none';
+                else element.style.display = apiKey && activeClient ? 'block' : 'none';
             }
         });
     }, [activeClient, apiKey]);

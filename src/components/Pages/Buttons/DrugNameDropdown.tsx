@@ -13,8 +13,8 @@ type CustomMenuProps = {
     style?: React.CSSProperties;
     className?: string;
     labeledBy?: string;
-    onChange: (e: React.ChangeEvent<FormControlElement>) => void;
-    onKeyDown: (e: React.KeyboardEvent<FormControlElement>) => void;
+    onChange: (changeEvent: React.ChangeEvent<FormControlElement>) => void;
+    onKeyDown: (keyboardEvent: React.KeyboardEvent<FormControlElement>) => void;
     inputRef: React.RefObject<HTMLInputElement>;
     value?: string | string[] | number;
 };
@@ -33,8 +33,8 @@ const CustomMenu = forwardRef((props: CustomMenuProps, ref: React.Ref<HTMLDivEle
                 autoFocus
                 className="mx-1 my-2 w-3"
                 placeholder="Drug name"
-                onChange={(e) => onChange(e)}
-                onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => onKeyDown(e)}
+                onChange={(changeEvent) => onChange(changeEvent)}
+                onKeyDown={(keyboardEvent: KeyboardEvent<HTMLInputElement>) => onKeyDown(keyboardEvent)}
                 style={style}
                 type="text"
                 value={value}
@@ -52,7 +52,7 @@ interface IProps {
     drugInputRef: React.RefObject<HTMLInputElement>;
     existingDrugs: string[];
     initialValue: string;
-    onChange?: (e: React.ChangeEvent<FormControlElement>) => void;
+    onChange?: (changeEvent: React.ChangeEvent<FormControlElement>) => void;
     onSelect?: (s: string) => void;
     style?: CSSProperties | undefined;
 }
@@ -96,15 +96,15 @@ const DrugNameDropdown = (props: IProps) => {
         }
     }, [drugNameInput, drugNameInput.length, props.existingDrugs]);
 
-    const inputRef = props.drugInputRef;
+    const inputReference = props.drugInputRef;
 
     /**
      * Handler for when the value in the textbox changes
-     * @param {ChangeEvent<HTMLInputElement>} e Change event for the textbox
+     * @param {ChangeEvent<HTMLInputElement>} changeEvent Change event for the textbox
      */
-    const handleOnChange = (e: React.ChangeEvent<FormControlElement>) => {
-        setDrugNameInput(e.target.value);
-        if (props.onChange) props.onChange(e);
+    const handleOnChange = (changeEvent: React.ChangeEvent<FormControlElement>) => {
+        setDrugNameInput(changeEvent.target.value);
+        if (props.onChange) props.onChange(changeEvent);
     };
 
     /**
@@ -118,22 +118,22 @@ const DrugNameDropdown = (props: IProps) => {
 
     /**
      * Handler for when the keypress event is invoked on the textbox
-     * @param {KeyboardEvent} e The keyboard event
+     * @param {KeyboardEvent} keyboardEvent The keyboard event
      */
-    const handleOnKeyDown = (e: KeyboardEvent) => {
-        if (e.key === 'Enter') {
+    const handleOnKeyDown = (keyboardEvent: KeyboardEvent) => {
+        if (keyboardEvent.key === 'Enter') {
             if (drugNameInput.length > 0) {
                 handleOnSelect(drugNameInput);
             } else {
-                e.preventDefault();
+                keyboardEvent.preventDefault();
             }
         }
 
-        if (filteredDrugNames.length === 0 && e.key === 'Tab') {
+        if (filteredDrugNames.length === 0 && keyboardEvent.key === 'Tab') {
             if (drugNameInput.length > 0) {
                 handleOnSelect(drugNameInput);
             } else {
-                e.preventDefault();
+                keyboardEvent.preventDefault();
             }
         }
     };
@@ -162,9 +162,9 @@ const DrugNameDropdown = (props: IProps) => {
             <CustomMenu
                 style={props.style}
                 value={drugNameInput}
-                onChange={(e) => handleOnChange(e)}
-                onKeyDown={(e: KeyboardEvent) => handleOnKeyDown(e)}
-                inputRef={inputRef}
+                onChange={(changeEvent) => handleOnChange(changeEvent)}
+                onKeyDown={(keyboardEvent: KeyboardEvent) => handleOnKeyDown(keyboardEvent)}
+                inputRef={inputReference}
             >
                 {filteredDrugNames.length > 0
                     ? filteredDrugNames.map((d) => DrugNameItems(d, false))

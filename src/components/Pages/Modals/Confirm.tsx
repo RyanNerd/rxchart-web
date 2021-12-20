@@ -61,15 +61,15 @@ const Confirm = {
             onSelect(isAccepted);
         };
 
-        const modalProps = {...props} as IModalProps;
-        delete modalProps.noButtonContent;
-        delete modalProps.noButtonProps;
-        delete modalProps.onSelect;
-        delete modalProps.yesButtonContent;
-        delete modalProps.yesButtonProps;
+        const modalProperties = {...props} as IModalProps;
+        delete modalProperties.noButtonContent;
+        delete modalProperties.noButtonProps;
+        delete modalProperties.onSelect;
+        delete modalProperties.yesButtonContent;
+        delete modalProperties.yesButtonProps;
 
         return (
-            <Modal {...modalProps} show={show} size={size} backdrop={backdrop} centered>
+            <Modal {...modalProperties} show={show} size={size} backdrop={backdrop} centered>
                 {props.children}
                 <Modal.Footer>
                     <Button {...yesButtonProps} onClick={() => onAnswer(true)}>

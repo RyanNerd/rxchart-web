@@ -45,12 +45,12 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
     const [searchText, setSearchText] = useState('');
     const lastTaken = activeOtc?.Id ? calculateLastTaken(activeOtc.Id, drugLogList) : null;
     const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
-    const searchRef = useRef<HTMLInputElement>(null);
+    const searchReference = useRef<HTMLInputElement>(null);
 
     const [activeRxTab, setActiveRxTab] = useState<TAB_KEY>(props.activeRxTab);
     useEffect(() => {
         setActiveRxTab(props.activeRxTab);
-        if (props.activeRxTab === TAB_KEY.OTC) searchRef?.current?.focus();
+        if (props.activeRxTab === TAB_KEY.OTC) searchReference?.current?.focus();
     }, [activeRxTab, props.activeRxTab]);
 
     // Filter the otcList by the search textbox value
@@ -102,9 +102,9 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                                 disabled={disabled}
                                 id="otc-page-search-text"
                                 isValid={searchIsValid || false}
-                                onChange={(e) => setSearchText(e.target.value)}
-                                onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
-                                    if (e.key === 'Enter') e.preventDefault();
+                                onChange={(changeEvent) => setSearchText(changeEvent.target.value)}
+                                onKeyDown={(keyboardEvent: React.KeyboardEvent<HTMLElement>) => {
+                                    if (keyboardEvent.key === 'Enter') keyboardEvent.preventDefault();
                                 }}
                                 onClick={() => {
                                     setSearchText('');
@@ -112,7 +112,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                                     otcSelected(null);
                                 }}
                                 placeholder="Search OTC medicine"
-                                ref={searchRef}
+                                ref={searchReference}
                                 size="sm"
                                 style={{width: '220px'}}
                                 type="search"
@@ -176,7 +176,7 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                         activeDrug={activeOtc}
                         onSelect={(d) => {
                             setSearchText(d.Drug);
-                            searchRef?.current?.focus();
+                            searchReference?.current?.focus();
                             otcSelected(d);
                         }}
                         otcList={filteredOtcList}

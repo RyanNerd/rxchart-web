@@ -29,9 +29,9 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const activeTabKey = props.activeTabKey;
 
-    const focusRef = useRef<HTMLInputElement>(null);
+    const focusReference = useRef<HTMLInputElement>(null);
     useEffect(() => {
-        focusRef?.current?.focus();
+        focusReference?.current?.focus();
     });
 
     // Search filter update
@@ -116,12 +116,12 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
                     className="ml-2"
                     id="medicine-page-search-text"
                     isValid={searchIsValid}
-                    onChange={(e) => setSearchText(e.target.value)}
-                    onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
-                        if (e.key === 'Enter') e.preventDefault();
+                    onChange={(changeEvent) => setSearchText(changeEvent.target.value)}
+                    onKeyDown={(keyboardEvent: React.KeyboardEvent<HTMLElement>) => {
+                        if (keyboardEvent.key === 'Enter') keyboardEvent.preventDefault();
                     }}
                     placeholder="Search OTC"
-                    ref={focusRef}
+                    ref={focusReference}
                     style={{width: '820px'}}
                     type="search"
                     value={searchText}

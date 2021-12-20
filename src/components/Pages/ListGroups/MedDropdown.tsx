@@ -26,20 +26,22 @@ const MedDropdown = (props: IProps): JSX.Element | null => {
     // Do not render unless we have the required props.
     if (!itemList || itemList.length === 0) return null;
 
-    const title = itemList.find((i) => i.id === activeId)?.description;
+    const title = itemList.find((dropdownItem) => dropdownItem.id === activeId)?.description;
 
     /**
      * Dropdown Items component
-     * @param {IDropdownItem} i The DropDownItem object
+     * @param {IDropdownItem} dropdownItem The DropDownItem object
      */
-    const MedDropdownItems = (i: IDropdownItem): JSX.Element => {
-        if (i.id === 0) return <Dropdown.Divider key={0} />;
-        const key = i.id < 0 ? 'pillbox-' + i.id : 'medicine-' + i.id;
+    const MedDropdownItems = (dropdownItem: IDropdownItem): JSX.Element => {
+        if (dropdownItem.id === 0) return <Dropdown.Divider key={0} />;
+        const key = dropdownItem.id < 0 ? 'pillbox-' + dropdownItem.id : 'medicine-' + dropdownItem.id;
         return (
-            <Dropdown.Item key={key} active={i.id === activeId} onSelect={() => onSelect(i.id)}>
+            <Dropdown.Item key={key} active={dropdownItem.id === activeId} onSelect={() => onSelect(dropdownItem.id)}>
                 <span>
-                    <span style={{display: 'block'}}>{i.description}</span>
-                    {i.subtext && <span style={{fontSize: '12px', display: 'block'}}>{i.subtext}</span>}
+                    <span style={{display: 'block'}}>{dropdownItem.description}</span>
+                    {dropdownItem.subtext && (
+                        <span style={{fontSize: '12px', display: 'block'}}>{dropdownItem.subtext}</span>
+                    )}
                 </span>
             </Dropdown.Item>
         );
@@ -47,13 +49,13 @@ const MedDropdown = (props: IProps): JSX.Element | null => {
 
     /**
      * Work-around so React 17 can be used
-     * @param {React.MouseEvent<HTMLElement>} e Mouse event object
+     * @param {React.MouseEvent<HTMLElement>} mouseEvent Mouse event object
      * @link https://github.com/react-bootstrap/react-bootstrap/issues/5409#issuecomment-718699584
      */
     return (
         <DropdownButton
             disabled={disabled}
-            onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
+            onClick={(mouseEvent: React.MouseEvent<HTMLElement>) => mouseEvent.stopPropagation()}
             size="sm"
             title={
                 disabled ? (

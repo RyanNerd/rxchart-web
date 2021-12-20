@@ -54,25 +54,25 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     // Observer to show / hide RxTabs
     useEffect(() => {
         if (activeClient) {
-            const historyEl = document.getElementById('medicine-page-tabs-tab-' + TAB_KEY.History);
-            if (historyEl) {
-                historyEl.style.display = activeClient.drugLogList.length === 0 ? 'none' : 'block';
+            const historyElement = document.getElementById('medicine-page-tabs-tab-' + TAB_KEY.History);
+            if (historyElement) {
+                historyElement.style.display = activeClient.drugLogList.length === 0 ? 'none' : 'block';
                 if (activeRxTab === TAB_KEY.History && activeClient.drugLogList.length === 0) {
                     setActiveRxTab(TAB_KEY.Medicine);
                 }
             }
 
-            const pillboxEl = document.getElementById('medicine-page-tabs-tab-' + TAB_KEY.Pillbox);
-            if (pillboxEl) {
-                pillboxEl.style.display = activeClient.medicineList.length < 5 ? 'none' : 'block';
+            const pillboxElement = document.getElementById('medicine-page-tabs-tab-' + TAB_KEY.Pillbox);
+            if (pillboxElement) {
+                pillboxElement.style.display = activeClient.medicineList.length < 5 ? 'none' : 'block';
                 if (activeRxTab === TAB_KEY.Pillbox && activeClient.medicineList.length < 5) {
                     setActiveRxTab(TAB_KEY.Medicine);
                 }
             }
 
-            const printEl = document.getElementById('medicine-page-tabs-tab-' + TAB_KEY.Print);
-            if (printEl) {
-                printEl.style.display = checkoutList.length === 0 ? 'none' : 'block';
+            const printElement = document.getElementById('medicine-page-tabs-tab-' + TAB_KEY.Print);
+            if (printElement) {
+                printElement.style.display = checkoutList.length === 0 ? 'none' : 'block';
                 if (activeRxTab === TAB_KEY.Print && checkoutList.length === 0) {
                     setActiveRxTab(TAB_KEY.Medicine);
                 }

@@ -87,19 +87,19 @@ const RxPillbox = (props: IProps) => {
      */
     const savePillbox = async (pillboxRecord: PillboxRecord) => {
         setIsBusy(true);
-        const [e, updatedPillbox] = (await asyncWrapper(mm.updatePillbox(pillboxRecord))) as [
+        const [errorUpdatePillbox, updatedPillbox] = (await asyncWrapper(mm.updatePillbox(pillboxRecord))) as [
             unknown,
             Promise<PillboxRecord>
         ];
-        if (e) await setErrorDetails(e);
+        if (errorUpdatePillbox) await setErrorDetails(errorUpdatePillbox);
         else {
             activePillboxChanged(await updatedPillbox);
         }
-        const [errLoadPillbox, pillboxes] = (await asyncWrapper(
+        const [errorLoadPillbox, pillboxes] = (await asyncWrapper(
             mm.loadPillboxList(activeClient?.clientInfo.Id as number)
         )) as [unknown, Promise<PillboxRecord[]>];
-        await (errLoadPillbox
-            ? setErrorDetails(errLoadPillbox)
+        await (errorLoadPillbox
+            ? setErrorDetails(errorLoadPillbox)
             : setActiveClient({...(activeClient as TClient), pillboxList: await pillboxes}));
         setIsBusy(false);
     };
@@ -110,13 +110,16 @@ const RxPillbox = (props: IProps) => {
      */
     const deletePillbox = async (pillboxId: number) => {
         setIsBusy(true);
-        const [e, pillboxDeleted] = (await asyncWrapper(mm.deletePillbox(pillboxId))) as [unknown, Promise<boolean>];
-        if (e) await setErrorDetails(e);
+        const [errorDeletePillbox, pillboxDeleted] = (await asyncWrapper(mm.deletePillbox(pillboxId))) as [
+            unknown,
+            Promise<boolean>
+        ];
+        if (errorDeletePillbox) await setErrorDetails(errorDeletePillbox);
         else if (await pillboxDeleted) {
-            const [errLoad, pillboxes] = (await asyncWrapper(
+            const [errorLoadPillbox, pillboxes] = (await asyncWrapper(
                 mm.loadPillboxList(activeClient?.clientInfo.Id as number)
             )) as [unknown, Promise<PillboxRecord[]>];
-            if (errLoad) await setErrorDetails(errLoad);
+            if (errorLoadPillbox) await setErrorDetails(errorLoadPillbox);
             else {
                 const pillboxList = await pillboxes;
                 await setActiveClient({...(activeClient as TClient), pillboxList});
@@ -134,17 +137,17 @@ const RxPillbox = (props: IProps) => {
      */
     const savePillboxItem = async (pillboxItemRecord: PillboxItemRecord) => {
         setIsBusy(true);
-        const [e, updatedPillboxItem] = (await asyncWrapper(mm.updatePillboxItem(pillboxItemRecord))) as [
+        const [error, updatedPillboxItem] = (await asyncWrapper(mm.updatePillboxItem(pillboxItemRecord))) as [
             unknown,
             Promise<PillboxItemRecord>
         ];
-        if (e) await setErrorDetails(e);
+        if (error) await setErrorDetails(error);
         else if (await updatedPillboxItem) {
-            const [errLoadPills, pillboxItems] = (await asyncWrapper(
+            const [errorLoadPills, pillboxItems] = (await asyncWrapper(
                 mm.loadPillboxItemList(activeClient?.clientInfo.Id as number)
             )) as [unknown, Promise<PillboxItemRecord[]>];
-            await (errLoadPills
-                ? setErrorDetails(errLoadPills)
+            await (errorLoadPills
+                ? setErrorDetails(errorLoadPills)
                 : setActiveClient({...(activeClient as TClient), pillboxItemList: await pillboxItems}));
         }
         setIsBusy(false);
@@ -156,19 +159,19 @@ const RxPillbox = (props: IProps) => {
     const handleLogPillbox = async () => {
         setIsBusy(true);
         const toastQ = [] as DrugLogRecord[];
-        const [e, loggedPillboxMeds] = (await asyncWrapper(mm.logPillbox(activePillbox?.Id as number))) as [
+        const [error, loggedPillboxMeds] = (await asyncWrapper(mm.logPillbox(activePillbox?.Id as number))) as [
             unknown,
             Promise<DrugLogRecord[]>
         ];
-        if (e) await setErrorDetails(e);
+        if (error) await setErrorDetails(error);
         else {
             const loggedPillboxDrugs = await loggedPillboxMeds;
             if (loggedPillboxDrugs.length > 0) {
-                const [errLoadLog, drugLogs] = (await asyncWrapper(
+                const [erroroLoadLog, drugLogs] = (await asyncWrapper(
                     mm.loadDrugLog(activeClient?.clientInfo.Id as number, 5)
                 )) as [unknown, Promise<DrugLogRecord[]>];
-                await (errLoadLog
-                    ? setErrorDetails(errLoadLog)
+                await (erroroLoadLog
+                    ? setErrorDetails(erroroLoadLog)
                     : setActiveClient({...(activeClient as TClient), drugLogList: await drugLogs}));
                 for (const ld of loggedPillboxDrugs) toastQ.push({...ld});
                 setToast(toastQ);

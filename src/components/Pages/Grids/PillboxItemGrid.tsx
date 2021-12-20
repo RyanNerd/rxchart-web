@@ -78,7 +78,7 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
                     >
                         <Button
                             className="ml-2"
-                            onClick={(e) => e.stopPropagation()}
+                            onClick={(mouseEvent) => mouseEvent.stopPropagation()}
                             size="sm"
                             variant={isInPillbox ? 'success' : 'info'}
                         >
@@ -114,8 +114,8 @@ const PillboxItemGrid = (props: IProps): JSX.Element | null => {
                     <Button
                         className="ml-2"
                         id={`pill-grid-inc-btn-${domId}`}
-                        onClick={(e) => {
-                            e.preventDefault();
+                        onClick={(mouseEvent) => {
+                            mouseEvent.preventDefault();
                             onEdit({
                                 Id: pill.Id,
                                 PillboxId: pillboxId,

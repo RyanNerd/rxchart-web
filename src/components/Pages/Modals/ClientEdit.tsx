@@ -39,14 +39,14 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
     }, [clientInfo, setClientInfo]);
 
     const onClose = props.onClose;
-    const focusRef = useRef<HTMLInputElement>(null);
+    const focusReference = useRef<HTMLInputElement>(null);
 
     /**
      * Fires when a text field or checkbox is changing.
-     * @param {React.KeyboardEvent<HTMLElement>} e Keyboard event object
+     * @param {React.KeyboardEvent<HTMLElement>} changeEvent Keyboard event object
      */
-    const handleOnChange = (e: React.ChangeEvent<HTMLElement>) => {
-        const target = e.target as HTMLInputElement;
+    const handleOnChange = (changeEvent: React.ChangeEvent<HTMLElement>) => {
+        const target = changeEvent.target as HTMLInputElement;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
         clientInfo[name] = value;
@@ -95,7 +95,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
     const residentTitle = clientInfo.Id ? 'Edit Client' : 'Add New Client';
 
     return (
-        <Modal backdrop="static" centered onEntered={() => focusRef?.current?.focus()} show={show} size="lg">
+        <Modal backdrop="static" centered onEntered={() => focusReference?.current?.focus()} show={show} size="lg">
             <Modal.Header closeButton>
                 <Modal.Title>{residentTitle}</Modal.Title>
             </Modal.Header>
@@ -111,8 +111,8 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                 className={clientInfo.FirstName !== '' ? '' : 'is-invalid'}
                                 name="FirstName"
                                 onBlur={() => checkForDuplicates()}
-                                onChange={(e) => handleOnChange(e)}
-                                ref={focusRef}
+                                onChange={(changeEvent) => handleOnChange(changeEvent)}
+                                ref={focusReference}
                                 required
                                 type="text"
                                 value={clientInfo.FirstName}
@@ -130,7 +130,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                 className={clientInfo.LastName !== '' ? '' : 'is-invalid'}
                                 name="LastName"
                                 onBlur={() => checkForDuplicates()}
-                                onChange={(e) => handleOnChange(e)}
+                                onChange={(changeEvent) => handleOnChange(changeEvent)}
                                 required
                                 type="text"
                                 value={clientInfo.LastName}
@@ -146,7 +146,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                         <Col sm="7">
                             <Form.Control
                                 name="Nickname"
-                                onChange={(e) => handleOnChange(e)}
+                                onChange={(changeEvent) => handleOnChange(changeEvent)}
                                 required
                                 type="text"
                                 value={clientInfo.Nickname}
@@ -164,7 +164,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                 className={isMonthValid(clientInfo.DOB_MONTH.toString()) ? '' : 'is-invalid'}
                                 name="DOB_MONTH"
                                 onBlur={() => checkForDuplicates()}
-                                onChange={(e) => handleOnChange(e)}
+                                onChange={(changeEvent) => handleOnChange(changeEvent)}
                                 required
                                 type="text"
                                 value={clientInfo.DOB_MONTH}
@@ -184,7 +184,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                 }
                                 name="DOB_DAY"
                                 onBlur={() => checkForDuplicates()}
-                                onChange={(e) => handleOnChange(e)}
+                                onChange={(changeEvent) => handleOnChange(changeEvent)}
                                 required
                                 type="text"
                                 value={clientInfo.DOB_DAY}
@@ -199,7 +199,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                 className={isYearValid(clientInfo.DOB_YEAR.toString(), true) ? '' : 'is-invalid'}
                                 name="DOB_YEAR"
                                 onBlur={() => checkForDuplicates()}
-                                onChange={(e) => handleOnChange(e)}
+                                onChange={(changeEvent) => handleOnChange(changeEvent)}
                                 required
                                 type="text"
                                 value={clientInfo.DOB_YEAR}
@@ -217,7 +217,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                 as="textarea"
                                 className={clientInfo?.Notes?.trim().length > 500 ? 'is-invalid' : ''}
                                 name="Notes"
-                                onChange={(e) => handleOnChange(e)}
+                                onChange={(changeEvent) => handleOnChange(changeEvent)}
                                 rows={4}
                                 value={clientInfo.Notes}
                             />

@@ -36,8 +36,8 @@ const startApp = async () => {
     try {
         const initialState = await setGlobal(getInitialState());
         ReactDOM.render(<App />, document.getElementById('root'), () => logAppStarted(initialState));
-    } catch (err) {
-        console.log('Something went wrong', err); // eslint-disable-line no-console
+    } catch (error) {
+        console.log('Something went wrong', error); // eslint-disable-line no-console
         ReactDOM.render(<InitError />, document.getElementById('root'));
     }
 };
