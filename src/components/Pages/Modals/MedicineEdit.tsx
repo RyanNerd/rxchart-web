@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import DrugNameDropdown from 'components/Pages/Buttons/DrugNameDropdown';
 import TooltipContainer from 'components/Pages/Containters/TooltipContainer';
 import Alert from 'react-bootstrap/Alert';
@@ -23,18 +24,16 @@ interface IProps {
  * Edit Modal for Medicine
  * @param {IProps} props Props for the component
  */
-const MedicineEdit = (props: IProps): JSX.Element | null => {
+const MedicineEdit = (props: IProps) => {
     const {allowDelete = false, onClose, fullName, existingDrugs = []} = props;
 
     const [drugInfo, setDrugInfo] = useState<MedicineRecord>(props.drugInfo);
     useEffect(() => {
         if (props.drugInfo) {
             const info = {...props.drugInfo};
-            if (info.Directions === null) info.Directions = '';
-            if (info.Notes === null) info.Notes = '';
-            if (info.FillDateMonth === null) info.FillDateMonth = '';
-            if (info.FillDateDay === null) info.FillDateDay = '';
-            if (info.FillDateYear === null) info.FillDateYear = '';
+            for (const field of ['Directions', 'Notes', 'FillDateMonth', 'FillDateDay', 'FillDateYear']) {
+                if (field === null) info[field] = '';
+            }
             setDrugInfo(info);
         }
     }, [props.drugInfo]);
@@ -66,22 +65,18 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
      * Returns true if the Fill Date fields have a valid fill date or if the fill date is empty.
      */
     const isFillDateValid = () => {
-        const fillDateMonth = drugInfo.FillDateMonth;
-        const fillDateDay = drugInfo.FillDateDay;
-        const fillDateYear = drugInfo.FillDateYear;
-
         // Check if any of the FillDate fields are populated then all need to be populated or all blank
         let cnt = 0;
-        if (fillDateMonth !== '') cnt++;
-        if (fillDateDay !== '') cnt++;
-        if (fillDateYear !== '') cnt++;
+        if (drugInfo.fillDateMonth !== '') cnt++;
+        if (drugInfo.fillDateDay !== '') cnt++;
+        if (drugInfo.fillDateYear !== '') cnt++;
 
         // Fill date can't be in the future
         if (cnt === 3) {
             const fillDate = new Date(
-                Number.parseInt(fillDateYear as string),
-                Number.parseInt(fillDateMonth as string) - 1,
-                Number.parseInt(fillDateDay as string)
+                Number.parseInt(drugInfo.fillDateYear as string),
+                Number.parseInt(drugInfo.fillDateMonth as string) - 1,
+                Number.parseInt(drugInfo.fillDateDay as string)
             );
             if (isDateFuture(fillDate)) cnt = 4;
         }

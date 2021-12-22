@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import PillPopover from 'components/Pages/Grids/PillPopover';
 import Button from 'react-bootstrap/Button';
 import Table, {TableProps} from 'react-bootstrap/Table';
@@ -68,28 +69,25 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
 
         // Figure out medicine field values
         const medicineId = drug.MedicineId;
-        const isOtc = drugColumnLookup(medicineId, 'OTC');
         let drugName = drugColumnLookup(medicineId, 'Drug') as string | null;
         if (!drugName || drugName.length === 0) drugName = 'UNKNOWN - Medicine removed!';
         const active = drugColumnLookup(medicineId, 'Active');
         const medicineNotes = drugColumnLookup(medicineId, 'Notes') as string | null;
-        const medicineDirections = drugColumnLookup(medicineId, 'Directions');
         const drugDetails = (
-            medicineNotes && medicineNotes.trim().length > 0 ? medicineNotes : medicineDirections || ''
+            medicineNotes && medicineNotes.trim().length > 0
+                ? medicineNotes
+                : drugColumnLookup(medicineId, 'Directions') || ''
         ) as string | null;
-        const createdDate = new Date(drug.Created || '');
-        const drugStrength = drugColumnLookup(medicineId, 'Strength') as string | null;
-        const updatedDate = new Date(drug.Updated || '');
-        const fontWeight = isToday(updatedDate) ? 'bold' : undefined;
-        const lastTaken = calculateLastTaken(medicineId, [drug]);
-        const variant = getLastTakenVariant(lastTaken);
-        const variantColor = getBsColor(variant);
+        const fontWeight = isToday(new Date(drug.Updated || '')) ? 'bold' : undefined;
 
         return (
             <tr
                 key={`druglog-grid-row-${drug.Id}`}
                 id={`druglog-grid-row-${drug.Id}`}
-                style={{color: variantColor, textDecoration: !active ? 'line-through' : undefined}}
+                style={{
+                    color: getBsColor(getLastTakenVariant(calculateLastTaken(medicineId, [drug]))),
+                    textDecoration: !active ? 'line-through' : undefined
+                }}
             >
                 {onEdit && (
                     <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
@@ -100,7 +98,10 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                 )}
                 {columns.includes('Drug') && (
                     <td style={{verticalAlign: 'middle', fontWeight}}>
-                        <span>{drugName}</span> <span>{drugStrength}</span> <span>{isOtc ? ' (OTC)' : ''}</span>
+                        <span>
+                            {drugName} {drugColumnLookup(medicineId, 'Strength') as string | null}
+                        </span>{' '}
+                        <span>{drugColumnLookup(medicineId, 'OTC') ? ' (OTC)' : ''}</span>
                     </td>
                 )}
                 {columns.includes('Created') && (
@@ -111,7 +112,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                             fontWeight
                         }}
                     >
-                        {getFormattedDate(createdDate)}
+                        {getFormattedDate(new Date(drug.Created || ''))}
                     </td>
                 )}
                 {(columns.includes('Updated') || columns.includes('Taken')) && (
@@ -122,7 +123,7 @@ const DrugLogGrid = (props: IProps): JSX.Element => {
                             fontWeight
                         }}
                     >
-                        {getFormattedDate(updatedDate)}
+                        {getFormattedDate(new Date(drug.Updated || ''))}
                     </td>
                 )}
                 {columns.includes('Notes')}

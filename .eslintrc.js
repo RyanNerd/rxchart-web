@@ -165,7 +165,7 @@ module.exports = {
         'arrow-parens': ['error', 'always'],
         'brace-style': ['error', '1tbs', {allowSingleLine: true}],
         'comma-dangle': 'error',
-        complexity: ['error', {max: 36}],
+        complexity: ['error', {max: 20}],
         'constructor-super': 'error',
         'dot-notation': 'error',
         'eol-last': ['error', 'always'],
