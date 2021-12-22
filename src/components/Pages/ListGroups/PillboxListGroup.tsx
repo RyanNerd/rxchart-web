@@ -135,12 +135,12 @@ const PillboxListGroup = (props: IProps) => {
 
     /**
      * Line Item component for pills in the pillbox
-     * @param {IPillboxLineItem} i The pillbox line item
+     * @param {IPillboxLineItem} indexPillboxLineItem The pillbox line item
      */
-    const PillboxLineItem = (i: IPillboxLineItem) => {
+    const PillboxLineItem = (indexPillboxLineItem: IPillboxLineItem) => {
         return (
-            <li key={i.Id} id={`pillbox-line-item-${i.Id}`} className="rx-icon">
-                {'('} {i.Qty} {') '} {i.Drug} {i.Strength}
+            <li key={indexPillboxLineItem.Id} id={`pillbox-line-item-${indexPillboxLineItem.Id}`} className="rx-icon">
+                {'('} {indexPillboxLineItem.Qty} {') '} {indexPillboxLineItem.Drug} {indexPillboxLineItem.Strength}
             </li>
         );
     };

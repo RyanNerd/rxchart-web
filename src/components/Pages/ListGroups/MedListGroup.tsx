@@ -17,7 +17,7 @@ interface IProps {
     clientId: number;
     disabled?: boolean;
     editMedicine: (m: MedicineRecord) => void;
-    itemChanged: (i: number) => void;
+    itemChanged: (itemNumber: number) => void;
     itemList: IDropdownItem[];
     lastTaken: number | null;
     logDrug: (n: number) => void;
@@ -105,7 +105,7 @@ const MedListGroup = (props: IProps): JSX.Element => {
                             activeId={activeMed.Id}
                             disabled={disabled}
                             itemList={itemList}
-                            onSelect={(i) => itemChanged(i)}
+                            onSelect={(itemNumber) => itemChanged(itemNumber)}
                         />
                     </ListGroup.Item>
 

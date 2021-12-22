@@ -54,7 +54,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
     useEffect(() => {
         const drugText = drugInfo?.Drug.split(' ')[0].trim().toLowerCase() || '';
         const existingDrugs = props?.existingDrugs || [];
-        if (existingDrugs.some((e) => drugText === e.split(' ')[0].trim().split(' ')[0].toLowerCase()))
+        if (existingDrugs.some((string_) => drugText === string_.split(' ')[0].trim().split(' ')[0].toLowerCase()))
             setShowExistingDrugAlert(true);
         else setShowExistingDrugAlert(false);
     }, [drugInfo?.Drug, props?.existingDrugs]);
@@ -90,10 +90,10 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
 
     /**
      * Fires when a text field or checkbox is changing.
-     * @param {React.ChangeEvent<HTMLElement>} e Change event object
+     * @param {React.ChangeEvent<HTMLElement>} changeEvent Change event object
      */
-    const handleOnChange = (e: React.ChangeEvent<HTMLElement>) => {
-        const target = e.target as HTMLInputElement;
+    const handleOnChange = (changeEvent: React.ChangeEvent<HTMLElement>) => {
+        const target = changeEvent.target as HTMLInputElement;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
         drugInfo[name] = value;
@@ -212,7 +212,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                                         autoComplete="off"
                                         id="otc-drug-textbox"
                                         name="Drug"
-                                        onChange={(e) => handleOnChange(e)}
+                                        onChange={(changeEvent) => handleOnChange(changeEvent)}
                                         placeholder="OTC Drug Name"
                                         tabIndex={1}
                                         type="text"
@@ -221,7 +221,9 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                                     />
                                 ) : (
                                     <DrugNameDropdown
-                                        onChange={(e) => setDrugInfo({...drugInfo, Drug: e.target.value})}
+                                        onChange={(changeEvent) =>
+                                            setDrugInfo({...drugInfo, Drug: changeEvent.target.value})
+                                        }
                                         onSelect={(s) => {
                                             setDrugInfo({...drugInfo, Drug: s});
                                             // Kludge for JS stupidity focusing on wrong input
@@ -248,7 +250,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                             <Form.Control
                                 autoComplete="off"
                                 name="Strength"
-                                onChange={(e) => handleOnChange(e)}
+                                onChange={(changeEvent) => handleOnChange(changeEvent)}
                                 placeholder="e.g. 100 MG TABS"
                                 ref={strengthInput}
                                 tabIndex={2}
@@ -265,7 +267,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                         <Col sm="9">
                             <Form.Control
                                 name="OtherNames"
-                                onChange={(e) => handleOnChange(e)}
+                                onChange={(changeEvent) => handleOnChange(changeEvent)}
                                 placeholder="Other names for the drug"
                                 tabIndex={-1}
                                 type="text"
@@ -284,7 +286,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                                     <Form.Check
                                         checked={drugInfo.Active}
                                         name="Active"
-                                        onChange={(e) => handleOnChange(e)}
+                                        onChange={(changeEvent) => handleOnChange(changeEvent)}
                                         style={{transform: 'scale(2)'}}
                                         tabIndex={-1}
                                     />
@@ -309,7 +311,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                             <Form.Control
                                 as="textarea"
                                 name="Directions"
-                                onChange={(e) => handleOnChange(e)}
+                                onChange={(changeEvent) => handleOnChange(changeEvent)}
                                 placeholder="e.g. Take 1 tablet at bedtime"
                                 rows={2}
                                 tabIndex={3}
@@ -327,7 +329,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                                 <Form.Control
                                     as="textarea"
                                     name="Notes"
-                                    onChange={(e) => handleOnChange(e)}
+                                    onChange={(changeEvent) => handleOnChange(changeEvent)}
                                     rows={3}
                                     tabIndex={4}
                                     value={(drugInfo && drugInfo.Notes) || ''}
@@ -343,7 +345,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                         <Col sm="9">
                             <Form.Control
                                 name="Barcode"
-                                onChange={(e) => handleOnChange(e)}
+                                onChange={(changeEvent) => handleOnChange(changeEvent)}
                                 tabIndex={5}
                                 type="text"
                                 value={drugInfo.Barcode ? drugInfo.Barcode : ''}
@@ -364,7 +366,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                                 <Form.Control
                                     className={fillDateMonthValid}
                                     name="FillDateMonth"
-                                    onChange={(e) => handleOnChange(e)}
+                                    onChange={(changeEvent) => handleOnChange(changeEvent)}
                                     tabIndex={6}
                                     type="text"
                                     value={drugInfo.FillDateMonth}
@@ -378,7 +380,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                                 <Form.Control
                                     className={fillDateDayValid}
                                     name="FillDateDay"
-                                    onChange={(e) => handleOnChange(e)}
+                                    onChange={(changeEvent) => handleOnChange(changeEvent)}
                                     tabIndex={7}
                                     type="text"
                                     value={drugInfo.FillDateDay}
@@ -392,7 +394,7 @@ const MedicineEdit = (props: IProps): JSX.Element | null => {
                                 <Form.Control
                                     className={fillDateYearValid}
                                     name="FillDateYear"
-                                    onChange={(e) => handleOnChange(e)}
+                                    onChange={(changeEvent) => handleOnChange(changeEvent)}
                                     tabIndex={8}
                                     type="text"
                                     value={drugInfo.FillDateYear}

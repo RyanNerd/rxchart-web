@@ -24,8 +24,8 @@ const ClientManager = (clientProvider: IClientProvider): IClientManager => {
      * @param {ClientRecord} clientRecord The client record object
      */
     const _updateClient = async (clientRecord: ClientRecord): Promise<ClientRecord> => {
-        const [e, r] = (await asyncWrapper(clientProvider.post(clientRecord))) as [unknown, Promise<ClientRecord>];
-        if (e) throw e;
+        const [error, r] = (await asyncWrapper(clientProvider.post(clientRecord))) as [unknown, Promise<ClientRecord>];
+        if (error) throw error;
         else return r;
     };
 
@@ -34,8 +34,8 @@ const ClientManager = (clientProvider: IClientProvider): IClientManager => {
      * @param {number} clientId The PK of the client
      */
     const _loadClient = async (clientId: number) => {
-        const [e, r] = (await asyncWrapper(clientProvider.load(clientId))) as [unknown, Promise<TClient>];
-        if (e) throw e;
+        const [error, r] = (await asyncWrapper(clientProvider.load(clientId))) as [unknown, Promise<TClient>];
+        if (error) throw error;
         else return r;
     };
 
@@ -44,8 +44,8 @@ const ClientManager = (clientProvider: IClientProvider): IClientManager => {
      * @param {number} clientId The PK of the Client table
      */
     const _deleteClient = async (clientId: number) => {
-        const [e, r] = (await asyncWrapper(clientProvider.delete(clientId))) as [unknown, Promise<DeleteResponse>];
-        if (e) throw e;
+        const [error, r] = (await asyncWrapper(clientProvider.delete(clientId))) as [unknown, Promise<DeleteResponse>];
+        if (error) throw error;
         else return (await r).success;
     };
 
@@ -59,11 +59,11 @@ const ClientManager = (clientProvider: IClientProvider): IClientManager => {
                 ['FirstName', 'asc']
             ]
         };
-        const [e, r] = (await asyncWrapper(clientProvider.search(searchCriteria))) as [
+        const [error, r] = (await asyncWrapper(clientProvider.search(searchCriteria))) as [
             unknown,
             Promise<ClientRecord[]>
         ];
-        if (e) throw e;
+        if (error) throw error;
         else return r;
     };
 
@@ -83,11 +83,11 @@ const ClientManager = (clientProvider: IClientProvider): IClientManager => {
             ],
             withTrashed: true
         };
-        const [e, r] = (await asyncWrapper(clientProvider.search(searchCriteria))) as [
+        const [error, r] = (await asyncWrapper(clientProvider.search(searchCriteria))) as [
             unknown,
             Promise<ClientRecord[]>
         ];
-        if (e) throw e;
+        if (error) throw error;
         else return r;
     };
 

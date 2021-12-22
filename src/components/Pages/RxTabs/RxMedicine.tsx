@@ -80,7 +80,7 @@ const RxMedicine = (props: IProps) => {
 
             // If activeMed is null, and we have med items in the list then set the initial activeMed to the first item
             if (activeMed === null && itemList.length > 0) {
-                const medsOnly = itemList.filter((i) => i.id > 0);
+                const medsOnly = itemList.filter((dropdownItem) => dropdownItem.id > 0);
                 setActiveMed(medsOnly.length === 0 ? null : medicineList.find((m) => m.Id === medsOnly[0].id) || null);
             }
         } else {
@@ -96,16 +96,19 @@ const RxMedicine = (props: IProps) => {
      */
     const saveMedicine = async (med: MedicineRecord) => {
         await setIsBusy(true);
-        const [e, m] = (await asyncWrapper(mm.updateMedicine(med))) as [unknown, Promise<MedicineRecord>];
-        if (e) await setErrorDetails(e);
+        const [errorUpdateMedicine, m] = (await asyncWrapper(mm.updateMedicine(med))) as [
+            unknown,
+            Promise<MedicineRecord>
+        ];
+        if (errorUpdateMedicine) await setErrorDetails(errorUpdateMedicine);
         const updatedMedicineRecord = await m;
 
-        const [errLoadMeds, meds] = (await asyncWrapper(mm.loadMedicineList(clientId as number))) as [
+        const [errorLoadMedicineList, meds] = (await asyncWrapper(mm.loadMedicineList(clientId as number))) as [
             unknown,
             Promise<MedicineRecord[]>
         ];
-        await (errLoadMeds
-            ? setErrorDetails(errLoadMeds)
+        await (errorLoadMedicineList
+            ? setErrorDetails(errorLoadMedicineList)
             : setActiveClient({...(activeClient as TClient), medicineList: await meds}));
         const activeMeds = (await meds).filter((m) => m.Active);
         // prettier-ignore
@@ -121,18 +124,18 @@ const RxMedicine = (props: IProps) => {
      */
     const saveDrugLog = async (drugLog: DrugLogRecord): Promise<DrugLogRecord> => {
         await setIsBusy(true);
-        const [e, updatedDrugLog] = (await asyncWrapper(mm.updateDrugLog(drugLog))) as [
+        const [errorUpdateDrugLog, updatedDrugLog] = (await asyncWrapper(mm.updateDrugLog(drugLog))) as [
             unknown,
             Promise<DrugLogRecord>
         ];
-        if (e) await setErrorDetails(e);
+        if (errorUpdateDrugLog) await setErrorDetails(errorUpdateDrugLog);
         else {
-            const [errLoadLog, drugLogs] = (await asyncWrapper(mm.loadDrugLog(clientId as number, 5))) as [
+            const [errorLoadDrugLog, drugLogs] = (await asyncWrapper(mm.loadDrugLog(clientId as number, 5))) as [
                 unknown,
                 Promise<DrugLogRecord[]>
             ];
-            await (errLoadLog
-                ? setErrorDetails(errLoadLog)
+            await (errorLoadDrugLog
+                ? setErrorDetails(errorLoadDrugLog)
                 : setActiveClient({...(activeClient as TClient), drugLogList: await drugLogs}));
         }
         await setIsBusy(false);

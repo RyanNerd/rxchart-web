@@ -131,7 +131,29 @@ module.exports = {
         'unicorn/prefer-ternary': 'error',
         'unicorn/prefer-top-level-await': 'error',
         'unicorn/prefer-type-error': 'error',
-        'unicorn/prevent-abbreviations': 'off',
+        'unicorn/prevent-abbreviations': [
+            'error',
+            {
+                allowList: {
+                    props: true,
+                    CustomMenuProps: true,
+                    dropdownProps: true,
+                    IDropdownProps: true,
+                    IProps: true,
+                    IModalProps: true,
+                    TProps: true,
+                    ITitleProps: true,
+                    ITableProps: true,
+                    tableProps: true,
+                    yesButtonProps: true,
+                    noButtonProps: true,
+                    defaultNoButtonProps: true,
+                    defaultYesButtonProps: true,
+                    n: true,
+                    ref: true
+                }
+            }
+        ],
         'unicorn/require-array-join-separator': 'error',
         'unicorn/require-number-to-fixed-digits-argument': 'error',
         'unicorn/require-post-message-target-origin': 'error',

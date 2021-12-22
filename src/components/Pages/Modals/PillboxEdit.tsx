@@ -41,10 +41,10 @@ const PillboxEdit = (props: IProps): JSX.Element | null => {
 
     /**
      * Fires when a text field or checkbox is changing.
-     * @param {React.ChangeEvent<HTMLElement>} e Change event object
+     * @param {React.ChangeEvent<HTMLElement>} changeEvent Change event object
      */
-    const handleOnChange = (e: React.ChangeEvent<HTMLElement>) => {
-        const target = e.target as HTMLInputElement;
+    const handleOnChange = (changeEvent: React.ChangeEvent<HTMLElement>) => {
+        const target = changeEvent.target as HTMLInputElement;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
         pillboxInfo[name] = value;
@@ -90,7 +90,7 @@ const PillboxEdit = (props: IProps): JSX.Element | null => {
                             <Form.Control
                                 className={pillboxInfo.Name !== '' ? '' : 'is-invalid'}
                                 name="Name"
-                                onChange={(e) => handleOnChange(e)}
+                                onChange={(changeEvent) => handleOnChange(changeEvent)}
                                 ref={textInput}
                                 required
                                 type="text"
@@ -108,7 +108,7 @@ const PillboxEdit = (props: IProps): JSX.Element | null => {
                             <Form.Control
                                 as="textarea"
                                 name="Notes"
-                                onChange={(e) => handleOnChange(e)}
+                                onChange={(changeEvent) => handleOnChange(changeEvent)}
                                 rows={3}
                                 value={pillboxInfo.Notes ? pillboxInfo.Notes : ''}
                             />
