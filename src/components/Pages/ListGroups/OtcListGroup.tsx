@@ -143,31 +143,33 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
                         </InputGroup.Append>
                     </InputGroup>
                 </FormGroup>
-                <FormGroup>
-                    <Button
-                        className="mr-2"
-                        disabled={!activeOtc || disabled}
-                        onClick={() => logOtcDrug()}
-                        size="sm"
-                        variant={lastTakenVariant}
-                    >
-                        <span>
-                            {disabled && (
-                                <>
-                                    <DisabledSpinner />{' '}
-                                </>
-                            )}
-                            + Log {activeOtc ? activeOtc.Drug + ' ' + activeOtc.Strength : ''}
-                        </span>
-                    </Button>
+                {activeOtc && !disabled && (
+                    <FormGroup>
+                        <Button
+                            className="mr-2"
+                            disabled={!activeOtc || disabled}
+                            onClick={() => logOtcDrug()}
+                            size="sm"
+                            variant={lastTakenVariant}
+                        >
+                            <span>
+                                {disabled && (
+                                    <>
+                                        <DisabledSpinner />{' '}
+                                    </>
+                                )}
+                                + Log {activeOtc ? activeOtc.Drug + ' ' + activeOtc.Strength : ''}
+                            </span>
+                        </Button>
 
-                    <LogButtons
-                        disabled={!activeOtc || disabled}
-                        lastTaken={lastTaken}
-                        lastTakenVariant={lastTakenVariant}
-                        onLogAmount={(n) => logOtcDrugAmount(n)}
-                    />
-                </FormGroup>
+                        <LogButtons
+                            disabled={!activeOtc || disabled}
+                            lastTaken={lastTaken}
+                            lastTakenVariant={lastTakenVariant}
+                            onLogAmount={(n) => logOtcDrugAmount(n)}
+                        />
+                    </FormGroup>
+                )}
             </ListGroup.Item>
 
             <ListGroup.Item disabled={disabled}>
