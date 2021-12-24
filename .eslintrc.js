@@ -28,13 +28,14 @@ module.exports = {
         }
     },
     extends: [
-        'prettier',
         'eslint:recommended',
         'plugin:react/recommended',
         'plugin:@typescript-eslint/recommended',
-        'plugin:react-hooks/recommended'
+        'plugin:react-hooks/recommended',
+        'plugin:prettier/recommended'
     ],
     plugins: [
+        'prettier',
         'eslint-plugin-jsdoc',
         'eslint-plugin-prefer-arrow',
         'eslint-plugin-react',

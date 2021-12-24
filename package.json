@@ -59,7 +59,6 @@
     "printWidth": 120,
     "trailingComma": "none",
     "bracketSameLine": false,
-    "jsxBracketSameLine": false,
     "singleQuote": true,
     "tabWidth": 4,
     "bracketSpacing": false,
