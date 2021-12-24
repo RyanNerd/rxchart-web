@@ -19,6 +19,7 @@ interface IProps {
     onDelete: (r: DrugLogRecord) => void;
     onEdit: (r: DrugLogRecord) => void;
     onPillClick: (pillboxId: number) => void;
+    medicineList: MedicineRecord[]; // Includes OTC
 }
 
 /**
@@ -26,8 +27,8 @@ interface IProps {
  * @param {IProps} props The props for this component
  */
 const DrugLogHistoryGrid = (props: IProps): JSX.Element => {
-    const {activeClient, onDelete, onEdit, onPillClick} = props;
-    const {medicineList, pillboxItemList, pillboxList, drugLogList} = activeClient;
+    const {activeClient, onDelete, onEdit, onPillClick, medicineList} = props;
+    const {pillboxItemList, pillboxList, drugLogList} = activeClient;
 
     /**
      * Returns the value of the drug column for the given drugId

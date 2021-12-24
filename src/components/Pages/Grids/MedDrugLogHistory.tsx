@@ -12,7 +12,7 @@ interface IProps {
     onDelete: (drugLogRecord: DrugLogRecord) => void;
     onEdit: (drugLogRecord: DrugLogRecord) => void;
     onPillClick: (pillboxId: number) => void;
-    otcList: MedicineRecord[];
+    medicineOtcList: MedicineRecord[]; // Includes OTC drugs
     disabled: boolean;
 }
 
@@ -21,7 +21,7 @@ interface IProps {
  * @param {IProps} props The props for this component
  */
 const MedDrugLogHistory = (props: IProps) => {
-    const {activeClient, onDelete, onEdit, onPillClick, disabled} = props;
+    const {activeClient, medicineOtcList, onDelete, onEdit, onPillClick, disabled} = props;
     const [printing, setPrinting] = useState(false);
 
     useEffect(() => {
@@ -76,6 +76,7 @@ const MedDrugLogHistory = (props: IProps) => {
             <div className="mt-3">
                 <DrugLogHistoryGrid
                     activeClient={activeClient}
+                    medicineList={medicineOtcList}
                     onDelete={(drugLogRecord) => onDelete(drugLogRecord)}
                     onEdit={(drugLogRecord) => onEdit(drugLogRecord)}
                     onPillClick={(pillboxId) => onPillClick(pillboxId)}
