@@ -61,7 +61,7 @@ const RxHistory = (props: IProps) => {
                 onEdit={(drugLogRecord) => setShowDrugLog({...drugLogRecord})}
                 onDelete={(drugLogRecord) => setShowDeleteDrugLogRecord(drugLogRecord)}
                 onPillClick={(pillboxId) => onPillboxSelected(pillboxId)}
-                otcList={otcList}
+                medicineOtcList={medicineOtcList}
             />
 
             <DrugLogEdit
