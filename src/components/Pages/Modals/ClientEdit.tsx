@@ -6,15 +6,7 @@ import Modal from 'react-bootstrap/Modal';
 import Row from 'react-bootstrap/Row';
 import React, {useEffect, useRef, useState} from 'reactn';
 import {ClientRecord} from 'types/RecordTypes';
-import {
-    BsColor,
-    clientFullName,
-    getFormattedDate,
-    isDateFuture,
-    isDayValid,
-    isMonthValid,
-    isYearValid
-} from 'utility/common';
+import {clientFullName, getFormattedDate, isDateFuture, isDayValid, isMonthValid, isYearValid} from 'utility/common';
 
 interface IProps {
     clientInfo: ClientRecord;
@@ -105,7 +97,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
             <Modal.Header closeButton>
                 <Modal.Title>
                     {clientInfo.Id ? 'Edit ' : 'Add '}
-                    <span style={{backgroundColor: BsColor.yellowLight}}>{clientFullName(clientInfo)}</span>
+                    <span style={{backgroundColor: 'yellow'}}>{clientFullName(clientInfo)}</span>
                 </Modal.Title>
             </Modal.Header>
 
