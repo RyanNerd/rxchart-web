@@ -6,7 +6,15 @@ import Modal from 'react-bootstrap/Modal';
 import Row from 'react-bootstrap/Row';
 import React, {useEffect, useRef, useState} from 'reactn';
 import {ClientRecord} from 'types/RecordTypes';
-import {isDateFuture, isDayValid, isMonthValid, isYearValid} from 'utility/common';
+import {
+    BsColor,
+    clientFullName,
+    getFormattedDate,
+    isDateFuture,
+    isDayValid,
+    isMonthValid,
+    isYearValid
+} from 'utility/common';
 
 interface IProps {
     clientInfo: ClientRecord;
@@ -92,12 +100,13 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
     // Prevent render if there is no data.
     if (!clientInfo) return null;
 
-    const residentTitle = clientInfo.Id ? 'Edit Client' : 'Add New Client';
-
     return (
         <Modal backdrop="static" centered onEntered={() => focusReference?.current?.focus()} show={show} size="lg">
             <Modal.Header closeButton>
-                <Modal.Title>{residentTitle}</Modal.Title>
+                <Modal.Title>
+                    {clientInfo.Id ? 'Edit ' : 'Add '}
+                    <span style={{backgroundColor: BsColor.yellowLight}}>{clientFullName(clientInfo)}</span>
+                </Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
@@ -108,6 +117,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                         </Form.Label>
                         <Col sm="7">
                             <Form.Control
+                                autoComplete="off"
                                 className={clientInfo.FirstName !== '' ? '' : 'is-invalid'}
                                 name="FirstName"
                                 onBlur={() => checkForDuplicates()}
@@ -127,6 +137,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                         </Form.Label>
                         <Col sm="7">
                             <Form.Control
+                                autoComplete="off"
                                 className={clientInfo.LastName !== '' ? '' : 'is-invalid'}
                                 name="LastName"
                                 onBlur={() => checkForDuplicates()}
@@ -145,6 +156,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                         </Form.Label>
                         <Col sm="7">
                             <Form.Control
+                                autoComplete="off"
                                 name="Nickname"
                                 onChange={(changeEvent) => handleOnChange(changeEvent)}
                                 required
@@ -230,6 +242,9 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
             </Modal.Body>
 
             <Modal.Footer>
+                <span style={{paddingRight: '40%'}}>
+                    Updated: {clientInfo.Updated ? getFormattedDate(clientInfo.Updated) : null}
+                </span>
                 <Button onClick={() => handleHide(false)} variant="secondary">
                     Cancel
                 </Button>
