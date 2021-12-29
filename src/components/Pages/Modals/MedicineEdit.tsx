@@ -20,6 +20,8 @@ interface IProps {
     show: boolean;
 }
 
+type ValidStatus = '' | 'is-invalid';
+
 /**
  * Edit Modal for Medicine
  * @param {IProps} props Props for the component
@@ -32,7 +34,7 @@ const MedicineEdit = (props: IProps) => {
         if (props.drugInfo) {
             const info = {...props.drugInfo};
             for (const field of ['Directions', 'Notes', 'FillDateMonth', 'FillDateDay', 'FillDateYear']) {
-                if (field === null) info[field] = '';
+                if (info[field] === null) info[field] = '';
             }
             setDrugInfo(info);
         }
@@ -43,10 +45,59 @@ const MedicineEdit = (props: IProps) => {
         setShow(props.show);
     }, [props.show]);
 
+    const [fillDateValidStatus, setFillDateValidStatus] = useState<ValidStatus>('');
+    const [fillDateMonthValidStatus, setFillDateMonthValidStatus] = useState<ValidStatus>('');
+    const [fillDateDayValidStatus, setDateDayValidStatus] = useState<ValidStatus>('');
+    const [fillDateYearValidStatus, setfillDateYearValidStatus] = useState<ValidStatus>('');
+    useEffect(() => {
+        // Check if any of the FillDate fields are populated then all need to be populated or all blank
+        let cnt = 0;
+        const {FillDateMonth = '', FillDateYear = '', FillDateDay = ''} = {...drugInfo};
+        if (FillDateMonth) cnt++;
+        if (FillDateDay) cnt++;
+        if (FillDateYear) cnt++;
+
+        // Fill date can't be in the future
+        if (cnt === 3) {
+            const fillDate = new Date(
+                Number.parseInt(FillDateYear as string),
+                Number.parseInt(FillDateMonth as string) - 1,
+                Number.parseInt(FillDateDay as string)
+            );
+            if (isDateFuture(fillDate)) cnt = 4;
+        }
+        setFillDateValidStatus(cnt === 0 || cnt === 3 ? '' : 'is-invalid');
+
+        // prettier-ignore
+        setFillDateMonthValidStatus(
+            FillDateMonth === '' || FillDateMonth === null ? '' : (isMonthValid(FillDateMonth) ? '' : 'is-invalid')
+        );
+
+        // prettier-ignore
+        setDateDayValidStatus(
+            FillDateDay === '' || FillDateDay === null
+                ? ''
+                : (isDayValid(FillDateDay as string, FillDateMonth)
+                    ? ''
+                    : 'is-invalid')
+        );
+
+        // prettier-ignore
+        setfillDateYearValidStatus(
+            FillDateYear === '' || FillDateYear === null
+                ? ''
+                : (isYearValid(FillDateYear as string, false)
+                    ? ''
+                    : 'is-invalid')
+        );
+    }, [drugInfo]);
+
     const [canSave, setCanSave] = useState(false);
     useEffect(() => {
-        if (drugInfo?.Drug?.length > 0) setCanSave(document.querySelectorAll('.is-invalid')?.length === 0);
-        else setCanSave(false);
+        // Kludge to give JS time to examine the DOM for changes
+        setTimeout(() => {
+            setCanSave(document.querySelectorAll('.is-invalid')?.length === 0 && drugInfo?.Drug?.length > 0);
+        }, 100);
     }, [drugInfo, setCanSave]);
 
     const [showExistingDrugAlert, setShowExistingDrugAlert] = useState(false);
@@ -60,28 +111,6 @@ const MedicineEdit = (props: IProps) => {
 
     const drugInput = useRef<HTMLInputElement>(null);
     const strengthInput = useRef<HTMLInputElement>(null);
-
-    /**
-     * Returns true if the Fill Date fields have a valid fill date or if the fill date is empty.
-     */
-    const isFillDateValid = () => {
-        // Check if any of the FillDate fields are populated then all need to be populated or all blank
-        let cnt = 0;
-        if (drugInfo.fillDateMonth !== '') cnt++;
-        if (drugInfo.fillDateDay !== '') cnt++;
-        if (drugInfo.fillDateYear !== '') cnt++;
-
-        // Fill date can't be in the future
-        if (cnt === 3) {
-            const fillDate = new Date(
-                Number.parseInt(drugInfo.fillDateYear as string),
-                Number.parseInt(drugInfo.fillDateMonth as string) - 1,
-                Number.parseInt(drugInfo.fillDateDay as string)
-            );
-            if (isDateFuture(fillDate)) cnt = 4;
-        }
-        return cnt === 0 || cnt === 3;
-    };
 
     /**
      * Fires when a text field or checkbox is changing.
@@ -153,22 +182,6 @@ const MedicineEdit = (props: IProps) => {
             </Col>
         </Form.Group>
     );
-
-    // prettier-ignore
-    const fillDateMonthValid =
-        drugInfo.FillDateMonth === '' ? '' : (isMonthValid(drugInfo.FillDateMonth as string) ? '' : 'is-invalid');
-
-    // prettier-ignore
-    const fillDateDayValid =
-        drugInfo.FillDateDay === ''
-            ? ''
-            : (isDayValid(drugInfo.FillDateDay as string, drugInfo.FillDateMonth as string)
-            ? ''
-            : 'is-invalid');
-
-    // prettier-ignore
-    const fillDateYearValid =
-        drugInfo.FillDateYear === '' ? '' : (isYearValid(drugInfo.FillDateYear as string, false) ? '' : 'is-invalid');
 
     // noinspection RequiredAttributes TS/Inspector thinks <Typeahead> requires ALL attributes when this is NOT so
     return (
@@ -351,7 +364,7 @@ const MedicineEdit = (props: IProps) => {
                     {!otc && drugInfo && (
                         <Form.Group as={Row}>
                             <Form.Label column sm="2" style={{userSelect: 'none'}}>
-                                <span className={isFillDateValid() ? '' : 'is-invalid'}>Fill Date</span>
+                                <span className={fillDateValidStatus}>Fill Date</span>
                                 <div className="invalid-feedback">Invalid Fill Date</div>
                             </Form.Label>
                             <Form.Label column sm="1" style={{userSelect: 'none'}}>
@@ -359,7 +372,7 @@ const MedicineEdit = (props: IProps) => {
                             </Form.Label>
                             <Col sm="2">
                                 <Form.Control
-                                    className={fillDateMonthValid}
+                                    className={fillDateMonthValidStatus}
                                     name="FillDateMonth"
                                     onChange={(changeEvent) => handleOnChange(changeEvent)}
                                     tabIndex={6}
@@ -373,7 +386,7 @@ const MedicineEdit = (props: IProps) => {
                             </Form.Label>
                             <Col sm="2">
                                 <Form.Control
-                                    className={fillDateDayValid}
+                                    className={fillDateDayValidStatus}
                                     name="FillDateDay"
                                     onChange={(changeEvent) => handleOnChange(changeEvent)}
                                     tabIndex={7}
@@ -387,7 +400,7 @@ const MedicineEdit = (props: IProps) => {
                             </Form.Label>
                             <Col sm={2}>
                                 <Form.Control
-                                    className={fillDateYearValid}
+                                    className={fillDateYearValidStatus}
                                     name="FillDateYear"
                                     onChange={(changeEvent) => handleOnChange(changeEvent)}
                                     tabIndex={8}
