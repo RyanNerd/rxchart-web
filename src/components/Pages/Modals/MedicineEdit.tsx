@@ -48,7 +48,7 @@ const MedicineEdit = (props: IProps) => {
     const [fillDateValidStatus, setFillDateValidStatus] = useState<ValidStatus>('');
     const [fillDateMonthValidStatus, setFillDateMonthValidStatus] = useState<ValidStatus>('');
     const [fillDateDayValidStatus, setDateDayValidStatus] = useState<ValidStatus>('');
-    const [fillDateYearValidStatus, setfillDateYearValidStatus] = useState<ValidStatus>('');
+    const [fillDateYearValidStatus, setFillDateYearValidStatus] = useState<ValidStatus>('');
     useEffect(() => {
         // Check if any of the FillDate fields are populated then all need to be populated or all blank
         let cnt = 0;
@@ -83,7 +83,7 @@ const MedicineEdit = (props: IProps) => {
         );
 
         // prettier-ignore
-        setfillDateYearValidStatus(
+        setFillDateYearValidStatus(
             FillDateYear === '' || FillDateYear === null
                 ? ''
                 : (isYearValid(FillDateYear as string, false)
