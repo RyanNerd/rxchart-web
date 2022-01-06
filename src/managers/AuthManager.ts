@@ -7,7 +7,7 @@ export interface IAuthManager {
 
 /**
  * Authorization Manager
- * @param {AuthManager} authenticationProvider The Authentication provider "class" object
+ * @param {IAuthenticationProvider} authenticationProvider The Authentication provider "class" object
  */
 const AuthManager = (authenticationProvider: IAuthenticationProvider): IAuthManager => {
     /**

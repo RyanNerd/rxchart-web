@@ -174,7 +174,6 @@ const LoginPage = (props: IProps): JSX.Element | null => {
             <div className="neu-content">
                 <img alt="logo" src={RxIcon} onClick={() => setShowAboutPage(true)} />
                 <div className="text">℞Chart</div>
-
                 <button
                     className="neu-button"
                     onClick={(mouseEvent) => {
