@@ -85,7 +85,7 @@ const CheckoutListGroup = (props: IProps) => {
                 </ListGroup.Item>
             </ListGroup>
 
-            {pinData && <DigitalSignature pinData={pinData} />}
+            {pinData && <DigitalSignature pinData={pinData} pinProvider={pinProvider} />}
         </>
     );
 };

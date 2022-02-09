@@ -13,9 +13,31 @@ type GenerateResponse = {
     success: boolean;
 };
 
+export type ReadResponseData = {
+    Id: number;
+    ResidentId: number;
+    UserId: number;
+    PinValue: string;
+    Image: string;
+};
+
+type ReadResponse = {
+    data: ReadResponseData;
+    status: number;
+    success: boolean;
+};
+
+export type DeleteResponse = {
+    data: null;
+    status: number;
+    success: boolean;
+};
+
 export interface IPinProvider {
     setApiKey: (apiKey: string) => void;
+    delete: (pinId: number) => Promise<boolean>;
     generate: (clientId: number) => Promise<GenerateResponseData>;
+    read: (pinId: number) => Promise<ReadResponseData>;
 }
 
 /**
@@ -49,6 +71,24 @@ const PinProvider = (baseUrl: string): IPinProvider => {
             } else {
                 throw response;
             }
+        },
+
+        read: async (pinId: number): Promise<ReadResponseData> => {
+            const uri = _baseUrl + 'pin/' + pinId.toString() + '?api_key=' + _apiKey;
+
+            const response = await _frak.get<ReadResponse>(uri);
+            if (response.success) {
+                return response.data as ReadResponseData;
+            } else {
+                throw response;
+            }
+        },
+
+        delete: async (pinId): Promise<boolean> => {
+            const uri = _baseUrl + 'pin/' + pinId.toString() + '?api_key=' + _apiKey;
+
+            const response = await _frak.delete<DeleteResponse>(uri);
+            return response.success;
         }
     };
 };
