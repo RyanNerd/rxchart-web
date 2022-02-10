@@ -48,7 +48,7 @@ module.exports = {
         'unicorn/better-regex': 'off',
         'unicorn/catch-error-name': 'off',
         'unicorn/consistent-destructuring': 'error',
-        'unicorn/consistent-function-scoping': 'error',
+        'unicorn/consistent-function-scoping': 'off',
         'unicorn/empty-brace-spaces': 'error',
         'unicorn/error-message': 'error',
         'unicorn/expiring-todo-comments': 'error',

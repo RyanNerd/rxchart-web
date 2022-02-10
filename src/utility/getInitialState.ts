@@ -9,6 +9,7 @@ import MedHistoryProvider, {IMedHistoryProvider} from '../providers/MedHistoryPr
 import MedicineProvider, {IMedicineProvider} from '../providers/MedicineProvider';
 import PillboxItemProvider, {IPillboxItemProvider} from '../providers/PillboxItemProvider';
 import PillboxProvider, {IPillboxProvider} from '../providers/PillboxProvider';
+import PinProvider, {IPinProvider} from 'providers/PinProvider';
 
 export interface IProviders {
     authenticationProvider: IAuthenticationProvider;
@@ -17,6 +18,7 @@ export interface IProviders {
     medHistoryProvider: IMedHistoryProvider;
     pillboxProvider: IPillboxProvider;
     pillboxItemProvider: IPillboxItemProvider;
+    pinProvider: IPinProvider;
     setApi: (apiKey: string) => Promise<void>;
 }
 
@@ -38,6 +40,7 @@ const getInitialState = () => {
         clientProvider: ClientProvider(baseUrl),
         pillboxProvider: PillboxProvider(baseUrl),
         pillboxItemProvider: PillboxItemProvider(baseUrl),
+        pinProvider: PinProvider(baseUrl),
 
         /**
          * Helper function that sets the API key for ALL providers
@@ -49,6 +52,7 @@ const getInitialState = () => {
             await providers.clientProvider.setApiKey(apiKey);
             await providers.pillboxProvider.setApiKey(apiKey);
             await providers.pillboxItemProvider.setApiKey(apiKey);
+            await providers.pinProvider.setApiKey(apiKey);
         }
     } as IProviders;
 
