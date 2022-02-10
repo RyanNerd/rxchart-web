@@ -2,7 +2,7 @@ import {GenerateResponseData, IPinProvider} from 'providers/PinProvider';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import React, {useEffect, useState} from 'reactn';
-import useInterval from 'utility/useInterval';
+import useInterval from 'hooks/useInterval';
 
 interface IProps {
     onClose: (img: string | null) => void;

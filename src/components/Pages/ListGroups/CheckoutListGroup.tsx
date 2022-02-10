@@ -14,6 +14,7 @@ interface IProps {
     medicineList: MedicineRecord[];
     onClose?: () => void;
 }
+
 const CheckoutListGroup = (props: IProps) => {
     const {checkoutList, medicineList, clientRecord, onClose} = props;
     const clientName = clientRecord ? clientFullName(clientRecord) : '';
