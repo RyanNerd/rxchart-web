@@ -5,70 +5,73 @@ import React, {useEffect, useState} from 'reactn';
 import useInterval from 'utility/useInterval';
 
 interface IProps {
-    pinProvider: IPinProvider;
+    onClose: (img: string | null) => void;
     pinData: GenerateResponseData;
-    onClose?: (img: string | null) => void;
+    pinProvider: IPinProvider;
 }
 
 const DigitalSignature = (props: IProps) => {
     const pinProvider = props.pinProvider;
     const onClose = props.onClose;
+
     const [pinData, setPinData] = useState(props.pinData);
-    const [image, setImage] = useState<string | null>(null);
     useEffect(() => {
         setPinData(props.pinData);
     }, [props.pinData]);
+
     const [show, setShow] = useState(pinData !== null);
     useEffect(() => {
         setShow(pinData !== null);
     }, [pinData]);
 
+    /**
+     * Keep polling the API until we get a signature from the client.
+     */
     useInterval(() => {
-        pinProvider.read(pinData.pin_id).then((pinReadData) => {
+        /**
+         * Call the API to get a Pin record given the pinId PK
+         * @param {number} pinId The pin Id
+         */
+        const pollPinSignatureImageUpdate = async (pinId: number) => {
+            const pinReadData = await pinProvider.read(pinId);
             if (pinReadData.Image !== null) {
-                setImage(pinReadData.Image);
+                setShow(false);
+                onClose(pinReadData.Image);
             }
-        });
+        };
+        pollPinSignatureImageUpdate(pinData.pin_id);
     }, 5000);
 
     /**
      * Handle when user clicks Cancel PIN entry by closing the modal and deleting the PIN record
      */
     const handleCancelPinEntry = () => {
-        setShow(false);
-        pinProvider.delete(pinData.pin_id).then((isDeleted) => {
-            if (isDeleted && onClose) {
+        /**
+         * Delete the Pin record given the PK pinId
+         * @param {number} pinId The Pin table PK
+         */
+        const deletePinRecord = async (pinId: number) => {
+            const isDeleted = await pinProvider.delete(pinId);
+            if (isDeleted) {
                 onClose(null);
             } else {
                 throw new Error('Unable to delete PIN record');
             }
-        });
+        };
+
+        setShow(false);
+        deletePinRecord(pinData.pin_id);
     };
 
     return (
         <Modal backdrop="static" centered show={show} size="lg">
             <Modal.Body>
                 <h1>PIN: {pinData.pin.toString()}</h1>
-                {image ? (
-                    <img src={image} height="65px" width="300px" alt="signature image" />
-                ) : (
-                    <h2>Waiting on client signature</h2>
-                )}
+                <h2>Waiting on client signature</h2>
             </Modal.Body>
 
             <Modal.Footer>
-                {image ? (
-                    <Button
-                        onClick={() => {
-                            setShow(false);
-                            if (onClose) onClose(image);
-                        }}
-                    >
-                        Close
-                    </Button>
-                ) : (
-                    <Button onClick={() => handleCancelPinEntry()}>Cancel Pin Entry</Button>
-                )}
+                <Button onClick={() => handleCancelPinEntry()}>Cancel Pin Entry</Button>
             </Modal.Footer>
         </Modal>
     );

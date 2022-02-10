@@ -24,7 +24,7 @@ const CheckoutListGroup = (props: IProps) => {
     const [pinData, setPinData] = useState<null | GenerateResponseData>(null);
     const [signIn] = useGlobal('signIn');
     const organization = signIn?.organization?.trim();
-
+    const [signatureImage, setSignatureImage] = useState<null | string>(null);
     const handleDigitalSignature = () => {
         pinProvider.generate(clientRecord.Id as number).then((pinData) => {
             setPinData(pinData);
@@ -76,7 +76,14 @@ const CheckoutListGroup = (props: IProps) => {
                         medications back in to the front office, I can be detained and arrested by the police.
                         <br />
                         <br />
-                        <span className="mt-3">Signature:____________________________________</span>{' '}
+                        {signatureImage ? (
+                            <span className="mt-3">
+                                <span className="mr-1">Signature:</span>
+                                <img src={signatureImage} height="60px" width="300px" alt="signature" />
+                            </span>
+                        ) : (
+                            <span className="mt-3">Signature:____________________________________</span>
+                        )}{' '}
                         <span className="ml-3">Date: {today}</span>
                     </p>
                 </ListGroup.Item>
@@ -85,7 +92,13 @@ const CheckoutListGroup = (props: IProps) => {
                 </ListGroup.Item>
             </ListGroup>
 
-            {pinData && <DigitalSignature pinData={pinData} pinProvider={pinProvider} />}
+            {pinData && (
+                <DigitalSignature
+                    onClose={(signature) => setSignatureImage(signature)}
+                    pinData={pinData}
+                    pinProvider={pinProvider}
+                />
+            )}
         </>
     );
 };
