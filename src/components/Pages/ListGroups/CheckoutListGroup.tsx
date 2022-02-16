@@ -26,11 +26,22 @@ const CheckoutListGroup = (props: IProps) => {
     const [signIn] = useGlobal('signIn');
     const organization = signIn?.organization?.trim();
     const [signatureImage, setSignatureImage] = useState<null | string>(null);
+
+    /**
+     * Handle when the user clicks the Digital Signature button
+     */
     const handleDigitalSignature = () => {
-        pinProvider.generate(clientRecord.Id as number).then((pinData) => {
-            setPinData(pinData);
-        });
+        /**
+         * Call the API to generate a new PIN for the given client.
+         * @param {number} clientId The client PK
+         */
+        const generatePin = async (clientId: number) => {
+            setPinData(await pinProvider.generate(clientId));
+        };
+        generatePin(clientRecord.Id as number);
     };
+
+    if (!clientRecord.Id) return null;
 
     return (
         <>

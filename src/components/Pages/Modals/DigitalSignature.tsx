@@ -67,6 +67,10 @@ const DigitalSignature = (props: IProps) => {
         <Modal backdrop="static" centered show={show} size="lg">
             <Modal.Body>
                 <h1>PIN: {pinData.pin.toString()}</h1>
+                <h2>
+                    Direct the client to <span style={{color: 'blue'}}>{window.location.href + 'pin'}</span>
+                </h2>
+                <br />
                 <h2>Waiting on client signature</h2>
             </Modal.Body>
 
