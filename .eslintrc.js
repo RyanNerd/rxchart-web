@@ -139,6 +139,7 @@ module.exports = {
                     props: true,
                     CustomMenuProps: true,
                     dropdownProps: true,
+                    idx: true,
                     IDropdownProps: true,
                     IProps: true,
                     IModalProps: true,

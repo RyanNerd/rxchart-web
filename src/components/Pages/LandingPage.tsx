@@ -1,4 +1,5 @@
 import ClientPage from 'components/Pages/ClientPage';
+import Documents from 'components/Pages/Documents';
 import SettingsPage from 'components/Pages/SettingsPage';
 import {ReactNode} from 'react';
 import Tab from 'react-bootstrap/Tab';
@@ -6,7 +7,6 @@ import Tabs from 'react-bootstrap/Tabs';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import React, {useEffect, useGlobal, useMemo} from 'reactn';
 import {IPreferences} from 'reactn/default';
-import {Base64, base64ArrayBuffer} from 'utility/common';
 import DiagnosticPage from './DiagnosticPage';
 import LoginPage from './LoginPage';
 import ManageDrugPage from './ManageDrugPage';
@@ -130,18 +130,7 @@ const LandingPage = (props: IProps) => {
             </Tab>
             <Tab eventKey="documents" title={<Title activeKey={'documents'}>Documents</Title>}>
                 <Tab.Content>
-                    <button
-                        onClick={async () => {
-                            const [fileHandle] = await window.showOpenFilePicker();
-                            const file = await fileHandle.getFile();
-                            const fileArrayBuffer = await file.arrayBuffer();
-                            const arrayString = base64ArrayBuffer(fileArrayBuffer);
-                            alert('base64 encoded: ' + JSON.stringify(arrayString));
-                            alert('decoded: ' + Base64.decode(arrayString));
-                        }}
-                    >
-                        FILE
-                    </button>
+                    <Documents />
                 </Tab.Content>
             </Tab>
             <Tab disabled={!errorDetails} eventKey="error" title={<Title activeKey="error">Diagnostics</Title>}>
