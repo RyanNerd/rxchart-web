@@ -1,7 +1,9 @@
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import React, {useGlobal, useState} from 'reactn';
+import {ChangeEvent} from 'react';
 import decodeBase64ArrayBuffer from 'utility/decodeBase64ArrayBuffer';
 import encodeBase64ArrayBuffer from 'utility/encodeBase64ArrayBuffer';
 
@@ -13,8 +15,12 @@ export enum UploadFileErrorCode {
 
 const Documents = () => {
     const [, setErrorDetails] = useGlobal('__errorDetails');
+    // todo: use <Suspense> when system is busy with stuff
     const [busy, setIsBusy] = useState(false);
+    const [uploadedFileName, setUploadedFileName] = useState('Select a File to Upload');
     const [encodedString, setEncodedString] = useState('');
+    const [providers] = useGlobal('providers');
+    const documentProvider = providers.documentProvider;
 
     const saveFile = async (content: ArrayBuffer, suggestedFileName?: string) => {
         const options = suggestedFileName ? {suggestedName: suggestedFileName} : undefined;
@@ -57,6 +63,23 @@ const Documents = () => {
         }
     };
 
+    const handleFileInput = async (fileInputEvent: ChangeEvent<HTMLInputElement>) => {
+        if (fileInputEvent) {
+            const target = fileInputEvent.target as HTMLInputElement;
+            const files = target.files;
+            if (files && files.length > 0) {
+                const file = files[0];
+                const formData = new FormData();
+                formData.append('example1', file);
+                setUploadedFileName(file.name);
+                const fileUploadedSuccessfully = await documentProvider.uploadFile(formData);
+                if (!fileUploadedSuccessfully) {
+                    setUploadedFileName('File upload failed');
+                }
+            }
+        }
+    };
+
     return (
         <>
             <ButtonGroup className="mb-2" as={Row}>
@@ -67,8 +90,13 @@ const Documents = () => {
                     Save encoded string as new file
                 </Button>
             </ButtonGroup>
-            <Row>
-                <p>Placeholder for DocumentsGrid</p>
+            <Row as={Form}>
+                <Form.File
+                    id="custom-file"
+                    label={uploadedFileName}
+                    custom
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => handleFileInput(event)}
+                />
             </Row>
         </>
     );
