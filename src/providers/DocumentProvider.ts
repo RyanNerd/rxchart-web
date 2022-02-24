@@ -1,6 +1,6 @@
 export interface IDocumentProvider {
     setApiKey: (apiKey: string) => void;
-    uploadFile: (formData: FormData) => Promise<boolean>; // todo: Promise<DocumentRecord>
+    uploadFile: (formData: FormData, clientId: number) => Promise<DocumentRecord>;
 }
 type DocumentRecord = {
     Id: number | null;
@@ -28,17 +28,25 @@ const DocumentProvider = (baseUrl: string): IDocumentProvider => {
             _apiKey = apiKey;
         },
 
-        uploadFile: async (formData: FormData): Promise<boolean> => {
-            const uri = _baseUrl + 'document/upload?api_key=' + _apiKey;
+        /**
+         * Upload a file as a FormData object. Note that Frak isn't used because the data is not JSON
+         * @param {FormData} formData The FormData object containing the name and file
+         * @param {number} clientId The Client PK
+         * @returns {Promise<DocumentRecord>} A Document record as a promise
+         */
+        uploadFile: async (formData: FormData, clientId): Promise<DocumentRecord> => {
+            const uri = _baseUrl + 'document/upload/' + clientId + '?api_key=' + _apiKey;
             const response = await fetch(uri, {
                 method: 'POST',
-                body: formData
+                body: formData,
+                headers: {
+                    Accept: 'application/json'
+                }
             });
 
             const responseJSON = (await response.json()) as UploadResponse;
             if (responseJSON.success) {
-                alert('data: ' + JSON.stringify(responseJSON.data));
-                return true; // TODO: Return a Document record object
+                return responseJSON.data as DocumentRecord;
             } else {
                 throw response;
             }

@@ -1,11 +1,7 @@
-import Button from 'react-bootstrap/Button';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import {ChangeEvent} from 'react';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import React, {useGlobal, useState} from 'reactn';
-import {ChangeEvent} from 'react';
-import decodeBase64ArrayBuffer from 'utility/decodeBase64ArrayBuffer';
-import encodeBase64ArrayBuffer from 'utility/encodeBase64ArrayBuffer';
 
 export enum UploadFileErrorCode {
     Ok,
@@ -15,90 +11,61 @@ export enum UploadFileErrorCode {
 
 const Documents = () => {
     const [, setErrorDetails] = useGlobal('__errorDetails');
-    // todo: use <Suspense> when system is busy with stuff
-    const [busy, setIsBusy] = useState(false);
-    const [uploadedFileName, setUploadedFileName] = useState('Select a File to Upload');
-    const [encodedString, setEncodedString] = useState('');
+    const [isBusy, setIsIsBusy] = useState(false);
+    const defaultFileLabelText = 'Select a File to Upload';
+    const [uploadedFileName, setUploadedFileName] = useState(defaultFileLabelText);
+    const [invalidMaxSize, setInvalidMaxSize] = useState(false);
     const [providers] = useGlobal('providers');
     const documentProvider = providers.documentProvider;
 
-    const saveFile = async (content: ArrayBuffer, suggestedFileName?: string) => {
-        const options = suggestedFileName ? {suggestedName: suggestedFileName} : undefined;
-        const fileHandle = await window.showSaveFilePicker(options);
-        const fileStream = await fileHandle.createWritable();
-        await fileStream.write(content);
-        await fileStream.close();
-    };
-
-    const handleSaveEncodedStringToFile = () => {
-        // Now decode the string back to an ArrayBuffer
-        const decodedArrayBuffer = decodeBase64ArrayBuffer(encodedString);
-        // Save the decodedArrayBuffer as a new file
-        saveFile(decodedArrayBuffer);
-    };
-
-    const uploadFile = async () => {
-        try {
-            // Bring up the file selector dialog window
-            const [fileHandle] = await window.showOpenFilePicker();
-            // Get the file object
-            const file = (await fileHandle.getFile()) as File;
-            if (file.size > 500_000_000) {
-                return UploadFileErrorCode.max_file_size_exceeded;
-            }
-            // Get the file contents as and ArrayBuffer
-            const fileArrayBuffer = await file.arrayBuffer();
-            // Convert the ArrayBuffer into base64
-            const arrayString = encodeBase64ArrayBuffer(fileArrayBuffer);
-            alert('base64 encoded: ' + JSON.stringify(arrayString));
-            setEncodedString(arrayString);
-        } catch (error: unknown) {
-            if (error instanceof DOMException && error.message.toLowerCase().includes('the user aborted a request')) {
-                return UploadFileErrorCode.file_selection_cancelled;
-            }
-
-            if (error instanceof Error) {
-                await setErrorDetails(error);
-            }
-        }
-    };
-
-    const handleFileInput = async (fileInputEvent: ChangeEvent<HTMLInputElement>) => {
+    /**
+     * Handle when the user clicked the Select a File to Upload component
+     * @param {React.ChangeEvent<HTMLInputElement>} fileInputEvent The file InputElement
+     * @returns {Promise<void>}
+     */
+    const handleFileUpload = async (fileInputEvent: ChangeEvent<HTMLInputElement>) => {
         if (fileInputEvent) {
             const target = fileInputEvent.target as HTMLInputElement;
             const files = target.files;
-            if (files && files.length > 0) {
+            // Must be only one file
+            if (files && files.length === 1) {
                 const file = files[0];
-                const formData = new FormData();
-                formData.append('example1', file);
-                setUploadedFileName(file.name);
-                const fileUploadedSuccessfully = await documentProvider.uploadFile(formData);
-                if (!fileUploadedSuccessfully) {
-                    setUploadedFileName('File upload failed');
+                // Max file size is 100MB
+                if (file.size <= 104_857_600) {
+                    setIsIsBusy(true);
+                    try {
+                        // See: https://www.slimframework.com/docs/v4/cookbook/uploading-files.html
+                        const formData = new FormData();
+                        formData.append('single_file', file);
+                        setUploadedFileName(file.name);
+                        const documentRecord = await documentProvider.uploadFile(formData, 1092);
+                        // TODO: Insert the record into the Document table
+                        alert('documentRecord: ' + JSON.stringify(documentRecord));
+                    } catch (error) {
+                        await setErrorDetails(error);
+                    }
+                    setIsIsBusy(false);
+                } else {
+                    setInvalidMaxSize(true);
                 }
+            } else {
+                setUploadedFileName(defaultFileLabelText);
             }
         }
     };
 
     return (
-        <>
-            <ButtonGroup className="mb-2" as={Row}>
-                <Button size="sm" variant="info" onClick={() => uploadFile()}>
-                    Upload new document or file
-                </Button>
-                <Button className="ml-2" size="sm" variant="info" onClick={() => handleSaveEncodedStringToFile()}>
-                    Save encoded string as new file
-                </Button>
-            </ButtonGroup>
-            <Row as={Form}>
-                <Form.File
-                    id="custom-file"
-                    label={uploadedFileName}
-                    custom
-                    onChange={(event: ChangeEvent<HTMLInputElement>) => handleFileInput(event)}
-                />
-            </Row>
-        </>
+        <Row as={Form}>
+            <Form.File
+                className={invalidMaxSize ? 'is-invalid' : ''}
+                disabled={isBusy}
+                id="custom-file"
+                label={uploadedFileName}
+                custom
+                onChange={(event: ChangeEvent<HTMLInputElement>) => handleFileUpload(event)}
+            />
+            <div className="invalid-feedback">File exceeds maximum size allowed</div>
+        </Row>
     );
 };
 
