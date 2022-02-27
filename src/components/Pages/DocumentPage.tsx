@@ -1,15 +1,8 @@
 import {ChangeEvent} from 'react';
 import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
 import React, {useGlobal, useState} from 'reactn';
 
-export enum UploadFileErrorCode {
-    Ok,
-    file_selection_cancelled,
-    max_file_size_exceeded
-}
-
-const Documents = () => {
+const DocumentPage = () => {
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [isBusy, setIsIsBusy] = useState(false);
     const defaultFileLabelText = 'Select a File to Upload';
@@ -39,7 +32,7 @@ const Documents = () => {
                         formData.append('single_file', file);
                         setUploadedFileName(file.name);
                         const documentRecord = await documentProvider.uploadFile(formData, 1092);
-                        // TODO: Insert the record into the Document table
+
                         alert('documentRecord: ' + JSON.stringify(documentRecord));
                     } catch (error) {
                         await setErrorDetails(error);
@@ -55,18 +48,25 @@ const Documents = () => {
     };
 
     return (
-        <Row as={Form}>
-            <Form.File
-                className={invalidMaxSize ? 'is-invalid' : ''}
-                disabled={isBusy}
-                id="custom-file"
-                label={uploadedFileName}
-                custom
-                onChange={(event: ChangeEvent<HTMLInputElement>) => handleFileUpload(event)}
-            />
-            <div className="invalid-feedback">File exceeds maximum size allowed</div>
-        </Row>
+        <Form>
+            <Form.Group>
+                <Form.File
+                    className={invalidMaxSize ? 'is-invalid' : ''}
+                    style={{width: '25%'}}
+                    disabled={isBusy}
+                    id="custom-file"
+                    label={uploadedFileName}
+                    custom
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => handleFileUpload(event)}
+                />
+                <div className="invalid-feedback">File exceeds maximum size allowed</div>
+            </Form.Group>
+
+            <Form.Group>
+                <p>Place holder</p>
+            </Form.Group>
+        </Form>
     );
 };
 
-export default Documents;
+export default DocumentPage;

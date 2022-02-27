@@ -4,7 +4,14 @@ import {IMedicineManager} from 'managers/MedicineManager';
 import {Authenticated} from 'providers/AuthenticationProvider';
 import 'reactn';
 import {State} from 'reactn/default';
-import {ClientRecord, DrugLogRecord, MedicineRecord, PillboxItemRecord, PillboxRecord} from 'types/RecordTypes';
+import {
+    ClientRecord,
+    DocumentRecord,
+    DrugLogRecord,
+    MedicineRecord,
+    PillboxItemRecord,
+    PillboxRecord
+} from 'types/RecordTypes';
 import {IProviders} from 'utility/getInitialState';
 
 /* eslint @typescript-eslint/no-explicit-any: off */
@@ -12,6 +19,7 @@ declare module 'reactn/default' {
     // Client Type for the activeClient
     export type TClient = {
         clientInfo: ClientRecord;
+        documentList: DocumentRecord[];
         drugLogList: DrugLogRecord[];
         medicineList: MedicineRecord[];
         pillboxList: PillboxRecord[];

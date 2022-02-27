@@ -24,15 +24,10 @@ import TabContent from '../../styles/common.css';
 import DrugLogEdit from './Modals/DrugLogEdit';
 import MedicineEdit from './Modals/MedicineEdit';
 
-interface IProps {
-    activeTabKey: string;
-}
-
 /**
  * ManageDrugPage - UI for Displaying, editing and adding Medicine
- * @param {IProps} props The props for the component
  */
-const ManageDrugPage = (props: IProps): JSX.Element | null => {
+const ManageDrugPage = (): JSX.Element | null => {
     const [, setPillboxItemList] = useState<PillboxItemRecord[]>([]);
     const [activeClient, setActiveClient] = useGlobal('activeClient');
     const [checkoutList, setCheckoutList] = useState<DrugLogRecord[]>([]);
@@ -48,7 +43,6 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(0);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const [toast, setToast] = useState<DrugLogRecord[] | null>(null);
-    const activeTabKey = props.activeTabKey;
 
     // When the activeClient is "active" then deconstruct the activeClient into the lists and clientInfo constants
     useEffect(() => {
@@ -69,7 +63,6 @@ const ManageDrugPage = (props: IProps): JSX.Element | null => {
 
     // No need to render if there's not an activeClient or if the activeTabKey isn't 'manage'
     if (!activeClient || !clientInfo) return null;
-    if (activeTabKey !== 'manage') return null;
 
     /**
      * Given a DrugLogRecord Update or Insert the record and rehydrate the drugLogList

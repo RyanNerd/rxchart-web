@@ -1,6 +1,6 @@
 import DrugLogGrid from 'components/Pages/Grids/DrugLogGrid';
 import OtcListGroup from 'components/Pages/ListGroups/OtcListGroup';
-import {TAB_KEY} from 'components/Pages/MedicinePage';
+import {TAB_KEY} from 'components/Pages/rxPage';
 import DeleteDrugLogModal from 'components/Pages/Modals/DeleteDrugLogModal';
 import DrugLogEdit from 'components/Pages/Modals/DrugLogEdit';
 import MedicineEdit from 'components/Pages/Modals/MedicineEdit';

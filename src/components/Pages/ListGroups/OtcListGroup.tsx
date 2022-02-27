@@ -1,6 +1,6 @@
 import OtcListGroupGrid from 'components/Pages/Grids/OtcListGroupGrid';
 import DisabledSpinner from 'components/Pages/ListGroups/DisabledSpinner';
-import {TAB_KEY} from 'components/Pages/MedicinePage';
+import {TAB_KEY} from 'components/Pages/rxPage';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import FormGroup from 'react-bootstrap/FormGroup';

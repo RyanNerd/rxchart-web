@@ -1,3 +1,4 @@
+import ManageDrugPage from 'components/Pages/ManageDrugPage';
 import RxHistory from 'components/Pages/RxTabs/RxHistory';
 import RxMedicine from 'components/Pages/RxTabs/RxMedicine';
 import RxOtc from 'components/Pages/RxTabs/RxOtc';
@@ -18,7 +19,8 @@ export enum TAB_KEY {
     Medicine = 'med',
     OTC = 'otc',
     Pillbox = 'pillbox',
-    Print = 'print'
+    Print = 'print',
+    Manage = 'manage'
 }
 
 interface IProps {
@@ -27,10 +29,10 @@ interface IProps {
 }
 
 /**
- * MedicinePage - UI for logging prescription & OTC medications as well as pillboxes and medication checkout
+ * RxPage - UI for logging prescription & OTC medications as well as pillboxes and medication checkout
  * @param {IProps} props The props for this component
  */
-const MedicinePage = (props: IProps): JSX.Element | null => {
+const RxPage = (props: IProps): JSX.Element | null => {
     const [activeClient] = useGlobal('activeClient');
     const [activePillbox, setActivePillbox] = useState<PillboxRecord | null>(null);
     const [activeRxTab, setActiveRxTab] = useState<TAB_KEY>(TAB_KEY.Medicine);
@@ -85,7 +87,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             tabContent[0].style.marginTop = '-15px';
         }
 
-        // Move MedicinePage rxTabs up for more screen real estate
+        // Move RxPage rxTabs up for more screen real estate
         const navElement = document.querySelectorAll<HTMLElement>('div.medicine-page-tablet > nav.nav');
         if (navElement && navElement.length > 0) {
             navElement[0].style.marginBottom = '-15px';
@@ -253,9 +255,32 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 >
                     <RxPrint activeClient={activeClient} checkoutList={checkoutList} />
                 </Tab>
+                <Tab
+                    eventKey={TAB_KEY.Manage}
+                    style={{marginLeft: '-40px'}}
+                    tabClassName="rx-manage-tab"
+                    title={
+                        <ToggleButton
+                            checked={activeRxTab === TAB_KEY.Manage}
+                            className="ml-2 d-print-none"
+                            id="med-list-group-manage-radio-btn"
+                            key="med-list-group-manage-btn"
+                            name="radio-med-list-group"
+                            onChange={() => setActiveRxTab(TAB_KEY.Manage)}
+                            size={preferences.rxTabSize}
+                            type="radio"
+                            value={TAB_KEY.Manage}
+                            variant="outline-success"
+                        >
+                            <span className="ml-2">Manage Rx</span>
+                        </ToggleButton>
+                    }
+                >
+                    <ManageDrugPage />
+                </Tab>
             </Tabs>
         </div>
     );
 };
 
-export default MedicinePage;
+export default RxPage;

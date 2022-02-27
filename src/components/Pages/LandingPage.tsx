@@ -1,5 +1,6 @@
 import ClientPage from 'components/Pages/ClientPage';
-import Documents from 'components/Pages/Documents';
+import DocumentPage from 'components/Pages/DocumentPage';
+import RxPage from 'components/Pages/rxPage';
 import SettingsPage from 'components/Pages/SettingsPage';
 import {ReactNode} from 'react';
 import Tab from 'react-bootstrap/Tab';
@@ -9,9 +10,7 @@ import React, {useEffect, useGlobal, useMemo} from 'reactn';
 import {IPreferences} from 'reactn/default';
 import DiagnosticPage from './DiagnosticPage';
 import LoginPage from './LoginPage';
-import ManageDrugPage from './ManageDrugPage';
 import ManageOtcPage from './ManageOtcPage';
-import MedicinePage from './MedicinePage';
 
 interface ITitleProps {
     activeKey: string;
@@ -63,12 +62,8 @@ const LandingPage = (props: IProps) => {
      * Memoized pages to reduce number of re-renders
      */
     const medicinePage = useMemo(() => {
-        return <MedicinePage activeTabKey={activeTabKey} preferences={preferences} />;
+        return <RxPage activeTabKey={activeTabKey} preferences={preferences} />;
     }, [activeTabKey, preferences]);
-
-    const manageDrugPage = useMemo(() => {
-        return <ManageDrugPage activeTabKey={activeTabKey} />;
-    }, [activeTabKey]);
 
     const clientPage = useMemo(() => {
         return <ClientPage activeTabKey={activeTabKey} clientSelected={() => setActiveTabKey('medicine')} />;
@@ -116,21 +111,15 @@ const LandingPage = (props: IProps) => {
                     <Tab.Content style={{marginLeft: 0}}>{medicinePage}</Tab.Content>
                 )}
             </Tab>
-            <Tab
-                disabled={!apiKey || !activeClient}
-                eventKey="manage"
-                title={<Title activeKey="manage">Manage Rx</Title>}
-            >
-                <Tab.Content>{manageDrugPage}</Tab.Content>
-            </Tab>
+
             <Tab disabled={!apiKey} eventKey="manage-otc" title={<Title activeKey="manage-otc">Manage OTC</Title>}>
                 <Tab.Content>
                     <ManageOtcPage activeTabKey={activeTabKey} />
                 </Tab.Content>
             </Tab>
-            <Tab eventKey="documents" title={<Title activeKey={'documents'}>Documents</Title>}>
+            <Tab disabled={!apiKey} eventKey="documents" title={<Title activeKey={'documents'}>Documents</Title>}>
                 <Tab.Content>
-                    <Documents />
+                    <DocumentPage />
                 </Tab.Content>
             </Tab>
             <Tab disabled={!errorDetails} eventKey="error" title={<Title activeKey="error">Diagnostics</Title>}>
@@ -138,7 +127,7 @@ const LandingPage = (props: IProps) => {
                     <DiagnosticPage error={errorDetails} dismissErrorAlert={() => window.location.reload()} />
                 </Tab.Content>
             </Tab>
-            <Tab eventKey="settings" title={<Title activeKey={'settings'}>Preferences</Title>}>
+            <Tab eventKey="management" title={<Title activeKey={'management'}>Management</Title>}>
                 <Tab.Content>
                     <SettingsPage />
                 </Tab.Content>

@@ -77,11 +77,14 @@ const ClientPage = (props: IProps): JSX.Element | null => {
             await setActiveClient({
                 ...activeClient,
                 clientInfo: clientLoad.clientInfo,
+                documentList: clientLoad.documentList,
                 drugLogList: clientLoad.drugLogList,
                 medicineList: clientLoad.medicineList,
                 pillboxList: clientLoad.pillboxList,
                 pillboxItemList: clientLoad.pillboxItemList
             });
+            // eslint-disable-next-line no-console
+            console.log('documentList', activeClient?.documentList);
         } catch (error) {
             await setErrorDetails(error);
         }
