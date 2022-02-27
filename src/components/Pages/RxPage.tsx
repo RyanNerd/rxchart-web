@@ -1,4 +1,4 @@
-import ManageDrugPage from 'components/Pages/ManageDrugPage';
+import ManageRx from 'components/Pages/RxTabs/ManageRx';
 import RxHistory from 'components/Pages/RxTabs/RxHistory';
 import RxMedicine from 'components/Pages/RxTabs/RxMedicine';
 import RxOtc from 'components/Pages/RxTabs/RxOtc';
@@ -276,7 +276,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                         </ToggleButton>
                     }
                 >
-                    <ManageDrugPage />
+                    <ManageRx />
                 </Tab>
             </Tabs>
         </div>

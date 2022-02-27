@@ -1,6 +1,6 @@
 import ClientPage from 'components/Pages/ClientPage';
 import DocumentPage from 'components/Pages/DocumentPage';
-import RxPage from 'components/Pages/rxPage';
+import RxPage from 'components/Pages/RxPage';
 import SettingsPage from 'components/Pages/SettingsPage';
 import {ReactNode} from 'react';
 import Tab from 'react-bootstrap/Tab';

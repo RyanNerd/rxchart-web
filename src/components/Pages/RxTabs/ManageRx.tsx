@@ -20,14 +20,14 @@ import {
     PillboxItemRecord
 } from 'types/RecordTypes';
 import {clientFullName, getCheckoutList, getDrugName} from 'utility/common';
-import TabContent from '../../styles/common.css';
-import DrugLogEdit from './Modals/DrugLogEdit';
-import MedicineEdit from './Modals/MedicineEdit';
+import TabContent from 'styles/common.css';
+import DrugLogEdit from 'components/Pages/Modals/DrugLogEdit';
+import MedicineEdit from 'components/Pages/Modals/MedicineEdit';
 
 /**
- * ManageDrugPage - UI for Displaying, editing and adding Medicine
+ * ManageRx - UI for Displaying, editing and adding Medicine
  */
-const ManageDrugPage = (): JSX.Element | null => {
+const ManageRx = (): JSX.Element | null => {
     const [, setPillboxItemList] = useState<PillboxItemRecord[]>([]);
     const [activeClient, setActiveClient] = useGlobal('activeClient');
     const [checkoutList, setCheckoutList] = useState<DrugLogRecord[]>([]);
@@ -307,4 +307,4 @@ const ManageDrugPage = (): JSX.Element | null => {
     );
 };
 
-export default ManageDrugPage;
+export default ManageRx;
