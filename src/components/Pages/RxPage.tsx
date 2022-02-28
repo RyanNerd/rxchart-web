@@ -1,3 +1,4 @@
+import DocumentPage from 'components/Pages/DocumentPage';
 import ManageRx from 'components/Pages/RxTabs/ManageRx';
 import RxHistory from 'components/Pages/RxTabs/RxHistory';
 import RxMedicine from 'components/Pages/RxTabs/RxMedicine';
@@ -20,7 +21,8 @@ export enum TAB_KEY {
     OTC = 'otc',
     Pillbox = 'pillbox',
     Print = 'print',
-    Manage = 'manage'
+    Manage = 'manage',
+    Document = 'document'
 }
 
 interface IProps {
@@ -277,6 +279,30 @@ const RxPage = (props: IProps): JSX.Element | null => {
                     }
                 >
                     <ManageRx />
+                </Tab>
+
+                <Tab
+                    eventKey={TAB_KEY.Document}
+                    style={{marginLeft: '-40px'}}
+                    tabClassName="rx-document-tab"
+                    title={
+                        <ToggleButton
+                            checked={activeRxTab === TAB_KEY.Document}
+                            className="ml-2 d-print-none"
+                            id="med-list-group-document-radio-btn"
+                            key="med-list-group-document-btn"
+                            name="radio-med-list-group"
+                            onChange={() => setActiveRxTab(TAB_KEY.Document)}
+                            size={preferences.rxTabSize}
+                            type="radio"
+                            value={TAB_KEY.Document}
+                            variant="outline-success"
+                        >
+                            <span className="ml-2">Documents</span>
+                        </ToggleButton>
+                    }
+                >
+                    <DocumentPage />
                 </Tab>
             </Tabs>
         </div>
