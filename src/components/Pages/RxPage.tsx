@@ -1,4 +1,4 @@
-import DocumentPage from 'components/Pages/DocumentPage';
+import Documents from 'components/Pages/RxTabs/Documents';
 import ManageRx from 'components/Pages/RxTabs/ManageRx';
 import RxHistory from 'components/Pages/RxTabs/RxHistory';
 import RxMedicine from 'components/Pages/RxTabs/RxMedicine';
@@ -302,7 +302,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                         </ToggleButton>
                     }
                 >
-                    <DocumentPage />
+                    <Documents />
                 </Tab>
             </Tabs>
         </div>

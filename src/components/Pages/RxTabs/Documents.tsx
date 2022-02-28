@@ -2,7 +2,7 @@ import {ChangeEvent} from 'react';
 import Form from 'react-bootstrap/Form';
 import React, {useGlobal, useState} from 'reactn';
 
-const DocumentPage = () => {
+const Documents = () => {
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [isBusy, setIsIsBusy] = useState(false);
     const defaultFileLabelText = 'Select a File to Upload';
@@ -69,4 +69,4 @@ const DocumentPage = () => {
     );
 };
 
-export default DocumentPage;
+export default Documents;

@@ -5,7 +5,7 @@ import React, {useEffect, useGlobal} from 'reactn';
 import 'styles/neumorphism/settings.css';
 import {setStickyState} from 'utility/common';
 
-const SettingsPage = () => {
+const Settings = () => {
     const [preferences, setPreferences] = useGlobal('preferences');
     useEffect(() => {
         if (preferences) {
@@ -50,4 +50,4 @@ const SettingsPage = () => {
     );
 };
 
-export default SettingsPage;
+export default Settings;

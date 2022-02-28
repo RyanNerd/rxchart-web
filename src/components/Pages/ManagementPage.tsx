@@ -1,5 +1,5 @@
-import ManageOtcPage from 'components/Pages/ManageOtcPage';
-import SettingsPage from 'components/Pages/SettingsPage';
+import ManageOtc from 'components/Pages/ManagementTabs/ManageOtc';
+import Settings from 'components/Pages/ManagementTabs/Settings';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import ToggleButton from 'react-bootstrap/ToggleButton';
@@ -32,7 +32,7 @@ const ManagementPage = () => {
                 }
             >
                 <Tab.Content>
-                    <ManageOtcPage activeTabKey="manage-otc" />
+                    <ManageOtc activeTabKey="manage-otc" />
                 </Tab.Content>
             </Tab>
             <Tab
@@ -54,7 +54,7 @@ const ManagementPage = () => {
                 }
             >
                 <Tab.Content>
-                    <SettingsPage />
+                    <Settings />
                 </Tab.Content>
             </Tab>
         </Tabs>

@@ -7,17 +7,17 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import {DrugLogRecord, MedicineRecord, newMedicineRecord} from 'types/RecordTypes';
-import MedicineEdit from './Modals/MedicineEdit';
+import MedicineEdit from 'components/Pages/Modals/MedicineEdit';
 
 interface IProps {
     activeTabKey: string;
 }
 
 /**
- * ManageOtcPage - UI for Displaying, editing and adding OTC drugs
+ * ManageOtc - UI for Displaying, editing and adding OTC drugs
  * @param {IProps} props The props for the component
  */
-const ManageOtcPage = (props: IProps): JSX.Element | null => {
+const ManageOtc = (props: IProps): JSX.Element | null => {
     const [allowDelete, setAllowDelete] = useState(false);
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [mm] = useGlobal('medicineManager');
@@ -167,4 +167,4 @@ const ManageOtcPage = (props: IProps): JSX.Element | null => {
     );
 };
 
-export default ManageOtcPage;
+export default ManageOtc;
