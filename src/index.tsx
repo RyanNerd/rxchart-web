@@ -35,11 +35,6 @@ const logAppStarted = (initialState: State) => {
 const startApp = async () => {
     try {
         const initialState = await setGlobal(getInitialState());
-        const isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
-        if (isDevelopment) {
-            const apiKey = process.env.REACT_APP_APIKEY || '';
-            await initialState.providers.setApi(apiKey);
-        }
         ReactDOM.render(<App />, document.getElementById('root'), () => logAppStarted(initialState));
     } catch (error) {
         console.log('Something went wrong', error); // eslint-disable-line no-console
