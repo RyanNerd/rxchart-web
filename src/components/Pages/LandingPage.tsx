@@ -50,7 +50,7 @@ const LandingPage = (props: IProps) => {
         ['resident', 'medicine', 'management'].map((tab) => {
             const element = document.getElementById('landing-page-tabs-tab-' + tab);
             if (element) {
-                if (tab === 'resident' || tab === 'manage-otc') element.style.display = apiKey ? 'block' : 'none';
+                if (tab === 'resident' || tab === 'management') element.style.display = apiKey ? 'block' : 'none';
                 else element.style.display = apiKey && activeClient ? 'block' : 'none';
             }
         });
