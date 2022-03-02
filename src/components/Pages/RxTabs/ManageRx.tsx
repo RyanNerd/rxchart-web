@@ -4,6 +4,7 @@ import ManageDrugGrid from 'components/Pages/Grids/ManageDrugGrid';
 import CheckoutListGroup from 'components/Pages/ListGroups/CheckoutListGroup';
 import CheckoutAllModal from 'components/Pages/Modals/CheckoutAllModal';
 import DeleteMedicineModal from 'components/Pages/Modals/DeleteMedicineModal';
+import {RX_TAB_KEY} from 'components/Pages/RxPage';
 import DrugLogToast from 'components/Pages/Toasts/DrugLogToast';
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
@@ -24,10 +25,15 @@ import TabContent from 'styles/common.css';
 import DrugLogEdit from 'components/Pages/Modals/DrugLogEdit';
 import MedicineEdit from 'components/Pages/Modals/MedicineEdit';
 
+interface IProps {
+    rxTabKey: string;
+}
+
 /**
  * ManageRx - UI for Displaying, editing and adding Medicine
+ * @param {IProps} props The props for this component
  */
-const ManageRx = (): JSX.Element | null => {
+const ManageRx = (props: IProps): JSX.Element | null => {
     const [, setPillboxItemList] = useState<PillboxItemRecord[]>([]);
     const [activeClient, setActiveClient] = useGlobal('activeClient');
     const [checkoutList, setCheckoutList] = useState<DrugLogRecord[]>([]);
@@ -43,6 +49,11 @@ const ManageRx = (): JSX.Element | null => {
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(0);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const [toast, setToast] = useState<DrugLogRecord[] | null>(null);
+
+    const [rxTabKey, setRxTabKey] = useState(props.rxTabKey);
+    useEffect(() => {
+        setRxTabKey(props.rxTabKey);
+    }, [props.rxTabKey]);
 
     // When the activeClient is "active" then deconstruct the activeClient into the lists and clientInfo constants
     useEffect(() => {
@@ -187,6 +198,8 @@ const ManageRx = (): JSX.Element | null => {
         return checkoutList.find((c) => c.MedicineId === m.Id);
     });
 
+    if (rxTabKey !== RX_TAB_KEY.Manage) return null;
+
     return (
         <Form className={TabContent}>
             <ButtonGroup as={Row} className="d-print-none">
@@ -210,7 +223,13 @@ const ManageRx = (): JSX.Element | null => {
                 <TooltipContainer
                     delay={{show: 120, hide: 200}}
                     placement="right"
-                    show={checkoutList.length > 0 && !showCheckoutAllMeds && !showCheckoutPrint && !showMedicineEdit}
+                    show={
+                        checkoutList.length > 0 &&
+                        !showCheckoutAllMeds &&
+                        !showCheckoutPrint &&
+                        !showMedicineEdit &&
+                        rxTabKey === RX_TAB_KEY.Manage
+                    }
                     tooltip={'At least one drug is already checked out'}
                 >
                     <Button

@@ -32,7 +32,7 @@ const ManagementPage = () => {
                 }
             >
                 <Tab.Content>
-                    <ManageOtc activeTabKey="manage-otc" />
+                    <ManageOtc activeManagementKey={activeManagementKey} />
                 </Tab.Content>
             </Tab>
             <Tab

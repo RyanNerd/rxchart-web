@@ -10,7 +10,7 @@ import {DrugLogRecord, MedicineRecord, newMedicineRecord} from 'types/RecordType
 import MedicineEdit from 'components/Pages/Modals/MedicineEdit';
 
 interface IProps {
-    activeTabKey: string;
+    activeManagementKey: string;
 }
 
 /**
@@ -27,7 +27,7 @@ const ManageOtc = (props: IProps): JSX.Element | null => {
     const [searchText, setSearchText] = useState('');
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(0);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
-    const activeTabKey = props.activeTabKey;
+    const activeTabKey = props.activeManagementKey;
 
     const focusReference = useRef<HTMLInputElement>(null);
     useEffect(() => {
