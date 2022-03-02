@@ -1,6 +1,6 @@
 import ClientManager from 'managers/ClientManager';
 import ClientProvider, {IClientProvider} from 'providers/ClientProvider';
-import DocumentProvider, {IDocumentProvider} from 'providers/DocumentProvider';
+import FileProvider, {IFileProvider} from 'providers/FileProvider';
 import {State} from 'reactn/default';
 import {ClientRecord, MedicineRecord} from 'types/RecordTypes';
 import AuthManager from '../managers/AuthManager';
@@ -15,7 +15,7 @@ import PinProvider, {IPinProvider} from 'providers/PinProvider';
 export interface IProviders {
     authenticationProvider: IAuthenticationProvider;
     clientProvider: IClientProvider;
-    documentProvider: IDocumentProvider;
+    fileProvider: IFileProvider;
     medicineProvider: IMedicineProvider;
     medHistoryProvider: IMedHistoryProvider;
     pillboxProvider: IPillboxProvider;
@@ -38,7 +38,7 @@ const getInitialState = () => {
     const providers = {
         authenticationProvider: AuthenticationProvider(baseUrl),
         clientProvider: ClientProvider(baseUrl),
-        documentProvider: DocumentProvider(baseUrl),
+        fileProvider: FileProvider(baseUrl),
         medHistoryProvider: MedHistoryProvider(baseUrl),
         medicineProvider: MedicineProvider(baseUrl),
         pillboxItemProvider: PillboxItemProvider(baseUrl),
@@ -51,7 +51,7 @@ const getInitialState = () => {
          */
         setApi: async (apiKey: string): Promise<void> => {
             await providers.clientProvider.setApiKey(apiKey);
-            await providers.documentProvider.setApiKey(apiKey);
+            await providers.fileProvider.setApiKey(apiKey);
             await providers.medHistoryProvider.setApiKey(apiKey);
             await providers.medicineProvider.setApiKey(apiKey);
             await providers.pillboxItemProvider.setApiKey(apiKey);

@@ -6,7 +6,7 @@ import 'reactn';
 import {State} from 'reactn/default';
 import {
     ClientRecord,
-    DocumentRecord,
+    FileRecord,
     DrugLogRecord,
     MedicineRecord,
     PillboxItemRecord,
@@ -19,7 +19,7 @@ declare module 'reactn/default' {
     // Client Type for the activeClient
     export type TClient = {
         clientInfo: ClientRecord;
-        documentList: DocumentRecord[];
+        fileList: FileRecord[];
         drugLogList: DrugLogRecord[];
         medicineList: MedicineRecord[];
         pillboxList: PillboxRecord[];

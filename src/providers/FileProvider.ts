@@ -1,13 +1,13 @@
 import Frak from 'frak/lib/components/Frak';
-import {DocumentRecord} from 'types/RecordTypes';
+import {FileRecord} from 'types/RecordTypes';
 
-export interface IDocumentProvider {
+export interface IFileProvider {
     setApiKey: (apiKey: string) => void;
-    uploadFile: (formData: FormData, clientId: number) => Promise<DocumentUploadRecord>;
-    load: (clientId: number) => Promise<DocumentRecord[]>;
+    uploadFile: (formData: FormData, clientId: number) => Promise<FileUploadRecord>;
+    load: (clientId: number) => Promise<FileRecord[]>;
 }
 
-type DocumentUploadRecord = {
+type FileUploadRecord = {
     Id: number | null;
     Size: number;
     FileName: string;
@@ -17,16 +17,16 @@ type DocumentUploadRecord = {
 type UploadResponse = {
     status: number;
     success: boolean;
-    data: null | DocumentUploadRecord;
+    data: null | FileUploadRecord;
 };
 
 type LoadResponse = {
     status: number;
     success: boolean;
-    data: DocumentRecord[];
+    data: FileRecord[];
 };
 
-const DocumentProvider = (baseUrl: string): IDocumentProvider => {
+const FileProvider = (baseUrl: string): IFileProvider => {
     const _baseUrl = baseUrl;
     const _frak = Frak();
     let _apiKey = null as string | null;
@@ -44,10 +44,10 @@ const DocumentProvider = (baseUrl: string): IDocumentProvider => {
          * Upload a file as a FormData object. Note that Frak isn't used because the data is not JSON
          * @param {FormData} formData The FormData object containing the name and file
          * @param {number} clientId The Client PK
-         * @returns {Promise<DocumentUploadRecord>} A Document record as a promise
+         * @returns {Promise<FileUploadRecord>} A FileUploadRecord object as a promise
          */
-        uploadFile: async (formData: FormData, clientId): Promise<DocumentUploadRecord> => {
-            const uri = _baseUrl + 'document/upload/' + clientId + '?api_key=' + _apiKey;
+        uploadFile: async (formData: FormData, clientId): Promise<FileUploadRecord> => {
+            const uri = _baseUrl + 'file/upload/' + clientId + '?api_key=' + _apiKey;
             const response = await fetch(uri, {
                 method: 'POST',
                 body: formData,
@@ -58,25 +58,25 @@ const DocumentProvider = (baseUrl: string): IDocumentProvider => {
 
             const responseJSON = (await response.json()) as UploadResponse;
             if (responseJSON.success) {
-                return responseJSON.data as DocumentUploadRecord;
+                return responseJSON.data as FileUploadRecord;
             } else {
                 throw response;
             }
         },
 
         /**
-         * Given a clientId (Resident PK) return all the Document records for the client
+         * Given a clientId (Resident PK) return all the File records for the client
          * @param {number} clientId Client (Resident) PK
-         * @returns {Promise<DocumentRecord[]>} An array of DocumentRecords
+         * @returns {Promise<FileRecord[]>} An array of FileRecords
          */
-        load: async (clientId: number): Promise<DocumentRecord[]> => {
-            const uri = `${_baseUrl}document/load/${clientId}?api_key=${_apiKey}`;
+        load: async (clientId: number): Promise<FileRecord[]> => {
+            const uri = `${_baseUrl}file/load/${clientId}?api_key=${_apiKey}`;
             const response = await _frak.get<LoadResponse>(uri);
             if (response.success) {
-                return response.data as DocumentRecord[];
+                return response.data as FileRecord[];
             } else {
                 if (response.status === 404) {
-                    return [] as DocumentRecord[];
+                    return [] as FileRecord[];
                 }
                 throw response;
             }
@@ -84,4 +84,4 @@ const DocumentProvider = (baseUrl: string): IDocumentProvider => {
     };
 };
 
-export default DocumentProvider;
+export default FileProvider;

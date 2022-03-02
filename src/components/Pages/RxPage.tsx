@@ -1,4 +1,4 @@
-import Documents from 'components/Pages/RxTabs/Documents';
+import Files from 'components/Pages/RxTabs/Files';
 import ManageRx from 'components/Pages/RxTabs/ManageRx';
 import RxHistory from 'components/Pages/RxTabs/RxHistory';
 import RxMedicine from 'components/Pages/RxTabs/RxMedicine';
@@ -302,7 +302,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                         </ToggleButton>
                     }
                 >
-                    <Documents />
+                    <Files activeClient={activeClient} rxTabKey={activeRxTab} />
                 </Tab>
             </Tabs>
         </div>

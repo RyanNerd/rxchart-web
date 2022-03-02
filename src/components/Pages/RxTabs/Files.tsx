@@ -1,15 +1,27 @@
+import FileGrid from 'components/Pages/Grids/FileGrid';
+import {RX_TAB_KEY} from 'components/Pages/RxPage';
 import {ChangeEvent} from 'react';
 import Form from 'react-bootstrap/Form';
 import React, {useGlobal, useState} from 'reactn';
+import {TClient} from 'reactn/default';
 
-const Documents = () => {
+interface IProps {
+    activeClient: TClient;
+    rxTabKey: string;
+}
+
+const Files = (props: IProps) => {
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [isBusy, setIsIsBusy] = useState(false);
     const defaultFileLabelText = 'Select a File to Upload';
     const [uploadedFileName, setUploadedFileName] = useState(defaultFileLabelText);
     const [invalidMaxSize, setInvalidMaxSize] = useState(false);
     const [providers] = useGlobal('providers');
-    const documentProvider = providers.documentProvider;
+    const documentProvider = providers.fileProvider;
+    const fileList = props.activeClient.fileList;
+
+    const clientInfo = props.activeClient.clientInfo;
+    const activeRxTab = props.rxTabKey;
 
     /**
      * Handle when the user clicked the Select a File to Upload component
@@ -31,7 +43,7 @@ const Documents = () => {
                         const formData = new FormData();
                         formData.append('single_file', file);
                         setUploadedFileName(file.name);
-                        const documentRecord = await documentProvider.uploadFile(formData, 1092);
+                        const documentRecord = await documentProvider.uploadFile(formData, clientInfo.Id as number);
 
                         alert('documentRecord: ' + JSON.stringify(documentRecord));
                     } catch (error) {
@@ -46,6 +58,8 @@ const Documents = () => {
             }
         }
     };
+
+    if (activeRxTab !== RX_TAB_KEY.Document) return null;
 
     return (
         <Form>
@@ -62,11 +76,17 @@ const Documents = () => {
                 <div className="invalid-feedback">File exceeds maximum size allowed</div>
             </Form.Group>
 
-            <Form.Group>
-                <p>Place holder</p>
-            </Form.Group>
+            {
+                <Form.Group>
+                    <FileGrid
+                        fileList={fileList}
+                        onDelete={(d) => alert('delete: ' + d)}
+                        onDownload={(d) => alert('download: ' + d)}
+                    />
+                </Form.Group>
+            }
         </Form>
     );
 };
 
-export default Documents;
+export default Files;

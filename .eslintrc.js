@@ -136,23 +136,24 @@ module.exports = {
             'error',
             {
                 allowList: {
-                    props: true,
                     CustomMenuProps: true,
-                    dropdownProps: true,
-                    idx: true,
                     IDropdownProps: true,
-                    IProps: true,
                     IModalProps: true,
-                    TProps: true,
-                    ITitleProps: true,
+                    IProps: true,
                     ITableProps: true,
-                    tableProps: true,
-                    yesButtonProps: true,
-                    noButtonProps: true,
+                    ITitleProps: true,
+                    TProps: true,
                     defaultNoButtonProps: true,
                     defaultYesButtonProps: true,
+                    doc: true,
+                    dropdownProps: true,
+                    idx: true,
                     n: true,
-                    ref: true
+                    noButtonProps: true,
+                    props: true,
+                    ref: true,
+                    tableProps: true,
+                    yesButtonProps: true
                 }
             }
         ],

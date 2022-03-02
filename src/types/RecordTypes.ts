@@ -16,7 +16,7 @@ export type ClientRecord = {
 };
 
 // ORM record of the Document table
-export type DocumentRecord = {
+export type FileRecord = {
     Created?: null | Date;
     Description: null | string;
     FileName: string;
