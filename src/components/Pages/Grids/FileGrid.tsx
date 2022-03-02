@@ -8,6 +8,7 @@ interface IProps extends TableProps {
     [key: string]: unknown;
     onDownload: (docId: number) => void;
     onDelete: (docId: number) => void;
+    onEdit: (docId: number) => void;
     fileList: FileRecord[];
 }
 
@@ -15,6 +16,7 @@ interface ITableProps extends TableProps {
     onDownload: unknown;
     onDelete: unknown;
     fileList: unknown;
+    onEdit: unknown;
 }
 
 /**
@@ -22,7 +24,7 @@ interface ITableProps extends TableProps {
  * @param {IProps} props The props for this component
  */
 const FileGrid = (props: IProps): JSX.Element | null => {
-    const {fileList, onDownload, onDelete} = props;
+    const {fileList, onDownload, onDelete, onEdit} = props;
 
     // No render if there isn't anything to render
     if (!fileList || fileList.length === 0) return null;
@@ -42,6 +44,16 @@ const FileGrid = (props: IProps): JSX.Element | null => {
                 <td style={{verticalAlign: 'middle'}}>{file.Size}</td>
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                     <Button
+                        id={`file-grid-edit-btn-${domId}`}
+                        onClick={() => onEdit(file.Id as number)}
+                        size="sm"
+                        variant="info"
+                    >
+                        Edit
+                    </Button>
+                </td>
+                <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
+                    <Button
                         id={`file-grid-download-btn-${domId}`}
                         onClick={() => onDownload(file.Id as number)}
                         size="sm"
@@ -49,18 +61,17 @@ const FileGrid = (props: IProps): JSX.Element | null => {
                     >
                         Download
                     </Button>
-
+                </td>
+                <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                     <Button
-                        className="ml-2"
-                        id={`file-grid-del-btn-${domId}`}
-                        onClick={(mouseEvent) => {
-                            mouseEvent.preventDefault();
-                            onDelete(file.Id as number);
-                        }}
+                        id={`file-grid-delete-btn-${domId}`}
+                        onClick={() => onDelete(file.Id as number)}
                         size="sm"
-                        variant="info"
+                        variant="outline-danger"
                     >
-                        Delete
+                        <span role="img" aria-label="delete">
+                            🗑️
+                        </span>
                     </Button>
                 </td>
             </tr>
@@ -70,6 +81,7 @@ const FileGrid = (props: IProps): JSX.Element | null => {
     const tableProps = {...props} as ITableProps;
     delete tableProps.onDelete;
     delete tableProps.onDownload;
+    delete tableProps.onEdit;
     delete tableProps.fileList;
 
     return (
@@ -80,6 +92,7 @@ const FileGrid = (props: IProps): JSX.Element | null => {
                     <th>Description</th>
                     <th>Type</th>
                     <th>Size</th>
+                    <th></th>
                     <th></th>
                     <th></th>
                 </tr>

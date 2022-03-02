@@ -82,6 +82,7 @@ const Files = (props: IProps) => {
                         fileList={fileList}
                         onDelete={(d) => alert('delete: ' + d)}
                         onDownload={(d) => alert('download: ' + d)}
+                        onEdit={(f) => alert('Edit: ' + f)}
                     />
                 </Form.Group>
             }
