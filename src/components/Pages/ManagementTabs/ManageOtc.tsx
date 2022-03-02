@@ -52,7 +52,7 @@ const ManageOtc = (props: IProps): JSX.Element | null => {
     }, [otcList, searchText]);
 
     // If this tab isn't active then don't render
-    if (activeTabKey !== 'manage-otc') return null;
+    if (activeTabKey !== 'otc') return null;
 
     /**
      * Given a MedicineRecord object Update or Insert the record and rehydrate the global otcList
