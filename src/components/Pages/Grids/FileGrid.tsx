@@ -8,7 +8,7 @@ interface IProps extends TableProps {
     [key: string]: unknown;
     onDownload: (docId: number) => void;
     onDelete: (docId: number) => void;
-    onEdit: (docId: number) => void;
+    onEdit: (fileRecord: FileRecord) => void;
     fileList: FileRecord[];
 }
 
@@ -43,12 +43,7 @@ const FileGrid = (props: IProps): JSX.Element | null => {
                 <td style={{verticalAlign: 'middle'}}>{file.MediaType}</td>
                 <td style={{verticalAlign: 'middle'}}>{file.Size}</td>
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
-                    <Button
-                        id={`file-grid-edit-btn-${domId}`}
-                        onClick={() => onEdit(file.Id as number)}
-                        size="sm"
-                        variant="info"
-                    >
+                    <Button id={`file-grid-edit-btn-${domId}`} onClick={() => onEdit(file)} size="sm" variant="info">
                         Edit
                     </Button>
                 </td>

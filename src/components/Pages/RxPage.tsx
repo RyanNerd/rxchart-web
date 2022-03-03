@@ -302,7 +302,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                         </ToggleButton>
                     }
                 >
-                    <Files activeClient={activeClient} rxTabKey={activeRxTab} />
+                    <Files rxTabKey={activeRxTab} />
                 </Tab>
             </Tabs>
         </div>
