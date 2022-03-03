@@ -26,11 +26,24 @@ const FileEdit = (props: IProps) => {
         setFileInfo(fileRecord);
     }, [props.fileInfo]);
 
+    const [canSave, setCanSave] = useState(false);
+    useEffect(() => {
+        if (!fileInfo || fileInfo.FileName?.length === 0) {
+            setCanSave(false);
+        } else {
+            setCanSave(true);
+        }
+    }, [fileInfo]);
+
     const [show, setShow] = useState(props.show);
     useEffect(() => {
         setShow(props.show);
     }, [props.show]);
 
+    /**
+     * Handle user keyboard changes
+     * @param {React.ChangeEvent<HTMLElement>} changeEvent The change event object
+     */
     const handleOnChange = (changeEvent: React.ChangeEvent<HTMLElement>) => {
         const target = changeEvent.target as HTMLInputElement;
         const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -60,7 +73,9 @@ const FileEdit = (props: IProps) => {
             show={show}
             size="lg"
         >
-            <Modal.Header>Edit File Info</Modal.Header>
+            <Modal.Header>
+                <h2>Edit File/Document Info</h2>
+            </Modal.Header>
 
             <Modal.Body>
                 <Form>
@@ -101,7 +116,7 @@ const FileEdit = (props: IProps) => {
                 <Button onClick={() => handleHide(false)} variant="secondary">
                     Cancel
                 </Button>
-                <Button onClick={() => handleHide(true)} variant="primary">
+                <Button disabled={!canSave} onClick={() => handleHide(true)} variant="primary">
                     Save changes
                 </Button>
             </Modal.Footer>
