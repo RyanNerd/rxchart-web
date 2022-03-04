@@ -248,7 +248,7 @@ const MedicineEdit = (props: IProps) => {
                                     />
                                 )}
                             </div>
-                            <div className="invalid-feedback">Drug Name cannot be blank.</div>
+                            <Form.Control.Feedback type="invalid">Drug Name cannot be blank.</Form.Control.Feedback>
                         </Col>
 
                         <Form.Label column sm="1" style={{userSelect: 'none'}}>
