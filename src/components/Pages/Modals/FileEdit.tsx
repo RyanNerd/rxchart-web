@@ -127,19 +127,23 @@ const FileEdit = (props: IProps) => {
                             Size
                         </Form.Label>
                         <Col sm="2">
-                            <Form.Control readOnly value={fileInfo.Size?.toString()} />
+                            <Form.Control readOnly style={{fontSize: '14.5px'}} value={fileInfo.Size?.toString()} />
                         </Col>
                         <Form.Label column sm="1">
                             Modified
                         </Form.Label>
-                        <Col sm="4">
-                            <Form.Control readOnly value={fileInfo ? getFormattedDate(fileInfo.Updated || '') : ''} />
+                        <Col sm="3">
+                            <Form.Control
+                                readOnly
+                                style={{fontSize: '14.5px'}}
+                                value={fileInfo ? getFormattedDate(fileInfo.Updated || '') : ''}
+                            />
                         </Col>
                         <Form.Label column sm="1">
                             Type
                         </Form.Label>
-                        <Col sm="3">
-                            <Form.Control readOnly value={fileInfo?.MediaType || ''} />
+                        <Col sm="4">
+                            <Form.Control readOnly style={{fontSize: '14.5px'}} value={fileInfo?.MediaType || ''} />
                         </Col>
                     </Form.Group>
                 </Form>
