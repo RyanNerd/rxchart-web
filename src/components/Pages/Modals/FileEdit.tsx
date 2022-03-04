@@ -1,6 +1,5 @@
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
@@ -127,23 +126,20 @@ const FileEdit = (props: IProps) => {
                         <Form.Label column sm="1">
                             Size
                         </Form.Label>
-                        <Col sm="3">
-                            <Form.Control readOnly={true} value={fileInfo.Size?.toString()} />
+                        <Col sm="2">
+                            <Form.Control readOnly value={fileInfo.Size?.toString()} />
                         </Col>
                         <Form.Label column sm="1">
                             Modified
                         </Form.Label>
-                        <Col sm="3">
-                            <Form.Control
-                                readOnly={true}
-                                value={fileInfo ? getFormattedDate(fileInfo.Updated || '') : ''}
-                            />
+                        <Col sm="4">
+                            <Form.Control readOnly value={fileInfo ? getFormattedDate(fileInfo.Updated || '') : ''} />
                         </Col>
                         <Form.Label column sm="1">
                             Type
                         </Form.Label>
                         <Col sm="3">
-                            <Form.Control readOnly={true} value={fileInfo?.MediaType || ''} />
+                            <Form.Control readOnly value={fileInfo?.MediaType || ''} />
                         </Col>
                     </Form.Group>
                 </Form>
@@ -153,14 +149,12 @@ const FileEdit = (props: IProps) => {
                 <Alert variant="warning" show={showFileExtensionWarning}>
                     WARNING: The file extension changed. This may cause problems.
                 </Alert>
-                <ButtonGroup>
-                    <Button onClick={() => handleHide(false)} variant="secondary">
-                        Cancel
-                    </Button>
-                    <Button disabled={!canSave} onClick={() => handleHide(true)} variant="primary">
-                        Save changes
-                    </Button>
-                </ButtonGroup>
+                <Button onClick={() => handleHide(false)} variant="secondary">
+                    Cancel
+                </Button>
+                <Button disabled={!canSave} onClick={() => handleHide(true)} variant="primary">
+                    Save changes
+                </Button>
             </Modal.Footer>
         </Modal>
     );
