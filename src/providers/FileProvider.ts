@@ -3,6 +3,7 @@ import {FileRecord} from 'types/RecordTypes';
 
 export interface IFileProvider {
     setApiKey: (apiKey: string) => void;
+    download: (fileRecord: FileRecord) => Promise<void>;
     update: (fileRecord: FileRecord) => Promise<FileRecord>;
     uploadFile: (formData: FormData, clientId: number) => Promise<FileUploadRecord>;
     load: (clientId: number) => Promise<FileRecord[]>;
@@ -102,6 +103,31 @@ const FileProvider = (baseUrl: string): IFileProvider => {
                 }
                 throw response;
             }
+        },
+
+        /**
+         * Given a FileRecord object download the file
+         * @param {FileRecord} fileRecord The FileRecord object to download
+         * @link https://codesandbox.io/s/fetch-based-file-download-0kxod?file=/src/index.js:541-573
+         * @returns {Promise<void>}
+         */
+        download: async (fileRecord: FileRecord): Promise<void> => {
+            const uri = `${_baseUrl}file/download/${fileRecord.Id}?api_key=${_apiKey}`;
+            const response = await fetch(uri, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/octet-stream'
+                }
+            });
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = fileRecord.FileName;
+            document.body.append(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
         }
     };
 };
