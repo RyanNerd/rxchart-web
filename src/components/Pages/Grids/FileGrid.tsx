@@ -7,7 +7,7 @@ import {randomString} from 'utility/common';
 interface IProps extends TableProps {
     [key: string]: unknown;
     onDownload: (fileRecord: FileRecord) => void;
-    onDelete: (docId: number) => void;
+    onDelete: (fileRecord: FileRecord) => void;
     onEdit: (fileRecord: FileRecord) => void;
     fileList: FileRecord[];
 }
@@ -60,7 +60,7 @@ const FileGrid = (props: IProps): JSX.Element | null => {
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                     <Button
                         id={`file-grid-delete-btn-${domId}`}
-                        onClick={() => onDelete(file.Id as number)}
+                        onClick={() => onDelete(file)}
                         size="sm"
                         variant="outline-danger"
                     >

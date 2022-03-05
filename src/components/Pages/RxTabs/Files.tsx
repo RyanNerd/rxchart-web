@@ -1,5 +1,6 @@
 import FileGrid from 'components/Pages/Grids/FileGrid';
 import DisabledSpinner from 'components/Pages/ListGroups/DisabledSpinner';
+import DeleteFileModal from 'components/Pages/Modals/DeleteFileModal';
 import FileEdit from 'components/Pages/Modals/FileEdit';
 import {RX_TAB_KEY} from 'components/Pages/RxPage';
 import {ChangeEvent} from 'react';
@@ -19,6 +20,7 @@ const Files = (props: IProps) => {
     const [isBusy, setIsIsBusy] = useState(false);
     const [providers] = useGlobal('providers');
     const [showEditFile, setShowEditFile] = useState<FileRecord | null>(null);
+    const [showDeleteFile, setShowDeleteFile] = useState<FileRecord | null>(null);
     const fileProvider = providers.fileProvider;
     const activeRxTab = props.rxTabKey;
 
@@ -89,9 +91,9 @@ const Files = (props: IProps) => {
                 <Form.Group>
                     <FileGrid
                         fileList={activeClient.fileList}
-                        onDelete={(d) => alert('delete: ' + d)}
+                        onDelete={(fileRecord) => setShowDeleteFile(fileRecord)}
                         onDownload={(fileRecord) => fileProvider.download(fileRecord)}
-                        onEdit={(f) => setShowEditFile(f)}
+                        onEdit={(fileRecord) => setShowEditFile(fileRecord)}
                     />
                 </Form.Group>
             )}
@@ -109,6 +111,20 @@ const Files = (props: IProps) => {
                     }
                 }}
                 onHide={() => setShowEditFile(null)}
+            />
+
+            <DeleteFileModal
+                fileRecord={showDeleteFile as FileRecord}
+                onSelect={async (fileRecord) => {
+                    setShowDeleteFile(null);
+                    if (fileRecord?.Id) {
+                        const success = await fileProvider.delete(fileRecord.Id, true);
+                        await (success
+                            ? refreshFileList()
+                            : setErrorDetails(new Error('Unable to delete file. Id: ' + fileRecord.Id)));
+                    }
+                }}
+                show={showDeleteFile !== null}
             />
         </Form>
     );

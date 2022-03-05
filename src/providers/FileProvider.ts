@@ -7,6 +7,7 @@ export interface IFileProvider {
     update: (fileRecord: FileRecord) => Promise<FileRecord>;
     uploadFile: (formData: FormData, clientId: number) => Promise<FileUploadRecord>;
     load: (clientId: number) => Promise<FileRecord[]>;
+    delete: (fileId: number, permanentDelete?: boolean) => Promise<boolean>;
 }
 
 type FileUploadRecord = {
@@ -33,6 +34,8 @@ type LoadResponse = {
     success: boolean;
     data: FileRecord[];
 };
+
+type DeleteResponse = {success: boolean};
 
 const FileProvider = (baseUrl: string): IFileProvider => {
     const _baseUrl = baseUrl;
@@ -61,6 +64,18 @@ const FileProvider = (baseUrl: string): IFileProvider => {
             } else {
                 throw response;
             }
+        },
+
+        /**
+         * Given the PK for a File table soft delete or permanently delete the record
+         * @param {number} id The PK of the File record to destroy
+         * @param {boolean | undefined} permanentDelete Set to true to permanently destroy the record
+         * @returns {Promise<boolean>} Success or failure of the delete request
+         */
+        delete: async (id: number, permanentDelete): Promise<boolean> => {
+            const uri = `${_baseUrl}file/${id}?api_key=${_apiKey}&force=${permanentDelete ? 'true' : false}`;
+            const response = await _frak.delete<DeleteResponse>(uri);
+            return response.success;
         },
 
         /**
