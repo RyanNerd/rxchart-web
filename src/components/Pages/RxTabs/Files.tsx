@@ -90,7 +90,7 @@ const Files = (props: IProps) => {
                     <FileGrid
                         fileList={activeClient.fileList}
                         onDelete={(d) => alert('delete: ' + d)}
-                        onDownload={(fileRecord) => fileProvider.download(fileRecord as FileRecord)}
+                        onDownload={(fileRecord) => fileProvider.download(fileRecord)}
                         onEdit={(f) => setShowEditFile(f)}
                     />
                 </Form.Group>
