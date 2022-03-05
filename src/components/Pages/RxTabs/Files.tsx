@@ -19,8 +19,6 @@ const Files = (props: IProps) => {
     const [isBusy, setIsIsBusy] = useState(false);
     const [providers] = useGlobal('providers');
     const [showEditFile, setShowEditFile] = useState<FileRecord | null>(null);
-    const defaultFileLabelText = 'Select a File to Upload';
-    const [uploadedFileName, setUploadedFileName] = useState(defaultFileLabelText);
     const fileProvider = providers.fileProvider;
     const activeRxTab = props.rxTabKey;
 
@@ -56,7 +54,6 @@ const Files = (props: IProps) => {
                     try {
                         const formData = new FormData();
                         formData.append('single_file', file);
-                        setUploadedFileName(file.name);
                         await fileProvider.uploadFile(formData, activeClient?.clientInfo.Id as number);
                         await refreshFileList();
                     } catch (error) {
@@ -66,8 +63,6 @@ const Files = (props: IProps) => {
                 } else {
                     setInvalidMaxSize(true);
                 }
-            } else {
-                setUploadedFileName(defaultFileLabelText);
             }
         }
     };
@@ -83,7 +78,7 @@ const Files = (props: IProps) => {
                     style={{width: '25%'}}
                     disabled={isBusy}
                     id="custom-file"
-                    label={uploadedFileName}
+                    label="Select a File to Upload"
                     custom
                     onChange={(event: ChangeEvent<HTMLInputElement>) => handleFileUpload(event)}
                 />
