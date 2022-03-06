@@ -1,3 +1,5 @@
+import Files from 'components/Pages/RxTabs/Files';
+import ManageRx from 'components/Pages/RxTabs/ManageRx';
 import RxHistory from 'components/Pages/RxTabs/RxHistory';
 import RxMedicine from 'components/Pages/RxTabs/RxMedicine';
 import RxOtc from 'components/Pages/RxTabs/RxOtc';
@@ -13,12 +15,14 @@ import {DrugLogRecord, PillboxRecord} from 'types/RecordTypes';
 import {getCheckoutList} from 'utility/common';
 
 // Active Rx tab states
-export enum TAB_KEY {
+export enum RX_TAB_KEY {
     History = 'history',
     Medicine = 'med',
     OTC = 'otc',
     Pillbox = 'pillbox',
-    Print = 'print'
+    Print = 'print',
+    Manage = 'manage',
+    Document = 'document'
 }
 
 interface IProps {
@@ -27,13 +31,13 @@ interface IProps {
 }
 
 /**
- * MedicinePage - UI for logging prescription & OTC medications as well as pillboxes and medication checkout
+ * RxPage - UI for logging prescription & OTC medications as well as pillboxes and medication checkout
  * @param {IProps} props The props for this component
  */
-const MedicinePage = (props: IProps): JSX.Element | null => {
+const RxPage = (props: IProps): JSX.Element | null => {
     const [activeClient] = useGlobal('activeClient');
     const [activePillbox, setActivePillbox] = useState<PillboxRecord | null>(null);
-    const [activeRxTab, setActiveRxTab] = useState<TAB_KEY>(TAB_KEY.Medicine);
+    const [activeRxTab, setActiveRxTab] = useState<RX_TAB_KEY>(RX_TAB_KEY.Medicine);
     const [checkoutList, setCheckoutList] = useState<DrugLogRecord[]>([]);
     const [mm] = useGlobal('medicineManager');
     const [otcList] = useGlobal('otcList');
@@ -54,27 +58,27 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
     // Observer to show / hide RxTabs
     useEffect(() => {
         if (activeClient) {
-            const historyElement = document.getElementById('medicine-page-tabs-tab-' + TAB_KEY.History);
+            const historyElement = document.getElementById('medicine-page-tabs-tab-' + RX_TAB_KEY.History);
             if (historyElement) {
                 historyElement.style.display = activeClient.drugLogList.length === 0 ? 'none' : 'block';
-                if (activeRxTab === TAB_KEY.History && activeClient.drugLogList.length === 0) {
-                    setActiveRxTab(TAB_KEY.Medicine);
+                if (activeRxTab === RX_TAB_KEY.History && activeClient.drugLogList.length === 0) {
+                    setActiveRxTab(RX_TAB_KEY.Medicine);
                 }
             }
 
-            const pillboxElement = document.getElementById('medicine-page-tabs-tab-' + TAB_KEY.Pillbox);
+            const pillboxElement = document.getElementById('medicine-page-tabs-tab-' + RX_TAB_KEY.Pillbox);
             if (pillboxElement) {
                 pillboxElement.style.display = activeClient.medicineList.length < 5 ? 'none' : 'block';
-                if (activeRxTab === TAB_KEY.Pillbox && activeClient.medicineList.length < 5) {
-                    setActiveRxTab(TAB_KEY.Medicine);
+                if (activeRxTab === RX_TAB_KEY.Pillbox && activeClient.medicineList.length < 5) {
+                    setActiveRxTab(RX_TAB_KEY.Medicine);
                 }
             }
 
-            const printElement = document.getElementById('medicine-page-tabs-tab-' + TAB_KEY.Print);
+            const printElement = document.getElementById('medicine-page-tabs-tab-' + RX_TAB_KEY.Print);
             if (printElement) {
                 printElement.style.display = checkoutList.length === 0 ? 'none' : 'block';
-                if (activeRxTab === TAB_KEY.Print && checkoutList.length === 0) {
-                    setActiveRxTab(TAB_KEY.Medicine);
+                if (activeRxTab === RX_TAB_KEY.Print && checkoutList.length === 0) {
+                    setActiveRxTab(RX_TAB_KEY.Medicine);
                 }
             }
         }
@@ -85,7 +89,7 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             tabContent[0].style.marginTop = '-15px';
         }
 
-        // Move MedicinePage rxTabs up for more screen real estate
+        // Move RxPage rxTabs up for more screen real estate
         const navElement = document.querySelectorAll<HTMLElement>('div.medicine-page-tablet > nav.nav');
         if (navElement && navElement.length > 0) {
             navElement[0].style.marginBottom = '-15px';
@@ -109,24 +113,24 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
             <Tabs
                 id="medicine-page-tabs"
                 activeKey={activeRxTab}
-                defaultActiveKey={TAB_KEY.Medicine}
-                onSelect={(key) => setActiveRxTab((key as TAB_KEY) || TAB_KEY.Medicine)}
+                defaultActiveKey={RX_TAB_KEY.Medicine}
+                onSelect={(key) => setActiveRxTab((key as RX_TAB_KEY) || RX_TAB_KEY.Medicine)}
             >
                 <Tab
-                    eventKey={TAB_KEY.Medicine}
+                    eventKey={RX_TAB_KEY.Medicine}
                     style={{marginLeft: '-35px', marginRight: '1%'}}
                     tabClassName="rx-medicine-tab"
                     title={
                         <ToggleButton
-                            checked={activeRxTab === TAB_KEY.Medicine}
+                            checked={activeRxTab === RX_TAB_KEY.Medicine}
                             className="d-print-none"
                             id="med-list-group-med-radio-btn"
                             key="med-list-group-med-btn"
                             name="radio-med-list-group"
-                            onChange={() => setActiveRxTab(TAB_KEY.Medicine)}
+                            onChange={() => setActiveRxTab(RX_TAB_KEY.Medicine)}
                             size={preferences.rxTabSize}
                             type="radio"
-                            value={TAB_KEY.Medicine}
+                            value={RX_TAB_KEY.Medicine}
                             variant="outline-success"
                         >
                             <span className="ml-2">Medicine</span>
@@ -137,26 +141,26 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         mm={mm}
                         pillboxSelected={(id) => {
                             setActivePillbox(pillboxList.find((p) => p.Id === id) || null);
-                            setActiveRxTab(TAB_KEY.Pillbox);
+                            setActiveRxTab(RX_TAB_KEY.Pillbox);
                         }}
                     />
                 </Tab>
 
                 <Tab
-                    eventKey={TAB_KEY.OTC}
+                    eventKey={RX_TAB_KEY.OTC}
                     style={{marginLeft: '-40px'}}
                     tabClassName="rx-otc-tab"
                     title={
                         <ToggleButton
-                            checked={activeRxTab === TAB_KEY.OTC}
+                            checked={activeRxTab === RX_TAB_KEY.OTC}
                             className="ml-2 d-print-none"
                             id="med-list-group-otc-radio-btn"
                             key="med-list-group-otc-btn"
                             name="radio-med-list-group"
-                            onChange={() => setActiveRxTab(TAB_KEY.OTC)}
+                            onChange={() => setActiveRxTab(RX_TAB_KEY.OTC)}
                             size={preferences.rxTabSize}
                             type="radio"
-                            value={TAB_KEY.OTC}
+                            value={RX_TAB_KEY.OTC}
                             variant="outline-success"
                         >
                             <span className="ml-2">OTC</span>
@@ -167,20 +171,20 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 </Tab>
 
                 <Tab
-                    eventKey={TAB_KEY.History}
+                    eventKey={RX_TAB_KEY.History}
                     style={{marginLeft: '-40px'}}
                     tabClassName="rx-history-tab d-print-flex"
                     title={
                         <ToggleButton
-                            checked={activeRxTab === TAB_KEY.History}
+                            checked={activeRxTab === RX_TAB_KEY.History}
                             className="ml-2 d-print-none"
                             disabled={drugLogList.length === 0}
                             id="med-list-group-history-radio-btn"
                             key="med-list-group-history-btn"
-                            onChange={() => setActiveRxTab(TAB_KEY.History)}
+                            onChange={() => setActiveRxTab(RX_TAB_KEY.History)}
                             size={preferences.rxTabSize}
                             type="radio"
-                            value={TAB_KEY.History}
+                            value={RX_TAB_KEY.History}
                             variant="outline-success"
                         >
                             <span className="ml-2">History</span>
@@ -192,27 +196,27 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                         otcList={otcList}
                         onPillboxSelected={(id) => {
                             setActivePillbox(pillboxList.find((p) => p.Id === id) || null);
-                            setActiveRxTab(TAB_KEY.Pillbox);
+                            setActiveRxTab(RX_TAB_KEY.Pillbox);
                         }}
                     />
                 </Tab>
 
                 <Tab
-                    eventKey={TAB_KEY.Pillbox}
+                    eventKey={RX_TAB_KEY.Pillbox}
                     style={{marginLeft: '-40px'}}
                     tabClassName="rx-pillbox-tab"
                     title={
                         <ToggleButton
-                            checked={activeRxTab === TAB_KEY.Pillbox}
+                            checked={activeRxTab === RX_TAB_KEY.Pillbox}
                             className="ml-2 d-print-none"
                             disabled={medicineList.length < 5}
                             id="med-list-group-pill-radio-btn"
                             key="med-list-group-pill-btn"
                             name="radio-med-list-group"
-                            onChange={() => setActiveRxTab(TAB_KEY.Pillbox)}
+                            onChange={() => setActiveRxTab(RX_TAB_KEY.Pillbox)}
                             size={preferences.rxTabSize}
                             type="radio"
-                            value={TAB_KEY.Pillbox}
+                            value={RX_TAB_KEY.Pillbox}
                             variant="outline-success"
                         >
                             <span className="ml-2">Pillbox</span>
@@ -229,19 +233,19 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 <Tab
                     tabClassName="rx-print-tab"
                     style={{marginLeft: '-40px'}}
-                    eventKey={TAB_KEY.Print}
+                    eventKey={RX_TAB_KEY.Print}
                     title={
                         <ToggleButton
-                            checked={activeRxTab === TAB_KEY.Print}
+                            checked={activeRxTab === RX_TAB_KEY.Print}
                             className="ml-2 d-print-none"
                             disabled={checkoutList.length === 0}
                             id="med-list-group-print-radio-btn"
                             key="med-list-group-print-btn"
                             name="radio-print-list-group"
-                            onChange={() => setActiveRxTab(TAB_KEY.Print)}
+                            onChange={() => setActiveRxTab(RX_TAB_KEY.Print)}
                             size={preferences.rxTabSize}
                             type="radio"
-                            value={TAB_KEY.Print}
+                            value={RX_TAB_KEY.Print}
                             variant="outline-success"
                         >
                             <span className="ml-2">
@@ -253,9 +257,56 @@ const MedicinePage = (props: IProps): JSX.Element | null => {
                 >
                     <RxPrint activeClient={activeClient} checkoutList={checkoutList} />
                 </Tab>
+                <Tab
+                    eventKey={RX_TAB_KEY.Manage}
+                    style={{marginLeft: '-40px'}}
+                    tabClassName="rx-manage-tab"
+                    title={
+                        <ToggleButton
+                            checked={activeRxTab === RX_TAB_KEY.Manage}
+                            className="ml-2 d-print-none"
+                            id="med-list-group-manage-radio-btn"
+                            key="med-list-group-manage-btn"
+                            name="radio-med-list-group"
+                            onChange={() => setActiveRxTab(RX_TAB_KEY.Manage)}
+                            size={preferences.rxTabSize}
+                            type="radio"
+                            value={RX_TAB_KEY.Manage}
+                            variant="outline-success"
+                        >
+                            <span className="ml-2">Manage Rx</span>
+                        </ToggleButton>
+                    }
+                >
+                    <ManageRx rxTabKey={activeRxTab} />
+                </Tab>
+
+                <Tab
+                    eventKey={RX_TAB_KEY.Document}
+                    style={{marginLeft: '-40px'}}
+                    tabClassName="rx-document-tab"
+                    title={
+                        <ToggleButton
+                            checked={activeRxTab === RX_TAB_KEY.Document}
+                            className="ml-2 d-print-none"
+                            id="med-list-group-document-radio-btn"
+                            key="med-list-group-document-btn"
+                            name="radio-med-list-group"
+                            onChange={() => setActiveRxTab(RX_TAB_KEY.Document)}
+                            size={preferences.rxTabSize}
+                            type="radio"
+                            value={RX_TAB_KEY.Document}
+                            variant="outline-success"
+                        >
+                            <span className="ml-2">Documents</span>
+                        </ToggleButton>
+                    }
+                >
+                    <Files rxTabKey={activeRxTab} />
+                </Tab>
             </Tabs>
         </div>
     );
 };
 
-export default MedicinePage;
+export default RxPage;

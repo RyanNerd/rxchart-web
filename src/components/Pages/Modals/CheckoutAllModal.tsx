@@ -15,7 +15,7 @@ interface IProps {
 
 /**
  * Confirmation modal to Check out All Medications and Print
- * This component exists to make the code in ManageDrugPage more readable
+ * This component exists to make the code in ManageRx more readable
  * @param {IProps} props The props for this component
  */
 const CheckoutAllModal = (props: IProps) => {

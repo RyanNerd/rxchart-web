@@ -1,6 +1,6 @@
 {
   "name": "rxchart",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "private": false,
   "dependencies": {
     "bootstrap": "^4.6.1",
@@ -44,6 +44,7 @@
     "@types/react-dom": "^17.0.11",
     "@typescript-eslint/eslint-plugin": "^5.1.0",
     "@typescript-eslint/parser": "^5.1.0",
+    "@types/wicg-file-system-access": "latest",
     "eslint": "^7.11.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-jsdoc": "^36.1.1",

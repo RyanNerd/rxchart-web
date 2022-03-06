@@ -1,6 +1,6 @@
 import DrugLogGrid from 'components/Pages/Grids/DrugLogGrid';
 import OtcListGroup from 'components/Pages/ListGroups/OtcListGroup';
-import {TAB_KEY} from 'components/Pages/MedicinePage';
+import {RX_TAB_KEY} from 'components/Pages/RxPage';
 import DeleteDrugLogModal from 'components/Pages/Modals/DeleteDrugLogModal';
 import DrugLogEdit from 'components/Pages/Modals/DrugLogEdit';
 import MedicineEdit from 'components/Pages/Modals/MedicineEdit';
@@ -16,7 +16,7 @@ import {asyncWrapper, clientFullName, getDrugName, getMedicineRecord} from 'util
 
 interface IProps {
     mm: IMedicineManager;
-    activeRxTab: TAB_KEY;
+    activeRxTab: RX_TAB_KEY;
 }
 
 /**
@@ -36,7 +36,7 @@ const RxOtc = (props: IProps) => {
     const clientId = activeClient?.clientInfo.Id;
     const mm = props.mm;
 
-    const [activeRxTab, setActiveRxTab] = useState<TAB_KEY>(props.activeRxTab);
+    const [activeRxTab, setActiveRxTab] = useState<RX_TAB_KEY>(props.activeRxTab);
     useEffect(() => {
         setActiveRxTab(props.activeRxTab);
     }, [props.activeRxTab]);

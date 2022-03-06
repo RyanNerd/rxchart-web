@@ -1,5 +1,6 @@
 import ClientPage from 'components/Pages/ClientPage';
-import SettingsPage from 'components/Pages/SettingsPage';
+import ManagementPage from 'components/Pages/ManagementPage';
+import RxPage from 'components/Pages/RxPage';
 import {ReactNode} from 'react';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
@@ -8,9 +9,6 @@ import React, {useEffect, useGlobal, useMemo} from 'reactn';
 import {IPreferences} from 'reactn/default';
 import DiagnosticPage from './DiagnosticPage';
 import LoginPage from './LoginPage';
-import ManageDrugPage from './ManageDrugPage';
-import ManageOtcPage from './ManageOtcPage';
-import MedicinePage from './MedicinePage';
 
 interface ITitleProps {
     activeKey: string;
@@ -49,10 +47,10 @@ const LandingPage = (props: IProps) => {
 
     // Observer to show / hide tabs based on if logged in and if a client has been selected
     useEffect(() => {
-        ['resident', 'medicine', 'manage', 'manage-otc'].map((tab) => {
+        ['resident', 'medicine', 'management'].map((tab) => {
             const element = document.getElementById('landing-page-tabs-tab-' + tab);
             if (element) {
-                if (tab === 'resident' || tab === 'manage-otc') element.style.display = apiKey ? 'block' : 'none';
+                if (tab === 'resident' || tab === 'management') element.style.display = apiKey ? 'block' : 'none';
                 else element.style.display = apiKey && activeClient ? 'block' : 'none';
             }
         });
@@ -62,12 +60,8 @@ const LandingPage = (props: IProps) => {
      * Memoized pages to reduce number of re-renders
      */
     const medicinePage = useMemo(() => {
-        return <MedicinePage activeTabKey={activeTabKey} preferences={preferences} />;
+        return <RxPage activeTabKey={activeTabKey} preferences={preferences} />;
     }, [activeTabKey, preferences]);
-
-    const manageDrugPage = useMemo(() => {
-        return <ManageDrugPage activeTabKey={activeTabKey} />;
-    }, [activeTabKey]);
 
     const clientPage = useMemo(() => {
         return <ClientPage activeTabKey={activeTabKey} clientSelected={() => setActiveTabKey('medicine')} />;
@@ -110,31 +104,22 @@ const LandingPage = (props: IProps) => {
             <Tab disabled={!apiKey} eventKey="resident" title={<Title activeKey="resident">Clients</Title>}>
                 <Tab.Content style={{marginLeft: 0}}>{clientPage}</Tab.Content>
             </Tab>
+
             <Tab disabled={!apiKey || !activeClient} eventKey="medicine" title={<Title activeKey="medicine">Rx</Title>}>
                 {activeClient && activeTabKey === 'medicine' && (
                     <Tab.Content style={{marginLeft: 0}}>{medicinePage}</Tab.Content>
                 )}
             </Tab>
-            <Tab
-                disabled={!apiKey || !activeClient}
-                eventKey="manage"
-                title={<Title activeKey="manage">Manage Rx</Title>}
-            >
-                <Tab.Content>{manageDrugPage}</Tab.Content>
-            </Tab>
-            <Tab disabled={!apiKey} eventKey="manage-otc" title={<Title activeKey="manage-otc">Manage OTC</Title>}>
+
+            <Tab disabled={!apiKey} eventKey="management" title={<Title activeKey={'management'}>Management</Title>}>
                 <Tab.Content>
-                    <ManageOtcPage activeTabKey={activeTabKey} />
+                    <ManagementPage />
                 </Tab.Content>
             </Tab>
+
             <Tab disabled={!errorDetails} eventKey="error" title={<Title activeKey="error">Diagnostics</Title>}>
                 <Tab.Content>
                     <DiagnosticPage error={errorDetails} dismissErrorAlert={() => window.location.reload()} />
-                </Tab.Content>
-            </Tab>
-            <Tab eventKey="settings" title={<Title activeKey={'settings'}>Preferences</Title>}>
-                <Tab.Content>
-                    <SettingsPage />
                 </Tab.Content>
             </Tab>
         </Tabs>

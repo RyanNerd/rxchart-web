@@ -1,6 +1,6 @@
 import OtcListGroupGrid from 'components/Pages/Grids/OtcListGroupGrid';
 import DisabledSpinner from 'components/Pages/ListGroups/DisabledSpinner';
-import {TAB_KEY} from 'components/Pages/MedicinePage';
+import {RX_TAB_KEY} from 'components/Pages/RxPage';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import FormGroup from 'react-bootstrap/FormGroup';
@@ -14,7 +14,7 @@ import ShadowBox from '../Buttons/ShadowBox';
 
 interface IProps {
     activeOtc: MedicineRecord | null;
-    activeRxTab: TAB_KEY;
+    activeRxTab: RX_TAB_KEY;
     disabled?: boolean;
     drugLogList: DrugLogRecord[];
     editOtcMedicine: (m: MedicineRecord) => void;
@@ -47,10 +47,10 @@ const OtcListGroup = (props: IProps): JSX.Element | null => {
     const lastTakenVariant = lastTaken && lastTaken >= 8 ? 'primary' : getLastTakenVariant(lastTaken);
     const searchReference = useRef<HTMLInputElement>(null);
 
-    const [activeRxTab, setActiveRxTab] = useState<TAB_KEY>(props.activeRxTab);
+    const [activeRxTab, setActiveRxTab] = useState<RX_TAB_KEY>(props.activeRxTab);
     useEffect(() => {
         setActiveRxTab(props.activeRxTab);
-        if (props.activeRxTab === TAB_KEY.OTC) searchReference?.current?.focus();
+        if (props.activeRxTab === RX_TAB_KEY.OTC) searchReference?.current?.focus();
     }, [activeRxTab, props.activeRxTab]);
 
     // Filter the otcList by the search textbox value

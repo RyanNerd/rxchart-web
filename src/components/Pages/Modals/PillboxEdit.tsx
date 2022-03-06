@@ -96,7 +96,9 @@ const PillboxEdit = (props: IProps): JSX.Element | null => {
                                 type="text"
                                 value={pillboxInfo.Name}
                             />
-                            <div className="invalid-feedback">Pillbox Name field cannot be blank.</div>
+                            <Form.Control.Feedback type="invalid">
+                                Pillbox Name field cannot be blank.
+                            </Form.Control.Feedback>
                         </Col>
                     </Form.Group>
 

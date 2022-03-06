@@ -1,5 +1,6 @@
 import ClientManager from 'managers/ClientManager';
 import ClientProvider, {IClientProvider} from 'providers/ClientProvider';
+import FileProvider, {IFileProvider} from 'providers/FileProvider';
 import {State} from 'reactn/default';
 import {ClientRecord, MedicineRecord} from 'types/RecordTypes';
 import AuthManager from '../managers/AuthManager';
@@ -14,6 +15,7 @@ import PinProvider, {IPinProvider} from 'providers/PinProvider';
 export interface IProviders {
     authenticationProvider: IAuthenticationProvider;
     clientProvider: IClientProvider;
+    fileProvider: IFileProvider;
     medicineProvider: IMedicineProvider;
     medHistoryProvider: IMedHistoryProvider;
     pillboxProvider: IPillboxProvider;
@@ -35,11 +37,12 @@ const getInitialState = () => {
 
     const providers = {
         authenticationProvider: AuthenticationProvider(baseUrl),
+        clientProvider: ClientProvider(baseUrl),
+        fileProvider: FileProvider(baseUrl),
         medHistoryProvider: MedHistoryProvider(baseUrl),
         medicineProvider: MedicineProvider(baseUrl),
-        clientProvider: ClientProvider(baseUrl),
-        pillboxProvider: PillboxProvider(baseUrl),
         pillboxItemProvider: PillboxItemProvider(baseUrl),
+        pillboxProvider: PillboxProvider(baseUrl),
         pinProvider: PinProvider(baseUrl),
 
         /**
@@ -47,11 +50,12 @@ const getInitialState = () => {
          * @param {string} apiKey The API key as returned from the web service
          */
         setApi: async (apiKey: string): Promise<void> => {
+            await providers.clientProvider.setApiKey(apiKey);
+            await providers.fileProvider.setApiKey(apiKey);
             await providers.medHistoryProvider.setApiKey(apiKey);
             await providers.medicineProvider.setApiKey(apiKey);
-            await providers.clientProvider.setApiKey(apiKey);
-            await providers.pillboxProvider.setApiKey(apiKey);
             await providers.pillboxItemProvider.setApiKey(apiKey);
+            await providers.pillboxProvider.setApiKey(apiKey);
             await providers.pinProvider.setApiKey(apiKey);
         }
     } as IProviders;

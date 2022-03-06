@@ -77,6 +77,7 @@ const ClientPage = (props: IProps): JSX.Element | null => {
             await setActiveClient({
                 ...activeClient,
                 clientInfo: clientLoad.clientInfo,
+                fileList: clientLoad.fileList,
                 drugLogList: clientLoad.drugLogList,
                 medicineList: clientLoad.medicineList,
                 pillboxList: clientLoad.pillboxList,

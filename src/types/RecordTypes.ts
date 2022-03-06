@@ -15,6 +15,21 @@ export type ClientRecord = {
     [key: string]: unknown;
 };
 
+// ORM record of the Document table
+export type FileRecord = {
+    Created?: null | Date;
+    Description: null | string;
+    FileName: string;
+    Id: null | number;
+    Image: null | string;
+    MediaType: null | string;
+    ResidentId: number;
+    Size: null | number;
+    Updated?: null | Date;
+    [key: string]: unknown;
+    deleted_at?: null | Date;
+};
+
 // ORM record of the MedHistory table
 export type DrugLogRecord = {
     Created?: string | null;

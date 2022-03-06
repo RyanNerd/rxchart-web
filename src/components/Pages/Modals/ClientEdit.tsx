@@ -102,7 +102,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
             </Modal.Header>
 
             <Modal.Body>
-                <Form>
+                <Form noValidate>
                     <Form.Group as={Row} controlId="resident-first_name">
                         <Form.Label column sm="2">
                             First Name
@@ -119,7 +119,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                 type="text"
                                 value={clientInfo.FirstName}
                             />
-                            <div className="invalid-feedback">First name can not be blank.</div>
+                            <Form.Control.Feedback type="invalid">First name can not be blank.</Form.Control.Feedback>
                         </Col>
                     </Form.Group>
 
@@ -138,7 +138,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                 type="text"
                                 value={clientInfo.LastName}
                             />
-                            <div className="invalid-feedback">Last name can not be blank.</div>
+                            <Form.Control.Feedback type="invalid">Last name can not be blank.</Form.Control.Feedback>
                         </Col>
                     </Form.Group>
 
@@ -161,10 +161,11 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                     <Form.Group as={Row}>
                         <Form.Label column sm="2">
                             <span className={isDobValid() ? '' : 'is-invalid'}>DOB</span> <span>Month</span>
-                            <div className="invalid-feedback">Invalid Date of Birth</div>
+                            <Form.Control.Feedback type="invalid">Invalid Date of Birth</Form.Control.Feedback>
                         </Form.Label>
                         <Col sm="2">
                             <Form.Control
+                                autoComplete="off"
                                 className={isMonthValid(clientInfo.DOB_MONTH.toString()) ? '' : 'is-invalid'}
                                 name="DOB_MONTH"
                                 onBlur={() => checkForDuplicates()}
@@ -173,7 +174,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                 type="text"
                                 value={clientInfo.DOB_MONTH}
                             />
-                            <div className="invalid-feedback">Enter the month (1-12).</div>
+                            <Form.Control.Feedback>Enter the month (1-12).</Form.Control.Feedback>
                         </Col>
 
                         <Form.Label column sm={1}>
@@ -181,6 +182,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                         </Form.Label>
                         <Col sm={2}>
                             <Form.Control
+                                autoComplete="off"
                                 className={
                                     isDayValid(clientInfo.DOB_DAY.toString(), clientInfo.DOB_MONTH.toString())
                                         ? ''
@@ -193,13 +195,14 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                 type="text"
                                 value={clientInfo.DOB_DAY}
                             />
-                            <div className="invalid-feedback">Enter a valid day.</div>
+                            <Form.Control.Feedback type="invalid">Enter a valid day.</Form.Control.Feedback>
                         </Col>
                         <Form.Label column sm={1}>
                             Year
                         </Form.Label>
                         <Col sm={3}>
                             <Form.Control
+                                autoComplete="off"
                                 className={isYearValid(clientInfo.DOB_YEAR.toString(), true) ? '' : 'is-invalid'}
                                 name="DOB_YEAR"
                                 onBlur={() => checkForDuplicates()}
@@ -208,7 +211,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                 type="text"
                                 value={clientInfo.DOB_YEAR}
                             />
-                            <div className="invalid-feedback">Enter a valid birth year.</div>
+                            <Form.Control.Feedback type="invalid">Enter a valid birth year.</Form.Control.Feedback>
                         </Col>
                     </Form.Group>
 
@@ -225,9 +228,9 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                 rows={4}
                                 value={clientInfo.Notes}
                             />
-                            <div className="invalid-feedback">
+                            <Form.Control.Feedback type="invalid">
                                 Notes can only be 500 characters long. length={clientInfo?.Notes?.trim().length}
-                            </div>
+                            </Form.Control.Feedback>
                         </Col>
                     </Form.Group>
                 </Form>
@@ -249,9 +252,9 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                 >
                     Save changes
                 </Button>
-                <div className="invalid-feedback" style={{textAlign: 'right'}}>
+                <Form.Control.Feedback type="invalid" style={{textAlign: 'right'}}>
                     This client already exists
-                </div>
+                </Form.Control.Feedback>
             </Modal.Footer>
         </Modal>
     );
