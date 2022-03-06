@@ -85,7 +85,7 @@ const FileProvider = (baseUrl: string): IFileProvider => {
          * @returns {Promise<FileUploadRecord>} A FileUploadRecord object as a promise
          */
         uploadFile: async (formData: FormData, clientId): Promise<FileUploadRecord> => {
-            const uri = _baseUrl + 'file/upload/' + clientId + '?api_key=' + _apiKey;
+            const uri = `${_baseUrl}file/upload/${clientId}?api_key=${_apiKey}`;
             const response = await fetch(uri, {
                 method: 'POST',
                 body: formData,
