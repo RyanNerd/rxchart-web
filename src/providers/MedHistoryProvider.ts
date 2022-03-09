@@ -10,7 +10,7 @@ type RecordResponse = {
 
 export interface IMedHistoryProvider {
     delete: (drugId: string | number) => Promise<DeleteResponse>;
-    post: (drugInfo: DrugLogRecord) => Promise<DrugLogRecord>;
+    update: (drugInfo: DrugLogRecord) => Promise<DrugLogRecord>;
     read: (id: string | number) => Promise<DrugLogRecord>;
     search: (options: Record<string, unknown>) => Promise<DrugLogRecord[]>;
     setApiKey: (apiKey: string) => void;
@@ -34,14 +34,16 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
         },
 
         /**
-         * Search Interface
+         * Drug Log Search
          * @see https://www.notion.so/Willow-Framework-Users-Guide-bf56317580884ccd95ed8d3889f83c72
          * @param {object} options A multi-shaped object used when the fetch is performed
          * @returns {Promise<DrugLogRecord[]>} Array of drug log records
          */
         search: async (options: Record<string, unknown>): Promise<DrugLogRecord[]> => {
-            const uri = _baseUrl + 'medhistory/search?api_key=' + _apiKey;
-            const response = await _frak.post<RecordResponse>(uri, options);
+            const response = await _frak.post<RecordResponse>(
+                `${_baseUrl}medhistory/search?api_key=${_apiKey}`,
+                options
+            );
             if (response.success) {
                 return response.data as DrugLogRecord[];
             } else {
@@ -54,13 +56,12 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
         },
 
         /**
-         * Read interface
+         * Drug Log Read
          * @param {string | number} id The PK of the MedHistory table
          * @returns {Promise<DrugLogRecord[]>} Array of drug log records
          */
         read: async (id: string | number): Promise<DrugLogRecord> => {
-            const uri = _baseUrl + 'medhistory/' + id + '?api_key=' + _apiKey;
-            const response = await _frak.get<RecordResponse>(uri);
+            const response = await _frak.get<RecordResponse>(`${_baseUrl}medhistory/${id}?api_key=${_apiKey}`);
             if (response.success) {
                 return response.data as DrugLogRecord;
             } else {
@@ -69,13 +70,12 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
         },
 
         /**
-         * Post interface
+         * Drug Log Update - Insert or update the MedHistory table given a DrugLogRecord object
          * @param {DrugLogRecord} drugInfo The MedHistory (drugLog) record
          * @returns {Promise<DrugLogRecord>} Drug log record
          */
-        post: async (drugInfo: DrugLogRecord): Promise<DrugLogRecord> => {
-            const uri = _baseUrl + 'medhistory?api_key=' + _apiKey;
-            const response = await _frak.post<RecordResponse>(uri, drugInfo);
+        update: async (drugInfo: DrugLogRecord): Promise<DrugLogRecord> => {
+            const response = await _frak.post<RecordResponse>(`${_baseUrl}medhistory?api_key=${_apiKey}`, drugInfo);
             if (response.success) {
                 return response.data as DrugLogRecord;
             } else {
@@ -84,13 +84,12 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
         },
 
         /**
-         * Delete interface
+         * Drug log Delete - Soft delete a MedHistory record given the PK
          * @param {string | number} drugId The PK for the MedHistory table
          * @returns {Promise<DeleteResponse>} Success: true/false
          */
         delete: async (drugId: string | number): Promise<DeleteResponse> => {
-            const uri = _baseUrl + 'medhistory/' + drugId + '?api_key=' + _apiKey;
-            const response = await _frak.delete<RecordResponse>(uri);
+            const response = await _frak.delete<RecordResponse>(`${_baseUrl}medhistory/${drugId}?api_key=${_apiKey}`);
             if (response.success) {
                 return response;
             } else {

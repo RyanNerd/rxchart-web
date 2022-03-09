@@ -12,7 +12,7 @@ export interface IMedicineProvider {
     setApiKey: (apiKey: string) => void;
     search: (options: Record<string, unknown>) => Promise<MedicineRecord[]>;
     read: (id: number | string) => Promise<MedicineRecord>;
-    post: (drugInfo: MedicineRecord) => Promise<MedicineRecord>;
+    update: (drugInfo: MedicineRecord) => Promise<MedicineRecord>;
     delete: (drugId: string | number) => Promise<DeleteResponse>;
 }
 
@@ -34,13 +34,12 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
         },
 
         /**
-         * Search Interface
+         * Medicine Search
          * @param {object} options A multi-shaped options object when the fetch is performed
          * @returns {Promise<MedicineRecord[]>} An array of Medicine records
          */
         search: async (options: Record<string, unknown>): Promise<MedicineRecord[]> => {
-            const uri = _baseUrl + 'medicine/search?api_key=' + _apiKey;
-            const response = await _frak.post<RecordResponse>(uri, options);
+            const response = await _frak.post<RecordResponse>(`${_baseUrl}medicine/search?api_key=${_apiKey}`, options);
             if (response.success) {
                 return response.data as MedicineRecord[];
             } else {
@@ -52,13 +51,12 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
         },
 
         /**
-         * Read interface
+         * Medicine Read
          * @param {string | number} id The PK of the Medicine table
          * @returns {Promise<MedicineRecord>} Medicine record
          */
         read: async (id: number | string): Promise<MedicineRecord> => {
-            const uri = _baseUrl + 'medicine/' + id + '?api_key=' + _apiKey;
-            const response = await _frak.get<RecordResponse>(uri);
+            const response = await _frak.get<RecordResponse>(`${_baseUrl}medicine/${id}?api_key=${_apiKey}`);
             if (response.success) {
                 return response.data as MedicineRecord;
             } else {
@@ -67,13 +65,12 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
         },
 
         /**
-         * Post interface
+         * Medicine Update - Insert or Update the Medicine table given a MedicineRecord object
          * @param {MedicineRecord} medInfo The Medicine record object
          * @returns {Promise<MedicineRecord>} Medicine record
          */
-        post: async (medInfo: MedicineRecord): Promise<MedicineRecord> => {
-            const uri = _baseUrl + 'medicine?api_key=' + _apiKey;
-            const response = await _frak.post<RecordResponse>(uri, medInfo);
+        update: async (medInfo: MedicineRecord): Promise<MedicineRecord> => {
+            const response = await _frak.post<RecordResponse>(`${_baseUrl}medicine?api_key=${_apiKey}`, medInfo);
             if (response.success) {
                 return response.data as MedicineRecord;
             } else {
@@ -82,13 +79,12 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
         },
 
         /**
-         * Delete interface
+         * Medicine Delete - Soft delete a Medicine record given the PK
          * @param {string | number} medId The PK of the Medicine table
          * @returns {Promise<DeleteResponse>} Success: true/false
          */
         delete: async (medId: string | number): Promise<DeleteResponse> => {
-            const uri = _baseUrl + 'medicine/' + medId + '?api_key=' + _apiKey;
-            const response = await _frak.delete<RecordResponse>(uri);
+            const response = await _frak.delete<RecordResponse>(`${_baseUrl}medicine/${medId}?api_key=${_apiKey}`);
             if (response.success) {
                 return response;
             } else {

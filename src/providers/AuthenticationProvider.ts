@@ -37,8 +37,7 @@ const AuthenticationProvider = (url: string): IAuthenticationProvider => {
          * @returns {Promise<Authenticated>} Authenticated obj {success: true/false, organization: org, apiKey: API key}
          */
         post: async (credentials: AuthCredentials): Promise<Authenticated> => {
-            const uri = _baseUrl + 'authenticate';
-            const response = await _frak.post<AuthResponse>(uri, credentials);
+            const response = await _frak.post<AuthResponse>(_baseUrl + 'authenticate', credentials);
             const success = response.success;
             const data = response.data ? response.data : undefined;
             const apiKey = success && data?.apiKey ? data.apiKey : '';

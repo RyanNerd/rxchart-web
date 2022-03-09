@@ -24,17 +24,15 @@ const Files = (props: IProps) => {
     const fileProvider = providers.fileProvider;
     const activeRxTab = props.rxTabKey;
 
-    const saveFile = async (fileRecord: FileRecord) => {
-        return await fileProvider.update(fileRecord);
-    };
-
     /**
      * Rehydrates the fileList for the active client
      * @returns {Promise<void>}
      */
     const refreshFileList = async () => {
-        const loadedFileList = await fileProvider.load(activeClient?.clientInfo.Id as number);
-        await setActiveClient({...(activeClient as TClient), fileList: loadedFileList});
+        await setActiveClient({
+            ...(activeClient as TClient),
+            fileList: await fileProvider.load(activeClient?.clientInfo.Id as number)
+        });
     };
 
     /**
@@ -53,6 +51,7 @@ const Files = (props: IProps) => {
                 // Max file size is 100MB
                 if (file.size <= 104_857_600) {
                     setIsIsBusy(true);
+                    setInvalidMaxSize(false);
                     try {
                         const formData = new FormData();
                         formData.append('single_file', file);
@@ -104,10 +103,8 @@ const Files = (props: IProps) => {
                 onClose={async (f) => {
                     setShowEditFile(null);
                     if (f) {
-                        const updatedFile = await saveFile(f);
-                        if (updatedFile) {
-                            await refreshFileList();
-                        }
+                        await fileProvider.update(f);
+                        await refreshFileList();
                     }
                 }}
                 onHide={() => setShowEditFile(null)}

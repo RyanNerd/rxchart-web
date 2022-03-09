@@ -63,9 +63,9 @@ const PinProvider = (baseUrl: string): IPinProvider => {
          * @param {number} clientId The clientId to generate the PIN for
          */
         generate: async (clientId: number): Promise<GenerateResponseData> => {
-            const uri = _baseUrl + 'pin/generate?api_key=' + _apiKey;
-
-            const response = await _frak.post<GenerateResponse>(uri, {client_id: clientId});
+            const response = await _frak.post<GenerateResponse>(`${_baseUrl}pin/generate?api_key=${_apiKey}`, {
+                client_id: clientId
+            });
             if (response.success) {
                 return response.data as GenerateResponseData;
             } else {
@@ -73,10 +73,13 @@ const PinProvider = (baseUrl: string): IPinProvider => {
             }
         },
 
+        /**
+         * Pin Read
+         * @param {number} pinId - The Pin table PK
+         * @returns {Promise<ReadResponseData>} The pseudo Pin table object as a promise
+         */
         read: async (pinId: number): Promise<ReadResponseData> => {
-            const uri = _baseUrl + 'pin/' + pinId.toString() + '?api_key=' + _apiKey;
-
-            const response = await _frak.get<ReadResponse>(uri);
+            const response = await _frak.get<ReadResponse>(`${_baseUrl}pin/${pinId.toString()}?api_key=${_apiKey}`);
             if (response.success) {
                 return response.data as ReadResponseData;
             } else {
@@ -84,10 +87,15 @@ const PinProvider = (baseUrl: string): IPinProvider => {
             }
         },
 
+        /**
+         * Pin Delete - Delete a record in the Pin table given the PK
+         * @param {number} pinId The PK to delete in the Pin table
+         * @returns {Promise<boolean>} True if successful, false otherwise as a promise
+         */
         delete: async (pinId): Promise<boolean> => {
-            const uri = _baseUrl + 'pin/' + pinId.toString() + '?api_key=' + _apiKey;
-
-            const response = await _frak.delete<DeleteResponse>(uri);
+            const response = await _frak.delete<DeleteResponse>(
+                `${_baseUrl}pin/${pinId.toString()}?api_key=${_apiKey}`
+            );
             return response.success;
         }
     };

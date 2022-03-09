@@ -206,7 +206,7 @@ const MedicineManager = (
      * @param {DrugLogRecord} drugLogInfo The drug log record object
      */
     const _updateDrugLog = async (drugLogInfo: DrugLogRecord) => {
-        const [error, r] = (await asyncWrapper(medHistoryProvider.post(drugLogInfo))) as [
+        const [error, r] = (await asyncWrapper(medHistoryProvider.update(drugLogInfo))) as [
             unknown,
             Promise<DrugLogRecord>
         ];
@@ -219,7 +219,7 @@ const MedicineManager = (
      * @param {MedicineRecord} medInfo The medicine record object
      */
     const _updateMedicine = async (medInfo: MedicineRecord) => {
-        const [error, r] = (await asyncWrapper(medicineProvider.post(medInfo))) as [unknown, Promise<MedicineRecord>];
+        const [error, r] = (await asyncWrapper(medicineProvider.update(medInfo))) as [unknown, Promise<MedicineRecord>];
         if (error) throw error;
         else return r;
     };
@@ -229,7 +229,7 @@ const MedicineManager = (
      * @param {PillboxRecord} pillInfo The pillbox record object
      */
     const _updatePillbox = async (pillInfo: PillboxRecord) => {
-        const [error, r] = (await asyncWrapper(pillboxProvider.post(pillInfo))) as [unknown, Promise<PillboxRecord>];
+        const [error, r] = (await asyncWrapper(pillboxProvider.update(pillInfo))) as [unknown, Promise<PillboxRecord>];
         if (error) throw error;
         else return r;
     };
@@ -239,7 +239,7 @@ const MedicineManager = (
      * @param {PillboxItemRecord} pillboxItemInfo The pillboxItem record object
      */
     const _updatePillboxItem = async (pillboxItemInfo: PillboxItemRecord) => {
-        const [error, r] = (await asyncWrapper(pillboxItemProvider.post(pillboxItemInfo))) as [
+        const [error, r] = (await asyncWrapper(pillboxItemProvider.update(pillboxItemInfo))) as [
             unknown,
             Promise<PillboxItemRecord>
         ];
