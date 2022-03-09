@@ -24,7 +24,10 @@ const ClientManager = (clientProvider: IClientProvider): IClientManager => {
      * @param {ClientRecord} clientRecord The client record object
      */
     const _updateClient = async (clientRecord: ClientRecord): Promise<ClientRecord> => {
-        const [error, r] = (await asyncWrapper(clientProvider.post(clientRecord))) as [unknown, Promise<ClientRecord>];
+        const [error, r] = (await asyncWrapper(clientProvider.update(clientRecord))) as [
+            unknown,
+            Promise<ClientRecord>
+        ];
         if (error) throw error;
         else return r;
     };

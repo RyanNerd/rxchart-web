@@ -17,7 +17,7 @@ type LoadResponse = {
 export interface IClientProvider {
     delete: (residentId: number) => Promise<DeleteResponse>;
     load: (clientId: number) => Promise<TClient>;
-    post: (residentInfo: ClientRecord) => Promise<ClientRecord>;
+    update: (residentInfo: ClientRecord) => Promise<ClientRecord>;
     read: (id: number) => Promise<ClientRecord>;
     restore: (residentId: number) => Promise<ClientRecord>;
     search: (options: Record<string, unknown>) => Promise<ClientRecord[]>;
@@ -32,6 +32,7 @@ const ClientProvider = (url: string): IClientProvider => {
     const _baseUrl = url;
     const _frak = Frak();
     let _apiKey = null as string | null;
+
     return {
         /**
          * Set the apiKey
@@ -42,13 +43,12 @@ const ClientProvider = (url: string): IClientProvider => {
         },
 
         /**
-         * Search Interface
+         * Client Search
          * @param {object} options Multi shaped object for the fetch request
          * @returns {Promise<ClientRecord[]>} An array of client records
          */
         search: async (options: Record<string, unknown>): Promise<ClientRecord[]> => {
-            const uri = _baseUrl + 'resident/search?api_key=' + _apiKey;
-            const response = await _frak.post<RecordResponse>(uri, options);
+            const response = await _frak.post<RecordResponse>(`${_baseUrl}resident/search?api_key=${_apiKey}`, options);
             if (response.success) {
                 return response.data as ClientRecord[];
             } else {
@@ -61,7 +61,7 @@ const ClientProvider = (url: string): IClientProvider => {
         },
 
         /**
-         * Restore Interface
+         * Client Restore
          * @param {number} residentId PK of the Resident table
          * @returns {Promise<ClientRecord>} A client record
          */
@@ -77,7 +77,7 @@ const ClientProvider = (url: string): IClientProvider => {
         },
 
         /**
-         * Read Interface
+         * Client Read
          * @param {number} id PK of the Resident table
          * @returns {Promise<ClientRecord>} A client record
          */
@@ -92,11 +92,11 @@ const ClientProvider = (url: string): IClientProvider => {
         },
 
         /**
-         * Post interface
+         * Client Update
          * @param {ClientRecord} residentInfo The client object
          * @returns {Promise<ClientRecord>} A client record
          */
-        post: async (residentInfo: ClientRecord): Promise<ClientRecord> => {
+        update: async (residentInfo: ClientRecord): Promise<ClientRecord> => {
             const uri = _baseUrl + 'resident?api_key=' + _apiKey;
             const response = await _frak.post<RecordResponse>(uri, residentInfo);
             if (response.success) {
@@ -107,7 +107,7 @@ const ClientProvider = (url: string): IClientProvider => {
         },
 
         /**
-         * Delete interface
+         * Client Delete
          * @param {number} residentId PK of the Resident table
          * @returns {Promise<DeleteResponse>} Success: true/false
          */

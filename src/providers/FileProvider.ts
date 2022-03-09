@@ -57,8 +57,7 @@ const FileProvider = (baseUrl: string): IFileProvider => {
          * @returns {Promise<FileRecord>} An updated file record object as a promise
          */
         update: async (fileRecord: FileRecord): Promise<FileRecord> => {
-            const uri = `${_baseUrl}file?api_key=${_apiKey}`;
-            const response = await _frak.post<UpdateResponse>(uri, fileRecord);
+            const response = await _frak.post<UpdateResponse>(`${_baseUrl}file?api_key=${_apiKey}`, fileRecord);
             if (response.success) {
                 return response.data as FileRecord;
             } else {
@@ -73,8 +72,9 @@ const FileProvider = (baseUrl: string): IFileProvider => {
          * @returns {Promise<boolean>} Success or failure of the delete request
          */
         delete: async (id: number, permanentDelete): Promise<boolean> => {
-            const uri = `${_baseUrl}file/${id}?api_key=${_apiKey}&force=${permanentDelete ? 'true' : false}`;
-            const response = await _frak.delete<DeleteResponse>(uri);
+            const response = await _frak.delete<DeleteResponse>(
+                `${_baseUrl}file/${id}?api_key=${_apiKey}&force=${permanentDelete ? 'true' : false}`
+            );
             return response.success;
         },
 
@@ -85,8 +85,7 @@ const FileProvider = (baseUrl: string): IFileProvider => {
          * @returns {Promise<FileUploadRecord>} A FileUploadRecord object as a promise
          */
         uploadFile: async (formData: FormData, clientId): Promise<FileUploadRecord> => {
-            const uri = `${_baseUrl}file/upload/${clientId}?api_key=${_apiKey}`;
-            const response = await fetch(uri, {
+            const response = await fetch(`${_baseUrl}file/upload/${clientId}?api_key=${_apiKey}`, {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -108,8 +107,7 @@ const FileProvider = (baseUrl: string): IFileProvider => {
          * @returns {Promise<FileRecord[]>} An array of FileRecords
          */
         load: async (clientId: number): Promise<FileRecord[]> => {
-            const uri = `${_baseUrl}file/load/${clientId}?api_key=${_apiKey}`;
-            const response = await _frak.get<LoadResponse>(uri);
+            const response = await _frak.get<LoadResponse>(`${_baseUrl}file/load/${clientId}?api_key=${_apiKey}`);
             if (response.success) {
                 return response.data as FileRecord[];
             } else {
@@ -127,8 +125,7 @@ const FileProvider = (baseUrl: string): IFileProvider => {
          * @returns {Promise<void>}
          */
         download: async (fileRecord: FileRecord): Promise<void> => {
-            const uri = `${_baseUrl}file/download/${fileRecord.Id}?api_key=${_apiKey}`;
-            const response = await fetch(uri, {
+            const response = await fetch(`${_baseUrl}file/download/${fileRecord.Id}?api_key=${_apiKey}`, {
                 method: 'GET',
                 headers: {
                     Accept: 'application/octet-stream'

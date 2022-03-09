@@ -18,7 +18,7 @@ export interface IPillboxProvider {
     setApiKey: (apiKey: string) => void;
     search: (options: Record<string, unknown>) => Promise<PillboxRecord[]>;
     read: (id: number | string) => Promise<PillboxRecord>;
-    post: (drugInfo: PillboxRecord) => Promise<PillboxRecord>;
+    update: (drugInfo: PillboxRecord) => Promise<PillboxRecord>;
     delete: (drugId: string | number) => Promise<DeleteResponse>;
     log: (pillboxId: number) => Promise<DrugLogRecord[]>;
 }
@@ -41,13 +41,12 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
         },
 
         /**
-         * Search Interface
+         * Pillbox Search
          * @param {object} options A multi-shaped object indicating the options to use to fetch
          * @returns {Promise<PillboxRecord[]>} Array of Pillbox records
          */
         search: async (options: Record<string, unknown>): Promise<PillboxRecord[]> => {
-            const uri = _baseUrl + 'pillbox/search?api_key=' + _apiKey;
-            const response = await _frak.post<RecordResponse>(uri, options);
+            const response = await _frak.post<RecordResponse>(`${_baseUrl}pillbox/search?api_key=${_apiKey}`, options);
             if (response.success) {
                 return response.data as PillboxRecord[];
             } else {
@@ -59,14 +58,12 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
         },
 
         /**
-         * Read interface
+         * Pillbox Read
          * @param {string | number} id The PK of the Pillbox table
          * @returns {Promise<PillboxRecord>} a pillbox record
          */
         read: async (id: number | string): Promise<PillboxRecord> => {
-            const uri = _baseUrl + 'pillbox/' + id + '?api_key=' + _apiKey;
-
-            const response = await _frak.get<RecordResponse>(uri);
+            const response = await _frak.get<RecordResponse>(`${_baseUrl}pillbox/${id}?api_key=${_apiKey}`);
             if (response.success) {
                 return response.data as PillboxRecord;
             } else {
@@ -75,14 +72,12 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
         },
 
         /**
-         * Post interface
+         * Pillbox Update - Insert or Update the Pilbox table given a PillboxRecord object
          * @param {PillboxRecord} pillboxInfo The Pillbox record
          * @returns {Promise<PillboxRecord>} A pillbox record
          */
-        post: async (pillboxInfo: PillboxRecord): Promise<PillboxRecord> => {
-            const uri = _baseUrl + 'pillbox?api_key=' + _apiKey;
-
-            const response = await _frak.post<RecordResponse>(uri, pillboxInfo);
+        update: async (pillboxInfo: PillboxRecord): Promise<PillboxRecord> => {
+            const response = await _frak.post<RecordResponse>(`${_baseUrl}pillbox?api_key=${_apiKey}`, pillboxInfo);
             if (response.success) {
                 return response.data as PillboxRecord;
             } else {
@@ -91,14 +86,14 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
         },
 
         /**
-         * Post interface
+         * Log all the drugs for the given Pillbox id
          * @param {number} pillboxId The PK of the Pillbox table
          * @returns {Promise<PillboxRecord>} A pillbox record
          */
         log: async (pillboxId: number): Promise<DrugLogRecord[]> => {
-            const uri = _baseUrl + 'pillbox/log?api_key=' + _apiKey;
-
-            const response = await _frak.post<LogResponse>(uri, {pillbox_id: pillboxId});
+            const response = await _frak.post<LogResponse>(`${_baseUrl}pillbox/log?api_key=${_apiKey}`, {
+                pillbox_id: pillboxId
+            });
             if (response.success) {
                 return response.data;
             } else {
@@ -107,13 +102,12 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
         },
 
         /**
-         * Delete interface
+         * Pillbox Delete - Delete a record in the Pillbox table given the PK
          * @param {string | number} pillboxId The PK for the Pillbox table
          * @returns {Promise<DeleteResponse>} Delete response {success: true/false}
          */
         delete: async (pillboxId: string | number): Promise<DeleteResponse> => {
-            const uri = _baseUrl + 'pillbox/' + pillboxId + '?api_key=' + _apiKey;
-            const response = await _frak.delete<RecordResponse>(uri);
+            const response = await _frak.delete<RecordResponse>(`${_baseUrl}pillbox/${pillboxId}?api_key=${_apiKey}`);
             if (response.success) {
                 return response;
             } else {
