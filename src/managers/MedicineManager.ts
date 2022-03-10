@@ -1,13 +1,12 @@
 import {IMedHistoryProvider} from 'providers/MedHistoryProvider';
 import {DeleteResponse, IMedicineProvider} from 'providers/MedicineProvider';
-import {DrugLogRecord, MedicineRecord} from 'types/RecordTypes';
+import {DrugLogRecord} from 'types/RecordTypes';
 import {asyncWrapper} from 'utility/common';
 
 export interface IMedicineManager {
     deleteDrugLog: (drugLogId: number) => Promise<boolean>;
     loadDrugLog: (residentId: number, days?: number) => Promise<DrugLogRecord[]>;
     loadDrugLogForMedicine: (medicineId: number) => Promise<DrugLogRecord[]>;
-    loadOtcList: () => Promise<MedicineRecord[]>;
     updateDrugLog: (drugLogRecord: DrugLogRecord) => Promise<DrugLogRecord>;
 }
 
@@ -79,23 +78,6 @@ const MedicineManager = (
     };
 
     /**
-     * Returns all the OTC medicines as a promise
-     * @todo Remove this
-     */
-    const _loadOtcList = async () => {
-        const searchCriteria = {
-            where: [['OTC', '=', true]],
-            orderBy: [['Drug', 'asc']]
-        };
-        const [error, r] = (await asyncWrapper(medicineProvider.search(searchCriteria))) as [
-            unknown,
-            Promise<MedicineRecord[]>
-        ];
-        if (error) throw error;
-        else return r;
-    };
-
-    /**
      * Add or update a MedHistory record
      * @param {DrugLogRecord} drugLogInfo The drug log record object
      */
@@ -117,9 +99,6 @@ const MedicineManager = (
         },
         loadDrugLogForMedicine: async (medicineId: number): Promise<DrugLogRecord[]> => {
             return await _loadDrugLogForMedicine(medicineId);
-        },
-        loadOtcList: async (): Promise<MedicineRecord[]> => {
-            return await _loadOtcList();
         },
         updateDrugLog: async (drugLogRecord: DrugLogRecord): Promise<DrugLogRecord> => {
             return await _updateDrugLog(drugLogRecord);

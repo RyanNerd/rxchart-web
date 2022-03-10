@@ -28,7 +28,6 @@ const LoginPage = (props: IProps): JSX.Element | null => {
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [, setOtcList] = useGlobal('otcList');
     const [canLogin, setCanLogin] = useState(false);
-    const [mm] = useGlobal('medicineManager');
     const [password, setPassword] = useState('');
     const [providers] = useGlobal('providers');
     const [showAboutPage, setShowAboutPage] = useState(false);
@@ -36,6 +35,7 @@ const LoginPage = (props: IProps): JSX.Element | null => {
     const [username, setUsername] = useState('');
     const authenticationProvider = providers.authenticationProvider;
     const clientProvider = providers.clientProvider;
+    const medicineProvider = providers.medicineProvider;
     const focusReference = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -74,7 +74,7 @@ const LoginPage = (props: IProps): JSX.Element | null => {
                         if (errorLoadClients) await setErrorDetails(errorLoadClients);
                         else {
                             await setClientList(await clients);
-                            const [errorLoadOtc, otcMeds] = (await asyncWrapper(mm.loadOtcList())) as [
+                            const [errorLoadOtc, otcMeds] = (await asyncWrapper(medicineProvider.loadOtcList())) as [
                                 unknown,
                                 Promise<MedicineRecord[]>
                             ];

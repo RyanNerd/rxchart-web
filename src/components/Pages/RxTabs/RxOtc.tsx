@@ -91,7 +91,10 @@ const RxOtc = (props: IProps) => {
         const [error, m] = (await asyncWrapper(medicineProvider.update(med))) as [unknown, Promise<MedicineRecord>];
         if (error) await setErrorDetails(error);
         const updatedMedicineRecord = await m;
-        const [errorLoadOtc, otcMeds] = (await asyncWrapper(mm.loadOtcList())) as [unknown, Promise<MedicineRecord[]>];
+        const [errorLoadOtc, otcMeds] = (await asyncWrapper(medicineProvider.loadOtcList())) as [
+            unknown,
+            Promise<MedicineRecord[]>
+        ];
         await (errorLoadOtc ? setErrorDetails(errorLoadOtc) : setOtcList(await otcMeds));
         setActiveOtc(updatedMedicineRecord.Active ? updatedMedicineRecord : null);
         await setIsBusy(false);

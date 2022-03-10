@@ -62,7 +62,7 @@ const ManageOtc = (props: IProps): JSX.Element | null => {
      */
     const saveOtcMedicine = async (otcMed: MedicineRecord) => {
         const m = await medicineProvider.update(otcMed);
-        await setOtcList(await mm.loadOtcList());
+        await setOtcList(await medicineProvider.loadOtcList());
         return m;
     };
 
@@ -71,7 +71,8 @@ const ManageOtc = (props: IProps): JSX.Element | null => {
      * @param {number} medicineId The PK of the Medicine record to delete, or a zero for a NOP
      */
     const deleteOtcMedicine = async (medicineId: number) => {
-        if (medicineId > 0 && (await medicineProvider.delete(medicineId))) await setOtcList(await mm.loadOtcList());
+        if (medicineId > 0 && (await medicineProvider.delete(medicineId)))
+            await setOtcList(await medicineProvider.loadOtcList());
     };
 
     /**

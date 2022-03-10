@@ -11,6 +11,7 @@ type RecordResponse = {
 export interface IMedicineProvider {
     setApiKey: (apiKey: string) => void;
     loadList: (clientId: number) => Promise<MedicineRecord[]>;
+    loadOtcList: () => Promise<MedicineRecord[]>;
     search: (options: Record<string, unknown>) => Promise<MedicineRecord[]>;
     read: (id: number | string) => Promise<MedicineRecord>;
     update: (drugInfo: MedicineRecord) => Promise<MedicineRecord>;
@@ -59,6 +60,14 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
         loadList: async (clientId) => {
             const searchCriteria = {
                 where: [['ResidentId', '=', clientId]],
+                orderBy: [['Drug', 'asc']]
+            };
+            return await _search(searchCriteria);
+        },
+
+        loadOtcList: async () => {
+            const searchCriteria = {
+                where: [['OTC', '=', true]],
                 orderBy: [['Drug', 'asc']]
             };
             return await _search(searchCriteria);
