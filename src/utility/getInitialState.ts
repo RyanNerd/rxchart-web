@@ -63,12 +63,7 @@ const getInitialState = () => {
         activeClient: null,
         activeTabKey: 'login',
         clientList: [] as ClientRecord[],
-        medicineManager: MedicineManager(
-            providers.medicineProvider,
-            providers.medHistoryProvider,
-            providers.pillboxProvider,
-            providers.pillboxItemProvider
-        ),
+        medicineManager: MedicineManager(providers.medicineProvider, providers.medHistoryProvider),
         otcList: [] as MedicineRecord[],
         preferences: null,
         providers,

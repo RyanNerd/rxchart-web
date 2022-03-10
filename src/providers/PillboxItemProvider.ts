@@ -13,6 +13,7 @@ export interface IPillboxItemProvider {
     update: (pillboxItemInfo: PillboxItemRecord) => Promise<PillboxItemRecord>;
     read: (id: string | number) => Promise<PillboxItemRecord>;
     search: (options: Record<string, unknown>) => Promise<PillboxItemRecord[]>;
+    loadList: (clientId: number) => Promise<PillboxItemRecord[]>;
     setApiKey: (apiKey: string) => void;
 }
 
@@ -24,6 +25,26 @@ const PillboxItemProvider = (baseurl: string): IPillboxItemProvider => {
     const _baseUrl = baseurl;
     const _frak = Frak();
     let _apiKey = null as string | null;
+
+    /**
+     * PillboxItem Search
+     * @see https://www.notion.so/Willow-Framework-Users-Guide-bf56317580884ccd95ed8d3889f83c72
+     * @param {object} options Multi-shaped object of options when the fetch is performed
+     * @returns {Promise<PillboxItemRecord[]>} An array of pillbox items
+     */
+    const _search = async (options: Record<string, unknown>): Promise<PillboxItemRecord[]> => {
+        const response = await _frak.post<RecordResponse>(`${_baseUrl}pillbox-item/search?api_key=${_apiKey}`, options);
+        if (response.success) {
+            return response.data as PillboxItemRecord[];
+        } else {
+            if (response.status === 404) {
+                return [] as PillboxItemRecord[];
+            } else {
+                throw response;
+            }
+        }
+    };
+
     return {
         /**
          * Set the apiKey
@@ -33,6 +54,14 @@ const PillboxItemProvider = (baseurl: string): IPillboxItemProvider => {
             _apiKey = apiKey;
         },
 
+        loadList: async (clientId: number) => {
+            const searchCriteria = {
+                where: [['ResidentId', '=', clientId]],
+                orderBy: [['Created', 'desc']]
+            };
+            return await _search(searchCriteria);
+        },
+
         /**
          * PillboxItem Search
          * @see https://www.notion.so/Willow-Framework-Users-Guide-bf56317580884ccd95ed8d3889f83c72
@@ -40,19 +69,7 @@ const PillboxItemProvider = (baseurl: string): IPillboxItemProvider => {
          * @returns {Promise<PillboxItemRecord[]>} An array of pillbox items
          */
         search: async (options: Record<string, unknown>): Promise<PillboxItemRecord[]> => {
-            const response = await _frak.post<RecordResponse>(
-                `${_baseUrl}pillbox-item/search?api_key=${_apiKey}`,
-                options
-            );
-            if (response.success) {
-                return response.data as PillboxItemRecord[];
-            } else {
-                if (response.status === 404) {
-                    return [] as PillboxItemRecord[];
-                } else {
-                    throw response;
-                }
-            }
+            return await _search(options);
         },
 
         /**

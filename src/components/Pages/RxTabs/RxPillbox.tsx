@@ -2,6 +2,7 @@ import PillboxCard from 'components/Pages/Grids/PillboxCard';
 import PillboxListGroup from 'components/Pages/ListGroups/PillboxListGroup';
 import DrugLogToast from 'components/Pages/Toasts/DrugLogToast';
 import {IMedicineManager} from 'managers/MedicineManager';
+import {IPillboxItemProvider} from 'providers/PillboxItemProvider';
 import {IPillboxProvider} from 'providers/PillboxProvider';
 import Col from 'react-bootstrap/Col';
 import ListGroup from 'react-bootstrap/ListGroup';
@@ -28,6 +29,7 @@ interface IProps {
     activePillboxChanged: (pb: PillboxRecord | null) => void;
     mm: IMedicineManager;
     pillboxProvider: IPillboxProvider;
+    pillboxItemProvider: IPillboxItemProvider;
 }
 
 /**
@@ -43,6 +45,7 @@ const RxPillbox = (props: IProps) => {
     const activePillboxChanged = props.activePillboxChanged;
     const mm = props.mm;
     const pillboxProvider = props.pillboxProvider;
+    const pillboxItemProvider = props.pillboxItemProvider;
 
     const [activePillbox, setActivePillbox] = useState(props.activePillbox);
     useEffect(() => {
@@ -140,14 +143,14 @@ const RxPillbox = (props: IProps) => {
      */
     const savePillboxItem = async (pillboxItemRecord: PillboxItemRecord) => {
         setIsBusy(true);
-        const [error, updatedPillboxItem] = (await asyncWrapper(mm.updatePillboxItem(pillboxItemRecord))) as [
+        const [error, updatedPillboxItem] = (await asyncWrapper(pillboxItemProvider.update(pillboxItemRecord))) as [
             unknown,
             Promise<PillboxItemRecord>
         ];
         if (error) await setErrorDetails(error);
         else if (await updatedPillboxItem) {
             const [errorLoadPills, pillboxItems] = (await asyncWrapper(
-                mm.loadPillboxItemList(activeClient?.clientInfo.Id as number)
+                pillboxItemProvider.loadList(activeClient?.clientInfo.Id as number)
             )) as [unknown, Promise<PillboxItemRecord[]>];
             await (errorLoadPills
                 ? setErrorDetails(errorLoadPills)
