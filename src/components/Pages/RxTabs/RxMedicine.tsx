@@ -7,6 +7,7 @@ import DrugLogEdit from 'components/Pages/Modals/DrugLogEdit';
 import MedicineEdit from 'components/Pages/Modals/MedicineEdit';
 import DrugLogToast from 'components/Pages/Toasts/DrugLogToast';
 import {IMedicineManager} from 'managers/MedicineManager';
+import {IMedicineProvider} from 'providers/MedicineProvider';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import ListGroup from 'react-bootstrap/ListGroup';
@@ -18,6 +19,7 @@ import {asyncWrapper, calculateLastTaken, clientFullName, getCheckoutList, getDr
 
 interface IProps {
     mm: IMedicineManager;
+    medicineProvider: IMedicineProvider;
     pillboxSelected: (id: number) => void;
 }
 
@@ -37,7 +39,7 @@ const RxMedicine = (props: IProps) => {
     const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
     const clientId = activeClient?.clientInfo.Id;
     const {drugLogList, pillboxList, pillboxItemList, medicineList} = activeClient as TClient;
-    const {mm, pillboxSelected} = props;
+    const {medicineProvider, mm, pillboxSelected} = props;
 
     // Build the dropdown items for the Medicine dropdown
     useEffect(() => {
@@ -96,14 +98,14 @@ const RxMedicine = (props: IProps) => {
      */
     const saveMedicine = async (med: MedicineRecord) => {
         await setIsBusy(true);
-        const [errorUpdateMedicine, m] = (await asyncWrapper(mm.updateMedicine(med))) as [
+        const [errorUpdateMedicine, m] = (await asyncWrapper(medicineProvider.update(med))) as [
             unknown,
             Promise<MedicineRecord>
         ];
         if (errorUpdateMedicine) await setErrorDetails(errorUpdateMedicine);
         const updatedMedicineRecord = await m;
 
-        const [errorLoadMedicineList, meds] = (await asyncWrapper(mm.loadMedicineList(clientId as number))) as [
+        const [errorLoadMedicineList, meds] = (await asyncWrapper(medicineProvider.loadList(clientId as number))) as [
             unknown,
             Promise<MedicineRecord[]>
         ];

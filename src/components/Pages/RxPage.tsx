@@ -40,6 +40,8 @@ const RxPage = (props: IProps): JSX.Element | null => {
     const [activeRxTab, setActiveRxTab] = useState<RX_TAB_KEY>(RX_TAB_KEY.Medicine);
     const [checkoutList, setCheckoutList] = useState<DrugLogRecord[]>([]);
     const [mm] = useGlobal('medicineManager');
+    const [providers] = useGlobal('providers');
+    const medicineProvider = providers.medicineProvider;
     const [otcList] = useGlobal('otcList');
     const preferences = props.preferences;
 
@@ -139,6 +141,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                 >
                     <RxMedicine
                         mm={mm}
+                        medicineProvider={medicineProvider}
                         pillboxSelected={(id) => {
                             setActivePillbox(pillboxList.find((p) => p.Id === id) || null);
                             setActiveRxTab(RX_TAB_KEY.Pillbox);
@@ -167,7 +170,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                         </ToggleButton>
                     }
                 >
-                    <RxOtc mm={mm} activeRxTab={activeRxTab} />
+                    <RxOtc mm={mm} medicineProvider={medicineProvider} activeRxTab={activeRxTab} />
                 </Tab>
 
                 <Tab
@@ -278,7 +281,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                         </ToggleButton>
                     }
                 >
-                    <ManageRx rxTabKey={activeRxTab} />
+                    <ManageRx mm={mm} medicineProvider={medicineProvider} rxTabKey={activeRxTab} />
                 </Tab>
 
                 <Tab

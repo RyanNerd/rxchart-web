@@ -6,6 +6,7 @@ import DrugLogEdit from 'components/Pages/Modals/DrugLogEdit';
 import MedicineEdit from 'components/Pages/Modals/MedicineEdit';
 import DrugLogToast from 'components/Pages/Toasts/DrugLogToast';
 import {IMedicineManager} from 'managers/MedicineManager';
+import {IMedicineProvider} from 'providers/MedicineProvider';
 import Col from 'react-bootstrap/Col';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Row from 'react-bootstrap/Row';
@@ -16,6 +17,7 @@ import {asyncWrapper, clientFullName, getDrugName, getMedicineRecord} from 'util
 
 interface IProps {
     mm: IMedicineManager;
+    medicineProvider: IMedicineProvider;
     activeRxTab: RX_TAB_KEY;
 }
 
@@ -35,6 +37,7 @@ const RxOtc = (props: IProps) => {
     const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
     const clientId = activeClient?.clientInfo.Id;
     const mm = props.mm;
+    const medicineProvider = props.medicineProvider;
 
     const [activeRxTab, setActiveRxTab] = useState<RX_TAB_KEY>(props.activeRxTab);
     useEffect(() => {
@@ -85,7 +88,7 @@ const RxOtc = (props: IProps) => {
      */
     const saveMedicine = async (med: MedicineRecord) => {
         await setIsBusy(true);
-        const [error, m] = (await asyncWrapper(mm.updateMedicine(med))) as [unknown, Promise<MedicineRecord>];
+        const [error, m] = (await asyncWrapper(medicineProvider.update(med))) as [unknown, Promise<MedicineRecord>];
         if (error) await setErrorDetails(error);
         const updatedMedicineRecord = await m;
         const [errorLoadOtc, otcMeds] = (await asyncWrapper(mm.loadOtcList())) as [unknown, Promise<MedicineRecord[]>];

@@ -6,6 +6,8 @@ import CheckoutAllModal from 'components/Pages/Modals/CheckoutAllModal';
 import DeleteMedicineModal from 'components/Pages/Modals/DeleteMedicineModal';
 import {RX_TAB_KEY} from 'components/Pages/RxPage';
 import DrugLogToast from 'components/Pages/Toasts/DrugLogToast';
+import {IMedicineManager} from 'managers/MedicineManager';
+import {IMedicineProvider} from 'providers/MedicineProvider';
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
@@ -27,6 +29,8 @@ import MedicineEdit from 'components/Pages/Modals/MedicineEdit';
 
 interface IProps {
     rxTabKey: string;
+    mm: IMedicineManager;
+    medicineProvider: IMedicineProvider;
 }
 
 /**
@@ -41,7 +45,6 @@ const ManageRx = (props: IProps): JSX.Element | null => {
     const [drugLogList, setDrugLogList] = useState<DrugLogRecord[]>([]);
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [medicineList, setMedicineList] = useState<MedicineRecord[]>([]);
-    const [mm] = useGlobal('medicineManager');
     const [showCheckoutAlert, setShowCheckoutAlert] = useState(false);
     const [showCheckoutAllMeds, setShowCheckoutAllMeds] = useState(false);
     const [showCheckoutModal, setShowCheckoutModal] = useState<DrugLogRecord | null>(null);
@@ -49,6 +52,8 @@ const ManageRx = (props: IProps): JSX.Element | null => {
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(0);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const [toast, setToast] = useState<DrugLogRecord[] | null>(null);
+    const mm = props.mm;
+    const medicineProvider = props.medicineProvider;
 
     const [rxTabKey, setRxTabKey] = useState(props.rxTabKey);
     useEffect(() => {
@@ -126,10 +131,10 @@ const ManageRx = (props: IProps): JSX.Element | null => {
      * @param {number} clientId The PK of the Resident table
      */
     const saveMedicine = async (med: MedicineRecord, clientId: number) => {
-        const m = await mm.updateMedicine(med);
+        const m = await medicineProvider.update(med);
         await setActiveClient({
             ...activeClient,
-            medicineList: await mm.loadMedicineList(clientId)
+            medicineList: await medicineProvider.loadList(clientId)
         });
         return m;
     };
@@ -139,10 +144,10 @@ const ManageRx = (props: IProps): JSX.Element | null => {
      * @param {number} id The PK of the Medicine record to delete
      */
     const deleteMedicine = async (id: number) => {
-        if (activeClient && (await mm.deleteMedicine(id))) {
+        if (activeClient && (await medicineProvider.delete(id))) {
             await setActiveClient({
                 ...activeClient,
-                medicineList: await mm.loadMedicineList(clientInfo.Id as number)
+                medicineList: await medicineProvider.loadList(clientInfo.Id as number)
             });
         }
     };

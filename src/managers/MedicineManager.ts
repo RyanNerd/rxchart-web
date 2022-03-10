@@ -7,18 +7,15 @@ import {asyncWrapper} from 'utility/common';
 
 export interface IMedicineManager {
     deleteDrugLog: (drugLogId: number) => Promise<boolean>;
-    deleteMedicine: (medicineId: number) => Promise<boolean>;
     deletePillbox: (pillboxId: number) => Promise<boolean>;
     deletePillboxItem: (pillboxItemId: number) => Promise<boolean>;
     loadDrugLog: (residentId: number, days?: number) => Promise<DrugLogRecord[]>;
     loadDrugLogForMedicine: (medicineId: number) => Promise<DrugLogRecord[]>;
-    loadMedicineList: (residentId: number) => Promise<MedicineRecord[]>;
     loadPillboxList: (residentId: number) => Promise<PillboxRecord[]>;
     loadPillboxItemList: (clientId: number) => Promise<PillboxItemRecord[]>;
     loadOtcList: () => Promise<MedicineRecord[]>;
     logPillbox: (pillboxId: number) => Promise<DrugLogRecord[]>;
     updateDrugLog: (drugLogRecord: DrugLogRecord) => Promise<DrugLogRecord>;
-    updateMedicine: (medicine: MedicineRecord) => Promise<MedicineRecord>;
     updatePillbox: (pillbox: PillboxRecord) => Promise<PillboxRecord>;
     updatePillboxItem: (pillboxItemRecord: PillboxItemRecord) => Promise<PillboxItemRecord>;
 }
@@ -42,19 +39,6 @@ const MedicineManager = (
      */
     const _deleteDrugLog = async (drugLogId: number) => {
         const [error, r] = (await asyncWrapper(medHistoryProvider.delete(drugLogId))) as [
-            unknown,
-            Promise<DeleteResponse>
-        ];
-        if (error) throw error;
-        else return (await r).success;
-    };
-
-    /**
-     * Delete a Medicine record given the Id.
-     * @param {number} medicineId The PK of the Medicine table
-     */
-    const _deleteMedicine = async (medicineId: number) => {
-        const [error, r] = (await asyncWrapper(medicineProvider.delete(medicineId))) as [
             unknown,
             Promise<DeleteResponse>
         ];
@@ -151,23 +135,6 @@ const MedicineManager = (
     };
 
     /**
-     * Returns all the Medicine records for the given clientId as a promise
-     * @param {number} clientId The PK of the Resident table
-     */
-    const _loadMedicineList = async (clientId: number) => {
-        const searchCriteria = {
-            where: [['ResidentId', '=', clientId]],
-            orderBy: [['Drug', 'asc']]
-        };
-        const [error, r] = (await asyncWrapper(medicineProvider.search(searchCriteria))) as [
-            unknown,
-            Promise<MedicineRecord[]>
-        ];
-        if (error) throw error;
-        else return r;
-    };
-
-    /**
      * Returns all the Pillbox records for the given clientId as a promise
      * @param {number} clientId The PK matching the Resident table (FK)
      */
@@ -214,16 +181,6 @@ const MedicineManager = (
     };
 
     /**
-     * Adds or updates a Medicine record.
-     * @param {MedicineRecord} medInfo The medicine record object
-     */
-    const _updateMedicine = async (medInfo: MedicineRecord) => {
-        const [error, r] = (await asyncWrapper(medicineProvider.update(medInfo))) as [unknown, Promise<MedicineRecord>];
-        if (error) throw error;
-        else return r;
-    };
-
-    /**
      * Adds or updates a Pillbox record.
      * @param {PillboxRecord} pillInfo The pillbox record object
      */
@@ -260,9 +217,6 @@ const MedicineManager = (
         deleteDrugLog: async (drugLogId: number): Promise<boolean> => {
             return await _deleteDrugLog(drugLogId);
         },
-        deleteMedicine: async (medicineId: number): Promise<boolean> => {
-            return await _deleteMedicine(medicineId);
-        },
         deletePillbox: async (pillboxId: number): Promise<boolean> => {
             return await _deletePillbox(pillboxId);
         },
@@ -275,9 +229,6 @@ const MedicineManager = (
         loadDrugLogForMedicine: async (medicineId: number): Promise<DrugLogRecord[]> => {
             return await _loadDrugLogForMedicine(medicineId);
         },
-        loadMedicineList: async (residentId: number): Promise<MedicineRecord[]> => {
-            return await _loadMedicineList(residentId);
-        },
         loadPillboxList: async (residentId: number): Promise<PillboxRecord[]> => {
             return await _loadPillboxList(residentId);
         },
@@ -289,9 +240,6 @@ const MedicineManager = (
         },
         updateDrugLog: async (drugLogRecord: DrugLogRecord): Promise<DrugLogRecord> => {
             return await _updateDrugLog(drugLogRecord);
-        },
-        updateMedicine: async (medicine: MedicineRecord): Promise<MedicineRecord> => {
-            return await _updateMedicine(medicine);
         },
         updatePillbox: async (pillbox: PillboxRecord): Promise<PillboxRecord> => {
             return await _updatePillbox(pillbox);
