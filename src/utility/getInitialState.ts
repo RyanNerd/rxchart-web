@@ -3,7 +3,6 @@ import FileProvider, {IFileProvider} from 'providers/FileProvider';
 import PinProvider, {IPinProvider} from 'providers/PinProvider';
 import {State} from 'reactn/default';
 import {ClientRecord, MedicineRecord} from 'types/RecordTypes';
-import AuthManager from '../managers/AuthManager';
 import MedicineManager from '../managers/MedicineManager';
 import AuthenticationProvider, {IAuthenticationProvider} from '../providers/AuthenticationProvider';
 import MedHistoryProvider, {IMedHistoryProvider} from '../providers/MedHistoryProvider';
@@ -63,7 +62,6 @@ const getInitialState = () => {
         __errorDetails: undefined,
         activeClient: null,
         activeTabKey: 'login',
-        authManager: AuthManager(providers.authenticationProvider),
         clientList: [] as ClientRecord[],
         medicineManager: MedicineManager(
             providers.medicineProvider,

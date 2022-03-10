@@ -1,4 +1,3 @@
-import {IAuthManager} from 'managers/AuthManager';
 import {IMedicineManager} from 'managers/MedicineManager';
 import {Authenticated} from 'providers/AuthenticationProvider';
 import 'reactn';
@@ -32,7 +31,6 @@ declare module 'reactn/default' {
 
     export interface State {
         activeTabKey: string;
-        authManager: IAuthManager;
         activeClient: TClient | null;
         count: number;
         __errorDetails: any;

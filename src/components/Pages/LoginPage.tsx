@@ -27,7 +27,6 @@ const LoginPage = (props: IProps): JSX.Element | null => {
     const [, setClientList] = useGlobal('clientList');
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [, setOtcList] = useGlobal('otcList');
-    const [am] = useGlobal('authManager');
     const [canLogin, setCanLogin] = useState(false);
     const [mm] = useGlobal('medicineManager');
     const [password, setPassword] = useState('');
@@ -35,6 +34,7 @@ const LoginPage = (props: IProps): JSX.Element | null => {
     const [showAboutPage, setShowAboutPage] = useState(false);
     const [signIn, setSignIn] = useGlobal('signIn');
     const [username, setUsername] = useState('');
+    const authenticationProvider = providers.authenticationProvider;
     const clientProvider = providers.clientProvider;
     const focusReference = useRef<HTMLInputElement>(null);
 
@@ -53,7 +53,7 @@ const LoginPage = (props: IProps): JSX.Element | null => {
      * Perform the authentication by calling the web service to validate the username and password.
      */
     const authenticate = async () => {
-        const [errorAuth, auth] = (await asyncWrapper(am.authenticate(username, password))) as [
+        const [errorAuth, auth] = (await asyncWrapper(authenticationProvider.authenticate({username, password}))) as [
             unknown,
             Promise<Authenticated>
         ];
