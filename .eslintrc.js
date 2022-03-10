@@ -267,7 +267,7 @@ module.exports = {
         'no-trailing-spaces': 'error',
         'no-undef-init': 'error',
         'no-underscore-dangle': [
-            'error',
+            'off',
             {
                 allow: ['_baseUrl', '_frak', '_apiKey', '_authenticate', '_alert']
             }

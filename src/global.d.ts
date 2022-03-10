@@ -1,13 +1,12 @@
 import {IAuthManager} from 'managers/AuthManager';
-import {IClientManager} from 'managers/ClientManager';
 import {IMedicineManager} from 'managers/MedicineManager';
 import {Authenticated} from 'providers/AuthenticationProvider';
 import 'reactn';
 import {State} from 'reactn/default';
 import {
     ClientRecord,
-    FileRecord,
     DrugLogRecord,
+    FileRecord,
     MedicineRecord,
     PillboxItemRecord,
     PillboxRecord
@@ -42,7 +41,6 @@ declare module 'reactn/default' {
         preferences: IPreferences | null;
         providers: IProviders;
         clientList: ClientRecord[];
-        clientManager: IClientManager;
         signIn: Authenticated;
         value: string;
     }

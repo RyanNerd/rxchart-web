@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import {IMedHistoryProvider} from 'providers/MedHistoryProvider';
 import {DeleteResponse, IMedicineProvider} from 'providers/MedicineProvider';
 import {IPillboxItemProvider} from 'providers/PillboxItemProvider';

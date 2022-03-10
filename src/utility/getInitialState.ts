@@ -1,6 +1,6 @@
-import ClientManager from 'managers/ClientManager';
 import ClientProvider, {IClientProvider} from 'providers/ClientProvider';
 import FileProvider, {IFileProvider} from 'providers/FileProvider';
+import PinProvider, {IPinProvider} from 'providers/PinProvider';
 import {State} from 'reactn/default';
 import {ClientRecord, MedicineRecord} from 'types/RecordTypes';
 import AuthManager from '../managers/AuthManager';
@@ -10,7 +10,6 @@ import MedHistoryProvider, {IMedHistoryProvider} from '../providers/MedHistoryPr
 import MedicineProvider, {IMedicineProvider} from '../providers/MedicineProvider';
 import PillboxItemProvider, {IPillboxItemProvider} from '../providers/PillboxItemProvider';
 import PillboxProvider, {IPillboxProvider} from '../providers/PillboxProvider';
-import PinProvider, {IPinProvider} from 'providers/PinProvider';
 
 export interface IProviders {
     authenticationProvider: IAuthenticationProvider;
@@ -66,7 +65,6 @@ const getInitialState = () => {
         activeTabKey: 'login',
         authManager: AuthManager(providers.authenticationProvider),
         clientList: [] as ClientRecord[],
-        clientManager: ClientManager(providers.clientProvider),
         medicineManager: MedicineManager(
             providers.medicineProvider,
             providers.medHistoryProvider,

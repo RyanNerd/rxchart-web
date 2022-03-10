@@ -29,13 +29,13 @@ const LoginPage = (props: IProps): JSX.Element | null => {
     const [, setOtcList] = useGlobal('otcList');
     const [am] = useGlobal('authManager');
     const [canLogin, setCanLogin] = useState(false);
-    const [cm] = useGlobal('clientManager');
     const [mm] = useGlobal('medicineManager');
     const [password, setPassword] = useState('');
     const [providers] = useGlobal('providers');
     const [showAboutPage, setShowAboutPage] = useState(false);
     const [signIn, setSignIn] = useGlobal('signIn');
     const [username, setUsername] = useState('');
+    const clientProvider = providers.clientProvider;
     const focusReference = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -67,7 +67,7 @@ const LoginPage = (props: IProps): JSX.Element | null => {
                     if (errorSetApi) await setErrorDetails(errorSetApi);
                     else {
                         // Load ALL Resident records up front and save them in the global store.
-                        const [errorLoadClients, clients] = (await asyncWrapper(cm.loadClientList())) as [
+                        const [errorLoadClients, clients] = (await asyncWrapper(clientProvider.loadList())) as [
                             unknown,
                             Promise<ClientRecord[]>
                         ];
