@@ -7,6 +7,7 @@ import DrugLogEdit from 'components/Pages/Modals/DrugLogEdit';
 import MedicineEdit from 'components/Pages/Modals/MedicineEdit';
 import DrugLogToast from 'components/Pages/Toasts/DrugLogToast';
 import {IMedicineManager} from 'managers/MedicineManager';
+import {IMedHistoryProvider} from 'providers/MedHistoryProvider';
 import {IMedicineProvider} from 'providers/MedicineProvider';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -20,6 +21,7 @@ import {asyncWrapper, calculateLastTaken, clientFullName, getCheckoutList, getDr
 interface IProps {
     mm: IMedicineManager;
     medicineProvider: IMedicineProvider;
+    medHistoryProvider: IMedHistoryProvider;
     pillboxSelected: (id: number) => void;
 }
 
@@ -39,7 +41,7 @@ const RxMedicine = (props: IProps) => {
     const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
     const clientId = activeClient?.clientInfo.Id;
     const {drugLogList, pillboxList, pillboxItemList, medicineList} = activeClient as TClient;
-    const {medicineProvider, mm, pillboxSelected} = props;
+    const {medicineProvider, mm, medHistoryProvider, pillboxSelected} = props;
 
     // Build the dropdown items for the Medicine dropdown
     useEffect(() => {
@@ -238,14 +240,12 @@ const RxMedicine = (props: IProps) => {
                 drugName={
                     showDeleteDrugLogRecord ? getDrugName(showDeleteDrugLogRecord.MedicineId, medicineList) || '' : ''
                 }
-                onSelect={(drugLogRecord) => {
+                onSelect={async (drugLogRecord) => {
                     setShowDeleteDrugLogRecord(null);
                     if (drugLogRecord) {
-                        mm.deleteDrugLog(showDeleteDrugLogRecord?.Id as number).then(() => {
-                            mm.loadDrugLog(clientId as number, 5).then((drugLogRecords) => {
-                                setActiveClient({...(activeClient as TClient), drugLogList: drugLogRecords});
-                            });
-                        });
+                        await medHistoryProvider.delete(showDeleteDrugLogRecord?.Id as number);
+                        const drugLogRecords = await mm.loadDrugLog(clientId as number, 5);
+                        await setActiveClient({...(activeClient as TClient), drugLogList: drugLogRecords});
                     }
                 }}
                 show={showDeleteDrugLogRecord !== null}

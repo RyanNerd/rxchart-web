@@ -6,6 +6,7 @@ import DrugLogEdit from 'components/Pages/Modals/DrugLogEdit';
 import MedicineEdit from 'components/Pages/Modals/MedicineEdit';
 import DrugLogToast from 'components/Pages/Toasts/DrugLogToast';
 import {IMedicineManager} from 'managers/MedicineManager';
+import {IMedHistoryProvider} from 'providers/MedHistoryProvider';
 import {IMedicineProvider} from 'providers/MedicineProvider';
 import Col from 'react-bootstrap/Col';
 import ListGroup from 'react-bootstrap/ListGroup';
@@ -18,6 +19,7 @@ import {asyncWrapper, clientFullName, getDrugName, getMedicineRecord} from 'util
 interface IProps {
     mm: IMedicineManager;
     medicineProvider: IMedicineProvider;
+    medHistoryProvider: IMedHistoryProvider;
     activeRxTab: RX_TAB_KEY;
 }
 
@@ -38,6 +40,7 @@ const RxOtc = (props: IProps) => {
     const clientId = activeClient?.clientInfo.Id;
     const mm = props.mm;
     const medicineProvider = props.medicineProvider;
+    const medHistoryProvider = props.medHistoryProvider;
 
     const [activeRxTab, setActiveRxTab] = useState<RX_TAB_KEY>(props.activeRxTab);
     useEffect(() => {
@@ -188,14 +191,11 @@ const RxOtc = (props: IProps) => {
                         ? getDrugName(showDeleteDrugLogRecord.MedicineId, medicineOtcList) || ''
                         : ''
                 }
-                onSelect={(drugLogRecord) => {
+                onSelect={async (drugLogRecord) => {
                     setShowDeleteDrugLogRecord(null);
-                    if (drugLogRecord)
-                        mm.deleteDrugLog(showDeleteDrugLogRecord?.Id as number).then(() => {
-                            mm.loadDrugLog(clientId as number, 5).then((drugLogRecords) => {
-                                setActiveClient({...activeClient, drugLogList: drugLogRecords});
-                            });
-                        });
+                    if (drugLogRecord) await medHistoryProvider.delete(showDeleteDrugLogRecord?.Id as number);
+                    const drugLogRecords = await mm.loadDrugLog(clientId as number, 5);
+                    await setActiveClient({...activeClient, drugLogList: drugLogRecords});
                 }}
                 show={showDeleteDrugLogRecord !== null}
             />

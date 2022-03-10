@@ -42,6 +42,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
     const [mm] = useGlobal('medicineManager');
     const [providers] = useGlobal('providers');
     const medicineProvider = providers.medicineProvider;
+    const medHistoryProvider = providers.medHistoryProvider;
     const pillboxProvider = providers.pillboxProvider;
     const pillboxItemProvider = providers.pillboxItemProvider;
     const [otcList] = useGlobal('otcList');
@@ -144,6 +145,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                     <RxMedicine
                         mm={mm}
                         medicineProvider={medicineProvider}
+                        medHistoryProvider={medHistoryProvider}
                         pillboxSelected={(id) => {
                             setActivePillbox(pillboxList.find((p) => p.Id === id) || null);
                             setActiveRxTab(RX_TAB_KEY.Pillbox);
@@ -172,7 +174,12 @@ const RxPage = (props: IProps): JSX.Element | null => {
                         </ToggleButton>
                     }
                 >
-                    <RxOtc mm={mm} medicineProvider={medicineProvider} activeRxTab={activeRxTab} />
+                    <RxOtc
+                        mm={mm}
+                        medicineProvider={medicineProvider}
+                        activeRxTab={activeRxTab}
+                        medHistoryProvider={medHistoryProvider}
+                    />
                 </Tab>
 
                 <Tab
@@ -198,6 +205,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                 >
                     <RxHistory
                         mm={mm}
+                        medHistoryProvider={medHistoryProvider}
                         otcList={otcList}
                         onPillboxSelected={(id) => {
                             setActivePillbox(pillboxList.find((p) => p.Id === id) || null);

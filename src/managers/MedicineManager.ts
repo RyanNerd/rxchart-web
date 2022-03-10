@@ -1,10 +1,9 @@
 import {IMedHistoryProvider} from 'providers/MedHistoryProvider';
-import {DeleteResponse, IMedicineProvider} from 'providers/MedicineProvider';
+import {IMedicineProvider} from 'providers/MedicineProvider';
 import {DrugLogRecord} from 'types/RecordTypes';
 import {asyncWrapper} from 'utility/common';
 
 export interface IMedicineManager {
-    deleteDrugLog: (drugLogId: number) => Promise<boolean>;
     loadDrugLog: (residentId: number, days?: number) => Promise<DrugLogRecord[]>;
     loadDrugLogForMedicine: (medicineId: number) => Promise<DrugLogRecord[]>;
     updateDrugLog: (drugLogRecord: DrugLogRecord) => Promise<DrugLogRecord>;
@@ -19,19 +18,6 @@ const MedicineManager = (
     medicineProvider: IMedicineProvider,
     medHistoryProvider: IMedHistoryProvider
 ): IMedicineManager => {
-    /**
-     * Delete a MedHistory record given the Id.
-     * @param {number} drugLogId The PK of the MedHistory table
-     */
-    const _deleteDrugLog = async (drugLogId: number) => {
-        const [error, r] = (await asyncWrapper(medHistoryProvider.delete(drugLogId))) as [
-            unknown,
-            Promise<DeleteResponse>
-        ];
-        if (error) throw error;
-        else return (await r).success;
-    };
-
     /**
      * Returns all the MedHistory records for the given ResidentId as a promise
      * @param {number} residentId The client Id
@@ -91,9 +77,6 @@ const MedicineManager = (
     };
 
     return {
-        deleteDrugLog: async (drugLogId: number): Promise<boolean> => {
-            return await _deleteDrugLog(drugLogId);
-        },
         loadDrugLog: async (residentId: number, days?: number): Promise<DrugLogRecord[]> => {
             return await _loadDrugLog(residentId, days);
         },
