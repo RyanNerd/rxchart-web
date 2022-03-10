@@ -7,14 +7,11 @@ import {asyncWrapper} from 'utility/common';
 
 export interface IMedicineManager {
     deleteDrugLog: (drugLogId: number) => Promise<boolean>;
-    deletePillbox: (pillboxId: number) => Promise<boolean>;
     deletePillboxItem: (pillboxItemId: number) => Promise<boolean>;
     loadDrugLog: (residentId: number, days?: number) => Promise<DrugLogRecord[]>;
     loadDrugLogForMedicine: (medicineId: number) => Promise<DrugLogRecord[]>;
-    loadPillboxList: (residentId: number) => Promise<PillboxRecord[]>;
     loadPillboxItemList: (clientId: number) => Promise<PillboxItemRecord[]>;
     loadOtcList: () => Promise<MedicineRecord[]>;
-    logPillbox: (pillboxId: number) => Promise<DrugLogRecord[]>;
     updateDrugLog: (drugLogRecord: DrugLogRecord) => Promise<DrugLogRecord>;
     updatePillbox: (pillbox: PillboxRecord) => Promise<PillboxRecord>;
     updatePillboxItem: (pillboxItemRecord: PillboxItemRecord) => Promise<PillboxItemRecord>;
@@ -39,19 +36,6 @@ const MedicineManager = (
      */
     const _deleteDrugLog = async (drugLogId: number) => {
         const [error, r] = (await asyncWrapper(medHistoryProvider.delete(drugLogId))) as [
-            unknown,
-            Promise<DeleteResponse>
-        ];
-        if (error) throw error;
-        else return (await r).success;
-    };
-
-    /**
-     * Delete a Pillbox record given the Id.
-     * @param {number} pillboxId The PK of the Pillbox table
-     */
-    const _deletePillbox = async (pillboxId: number) => {
-        const [error, r] = (await asyncWrapper(pillboxProvider.delete(pillboxId))) as [
             unknown,
             Promise<DeleteResponse>
         ];
@@ -135,23 +119,6 @@ const MedicineManager = (
     };
 
     /**
-     * Returns all the Pillbox records for the given clientId as a promise
-     * @param {number} clientId The PK matching the Resident table (FK)
-     */
-    const _loadPillboxList = async (clientId: number) => {
-        const searchCriteria = {
-            where: [['ResidentId', '=', clientId]],
-            orderBy: [['Name', 'asc']]
-        };
-        const [error, r] = (await asyncWrapper(pillboxProvider.search(searchCriteria))) as [
-            unknown,
-            Promise<PillboxRecord[]>
-        ];
-        if (error) throw error;
-        else return r;
-    };
-
-    /**
      * Returns all the OTC medicines as a promise
      */
     const _loadOtcList = async () => {
@@ -203,22 +170,9 @@ const MedicineManager = (
         else return r;
     };
 
-    /**
-     * Logs all the drugs in the given Pillbox
-     * @param {number} pillboxId The PK of the Pillbox table
-     */
-    const _logPillbox = async (pillboxId: number) => {
-        const [error, r] = (await asyncWrapper(pillboxProvider.log(pillboxId))) as [unknown, Promise<DrugLogRecord[]>];
-        if (error) throw error;
-        else return r;
-    };
-
     return {
         deleteDrugLog: async (drugLogId: number): Promise<boolean> => {
             return await _deleteDrugLog(drugLogId);
-        },
-        deletePillbox: async (pillboxId: number): Promise<boolean> => {
-            return await _deletePillbox(pillboxId);
         },
         deletePillboxItem: async (pillboxItemId: number): Promise<boolean> => {
             return await _deletePillboxItem(pillboxItemId);
@@ -228,9 +182,6 @@ const MedicineManager = (
         },
         loadDrugLogForMedicine: async (medicineId: number): Promise<DrugLogRecord[]> => {
             return await _loadDrugLogForMedicine(medicineId);
-        },
-        loadPillboxList: async (residentId: number): Promise<PillboxRecord[]> => {
-            return await _loadPillboxList(residentId);
         },
         loadPillboxItemList: async (residentId: number): Promise<PillboxItemRecord[]> => {
             return await _loadPillboxItem(residentId);
@@ -246,9 +197,6 @@ const MedicineManager = (
         },
         updatePillboxItem: async (pillboxItem: PillboxItemRecord): Promise<PillboxItemRecord> => {
             return await _updatePillboxItem(pillboxItem);
-        },
-        logPillbox: async (pillboxId: number): Promise<DrugLogRecord[]> => {
-            return await _logPillbox(pillboxId);
         }
     };
 };

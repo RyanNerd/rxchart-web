@@ -42,6 +42,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
     const [mm] = useGlobal('medicineManager');
     const [providers] = useGlobal('providers');
     const medicineProvider = providers.medicineProvider;
+    const pillboxProvider = providers.pillboxProvider;
     const [otcList] = useGlobal('otcList');
     const preferences = props.preferences;
 
@@ -228,6 +229,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                 >
                     <RxPillbox
                         mm={mm}
+                        pillboxProvider={pillboxProvider}
                         activePillbox={activePillbox}
                         activePillboxChanged={(pb) => setActivePillbox(pb)}
                     />
