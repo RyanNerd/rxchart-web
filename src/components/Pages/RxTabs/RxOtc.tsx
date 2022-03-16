@@ -53,7 +53,7 @@ const RxOtc = (props: IProps) => {
      */
     const saveDrugLog = async (drugLog: DrugLogRecord): Promise<DrugLogRecord> => {
         await setIsBusy(true);
-        const [errorUpdateDrugLog, updatedDrugLog] = (await asyncWrapper(mm.updateDrugLog(drugLog))) as [
+        const [errorUpdateDrugLog, updatedDrugLog] = (await asyncWrapper(medHistoryProvider.update(drugLog))) as [
             unknown,
             Promise<DrugLogRecord>
         ];

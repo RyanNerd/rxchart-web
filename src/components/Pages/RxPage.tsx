@@ -73,8 +73,8 @@ const RxPage = (props: IProps): JSX.Element | null => {
 
             const pillboxElement = document.getElementById('medicine-page-tabs-tab-' + RX_TAB_KEY.Pillbox);
             if (pillboxElement) {
-                pillboxElement.style.display = activeClient.medicineList.length < 5 ? 'none' : 'block';
-                if (activeRxTab === RX_TAB_KEY.Pillbox && activeClient.medicineList.length < 5) {
+                pillboxElement.style.display = activeClient.medicineList.length < 3 ? 'none' : 'block';
+                if (activeRxTab === RX_TAB_KEY.Pillbox && activeClient.medicineList.length < 3) {
                     setActiveRxTab(RX_TAB_KEY.Medicine);
                 }
             }
@@ -222,7 +222,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                         <ToggleButton
                             checked={activeRxTab === RX_TAB_KEY.Pillbox}
                             className="ml-2 d-print-none"
-                            disabled={medicineList.length < 5}
+                            disabled={medicineList.length < 3}
                             id="med-list-group-pill-radio-btn"
                             key="med-list-group-pill-btn"
                             name="radio-med-list-group"
@@ -293,7 +293,12 @@ const RxPage = (props: IProps): JSX.Element | null => {
                         </ToggleButton>
                     }
                 >
-                    <ManageRx mm={mm} medicineProvider={medicineProvider} rxTabKey={activeRxTab} />
+                    <ManageRx
+                        mm={mm}
+                        medicineProvider={medicineProvider}
+                        medHistoryProvider={medHistoryProvider}
+                        rxTabKey={activeRxTab}
+                    />
                 </Tab>
 
                 <Tab

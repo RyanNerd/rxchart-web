@@ -7,6 +7,7 @@ import DeleteMedicineModal from 'components/Pages/Modals/DeleteMedicineModal';
 import {RX_TAB_KEY} from 'components/Pages/RxPage';
 import DrugLogToast from 'components/Pages/Toasts/DrugLogToast';
 import {IMedicineManager} from 'managers/MedicineManager';
+import {IMedHistoryProvider} from 'providers/MedHistoryProvider';
 import {IMedicineProvider} from 'providers/MedicineProvider';
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
@@ -31,6 +32,7 @@ interface IProps {
     rxTabKey: string;
     mm: IMedicineManager;
     medicineProvider: IMedicineProvider;
+    medHistoryProvider: IMedHistoryProvider;
 }
 
 /**
@@ -54,6 +56,7 @@ const ManageRx = (props: IProps): JSX.Element | null => {
     const [toast, setToast] = useState<DrugLogRecord[] | null>(null);
     const mm = props.mm;
     const medicineProvider = props.medicineProvider;
+    const medHistoryProvider = props.medHistoryProvider;
 
     const [rxTabKey, setRxTabKey] = useState(props.rxTabKey);
     useEffect(() => {
@@ -93,7 +96,7 @@ const ManageRx = (props: IProps): JSX.Element | null => {
              * @param {DrugLogRecord} d The drugLog record to insert or update
              */
             const save = async (d: DrugLogRecord) => {
-                return await mm.updateDrugLog(d);
+                return await medHistoryProvider.update(d);
             };
             drugsLogged.push(await save(d));
         }

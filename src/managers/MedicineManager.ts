@@ -6,7 +6,6 @@ import {asyncWrapper} from 'utility/common';
 export interface IMedicineManager {
     loadDrugLog: (residentId: number, days?: number) => Promise<DrugLogRecord[]>;
     loadDrugLogForMedicine: (medicineId: number) => Promise<DrugLogRecord[]>;
-    updateDrugLog: (drugLogRecord: DrugLogRecord) => Promise<DrugLogRecord>;
 }
 
 /**
@@ -63,28 +62,12 @@ const MedicineManager = (
         else return r;
     };
 
-    /**
-     * Add or update a MedHistory record
-     * @param {DrugLogRecord} drugLogInfo The drug log record object
-     */
-    const _updateDrugLog = async (drugLogInfo: DrugLogRecord) => {
-        const [error, r] = (await asyncWrapper(medHistoryProvider.update(drugLogInfo))) as [
-            unknown,
-            Promise<DrugLogRecord>
-        ];
-        if (error) throw error;
-        else return r;
-    };
-
     return {
         loadDrugLog: async (residentId: number, days?: number): Promise<DrugLogRecord[]> => {
             return await _loadDrugLog(residentId, days);
         },
         loadDrugLogForMedicine: async (medicineId: number): Promise<DrugLogRecord[]> => {
             return await _loadDrugLogForMedicine(medicineId);
-        },
-        updateDrugLog: async (drugLogRecord: DrugLogRecord): Promise<DrugLogRecord> => {
-            return await _updateDrugLog(drugLogRecord);
         }
     };
 };
