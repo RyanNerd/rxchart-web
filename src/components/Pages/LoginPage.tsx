@@ -27,15 +27,15 @@ const LoginPage = (props: IProps): JSX.Element | null => {
     const [, setClientList] = useGlobal('clientList');
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [, setOtcList] = useGlobal('otcList');
-    const [am] = useGlobal('authManager');
     const [canLogin, setCanLogin] = useState(false);
-    const [cm] = useGlobal('clientManager');
-    const [mm] = useGlobal('medicineManager');
     const [password, setPassword] = useState('');
     const [providers] = useGlobal('providers');
     const [showAboutPage, setShowAboutPage] = useState(false);
     const [signIn, setSignIn] = useGlobal('signIn');
     const [username, setUsername] = useState('');
+    const authenticationProvider = providers.authenticationProvider;
+    const clientProvider = providers.clientProvider;
+    const medicineProvider = providers.medicineProvider;
     const focusReference = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -53,7 +53,7 @@ const LoginPage = (props: IProps): JSX.Element | null => {
      * Perform the authentication by calling the web service to validate the username and password.
      */
     const authenticate = async () => {
-        const [errorAuth, auth] = (await asyncWrapper(am.authenticate(username, password))) as [
+        const [errorAuth, auth] = (await asyncWrapper(authenticationProvider.authenticate({username, password}))) as [
             unknown,
             Promise<Authenticated>
         ];
@@ -67,14 +67,14 @@ const LoginPage = (props: IProps): JSX.Element | null => {
                     if (errorSetApi) await setErrorDetails(errorSetApi);
                     else {
                         // Load ALL Resident records up front and save them in the global store.
-                        const [errorLoadClients, clients] = (await asyncWrapper(cm.loadClientList())) as [
+                        const [errorLoadClients, clients] = (await asyncWrapper(clientProvider.loadList())) as [
                             unknown,
                             Promise<ClientRecord[]>
                         ];
                         if (errorLoadClients) await setErrorDetails(errorLoadClients);
                         else {
                             await setClientList(await clients);
-                            const [errorLoadOtc, otcMeds] = (await asyncWrapper(mm.loadOtcList())) as [
+                            const [errorLoadOtc, otcMeds] = (await asyncWrapper(medicineProvider.loadOtcList())) as [
                                 unknown,
                                 Promise<MedicineRecord[]>
                             ];

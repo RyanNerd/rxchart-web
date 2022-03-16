@@ -26,7 +26,8 @@ const ClientPage = (props: IProps): JSX.Element | null => {
     const [activeClient, setActiveClient] = useGlobal('activeClient');
     const [clientList, setClientList] = useGlobal('clientList');
     const [filteredClients, setFilteredClients] = useState<ClientRecord[]>(clientList);
-    const [cm] = useGlobal('clientManager');
+    const [providers] = useGlobal('providers');
+    const clientProvider = providers.clientProvider;
     const [searchIsValid, setSearchIsValid] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [showClientRoster, setShowClientRoster] = useState(false);
@@ -72,7 +73,7 @@ const ClientPage = (props: IProps): JSX.Element | null => {
      * @param {number} clientId Client PK
      */
     const refreshClient = async (clientId: number): Promise<void> => {
-        const clientLoad = await cm.loadClient(clientId);
+        const clientLoad = await clientProvider.load(clientId);
         try {
             await setActiveClient({
                 ...activeClient,
@@ -108,8 +109,8 @@ const ClientPage = (props: IProps): JSX.Element | null => {
      * @param {ClientRecord} client The client record object
      */
     const saveClient = async (client: ClientRecord) => {
-        const r = await cm.updateClient(client);
-        await setClientList(await cm.loadClientList());
+        const r = await clientProvider.update(client);
+        await setClientList(await clientProvider.loadList());
         return r;
     };
 
@@ -118,8 +119,8 @@ const ClientPage = (props: IProps): JSX.Element | null => {
      * @param {number} clientId The PK of the Resident table
      */
     const deleteClient = async (clientId: number) => {
-        if (await cm.deleteClient(clientId)) {
-            await setClientList(await cm.loadClientList());
+        if (await clientProvider.delete(clientId)) {
+            await setClientList(await clientProvider.loadList());
             await setActiveClient(null);
             setSearchText('');
         }
@@ -174,7 +175,7 @@ const ClientPage = (props: IProps): JSX.Element | null => {
 
             <ClientEdit
                 clientInfo={showClientEdit as ClientRecord}
-                cm={cm}
+                clientProvider={clientProvider}
                 onClose={(client) => {
                     setShowClientEdit(null);
 

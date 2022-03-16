@@ -1,4 +1,4 @@
-/* eslint-disable no-underscore-dangle,no-bitwise */
+/* eslint-disable no-bitwise */
 
 export interface IBase64 {
     encode: (input: string) => string;

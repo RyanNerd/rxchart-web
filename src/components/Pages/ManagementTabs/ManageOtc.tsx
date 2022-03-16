@@ -1,13 +1,13 @@
 import TooltipContainer from 'components/Pages/Containters/TooltipContainer';
 import ManageOtcGrid from 'components/Pages/Grids/ManageOtcGrid';
 import DeleteMedicineModal from 'components/Pages/Modals/DeleteMedicineModal';
+import MedicineEdit from 'components/Pages/Modals/MedicineEdit';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import {DrugLogRecord, MedicineRecord, newMedicineRecord} from 'types/RecordTypes';
-import MedicineEdit from 'components/Pages/Modals/MedicineEdit';
 
 interface IProps {
     activeManagementKey: string;
@@ -20,7 +20,9 @@ interface IProps {
 const ManageOtc = (props: IProps): JSX.Element | null => {
     const [allowDelete, setAllowDelete] = useState(false);
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
-    const [mm] = useGlobal('medicineManager');
+    const [providers] = useGlobal('providers');
+    const medicineProvider = providers.medicineProvider;
+    const medHistoryProvider = providers.medHistoryProvider;
     const [otcList, setOtcList] = useGlobal('otcList');
     const [filteredOtcList, setFilteredOtcList] = useState<MedicineRecord[]>(otcList);
     const [searchIsValid, setSearchIsValid] = useState(false);
@@ -59,8 +61,8 @@ const ManageOtc = (props: IProps): JSX.Element | null => {
      * @param {MedicineRecord} otcMed The medicine record object
      */
     const saveOtcMedicine = async (otcMed: MedicineRecord) => {
-        const m = await mm.updateMedicine(otcMed);
-        await setOtcList(await mm.loadOtcList());
+        const m = await medicineProvider.update(otcMed);
+        await setOtcList(await medicineProvider.loadOtcList());
         return m;
     };
 
@@ -69,7 +71,8 @@ const ManageOtc = (props: IProps): JSX.Element | null => {
      * @param {number} medicineId The PK of the Medicine record to delete, or a zero for a NOP
      */
     const deleteOtcMedicine = async (medicineId: number) => {
-        if (medicineId > 0 && (await mm.deleteMedicine(medicineId))) await setOtcList(await mm.loadOtcList());
+        if (medicineId > 0 && (await medicineProvider.delete(medicineId)))
+            await setOtcList(await medicineProvider.loadOtcList());
     };
 
     /**
@@ -78,7 +81,7 @@ const ManageOtc = (props: IProps): JSX.Element | null => {
      * @returns {Promise<DrugLogRecord[]>} An array of drug log records
      */
     const getDrugLogForMedication = async (medicineId: number): Promise<DrugLogRecord[]> => {
-        return await mm.loadDrugLogForMedicine(medicineId);
+        return await medHistoryProvider.loadDrugLogForMedicine(medicineId);
     };
 
     /**

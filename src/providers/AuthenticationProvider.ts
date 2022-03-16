@@ -20,7 +20,7 @@ type AuthCredentials = {
 };
 
 export interface IAuthenticationProvider {
-    post: (credentials: AuthCredentials) => Promise<Authenticated>;
+    authenticate: (credentials: AuthCredentials) => Promise<Authenticated>;
 }
 
 /**
@@ -36,7 +36,7 @@ const AuthenticationProvider = (url: string): IAuthenticationProvider => {
          * @param {AuthCredentials} credentials The AuthCredentials object {username: string, password: string}
          * @returns {Promise<Authenticated>} Authenticated obj {success: true/false, organization: org, apiKey: API key}
          */
-        post: async (credentials: AuthCredentials): Promise<Authenticated> => {
+        authenticate: async (credentials: AuthCredentials): Promise<Authenticated> => {
             const response = await _frak.post<AuthResponse>(_baseUrl + 'authenticate', credentials);
             const success = response.success;
             const data = response.data ? response.data : undefined;

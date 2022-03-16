@@ -21,6 +21,7 @@ export interface IPillboxProvider {
     update: (drugInfo: PillboxRecord) => Promise<PillboxRecord>;
     delete: (drugId: string | number) => Promise<DeleteResponse>;
     log: (pillboxId: number) => Promise<DrugLogRecord[]>;
+    loadList: (clientId: number) => Promise<PillboxRecord[]>;
 }
 
 /**
@@ -31,6 +32,24 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
     const _baseUrl = baseUrl;
     const _frak = Frak();
     let _apiKey = null as string | null;
+
+    /**
+     * Pillbox Search
+     * @param {object} options A multi-shaped object indicating the options to use to fetch
+     * @returns {Promise<PillboxRecord[]>} Array of Pillbox records
+     */
+    const _search = async (options: Record<string, unknown>): Promise<PillboxRecord[]> => {
+        const response = await _frak.post<RecordResponse>(`${_baseUrl}pillbox/search?api_key=${_apiKey}`, options);
+        if (response.success) {
+            return response.data as PillboxRecord[];
+        } else {
+            if (response.status === 404) {
+                return [] as PillboxRecord[];
+            }
+            throw response;
+        }
+    };
+
     return {
         /**
          * Set the apiKey
@@ -46,15 +65,15 @@ const PillboxProvider = (baseUrl: string): IPillboxProvider => {
          * @returns {Promise<PillboxRecord[]>} Array of Pillbox records
          */
         search: async (options: Record<string, unknown>): Promise<PillboxRecord[]> => {
-            const response = await _frak.post<RecordResponse>(`${_baseUrl}pillbox/search?api_key=${_apiKey}`, options);
-            if (response.success) {
-                return response.data as PillboxRecord[];
-            } else {
-                if (response.status === 404) {
-                    return [] as PillboxRecord[];
-                }
-                throw response;
-            }
+            return await _search(options);
+        },
+
+        loadList: async (clientId: number) => {
+            const searchCriteria = {
+                where: [['ResidentId', '=', clientId]],
+                orderBy: [['Name', 'asc']]
+            };
+            return await _search(searchCriteria);
         },
 
         /**

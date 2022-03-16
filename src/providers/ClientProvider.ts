@@ -21,6 +21,7 @@ export interface IClientProvider {
     read: (id: number) => Promise<ClientRecord>;
     restore: (residentId: number) => Promise<ClientRecord>;
     search: (options: Record<string, unknown>) => Promise<ClientRecord[]>;
+    loadList: () => Promise<ClientRecord[]>;
     setApiKey: (apiKey: string) => void;
 }
 
@@ -32,6 +33,24 @@ const ClientProvider = (url: string): IClientProvider => {
     const _baseUrl = url;
     const _frak = Frak();
     let _apiKey = null as string | null;
+
+    /**
+     * Client Search
+     * @param {object} options Multi shaped object for the fetch request
+     * @returns {Promise<ClientRecord[]>} An array of client records
+     */
+    const _search = async (options: Record<string, unknown>): Promise<ClientRecord[]> => {
+        const response = await _frak.post<RecordResponse>(`${_baseUrl}resident/search?api_key=${_apiKey}`, options);
+        if (response.success) {
+            return response.data as ClientRecord[];
+        } else {
+            if (response.status === 404) {
+                return [];
+            } else {
+                throw response;
+            }
+        }
+    };
 
     return {
         /**
@@ -48,16 +67,21 @@ const ClientProvider = (url: string): IClientProvider => {
          * @returns {Promise<ClientRecord[]>} An array of client records
          */
         search: async (options: Record<string, unknown>): Promise<ClientRecord[]> => {
-            const response = await _frak.post<RecordResponse>(`${_baseUrl}resident/search?api_key=${_apiKey}`, options);
-            if (response.success) {
-                return response.data as ClientRecord[];
-            } else {
-                if (response.status === 404) {
-                    return [];
-                } else {
-                    throw response;
-                }
-            }
+            return await _search(options);
+        },
+
+        /**
+         * Load all client records as a promise ordered by LastName, FirstName
+         * @returns {Promise<ClientRecord[]>} An array of client records as a promise
+         */
+        loadList: async () => {
+            const searchCriteria = {
+                orderBy: [
+                    ['LastName', 'asc'],
+                    ['FirstName', 'asc']
+                ]
+            };
+            return await _search(searchCriteria);
         },
 
         /**

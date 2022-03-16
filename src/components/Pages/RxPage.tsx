@@ -39,7 +39,11 @@ const RxPage = (props: IProps): JSX.Element | null => {
     const [activePillbox, setActivePillbox] = useState<PillboxRecord | null>(null);
     const [activeRxTab, setActiveRxTab] = useState<RX_TAB_KEY>(RX_TAB_KEY.Medicine);
     const [checkoutList, setCheckoutList] = useState<DrugLogRecord[]>([]);
-    const [mm] = useGlobal('medicineManager');
+    const [providers] = useGlobal('providers');
+    const medicineProvider = providers.medicineProvider;
+    const medHistoryProvider = providers.medHistoryProvider;
+    const pillboxProvider = providers.pillboxProvider;
+    const pillboxItemProvider = providers.pillboxItemProvider;
     const [otcList] = useGlobal('otcList');
     const preferences = props.preferences;
 
@@ -68,8 +72,8 @@ const RxPage = (props: IProps): JSX.Element | null => {
 
             const pillboxElement = document.getElementById('medicine-page-tabs-tab-' + RX_TAB_KEY.Pillbox);
             if (pillboxElement) {
-                pillboxElement.style.display = activeClient.medicineList.length < 5 ? 'none' : 'block';
-                if (activeRxTab === RX_TAB_KEY.Pillbox && activeClient.medicineList.length < 5) {
+                pillboxElement.style.display = activeClient.medicineList.length < 3 ? 'none' : 'block';
+                if (activeRxTab === RX_TAB_KEY.Pillbox && activeClient.medicineList.length < 3) {
                     setActiveRxTab(RX_TAB_KEY.Medicine);
                 }
             }
@@ -138,7 +142,8 @@ const RxPage = (props: IProps): JSX.Element | null => {
                     }
                 >
                     <RxMedicine
-                        mm={mm}
+                        medicineProvider={medicineProvider}
+                        medHistoryProvider={medHistoryProvider}
                         pillboxSelected={(id) => {
                             setActivePillbox(pillboxList.find((p) => p.Id === id) || null);
                             setActiveRxTab(RX_TAB_KEY.Pillbox);
@@ -167,7 +172,11 @@ const RxPage = (props: IProps): JSX.Element | null => {
                         </ToggleButton>
                     }
                 >
-                    <RxOtc mm={mm} activeRxTab={activeRxTab} />
+                    <RxOtc
+                        medicineProvider={medicineProvider}
+                        activeRxTab={activeRxTab}
+                        medHistoryProvider={medHistoryProvider}
+                    />
                 </Tab>
 
                 <Tab
@@ -192,7 +201,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                     }
                 >
                     <RxHistory
-                        mm={mm}
+                        medHistoryProvider={medHistoryProvider}
                         otcList={otcList}
                         onPillboxSelected={(id) => {
                             setActivePillbox(pillboxList.find((p) => p.Id === id) || null);
@@ -209,7 +218,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                         <ToggleButton
                             checked={activeRxTab === RX_TAB_KEY.Pillbox}
                             className="ml-2 d-print-none"
-                            disabled={medicineList.length < 5}
+                            disabled={medicineList.length < 3}
                             id="med-list-group-pill-radio-btn"
                             key="med-list-group-pill-btn"
                             name="radio-med-list-group"
@@ -224,7 +233,9 @@ const RxPage = (props: IProps): JSX.Element | null => {
                     }
                 >
                     <RxPillbox
-                        mm={mm}
+                        pillboxProvider={pillboxProvider}
+                        pillboxItemProvider={pillboxItemProvider}
+                        medHistoryProvider={medHistoryProvider}
                         activePillbox={activePillbox}
                         activePillboxChanged={(pb) => setActivePillbox(pb)}
                     />
@@ -278,7 +289,11 @@ const RxPage = (props: IProps): JSX.Element | null => {
                         </ToggleButton>
                     }
                 >
-                    <ManageRx rxTabKey={activeRxTab} />
+                    <ManageRx
+                        medicineProvider={medicineProvider}
+                        medHistoryProvider={medHistoryProvider}
+                        rxTabKey={activeRxTab}
+                    />
                 </Tab>
 
                 <Tab

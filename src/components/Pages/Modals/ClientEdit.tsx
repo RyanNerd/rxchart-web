@@ -1,4 +1,4 @@
-import {IClientManager} from 'managers/ClientManager';
+import {IClientProvider} from 'providers/ClientProvider';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
@@ -10,7 +10,7 @@ import {clientFullName, getFormattedDate, isDateFuture, isDayValid, isMonthValid
 
 interface IProps {
     clientInfo: ClientRecord;
-    cm: IClientManager;
+    clientProvider: IClientProvider;
     onClose: (r: ClientRecord | null) => void;
     show: boolean;
 }
@@ -20,7 +20,7 @@ interface IProps {
  * @param {IProps} props Props for the component
  */
 const ClientEdit = (props: IProps): JSX.Element | null => {
-    const cm = props.cm;
+    const clientProvider = props.clientProvider;
     const [isDupe, setIsDupe] = useState(false);
 
     const [clientInfo, setClientInfo] = useState<ClientRecord>(props.clientInfo);
@@ -85,8 +85,20 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
     /**
      * Called each time focus is changed on fields that could be a duplicate
      */
-    const checkForDuplicates = () => {
-        cm.checkForDupe(clientInfo).then((dupe) => setIsDupe(dupe.length > 0));
+    const checkForDuplicates = async () => {
+        const searchCriteria = {
+            where: [
+                ['FirstName', '=', clientInfo.firstName],
+                ['LastName', '=', clientInfo.LastName],
+                ['DOB_YEAR', '=', clientInfo.DOB_YEAR],
+                ['DOB_MONTH', '=', clientInfo.DOB_MONTH],
+                ['DOB_DAY', '=', clientInfo.DOB_DAY],
+                ['Id', '<>', clientInfo.Id]
+            ],
+            withTrashed: true
+        };
+        const dupe = await clientProvider.search(searchCriteria);
+        setIsDupe(dupe.length > 0);
     };
 
     // Prevent render if there is no data.

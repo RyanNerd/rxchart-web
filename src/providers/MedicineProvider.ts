@@ -10,6 +10,8 @@ type RecordResponse = {
 
 export interface IMedicineProvider {
     setApiKey: (apiKey: string) => void;
+    loadList: (clientId: number) => Promise<MedicineRecord[]>;
+    loadOtcList: () => Promise<MedicineRecord[]>;
     search: (options: Record<string, unknown>) => Promise<MedicineRecord[]>;
     read: (id: number | string) => Promise<MedicineRecord>;
     update: (drugInfo: MedicineRecord) => Promise<MedicineRecord>;
@@ -24,6 +26,24 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
     const _baseUrl = baseUrl;
     const _frak = Frak();
     let _apiKey = null as string | null;
+
+    /**
+     * Medicine Search
+     * @param {object} options A multi-shaped options object when the fetch is performed
+     * @returns {Promise<MedicineRecord[]>} An array of Medicine records
+     */
+    const _search = async (options: Record<string, unknown>): Promise<MedicineRecord[]> => {
+        const response = await _frak.post<RecordResponse>(`${_baseUrl}medicine/search?api_key=${_apiKey}`, options);
+        if (response.success) {
+            return response.data as MedicineRecord[];
+        } else {
+            if (response.status === 404) {
+                return [] as MedicineRecord[];
+            }
+            throw response;
+        }
+    };
+
     return {
         /**
          * Set the apiKey
@@ -34,20 +54,32 @@ const MedicineProvider = (baseUrl: string): IMedicineProvider => {
         },
 
         /**
+         * Returns all the Medicine records for the given clientId as a promise
+         * @param {number} clientId The PK of the Resident table
+         */
+        loadList: async (clientId) => {
+            const searchCriteria = {
+                where: [['ResidentId', '=', clientId]],
+                orderBy: [['Drug', 'asc']]
+            };
+            return await _search(searchCriteria);
+        },
+
+        loadOtcList: async () => {
+            const searchCriteria = {
+                where: [['OTC', '=', true]],
+                orderBy: [['Drug', 'asc']]
+            };
+            return await _search(searchCriteria);
+        },
+
+        /**
          * Medicine Search
          * @param {object} options A multi-shaped options object when the fetch is performed
          * @returns {Promise<MedicineRecord[]>} An array of Medicine records
          */
         search: async (options: Record<string, unknown>): Promise<MedicineRecord[]> => {
-            const response = await _frak.post<RecordResponse>(`${_baseUrl}medicine/search?api_key=${_apiKey}`, options);
-            if (response.success) {
-                return response.data as MedicineRecord[];
-            } else {
-                if (response.status === 404) {
-                    return [] as MedicineRecord[];
-                }
-                throw response;
-            }
+            return await _search(options);
         },
 
         /**

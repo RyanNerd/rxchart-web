@@ -15,9 +15,10 @@ const ClientHeader = () => {
     const [activeClient, setActiveClient] = useGlobal('activeClient');
     const [copyText, setCopyText] = useState('');
     const [hmisName, setHmisName] = useState('');
-    const [cm] = useGlobal('clientManager');
+    const [providers] = useGlobal('providers');
     const [showClientEdit, setShowClientEdit] = useState(false);
     const [showClientRoster, setShowClientRoster] = useState(false);
+    const clientProvider = providers.clientProvider;
 
     // When copyText is populated copy it to the clipboard
     useEffect(() => {
@@ -57,8 +58,8 @@ const ClientHeader = () => {
      */
     const saveClient = async (client: ClientRecord) => {
         if (activeClient) {
-            await setActiveClient({...activeClient, clientInfo: await cm.updateClient(client)});
-            await setClientList(await cm.loadClientList());
+            await setActiveClient({...activeClient, clientInfo: await clientProvider.update(client)});
+            await setClientList(await clientProvider.loadList());
         }
     };
 
@@ -106,7 +107,7 @@ const ClientHeader = () => {
 
             <ClientEdit
                 clientInfo={clientRecord}
-                cm={cm}
+                clientProvider={clientProvider}
                 show={showClientEdit}
                 onClose={(client) => {
                     setShowClientEdit(false);
