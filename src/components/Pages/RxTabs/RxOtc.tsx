@@ -16,9 +16,9 @@ import {DrugLogRecord, MedicineRecord, newDrugLogRecord} from 'types/RecordTypes
 import {asyncWrapper, clientFullName, getDrugName, getMedicineRecord} from 'utility/common';
 
 interface IProps {
-    medicineProvider: IMedicineProvider;
-    medHistoryProvider: IMedHistoryProvider;
     activeRxTab: RX_TAB_KEY;
+    medHistoryProvider: IMedHistoryProvider;
+    medicineProvider: IMedicineProvider;
 }
 
 /**

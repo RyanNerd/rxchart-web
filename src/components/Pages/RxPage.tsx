@@ -16,13 +16,13 @@ import {getCheckoutList} from 'utility/common';
 
 // Active Rx tab states
 export enum RX_TAB_KEY {
+    Document = 'document',
     History = 'history',
+    Manage = 'manage',
     Medicine = 'med',
     OTC = 'otc',
     Pillbox = 'pillbox',
-    Print = 'print',
-    Manage = 'manage',
-    Document = 'document'
+    Print = 'print'
 }
 
 interface IProps {
@@ -39,12 +39,9 @@ const RxPage = (props: IProps): JSX.Element | null => {
     const [activePillbox, setActivePillbox] = useState<PillboxRecord | null>(null);
     const [activeRxTab, setActiveRxTab] = useState<RX_TAB_KEY>(RX_TAB_KEY.Medicine);
     const [checkoutList, setCheckoutList] = useState<DrugLogRecord[]>([]);
-    const [providers] = useGlobal('providers');
-    const medicineProvider = providers.medicineProvider;
-    const medHistoryProvider = providers.medHistoryProvider;
-    const pillboxProvider = providers.pillboxProvider;
-    const pillboxItemProvider = providers.pillboxItemProvider;
     const [otcList] = useGlobal('otcList');
+    const [providers] = useGlobal('providers');
+    const {medicineProvider, medHistoryProvider, pillboxProvider, pillboxItemProvider} = providers;
     const preferences = props.preferences;
 
     const [activeTabKey, setActiveTabKey] = useState(props.activeTabKey);
@@ -115,9 +112,9 @@ const RxPage = (props: IProps): JSX.Element | null => {
     return (
         <div className="medicine-page-tablet">
             <Tabs
-                id="medicine-page-tabs"
                 activeKey={activeRxTab}
                 defaultActiveKey={RX_TAB_KEY.Medicine}
+                id="medicine-page-tabs"
                 onSelect={(key) => setActiveRxTab((key as RX_TAB_KEY) || RX_TAB_KEY.Medicine)}
             >
                 <Tab
@@ -173,9 +170,9 @@ const RxPage = (props: IProps): JSX.Element | null => {
                     }
                 >
                     <RxOtc
-                        medicineProvider={medicineProvider}
                         activeRxTab={activeRxTab}
                         medHistoryProvider={medHistoryProvider}
+                        medicineProvider={medicineProvider}
                     />
                 </Tab>
 
@@ -202,11 +199,11 @@ const RxPage = (props: IProps): JSX.Element | null => {
                 >
                     <RxHistory
                         medHistoryProvider={medHistoryProvider}
-                        otcList={otcList}
                         onPillboxSelected={(id) => {
                             setActivePillbox(pillboxList.find((p) => p.Id === id) || null);
                             setActiveRxTab(RX_TAB_KEY.Pillbox);
                         }}
+                        otcList={otcList}
                     />
                 </Tab>
 

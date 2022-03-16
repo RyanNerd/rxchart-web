@@ -28,8 +28,8 @@ interface IProps {
     activePillbox: PillboxRecord | null;
     activePillboxChanged: (pb: PillboxRecord | null) => void;
     medHistoryProvider: IMedHistoryProvider;
-    pillboxProvider: IPillboxProvider;
     pillboxItemProvider: IPillboxItemProvider;
+    pillboxProvider: IPillboxProvider;
 }
 
 /**
@@ -42,10 +42,7 @@ const RxPillbox = (props: IProps) => {
     const [isBusy, setIsBusy] = useState(false);
     const [pillboxMedLogList, setPillboxMedLogList] = useState<TPillboxMedLog[]>([]);
     const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
-    const activePillboxChanged = props.activePillboxChanged;
-    const medHistoryProvider = props.medHistoryProvider;
-    const pillboxProvider = props.pillboxProvider;
-    const pillboxItemProvider = props.pillboxItemProvider;
+    const {activePillboxChanged, medHistoryProvider, pillboxProvider, pillboxItemProvider} = props;
 
     const [activePillbox, setActivePillbox] = useState(props.activePillbox);
     useEffect(() => {

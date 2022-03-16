@@ -27,12 +27,12 @@ const ClientPage = (props: IProps): JSX.Element | null => {
     const [clientList, setClientList] = useGlobal('clientList');
     const [filteredClients, setFilteredClients] = useState<ClientRecord[]>(clientList);
     const [providers] = useGlobal('providers');
-    const clientProvider = providers.clientProvider;
     const [searchIsValid, setSearchIsValid] = useState(false);
     const [searchText, setSearchText] = useState('');
+    const [showClientEdit, setShowClientEdit] = useState<ClientRecord | null>(null);
     const [showClientRoster, setShowClientRoster] = useState(false);
     const [showDeleteResident, setShowDeleteResident] = useState<null | ClientRecord>(null);
-    const [showClientEdit, setShowClientEdit] = useState<ClientRecord | null>(null);
+    const clientProvider = providers.clientProvider;
     const focusReference = useRef<HTMLInputElement>(null);
 
     // Filter the resident list by the search textbox value

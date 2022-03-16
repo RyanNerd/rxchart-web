@@ -23,7 +23,6 @@ interface IProps {
  * Sign in page
  */
 const LoginPage = (props: IProps): JSX.Element | null => {
-    const {activeTabKey, setActiveTabKey} = props;
     const [, setClientList] = useGlobal('clientList');
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [, setOtcList] = useGlobal('otcList');
@@ -33,9 +32,8 @@ const LoginPage = (props: IProps): JSX.Element | null => {
     const [showAboutPage, setShowAboutPage] = useState(false);
     const [signIn, setSignIn] = useGlobal('signIn');
     const [username, setUsername] = useState('');
-    const authenticationProvider = providers.authenticationProvider;
-    const clientProvider = providers.clientProvider;
-    const medicineProvider = providers.medicineProvider;
+    const {activeTabKey, setActiveTabKey} = props;
+    const {authenticationProvider, clientProvider, medicineProvider} = providers;
     const focusReference = useRef<HTMLInputElement>(null);
 
     useEffect(() => {

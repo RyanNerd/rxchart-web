@@ -19,13 +19,13 @@ interface IProps {
  * @param {IProps} props The props for this component
  */
 const RxHistory = (props: IProps) => {
-    const {medHistoryProvider, onPillboxSelected, otcList} = props;
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [activeClient, setActiveClient] = useGlobal('activeClient');
     const [isBusy, setIsBusy] = useState(false);
     const [showDeleteDrugLogRecord, setShowDeleteDrugLogRecord] = useState<DrugLogRecord | null>(null);
     const [showDrugLog, setShowDrugLog] = useState<DrugLogRecord | null>(null);
     const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
+    const {medHistoryProvider, onPillboxSelected, otcList} = props;
 
     /**
      * Given a DrugLogRecord Update or Insert the record and rehydrate the drugLogList

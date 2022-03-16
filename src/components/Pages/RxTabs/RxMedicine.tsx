@@ -18,8 +18,8 @@ import {DrugLogRecord, MedicineRecord, newDrugLogRecord} from 'types/RecordTypes
 import {asyncWrapper, calculateLastTaken, clientFullName, getCheckoutList, getDrugName, isToday} from 'utility/common';
 
 interface IProps {
-    medicineProvider: IMedicineProvider;
     medHistoryProvider: IMedHistoryProvider;
+    medicineProvider: IMedicineProvider;
     pillboxSelected: (id: number) => void;
 }
 
