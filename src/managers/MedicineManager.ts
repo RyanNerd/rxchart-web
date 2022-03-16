@@ -5,7 +5,6 @@ import {asyncWrapper} from 'utility/common';
 
 export interface IMedicineManager {
     loadDrugLog: (residentId: number, days?: number) => Promise<DrugLogRecord[]>;
-    loadDrugLogForMedicine: (medicineId: number) => Promise<DrugLogRecord[]>;
 }
 
 /**
@@ -48,26 +47,9 @@ const MedicineManager = (
         else return r;
     };
 
-    /**
-     * For a given medicine PK return all MedHistory DrugLogRecords[]
-     * @param {number} medicineId The PK of the Medicine table
-     */
-    const _loadDrugLogForMedicine = async (medicineId: number) => {
-        const searchCriteria = {where: [['MedicineId', '=', medicineId]]};
-        const [error, r] = (await asyncWrapper(medHistoryProvider.search(searchCriteria))) as [
-            unknown,
-            Promise<DrugLogRecord[]>
-        ];
-        if (error) throw error;
-        else return r;
-    };
-
     return {
         loadDrugLog: async (residentId: number, days?: number): Promise<DrugLogRecord[]> => {
             return await _loadDrugLog(residentId, days);
-        },
-        loadDrugLogForMedicine: async (medicineId: number): Promise<DrugLogRecord[]> => {
-            return await _loadDrugLogForMedicine(medicineId);
         }
     };
 };

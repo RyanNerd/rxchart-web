@@ -13,6 +13,7 @@ export interface IMedHistoryProvider {
     update: (drugInfo: DrugLogRecord) => Promise<DrugLogRecord>;
     read: (id: string | number) => Promise<DrugLogRecord>;
     search: (options: Record<string, unknown>) => Promise<DrugLogRecord[]>;
+    loadDrugLogForMedicine: (medicineId: number) => Promise<DrugLogRecord[]>;
     setApiKey: (apiKey: string) => void;
 }
 
@@ -24,6 +25,26 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
     const _baseUrl = baseurl;
     const _frak = Frak();
     let _apiKey = null as string | null;
+
+    /**
+     * Drug Log Search
+     * @see https://www.notion.so/Willow-Framework-Users-Guide-bf56317580884ccd95ed8d3889f83c72
+     * @param {object} options A multi-shaped object used when the fetch is performed
+     * @returns {Promise<DrugLogRecord[]>} Array of drug log records
+     */
+    const _search = async (options: Record<string, unknown>): Promise<DrugLogRecord[]> => {
+        const response = await _frak.post<RecordResponse>(`${_baseUrl}medhistory/search?api_key=${_apiKey}`, options);
+        if (response.success) {
+            return response.data as DrugLogRecord[];
+        } else {
+            if (response.status === 404) {
+                return [] as DrugLogRecord[];
+            } else {
+                throw response;
+            }
+        }
+    };
+
     return {
         /**
          * Set the apiKey
@@ -40,19 +61,16 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
          * @returns {Promise<DrugLogRecord[]>} Array of drug log records
          */
         search: async (options: Record<string, unknown>): Promise<DrugLogRecord[]> => {
-            const response = await _frak.post<RecordResponse>(
-                `${_baseUrl}medhistory/search?api_key=${_apiKey}`,
-                options
-            );
-            if (response.success) {
-                return response.data as DrugLogRecord[];
-            } else {
-                if (response.status === 404) {
-                    return [] as DrugLogRecord[];
-                } else {
-                    throw response;
-                }
-            }
+            return await _search(options);
+        },
+
+        /**
+         * For a given medicine PK return all MedHistory DrugLogRecords[]
+         * @param {number} medicineId The PK of the Medicine table
+         */
+        loadDrugLogForMedicine: async (medicineId: number): Promise<DrugLogRecord[]> => {
+            const searchCriteria = {where: [['MedicineId', '=', medicineId]]};
+            return await _search(searchCriteria);
         },
 
         /**
