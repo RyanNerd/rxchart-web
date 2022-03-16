@@ -95,7 +95,7 @@ const LandingPage = (props: IProps) => {
     return (
         <Tabs id="landing-page-tabs" activeKey={activeTabKey} onSelect={(key) => setActiveTabKey(key || 'login')}>
             <Tab
-                disabled={errorDetails}
+                disabled={errorDetails !== undefined}
                 eventKey="login"
                 title={<Title activeKey="login">{apiKey ? 'Logout' : 'Login'}</Title>}
             >

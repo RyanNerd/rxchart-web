@@ -13,10 +13,10 @@ export interface IProviders {
     authenticationProvider: IAuthenticationProvider;
     clientProvider: IClientProvider;
     fileProvider: IFileProvider;
-    medicineProvider: IMedicineProvider;
     medHistoryProvider: IMedHistoryProvider;
-    pillboxProvider: IPillboxProvider;
+    medicineProvider: IMedicineProvider;
     pillboxItemProvider: IPillboxItemProvider;
+    pillboxProvider: IPillboxProvider;
     pinProvider: IPinProvider;
     setApi: (apiKey: string) => Promise<void>;
 }
