@@ -2,7 +2,6 @@ import MedDrugLogHistory from 'components/Pages/Grids/MedDrugLogHistory';
 import DeleteDrugLogModal from 'components/Pages/Modals/DeleteDrugLogModal';
 import DrugLogEdit from 'components/Pages/Modals/DrugLogEdit';
 import DrugLogToast from 'components/Pages/Toasts/DrugLogToast';
-import {IMedicineManager} from 'managers/MedicineManager';
 import {IMedHistoryProvider} from 'providers/MedHistoryProvider';
 import React, {useGlobal, useState} from 'reactn';
 import {TClient} from 'reactn/default';
@@ -10,7 +9,6 @@ import {DrugLogRecord, MedicineRecord} from 'types/RecordTypes';
 import {asyncWrapper, getDrugName, getMedicineRecord} from 'utility/common';
 
 interface IProps {
-    mm: IMedicineManager;
     medHistoryProvider: IMedHistoryProvider;
     onPillboxSelected: (id: number) => void;
     otcList: MedicineRecord[];
@@ -21,7 +19,7 @@ interface IProps {
  * @param {IProps} props The props for this component
  */
 const RxHistory = (props: IProps) => {
-    const {mm, medHistoryProvider, onPillboxSelected, otcList} = props;
+    const {medHistoryProvider, onPillboxSelected, otcList} = props;
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [activeClient, setActiveClient] = useGlobal('activeClient');
     const [isBusy, setIsBusy] = useState(false);
@@ -31,7 +29,7 @@ const RxHistory = (props: IProps) => {
 
     /**
      * Given a DrugLogRecord Update or Insert the record and rehydrate the drugLogList
-     * @param {DrugLogRecord} drugLog Druglog record object
+     * @param {DrugLogRecord} drugLog DrugLog record object
      */
     const saveDrugLog = async (drugLog: DrugLogRecord): Promise<DrugLogRecord> => {
         await setIsBusy(true);
@@ -42,7 +40,7 @@ const RxHistory = (props: IProps) => {
         if (errorUpdateDrugLog) await setErrorDetails(errorUpdateDrugLog);
         else {
             const [errorLoadDrugLog, drugLogs] = (await asyncWrapper(
-                mm.loadDrugLog(activeClient?.clientInfo?.Id as number, 5)
+                medHistoryProvider.load(activeClient?.clientInfo?.Id as number, 5)
             )) as [unknown, Promise<DrugLogRecord[]>];
             await (errorLoadDrugLog
                 ? setErrorDetails(errorLoadDrugLog)
@@ -85,7 +83,7 @@ const RxHistory = (props: IProps) => {
                 onSelect={async (drugLogRecord) => {
                     await setShowDeleteDrugLogRecord(null);
                     if (drugLogRecord) await medHistoryProvider.delete(showDeleteDrugLogRecord?.Id as number);
-                    const drugLogRecords = await mm.loadDrugLog(activeClient?.clientInfo?.Id as number, 5);
+                    const drugLogRecords = await medHistoryProvider.load(activeClient?.clientInfo?.Id as number, 5);
                     await setActiveClient({...activeClient, drugLogList: drugLogRecords});
                 }}
                 show={showDeleteDrugLogRecord !== null}

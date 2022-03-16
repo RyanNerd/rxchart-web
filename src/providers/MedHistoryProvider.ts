@@ -14,6 +14,7 @@ export interface IMedHistoryProvider {
     read: (id: string | number) => Promise<DrugLogRecord>;
     search: (options: Record<string, unknown>) => Promise<DrugLogRecord[]>;
     loadDrugLogForMedicine: (medicineId: number) => Promise<DrugLogRecord[]>;
+    load: (residentId: number, days: number | undefined) => Promise<DrugLogRecord[]>;
     setApiKey: (apiKey: string) => void;
 }
 
@@ -70,6 +71,32 @@ const MedHistoryProvider = (baseurl: string): IMedHistoryProvider => {
          */
         loadDrugLogForMedicine: async (medicineId: number): Promise<DrugLogRecord[]> => {
             const searchCriteria = {where: [['MedicineId', '=', medicineId]]};
+            return await _search(searchCriteria);
+        },
+
+        /**
+         * Returns all the MedHistory records for the given ResidentId as a promise
+         * @param {number} residentId The client Id
+         * @param {number} days number of days old to fetch
+         */
+        load: async (residentId: number, days: number | undefined): Promise<DrugLogRecord[]> => {
+            let searchCriteria;
+            if (days) {
+                const d = new Date();
+                d.setDate(d.getDate() - days);
+                searchCriteria = {
+                    where: [
+                        ['ResidentId', '=', residentId],
+                        ['Updated', '>', d]
+                    ],
+                    orderBy: [['Created', 'desc']]
+                };
+            } else {
+                searchCriteria = {
+                    where: [['ResidentId', '=', residentId]],
+                    orderBy: [['Created', 'desc']]
+                };
+            }
             return await _search(searchCriteria);
         },
 

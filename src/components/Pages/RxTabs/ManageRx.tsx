@@ -6,7 +6,6 @@ import CheckoutAllModal from 'components/Pages/Modals/CheckoutAllModal';
 import DeleteMedicineModal from 'components/Pages/Modals/DeleteMedicineModal';
 import {RX_TAB_KEY} from 'components/Pages/RxPage';
 import DrugLogToast from 'components/Pages/Toasts/DrugLogToast';
-import {IMedicineManager} from 'managers/MedicineManager';
 import {IMedHistoryProvider} from 'providers/MedHistoryProvider';
 import {IMedicineProvider} from 'providers/MedicineProvider';
 import Badge from 'react-bootstrap/Badge';
@@ -30,7 +29,6 @@ import MedicineEdit from 'components/Pages/Modals/MedicineEdit';
 
 interface IProps {
     rxTabKey: string;
-    mm: IMedicineManager;
     medicineProvider: IMedicineProvider;
     medHistoryProvider: IMedHistoryProvider;
 }
@@ -54,7 +52,6 @@ const ManageRx = (props: IProps): JSX.Element | null => {
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(0);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
     const [toast, setToast] = useState<DrugLogRecord[] | null>(null);
-    const mm = props.mm;
     const medicineProvider = props.medicineProvider;
     const medHistoryProvider = props.medHistoryProvider;
 
@@ -100,7 +97,7 @@ const ManageRx = (props: IProps): JSX.Element | null => {
             };
             drugsLogged.push(await save(d));
         }
-        await setActiveClient({...activeClient, drugLogList: await mm.loadDrugLog(clientId, 5)});
+        await setActiveClient({...activeClient, drugLogList: await medHistoryProvider.load(clientId, 5)});
         return drugsLogged;
     };
 

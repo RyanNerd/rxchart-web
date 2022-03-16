@@ -1,4 +1,3 @@
-import {IMedicineManager} from 'managers/MedicineManager';
 import {Authenticated} from 'providers/AuthenticationProvider';
 import 'reactn';
 import {State} from 'reactn/default';
@@ -34,7 +33,6 @@ declare module 'reactn/default' {
         activeClient: TClient | null;
         count: number;
         __errorDetails: any;
-        medicineManager: IMedicineManager;
         otcList: MedicineRecord[];
         preferences: IPreferences | null;
         providers: IProviders;

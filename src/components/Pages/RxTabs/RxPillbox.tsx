@@ -1,7 +1,7 @@
 import PillboxCard from 'components/Pages/Grids/PillboxCard';
 import PillboxListGroup from 'components/Pages/ListGroups/PillboxListGroup';
 import DrugLogToast from 'components/Pages/Toasts/DrugLogToast';
-import {IMedicineManager} from 'managers/MedicineManager';
+import {IMedHistoryProvider} from 'providers/MedHistoryProvider';
 import {IPillboxItemProvider} from 'providers/PillboxItemProvider';
 import {IPillboxProvider} from 'providers/PillboxProvider';
 import Col from 'react-bootstrap/Col';
@@ -27,7 +27,7 @@ export type TPillboxMedLog = {
 interface IProps {
     activePillbox: PillboxRecord | null;
     activePillboxChanged: (pb: PillboxRecord | null) => void;
-    mm: IMedicineManager;
+    medHistoryProvider: IMedHistoryProvider;
     pillboxProvider: IPillboxProvider;
     pillboxItemProvider: IPillboxItemProvider;
 }
@@ -43,7 +43,7 @@ const RxPillbox = (props: IProps) => {
     const [pillboxMedLogList, setPillboxMedLogList] = useState<TPillboxMedLog[]>([]);
     const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
     const activePillboxChanged = props.activePillboxChanged;
-    const mm = props.mm;
+    const medHistoryProvider = props.medHistoryProvider;
     const pillboxProvider = props.pillboxProvider;
     const pillboxItemProvider = props.pillboxItemProvider;
 
@@ -174,7 +174,7 @@ const RxPillbox = (props: IProps) => {
             const loggedPillboxDrugs = await loggedPillboxMeds;
             if (loggedPillboxDrugs.length > 0) {
                 const [errorLoadLog, drugLogs] = (await asyncWrapper(
-                    mm.loadDrugLog(activeClient?.clientInfo.Id as number, 5)
+                    medHistoryProvider.load(activeClient?.clientInfo.Id as number, 5)
                 )) as [unknown, Promise<DrugLogRecord[]>];
                 await (errorLoadLog
                     ? setErrorDetails(errorLoadLog)

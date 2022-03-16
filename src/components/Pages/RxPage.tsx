@@ -39,7 +39,6 @@ const RxPage = (props: IProps): JSX.Element | null => {
     const [activePillbox, setActivePillbox] = useState<PillboxRecord | null>(null);
     const [activeRxTab, setActiveRxTab] = useState<RX_TAB_KEY>(RX_TAB_KEY.Medicine);
     const [checkoutList, setCheckoutList] = useState<DrugLogRecord[]>([]);
-    const [mm] = useGlobal('medicineManager');
     const [providers] = useGlobal('providers');
     const medicineProvider = providers.medicineProvider;
     const medHistoryProvider = providers.medHistoryProvider;
@@ -143,7 +142,6 @@ const RxPage = (props: IProps): JSX.Element | null => {
                     }
                 >
                     <RxMedicine
-                        mm={mm}
                         medicineProvider={medicineProvider}
                         medHistoryProvider={medHistoryProvider}
                         pillboxSelected={(id) => {
@@ -175,7 +173,6 @@ const RxPage = (props: IProps): JSX.Element | null => {
                     }
                 >
                     <RxOtc
-                        mm={mm}
                         medicineProvider={medicineProvider}
                         activeRxTab={activeRxTab}
                         medHistoryProvider={medHistoryProvider}
@@ -204,7 +201,6 @@ const RxPage = (props: IProps): JSX.Element | null => {
                     }
                 >
                     <RxHistory
-                        mm={mm}
                         medHistoryProvider={medHistoryProvider}
                         otcList={otcList}
                         onPillboxSelected={(id) => {
@@ -237,9 +233,9 @@ const RxPage = (props: IProps): JSX.Element | null => {
                     }
                 >
                     <RxPillbox
-                        mm={mm}
                         pillboxProvider={pillboxProvider}
                         pillboxItemProvider={pillboxItemProvider}
+                        medHistoryProvider={medHistoryProvider}
                         activePillbox={activePillbox}
                         activePillboxChanged={(pb) => setActivePillbox(pb)}
                     />
@@ -294,7 +290,6 @@ const RxPage = (props: IProps): JSX.Element | null => {
                     }
                 >
                     <ManageRx
-                        mm={mm}
                         medicineProvider={medicineProvider}
                         medHistoryProvider={medHistoryProvider}
                         rxTabKey={activeRxTab}
