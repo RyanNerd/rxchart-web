@@ -16,6 +16,7 @@ interface IProps {
 }
 
 const CheckoutListGroup = (props: IProps) => {
+    const [, setErrorDetails] = useGlobal('__errorDetails');
     const {checkoutList, medicineList, clientRecord, onClose} = props;
     const clientName = clientRecord ? clientFullName(clientRecord) : '';
     const now = new Date();
@@ -36,7 +37,11 @@ const CheckoutListGroup = (props: IProps) => {
          * @param {number} clientId The client PK
          */
         const generatePin = async (clientId: number) => {
-            setPinData(await pinProvider.generate(clientId));
+            try {
+                setPinData(await pinProvider.generate(clientId));
+            } catch (requestError) {
+                await setErrorDetails(requestError);
+            }
         };
         generatePin(clientRecord.Id as number);
     };
