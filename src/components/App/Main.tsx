@@ -7,7 +7,7 @@ interface IProps {
 }
 
 /**
- * Wrapper that initializes the ErrorDetail observer and renders the main "page" in an effort to reduce rerendering
+ * Wrapper that initializes the ErrorDetail observer and renders the main "page" in an effort to reduce re-rendering
  * @param {IProps} props The props for this component
  * @link https://overreacted.io/before-you-memo/
  */
@@ -17,8 +17,6 @@ const Main = (props: IProps) => {
         // Is __errorDetails populated and is it NOT an instance of RxError?
         if (global.__errorDetails && !(global.__errorDetails instanceof RxError)) {
             // This is new error we are going to wrap in a custom RxError object
-            // TODO: Move Duck 🦆 typing to figure out what type the error is to this function.
-            // TODO: Change DiagnosticPage.tsx to only handle display of RxError types
             const newError = new RxError('An error occurred while trying to access the API service');
             newError.setErrorDetails(global.__errorDetails);
             return {

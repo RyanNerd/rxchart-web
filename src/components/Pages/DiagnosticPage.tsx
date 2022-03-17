@@ -27,6 +27,7 @@ interface IWillow {
 
 /**
  * DiagnosticPage
+ * @todo Change DiagnosticPage.tsx to only handle display of RxError types
  * @param {IProps} props The props for this component
  */
 const DiagnosticPage = (props: IProps): JSX.Element | null => {
