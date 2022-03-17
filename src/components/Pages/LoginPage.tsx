@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-param */
 import {Authenticated} from 'providers/AuthenticationProvider';
 import Alert from 'react-bootstrap/Alert';
 import Container from 'react-bootstrap/Container';
@@ -20,7 +19,8 @@ interface IProps {
 }
 
 /**
- * Sign in page
+ * Login Page
+ * @param {IProps} props The props for this component
  */
 const LoginPage = (props: IProps): JSX.Element | null => {
     const [, setClientList] = useGlobal('clientList');
@@ -104,7 +104,8 @@ const LoginPage = (props: IProps): JSX.Element | null => {
     };
 
     /**
-     * The signOn component
+     * The sign-on component
+     * @type {JSX.Element}
      */
     const signOn = (
         <Container className="neu-main">
@@ -165,7 +166,8 @@ const LoginPage = (props: IProps): JSX.Element | null => {
     );
 
     /**
-     * The logOff component
+     * The Log-Off component
+     * @type {JSX.Element}
      */
     const logOff = (
         <Container className="neu-main">
