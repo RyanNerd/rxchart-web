@@ -2,12 +2,14 @@ import TooltipContainer from 'components/Pages/Containters/TooltipContainer';
 import ManageOtcGrid from 'components/Pages/Grids/ManageOtcGrid';
 import DeleteMedicineModal from 'components/Pages/Modals/DeleteMedicineModal';
 import MedicineEdit from 'components/Pages/Modals/MedicineEdit';
+import {DeleteResponse} from 'providers/MedicineProvider';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import {DrugLogRecord, MedicineRecord, newMedicineRecord} from 'types/RecordTypes';
+import {asyncWrapper} from 'utility/common';
 
 interface IProps {
     activeManagementKey: string;
@@ -18,6 +20,7 @@ interface IProps {
  * @param {IProps} props The props for the component
  */
 const ManageOtc = (props: IProps): JSX.Element | null => {
+    const [, setErrorDetails] = useGlobal('__errorDetails');
     const [allowDelete, setAllowDelete] = useState(false);
     const [medicineInfo, setMedicineInfo] = useState<MedicineRecord | null>(null);
     const [providers] = useGlobal('providers');
@@ -57,13 +60,28 @@ const ManageOtc = (props: IProps): JSX.Element | null => {
     if (activeTabKey !== 'otc') return null;
 
     /**
+     * Rehydrate the global otcList
+     * @returns {Promise<void>}
+     */
+    const refreshOtcList = async () => {
+        try {
+            await setOtcList(await medicineProvider.loadOtcList());
+        } catch (requestError: unknown) {
+            await setErrorDetails(requestError);
+        }
+    };
+
+    /**
      * Given a MedicineRecord object Update or Insert the record and rehydrate the global otcList
      * @param {MedicineRecord} otcMed The medicine record object
      */
     const saveOtcMedicine = async (otcMed: MedicineRecord) => {
-        const m = await medicineProvider.update(otcMed);
-        await setOtcList(await medicineProvider.loadOtcList());
-        return m;
+        const [saveOtcMedicineError, medicineRecord] = (await asyncWrapper(medicineProvider.update(otcMed))) as [
+            unknown,
+            MedicineRecord
+        ];
+        await (saveOtcMedicineError ? setErrorDetails(saveOtcMedicineError) : refreshOtcList());
+        return medicineRecord;
     };
 
     /**
@@ -71,8 +89,15 @@ const ManageOtc = (props: IProps): JSX.Element | null => {
      * @param {number} medicineId The PK of the Medicine record to delete, or a zero for a NOP
      */
     const deleteOtcMedicine = async (medicineId: number) => {
-        if (medicineId > 0 && (await medicineProvider.delete(medicineId)))
-            await setOtcList(await medicineProvider.loadOtcList());
+        if (medicineId > 0) {
+            const [deleteOtcMedicineError, deleteOtcMedicine] = (await asyncWrapper(
+                medicineProvider.delete(medicineId)
+            )) as [unknown, Promise<DeleteResponse>];
+            const deleteResponse = await deleteOtcMedicine;
+            if (!deleteResponse.success)
+                await setErrorDetails(`Unable to delete OTC medicine record. Id: ${medicineId}`);
+            else await (deleteOtcMedicineError ? setErrorDetails(deleteOtcMedicineError) : refreshOtcList());
+        }
     };
 
     /**
@@ -81,7 +106,11 @@ const ManageOtc = (props: IProps): JSX.Element | null => {
      * @returns {Promise<DrugLogRecord[]>} An array of drug log records
      */
     const getDrugLogForMedication = async (medicineId: number): Promise<DrugLogRecord[]> => {
-        return await medHistoryProvider.loadDrugLogForMedicine(medicineId);
+        const [drugLogsForMedicationError, drugLogsForMedication] = (await asyncWrapper(
+            medHistoryProvider.loadDrugLogForMedicine(medicineId)
+        )) as [unknown, Promise<DrugLogRecord[]>];
+        if (drugLogsForMedicationError) await setErrorDetails(drugLogsForMedicationError);
+        return drugLogsForMedication;
     };
 
     /**
@@ -159,10 +188,10 @@ const ManageOtc = (props: IProps): JSX.Element | null => {
 
             <DeleteMedicineModal
                 medicineRecord={otcList.find((m) => m.Id === showDeleteMedicine) as MedicineRecord}
-                onSelect={(medicineId) => {
-                    deleteOtcMedicine(medicineId)
-                        .then(() => setShowDeleteMedicine(0))
-                        .then(() => setSearchText(''));
+                onSelect={async (medicineId) => {
+                    await deleteOtcMedicine(medicineId);
+                    await setShowDeleteMedicine(0);
+                    await setSearchText('');
                 }}
                 show={showDeleteMedicine !== 0}
             />
