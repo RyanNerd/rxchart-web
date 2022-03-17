@@ -17,7 +17,7 @@ const Main = (props: IProps) => {
         // Is __errorDetails populated and is it NOT an instance of RxError?
         if (global.__errorDetails && !(global.__errorDetails instanceof RxError)) {
             // This is new error we are going to wrap in a custom RxError object
-            const newError = new RxError('An error occurred while trying to access the API service');
+            const newError = new RxError('An error occurred. Check the console log for more details.');
             newError.setErrorDetails(global.__errorDetails);
             return {
                 __errorDetails: newError,

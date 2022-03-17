@@ -7,6 +7,7 @@ import Tabs from 'react-bootstrap/Tabs';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import React, {useEffect, useGlobal, useMemo} from 'reactn';
 import {IPreferences} from 'reactn/default';
+import {RxError} from 'utility/RxError';
 import DiagnosticPage from './DiagnosticPage';
 import LoginPage from './LoginPage';
 
@@ -119,7 +120,10 @@ const LandingPage = (props: IProps) => {
 
             <Tab disabled={!errorDetails} eventKey="error" title={<Title activeKey="error">Diagnostics</Title>}>
                 <Tab.Content>
-                    <DiagnosticPage error={errorDetails} dismissErrorAlert={() => window.location.reload()} />
+                    <DiagnosticPage
+                        error={errorDetails as RxError}
+                        dismissErrorAlert={() => window.location.reload()}
+                    />
                 </Tab.Content>
             </Tab>
         </Tabs>
