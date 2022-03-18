@@ -4,7 +4,7 @@ import RxHistory from 'components/Pages/RxTabs/RxHistory';
 import RxMedicine from 'components/Pages/RxTabs/RxMedicine';
 import RxOtc from 'components/Pages/RxTabs/RxOtc';
 import RxPillbox from 'components/Pages/RxTabs/RxPillbox';
-import RxPrint from 'components/Pages/RxTabs/RxPrint';
+import RxCheckout from 'components/Pages/RxTabs/RxCheckout';
 import Badge from 'react-bootstrap/Badge';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
@@ -265,7 +265,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                         </ToggleButton>
                     }
                 >
-                    <RxPrint activeClient={activeClient} checkoutList={checkoutList} />
+                    <RxCheckout activeClient={activeClient} checkoutList={checkoutList} />
                 </Tab>
 
                 <Tab
