@@ -25,7 +25,12 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
 
     const [clientInfo, setClientInfo] = useState<ClientRecord>(props.clientInfo);
     useEffect(() => {
-        if (props.clientInfo) setClientInfo({...props.clientInfo});
+        if (props.clientInfo) {
+            const info = {...props.clientInfo};
+            if (info.Notes === null) info.Notes = '';
+            if (info.Nickname === null) info.Nickname = '';
+            setClientInfo(info);
+        }
     }, [props.clientInfo]);
 
     const [show, setShow] = useState(props.show);
@@ -88,7 +93,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
     const checkForDuplicates = async () => {
         const searchCriteria = {
             where: [
-                ['FirstName', '=', clientInfo.firstName],
+                ['FirstName', '=', clientInfo.FirstName],
                 ['LastName', '=', clientInfo.LastName],
                 ['DOB_YEAR', '=', clientInfo.DOB_YEAR],
                 ['DOB_MONTH', '=', clientInfo.DOB_MONTH],
@@ -124,7 +129,11 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                 autoComplete="off"
                                 className={clientInfo.FirstName !== '' ? '' : 'is-invalid'}
                                 name="FirstName"
-                                onBlur={() => checkForDuplicates()}
+                                onBlur={() => {
+                                    if (props.clientInfo.FirstName !== clientInfo.FirstName) {
+                                        checkForDuplicates();
+                                    }
+                                }}
                                 onChange={(changeEvent) => handleOnChange(changeEvent)}
                                 ref={focusReference}
                                 required
@@ -144,7 +153,11 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                 autoComplete="off"
                                 className={clientInfo.LastName !== '' ? '' : 'is-invalid'}
                                 name="LastName"
-                                onBlur={() => checkForDuplicates()}
+                                onBlur={() => {
+                                    if (props.clientInfo.LastName !== clientInfo.LastName) {
+                                        checkForDuplicates();
+                                    }
+                                }}
                                 onChange={(changeEvent) => handleOnChange(changeEvent)}
                                 required
                                 type="text"
@@ -180,7 +193,11 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                 autoComplete="off"
                                 className={isMonthValid(clientInfo.DOB_MONTH.toString()) ? '' : 'is-invalid'}
                                 name="DOB_MONTH"
-                                onBlur={() => checkForDuplicates()}
+                                onBlur={() => {
+                                    if (props.clientInfo.DOB_MONTH !== clientInfo.DOB_MONTH) {
+                                        checkForDuplicates();
+                                    }
+                                }}
                                 onChange={(changeEvent) => handleOnChange(changeEvent)}
                                 required
                                 type="text"
@@ -201,7 +218,11 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                         : 'is-invalid'
                                 }
                                 name="DOB_DAY"
-                                onBlur={() => checkForDuplicates()}
+                                onBlur={() => {
+                                    if (props.clientInfo.DOB_DAY !== clientInfo.DOB_DAY) {
+                                        checkForDuplicates();
+                                    }
+                                }}
                                 onChange={(changeEvent) => handleOnChange(changeEvent)}
                                 required
                                 type="text"
@@ -217,7 +238,11 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                 autoComplete="off"
                                 className={isYearValid(clientInfo.DOB_YEAR.toString(), true) ? '' : 'is-invalid'}
                                 name="DOB_YEAR"
-                                onBlur={() => checkForDuplicates()}
+                                onBlur={() => {
+                                    if (props.clientInfo.DOB_YEAR !== clientInfo.DOB_YEAR) {
+                                        checkForDuplicates();
+                                    }
+                                }}
                                 onChange={(changeEvent) => handleOnChange(changeEvent)}
                                 required
                                 type="text"
