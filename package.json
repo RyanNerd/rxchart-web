@@ -5,14 +5,14 @@
   "dependencies": {
     "bootstrap": "^4.6.1",
     "bwip-js": "^3.0.4",
-    "frak": "^3.1.4",
+    "frak": "^3.1.5",
     "react": "^17.0.2",
     "react-bootstrap": "^1.6.4",
     "react-dom": "^17.0.2",
     "react-new-improved-window": "^0.2.8",
-    "react-scripts": "^4.0.3",
+    "react-scripts": "^5.0.0",
     "reactn": "^2.2.7",
-    "typescript": "^4.5.2"
+    "typescript": "^4.6.2"
   },
   "scripts": {
     "start": "react-scripts start",
