@@ -214,16 +214,17 @@ const ManageRx = (props: IProps): JSX.Element | null => {
                     </Button>
                 </TooltipContainer>
 
-                <Button
-                    className="ml-3"
-                    disabled={checkoutList.length === 0 || showCheckoutPrint}
-                    onClick={() => setShowCheckoutPrint(true)}
-                    size="sm"
-                    variant="info"
-                >
-                    Print Medicine Checkout{' '}
-                    {checkoutList.length > 0 && <Badge variant="secondary">{checkoutList.length}</Badge>}
-                </Button>
+                {checkoutList.length > 0 && (
+                    <Button
+                        className="ml-3"
+                        disabled={showCheckoutPrint}
+                        onClick={() => setShowCheckoutPrint(true)}
+                        size="sm"
+                        variant="outline-success"
+                    >
+                        Show Checkout <Badge variant="secondary">{checkoutList.length}</Badge>
+                    </Button>
+                )}
 
                 <TooltipContainer
                     delay={{show: 120, hide: 200}}
