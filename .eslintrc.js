@@ -309,7 +309,7 @@ module.exports = {
         'require-await': 'error',
         'react-hooks/exhaustive-deps': 'error',
         semi: ['error', 'always'],
-        'space-before-function-paren': 'error',
+        'space-before-function-paren': 'off',
         'space-in-parens': ['off', 'never'],
         'spaced-comment': [
             'error',

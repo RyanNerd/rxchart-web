@@ -29,10 +29,14 @@ const Files = (props: IProps) => {
      * @returns {Promise<void>}
      */
     const refreshFileList = async () => {
-        await setActiveClient({
-            ...(activeClient as TClient),
-            fileList: await fileProvider.load(activeClient?.clientInfo.Id as number)
-        });
+        try {
+            await setActiveClient({
+                ...(activeClient as TClient),
+                fileList: await fileProvider.load(activeClient?.clientInfo.Id as number)
+            });
+        } catch (requestError) {
+            setErrorDetails(requestError);
+        }
     };
 
     /**
@@ -91,7 +95,13 @@ const Files = (props: IProps) => {
                     <FileGrid
                         fileList={activeClient.fileList}
                         onDelete={(fileRecord) => setShowDeleteFile(fileRecord)}
-                        onDownload={(fileRecord) => fileProvider.download(fileRecord)}
+                        onDownload={async (fileRecord) => {
+                            try {
+                                await fileProvider.download(fileRecord);
+                            } catch (requestError) {
+                                await setErrorDetails(requestError);
+                            }
+                        }}
                         onEdit={(fileRecord) => setShowEditFile(fileRecord)}
                     />
                 </Form.Group>
@@ -103,8 +113,12 @@ const Files = (props: IProps) => {
                 onClose={async (f) => {
                     setShowEditFile(null);
                     if (f) {
-                        await fileProvider.update(f);
-                        await refreshFileList();
+                        try {
+                            await fileProvider.update(f);
+                            await refreshFileList();
+                        } catch (requestError) {
+                            await setErrorDetails(requestError);
+                        }
                     }
                 }}
                 onHide={() => setShowEditFile(null)}
@@ -115,10 +129,14 @@ const Files = (props: IProps) => {
                 onSelect={async (fileRecord) => {
                     setShowDeleteFile(null);
                     if (fileRecord?.Id) {
-                        const success = await fileProvider.delete(fileRecord.Id, true);
-                        await (success
-                            ? refreshFileList()
-                            : setErrorDetails(new Error('Unable to delete file. Id: ' + fileRecord.Id)));
+                        try {
+                            const success = await fileProvider.delete(fileRecord.Id, true);
+                            await (success
+                                ? refreshFileList()
+                                : setErrorDetails(new Error('Unable to delete file. Id: ' + fileRecord.Id)));
+                        } catch (requestError) {
+                            await setErrorDetails(requestError);
+                        }
                     }
                 }}
                 show={showDeleteFile !== null}

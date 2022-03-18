@@ -5,6 +5,7 @@ import ClientRoster from 'components/Pages/Modals/ClientRoster';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import React, {useEffect, useGlobal, useState} from 'reactn';
 import {ClientRecord} from 'types/RecordTypes';
+import {asyncWrapper} from 'utility/common';
 
 /**
  * Dropdown Buttons for the activeClient
@@ -12,6 +13,7 @@ import {ClientRecord} from 'types/RecordTypes';
 const ClientHeader = () => {
     const [, setActiveTabKey] = useGlobal('activeTabKey');
     const [, setClientList] = useGlobal('clientList');
+    const [, setErrorDetails] = useGlobal('__errorDetails');
     const [activeClient, setActiveClient] = useGlobal('activeClient');
     const [copyText, setCopyText] = useState('');
     const [hmisName, setHmisName] = useState('');
@@ -58,7 +60,13 @@ const ClientHeader = () => {
      */
     const saveClient = async (client: ClientRecord) => {
         if (activeClient) {
-            await setActiveClient({...activeClient, clientInfo: await clientProvider.update(client)});
+            const [clientRecordError, clientRecord] = (await asyncWrapper(clientProvider.update(client))) as [
+                unknown,
+                Promise<ClientRecord>
+            ];
+            await (clientRecordError
+                ? setErrorDetails(clientRecordError)
+                : setActiveClient({...activeClient, clientInfo: await clientRecord}));
             await setClientList(await clientProvider.loadList());
         }
     };

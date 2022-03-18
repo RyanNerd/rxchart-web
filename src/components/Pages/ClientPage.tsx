@@ -7,7 +7,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
 import {ClientRecord, newResidentRecord} from 'types/RecordTypes';
-import {clientFullName} from 'utility/common';
+import {asyncWrapper, clientFullName} from 'utility/common';
 import ClientRoster from './Modals/ClientRoster';
 import Confirm from './Modals/Confirm';
 
@@ -73,8 +73,8 @@ const ClientPage = (props: IProps): JSX.Element | null => {
      * @param {number} clientId Client PK
      */
     const refreshClient = async (clientId: number): Promise<void> => {
-        const clientLoad = await clientProvider.load(clientId);
         try {
+            const clientLoad = await clientProvider.load(clientId);
             await setActiveClient({
                 ...activeClient,
                 clientInfo: clientLoad.clientInfo,
@@ -105,13 +105,31 @@ const ClientPage = (props: IProps): JSX.Element | null => {
     };
 
     /**
+     * Rehydrate the global clientList
+     */
+    const refreshClientList = async () => {
+        const [clientListError, clientList] = (await asyncWrapper(clientProvider.loadList())) as [
+            unknown,
+            Promise<ClientRecord[]>
+        ];
+        await (clientListError ? setErrorDetails(clientListError) : setClientList(await clientList));
+    };
+
+    /**
      * Given the ResidentRecord update/insert the record, rehydrate the clientList global
      * @param {ClientRecord} client The client record object
      */
     const saveClient = async (client: ClientRecord) => {
-        const r = await clientProvider.update(client);
-        await setClientList(await clientProvider.loadList());
-        return r;
+        const [clientRecordError, r] = (await asyncWrapper(clientProvider.update(client))) as [
+            unknown,
+            Promise<ClientRecord>
+        ];
+        if (clientRecordError) {
+            await setErrorDetails(clientRecordError);
+        } else {
+            await refreshClientList();
+            return r;
+        }
     };
 
     /**
@@ -119,10 +137,14 @@ const ClientPage = (props: IProps): JSX.Element | null => {
      * @param {number} clientId The PK of the Resident table
      */
     const deleteClient = async (clientId: number) => {
-        if (await clientProvider.delete(clientId)) {
-            await setClientList(await clientProvider.loadList());
-            await setActiveClient(null);
-            setSearchText('');
+        try {
+            if (await clientProvider.delete(clientId)) {
+                await refreshClientList();
+                await setActiveClient(null);
+                setSearchText('');
+            }
+        } catch (requestError) {
+            await setErrorDetails(requestError);
         }
     };
 
