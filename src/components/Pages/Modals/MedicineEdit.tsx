@@ -33,7 +33,16 @@ const MedicineEdit = (props: IProps) => {
     useEffect(() => {
         if (props.drugInfo) {
             const info = {...props.drugInfo};
-            for (const field of ['Directions', 'Notes', 'FillDateMonth', 'FillDateDay', 'FillDateYear']) {
+            for (const field of [
+                'Directions',
+                'Notes',
+                'OtherNames',
+                'Strength',
+                'Barcode',
+                'FillDateMonth',
+                'FillDateDay',
+                'FillDateYear'
+            ]) {
                 if (info[field] === null) info[field] = '';
             }
             setDrugInfo(info);
