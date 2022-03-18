@@ -126,7 +126,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                             checked={activeRxTab === RX_TAB_KEY.Medicine}
                             className="d-print-none"
                             id="med-list-group-med-radio-btn"
-                            key="med-list-group-med-btn"
+                            key="med-list-group-med-radio-btn"
                             name="radio-med-list-group"
                             onChange={() => setActiveRxTab(RX_TAB_KEY.Medicine)}
                             size={preferences.rxTabSize}
@@ -157,7 +157,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                             checked={activeRxTab === RX_TAB_KEY.OTC}
                             className="ml-2 d-print-none"
                             id="med-list-group-otc-radio-btn"
-                            key="med-list-group-otc-btn"
+                            key="med-list-group-otc-radio-btn"
                             name="radio-med-list-group"
                             onChange={() => setActiveRxTab(RX_TAB_KEY.OTC)}
                             size={preferences.rxTabSize}
@@ -186,7 +186,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                             className="ml-2 d-print-none"
                             disabled={drugLogList.length === 0}
                             id="med-list-group-history-radio-btn"
-                            key="med-list-group-history-btn"
+                            key="med-list-group-history-radio-btn"
                             onChange={() => setActiveRxTab(RX_TAB_KEY.History)}
                             size={preferences.rxTabSize}
                             type="radio"
@@ -217,7 +217,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                             className="ml-2 d-print-none"
                             disabled={medicineList.length < 3}
                             id="med-list-group-pill-radio-btn"
-                            key="med-list-group-pill-btn"
+                            key="med-list-group-pill-radio-btn"
                             name="radio-med-list-group"
                             onChange={() => setActiveRxTab(RX_TAB_KEY.Pillbox)}
                             size={preferences.rxTabSize}
@@ -248,7 +248,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                             className="ml-2 d-print-none"
                             disabled={checkoutList.length === 0}
                             id="med-list-group-print-radio-btn"
-                            key="med-list-group-print-btn"
+                            key="med-list-group-print-radio-btn"
                             name="radio-print-list-group"
                             onChange={() => setActiveRxTab(RX_TAB_KEY.Print)}
                             size={preferences.rxTabSize}
@@ -274,7 +274,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                             checked={activeRxTab === RX_TAB_KEY.Manage}
                             className="ml-2 d-print-none"
                             id="med-list-group-manage-radio-btn"
-                            key="med-list-group-manage-btn"
+                            key="med-list-group-manage-radio-btn"
                             name="radio-med-list-group"
                             onChange={() => setActiveRxTab(RX_TAB_KEY.Manage)}
                             size={preferences.rxTabSize}
@@ -302,7 +302,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                             checked={activeRxTab === RX_TAB_KEY.Document}
                             className="ml-2 d-print-none"
                             id="med-list-group-document-radio-btn"
-                            key="med-list-group-document-btn"
+                            key="med-list-group-document-radio-btn"
                             name="radio-med-list-group"
                             onChange={() => setActiveRxTab(RX_TAB_KEY.Document)}
                             size={preferences.rxTabSize}
