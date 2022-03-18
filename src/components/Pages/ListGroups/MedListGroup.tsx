@@ -22,8 +22,8 @@ interface IProps {
     itemList: IDropdownItem[];
     lastTaken: number | null;
     logDrug: (n: number) => void;
-    onPrintCheckout: () => void;
-    printCheckout: number;
+    onCheckout: () => void;
+    checkoutCount: number;
 }
 
 /**
@@ -43,8 +43,8 @@ const MedListGroup = (props: IProps): JSX.Element => {
         itemList,
         lastTaken = null,
         logDrug,
-        onPrintCheckout,
-        printCheckout
+        onCheckout,
+        checkoutCount
     } = props;
     const barCode = activeMed?.Barcode && activeMed.Barcode.length > 0 ? activeMed.Barcode : null;
     const notes = activeMed?.Notes && activeMed.Notes.length > 0 ? activeMed.Notes : null;
@@ -102,9 +102,9 @@ const MedListGroup = (props: IProps): JSX.Element => {
                     Edit <b>{activeMed?.Drug}</b>
                 </Button>
 
-                {printCheckout > 0 && (
-                    <Button className="ml-3" size="sm" variant="outline-success" onClick={() => onPrintCheckout()}>
-                        Medicine Checkout <Badge variant="secondary">{printCheckout}</Badge>
+                {checkoutCount > 0 && (
+                    <Button className="ml-3" size="sm" variant="outline-success" onClick={() => onCheckout()}>
+                        Medicine Checkout <Badge variant="secondary">{checkoutCount}</Badge>
                     </Button>
                 )}
             </ListGroup.Item>

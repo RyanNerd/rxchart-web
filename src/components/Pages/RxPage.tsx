@@ -139,8 +139,8 @@ const RxPage = (props: IProps): JSX.Element | null => {
                     }
                 >
                     <RxMedicine
-                        onPrintCheckout={() => setActiveRxTab(RX_TAB_KEY.Checkout)}
-                        printCheckout={checkoutList.length}
+                        onCheckout={() => setActiveRxTab(RX_TAB_KEY.Checkout)}
+                        checkoutCount={checkoutList.length}
                         medicineProvider={medicineProvider}
                         medHistoryProvider={medHistoryProvider}
                         pillboxSelected={(id) => {
