@@ -1,3 +1,4 @@
+import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
 import React, {useEffect} from 'reactn';
@@ -21,6 +22,8 @@ interface IProps {
     itemList: IDropdownItem[];
     lastTaken: number | null;
     logDrug: (n: number) => void;
+    onPrintCheckout: () => void;
+    printCheckout: number;
 }
 
 /**
@@ -39,7 +42,9 @@ const MedListGroup = (props: IProps): JSX.Element => {
         itemChanged,
         itemList,
         lastTaken = null,
-        logDrug
+        logDrug,
+        onPrintCheckout,
+        printCheckout
     } = props;
     const barCode = activeMed?.Barcode && activeMed.Barcode.length > 0 ? activeMed.Barcode : null;
     const notes = activeMed?.Notes && activeMed.Notes.length > 0 ? activeMed.Notes : null;
@@ -96,6 +101,12 @@ const MedListGroup = (props: IProps): JSX.Element => {
                 >
                     Edit <b>{activeMed?.Drug}</b>
                 </Button>
+
+                {printCheckout > 0 && (
+                    <Button className="ml-3" size="sm" variant="outline-success" onClick={() => onPrintCheckout()}>
+                        Medicine Checkout <Badge variant="secondary">{printCheckout}</Badge>
+                    </Button>
+                )}
             </ListGroup.Item>
 
             {activeMed && activeMed.Id && (

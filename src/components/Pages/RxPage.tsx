@@ -16,13 +16,13 @@ import {getCheckoutList} from 'utility/common';
 
 // Active Rx tab states
 export enum RX_TAB_KEY {
+    Checkout = 'print',
     Document = 'document',
     History = 'history',
     Manage = 'manage',
     Medicine = 'med',
     OTC = 'otc',
-    Pillbox = 'pillbox',
-    Print = 'print'
+    Pillbox = 'pillbox'
 }
 
 interface IProps {
@@ -75,10 +75,10 @@ const RxPage = (props: IProps): JSX.Element | null => {
                 }
             }
 
-            const printElement = document.getElementById('medicine-page-tabs-tab-' + RX_TAB_KEY.Print);
+            const printElement = document.getElementById('medicine-page-tabs-tab-' + RX_TAB_KEY.Checkout);
             if (printElement) {
                 printElement.style.display = checkoutList.length === 0 ? 'none' : 'block';
-                if (activeRxTab === RX_TAB_KEY.Print && checkoutList.length === 0) {
+                if (activeRxTab === RX_TAB_KEY.Checkout && checkoutList.length === 0) {
                     setActiveRxTab(RX_TAB_KEY.Medicine);
                 }
             }
@@ -139,6 +139,8 @@ const RxPage = (props: IProps): JSX.Element | null => {
                     }
                 >
                     <RxMedicine
+                        onPrintCheckout={() => setActiveRxTab(RX_TAB_KEY.Checkout)}
+                        printCheckout={checkoutList.length}
                         medicineProvider={medicineProvider}
                         medHistoryProvider={medHistoryProvider}
                         pillboxSelected={(id) => {
@@ -177,37 +179,6 @@ const RxPage = (props: IProps): JSX.Element | null => {
                 </Tab>
 
                 <Tab
-                    eventKey={RX_TAB_KEY.History}
-                    style={{marginLeft: '-40px'}}
-                    tabClassName="rx-history-tab d-print-flex"
-                    title={
-                        <ToggleButton
-                            checked={activeRxTab === RX_TAB_KEY.History}
-                            className="ml-2 d-print-none"
-                            disabled={drugLogList.length === 0}
-                            id="med-list-group-history-radio-btn"
-                            key="med-list-group-history-radio-btn"
-                            onChange={() => setActiveRxTab(RX_TAB_KEY.History)}
-                            size={preferences.rxTabSize}
-                            type="radio"
-                            value={RX_TAB_KEY.History}
-                            variant="outline-success"
-                        >
-                            <span className="ml-2">History</span>
-                        </ToggleButton>
-                    }
-                >
-                    <RxHistory
-                        medHistoryProvider={medHistoryProvider}
-                        onPillboxSelected={(id) => {
-                            setActivePillbox(pillboxList.find((p) => p.Id === id) || null);
-                            setActiveRxTab(RX_TAB_KEY.Pillbox);
-                        }}
-                        otcList={otcList}
-                    />
-                </Tab>
-
-                <Tab
                     eventKey={RX_TAB_KEY.Pillbox}
                     style={{marginLeft: '-40px'}}
                     tabClassName="rx-pillbox-tab"
@@ -239,25 +210,56 @@ const RxPage = (props: IProps): JSX.Element | null => {
                 </Tab>
 
                 <Tab
-                    tabClassName="rx-print-tab"
+                    eventKey={RX_TAB_KEY.History}
                     style={{marginLeft: '-40px'}}
-                    eventKey={RX_TAB_KEY.Print}
+                    tabClassName="rx-history-tab d-print-flex"
                     title={
                         <ToggleButton
-                            checked={activeRxTab === RX_TAB_KEY.Print}
+                            checked={activeRxTab === RX_TAB_KEY.History}
+                            className="ml-2 d-print-none"
+                            disabled={drugLogList.length === 0}
+                            id="med-list-group-history-radio-btn"
+                            key="med-list-group-history-radio-btn"
+                            onChange={() => setActiveRxTab(RX_TAB_KEY.History)}
+                            size={preferences.rxTabSize}
+                            type="radio"
+                            value={RX_TAB_KEY.History}
+                            variant="outline-success"
+                        >
+                            <span className="ml-2">History</span>
+                        </ToggleButton>
+                    }
+                >
+                    <RxHistory
+                        medHistoryProvider={medHistoryProvider}
+                        onPillboxSelected={(id) => {
+                            setActivePillbox(pillboxList.find((p) => p.Id === id) || null);
+                            setActiveRxTab(RX_TAB_KEY.Pillbox);
+                        }}
+                        otcList={otcList}
+                    />
+                </Tab>
+
+                <Tab
+                    tabClassName="rx-print-tab"
+                    style={{marginLeft: '-40px'}}
+                    eventKey={RX_TAB_KEY.Checkout}
+                    title={
+                        <ToggleButton
+                            checked={activeRxTab === RX_TAB_KEY.Checkout}
                             className="ml-2 d-print-none"
                             disabled={checkoutList.length === 0}
                             id="med-list-group-print-radio-btn"
                             key="med-list-group-print-radio-btn"
                             name="radio-print-list-group"
-                            onChange={() => setActiveRxTab(RX_TAB_KEY.Print)}
+                            onChange={() => setActiveRxTab(RX_TAB_KEY.Checkout)}
                             size={preferences.rxTabSize}
                             type="radio"
-                            value={RX_TAB_KEY.Print}
+                            value={RX_TAB_KEY.Checkout}
                             variant="outline-success"
                         >
                             <span className="ml-2">
-                                Print Med Checkout{' '}
+                                Medicine Checkout{' '}
                                 {checkoutList.length > 0 && <Badge variant="secondary">{checkoutList.length}</Badge>}
                             </span>
                         </ToggleButton>
@@ -265,6 +267,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                 >
                     <RxPrint activeClient={activeClient} checkoutList={checkoutList} />
                 </Tab>
+
                 <Tab
                     eventKey={RX_TAB_KEY.Manage}
                     style={{marginLeft: '-40px'}}

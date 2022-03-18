@@ -20,7 +20,9 @@ import {asyncWrapper, calculateLastTaken, clientFullName, getCheckoutList, getDr
 interface IProps {
     medHistoryProvider: IMedHistoryProvider;
     medicineProvider: IMedicineProvider;
+    onPrintCheckout: () => void;
     pillboxSelected: (id: number) => void;
+    printCheckout: number;
 }
 
 /**
@@ -39,7 +41,7 @@ const RxMedicine = (props: IProps) => {
     const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
     const clientId = activeClient?.clientInfo.Id;
     const {drugLogList, pillboxList, pillboxItemList, medicineList} = activeClient as TClient;
-    const {medicineProvider, medHistoryProvider, pillboxSelected} = props;
+    const {medicineProvider, medHistoryProvider, pillboxSelected, onPrintCheckout, printCheckout} = props;
 
     // Build the dropdown items for the Medicine dropdown
     useEffect(() => {
@@ -196,6 +198,8 @@ const RxMedicine = (props: IProps) => {
                         itemList={medItemList}
                         lastTaken={activeMed?.Id ? calculateLastTaken(activeMed.Id, drugLogList) : null}
                         logDrug={(n) => handleLogDrugAmount(n)}
+                        printCheckout={printCheckout}
+                        onPrintCheckout={() => onPrintCheckout()}
                     />
                 </Col>
 
