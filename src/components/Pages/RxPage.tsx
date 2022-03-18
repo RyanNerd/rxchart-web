@@ -240,33 +240,34 @@ const RxPage = (props: IProps): JSX.Element | null => {
                     />
                 </Tab>
 
-                <Tab
-                    tabClassName="rx-print-tab"
-                    style={{marginLeft: '-40px'}}
-                    eventKey={RX_TAB_KEY.Checkout}
-                    title={
-                        <ToggleButton
-                            checked={activeRxTab === RX_TAB_KEY.Checkout}
-                            className="ml-2 d-print-none"
-                            disabled={checkoutList.length === 0}
-                            id="med-list-group-print-radio-btn"
-                            key="med-list-group-print-radio-btn"
-                            name="radio-print-list-group"
-                            onChange={() => setActiveRxTab(RX_TAB_KEY.Checkout)}
-                            size={preferences.rxTabSize}
-                            type="radio"
-                            value={RX_TAB_KEY.Checkout}
-                            variant="outline-success"
-                        >
-                            <span className="ml-2">
-                                Medicine Checkout{' '}
-                                {checkoutList.length > 0 && <Badge variant="secondary">{checkoutList.length}</Badge>}
-                            </span>
-                        </ToggleButton>
-                    }
-                >
-                    <RxCheckout activeClient={activeClient} checkoutList={checkoutList} />
-                </Tab>
+                {checkoutList.length > 0 && (
+                    <Tab
+                        tabClassName="rx-print-tab"
+                        style={{marginLeft: '-40px'}}
+                        eventKey={RX_TAB_KEY.Checkout}
+                        title={
+                            <ToggleButton
+                                checked={activeRxTab === RX_TAB_KEY.Checkout}
+                                className="ml-2 d-print-none"
+                                disabled={checkoutList.length === 0}
+                                id="med-list-group-print-radio-btn"
+                                key="med-list-group-print-radio-btn"
+                                name="radio-print-list-group"
+                                onChange={() => setActiveRxTab(RX_TAB_KEY.Checkout)}
+                                size={preferences.rxTabSize}
+                                type="radio"
+                                value={RX_TAB_KEY.Checkout}
+                                variant="outline-success"
+                            >
+                                <span className="ml-2">
+                                    Checkout <Badge variant="secondary">{checkoutList.length}</Badge>
+                                </span>
+                            </ToggleButton>
+                        }
+                    >
+                        <RxCheckout activeClient={activeClient} checkoutList={checkoutList} />
+                    </Tab>
+                )}
 
                 <Tab
                     eventKey={RX_TAB_KEY.Manage}
