@@ -20,6 +20,7 @@ const LogButtons = (props: IProps) => {
                 disabled={disable}
                 onClick={() => onLogAmount(1)}
                 size="sm"
+                style={{cursor: disable ? 'not-allowed' : undefined}}
                 variant={`outline-${lastTakenVariant}`}
             >
                 {buttonTitle} 1
@@ -30,6 +31,7 @@ const LogButtons = (props: IProps) => {
                 disabled={disable}
                 onClick={() => onLogAmount(2)}
                 size="sm"
+                style={{cursor: disable ? 'not-allowed' : undefined}}
                 variant={`outline-${lastTakenVariant}`}
             >
                 {buttonTitle} 2
@@ -40,12 +42,19 @@ const LogButtons = (props: IProps) => {
                 disabled={disable}
                 onClick={() => onLogAmount(3)}
                 size="sm"
+                style={{cursor: disable ? 'not-allowed' : undefined}}
                 variant={`outline-${lastTakenVariant}`}
             >
                 {buttonTitle} 3
             </Button>
 
-            <Button disabled={disable} onClick={() => onLogAmount(4)} size="sm" variant={`outline-${lastTakenVariant}`}>
+            <Button
+                disabled={disable}
+                onClick={() => onLogAmount(4)}
+                size="sm"
+                style={{cursor: disable ? 'not-allowed' : undefined}}
+                variant={`outline-${lastTakenVariant}`}
+            >
                 {buttonTitle} 4
             </Button>
         </>
