@@ -39,6 +39,7 @@ module.exports = {
         'eslint-plugin-jsdoc',
         'eslint-plugin-prefer-arrow',
         'eslint-plugin-react',
+        'react',
         'react-hooks',
         '@typescript-eslint',
         'unicorn'
