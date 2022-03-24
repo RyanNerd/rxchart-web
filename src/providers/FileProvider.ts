@@ -89,8 +89,7 @@ const FileProvider = (baseUrl: string): IFileProvider => {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'multipart/form-data'
+                    Accept: 'application/json'
                 },
                 mode: 'cors'
             });
