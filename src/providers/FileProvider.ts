@@ -90,7 +90,8 @@ const FileProvider = (baseUrl: string): IFileProvider => {
                 body: formData,
                 headers: {
                     Accept: 'application/json'
-                }
+                },
+                mode: 'cors'
             });
 
             const responseJSON = (await response.json()) as UploadResponse;
