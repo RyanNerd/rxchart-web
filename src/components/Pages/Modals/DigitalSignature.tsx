@@ -14,16 +14,14 @@ const DigitalSignature = (props: IProps) => {
     const pinProvider = props.pinProvider;
     const onClose = props.onClose;
 
+    const [interval, setInterval] = useState<null | number>(null);
     const [pinData, setPinData] = useState(props.pinData);
-    const [interval, setInterval] = useState<null | number>(5000);
-    useEffect(() => {
-        setPinData(props.pinData);
-    }, [props.pinData]);
-
     const [show, setShow] = useState(pinData !== null);
     useEffect(() => {
-        setShow(pinData !== null);
-    }, [pinData]);
+        setPinData(props.pinData);
+        setShow(props.pinData !== null);
+        setInterval(props.pinData !== null ? 5000 : null);
+    }, [props.pinData]);
 
     /**
      * Keep polling the API until we get a signature from the client.
