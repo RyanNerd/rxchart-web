@@ -62,3 +62,8 @@ li.rx-icon::marker {
     content: "💊 ";
     color: chartreuse;
 }
+
+li.save-icon::marker {
+    content: "💾 ";
+    color: chartreuse;
+}

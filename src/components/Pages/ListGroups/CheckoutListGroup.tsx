@@ -1,5 +1,6 @@
 import CheckoutGrid from 'components/Pages/Grids/CheckoutGrid';
 import DigitalSignature from 'components/Pages/Modals/DigitalSignature';
+import SignatureToast from 'components/Pages/Toasts/SignatureToast';
 import {GenerateResponseData, PinReadResponseData} from 'providers/PinProvider';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
@@ -29,6 +30,7 @@ const CheckoutListGroup = (props: IProps) => {
     const fileProvider = providers.fileProvider;
     const [pinData, setPinData] = useState<null | GenerateResponseData>(null);
     const [signIn] = useGlobal('signIn');
+    const [toast, setToast] = useState<FileRecord | null>(null);
     const organization = signIn?.organization?.trim();
 
     /**
@@ -75,7 +77,7 @@ const CheckoutListGroup = (props: IProps) => {
                     FileName: `${clientName}-med-checkout.png`,
                     Description: 'Medication checkout signature'
                 } as FileRecord;
-                await fileProvider.update(fileRecord);
+                setToast(await fileProvider.update(fileRecord));
 
                 // Rehydrate the activeClient fileList
                 await setActiveClient({
@@ -154,6 +156,8 @@ const CheckoutListGroup = (props: IProps) => {
                     pinProvider={pinProvider}
                 />
             )}
+
+            {toast !== null && <SignatureToast onClose={() => setToast(null)} show={true} toast={toast} />}
         </>
     );
 };
