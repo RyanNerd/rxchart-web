@@ -1,11 +1,11 @@
-import {GenerateResponseData, IPinProvider} from 'providers/PinProvider';
+import {GenerateResponseData, IPinProvider, PinReadResponseData} from 'providers/PinProvider';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import React, {useEffect, useState} from 'reactn';
 import useInterval from 'hooks/useInterval';
 
 interface IProps {
-    onClose: (img: string | null) => void;
+    onClose: (pinData: PinReadResponseData | null) => void;
     pinData: GenerateResponseData;
     pinProvider: IPinProvider;
 }
@@ -37,7 +37,7 @@ const DigitalSignature = (props: IProps) => {
             const pinReadData = await pinProvider.read(pinId);
             if (pinReadData.Image !== null) {
                 setShow(false);
-                onClose(pinReadData.Image);
+                onClose(pinReadData);
                 setInterval(null);
             }
         };
