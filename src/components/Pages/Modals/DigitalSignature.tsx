@@ -15,6 +15,7 @@ const DigitalSignature = (props: IProps) => {
     const onClose = props.onClose;
 
     const [pinData, setPinData] = useState(props.pinData);
+    const [interval, setInterval] = useState<null | number>(5000);
     useEffect(() => {
         setPinData(props.pinData);
     }, [props.pinData]);
@@ -37,10 +38,11 @@ const DigitalSignature = (props: IProps) => {
             if (pinReadData.Image !== null) {
                 setShow(false);
                 onClose(pinReadData.Image);
+                setInterval(null);
             }
         };
         pollPinSignatureImageUpdate(pinData.pin_id);
-    }, 5000);
+    }, interval);
 
     /**
      * Handle when user clicks Cancel PIN entry by closing the modal and deleting the PIN record
@@ -54,6 +56,7 @@ const DigitalSignature = (props: IProps) => {
             const isDeleted = await pinProvider.delete(pinId);
             if (isDeleted) {
                 onClose(null);
+                setInterval(null);
             } else {
                 throw new Error('Unable to delete PIN record');
             }

@@ -252,7 +252,6 @@ const ManageRx = (props: IProps): JSX.Element | null => {
             {showCheckoutPrint && activeClient && (
                 <Row className="mt-2">
                     <CheckoutListGroup
-                        clientRecord={clientInfo}
                         checkoutList={checkoutList}
                         medicineList={medicineList}
                         onClose={() => setShowCheckoutPrint(false)}

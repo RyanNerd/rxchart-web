@@ -35,7 +35,7 @@ const Files = (props: IProps) => {
                 fileList: await fileProvider.load(activeClient?.clientInfo.Id as number)
             });
         } catch (requestError) {
-            setErrorDetails(requestError);
+            await setErrorDetails(requestError);
         }
     };
 
