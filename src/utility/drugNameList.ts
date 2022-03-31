@@ -290,7 +290,6 @@ const drugNameList = [
     'Trazodone',
     'Tramadol',
     'Tranexamic Acid',
-    'Trazodone',
     'Triamcinolone',
     'Triamterene',
     'Trifluoperazine',
