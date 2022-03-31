@@ -13,7 +13,12 @@ interface IProps {
     rxTabKey: string;
 }
 
-const Files = (props: IProps) => {
+/**
+ * Document / Files tab component
+ * @param {IProps} props The props for this component
+ * @returns {JSX.Element | null} The component or null
+ */
+const RxFiles = (props: IProps) => {
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [activeClient, setActiveClient] = useGlobal('activeClient');
     const [invalidMaxSize, setInvalidMaxSize] = useState(false);
@@ -35,7 +40,7 @@ const Files = (props: IProps) => {
                 fileList: await fileProvider.load(activeClient?.clientInfo.Id as number)
             });
         } catch (requestError) {
-            setErrorDetails(requestError);
+            await setErrorDetails(requestError);
         }
     };
 
@@ -145,4 +150,4 @@ const Files = (props: IProps) => {
     );
 };
 
-export default Files;
+export default RxFiles;

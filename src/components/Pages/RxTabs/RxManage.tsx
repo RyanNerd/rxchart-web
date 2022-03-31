@@ -34,10 +34,10 @@ interface IProps {
 }
 
 /**
- * ManageRx - UI for Displaying, editing and adding Medicine
+ * RxManage - UI for Displaying, editing and adding Medicine
  * @param {IProps} props The props for this component
  */
-const ManageRx = (props: IProps): JSX.Element | null => {
+const RxManage = (props: IProps): JSX.Element | null => {
     const [, setPillboxItemList] = useState<PillboxItemRecord[]>([]);
     const [activeClient, setActiveClient] = useGlobal('activeClient');
     const [checkoutList, setCheckoutList] = useState<DrugLogRecord[]>([]);
@@ -252,7 +252,6 @@ const ManageRx = (props: IProps): JSX.Element | null => {
             {showCheckoutPrint && activeClient && (
                 <Row className="mt-2">
                     <CheckoutListGroup
-                        clientRecord={clientInfo}
                         checkoutList={checkoutList}
                         medicineList={medicineList}
                         onClose={() => setShowCheckoutPrint(false)}
@@ -332,4 +331,4 @@ const ManageRx = (props: IProps): JSX.Element | null => {
     );
 };
 
-export default ManageRx;
+export default RxManage;

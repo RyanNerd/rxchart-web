@@ -1,11 +1,11 @@
-import {GenerateResponseData, IPinProvider} from 'providers/PinProvider';
+import {GenerateResponseData, IPinProvider, PinReadResponseData} from 'providers/PinProvider';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import React, {useEffect, useState} from 'reactn';
 import useInterval from 'hooks/useInterval';
 
 interface IProps {
-    onClose: (img: string | null) => void;
+    onClose: (pinData: PinReadResponseData | null) => void;
     pinData: GenerateResponseData;
     pinProvider: IPinProvider;
 }
@@ -14,15 +14,14 @@ const DigitalSignature = (props: IProps) => {
     const pinProvider = props.pinProvider;
     const onClose = props.onClose;
 
+    const [interval, setInterval] = useState<null | number>(null);
     const [pinData, setPinData] = useState(props.pinData);
-    useEffect(() => {
-        setPinData(props.pinData);
-    }, [props.pinData]);
-
     const [show, setShow] = useState(pinData !== null);
     useEffect(() => {
-        setShow(pinData !== null);
-    }, [pinData]);
+        setPinData(props.pinData);
+        setShow(props.pinData !== null);
+        setInterval(props.pinData !== null ? 5000 : null);
+    }, [props.pinData]);
 
     /**
      * Keep polling the API until we get a signature from the client.
@@ -36,11 +35,12 @@ const DigitalSignature = (props: IProps) => {
             const pinReadData = await pinProvider.read(pinId);
             if (pinReadData.Image !== null) {
                 setShow(false);
-                onClose(pinReadData.Image);
+                onClose(pinReadData);
+                setInterval(null);
             }
         };
         pollPinSignatureImageUpdate(pinData.pin_id);
-    }, 5000);
+    }, interval);
 
     /**
      * Handle when user clicks Cancel PIN entry by closing the modal and deleting the PIN record
@@ -54,6 +54,7 @@ const DigitalSignature = (props: IProps) => {
             const isDeleted = await pinProvider.delete(pinId);
             if (isDeleted) {
                 onClose(null);
+                setInterval(null);
             } else {
                 throw new Error('Unable to delete PIN record');
             }

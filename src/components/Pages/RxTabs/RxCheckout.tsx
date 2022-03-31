@@ -17,13 +17,7 @@ const RxCheckout = (props: IProps) => {
     const checkoutList = props.checkoutList;
 
     if (activeClient === null) return null;
-    return (
-        <CheckoutListGroup
-            checkoutList={checkoutList}
-            clientRecord={activeClient.clientInfo}
-            medicineList={activeClient.medicineList}
-        />
-    );
+    return <CheckoutListGroup checkoutList={checkoutList} medicineList={activeClient.medicineList} />;
 };
 
 export default RxCheckout;

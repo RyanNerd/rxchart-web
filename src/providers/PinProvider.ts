@@ -13,7 +13,7 @@ type GenerateResponse = {
     success: boolean;
 };
 
-export type ReadResponseData = {
+export type PinReadResponseData = {
     Id: number;
     ResidentId: number;
     UserId: number;
@@ -22,7 +22,7 @@ export type ReadResponseData = {
 };
 
 type ReadResponse = {
-    data: ReadResponseData;
+    data: PinReadResponseData;
     status: number;
     success: boolean;
 };
@@ -35,9 +35,9 @@ export type DeleteResponse = {
 
 export interface IPinProvider {
     setApiKey: (apiKey: string) => void;
-    delete: (pinId: number) => Promise<boolean>;
+    delete: (fileId: number, permanentDelete?: boolean) => Promise<boolean>;
     generate: (clientId: number) => Promise<GenerateResponseData>;
-    read: (pinId: number) => Promise<ReadResponseData>;
+    read: (pinId: number) => Promise<PinReadResponseData>;
 }
 
 /**
@@ -76,12 +76,12 @@ const PinProvider = (baseUrl: string): IPinProvider => {
         /**
          * Pin Read
          * @param {number} pinId - The Pin table PK
-         * @returns {Promise<ReadResponseData>} The pseudo Pin table object as a promise
+         * @returns {Promise<PinReadResponseData>} The pseudo Pin table object as a promise
          */
-        read: async (pinId: number): Promise<ReadResponseData> => {
+        read: async (pinId: number): Promise<PinReadResponseData> => {
             const response = await _frak.get<ReadResponse>(`${_baseUrl}pin/${pinId.toString()}?api_key=${_apiKey}`);
             if (response.success) {
-                return response.data as ReadResponseData;
+                return response.data as PinReadResponseData;
             } else {
                 throw response;
             }
@@ -90,11 +90,12 @@ const PinProvider = (baseUrl: string): IPinProvider => {
         /**
          * Pin Delete - Delete a record in the Pin table given the PK
          * @param {number} pinId The PK to delete in the Pin table
+         * @param {boolean | undefined} permanentDelete Set to true to permanently destroy the record
          * @returns {Promise<boolean>} True if successful, false otherwise as a promise
          */
-        delete: async (pinId): Promise<boolean> => {
+        delete: async (pinId, permanentDelete): Promise<boolean> => {
             const response = await _frak.delete<DeleteResponse>(
-                `${_baseUrl}pin/${pinId.toString()}?api_key=${_apiKey}`
+                `${_baseUrl}pin/${pinId.toString()}?api_key=${_apiKey}&force=${permanentDelete ? 'true' : false}`
             );
             return response.success;
         }

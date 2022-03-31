@@ -1,5 +1,5 @@
-import Files from 'components/Pages/RxTabs/Files';
-import ManageRx from 'components/Pages/RxTabs/ManageRx';
+import RxFiles from 'components/Pages/RxTabs/RxFiles';
+import RxManage from 'components/Pages/RxTabs/RxManage';
 import RxHistory from 'components/Pages/RxTabs/RxHistory';
 import RxMedicine from 'components/Pages/RxTabs/RxMedicine';
 import RxOtc from 'components/Pages/RxTabs/RxOtc';
@@ -290,7 +290,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                         </ToggleButton>
                     }
                 >
-                    <ManageRx
+                    <RxManage
                         medicineProvider={medicineProvider}
                         medHistoryProvider={medHistoryProvider}
                         rxTabKey={activeRxTab}
@@ -318,7 +318,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                         </ToggleButton>
                     }
                 >
-                    <Files rxTabKey={activeRxTab} />
+                    <RxFiles rxTabKey={activeRxTab} />
                 </Tab>
             </Tabs>
         </div>
