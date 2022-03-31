@@ -4,6 +4,7 @@ import ManageDrugGrid from 'components/Pages/Grids/ManageDrugGrid';
 import CheckoutListGroup from 'components/Pages/ListGroups/CheckoutListGroup';
 import CheckoutAllModal from 'components/Pages/Modals/CheckoutAllModal';
 import DeleteMedicineModal from 'components/Pages/Modals/DeleteMedicineModal';
+import PrintMedicationList from 'components/Pages/Modals/PrintMedicationList';
 import {RX_TAB_KEY} from 'components/Pages/RxPage';
 import DrugLogToast from 'components/Pages/Toasts/DrugLogToast';
 import {IMedHistoryProvider} from 'providers/MedHistoryProvider';
@@ -51,6 +52,7 @@ const RxManage = (props: IProps): JSX.Element | null => {
     const [showCheckoutPrint, setShowCheckoutPrint] = useState(false);
     const [showDeleteMedicine, setShowDeleteMedicine] = useState(0);
     const [showMedicineEdit, setShowMedicineEdit] = useState(false);
+    const [showPrintMedicationList, setShowPrintMedicationList] = useState(false);
     const [toast, setToast] = useState<DrugLogRecord[] | null>(null);
     const medicineProvider = props.medicineProvider;
     const medHistoryProvider = props.medHistoryProvider;
@@ -214,6 +216,15 @@ const RxManage = (props: IProps): JSX.Element | null => {
                     </Button>
                 </TooltipContainer>
 
+                <Button
+                    className="ml-3"
+                    size="sm"
+                    variant="outline-primary"
+                    onClick={() => setShowPrintMedicationList(true)}
+                >
+                    Print Medication List
+                </Button>
+
                 {checkoutList.length > 0 && (
                     <Button
                         className="ml-3"
@@ -327,6 +338,10 @@ const RxManage = (props: IProps): JSX.Element | null => {
                 }}
                 show={showDeleteMedicine !== 0}
             />
+
+            {showPrintMedicationList && (
+                <PrintMedicationList onUnload={() => setShowPrintMedicationList(false)} medList={medicineList} />
+            )}
         </Form>
     );
 };
