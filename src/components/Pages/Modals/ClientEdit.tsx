@@ -29,6 +29,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
             const info = {...props.clientInfo};
             if (info.Notes === null) info.Notes = '';
             if (info.Nickname === null) info.Nickname = '';
+            if (info.HMIS === null) info.HMIS = '';
             setClientInfo(info);
         }
     }, [props.clientInfo]);
@@ -252,6 +253,20 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                         </Col>
                     </Form.Group>
 
+                    <Form.Group as={Row}>
+                        <Form.Label column sm="2">
+                            HMIS #
+                        </Form.Label>
+                        <Col sm="4">
+                            <Form.Control
+                                autoComplete="off"
+                                type="number"
+                                name="HMIS"
+                                onChange={(changeEvent) => handleOnChange(changeEvent)}
+                                value={clientInfo.HMIS}
+                            />
+                        </Col>
+                    </Form.Group>
                     <Form.Group as={Row}>
                         <Form.Label column sm="2">
                             Notes

@@ -163,13 +163,13 @@ const ClientPage = (props: IProps): JSX.Element | null => {
 
                 <Form.Control
                     autoFocus
-                    id="medicine-page-search-text"
+                    id="cient-page-search-text"
                     isValid={searchIsValid}
                     onChange={(changeEvent) => setSearchText(changeEvent.target.value)}
                     onKeyDown={(keyboardEvent: React.KeyboardEvent<HTMLElement>) => {
                         if (keyboardEvent.key === 'Enter') keyboardEvent.preventDefault();
                     }}
-                    placeholder="Search resident"
+                    placeholder="Search client"
                     ref={focusReference}
                     style={{width: '220px'}}
                     type="search"
