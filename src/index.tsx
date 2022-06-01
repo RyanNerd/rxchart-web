@@ -2,6 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import App from 'components/App/App';
 import ReactDOM from 'react-dom';
 import React, {setGlobal} from 'reactn';
+import {createRoot} from 'react-dom/client';
 import {State} from 'reactn/default';
 import getInitialState from './utility/getInitialState';
 
@@ -35,7 +36,8 @@ const logAppStarted = (initialState: State) => {
 const startApp = async () => {
     try {
         const initialState = await setGlobal(getInitialState());
-        ReactDOM.render(<App />, document.getElementById('root'), () => logAppStarted(initialState));
+        const root = createRoot(document.getElementById('root') as HTMLDivElement);
+        root.render(<App />);
     } catch (error) {
         console.log('Something went wrong', error); // eslint-disable-line no-console
         ReactDOM.render(<InitError />, document.getElementById('root'));
