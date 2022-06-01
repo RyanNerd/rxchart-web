@@ -61,12 +61,46 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
     };
 
     /**
+     * Called each time focus is changed on fields that could be a duplicate
+     */
+    const checkForDuplicates = async () => {
+        const searchCriteria = {
+            where: [
+                ['FirstName', '=', clientInfo.FirstName],
+                ['LastName', '=', clientInfo.LastName],
+                ['DOB_YEAR', '=', clientInfo.DOB_YEAR],
+                ['DOB_MONTH', '=', clientInfo.DOB_MONTH],
+                ['DOB_DAY', '=', clientInfo.DOB_DAY],
+                ['Id', '<>', clientInfo.Id]
+            ],
+            withTrashed: true
+        };
+        const dupe = await clientProvider.search(searchCriteria);
+        setIsDupe(dupe.length > 0);
+        return dupe;
+    };
+
+    /**
      * Fires when the user clicks on save or cancel
      * @param {boolean} shouldSave Set to true if the user clicked the save button, otherwise false
      */
-    const handleHide = (shouldSave: boolean) => {
-        if (shouldSave) onClose({...clientInfo});
-        else onClose(null);
+    const handleHide = async (shouldSave: boolean) => {
+        if (shouldSave) {
+            if (isDupe) {
+                const dupes = await checkForDuplicates();
+                // Sanity check
+                if (dupes.length > 0) {
+                    const activatedClient = await clientProvider.restore(dupes[0].Id as number);
+                    onClose({...activatedClient});
+                } else {
+                    // Something is seriously wrong here. Should never get here.
+                }
+            } else {
+                onClose({...clientInfo});
+            }
+        } else {
+            onClose(null);
+        }
         setShow(false);
     };
 
@@ -87,25 +121,6 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
         return dobYear !== '' && dobMonth !== '' && dobDay !== ''
             ? isYearValid(dobYear, true) && isMonthValid(dobMonth) && isDayValid(dobDay, dobMonth) && !isDateFuture(dob)
             : false;
-    };
-
-    /**
-     * Called each time focus is changed on fields that could be a duplicate
-     */
-    const checkForDuplicates = async () => {
-        const searchCriteria = {
-            where: [
-                ['FirstName', '=', clientInfo.FirstName],
-                ['LastName', '=', clientInfo.LastName],
-                ['DOB_YEAR', '=', clientInfo.DOB_YEAR],
-                ['DOB_MONTH', '=', clientInfo.DOB_MONTH],
-                ['DOB_DAY', '=', clientInfo.DOB_DAY],
-                ['Id', '<>', clientInfo.Id]
-            ],
-            withTrashed: true
-        };
-        const dupe = await clientProvider.search(searchCriteria);
-        setIsDupe(dupe.length > 0);
     };
 
     // Prevent render if there is no data.
@@ -309,21 +324,36 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                 <span style={{paddingRight: '40%'}}>
                     Updated: {clientInfo.Updated ? getFormattedDate(clientInfo.Updated) : null}
                 </span>
+
                 <Button onClick={() => handleHide(false)} variant="secondary">
                     Cancel
                 </Button>
-                <Button
-                    className={isDupe ? 'is-invalid' : ''}
-                    disabled={!canSave}
-                    onClick={() => handleHide(true)}
-                    style={{cursor: canSave ? 'pointer' : 'not-allowed'}}
-                    variant="primary"
-                >
-                    Save changes
-                </Button>
-                <Form.Control.Feedback type="invalid" style={{textAlign: 'right'}}>
-                    This client already exists
-                </Form.Control.Feedback>
+
+                {clientInfo.Id !== null ? (
+                    <>
+                        <Button
+                            className={isDupe ? 'is-invalid' : ''}
+                            disabled={!canSave}
+                            onClick={() => handleHide(true)}
+                            style={{cursor: canSave ? 'pointer' : 'not-allowed'}}
+                            variant="primary"
+                        >
+                            Save changes
+                        </Button>
+                        <Form.Control.Feedback type="invalid" style={{textAlign: 'right'}}>
+                            This client already exists
+                        </Form.Control.Feedback>
+                    </>
+                ) : (
+                    <Button
+                        disabled={!canSave}
+                        onClick={() => handleHide(true)}
+                        style={{cursor: canSave ? 'pointer' : 'not-allowed'}}
+                        variant="primary"
+                    >
+                        {isDupe ? <span style={{fontStyle: 'bold'}}>Reactivate Client</span> : <span>Add Client</span>}
+                    </Button>
+                )}
             </Modal.Footer>
         </Modal>
     );
