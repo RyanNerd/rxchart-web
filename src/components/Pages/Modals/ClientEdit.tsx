@@ -29,8 +29,8 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
             const info = {...props.clientInfo};
             if (info.Notes === null) info.Notes = '';
             if (info.Nickname === null) info.Nickname = '';
-            if (info.HMIS === null) info.HMIS = '';
-            if (info.EnrollmentId === null) info.EnrollmentId = '';
+            if (info.HMIS === null) info.HMIS = 0;
+            if (info.EnrollmentId === null) info.EnrollmentId = 0;
             setClientInfo(info);
         }
     }, [props.clientInfo]);

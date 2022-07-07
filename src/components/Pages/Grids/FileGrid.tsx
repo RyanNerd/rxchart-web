@@ -6,6 +6,7 @@ import {randomString} from 'utility/common';
 
 interface IProps extends TableProps {
     [key: string]: unknown;
+    disabled?: boolean;
     onDownload: (fileRecord: FileRecord) => void;
     onDelete: (fileRecord: FileRecord) => void;
     onEdit: (fileRecord: FileRecord) => void;
@@ -13,6 +14,7 @@ interface IProps extends TableProps {
 }
 
 interface ITableProps extends TableProps {
+    disabled?: boolean;
     onDownload: unknown;
     onDelete: unknown;
     fileList: unknown;
@@ -24,7 +26,7 @@ interface ITableProps extends TableProps {
  * @param {IProps} props The props for this component
  */
 const FileGrid = (props: IProps): JSX.Element | null => {
-    const {fileList, onDownload, onDelete, onEdit} = props;
+    const {fileList, onDownload, onDelete, onEdit, disabled = false} = props;
 
     // No render if there isn't anything to render
     if (!fileList || fileList.length === 0) return null;
@@ -43,12 +45,19 @@ const FileGrid = (props: IProps): JSX.Element | null => {
                 <td style={{verticalAlign: 'middle'}}>{file.MediaType}</td>
                 <td style={{verticalAlign: 'middle'}}>{file.Size}</td>
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
-                    <Button id={`file-grid-edit-btn-${domId}`} onClick={() => onEdit(file)} size="sm" variant="info">
+                    <Button
+                        disabled={disabled}
+                        id={`file-grid-edit-btn-${domId}`}
+                        onClick={() => onEdit(file)}
+                        size="sm"
+                        variant="info"
+                    >
                         Edit
                     </Button>
                 </td>
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                     <Button
+                        disabled={disabled}
                         id={`file-grid-download-btn-${domId}`}
                         onClick={() => onDownload(file)}
                         size="sm"
@@ -59,6 +68,7 @@ const FileGrid = (props: IProps): JSX.Element | null => {
                 </td>
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                     <Button
+                        disabled={disabled}
                         id={`file-grid-delete-btn-${domId}`}
                         onClick={() => onDelete(file)}
                         size="sm"

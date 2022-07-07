@@ -22,7 +22,7 @@ const RxFiles = (props: IProps) => {
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [activeClient, setActiveClient] = useGlobal('activeClient');
     const [invalidMaxSize, setInvalidMaxSize] = useState(false);
-    const [isBusy, setIsIsBusy] = useState(false);
+    const [isBusy, setIsBusy] = useState(false);
     const [providers] = useGlobal('providers');
     const [showEditFile, setShowEditFile] = useState<FileRecord | null>(null);
     const [showDeleteFile, setShowDeleteFile] = useState<FileRecord | null>(null);
@@ -59,7 +59,7 @@ const RxFiles = (props: IProps) => {
                 const file = files[0];
                 // Max file size is 100MB
                 if (file.size <= 104_857_600) {
-                    setIsIsBusy(true);
+                    setIsBusy(true);
                     setInvalidMaxSize(false);
                     try {
                         const formData = new FormData();
@@ -69,7 +69,7 @@ const RxFiles = (props: IProps) => {
                     } catch (error) {
                         await setErrorDetails(error);
                     }
-                    setIsIsBusy(false);
+                    setIsBusy(false);
                 } else {
                     setInvalidMaxSize(true);
                 }
@@ -82,7 +82,7 @@ const RxFiles = (props: IProps) => {
     return (
         <Form>
             <Form.Group>
-                {isBusy && <DisabledSpinner />}
+                {isBusy && <DisabledSpinner className="mx-1" />}
                 <Form.File
                     className={invalidMaxSize ? 'is-invalid' : ''}
                     style={{width: '25%'}}
@@ -98,6 +98,7 @@ const RxFiles = (props: IProps) => {
             {activeClient && (
                 <Form.Group>
                     <FileGrid
+                        disabled={isBusy}
                         fileList={activeClient.fileList}
                         onDelete={(fileRecord) => setShowDeleteFile(fileRecord)}
                         onDownload={async (fileRecord) => {
