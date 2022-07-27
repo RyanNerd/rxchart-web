@@ -141,6 +141,7 @@ const FileProvider = (baseUrl: string): IFileProvider => {
             document.body.append(a);
             a.click();
             window.URL.revokeObjectURL(url);
+            a.remove();
         }
     };
 };
