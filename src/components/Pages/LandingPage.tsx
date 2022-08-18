@@ -1,5 +1,6 @@
 import ClientPage from 'components/Pages/ClientPage';
 import ManagementPage from 'components/Pages/ManagementPage';
+import RxLookup from 'components/Pages/RxLookup';
 import RxPage from 'components/Pages/RxPage';
 import {ReactNode} from 'react';
 import Tab from 'react-bootstrap/Tab';
@@ -48,11 +49,14 @@ const LandingPage = (props: IProps) => {
 
     // Observer to show / hide tabs based on if logged in and if a client has been selected
     useEffect(() => {
-        ['resident', 'medicine', 'management'].map((tab) => {
+        ['resident', 'medicine', 'management', 'rx-lookup'].map((tab) => {
             const element = document.getElementById('landing-page-tabs-tab-' + tab);
             if (element) {
-                if (tab === 'resident' || tab === 'management') element.style.display = apiKey ? 'block' : 'none';
-                else element.style.display = apiKey && activeClient ? 'block' : 'none';
+                if (tab === 'resident' || tab === 'management' || tab === 'rx-lookup') {
+                    element.style.display = apiKey ? 'block' : 'none';
+                } else {
+                    element.style.display = apiKey && activeClient ? 'block' : 'none';
+                }
             }
         });
     }, [activeClient, apiKey]);
@@ -115,6 +119,12 @@ const LandingPage = (props: IProps) => {
             <Tab disabled={!apiKey} eventKey="management" title={<Title activeKey={'management'}>Management</Title>}>
                 <Tab.Content>
                     <ManagementPage />
+                </Tab.Content>
+            </Tab>
+
+            <Tab disabled={!apiKey} eventKey="rx-lookup" title={<Title activeKey={'rx-lookup'}>Rx Lookup</Title>}>
+                <Tab.Content>
+                    <RxLookup activeTabKey={activeTabKey} />
                 </Tab.Content>
             </Tab>
 

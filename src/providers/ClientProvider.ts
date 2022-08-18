@@ -111,6 +111,9 @@ const ClientProvider = (url: string): IClientProvider => {
             if (response.success) {
                 return response.data as ClientRecord;
             } else {
+                if (response.status === 404) {
+                    return {} as ClientRecord;
+                }
                 throw response;
             }
         },
