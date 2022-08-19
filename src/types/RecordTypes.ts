@@ -10,7 +10,6 @@ export type ClientRecord = {
     Nickname: string;
     Notes: string;
     HMIS: number;
-    EnrollmentId: number;
     Updated?: null | Date;
     UserId?: number;
     deleted_at?: null | Date;

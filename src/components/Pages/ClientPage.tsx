@@ -163,7 +163,7 @@ const ClientPage = (props: IProps): JSX.Element | null => {
 
                 <Form.Control
                     autoFocus
-                    id="cient-page-search-text"
+                    id="client-page-search-text"
                     isValid={searchIsValid}
                     onChange={(changeEvent) => setSearchText(changeEvent.target.value)}
                     onKeyDown={(keyboardEvent: React.KeyboardEvent<HTMLElement>) => {
