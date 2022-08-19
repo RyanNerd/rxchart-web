@@ -37,6 +37,7 @@ const startApp = async () => {
     try {
         const initialState = await setGlobal(getInitialState());
         const root = createRoot(document.getElementById('root') as HTMLDivElement);
+        logAppStarted(initialState);
         root.render(<App />);
     } catch (error) {
         console.log('Something went wrong', error); // eslint-disable-line no-console

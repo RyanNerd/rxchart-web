@@ -230,7 +230,7 @@ export const isDateFuture = (dateIn: Date): boolean => {
  * @param {IKey} objectList Any array of {object}
  * @param {string} propertyName The property name to search for
  * @param {any} searchValue The value to search for
- * @returns {Object | undefined} The object searched for or undefined if not found
+ * @returns {object | undefined} The object searched for or undefined if not found
  */
 export const getObjectByProperty = <T>(objectList: IKey, propertyName: string, searchValue: any): T | undefined => {
     return objectList.find((object: IKey) => object[propertyName] === searchValue);
