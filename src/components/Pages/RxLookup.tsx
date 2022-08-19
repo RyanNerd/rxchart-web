@@ -1,5 +1,6 @@
-import Button from 'react-bootstrap/Button';
-import React, {useGlobal, useState} from 'reactn';
+import RxLookupGrid from 'components/Pages/Grids/RxLookupGrid';
+import Form from 'react-bootstrap/Form';
+import React, {useEffect, useGlobal, useState} from 'reactn';
 
 interface IProps {
     activeTabKey: string;
@@ -10,42 +11,61 @@ const RxLookup = (props: IProps) => {
     const [providers] = useGlobal('providers');
     const [clientList] = useGlobal('clientList');
     const medicineProvider = providers.medicineProvider;
-    const [rxResult, setRxResult] = useState<unknown>(null);
+    const [rxResult, setRxResult] = useState<{Drug: string; LastName: string; FirstName: string}[] | []>([]);
+    const [searchText, setSearchText] = useState('');
 
-    const findRx = async (drugName: string) => {
-        const result = [];
-        const medicineSearchCriteria = {
-            where: [['Drug', 'LIKE', drugName + '%']],
-            orderBy: [['ResidentId']]
-        };
-        const meds = await medicineProvider.search(medicineSearchCriteria);
+    useEffect(() => {
+        if (searchText.length > 1) {
+            const findRx = async (drugName: string) => {
+                const result = [] as {Drug: string; LastName: string; FirstName: string}[];
+                const medicineSearchCriteria = {
+                    where: [['Drug', 'LIKE', drugName + '%']],
+                    orderBy: [['ResidentId']]
+                };
+                const meds = await medicineProvider.search(medicineSearchCriteria);
 
-        for (const m of meds) {
-            if (m.ResidentId) {
-                const client = clientList.find((c) => c.Id === m.ResidentId);
+                for (const m of meds) {
+                    if (m.ResidentId) {
+                        const client = clientList.find((c) => c.Id === m.ResidentId);
 
-                if (client?.Id) {
-                    // eslint-disable-next-line no-console
-                    console.log('client', client);
-                    result.push({firstName: client.FirstName, lastName: client.LastName, Drug: m.Drug});
+                        if (client?.Id) {
+                            // eslint-disable-next-line no-console
+                            console.log('client', client);
+                            result.push({FirstName: client.FirstName, LastName: client.LastName, Drug: m.Drug});
+                        }
+                    }
                 }
-            }
+                setRxResult(result);
+            };
+            findRx(searchText);
+        } else {
+            setRxResult([]);
         }
-        return result;
-    };
+    }, [clientList, medicineProvider, searchText]);
 
     if (activeTabKey !== 'rx-lookup') return null;
 
-    const handleClick = async () => {
-        const rxFound = await findRx('Hy');
-        setRxResult(rxFound);
-    };
-
     return (
-        <>
-            <Button onClick={() => handleClick()}>GO</Button>
-            <p>{JSON.stringify(rxResult, null, '\t')}</p>
-        </>
+        <Form>
+            <Form.Control
+                autoFocus
+                id="rx-look-up-search-box"
+                onChange={(changeEvent) => setSearchText(changeEvent.target.value)}
+                onKeyDown={(keyboardEvent: React.KeyboardEvent<HTMLElement>) => {
+                    if (keyboardEvent.key === 'Enter') keyboardEvent.preventDefault();
+                }}
+                placeholder="Drug name"
+                style={{width: '350px'}}
+                type="search"
+                value={searchText}
+            />
+
+            {rxResult.length > 0 && (
+                <div className="my-3">
+                    <RxLookupGrid lookupList={rxResult} />{' '}
+                </div>
+            )}
+        </Form>
     );
 };
 
