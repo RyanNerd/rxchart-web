@@ -37,6 +37,7 @@ interface IProps {
  * @param {IProps} props The props for this component
  */
 const RxPillbox = (props: IProps) => {
+    const DRUG_HISTORY_DAYS = 14;
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [activeClient, setActiveClient] = useGlobal('activeClient');
     const [isBusy, setIsBusy] = useState(false);
@@ -171,7 +172,7 @@ const RxPillbox = (props: IProps) => {
             const loggedPillboxDrugs = await loggedPillboxMeds;
             if (loggedPillboxDrugs.length > 0) {
                 const [errorLoadLog, drugLogs] = (await asyncWrapper(
-                    medHistoryProvider.load(activeClient?.clientInfo.Id as number, 5)
+                    medHistoryProvider.load(activeClient?.clientInfo.Id as number, DRUG_HISTORY_DAYS)
                 )) as [unknown, Promise<DrugLogRecord[]>];
                 await (errorLoadLog
                     ? setErrorDetails(errorLoadLog)
