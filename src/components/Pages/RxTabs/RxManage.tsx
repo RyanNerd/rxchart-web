@@ -39,6 +39,7 @@ interface IProps {
  * @param {IProps} props The props for this component
  */
 const RxManage = (props: IProps): JSX.Element | null => {
+    const DRUG_HISTORY_DAYS = 14;
     const [, setPillboxItemList] = useState<PillboxItemRecord[]>([]);
     const [activeClient, setActiveClient] = useGlobal('activeClient');
     const [checkoutList, setCheckoutList] = useState<DrugLogRecord[]>([]);
@@ -99,7 +100,10 @@ const RxManage = (props: IProps): JSX.Element | null => {
             };
             drugsLogged.push(await save(d));
         }
-        await setActiveClient({...activeClient, drugLogList: await medHistoryProvider.load(clientId, 5)});
+        await setActiveClient({
+            ...activeClient,
+            drugLogList: await medHistoryProvider.load(clientId, DRUG_HISTORY_DAYS)
+        });
         return drugsLogged;
     };
 

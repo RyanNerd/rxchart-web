@@ -26,6 +26,7 @@ interface IProps {
  * @param {IProps} props The props for this component
  */
 const RxOtc = (props: IProps) => {
+    const DRUG_HISTORY_DAYS = 14;
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [activeClient, setActiveClient] = useGlobal('activeClient');
     const [activeOtc, setActiveOtc] = useState<MedicineRecord | null>(null);
@@ -57,7 +58,7 @@ const RxOtc = (props: IProps) => {
         if (errorUpdateDrugLog) await setErrorDetails(errorUpdateDrugLog);
         else {
             const [errorLoadDrugLog, drugLogs] = (await asyncWrapper(
-                medHistoryProvider.load(clientId as number, 5)
+                medHistoryProvider.load(clientId as number, DRUG_HISTORY_DAYS)
             )) as [unknown, Promise<DrugLogRecord[]>];
             await (errorLoadDrugLog
                 ? setErrorDetails(errorLoadDrugLog)
@@ -190,7 +191,7 @@ const RxOtc = (props: IProps) => {
                 onSelect={async (drugLogRecord) => {
                     setShowDeleteDrugLogRecord(null);
                     if (drugLogRecord) await medHistoryProvider.delete(showDeleteDrugLogRecord?.Id as number);
-                    const drugLogRecords = await medHistoryProvider.load(clientId as number, 5);
+                    const drugLogRecords = await medHistoryProvider.load(clientId as number, DRUG_HISTORY_DAYS);
                     await setActiveClient({...activeClient, drugLogList: drugLogRecords});
                 }}
                 show={showDeleteDrugLogRecord !== null}
