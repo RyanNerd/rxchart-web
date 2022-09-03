@@ -398,7 +398,12 @@ const PillboxListGroup = (props: IProps) => {
                 </Confirm.Body>
             </Confirm.Modal>
 
-            <MedicineCheckoutModal show={showPillboxCheckout} activeClient={activeClient} medsToCheckout={[]} />
+            <MedicineCheckoutModal
+                show={showPillboxCheckout}
+                activeClient={activeClient}
+                medsToCheckout={[]}
+                onClose={() => setShowPillboxCheckout(false)}
+            />
         </>
     );
 };

@@ -9,6 +9,7 @@ interface IProps {
     activeClient: TClient;
     medsToCheckout: number[]; // The MedicineIds to default checkout
     show: boolean;
+    onClose: () => void;
 }
 
 type CheckoutLine = {id: number | null; active: boolean; drug: string; checkout: number; notes: string};
@@ -16,9 +17,16 @@ type CheckoutLine = {id: number | null; active: boolean; drug: string; checkout:
 /**
  * Confirmation modal to Check out Medications and Print
  * @param {IProps} props The props for this component
+ * @todo Adjust checkout by medsToCheckout and existing checkouts
+ * @todo Save needs to update existing MedLog records and add new ones.
  */
 const MedicineCheckoutModal = (props: IProps) => {
-    const {activeClient, show, medsToCheckout} = props;
+    const {activeClient, medsToCheckout, onClose} = props;
+
+    const [show, setShow] = useState(props.show);
+    useEffect(() => {
+        setShow(props.show);
+    }, [props.show]);
 
     const [checkoutList, setCheckoutList] = useState<null | CheckoutLine[]>(null);
     useEffect(() => {
@@ -79,11 +87,21 @@ const MedicineCheckoutModal = (props: IProps) => {
     if (checkoutList === null) return null;
 
     /**
+     * How to scroll an ordered list
      * @link https://stackoverflow.com/questions/29793160/making-unordered-list-scrollable
      */
     return (
-        <Modal centered show={show} size="lg">
-            <Modal.Header>
+        <Modal
+            centered
+            static
+            show={show}
+            size="lg"
+            onHide={() => {
+                setShow(false);
+                onClose();
+            }}
+        >
+            <Modal.Header closeButton>
                 <Modal.Title>
                     <h3>Medication Checkout</h3>
                 </Modal.Title>
@@ -111,7 +129,14 @@ const MedicineCheckoutModal = (props: IProps) => {
             </Modal.Body>
 
             <Modal.Footer>
-                <Button>Save Changes</Button>
+                <Button
+                    onClick={() => {
+                        setShow(false);
+                        onClose();
+                    }}
+                >
+                    Save Changes
+                </Button>
             </Modal.Footer>
         </Modal>
     );
