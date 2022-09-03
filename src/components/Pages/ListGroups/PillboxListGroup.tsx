@@ -1,6 +1,8 @@
 import PillboxLogGrid from 'components/Pages/Grids/PillboxLogGrid';
 import DisabledSpinner from 'components/Pages/ListGroups/DisabledSpinner';
+import CheckoutAllModal from 'components/Pages/Modals/CheckoutAllModal';
 import Confirm from 'components/Pages/Modals/Confirm';
+import MedicineCheckoutModal from 'components/Pages/Modals/MedicineCheckoutModal';
 import {TPillboxMedLog} from 'components/Pages/RxTabs/RxPillbox';
 import Alert from 'react-bootstrap/Alert';
 import Badge from 'react-bootstrap/Badge';
@@ -13,8 +15,8 @@ import Row from 'react-bootstrap/Row';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import React, {useEffect, useState} from 'reactn';
 import {TClient} from 'reactn/default';
-import {newPillboxRecord, PillboxRecord} from 'types/RecordTypes';
-import {BsColor, getMedicineRecord, multiSort, SortDirection} from 'utility/common';
+import {DrugLogRecord, newDrugLogRecord, newPillboxRecord, PillboxRecord} from 'types/RecordTypes';
+import {BsColor, getMedicineRecord, multiSort, SortDirection, getCheckoutList} from 'utility/common';
 import '../../../styles/pillbox-list-group.css';
 import PillboxEdit from '../Modals/PillboxEdit';
 
@@ -52,7 +54,8 @@ const PillboxListGroup = (props: IProps) => {
         pillboxMedLogList
     } = props;
 
-    const {pillboxList, pillboxItemList, medicineList, clientInfo} = activeClient;
+    const {pillboxList, pillboxItemList, medicineList, clientInfo, drugLogList} = activeClient;
+
     const firstLoggedPillbox = pillboxMedLogList.find((p) => p.Updated)?.Updated;
     const logTime = firstLoggedPillbox
         ? new Date(firstLoggedPillbox).toLocaleString('en-US', {
@@ -63,6 +66,7 @@ const PillboxListGroup = (props: IProps) => {
         : null;
     const [showPillboxDeleteConfirm, setShowPillboxDeleteConfirm] = useState(false);
     const [pillboxInfo, setPillboxInfo] = useState<PillboxRecord | null>(null);
+    const [showPillboxCheckout, setShowPillboxCheckout] = useState(false);
     const clientId = clientInfo.Id;
 
     const [showAlert, setShowAlert] = useState(false);
@@ -86,6 +90,30 @@ const PillboxListGroup = (props: IProps) => {
         });
     };
 
+    /**
+     * Checks out all medicine and brings up the checkout print dialog
+     */
+    const logAllDrugsCheckedOut = () => {
+        const clientId = clientInfo.Id as number;
+        const toastQ = [] as DrugLogRecord[];
+        for (const m of medicineList) {
+            if (m.Active) {
+                const drugLog = {...newDrugLogRecord};
+                drugLog.Out = 1;
+                drugLog.Notes = '** ALL **';
+                drugLog.MedicineId = m.Id as number;
+                drugLog.ResidentId = clientId;
+                toastQ.push(drugLog);
+            }
+        }
+
+        // if (toastQ.length > 0) {
+        //    saveDrugLog(toastQ, clientId)
+        //        .then((t) => setToast(t))
+        //        .then(() => setShowCheckoutPrint(true));
+        // }
+    };
+
     // Build out the pillbox line items content
     const drugsInThePillbox = activePillbox?.Id ? getDrugsInThePillbox() : [];
     const pillboxLineItems: IPillboxLineItem[] = [];
@@ -101,6 +129,14 @@ const PillboxListGroup = (props: IProps) => {
             pillboxLineItems.push({Id: d.Id, Drug: drugName, Strength: strength, Qty: qty});
         }
     }
+
+    // const [checkoutList, setCheckoutList] = useState<DrugLogRecord[]>([]);
+    // useEffect(() => {
+    //    const pillboxCheckoutItems = drugLogList.filter((drugLogItem) =>
+    //        drugsInThePillbox.some((inTheBox) => inTheBox.Id === drugLogItem.Id)
+    //    );
+    //    setCheckoutList(getCheckoutList(pillboxCheckoutItems));
+    // }, [drugLogList, drugsInThePillbox]);
 
     /**
      * Pillbox RadioButton component
@@ -223,6 +259,20 @@ const PillboxListGroup = (props: IProps) => {
         );
     };
 
+    const CheckoutPillboxButton = () => {
+        return (
+            <Button
+                className="ml-3"
+                size="sm"
+                variant="outline-secondary"
+                disabled={disabled || drugsInThePillbox.length === 0 || showAlert}
+                onClick={() => setShowPillboxCheckout(true)}
+            >
+                Checkout Pillbox
+            </Button>
+        );
+    };
+
     return (
         <>
             <ListGroup>
@@ -269,6 +319,7 @@ const PillboxListGroup = (props: IProps) => {
                                     Delete <span style={{textTransform: 'uppercase'}}>{activePillbox.Name}</span>
                                 </Button>
                                 {drugsInThePillbox.length > 0 && <LogPillboxButton />}
+                                {drugsInThePillbox.length > 0 && <CheckoutPillboxButton />}
                             </>
                         )}
                     </ButtonGroup>
@@ -346,6 +397,8 @@ const PillboxListGroup = (props: IProps) => {
                     <Alert variant="danger">{'Delete Pillbox: ' + activePillbox?.Name}</Alert>
                 </Confirm.Body>
             </Confirm.Modal>
+
+            <MedicineCheckoutModal show={showPillboxCheckout} activeClient={activeClient} medsToCheckout={[]} />
         </>
     );
 };
