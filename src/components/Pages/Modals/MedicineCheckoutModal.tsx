@@ -1,5 +1,7 @@
+import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
+import InputGroup from 'react-bootstrap/InputGroup';
 import React, {useEffect, useState} from 'reactn';
 import {TClient} from 'reactn/default';
 
@@ -32,20 +34,53 @@ const MedicineCheckoutModal = (props: IProps) => {
     /**
      * Inline data entry
      * @param {CheckoutLine} checkoutLine The data entry line
+     * @link https://react-bootstrap-v4.netlify.app/components/forms/#forms-inline
      */
     const CheckoutFormLine = (checkoutLine: CheckoutLine) => {
         return (
             <Form inline>
-                <Form.Label htmlFor={`medication-name-${checkoutLine.id}`} srOnly className="mx-1">
+                <Form.Label htmlFor={`medication-name-${checkoutLine.id}`} srOnly>
                     Medication Name
                 </Form.Label>
-                <Form.Control id={`medication-name-${checkoutLine.id}`} value={checkoutLine.drug} className="mx-1" />
+                <Form.Control
+                    className="mb-2 mr-sm-2"
+                    id={`medication-name-${checkoutLine.id}`}
+                    value={checkoutLine.drug}
+                    readOnly
+                />
+
+                <Form.Label htmlFor={`medication-checkout-${checkoutLine.id}`} srOnly>
+                    Out
+                </Form.Label>
+                <InputGroup className="mb-2 mr-sm-2">
+                    <InputGroup.Prepend>
+                        <InputGroup.Text>Out</InputGroup.Text>
+                    </InputGroup.Prepend>
+                    <Form.Control
+                        id={`medication-checkout-${checkoutLine.id}`}
+                        style={{width: '75px'}}
+                        value={checkoutLine.checkout}
+                    />
+                </InputGroup>
+
+                <Form.Label htmlFor={`medication-ckout-notes-${checkoutLine.id}`} srOnly>
+                    Out
+                </Form.Label>
+                <InputGroup className="mb-2 mr-sm-2">
+                    <InputGroup.Prepend>
+                        <InputGroup.Text>Notes</InputGroup.Text>
+                    </InputGroup.Prepend>
+                    <Form.Control id={`medication-ckout-notes-${checkoutLine.id}`} value={checkoutLine.notes} />
+                </InputGroup>
             </Form>
         );
     };
 
     if (checkoutList === null) return null;
 
+    /**
+     * @link https://stackoverflow.com/questions/29793160/making-unordered-list-scrollable
+     */
     return (
         <Modal centered show={show} size="lg">
             <Modal.Header>
@@ -55,16 +90,29 @@ const MedicineCheckoutModal = (props: IProps) => {
             </Modal.Header>
 
             <Modal.Body>
-                <ul
-                    style={{
-                        listStyleType: 'square'
-                    }}
-                >
-                    {checkoutList.map((checkout) => (
-                        <li key={`checkout-item-${checkout.id}`}>{CheckoutFormLine(checkout)}</li>
-                    ))}
-                </ul>
+                <div style={{height: '400px'}}>
+                    <ul
+                        style={{
+                            listStyleType: 'none',
+                            margin: 0,
+                            padding: 0,
+                            maxHeight: '400px',
+                            overflow: 'auto',
+                            textIndent: '10px'
+                        }}
+                    >
+                        {checkoutList.map((checkout) => (
+                            <li style={{lineHeight: '50px'}} key={`checkout-item-${checkout.id}`}>
+                                {CheckoutFormLine(checkout)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
             </Modal.Body>
+
+            <Modal.Footer>
+                <Button>Save Changes</Button>
+            </Modal.Footer>
         </Modal>
     );
 };
