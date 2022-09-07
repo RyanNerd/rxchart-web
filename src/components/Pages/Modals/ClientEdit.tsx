@@ -1,4 +1,5 @@
 import {IClientProvider} from 'providers/ClientProvider';
+import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
@@ -6,7 +7,7 @@ import Modal from 'react-bootstrap/Modal';
 import Row from 'react-bootstrap/Row';
 import React, {useEffect, useRef, useState} from 'reactn';
 import {ClientRecord} from 'types/RecordTypes';
-import {clientFullName, getFormattedDate, isDateFuture, isDayValid, isMonthValid, isYearValid} from 'utility/common';
+import {clientFullName, isDateFuture, isDayValid, isMonthValid, isYearValid} from 'utility/common';
 
 interface IProps {
     clientInfo: ClientRecord;
@@ -21,7 +22,7 @@ interface IProps {
  */
 const ClientEdit = (props: IProps): JSX.Element | null => {
     const clientProvider = props.clientProvider;
-    const [isDupe, setIsDupe] = useState(false);
+    const [showDupeAlert, setShowDupeAlert] = useState<null | ClientRecord>(null);
 
     const [clientInfo, setClientInfo] = useState<ClientRecord>(props.clientInfo);
     useEffect(() => {
@@ -60,7 +61,8 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
     };
 
     /**
-     * Called each time focus is changed on fields that could be a duplicate
+     * Check for an existing client (including trashed clients)
+     * @returns {Promise<ClientRecord|null>} If the client exists return the ClientRecord, otherwise null
      */
     const checkForDuplicates = async () => {
         const searchCriteria = {
@@ -69,14 +71,12 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                 ['LastName', '=', clientInfo.LastName],
                 ['DOB_YEAR', '=', clientInfo.DOB_YEAR],
                 ['DOB_MONTH', '=', clientInfo.DOB_MONTH],
-                ['DOB_DAY', '=', clientInfo.DOB_DAY],
-                ['Id', '<>', clientInfo.Id]
+                ['DOB_DAY', '=', clientInfo.DOB_DAY]
             ],
             withTrashed: true
         };
         const dupe = await clientProvider.search(searchCriteria);
-        setIsDupe(dupe.length > 0);
-        return dupe;
+        return dupe.length === 0 ? null : dupe[0];
     };
 
     /**
@@ -84,23 +84,36 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
      * @param {boolean} shouldSave Set to true if the user clicked the save button, otherwise false
      */
     const handleHide = async (shouldSave: boolean) => {
+        // Did use click Save/(Re)activate button?
         if (shouldSave) {
-            if (isDupe) {
-                const dupes = await checkForDuplicates();
-                // Sanity check
-                if (dupes.length > 0) {
-                    const activatedClient = await clientProvider.restore(dupes[0].Id as number);
-                    onClose({...activatedClient});
-                } else {
-                    // Something is seriously wrong here. Should never get here.
-                }
+            // Are we are dealing with an existing client?
+            if (showDupeAlert) {
+                const activatedClient =
+                    showDupeAlert.deleted_at === null
+                        ? showDupeAlert
+                        : await clientProvider.restore(showDupeAlert.Id as number);
+                onClose({...activatedClient});
+                setShow(false);
             } else {
-                onClose({...clientInfo});
+                const dupe = await checkForDuplicates();
+                // Did we find an existing client?
+                if (dupe === null) {
+                    onClose({...clientInfo});
+                    setShow(false);
+                } else {
+                    // If the dupe is the record we are updating then just update the record
+                    if (dupe.Id === clientInfo.Id) {
+                        onClose({...clientInfo});
+                        setShow(false);
+                    } else {
+                        setClientInfo({...dupe});
+                        setShowDupeAlert(dupe);
+                    }
+                }
             }
         } else {
-            onClose(null);
+            setShow(false);
         }
-        setShow(false);
     };
 
     /**
@@ -147,7 +160,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                 name="FirstName"
                                 onBlur={() => {
                                     if (props.clientInfo.FirstName !== clientInfo.FirstName) {
-                                        checkForDuplicates();
+                                        setShowDupeAlert(null);
                                     }
                                 }}
                                 onChange={(changeEvent) => handleOnChange(changeEvent)}
@@ -171,7 +184,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                 name="LastName"
                                 onBlur={() => {
                                     if (props.clientInfo.LastName !== clientInfo.LastName) {
-                                        checkForDuplicates();
+                                        setShowDupeAlert(null);
                                     }
                                 }}
                                 onChange={(changeEvent) => handleOnChange(changeEvent)}
@@ -211,7 +224,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                 name="DOB_MONTH"
                                 onBlur={() => {
                                     if (props.clientInfo.DOB_MONTH !== clientInfo.DOB_MONTH) {
-                                        checkForDuplicates();
+                                        setShowDupeAlert(null);
                                     }
                                 }}
                                 onChange={(changeEvent) => handleOnChange(changeEvent)}
@@ -236,7 +249,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                 name="DOB_DAY"
                                 onBlur={() => {
                                     if (props.clientInfo.DOB_DAY !== clientInfo.DOB_DAY) {
-                                        checkForDuplicates();
+                                        setShowDupeAlert(null);
                                     }
                                 }}
                                 onChange={(changeEvent) => handleOnChange(changeEvent)}
@@ -256,7 +269,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                 name="DOB_YEAR"
                                 onBlur={() => {
                                     if (props.clientInfo.DOB_YEAR !== clientInfo.DOB_YEAR) {
-                                        checkForDuplicates();
+                                        setShowDupeAlert(null);
                                     }
                                 }}
                                 onChange={(changeEvent) => handleOnChange(changeEvent)}
@@ -305,10 +318,6 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
             </Modal.Body>
 
             <Modal.Footer>
-                <span style={{paddingRight: '40%'}}>
-                    Updated: {clientInfo.Updated ? getFormattedDate(clientInfo.Updated) : null}
-                </span>
-
                 <Button onClick={() => handleHide(false)} variant="secondary">
                     Cancel
                 </Button>
@@ -316,17 +325,17 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                 {clientInfo.Id !== null ? (
                     <>
                         <Button
-                            className={isDupe ? 'is-invalid' : ''}
                             disabled={!canSave}
                             onClick={() => handleHide(true)}
                             style={{cursor: canSave ? 'pointer' : 'not-allowed'}}
                             variant="primary"
                         >
-                            Save changes
+                            {showDupeAlert ? (
+                                <span style={{fontStyle: 'bold'}}>Activate Client</span>
+                            ) : (
+                                <span>Save changes</span>
+                            )}
                         </Button>
-                        <Form.Control.Feedback type="invalid" style={{textAlign: 'right'}}>
-                            This client already exists
-                        </Form.Control.Feedback>
                     </>
                 ) : (
                     <Button
@@ -335,8 +344,18 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                         style={{cursor: canSave ? 'pointer' : 'not-allowed'}}
                         variant="primary"
                     >
-                        {isDupe ? <span style={{fontStyle: 'bold'}}>Reactivate Client</span> : <span>Add Client</span>}
+                        {showDupeAlert ? (
+                            <span style={{fontStyle: 'bold'}}>Reactivate Client</span>
+                        ) : (
+                            <span>Add Client</span>
+                        )}
                     </Button>
+                )}
+
+                {showDupeAlert !== null && (
+                    <Alert show={true} variant="warning">
+                        <span>{clientFullName(showDupeAlert)} already exists!</span>
+                    </Alert>
                 )}
             </Modal.Footer>
         </Modal>

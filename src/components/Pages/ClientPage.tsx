@@ -90,21 +90,6 @@ const ClientPage = (props: IProps): JSX.Element | null => {
     };
 
     /**
-     * Fires when user clicks on the select button or if the user is trying to add an existing active client
-     * @param {ClientRecord} clientRecord A ClientRecord object to set as the activeClient.clientInfo
-     */
-    const handleOnSelected = async (clientRecord?: ClientRecord) => {
-        if (clientRecord) {
-            await refreshClient(clientRecord.Id as number);
-            onSelected();
-            setSearchText('');
-        } else {
-            setSearchText('');
-            onSelected();
-        }
-    };
-
-    /**
      * Rehydrate the global clientList
      */
     const refreshClientList = async () => {
@@ -113,6 +98,22 @@ const ClientPage = (props: IProps): JSX.Element | null => {
             Promise<ClientRecord[]>
         ];
         await (clientListError ? setErrorDetails(clientListError) : setClientList(await clientList));
+    };
+
+    /**
+     * Fires when user clicks on the select button or if the user is trying to add an existing active client
+     * @param {ClientRecord} clientRecord A ClientRecord object to set as the activeClient.clientInfo
+     */
+    const handleOnSelected = async (clientRecord?: ClientRecord) => {
+        if (clientRecord) {
+            await refreshClientList();
+            await refreshClient(clientRecord.Id as number);
+            onSelected();
+            setSearchText('');
+        } else {
+            setSearchText('');
+            onSelected();
+        }
     };
 
     /**
@@ -158,7 +159,7 @@ const ClientPage = (props: IProps): JSX.Element | null => {
                         setShowClientEdit({...newResidentRecord});
                     }}
                 >
-                    + Resident
+                    + Client
                 </Button>
 
                 <Form.Control
@@ -202,37 +203,7 @@ const ClientPage = (props: IProps): JSX.Element | null => {
                     setShowClientEdit(null);
 
                     // Do we have a record to update or add?
-                    if (client) {
-                        // Are we adding a new record?
-                        if (client.Id === null) {
-                            // Search clientList for any existing clients to prevent adding dupes
-                            const existing = clientList.find(
-                                (r) =>
-                                    r.FirstName.trim().toLowerCase() === client.FirstName.trim().toLowerCase() &&
-                                    r.LastName.trim().toLowerCase() === client.LastName.trim().toLowerCase() &&
-                                    (typeof r.DOB_DAY === 'string' ? Number.parseInt(r.DOB_DAY) : r.DOB_DAY) ===
-                                        (typeof client.DOB_DAY === 'string'
-                                            ? Number.parseInt(client.DOB_DAY)
-                                            : client.DOB_DAY) &&
-                                    (typeof r.DOB_MONTH === 'string' ? Number.parseInt(r.DOB_MONTH) : r.DOB_MONTH) ===
-                                        (typeof client.DOB_MONTH === 'string'
-                                            ? Number.parseInt(client.DOB_MONTH)
-                                            : client.DOB_MONTH) &&
-                                    (typeof r.DOB_YEAR === 'string' ? Number.parseInt(r.DOB_YEAR) : r.DOB_YEAR) ===
-                                        (typeof client.DOB_YEAR === 'string'
-                                            ? Number.parseInt(client.DOB_YEAR)
-                                            : client.DOB_YEAR)
-                            );
-
-                            // Is user trying to add an existing active client?
-                            // If so then make the exiting client the active instead.
-                            if (existing) {
-                                handleOnSelected();
-                                return;
-                            }
-                        }
-                        saveClient(client).then((c) => handleOnSelected(c));
-                    }
+                    if (client) saveClient(client).then((c) => handleOnSelected(c));
                 }}
                 show={showClientEdit !== null}
             />
