@@ -53,6 +53,17 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
      * @param {React.KeyboardEvent<HTMLElement>} changeEvent Keyboard event object
      */
     const handleOnChange = (changeEvent: React.ChangeEvent<HTMLElement>) => {
+        // If the dupe alert is visible and the client edits anything restore the data back to the original
+        if (showDupeAlert !== null) {
+            setShowDupeAlert(null);
+            const info = {...props.clientInfo};
+            if (info.Notes === null) info.Notes = '';
+            if (info.Nickname === null) info.Nickname = '';
+            if (info.HMIS === null) info.HMIS = 0;
+            setClientInfo(info);
+            return;
+        }
+
         const target = changeEvent.target as HTMLInputElement;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
@@ -80,7 +91,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
     };
 
     /**
-     * Fires when the user clicks on save or cancel
+     * Fires when the user clicks on the Save/Reactivate or Cancel button
      * @param {boolean} shouldSave Set to true if the user clicked the save button, otherwise false
      */
     const handleHide = async (shouldSave: boolean) => {
@@ -88,30 +99,36 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
         if (shouldSave) {
             // Are we are dealing with an existing client?
             if (showDupeAlert) {
+                // If this is a deleted client then restore the client
                 const activatedClient =
                     showDupeAlert.deleted_at === null
                         ? showDupeAlert
                         : await clientProvider.restore(showDupeAlert.Id as number);
-                onClose({...activatedClient});
+                // Save the changes and dismiss the modal
+                onClose({...(await clientProvider.update(activatedClient))});
                 setShow(false);
             } else {
                 const dupe = await checkForDuplicates();
                 // Did we find an existing client?
                 if (dupe === null) {
-                    onClose({...clientInfo});
+                    // No dupes found so update/add the client record and dismiss the modal
+                    onClose({...(await clientProvider.update(clientInfo))});
                     setShow(false);
                 } else {
-                    // If the dupe is the record we are updating then just update the record
+                    // If the dupe is the record we are updating then just update the record and dismiss the modal
                     if (dupe.Id === clientInfo.Id) {
-                        onClose({...clientInfo});
+                        onClose({...(await clientProvider.update(clientInfo))});
                         setShow(false);
                     } else {
+                        // We found a dupe so override all changes with the dupe found and show alert
                         setClientInfo({...dupe});
-                        setShowDupeAlert(dupe);
+                        setShowDupeAlert({...dupe});
                     }
                 }
             }
         } else {
+            // User selected cancel so just dismiss the modal
+            onClose(null);
             setShow(false);
         }
     };
@@ -158,11 +175,6 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                 autoComplete="off"
                                 className={clientInfo.FirstName !== '' ? '' : 'is-invalid'}
                                 name="FirstName"
-                                onBlur={() => {
-                                    if (props.clientInfo.FirstName !== clientInfo.FirstName) {
-                                        setShowDupeAlert(null);
-                                    }
-                                }}
                                 onChange={(changeEvent) => handleOnChange(changeEvent)}
                                 ref={focusReference}
                                 required
@@ -182,11 +194,6 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                 autoComplete="off"
                                 className={clientInfo.LastName !== '' ? '' : 'is-invalid'}
                                 name="LastName"
-                                onBlur={() => {
-                                    if (props.clientInfo.LastName !== clientInfo.LastName) {
-                                        setShowDupeAlert(null);
-                                    }
-                                }}
                                 onChange={(changeEvent) => handleOnChange(changeEvent)}
                                 required
                                 type="text"
@@ -222,11 +229,6 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                 autoComplete="off"
                                 className={isMonthValid(clientInfo.DOB_MONTH.toString()) ? '' : 'is-invalid'}
                                 name="DOB_MONTH"
-                                onBlur={() => {
-                                    if (props.clientInfo.DOB_MONTH !== clientInfo.DOB_MONTH) {
-                                        setShowDupeAlert(null);
-                                    }
-                                }}
                                 onChange={(changeEvent) => handleOnChange(changeEvent)}
                                 required
                                 type="text"
@@ -247,11 +249,6 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                         : 'is-invalid'
                                 }
                                 name="DOB_DAY"
-                                onBlur={() => {
-                                    if (props.clientInfo.DOB_DAY !== clientInfo.DOB_DAY) {
-                                        setShowDupeAlert(null);
-                                    }
-                                }}
                                 onChange={(changeEvent) => handleOnChange(changeEvent)}
                                 required
                                 type="text"
@@ -267,11 +264,6 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                                 autoComplete="off"
                                 className={isYearValid(clientInfo.DOB_YEAR.toString(), true) ? '' : 'is-invalid'}
                                 name="DOB_YEAR"
-                                onBlur={() => {
-                                    if (props.clientInfo.DOB_YEAR !== clientInfo.DOB_YEAR) {
-                                        setShowDupeAlert(null);
-                                    }
-                                }}
                                 onChange={(changeEvent) => handleOnChange(changeEvent)}
                                 required
                                 type="text"

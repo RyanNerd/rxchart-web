@@ -101,7 +101,7 @@ const ClientPage = (props: IProps): JSX.Element | null => {
     };
 
     /**
-     * Fires when user clicks on the select button or if the user is trying to add an existing active client
+     * Fires when user clicks on the select button or user has edited/added a client
      * @param {ClientRecord} clientRecord A ClientRecord object to set as the activeClient.clientInfo
      */
     const handleOnSelected = async (clientRecord?: ClientRecord) => {
@@ -113,23 +113,6 @@ const ClientPage = (props: IProps): JSX.Element | null => {
         } else {
             setSearchText('');
             onSelected();
-        }
-    };
-
-    /**
-     * Given the ResidentRecord update/insert the record, rehydrate the clientList global
-     * @param {ClientRecord} client The client record object
-     */
-    const saveClient = async (client: ClientRecord) => {
-        const [clientRecordError, r] = (await asyncWrapper(clientProvider.update(client))) as [
-            unknown,
-            Promise<ClientRecord>
-        ];
-        if (clientRecordError) {
-            await setErrorDetails(clientRecordError);
-        } else {
-            await refreshClientList();
-            return r;
         }
     };
 
@@ -152,13 +135,7 @@ const ClientPage = (props: IProps): JSX.Element | null => {
     return (
         <Form className="tab-content">
             <Row as={ButtonGroup}>
-                <Button
-                    className="mr-2"
-                    onClick={(mouseEvent: React.MouseEvent<HTMLElement>) => {
-                        mouseEvent.preventDefault();
-                        setShowClientEdit({...newResidentRecord});
-                    }}
-                >
+                <Button className="mr-2" onClick={() => setShowClientEdit({...newResidentRecord})}>
                     + Client
                 </Button>
 
@@ -203,7 +180,7 @@ const ClientPage = (props: IProps): JSX.Element | null => {
                     setShowClientEdit(null);
 
                     // Do we have a record to update or add?
-                    if (client) saveClient(client).then((c) => handleOnSelected(c));
+                    if (client) handleOnSelected(client);
                 }}
                 show={showClientEdit !== null}
             />
