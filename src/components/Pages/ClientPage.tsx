@@ -90,21 +90,6 @@ const ClientPage = (props: IProps): JSX.Element | null => {
     };
 
     /**
-     * Fires when user clicks on the select button or if the user is trying to add an existing active client
-     * @param {ClientRecord} clientRecord A ClientRecord object to set as the activeClient.clientInfo
-     */
-    const handleOnSelected = async (clientRecord?: ClientRecord) => {
-        if (clientRecord) {
-            await refreshClient(clientRecord.Id as number);
-            onSelected();
-            setSearchText('');
-        } else {
-            setSearchText('');
-            onSelected();
-        }
-    };
-
-    /**
      * Rehydrate the global clientList
      */
     const refreshClientList = async () => {
@@ -116,19 +101,18 @@ const ClientPage = (props: IProps): JSX.Element | null => {
     };
 
     /**
-     * Given the ResidentRecord update/insert the record, rehydrate the clientList global
-     * @param {ClientRecord} client The client record object
+     * Fires when user clicks on the select button or user has edited/added a client
+     * @param {ClientRecord} clientRecord A ClientRecord object to set as the activeClient.clientInfo
      */
-    const saveClient = async (client: ClientRecord) => {
-        const [clientRecordError, r] = (await asyncWrapper(clientProvider.update(client))) as [
-            unknown,
-            Promise<ClientRecord>
-        ];
-        if (clientRecordError) {
-            await setErrorDetails(clientRecordError);
-        } else {
+    const handleOnSelected = async (clientRecord?: ClientRecord) => {
+        if (clientRecord) {
             await refreshClientList();
-            return r;
+            await refreshClient(clientRecord.Id as number);
+            onSelected();
+            setSearchText('');
+        } else {
+            setSearchText('');
+            onSelected();
         }
     };
 
@@ -151,14 +135,8 @@ const ClientPage = (props: IProps): JSX.Element | null => {
     return (
         <Form className="tab-content">
             <Row as={ButtonGroup}>
-                <Button
-                    className="mr-2"
-                    onClick={(mouseEvent: React.MouseEvent<HTMLElement>) => {
-                        mouseEvent.preventDefault();
-                        setShowClientEdit({...newResidentRecord});
-                    }}
-                >
-                    + Resident
+                <Button className="mr-2" onClick={() => setShowClientEdit({...newResidentRecord})}>
+                    + Client
                 </Button>
 
                 <Form.Control
@@ -202,37 +180,7 @@ const ClientPage = (props: IProps): JSX.Element | null => {
                     setShowClientEdit(null);
 
                     // Do we have a record to update or add?
-                    if (client) {
-                        // Are we adding a new record?
-                        if (client.Id === null) {
-                            // Search clientList for any existing clients to prevent adding dupes
-                            const existing = clientList.find(
-                                (r) =>
-                                    r.FirstName.trim().toLowerCase() === client.FirstName.trim().toLowerCase() &&
-                                    r.LastName.trim().toLowerCase() === client.LastName.trim().toLowerCase() &&
-                                    (typeof r.DOB_DAY === 'string' ? Number.parseInt(r.DOB_DAY) : r.DOB_DAY) ===
-                                        (typeof client.DOB_DAY === 'string'
-                                            ? Number.parseInt(client.DOB_DAY)
-                                            : client.DOB_DAY) &&
-                                    (typeof r.DOB_MONTH === 'string' ? Number.parseInt(r.DOB_MONTH) : r.DOB_MONTH) ===
-                                        (typeof client.DOB_MONTH === 'string'
-                                            ? Number.parseInt(client.DOB_MONTH)
-                                            : client.DOB_MONTH) &&
-                                    (typeof r.DOB_YEAR === 'string' ? Number.parseInt(r.DOB_YEAR) : r.DOB_YEAR) ===
-                                        (typeof client.DOB_YEAR === 'string'
-                                            ? Number.parseInt(client.DOB_YEAR)
-                                            : client.DOB_YEAR)
-                            );
-
-                            // Is user trying to add an existing active client?
-                            // If so then make the exiting client the active instead.
-                            if (existing) {
-                                handleOnSelected();
-                                return;
-                            }
-                        }
-                        saveClient(client).then((c) => handleOnSelected(c));
-                    }
+                    if (client) handleOnSelected(client);
                 }}
                 show={showClientEdit !== null}
             />

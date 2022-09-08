@@ -90,9 +90,8 @@ const ClientProvider = (url: string): IClientProvider => {
          * @returns {Promise<ClientRecord>} A client record
          */
         restore: async (clientId: number): Promise<ClientRecord> => {
-            const uri = _baseUrl + 'client/restore?api_key=' + _apiKey;
-            const body = {id: clientId};
-            const response = await _frak.post<RecordResponse>(uri, body);
+            const uri = `${_baseUrl}client/restore/${clientId}?api_key=${_apiKey}`;
+            const response = await _frak.post<RecordResponse>(uri, {});
             if (response.success) {
                 return response.data as ClientRecord;
             } else {
