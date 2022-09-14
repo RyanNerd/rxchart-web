@@ -22,7 +22,7 @@ interface IProps {
     medicineProvider: IMedicineProvider;
     onCheckout: () => void;
     pillboxSelected: (id: number) => void;
-    checkoutCount: number;
+    checkoutList: DrugLogRecord[];
 }
 
 /**
@@ -42,7 +42,7 @@ const RxMedicine = (props: IProps) => {
     const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
     const clientId = activeClient?.clientInfo.Id;
     const {drugLogList, pillboxList, pillboxItemList, medicineList} = activeClient as TClient;
-    const {medicineProvider, medHistoryProvider, pillboxSelected, onCheckout, checkoutCount} = props;
+    const {medicineProvider, medHistoryProvider, pillboxSelected, onCheckout, checkoutList} = props;
 
     // Build the dropdown items for the Medicine dropdown
     useEffect(() => {
@@ -199,7 +199,7 @@ const RxMedicine = (props: IProps) => {
                         itemList={medItemList}
                         lastTaken={activeMed?.Id ? calculateLastTaken(activeMed.Id, drugLogList) : null}
                         logDrug={(n) => handleLogDrugAmount(n)}
-                        checkoutCount={checkoutCount}
+                        checkoutList={checkoutList}
                         onCheckout={() => onCheckout()}
                     />
                 </Col>

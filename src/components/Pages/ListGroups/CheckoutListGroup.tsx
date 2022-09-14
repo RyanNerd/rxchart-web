@@ -8,19 +8,18 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import React, {useGlobal, useState} from 'reactn';
 import {TClient} from 'reactn/default';
 import {DrugLogRecord, FileRecord, MedicineRecord} from 'types/RecordTypes';
-import {clientFullName, getFormattedDate} from 'utility/common';
+import {clientFullName, getCheckoutList, getFormattedDate} from 'utility/common';
 import decodeBase64ArrayBuffer from 'utility/decodeBase64ArrayBuffer';
 
 interface IProps {
-    checkoutList: DrugLogRecord[];
-    medicineList: MedicineRecord[];
     onClose?: () => void;
 }
 
 const CheckoutListGroup = (props: IProps) => {
+    const {onClose} = props;
     const [, setErrorDetails] = useGlobal('__errorDetails');
     const [activeClient, setActiveClient] = useGlobal('activeClient');
-    const {checkoutList, medicineList, onClose} = props;
+    const medicineList = activeClient !== null ? activeClient.medicineList : ([] as MedicineRecord[]);
     const clientRecord = activeClient?.clientInfo;
     const clientName = clientRecord ? clientFullName(clientRecord) : '';
     const now = new Date();
@@ -32,6 +31,7 @@ const CheckoutListGroup = (props: IProps) => {
     const [signIn] = useGlobal('signIn');
     const [toast, setToast] = useState<FileRecord | null>(null);
     const organization = signIn?.organization?.trim();
+    const checkoutList = activeClient !== null ? getCheckoutList(activeClient.drugLogList) : ([] as DrugLogRecord[]);
 
     /**
      * Handle when the user clicks the Digital Signature button

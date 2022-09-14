@@ -38,7 +38,6 @@ const RxPage = (props: IProps): JSX.Element | null => {
     const [activeClient] = useGlobal('activeClient');
     const [activePillbox, setActivePillbox] = useState<PillboxRecord | null>(null);
     const [activeRxTab, setActiveRxTab] = useState<RX_TAB_KEY>(RX_TAB_KEY.Medicine);
-    const [checkoutList, setCheckoutList] = useState<DrugLogRecord[]>([]);
     const [otcList] = useGlobal('otcList');
     const [providers] = useGlobal('providers');
     const {medicineProvider, medHistoryProvider, pillboxProvider, pillboxItemProvider} = providers;
@@ -50,6 +49,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
     }, [props.activeTabKey]);
 
     // Update the checkoutList when drugLogList changes
+    const [checkoutList, setCheckoutList] = useState<DrugLogRecord[]>([]);
     useEffect(() => {
         if (activeClient?.drugLogList) {
             setCheckoutList(getCheckoutList(activeClient.drugLogList));
@@ -140,7 +140,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                 >
                     <RxMedicine
                         onCheckout={() => setActiveRxTab(RX_TAB_KEY.Checkout)}
-                        checkoutCount={checkoutList.length}
+                        checkoutList={checkoutList}
                         medicineProvider={medicineProvider}
                         medHistoryProvider={medHistoryProvider}
                         pillboxSelected={(id) => {
@@ -265,7 +265,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                             </ToggleButton>
                         }
                     >
-                        <RxCheckout activeClient={activeClient} checkoutList={checkoutList} />
+                        <RxCheckout activeClient={activeClient} />
                     </Tab>
                 )}
 

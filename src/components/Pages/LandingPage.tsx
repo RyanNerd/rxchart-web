@@ -8,6 +8,7 @@ import Tabs from 'react-bootstrap/Tabs';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import React, {useEffect, useGlobal, useMemo} from 'reactn';
 import {IPreferences} from 'reactn/default';
+import {clientFullName} from 'utility/common';
 import {RxError} from 'utility/RxError';
 import DiagnosticPage from './DiagnosticPage';
 import LoginPage from './LoginPage';
@@ -106,11 +107,20 @@ const LandingPage = (props: IProps) => {
             >
                 <Tab.Content>{loginPage}</Tab.Content>
             </Tab>
+
             <Tab disabled={!apiKey} eventKey="resident" title={<Title activeKey="resident">Clients</Title>}>
                 <Tab.Content style={{marginLeft: 0}}>{clientPage}</Tab.Content>
             </Tab>
 
-            <Tab disabled={!apiKey || !activeClient} eventKey="medicine" title={<Title activeKey="medicine">Rx</Title>}>
+            <Tab
+                disabled={!apiKey || !activeClient}
+                eventKey="medicine"
+                title={
+                    <Title activeKey="medicine">
+                        Rx {activeClient?.clientInfo ? clientFullName(activeClient?.clientInfo) : undefined}
+                    </Title>
+                }
+            >
                 {activeClient && activeTabKey === 'medicine' && (
                     <Tab.Content style={{marginLeft: 0}}>{medicinePage}</Tab.Content>
                 )}

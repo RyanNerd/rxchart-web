@@ -9,7 +9,6 @@ interface IProps {
     checkoutList: MedicineRecord[];
     medicineList: MedicineRecord[];
     onEdit: (r: MedicineRecord) => void;
-    onLogDrug: (r: MedicineRecord) => void;
     onToggleActive: (r: MedicineRecord) => void;
 }
 
@@ -18,7 +17,7 @@ interface IProps {
  * @param {IProps} props The props for this component
  */
 const ManageDrugGrid = (props: IProps): JSX.Element => {
-    const {checkoutList, onToggleActive, onEdit, onLogDrug, medicineList} = props;
+    const {checkoutList, onToggleActive, onEdit, medicineList} = props;
 
     /**
      * Table row component for each medicine record
@@ -33,20 +32,9 @@ const ManageDrugGrid = (props: IProps): JSX.Element => {
                 key={drug.Id}
                 style={{textDecoration: !drug.Active ? 'line-through' : undefined}}
             >
-                <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
+                <td className="d-print-none" style={{textAlign: 'center', verticalAlign: 'middle'}}>
                     <Button size="sm" id={`manage-drug-grid-edit-btn-${drug.Id}`} onClick={() => onEdit(drug)}>
                         Edit
-                    </Button>
-                </td>
-                <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
-                    <Button
-                        disabled={!drug.Active}
-                        id={`manage-drug-grid-checkout-btn-${drug.Id}`}
-                        onClick={() => onLogDrug(drug)}
-                        size="sm"
-                        variant="info"
-                    >
-                        + Log Drug {!drug.Active && <Badge>🚫</Badge>}
                     </Button>
                 </td>
                 <td style={{verticalAlign: 'middle'}}>
@@ -79,7 +67,6 @@ const ManageDrugGrid = (props: IProps): JSX.Element => {
             <thead>
                 <tr>
                     <th>{/* Edit */}</th>
-                    <th>{/* Checkout */}</th>
                     <th>Drug</th>
                     <th>Strength</th>
                     <th>Directions</th>

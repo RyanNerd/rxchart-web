@@ -1,8 +1,7 @@
-import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
 import React, {useEffect} from 'reactn';
-import {MedicineRecord, newMedicineRecord} from 'types/RecordTypes';
+import {DrugLogRecord, MedicineRecord, newMedicineRecord} from 'types/RecordTypes';
 import {getLastTakenVariant, randomString} from 'utility/common';
 import {drawBarcode} from 'utility/drawBarcode';
 import LogButtons from '../Buttons/LogButtons';
@@ -23,7 +22,7 @@ interface IProps {
     lastTaken: number | null;
     logDrug: (n: number) => void;
     onCheckout: () => void;
-    checkoutCount: number;
+    checkoutList: DrugLogRecord[];
 }
 
 /**
@@ -44,7 +43,7 @@ const MedListGroup = (props: IProps): JSX.Element => {
         lastTaken = null,
         logDrug,
         onCheckout,
-        checkoutCount
+        checkoutList
     } = props;
     const barCode = activeMed?.Barcode && activeMed.Barcode.length > 0 ? activeMed.Barcode : null;
     const notes = activeMed?.Notes && activeMed.Notes.length > 0 ? activeMed.Notes : null;
@@ -102,9 +101,9 @@ const MedListGroup = (props: IProps): JSX.Element => {
                     Edit <b>{activeMed?.Drug}</b>
                 </Button>
 
-                {checkoutCount > 0 && (
+                {!checkoutList?.find((medCheckedOut) => medCheckedOut.MedicineId === activeMed?.Id) && (
                     <Button className="ml-3" size="sm" variant="outline-success" onClick={() => onCheckout()}>
-                        Medicine Checkout <Badge variant="secondary">{checkoutCount}</Badge>
+                        Checkout {activeMed?.Drug}
                     </Button>
                 )}
             </ListGroup.Item>
