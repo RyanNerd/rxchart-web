@@ -74,14 +74,6 @@ const RxPage = (props: IProps): JSX.Element | null => {
                     setActiveRxTab(RX_TAB_KEY.Medicine);
                 }
             }
-
-            const printElement = document.getElementById('medicine-page-tabs-tab-' + RX_TAB_KEY.Checkout);
-            if (printElement) {
-                printElement.style.display = checkoutList.length === 0 ? 'none' : 'block';
-                if (activeRxTab === RX_TAB_KEY.Checkout && checkoutList.length === 0) {
-                    setActiveRxTab(RX_TAB_KEY.Medicine);
-                }
-            }
         }
 
         // Move LandingPage tabs up for more screen real estate
@@ -139,7 +131,6 @@ const RxPage = (props: IProps): JSX.Element | null => {
                     }
                 >
                     <RxMedicine
-                        onCheckout={() => setActiveRxTab(RX_TAB_KEY.Checkout)}
                         checkoutList={checkoutList}
                         medicineProvider={medicineProvider}
                         medHistoryProvider={medHistoryProvider}
@@ -240,34 +231,32 @@ const RxPage = (props: IProps): JSX.Element | null => {
                     />
                 </Tab>
 
-                {checkoutList.length > 0 && (
-                    <Tab
-                        tabClassName="rx-print-tab"
-                        style={{marginLeft: '-40px'}}
-                        eventKey={RX_TAB_KEY.Checkout}
-                        title={
-                            <ToggleButton
-                                checked={activeRxTab === RX_TAB_KEY.Checkout}
-                                className="ml-2 d-print-none"
-                                disabled={checkoutList.length === 0}
-                                id="med-list-group-print-radio-btn"
-                                key="med-list-group-print-radio-btn"
-                                name="radio-print-list-group"
-                                onChange={() => setActiveRxTab(RX_TAB_KEY.Checkout)}
-                                size={preferences.rxTabSize}
-                                type="radio"
-                                value={RX_TAB_KEY.Checkout}
-                                variant="outline-success"
-                            >
-                                <span className="ml-2">
-                                    Checkout <Badge variant="secondary">{checkoutList.length}</Badge>
-                                </span>
-                            </ToggleButton>
-                        }
-                    >
-                        <RxCheckout activeClient={activeClient} />
-                    </Tab>
-                )}
+                <Tab
+                    tabClassName="rx-print-tab"
+                    style={{marginLeft: '-40px'}}
+                    eventKey={RX_TAB_KEY.Checkout}
+                    title={
+                        <ToggleButton
+                            checked={activeRxTab === RX_TAB_KEY.Checkout}
+                            className="ml-2 d-print-none"
+                            id="med-list-group-print-radio-btn"
+                            key="med-list-group-print-radio-btn"
+                            name="radio-print-list-group"
+                            onChange={() => setActiveRxTab(RX_TAB_KEY.Checkout)}
+                            size={preferences.rxTabSize}
+                            type="radio"
+                            value={RX_TAB_KEY.Checkout}
+                            variant="outline-success"
+                        >
+                            <span className="ml-2">
+                                Checkout{' '}
+                                {checkoutList.length > 0 ?? <Badge variant="secondary">{checkoutList.length}</Badge>}
+                            </span>
+                        </ToggleButton>
+                    }
+                >
+                    <RxCheckout activeClient={activeClient} />
+                </Tab>
 
                 <Tab
                     eventKey={RX_TAB_KEY.Manage}

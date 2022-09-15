@@ -21,7 +21,7 @@ interface IProps {
     itemList: IDropdownItem[];
     lastTaken: number | null;
     logDrug: (n: number) => void;
-    onCheckout: () => void;
+    onCheckout: (drugLogRecord: DrugLogRecord | undefined) => void;
     checkoutList: DrugLogRecord[];
 }
 
@@ -69,6 +69,8 @@ const MedListGroup = (props: IProps): JSX.Element => {
         if (canvasUpdated && canvas) canvasUpdated(canvas);
     }, [barCode, canvasUpdated, canvasId]);
 
+    const isCheckout = checkoutList?.find((medCheckedOut) => medCheckedOut.MedicineId === activeMed?.Id);
+
     return (
         <ListGroup>
             <ListGroup.Item>
@@ -101,11 +103,9 @@ const MedListGroup = (props: IProps): JSX.Element => {
                     Edit <b>{activeMed?.Drug}</b>
                 </Button>
 
-                {!checkoutList?.find((medCheckedOut) => medCheckedOut.MedicineId === activeMed?.Id) && (
-                    <Button className="ml-3" size="sm" variant="outline-success" onClick={() => onCheckout()}>
-                        Checkout {activeMed?.Drug}
-                    </Button>
-                )}
+                <Button className="ml-3" size="sm" variant="outline-success" onClick={() => onCheckout(isCheckout)}>
+                    {isCheckout ? <span>Check-In {activeMed?.Drug}</span> : <span>Check-Out {activeMed?.Drug}</span>}
+                </Button>
             </ListGroup.Item>
 
             {activeMed && activeMed.Id && (

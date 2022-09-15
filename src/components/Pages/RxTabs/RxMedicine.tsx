@@ -20,7 +20,6 @@ import {asyncWrapper, calculateLastTaken, clientFullName, getCheckoutList, getDr
 interface IProps {
     medHistoryProvider: IMedHistoryProvider;
     medicineProvider: IMedicineProvider;
-    onCheckout: () => void;
     pillboxSelected: (id: number) => void;
     checkoutList: DrugLogRecord[];
 }
@@ -42,7 +41,7 @@ const RxMedicine = (props: IProps) => {
     const [toast, setToast] = useState<null | DrugLogRecord[]>(null);
     const clientId = activeClient?.clientInfo.Id;
     const {drugLogList, pillboxList, pillboxItemList, medicineList} = activeClient as TClient;
-    const {medicineProvider, medHistoryProvider, pillboxSelected, onCheckout, checkoutList} = props;
+    const {medicineProvider, medHistoryProvider, pillboxSelected, checkoutList} = props;
 
     // Build the dropdown items for the Medicine dropdown
     useEffect(() => {
@@ -177,6 +176,10 @@ const RxMedicine = (props: IProps) => {
         setShowDrugLog(drugLogRecord);
     };
 
+    const handleOnCheckout = (checkoutRecord: DrugLogRecord | undefined) => {
+        if (checkoutRecord) setShowDrugLog(checkoutRecord); // TODO: We need to set the type of modal for ShowDrugLog
+    };
+
     if (activeClient === null) return null;
     return (
         <>
@@ -200,7 +203,7 @@ const RxMedicine = (props: IProps) => {
                         lastTaken={activeMed?.Id ? calculateLastTaken(activeMed.Id, drugLogList) : null}
                         logDrug={(n) => handleLogDrugAmount(n)}
                         checkoutList={checkoutList}
-                        onCheckout={() => onCheckout()}
+                        onCheckout={(checkoutRecord) => handleOnCheckout(checkoutRecord)}
                     />
                 </Col>
 
