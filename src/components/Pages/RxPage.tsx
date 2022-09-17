@@ -250,7 +250,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                         >
                             <span className="ml-2">
                                 Checkout{' '}
-                                {checkoutList.length > 0 ?? <Badge variant="secondary">{checkoutList.length}</Badge>}
+                                {checkoutList.length > 0 && <Badge variant="secondary">{checkoutList.length}</Badge>}
                             </span>
                         </ToggleButton>
                     }
