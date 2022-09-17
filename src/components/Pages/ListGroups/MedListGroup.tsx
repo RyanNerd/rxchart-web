@@ -1,7 +1,7 @@
 import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
 import React, {useEffect} from 'reactn';
-import {DrugLogRecord, MedicineRecord, newMedicineRecord} from 'types/RecordTypes';
+import {MedicineRecord, newMedicineRecord} from 'types/RecordTypes';
 import {getLastTakenVariant, randomString} from 'utility/common';
 import {drawBarcode} from 'utility/drawBarcode';
 import LogButtons from '../Buttons/LogButtons';
@@ -21,8 +21,6 @@ interface IProps {
     itemList: IDropdownItem[];
     lastTaken: number | null;
     logDrug: (n: number) => void;
-    onCheckout: (drugLogRecord: DrugLogRecord | undefined) => void;
-    checkoutList: DrugLogRecord[];
 }
 
 /**
@@ -41,9 +39,7 @@ const MedListGroup = (props: IProps): JSX.Element => {
         itemChanged,
         itemList,
         lastTaken = null,
-        logDrug,
-        onCheckout,
-        checkoutList
+        logDrug
     } = props;
     const barCode = activeMed?.Barcode && activeMed.Barcode.length > 0 ? activeMed.Barcode : null;
     const notes = activeMed?.Notes && activeMed.Notes.length > 0 ? activeMed.Notes : null;
@@ -68,8 +64,6 @@ const MedListGroup = (props: IProps): JSX.Element => {
         const canvas = barCode ? drawBarcode(barCode, canvasId) : null;
         if (canvasUpdated && canvas) canvasUpdated(canvas);
     }, [barCode, canvasUpdated, canvasId]);
-
-    const isCheckout = checkoutList?.find((medCheckedOut) => medCheckedOut.MedicineId === activeMed?.Id);
 
     return (
         <ListGroup>
@@ -101,10 +95,6 @@ const MedListGroup = (props: IProps): JSX.Element => {
                     }}
                 >
                     Edit <b>{activeMed?.Drug}</b>
-                </Button>
-
-                <Button className="ml-3" size="sm" variant="outline-success" onClick={() => onCheckout(isCheckout)}>
-                    {isCheckout ? <span>Check-In {activeMed?.Drug}</span> : <span>Check-Out {activeMed?.Drug}</span>}
                 </Button>
             </ListGroup.Item>
 
