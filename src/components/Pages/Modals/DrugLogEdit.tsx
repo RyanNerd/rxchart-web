@@ -125,6 +125,7 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
                                 </Form.Label>
                                 <Col md="8">
                                     <Form.Control
+                                        disabled={drugLogInfo.Out === null || drugLogInfo.Out < 1}
                                         name="In"
                                         onChange={(changeEvent) => handleOnChange(changeEvent, true)}
                                         type="number"
