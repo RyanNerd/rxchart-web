@@ -277,7 +277,6 @@ const RxMedicine = (props: IProps) => {
                     if (drugLogRecord)
                         saveDrugLog(drugLogRecord).then((updatedDrugLogRecord) => setToast([updatedDrugLogRecord]));
                 }}
-                onHide={() => setShowDrugLog(null)}
                 show={showDrugLog !== null}
             />
         </>

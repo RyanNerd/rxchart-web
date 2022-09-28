@@ -73,7 +73,6 @@ const RxHistory = (props: IProps) => {
                     if (drugLogRecord)
                         saveDrugLog(drugLogRecord).then((updatedDrugLogRecord) => setToast([updatedDrugLogRecord]));
                 }}
-                onHide={() => setShowDrugLog(null)}
                 otc={getMedicineRecord(showDrugLog?.MedicineId as number, medicineOtcList)?.OTC || false}
                 show={showDrugLog !== null}
             />

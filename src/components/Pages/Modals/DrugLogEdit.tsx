@@ -10,7 +10,6 @@ interface IProps {
     drugLogInfo: DrugLogRecord;
     drugName: string;
     onClose: (drugLogInfo: DrugLogRecord | null) => void;
-    onHide: () => void;
     otc?: boolean;
     show: boolean;
 }
@@ -20,7 +19,7 @@ interface IProps {
  * @param {IProps} props Props for the component
  */
 const DrugLogEdit = (props: IProps): JSX.Element | null => {
-    const {otc, onClose, onHide, drugName} = props;
+    const {otc, onClose, drugName} = props;
 
     const [drugLogInfo, setDrugLogInfo] = useState(props.drugLogInfo);
     useEffect(() => {
@@ -83,13 +82,7 @@ const DrugLogEdit = (props: IProps): JSX.Element | null => {
     if (!drugLogInfo) return null;
 
     return (
-        <Modal
-            backdrop="static"
-            centered
-            onEntered={() => textInput?.current?.focus()}
-            onHide={() => onHide()}
-            show={show}
-        >
+        <Modal backdrop="static" centered onEntered={() => textInput?.current?.focus()} show={show}>
             <Modal.Header closeButton>
                 <Modal.Title>{title}</Modal.Title>
             </Modal.Header>
