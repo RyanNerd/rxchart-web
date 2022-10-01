@@ -255,7 +255,7 @@ const RxPage = (props: IProps): JSX.Element | null => {
                         </ToggleButton>
                     }
                 >
-                    <RxCheckout activeClient={activeClient} />
+                    <RxCheckout />
                 </Tab>
 
                 <Tab
