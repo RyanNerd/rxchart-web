@@ -57,6 +57,7 @@ const MedListGroup = (props: IProps): JSX.Element => {
         paddingBottom: '0.20rem',
         paddingLeft: '1.25rem'
     };
+    const isCheckedOut = itemList.some((index) => index.isCheckedOut && index.id === activeMed?.Id);
 
     // Update the barcode image if the barcode has changed
     useEffect(() => {
@@ -102,8 +103,8 @@ const MedListGroup = (props: IProps): JSX.Element => {
                 <>
                     <ListGroup.Item active className="justify-content-left">
                         <MedDropdown
-                            activeId={activeMed.Id}
                             disabled={disabled}
+                            activeId={activeMed.Id}
                             itemList={itemList}
                             onSelect={(itemNumber) => itemChanged(itemNumber)}
                         />
@@ -112,16 +113,17 @@ const MedListGroup = (props: IProps): JSX.Element => {
                     <ListGroup.Item>
                         <Button
                             className="mr-2"
-                            disabled={disabled}
+                            disabled={isCheckedOut}
                             size="sm"
                             variant={lastTakenVariant}
                             onClick={() => addDrugLog()}
+                            style={{cursor: isCheckedOut ? 'not-allowed' : 'pointer'}}
                         >
                             + Log {activeMed?.Drug}
                         </Button>
 
                         <LogButtons
-                            disabled={disabled}
+                            disabled={isCheckedOut}
                             lastTaken={lastTaken}
                             lastTakenVariant={lastTakenVariant}
                             onLogAmount={(n) => logDrug(n)}

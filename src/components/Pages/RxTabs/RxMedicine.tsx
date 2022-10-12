@@ -61,12 +61,13 @@ const RxMedicine = (props: IProps) => {
                     itemList.push({
                         id: -(p.Id as number),
                         description: p.Name.toUpperCase(),
-                        subtext: null
+                        subtext: null,
+                        isCheckedOut: false
                     }); // Pillbox have negative id
                     pbCnt++;
                 }
             }
-            if (pbCnt > 0) itemList.push({id: 0, description: 'divider', subtext: null});
+            if (pbCnt > 0) itemList.push({id: 0, description: 'divider', subtext: null, isCheckedOut: false});
 
             for (const m of medicineList) {
                 if (m.Active) {
@@ -77,7 +78,8 @@ const RxMedicine = (props: IProps) => {
                     itemList.push({
                         id: m.Id as number,
                         description,
-                        subtext: other
+                        subtext: other,
+                        isCheckedOut: checkoutMed !== undefined
                     });
                 }
             }

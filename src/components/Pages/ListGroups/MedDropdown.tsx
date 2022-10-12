@@ -7,6 +7,7 @@ export interface IDropdownItem {
     description: string;
     id: number; // id === 0 divider, id > 0 medicineId, id < 0 pillboxId
     subtext: string | null;
+    isCheckedOut: boolean;
 }
 
 interface IProps {
